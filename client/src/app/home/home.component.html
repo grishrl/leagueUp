@@ -1,0 +1,55 @@
+<!-- <div class="container nav-padding"> -->
+
+
+<!-- Page Content -->
+<div class="container">
+    <header>
+        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators">
+                <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+            </ol>
+            <div class="carousel-inner" role="listbox">
+                <!-- Slide One - Set the background image for this slide in the line below -->
+                <div (click)="goToBlogPage(jumboSlide)" *ngFor="let jumboSlide of jumboTron let i = index" class="carousel-item finger" [ngClass]="{'active':i==0}" [style.background-image]="'url('+jumboSlide.fields.heroImage.fields.file.url+'?w=1900&h=1080&fit=scale)'">
+                    <div class="carousel-caption d-none d-md-block">
+
+                        <h3>{{jumboSlide.fields.title}}</h3>
+                        <p>{{jumboSlide.fields.description}}</p>
+                    </div>
+                </div>
+
+                <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <h1 class="my-4">Welcome to the site!</h1>
+
+    <h2>Recent news</h2>
+
+    <div class="row m-t" *ngFor="let row of rows">
+        <div class="col" *ngFor="let item of row">
+            <mat-card class="blog-card">
+                <mat-card-header>
+                    <img mat-card-avatar src="{{item.fields.author.fields.image.fields.file.url}}" class="author-image">
+                    <mat-card-title><span class="anchor" (click)="goToBlogPage(item)">{{item.fields.title}}</span></mat-card-title>
+                    <mat-card-subtitle>{{item.fields.author.fields.name}}</mat-card-subtitle>
+                </mat-card-header>
+                <img mat-card-image src="{{item.fields.heroImage.fields.file.url}}?w=450&h=300&fit=scale" alt="{{item.fields.heroImage.fields.description}}">
+                <mat-card-content>
+                    <div>{{item.fields.description}}</div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+
+</div>

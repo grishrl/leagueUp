@@ -1,0 +1,17 @@
+<!-- <input matInput placeholder="Battle tag" [matAutocomplete]="auto">
+<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+    <mat-option *ngFor="let btag of getUsers | async" [value]="btag">{{btag}}</mat-option>
+</mat-autocomplete> -->
+
+<form class="userSearchForm">
+    <mat-form-field class="userSearch">
+        <input matInput placeholder="Enter battle tag" [(ngModel)]="selectedUser" aria-label="Enter battle tag" [matAutocomplete]="auto" [formControl]="userCtrl">
+        <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let btag of foundUsers " [value]="btag">
+                {{btag}}
+            </mat-option>
+        </mat-autocomplete>
+    </mat-form-field>
+    <button type="button" (click)="invite(selectedUser)"> Invite </button>
+</form>
+<div><span>{{message}}</span></div>

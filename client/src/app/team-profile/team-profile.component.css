@@ -1,0 +1,12 @@
+.formContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.tp-FullWidth {
+    width: 100%;
+}
+
+.role-margin {
+    margin: 0 10px;
+}

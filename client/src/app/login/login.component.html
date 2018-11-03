@@ -1,0 +1,20 @@
+<div class="container h-100">
+    <div class="row" *ngIf="!Auth.isAuthenticated(); else loggedIn">
+        <div class="col-sm"></div>
+        <div class="col-sm">
+            <h2>We manage athentication an login via Battle.net:</h2>
+            <a type="button" class="btn btn-success" href="/auth/bnet">Login with Battle.Net!</a>
+        </div>
+        <div class="col-sm"></div>
+    </div>
+    <ng-template #loggedIn>
+        <div class="row">
+            <div class="col-sm"></div>
+            <div class="col-sm">
+                <h2>Welcome to the NGS app!</h2>
+                <a type="button" class="btn btn-success" href="/profile/{{profile}}">Check out your profile!</a>
+            </div>
+            <div class="col-sm"></div>
+        </div>
+    </ng-template>
+</div>

@@ -1,0 +1,5 @@
+<div class="row" *ngFor="let memberRow of memberRows">
+    <div class="col" *ngFor="let member of memberRow">
+        <a [routerLink]="['/profile/', user.routeFriendlyUsername(member.displayName)]">{{member.displayName}}</a>
+    </div>
+</div>

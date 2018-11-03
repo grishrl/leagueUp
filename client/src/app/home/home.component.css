@@ -1,0 +1,26 @@
+.carousel-item {
+    height: 65vh;
+    min-height: 300px;
+    background: no-repeat center center scroll;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.portfolio-item {
+    margin-bottom: 30px;
+}
+
+.finger {
+    cursor: pointer;
+}
+
+.anchor {
+    color: blue;
+    text-decoration: underline;
+}
+
+.m-t {
+    margin-top: 10px;
+}

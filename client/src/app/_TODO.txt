@@ -1,0 +1,24 @@
+contentfulservice :
+>TRY TO REDUCE THE AMMOUNT OF CONTENTFUL REQUESTS MADE BY USING LOCAL STORAGE -- MAY REQUIRE SOME OBSERVABLE / PROMISE STATE MIXING TO PULL FROM LOCAL OR HTTP 
+>PAGINATION AND LIMITS + PULLING EXTRA ARTICLES 
+> order posts in the list by date.
+
+contenful:
+>ADD CATEGORY FOR EACH DIVISON TO LINK BLOG POSTS TO
+
+ADMIN:
+> approve team ADD
+> delete team
+> delete user
+> add team to DIVISON
+
+FOOTER
+> GET FOOTER WORKING
+
+TEAM 
+> save team edit
+> show pending members?
+
+>Create account warning/disclaimer
+
+>Commit to github

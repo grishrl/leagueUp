@@ -1,0 +1,31 @@
+.blog-card {
+    max-width: 300px;
+}
+
+.m-t {
+    margin-top: 10px;
+}
+
+.nav-offset {
+    padding-top: 60px;
+}
+
+.anchor {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.author-image {
+    background-size: cover;
+}
+
+.example-container {
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+.example-container>* {
+    width: 100%;
+}
