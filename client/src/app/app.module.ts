@@ -21,6 +21,8 @@ import { OutreachEmailResponseComponent } from './outreach-email-response/outrea
 import { BlogListComponent } from './blog-list/blog-list.component';
 import { BlogViewComponent } from './blog-view/blog-view.component';
 import { AppFooterComponent } from './app-footer/app-footer.component';
+import { ImageUploadComponent } from './image-upload/image-upload.component';
+import { NgxCroppieModule } from 'ngx-croppie';
 
 
 @NgModule({
@@ -39,7 +41,8 @@ import { AppFooterComponent } from './app-footer/app-footer.component';
     OutreachEmailResponseComponent,
     BlogListComponent,
     BlogViewComponent,
-    AppFooterComponent
+    AppFooterComponent,
+    ImageUploadComponent
   ],
   imports: [
     BrowserModule, 
@@ -48,7 +51,8 @@ import { AppFooterComponent } from './app-footer/app-footer.component';
     HttpClientModule,
     InputFormMaterial,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgxCroppieModule
   ],
   providers: [
     {
