@@ -80,6 +80,7 @@ export class ProfileEditComponent implements OnInit {
        });
        
      }else{
+       
        console.log('the data was invalid we cant save');
      }
    }
