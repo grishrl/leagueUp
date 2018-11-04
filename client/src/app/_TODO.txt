@@ -20,9 +20,6 @@ TEAM
 > show pending members?
 > validation warnings
 
-user
-> validation warnings
-
 product:
 > remove hardcoded URLs from all locations
 > probably need some modals for request waiting and requests confimations

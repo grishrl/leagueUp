@@ -1,19 +1,23 @@
-<div class="container h-100">
+<div class="container">
     <div class="row">
-        <div class="col-md-12">
-            <h1>Welcome to NGS!</h1>
+        <div class="col-3"></div>
+        <div class="col">
+            <div class="card mt-5">
+                <div class="card-header">
+                    Welcome to the league
+                    <!--NGS!-->
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">You've been invited to join an elite group of players to test your mettle in the Nexus!</h5>
+                    <div class="text-center"><a href="/auth/bnet" class="btn btn-primary bNet">Login with Battle.Net!</a></div>
+                    <div class="text-center mt-1"><img class="text-center" src="assets/Blizz_Corp_RGB_LightBkgd.png" width="145"></div>
+                </div>
+            </div>
+
+            <p class="disclaimer">
+                We do not capture any private data (ie: email); however we do create a profile including your battle.bet account and collect information regarding your play schedule and MMR etc.
+            </p>
         </div>
-        <div class="col-md-12">
-            You've been invited to join an elite group of players to test your mettle in the Nexus!
-        </div>
-        <div class="col-md-12">
-            We use the Battle.net Oauth for authentication management, we have a profile for NGS league and system et all that collects no private information (IE: email, etc) but we do collect information in regards to your rank, desires to play in the league and
-            your battle tag as returned from Battle.net Oauth
-        </div>
-        <div class="col-md-12">
-            If you're ready to jump into the Nexus Gaming Series, click here to create your profile!
-            <br>
-            <a type="button" class="btn btn-success" href="/auth/bnet?emailCode={{auth.getReferral()}}">Login with Battle.Net!</a>
-        </div>
+        <div class="col-3"></div>
     </div>
 </div>
