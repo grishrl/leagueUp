@@ -4,6 +4,7 @@ const User = require("../models/user-models");
 const Team = require("../models/team-models");
 const passport = require("passport");
 const fs = require('fs');
+const imageDataURI = require('image-data-uri');
 
 /*
 routes for team management --
@@ -16,6 +17,7 @@ save - saves new team information
 delete - deletes team
 addMember - adds member
 removeMember - removes member
+uploadLogo - uploads logo 
 */
 
 
@@ -265,32 +267,58 @@ router.post('/save', passport.authenticate('jwt', {
     var payloadTeamName = req.body.teamName;
     var payload = req.body;
     Team.findOne({ teamName: payloadTeamName }).then((foundTeam) => {
+        console.log('A');
         if (foundTeam) {
+            console.log('B');
             // this might be something to be changed later -
             var captainRec = false;
             if (!util.isNullOrEmpty(payload.lookingForMore)) {
+                console.log('setting the LFM');
                 foundTeam.lookingForMore = payload.lookingForMore;
+                console.log('foundTeam.lookingForMore ', foundTeam.lookingForMore);
+                console.log('payload.lookingForMore ', payload.lookingForMore);
             }
-            if (!util.isNullOrEmpty(payload.lfmDetails)) {
-                if (!util.isNullOrEmpty(payload.lfmDetails.availability)) {
+
+            console.log('setting the LFMdetails');
+            console.log('util.isNullOrEmpty(payload.lfmDetails) ', util.isNullOrEmpty(payload.lfmDetails));
+            if (!util.isNullorUndefined(payload.lfmDetails)) {
+
+                console.log('lfmDetails.availability');
+                console.log('util.isNullOrUndifined(payload.lfmDetails.availability) ', util.isNullorUndefined(payload.lfmDetails.availability));
+                if (!util.isNullorUndefined(payload.lfmDetails.availability)) {
                     if (!foundTeam.lfmDetails.availability) {
                         foundTeam.lfmDetails.availability = {};
                     }
                     foundTeam.lfmDetails.availability = payload.lfmDetails.availability;
+                    console.log(foundTeam.lfmDetails.availability.toString());
                 }
+
+                console.log('lfmDetails.competitiveLevel');
+                console.log('util.isNullOrEmpty(payload.lfmDetails.competitiveLevel) ', util.isNullOrEmpty(payload.lfmDetails.competitiveLevel));
                 if (!util.isNullOrEmpty(payload.lfmDetails.competitiveLevel)) {
                     foundTeam.lfmDetails.competitiveLevel = payload.lfmDetails.competitiveLevel;
                 }
+
+                console.log('lfmDetails.descriptionOfTeam');
+                console.log('util.isNullOrEmpty(payload.lfmDetails.descriptionOfTeam) ', util.isNullOrEmpty(payload.lfmDetails.descriptionOfTeam));
                 if (!util.isNullOrEmpty(payload.lfmDetails.descriptionOfTeam)) {
                     foundTeam.lfmDetails.descriptionOfTeam = payload.lfmDetails.descriptionOfTeam;
                 }
+
+                console.log('util.isNullOrEmpty(payload.lfmDetails.rolesNeeded');
+                console.log('util.isNullOrEmpty(payload.lfmDetails.rolesNeeded ', util.isNullOrEmpty(payload.lfmDetails.rolesNeeded))
                 if (!util.isNullOrEmpty(payload.lfmDetails.rolesNeeded)) {
+                    console.log('updating roles needed')
                     if (!foundTeam.lfmDetails.rolesNeeded) {
                         foundTeam.lfmDetails.rolesNeeded = {};
                     }
                     foundTeam.lfmDetails.rolesNeeded = payload.lfmDetails.rolesNeeded;
                 }
+
+                console.log('lfmDetails.timeZone');
+                console.log('util.isNullOrEmpty(payload.lfmDetails.timeZone) ', util.isNullOrEmpty(payload.lfmDetails.timeZone))
                 if (!util.isNullOrEmpty(payload.lfmDetails.timeZone)) {
+                    console.log('updating timezone');
                     foundTeam.lfmDetails.timeZone = payload.lfmDetails.timeZone;
                 }
             }
@@ -299,6 +327,7 @@ router.post('/save', passport.authenticate('jwt', {
                 //send message back, we won't allow this to change here.
                 captainRec = true;
             }
+            // console.log('this is the team updated ', foundTeam);
             foundTeam.save().then((savedTeam) => {
                 var message = "";
                 if (captainRec) {
@@ -382,25 +411,51 @@ router.post('/removeMember', passport.authenticate('jwt', {
 
 router.post('/uploadLogo', passport.authenticate('jwt', {
     session: false
-}), (req, res) => {
+}), confirmCaptain, (req, res) => {
     const path = '/team/uploadLogo';
-    let formidable = require('formidable');
-    var form = new formidable.IncomingForm();
+    let uploadDir = "../client/src/assets/teamImgs/";
 
-    form.uploadDir = "../client/src/assets/teamImgs";
-    form.keepExtensions = true;
-    form.maxFieldsSize = 2 * 1024 * 1024;
-    form.multiples = true;
-    var filePath;
-    var teamName;
-    form.parse(req, (err, fields, files) => {
-        if (err) {
-            res.status(500).send(util.returnMessaging(path, "Error uploading file", err));
+    let teamName = req.body.teamName;
+    let dataURI = req.body.logo;
+
+    var decoded = Buffer.byteLength(dataURI, 'base64');
+
+    console.log(decoded.length);
+    if (decoded.length > 2500000) {
+        res.status(500).send(util.returnMessaging(path, "File is too big!"));
+    } else {
+
+        var png = dataURI.indexOf('png');
+        var jpg = dataURI.indexOf('jpg');
+        var jpeg = dataURI.indexOf('jpeg');
+        var gif = dataURI.indexOf('gif');
+
+        var stamp = Date.now()
+        stamp = stamp.toString();
+        stamp = stamp.slice(stamp.length - 4, stamp.length);
+
+        uploadDir += teamName + stamp + "_logo";
+        if (png > -1) {
+            uploadDir += '.png'
         }
-        filePath = files.logo.path;
-        teamName = fields.teamName;
+        if (jpg > -1) {
+            uploadDir += '.jpg'
+        }
+        if (jpeg > -1) {
+            uploadDir += '.jpeg'
+        }
+        if (gif > -1) {
+            uploadDir += '.gif'
+        }
+        imageDataURI.outputFile(dataURI, uploadDir).then((req) => {
+            console.log('saved');
+        }, (err) => {
+            console.log('error saving');
+        });
 
-        Team.findOne({ teamName: teamName }).then((foundTeam) => {
+        Team.findOne({
+            teamName: teamName
+        }).then((foundTeam) => {
             if (foundTeam) {
                 if (foundTeam) {
                     if (foundTeam.captain == req.user.displayName) {
@@ -408,16 +463,11 @@ router.post('/uploadLogo', passport.authenticate('jwt', {
                         if (foundTeam.logo) {
                             logoToDelete = foundTeam.logo;
                         }
+                        console.log('logoToDelete ', logoToDelete)
                         if (logoToDelete) {
                             deleteFile(logoToDelete);
                         }
-                        var foundTeamObject = foundTeam.toObject();
-                        var stamp = Date.now()
-                        stamp = stamp.toString();
-                        stamp = stamp.slice(stamp.length - 4, stamp.length);
-                        var newFilePath = "../client/src/assets/teamImgs/" + foundTeamObject.teamName + stamp + "_logo";
-                        renameFile(filePath, newFilePath);
-                        foundTeam.logo = newFilePath;
+                        foundTeam.logo = uploadDir;
                         foundTeam.save().then((savedTeam) => {
                             if (savedTeam) {
                                 res.status(200).send(util.returnMessaging(path, "File uploaded!", false, savedTeam));
@@ -443,7 +493,7 @@ router.post('/uploadLogo', passport.authenticate('jwt', {
             deleteFile(filePath);
             res.status(500).send(util.returnMessaging(path, "Error uploading file", err));
         });
-    });
+    }
 
 });
 

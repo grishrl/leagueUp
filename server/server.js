@@ -27,7 +27,10 @@ const app = express();
 
 app.set('view engine', 'ejs');
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({
+    limit: '2.5mb',
+    extended: true
+}));
 app.use(bodyParser.urlencoded({ extended: false }));
 
 
