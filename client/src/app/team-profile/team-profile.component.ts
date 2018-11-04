@@ -33,14 +33,95 @@ export class TeamProfileComponent implements OnInit {
     this.editOn=false;
     this.tempProfile = Object.assign({}, this.returnedProfile);
   } 
+
   tempProfile
   cancel() {
     this.returnedProfile = Object.assign({}, this.tempProfile);
     this.editOn = true;
   }
+
+  hideDay(editSwitch, dayAvailabilty): boolean {
+    if (!editSwitch) {
+      return false;
+    } else {
+      if (dayAvailabilty) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+  }
+
   save(){
-    this.editOn = true;
-    console.log('saving data wink wink');
+    if(this.validate()){
+      this.editOn = true;
+      let cptRemoved = Object.assign({}, this.returnedProfile);
+      delete cptRemoved.captain;
+      this.team.saveTeam(cptRemoved).subscribe((res) => {
+        this.editOn = true;
+      }, (err) => {
+        console.log(err);
+        alert(err.message);
+      });
+    }else{
+      //activate validator errors
+      console.log('the data was invalid')
+    }
+
+  }
+
+  isNullOrEmpty(dat): boolean {
+    if (dat == null || dat == undefined) {
+      return true;
+    }
+    if (Array.isArray(dat)) {
+      if (dat.length == 0) {
+        return true;
+      }
+    } else if (typeof dat == 'object') {
+      let noe = false;
+      for (let key in dat) {
+        if (this.isNullOrEmpty(dat[key])) {
+          noe = true;
+        }
+      }
+      return noe;
+    } else if (typeof dat == "string") {
+      return dat.length == 0;
+    } else {
+      return false;
+    }
+  }
+
+  validate() {
+    let valid = true;
+
+    //validate looking for team:
+    if (this.isNullOrEmpty(this.returnedProfile.lookingForMore)) {
+      valid = false;
+    }
+
+    //will we require the comp level, play history, roles?
+
+    //validate that we have start and end times for available days
+    for (let day in this.returnedProfile.lfmDetails.availability) {
+      let checkDay = this.returnedProfile.lfmDetails.availability[day];
+      if (checkDay.available) {
+        console.log('the times S, E', checkDay.startTime, checkDay.endTime)
+        if (checkDay.startTime == null && checkDay.endTime == null) {
+          return false;
+        } else if (checkDay.startTime.length == 0 && checkDay.endTime.length == 0) {
+          return false;
+        }
+      }
+    }
+
+    //ensure time zone
+    if (this.isNullOrEmpty(this.returnedProfile.lfmDetails.timeZone)) {
+      valid = false;
+    }
+
+    return valid;
   }
 
 

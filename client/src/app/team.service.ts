@@ -17,6 +17,7 @@ export class TeamService {
       map((res)=>{
         let logoURL = res.returnObject.logo;
         console.log('logoUrl', logoURL);
+      res.returnObject.logo = this.cleanUpLogoUrl(logoURL);
        return res.returnObject;
       }
       // ({ _id, teamName, lookingForMore, lfmDetails,
@@ -29,6 +30,15 @@ export class TeamService {
       )
     );
   };
+
+  saveTeam(team): Observable<any>{
+    let url = 'http://localhost:3000/team/save';
+    return this.http.post<any>(url, team).pipe(
+      map( (res)=>{
+        return res;
+      })
+    );
+  }
 
   addUser(user, team){
     let postData = {}
