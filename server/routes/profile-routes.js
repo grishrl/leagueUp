@@ -99,6 +99,11 @@ router.post('/save', passport.authenticate('jwt', {
                         });
                     }
 
+                    console.log('sentUser.lfgDetails.averageMmr ', sentUser.lfgDetails.averageMmr);
+                    if (!util.isNullOrEmpty(sentUser.lfgDetails.averageMmr)) {
+                        found.lfgDetails.averageMmr = sentUser.lfgDetails.averageMmr;
+                    }
+
                     if (!util.isNullOrEmpty(sentUser.lfgDetails.competitiveLevel)) {
                         if (!found.lfgDetails) {
                             found.lfgDetails = {};

@@ -63,9 +63,12 @@ passport.use(new BnetStrategy({
                 displayName: prof.displayName,
                 token: token
             }
-            if (prof.teamInfo.teamName) {
-                reply['teamInfo'] = prof.teamInfo.teamName;
+            if (prof.hasOwnProperty('teamInfo')) {
+                if (prof.teamInfo.teamName) {
+                    reply['teamInfo'] = prof.teamInfo.teamName;
+                }
             }
+
             done(null, reply);
         } else {
             var id = profile.id.toString();

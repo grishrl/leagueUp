@@ -73,6 +73,8 @@ https.createServer(options, app).listen(httpsPort, function() {
     console.log('https running on 3443');
 });
 
+console.log('xxxxxx ', __dirname);
+
 app.use('/', express.static(__dirname + '/../client/dist/client'));
 
 app.get('*', function(req, res) {
@@ -80,3 +82,9 @@ app.get('*', function(req, res) {
     // res.redirect('https://' + host + req.url);
     res.sendFile(path.join(__dirname, '/../client/dist/client/index.html'));
 });
+
+// app.use('/admin/', express.static(__dirname + '/../client/'));
+
+// app.get('/admin', function(req, res) {
+//     res.sendFile(path.join(__dirname, '../../client/dist/client/index.html'));
+// });

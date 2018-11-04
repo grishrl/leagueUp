@@ -7,6 +7,7 @@ import { Profile } from '../classes/profile.class';
 import { Observable, Subscription } from 'rxjs';
 import { ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
 import { merge } from 'lodash';
+import { HotsLogsService } from '../hots-logs.service';
 
 @NgModule({
   imports:[
@@ -42,7 +43,7 @@ export class ProfileEditComponent implements OnInit {
     'Low','Medium','High'
   ]
   
-  constructor(public timezone : TimezoneService, private user : UserService, public auth : AuthService, private route : ActivatedRoute ) {
+  constructor(public timezone : TimezoneService, private user : UserService, public auth : AuthService, private route : ActivatedRoute, private hotsLogsService: HotsLogsService ) {
     this.displayName = user.realUserName(this.route.snapshot.params['id']);
    }
 
@@ -70,15 +71,27 @@ export class ProfileEditComponent implements OnInit {
 
    save(){
      if(this.validate()){
-       
-       this.user.saveUser(this.returnedProfile).subscribe((res) => {
-        if(res){
-          this.editOn = true;
-        }else{
-          alert("error");
-        }
-       });
-       
+       if (!this.isNullOrEmpty(this.returnedProfile.lfgDetails.hotsLogsURL){
+         this.hotsLogsService.getMMR(this.returnedProfile.lfgDetails.hotsLogsURL).subscribe(res => {
+           console.log(res);
+           this.returnedProfile.lfgDetails.averageMmr = res;
+           this.user.saveUser(this.returnedProfile).subscribe((res) => {
+             if (res) {
+               this.editOn = true;
+             } else {
+               alert("error");
+             }
+           });
+         });
+       }else{
+         this.user.saveUser(this.returnedProfile).subscribe((res) => {
+           if (res) {
+             this.editOn = true;
+           } else {
+             alert("error");
+           }
+         });
+       }
      }else{
        
        console.log('the data was invalid we cant save');
@@ -97,7 +110,7 @@ export class ProfileEditComponent implements OnInit {
     let valid = true;
     //validate the hotslogs URL
     if (this.isNullOrEmpty(this.returnedProfile.lfgDetails.hotsLogsURL) ||
-      this.returnedProfile.lfgDetails.hotsLogsURL.indexOf('https://www.hotslogs.com/Player/Profile?PlayerID') == -1){
+      this.returnedProfile.lfgDetails.hotsLogsURL.indexOf('https://www.hotslogs.com/Player/Profile?PlayerID=') == -1){
       valid = false;
     }
 

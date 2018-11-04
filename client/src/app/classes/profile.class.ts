@@ -64,6 +64,7 @@ export class Profile {  //addition of stats for future plans
           "endTime": null
         }
       },
+      "averageMmr":null,
       "competitiveLevel":null, 
       "descriptionOfPlay":"",
       "role": { "tank": false, "assassin": false, "support": false, "offlane": false, "specialist": false }, //form input added,
@@ -98,6 +99,7 @@ export interface lfgSchema {
   competitiveLevel: Number; //form input added
   descriptionOfPlay: String; //form input added
   role: Object; //
+  averageMmr: Number;  //user average mmr
   timeZone: String; //form input added
   heroLeague: hlRankShema;
   hotsLogsURL: String; //form input added

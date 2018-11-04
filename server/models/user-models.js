@@ -18,7 +18,8 @@ const lfgSchema = new Schema({
     "role": Object, //form input added
     "timeZone": String, //form input added
     "heroLeague": hlRankShema,
-    "hotsLogsURL": String //form input added
+    "hotsLogsURL": String, //form input added
+    "averageMmr": Number
 });
 
 

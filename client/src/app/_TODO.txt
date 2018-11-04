@@ -6,6 +6,12 @@ contentfulservice :
 contenful:
 >ADD CATEGORY FOR EACH DIVISON TO LINK BLOG POSTS TO
 
+user
+>Looking for team
+
+team
+>looking for users
+
 ADMIN:
 > approve team ADD
 > delete team
@@ -16,8 +22,10 @@ FOOTER
 > GET FOOTER WORKING
 
 TEAM 
-> save team edit
 > show pending members?
+> validation warnings
+
+user
 > validation warnings
 
 product:
@@ -28,3 +36,4 @@ product:
 
 > Server, 
 >need some persistnet logging to keep up with background notices.
+
