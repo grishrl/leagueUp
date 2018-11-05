@@ -8,7 +8,6 @@ const adminRoutes = require('./routes/admin-routes');
 const profileRoutes = require('./routes/profile-routes');
 const divisionRoutes = require('./routes/division-routes');
 const outreachRoutes = require('./routes/outreach-routes');
-const httpsRedirect = require('express-https-redirect');
 const path = require('path');
 const passportSetup = require('./configs/passport-setup');
 const mongoose = require('mongoose');
@@ -25,7 +24,16 @@ const port = 3000;
 
 const app = express();
 
-app.set('view engine', 'ejs');
+const adminPort = 3444;
+const admin = express();
+
+admin.use(bodyParser.json({
+    limit: '2.5mb',
+    extended: true
+}));
+admin.use(bodyParser.urlencoded({
+    extended: false
+}));
 
 app.use(bodyParser.json({
     limit: '2.5mb',
@@ -33,13 +41,17 @@ app.use(bodyParser.json({
 }));
 app.use(bodyParser.urlencoded({ extended: false }));
 
-
+admin.use(cors({
+    credentials: true,
+    origin: ['http://localhost:3000', 'https://localhost:3443']
+}));
 app.use(cors({
     credentials: true,
     origin: ['http://localhost:3000', 'https://localhost:3443']
 }));
 
 //initialize passport
+admin.use(passport.initialize());
 app.use(passport.initialize());
 
 //connect to mongo db
@@ -58,6 +70,9 @@ app.use('/outreach', outreachRoutes);
 
 
 //listen for request on port 3000, and as a callback function have the port listened on logged
+admin.listen(adminPort, hostname, () => {
+    console.log(`Server running at http://${hostname}:${port}/`);
+});
 app.listen(port, hostname, () => {
     console.log(`Server running at http://${hostname}:${port}/`);
 });
@@ -69,22 +84,20 @@ const options = {
 
 const httpsPort = 3443;
 
-https.createServer(options, app).listen(httpsPort, function() {
-    console.log('https running on 3443');
+https.createServer(options, admin).listen(adminPort, function() {
+    console.log('https running on ' + adminPort);
 });
 
-console.log('xxxxxx ', __dirname);
+https.createServer(options, app).listen(httpsPort, function() {
+    console.log('https running on ' + httpsPort);
+});
 
-app.use('/', express.static(__dirname + '/../client/dist/client'));
+admin.use('/', express.static(path.join(__dirname + '/../../leagueUpAdmin/dist/')));
+admin.get('*', function(req, res) {
+    res.sendFile(path.join(__dirname, '/../../leagueUpAdmin/dist/index.html'));
+});
+app.use('/', express.static(path.join(__dirname + '/../client/dist/client/')));
 
 app.get('*', function(req, res) {
-    // let host = req.headers.host.replace(port, httpsPort);
-    // res.redirect('https://' + host + req.url);
     res.sendFile(path.join(__dirname, '/../client/dist/client/index.html'));
 });
-
-// app.use('/admin/', express.static(__dirname + '/../client/'));
-
-// app.get('/admin', function(req, res) {
-//     res.sendFile(path.join(__dirname, '../../client/dist/client/index.html'));
-// });

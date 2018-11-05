@@ -8,20 +8,45 @@ contenful:
 
 user
 >Looking for team
+>collect discord userid?
 
 team
 >looking for users
 
-ADMIN:
-> approve team ADD
-> delete team
-> delete user
-> add team to DIVISON
+scheduling
+>schedule matches
+
+reporting
+>report match outcomes
+
+>match 
+>need match creation routines
+>match routes to handle scheduling
+ >when match results are reported we will likewise update the standings
+ >of the teams.
+>need match logic!
+{
+  teamA: 'teamname',
+  teamB: 'teamname',
+  dateTime: dateTime,
+  outcome:{
+    game1:{
+      winTeam:'teamname',
+      replayFile:url
+    },
+    game2:{
+      winTeam:'teamname',
+      replayFile:url
+    }
+  }
+}
 
 FOOTER
 > GET FOOTER WORKING
 
 TEAM 
+>team members two columns of 3 rows
+>player names links, if possible.
 > show pending members?
 > validation warnings
 
@@ -29,11 +54,16 @@ user
 > validation warnings
 
 product:
+> disabled mat inputs are very muted for looking at
 > remove hardcoded URLs from all locations
 > probably need some modals for request waiting and requests confimations
-
->Create account warning/disclaimer
+> branding
 
 > Server, 
+>post to discord when someone is looking for team
+>post to discord when team is looking for someone
 >need some persistnet logging to keep up with background notices.
+>need a queue of pending team adds for admins to Server .... or can I query teams with pending team adds ....
+>standings ... add the w/l to teams? < where to put theseeeee
+
 
