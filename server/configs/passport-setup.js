@@ -26,6 +26,7 @@ var jwtOptions = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: keys.session.jwtToken
 }
+
 passport.use(new JwtStrategy(jwtOptions, function(jwt_payload, next) {
     console.log('inside the jwt strat');
     User.findOne({ _id: jwt_payload.id }).then((reply) => {
@@ -55,6 +56,7 @@ passport.use(new BnetStrategy({
     callbackURL: "https://localhost:3443/auth/bnet/redirect",
     region: "us"
 }, function(accessToken, refreshToken, profile, done) {
+
     var id = profile.id.toString()
     User.findOne({ bNetId: id }).then((prof) => {
         if (prof) {
@@ -63,9 +65,18 @@ passport.use(new BnetStrategy({
                 displayName: prof.displayName,
                 token: token
             }
-            if (prof.hasOwnProperty('teamInfo')) {
-                if (prof.teamInfo.teamName) {
-                    reply['teamInfo'] = prof.teamInfo.teamName;
+
+            let teamInfo = prof.teamInfo;
+            if (teamInfo) {
+                reply.teamInfo = {};
+                if (teamInfo.teamName) {
+
+                    if (teamInfo.hasOwnProperty('isCaptain')) {
+
+                        reply.teamInfo.isCaptain = prof.teamInfo.isCaptain;
+                    }
+
+                    reply.teamInfo.teamName = prof.teamInfo.teamName;
                 }
             }
 
@@ -85,26 +96,26 @@ passport.use(new BnetStrategy({
     })
 }));
 
-passport.use(new GoogleStrategy({
-    callbackURL: '/auth/google/redirect',
-    clientID: keys.google.clientID,
-    clientSecret: keys.google.clientSecret
-}, (accessToken, refreshToken, profile, done) => {
-    //check if profile exists all ready
-    User.findOne({ googleId: profile.id }).then((prof) => {
-        if (prof) {
-            console.log('user is:' + prof)
-            done(null, prof);
-        } else {
-            //this user did not exist yet;
-            new User({
-                username: profile.displayName,
-                googleId: profile.id
-            }).save().then((newUser) => {
-                console.log('created new user: ' + newUser);
-                done(null, newUser);
-            });
-        }
-    });
+// passport.use(new GoogleStrategy({
+//     callbackURL: '/auth/google/redirect',
+//     clientID: keys.google.clientID,
+//     clientSecret: keys.google.clientSecret
+// }, (accessToken, refreshToken, profile, done) => {
+//     //check if profile exists all ready
+//     User.findOne({ googleId: profile.id }).then((prof) => {
+//         if (prof) {
+//             console.log('user is:' + prof)
+//             done(null, prof);
+//         } else {
+//             //this user did not exist yet;
+//             new User({
+//                 username: profile.displayName,
+//                 googleId: profile.id
+//             }).save().then((newUser) => {
+//                 console.log('created new user: ' + newUser);
+//                 done(null, newUser);
+//             });
+//         }
+//     });
 
-}));
+// }));
