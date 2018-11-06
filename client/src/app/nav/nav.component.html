@@ -78,20 +78,21 @@
                     </li>
                     <ng-template #loggedIn>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
-        {{Auth.getUser()}}
-      </a>
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false"> {{Auth.getUser()}} </a>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" (click)="navGo('/profile/',user.routeFriendlyUsername(userName))">
-          Profile
-        </a>
-                                <a class="dropdown-item" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( teamName ) )" disabled="">
-          Team
-        </a>
+                                <a class="dropdown-item" (click)="navGo('/profile/',user.routeFriendlyUsername(userName))">Profile</a>
+                                <div *ngIf="Auth.getTeam(); else noTeam">
+                                    <a class="dropdown-item" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( Auth.getTeam() ) )" disabled="">Team</a>
+                                    <a class="dropdown-item" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( Auth.getTeam() ) )" disabled="">Find
+  Players</a>
+                                </div>
+                                <ng-template #noTeam>
+                                    <a class="dropdown-item" [routerLink]="['/teamCreate']">Create Team</a>
+                                    <a class="dropdown-item" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( teamName ) )" disabled="">Find Team</a>
+                                </ng-template>
+
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" (click)="Auth.destroyAuth()">
-          Logout
-        </a>
+                                <a class="dropdown-item" (click)="Auth.destroyAuth()">Logout</a>
                             </div>
                         </li>
                     </ng-template>
@@ -101,91 +102,3 @@
         </div>
     </div>
 </nav>
-
-<!-- <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" [routerLink]="['/']">Home</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link" [routerLink]="['/blog']">Blog</a>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="divisionDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
-                    Divisions
-                </a>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" [routerLink]="['/division/heroic']">
-                        Heroic
-                    </a>
-                    <a class="dropdown-item" [routerLink]="['/division/storm']">
-                        Storm
-                    </a>
-                    <a class="dropdown-item" [routerLink]="['/division/a/east']">
-                        Div A - East
-                     </a>
-                    <a class="dropdown-item" [routerLink]="['/division/a/west']">
-                        Div A - West
-                    </a>
-                    <a class="dropdown-item" [routerLink]="['/division/b/east']">
-                        Div B - East
-                    </a>
-                    <a class="dropdown-item" [routerLink]="['/division/b/west']">
-                        Div B - West
-                    </a>
-                    <a class="dropdown-item" [routerLink]="['/division/c/east']">
-                        Div C - East
-                    </a>
-                    <a class="dropdown-item" [routerLink]="['/division/c/west']">
-                        Div C - West
-                    </a>
-                    <a class="dropdown-item" [routerLink]="['/division/d/east']">
-                        Div D - East
-                    </a>
-                    <a class="dropdown-item" [routerLink]="['/division/d/west']">
-                        Div D - West
-                    </a>
-                    <a class="dropdown-item" [routerLink]="['/division/f/east']">
-                        Div F - East
-                    </a>
-                    <a class="dropdown-item" [routerLink]="['/division/f/west']">
-                        Div F - West
-                    </a>
-                </div>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link">Rules</a>
-            </li>
-        </ul>
-        <div class="form-inline my-2 my-lg-0">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item" *ngIf="!Auth.isAuthenticated() else loggedIn">
-                    <a class="nav-link" [routerLink]="['/login']">Login</a>
-                </li>
-                <ng-template #loggedIn>
-                    <li class="nav-item dropdown">
-                        <a class="nav-item dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
-                            {{Auth.getUser()}}
-                        </a>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" (click)="navGo('/profile/',user.routeFriendlyUsername(userName))">
-                                Profile
-                            </a>
-                            <a class="dropdown-item" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( teamName ) )" disabled="">
-                                Team
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" (click)="Auth.destroyAuth()">
-                                Logout
-                            </a>
-                        </div>
-                    </li>
-                </ng-template>
-
-            </ul>
-        </div>
-    </div>
-</nav> -->

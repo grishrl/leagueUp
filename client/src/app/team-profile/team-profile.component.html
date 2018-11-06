@@ -104,8 +104,8 @@
 
                 <mat-form-field class="tp-FullWidth">
                     <mat-select placeholder="Team Competitive Level" disabled="{{editOn}}" [(ngModel)]="returnedProfile.lfmDetails.competitiveLevel">
-                        <mat-option *ngFor="let level of competitonLevel" [value]="level">
-                            {{level}}
+                        <mat-option *ngFor="let level of competitonLevel" [value]="level.val">
+                            {{level.display}}
                         </mat-option>
                     </mat-select>
                     <mat-hint align="start"><strong>Generally how serious / competitively you're looking to play</strong> </mat-hint>
