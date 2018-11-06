@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ContentfulService } from '../contentful.service';
+import { ContentfulService } from '../services/contentful.service';
 import { ActivatedRoute } from '@angular/router';
-import { MarkdownParserService } from '../markdown-parser.service';
+import { MarkdownParserService } from '../services/markdown-parser.service';
 
 @Component({
   selector: 'app-blog-view',

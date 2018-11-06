@@ -1,9 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
-import { UserService } from '../user.service';
+import { UserService } from '../services/user.service';
 import { last } from '@angular/router/src/utils/collection';
-import { TeamService } from '../team.service';
+import { TeamService } from '../services/team.service';
 
 
 @Component({
@@ -64,14 +64,17 @@ export class UserSearchComponent implements OnInit {
   constructor(private users: UserService, private team: TeamService) {
     this.userCtrl.valueChanges.subscribe(
       data => {
-        //give this a delay so we don't swap the server with calls! .875 seconds to make call
-        let timestamp = Date.now();
-        if(timestamp - this.lastChange > 875){
-          this.lastChange = timestamp;
-          this.users.userSearch(data).subscribe(res => {
-            this.foundUsers = this.filterUsers(res, this.usersToFilter);
-          });
+        if(data && data.length>2){
+          //give this a delay so we don't swamp the server with calls! .875 seconds to make call
+          let timestamp = Date.now();
+          if (timestamp - this.lastChange > 1000) {
+            this.lastChange = timestamp;
+            this.users.userSearch(data).subscribe(res => {
+              this.foundUsers = this.filterUsers(res, this.usersToFilter);
+            });
+          }
         }
+
 
       }
     )

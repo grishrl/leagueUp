@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../auth.service';
-import { UserService } from '../user.service';
-import { TeamService } from '../team.service';
+import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
+import { TeamService } from '../services/team.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-nav',
@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 export class NavComponent implements OnInit {
   userName: String
   teamName: string
-  constructor(private user:UserService, public Auth:AuthService, private team: TeamService, private router: Router) { }
+  constructor(public Auth:AuthService, private router: Router, private team:TeamService, private user:UserService) { }
 
   navGo(appRoute,path){
     console.log(path);

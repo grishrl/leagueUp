@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
-import { UserService } from '../user.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +18,8 @@ export class LoginComponent implements OnInit {
       
       let parsed = JSON.parse(URI);
 
-      // console.log('parsed ',parsed )
+      console.log('parsed ',parsed )
+      
       Auth.createAuth(parsed.token, parsed.displayName, parsed.teamInfo);
       console.log('init in login ', Auth.getReferral());
       if (Auth.getReferral()) {

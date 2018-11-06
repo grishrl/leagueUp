@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { TimezoneService } from '../timezone.service';
-import { TeamService } from '../team.service';
+import { TimezoneService } from '../services/timezone.service';
+import { TeamService } from '../services/team.service';
 import { ActivatedRoute } from '@angular/router';
 import { merge } from 'lodash';
 import { Subscription } from 'rxjs';
 import { Team } from '../classes/team.class';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-team-profile',
@@ -23,7 +23,9 @@ export class TeamProfileComponent implements OnInit {
   hlMedals = ['Grand Master', 'Master', 'Diamond', 'Platinum', 'Gold', 'Silver', 'Bronze'];
   hlDivision = [1, 2, 3, 4, 5];
   competitonLevel = [
-    'Low', 'Medium', 'High'
+    { val: 1, display: 'Low' },
+    { val: 3, display: 'Medium' },
+    { val: 5, display: 'High' }
   ]
   constructor(private auth: AuthService, public timezone: TimezoneService, private team: TeamService, private route:ActivatedRoute) {
     this.teamName = team.realTeamName(this.route.snapshot.params['id']);

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Team } from '../classes/team.class';
-import { TeamService } from '../team.service';
+import { TeamService } from '../services/team.service';
 
 @Component({
   selector: 'app-team-display',

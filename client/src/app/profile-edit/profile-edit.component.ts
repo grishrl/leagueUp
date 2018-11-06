@@ -1,13 +1,13 @@
 import { Component, OnInit, NgModule } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { TimezoneService } from '../timezone.service';
-import { UserService } from '../user.service';
-import { AuthService } from '../auth.service';
+import { TimezoneService } from '../services/timezone.service';
+import { UserService } from '../services/user.service';
+import { AuthService } from '../services/auth.service';
 import { Profile } from '../classes/profile.class';
 import { Observable, Subscription } from 'rxjs';
 import { ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
 import { merge } from 'lodash';
-import { HotsLogsService } from '../hots-logs.service';
+import { HotsLogsService } from '../services/hots-logs.service';
 
 @NgModule({
   imports:[
@@ -71,7 +71,7 @@ export class ProfileEditComponent implements OnInit {
 
    save(){
      if(this.validate()){
-       if (!this.isNullOrEmpty(this.returnedProfile.lfgDetails.hotsLogsURL){
+       if (!this.isNullOrEmpty(this.returnedProfile.lfgDetails.hotsLogsURL)){
          this.hotsLogsService.getMMR(this.returnedProfile.lfgDetails.hotsLogsURL).subscribe(res => {
            console.log(res);
            this.returnedProfile.lfgDetails.averageMmr = res;

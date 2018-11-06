@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
-import { Team } from './classes/team.class';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -15,21 +14,27 @@ export class TeamService {
     return this.http.get<any>(url)
     .pipe(
       map((res)=>{
-        let logoURL = res.returnObject.logo;
-        console.log('logoUrl', logoURL);
-      res.returnObject.logo = this.cleanUpLogoUrl(logoURL);
+        console.log('res ',res)
+        if(res.hasOwnProperty('returnObject')){
+          if (res.returnObject.hasOwnProperty('logo')){
+            let logoURL = res.returnObject.logo;
+            res.returnObject.logo = this.cleanUpLogoUrl(logoURL);
+          }
+        }
        return res.returnObject;
       }
-      // ({ _id, teamName, lookingForMore, lfmDetails,
-      //   teamMembers, pendingMembers, captain, teamMMRAvg,
-      //   teamDivision }) => {
-      //   return new Team(_id, teamName, lookingForMore, lfmDetails,
-      //     teamMembers, pendingMembers, captain, teamMMRAvg,
-      //     teamDivision);
-      // }
       )
     );
   };
+
+  createTeam(team){
+    let url = 'http://localhost:3000/team/create';
+    return this.http.post<any>(url, team).pipe(
+      map( res=>{
+        return res.returnObject;
+      } )
+    )
+  }
 
   saveTeam(team): Observable<any>{
     let url = 'http://localhost:3000/team/save';

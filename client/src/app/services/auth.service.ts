@@ -1,17 +1,15 @@
-import { Injectable, Inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 
 @Injectable({providedIn: 'root'})
 
 export class AuthService {
 
-  xdom: any
-  constructor(private router:Router){
+  constructor(private router:Router, private http: HttpClient){
    
   }
-  
-
 
   isAuthenticated():Boolean{
     var test = localStorage.getItem('token');
@@ -34,12 +32,25 @@ export class AuthService {
     localStorage.removeItem('referral');
   }
 
-  createAuth(token,username,teamName){
+  createAuth(token,username,teamInfo){
     localStorage.setItem('token', token);
     localStorage.setItem('userName', username);
-    if(teamName){
-      localStorage.setItem('teamName', teamName);
+    if(teamInfo){
+      if (teamInfo.hasOwnProperty('teamName')){
+        localStorage.setItem('teamName', teamInfo.teamName);
+      }
+      if(teamInfo.hasOwnProperty('isCaptain')){
+        localStorage.setItem('captain', teamInfo.isCaptain.toSting());
+      }else{
+        localStorage.setItem('captain', 'false');
+      }
     }
+  }
+  setCaptain(cap){
+    localStorage.setItem('captain', cap);
+  }
+  getCaptain(){
+    localStorage.getItem('captain');
   }
   setToken(token){
     localStorage.setItem('token', token);
@@ -66,9 +77,17 @@ export class AuthService {
     localStorage.removeItem('userName');
   }
   destroyAuth(){
-    localStorage.removeItem('userName');
-    localStorage.removeItem('token');
-    localStorage.removeItem('teamName');
-    this.router.navigateByUrl('/');
+    let url = 'http://localhost:3000/auth/logout';
+
+    this.http.get(url).subscribe(
+      res => {
+        localStorage.removeItem('userName');
+        localStorage.removeItem('token');
+        localStorage.removeItem('teamName');
+        localStorage.removeItem('captain');
+        this.router.navigate(['/logout']);
+      }
+    );
+
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createClient, Entry } from 'contentful';
-import { environment } from '../environments/environment';
+import { environment } from '../../environments/environment';
 import { merge } from 'lodash';
 
 @Injectable({

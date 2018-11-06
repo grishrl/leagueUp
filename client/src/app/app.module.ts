@@ -7,7 +7,7 @@ import { DirectoryComponent } from './directory/directory.component';
 import { AppRoutingModule } from './app.Routes';
 import { NavComponent } from './nav/nav.component';
 import { LoginComponent } from './login/login.component';
-import { ResponseInterceptor } from './token-interceptor.service';
+import { ResponseInterceptor } from './services/token-interceptor.service';
 import { ProfileEditComponent } from './profile-edit/profile-edit.component';
 import { InputFormMaterial } from './classes/aM-input-Import.class';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -23,6 +23,8 @@ import { BlogViewComponent } from './blog-view/blog-view.component';
 import { AppFooterComponent } from './app-footer/app-footer.component';
 import { ImageUploadComponent } from './image-upload/image-upload.component';
 import { NgxCroppieModule } from 'ngx-croppie';
+import { LogoutComponent } from './logout/logout.component';
+import { CreateTeamComponent } from './create-team/create-team.component';
 
 
 @NgModule({
@@ -42,7 +44,9 @@ import { NgxCroppieModule } from 'ngx-croppie';
     BlogListComponent,
     BlogViewComponent,
     AppFooterComponent,
-    ImageUploadComponent
+    ImageUploadComponent,
+    LogoutComponent,
+    CreateTeamComponent
   ],
   imports: [
     BrowserModule, 

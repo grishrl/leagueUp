@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DivisionService } from '../division.service';
+import { DivisionService } from '../services/division.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Team } from '../classes/team.class';
