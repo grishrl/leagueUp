@@ -75,8 +75,9 @@ router.post('/inviteResponseComplete', passport.authenticate('jwt', {
             res.status(404).send(util.returnMessaging(path, "Reference not found in ref table."));
         } else {
             console.log('del', deletedRef);
+            let lower = deletedRef.teamName.toLowerCase();
             Team.findOne({
-                teamName: deletedRef.teamName
+                teamName_lower: lower
             }).then((foundTeam) => {
                 res.status(200).send(util.returnMessaging(path, "We added the user to pending members"));
             }, (err) => {

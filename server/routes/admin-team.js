@@ -11,8 +11,9 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
 }), levelRestrict.teamLevel, (req, res) => {
     var teamName = req.body.teamName;
     var member = req.body.member;
+    teamName = teamName.toLowerCase();
     Team.findOne({
-        teamName: teamName
+        teamName_lower: teamName
     }).then((foundTeam) => {
         if (foundTeam) {
             User.findOne({

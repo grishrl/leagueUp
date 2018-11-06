@@ -29,9 +29,13 @@ uploadLogo - uploads logo
 router.get('/get', (req, res) => {
     const path = '/team/get';
     var team = req.query.team;
+
     team = decodeURIComponent(team);
+
+    team = team.toLowerCase();
+
     Team.findOne({
-        teamName: team
+        teamName_lower: team
     }).lean().then(
         (foundTeam) => {
             if (foundTeam) {
@@ -54,7 +58,10 @@ router.post('/delete', passport.authenticate('jwt', {
 }), confirmCaptain, (req, res) => {
     const path = '/team/delete';
     var payloadTeamName = req.body.teamName;
-    Team.findOneAndDelete({ teamName: payloadTeamName }).then((deletedTeam) => {
+    payloadTeamName = payloadTeamName.toLowerCase();
+    Team.findOneAndDelete({
+        teamName_lower: payloadTeamName
+    }).then((deletedTeam) => {
         if (deletedTeam) {
             removeAffectedUsers(deletedTeam.teamMembers);
             res.status(200).send(util.returnMessaging(path, 'Team has been deleted!', false, false));
@@ -104,16 +111,22 @@ router.post('/create', passport.authenticate('jwt', {
             status = 400;
             message.lookingForMoreError += "Must have a looking for more status!";
         }
-        if (util.isNullOrEmpty(recievedTeam.lfmDetails)) {
-            status = 400;
-            message.lfmDetailsError += "Must have a looking for more details!";
+        //time zone should be in here.. although not sure if that's even necessary for a minimal creation
+        if (recievedTeam.hasOwnProperty('lfmDetails')) {
 
-        } else {
-            if (util.isNullOrEmpty(recievedTeam.lfmDetails.availability)) {
-                status = 400;
-                message = {
-                    "message": "Must have a looking for more details > availability!"
-                };
+            if (recievedTeam.lfmDetails.hasOwnProperty('availability')) {
+                if (util.isNullOrEmpty(recievedTeam.lfmDetails.availability)) {
+                    let keys = Object.keys(recievedTeam.lfmDetails.availability);
+                    for (var i = 0; i < keys.length; i++) {
+                        let ele = keys[i];
+                        if (util.isNullOrEmpty(recievedTeam.lfmDetails.availability[ele])) {
+                            delete recievedTeam.lfmDetails.availability[ele];
+                        }
+                    }
+                }
+                if (util.isNullOrEmpty(recievedTeam.lfmDetails.availability)) {
+                    delete recievedTeam.lfmDetails.availability;
+                }
             }
             if (util.isNullOrEmpty(recievedTeam.lfmDetails.timeZone)) {
                 status = 400;
@@ -122,17 +135,23 @@ router.post('/create', passport.authenticate('jwt', {
                 };
             }
         }
+        if (recievedTeam.hasOwnProperty('_id')) {
+            delete recievedTeam._id;
+        }
+
 
         if (!util.isNullOrEmpty(status) && !util.isNullOrEmpty(message)) {
             //we were missing data so send an error back.
             res.status(status).send(util.returnMessaging(path, message));
         } else {
+            let lowerName = recievedTeam.teamName.toLowerCase();
             Team.findOne({
-                teamName: recievedTeam.teamName
+                teamName_lower: lowerName
             }).then((found) => {
                 if (found) {
                     res.status(500).send(util.returnMessaging(path, 'This team name all ready exists!'));
                 } else {
+                    recievedTeam.teamName_lower = recievedTeam.teamName.toLowerCase();
                     new Team(
                         recievedTeam
                     ).save().then((newTeam) => {
@@ -144,7 +163,8 @@ router.post('/create', passport.authenticate('jwt', {
                             if (found) {
                                 found.teamInfo = {
                                     "teamId": newTeam._id,
-                                    "teamName": newTeam.teamName
+                                    "teamName": newTeam.teamName,
+                                    "isCaptain": true
                                 };
                                 found.save().then((save) => {
                                     if (save) {
@@ -190,8 +210,9 @@ router.post('/addMember', passport.authenticate('jwt', {
 
     var payloadTeamName = req.body.teamName;
     var payloadMemberToAdd = req.body.addMember;
+    payloadTeamName = payloadTeamName.toLowerCase();
     Team.findOne({
-        teamName: payloadTeamName
+        teamName_lower: payloadTeamName
     }).then((foundTeam) => {
         if (foundTeam) {
             var cont = true;
@@ -266,59 +287,49 @@ router.post('/save', passport.authenticate('jwt', {
     const path = '/team/save';
     var payloadTeamName = req.body.teamName;
     var payload = req.body;
-    Team.findOne({ teamName: payloadTeamName }).then((foundTeam) => {
-        console.log('A');
+    payloadTeamName = payloadTeamName.toLowerCase();
+    Team.findOne({ teamName_lower: payloadTeamName }).then((foundTeam) => {
         if (foundTeam) {
-            console.log('B');
             // this might be something to be changed later -
             var captainRec = false;
             if (!util.isNullOrEmpty(payload.lookingForMore)) {
-                console.log('setting the LFM');
                 foundTeam.lookingForMore = payload.lookingForMore;
-                console.log('foundTeam.lookingForMore ', foundTeam.lookingForMore);
-                console.log('payload.lookingForMore ', payload.lookingForMore);
             }
 
-            console.log('setting the LFMdetails');
-            console.log('util.isNullOrEmpty(payload.lfmDetails) ', util.isNullOrEmpty(payload.lfmDetails));
             if (!util.isNullorUndefined(payload.lfmDetails)) {
 
-                console.log('lfmDetails.availability');
-                console.log('util.isNullOrUndifined(payload.lfmDetails.availability) ', util.isNullorUndefined(payload.lfmDetails.availability));
                 if (!util.isNullorUndefined(payload.lfmDetails.availability)) {
                     if (!foundTeam.lfmDetails.availability) {
                         foundTeam.lfmDetails.availability = {};
                     }
                     foundTeam.lfmDetails.availability = payload.lfmDetails.availability;
-                    console.log(foundTeam.lfmDetails.availability.toString());
+
                 }
 
-                console.log('lfmDetails.competitiveLevel');
-                console.log('util.isNullOrEmpty(payload.lfmDetails.competitiveLevel) ', util.isNullOrEmpty(payload.lfmDetails.competitiveLevel));
+
                 if (!util.isNullOrEmpty(payload.lfmDetails.competitiveLevel)) {
                     foundTeam.lfmDetails.competitiveLevel = payload.lfmDetails.competitiveLevel;
                 }
 
-                console.log('lfmDetails.descriptionOfTeam');
-                console.log('util.isNullOrEmpty(payload.lfmDetails.descriptionOfTeam) ', util.isNullOrEmpty(payload.lfmDetails.descriptionOfTeam));
+
                 if (!util.isNullOrEmpty(payload.lfmDetails.descriptionOfTeam)) {
+
                     foundTeam.lfmDetails.descriptionOfTeam = payload.lfmDetails.descriptionOfTeam;
+
                 }
 
-                console.log('util.isNullOrEmpty(payload.lfmDetails.rolesNeeded');
-                console.log('util.isNullOrEmpty(payload.lfmDetails.rolesNeeded ', util.isNullOrEmpty(payload.lfmDetails.rolesNeeded))
+
                 if (!util.isNullOrEmpty(payload.lfmDetails.rolesNeeded)) {
-                    console.log('updating roles needed')
+
                     if (!foundTeam.lfmDetails.rolesNeeded) {
                         foundTeam.lfmDetails.rolesNeeded = {};
                     }
                     foundTeam.lfmDetails.rolesNeeded = payload.lfmDetails.rolesNeeded;
                 }
 
-                console.log('lfmDetails.timeZone');
-                console.log('util.isNullOrEmpty(payload.lfmDetails.timeZone) ', util.isNullOrEmpty(payload.lfmDetails.timeZone))
+
                 if (!util.isNullOrEmpty(payload.lfmDetails.timeZone)) {
-                    console.log('updating timezone');
+
                     foundTeam.lfmDetails.timeZone = payload.lfmDetails.timeZone;
                 }
             }
@@ -327,7 +338,7 @@ router.post('/save', passport.authenticate('jwt', {
                 //send message back, we won't allow this to change here.
                 captainRec = true;
             }
-            // console.log('this is the team updated ', foundTeam);
+
             foundTeam.save().then((savedTeam) => {
                 var message = "";
                 if (captainRec) {
@@ -364,8 +375,9 @@ router.post('/removeMember', passport.authenticate('jwt', {
         );
     }
     //grab the team from mongo for updating
+    let lower = payloadTeamName.toLowerCase();
     Team.findOne({
-        teamName: payloadTeamName
+        teamName_lower: lower
     }).then((foundTeam) => {
         var indiciesToRemove = [];
         var usersRemoved = [];
@@ -420,7 +432,6 @@ router.post('/uploadLogo', passport.authenticate('jwt', {
 
     var decoded = Buffer.byteLength(dataURI, 'base64');
 
-    console.log(decoded.length);
     if (decoded.length > 2500000) {
         res.status(500).send(util.returnMessaging(path, "File is too big!"));
     } else {
@@ -452,9 +463,9 @@ router.post('/uploadLogo', passport.authenticate('jwt', {
         }, (err) => {
             console.log('error saving');
         });
-
+        let lower = teamName.toLowerCase();
         Team.findOne({
-            teamName: teamName
+            teamName_lower: lower
         }).then((foundTeam) => {
             if (foundTeam) {
                 if (foundTeam) {
@@ -463,7 +474,6 @@ router.post('/uploadLogo', passport.authenticate('jwt', {
                         if (foundTeam.logo) {
                             logoToDelete = foundTeam.logo;
                         }
-                        console.log('logoToDelete ', logoToDelete)
                         if (logoToDelete) {
                             deleteFile(logoToDelete);
                         }
@@ -545,8 +555,9 @@ function confirmCaptain(req, res, next) {
     const path = 'captianCheck';
     var callingUser = req.user;
     var payloadTeamName = req.body.teamName;
+    let lower = payloadTeamName.toLowerCase();
     Team.findOne({
-        teamName: payloadTeamName
+        teamName_lower: lower
     }).then((foundTeam) => {
         if (foundTeam) {
             if (foundTeam.captain == callingUser.displayName) {
