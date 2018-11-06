@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const passport = require("passport");
+const util = require('../utils');
 
 //auth with google
 // router.get('/google', passport.authenticate('google', {
@@ -8,9 +9,10 @@ const passport = require("passport");
 
 //auth logout
 router.get('/logout', (req, res) => {
-    //handle with passport
+    const path = '/auth/logout'
+        //handle with passport
     req.logout();
-    res.redirect('/');
+    res.status(200).send(util.returnMessaging(path, "Logged out"));
 });
 
 router.get('/bnet', passport.authenticate('bnet', {
