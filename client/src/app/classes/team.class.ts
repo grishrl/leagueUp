@@ -70,7 +70,7 @@ export class Team {
           }
         },
         "competitiveLevel": null,
-        "desctiptionOfTeam": "",
+        "descriptionOfTeam": "",
         "rolesNeeded": { "tank": false, "assassin": false, "support": false, "offlane": false, "specialist": false }, //form input added,
         "timeZone": ""
       }
@@ -109,7 +109,7 @@ export class Team {
 interface lfmSchema {
   "availability": Object,
   "competitiveLevel": Number,
-  "desctiptionOfTeam": String,
+  "descriptionOfTeam": String,
   "rolesNeeded": Object,
   "timeZone": String
 }

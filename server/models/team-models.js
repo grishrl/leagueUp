@@ -15,7 +15,7 @@ const division = new Schema({
 const lfmSchema = new Schema({
     "availability": Object,
     "competitiveLevel": Number,
-    "desctiptionOfTeam": String,
+    "descriptionOfTeam": String,
     "rolesNeeded": Object,
     "timeZone": String
 });
@@ -25,6 +25,7 @@ const teamSchema = new Schema({
     "teamId": String,
     "logo": String,
     "teamName": String, //added to display form 
+    "teamName_lower": String, //added so we can do case insensitive searching
     "teamDivision": division, //added to display form -- maybe an object???
     "stats": String, //later addition of team statistics
     "lookingForMore": Boolean, //added to display form
