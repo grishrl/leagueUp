@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const miniUser = new Schema({
-    "systemId": String,
     "displayName": String
 });
 

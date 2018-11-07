@@ -10,6 +10,16 @@ const adminSchema = new Schema({
         //more as needed
 });
 
-const Admin = mongoose.model('admin', adminSchema);
+const pendingMembersSchema = new Schema({
+    "teamName": String,
+    "userName": String,
+    "timestamp": Date
+});
 
-module.exports = Admin;
+const Admin = mongoose.model('admin', adminSchema);
+const PendingQueue = mongoose.model('pendingQueue', pendingMembersSchema);
+
+module.exports = {
+    AdminLevel: Admin,
+    PendingQueue: PendingQueue
+};

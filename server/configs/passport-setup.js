@@ -33,7 +33,7 @@ passport.use(new JwtStrategy(jwtOptions, function(jwt_payload, next) {
         if (!reply) {
             next(null, false);
         } else {
-            Admin.findOne({
+            Admin.AdminLevel.findOne({
                 adminId: jwt_payload.id
             }).then((adminLevel) => {
                 if (!adminLevel) {

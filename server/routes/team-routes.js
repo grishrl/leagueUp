@@ -1,6 +1,8 @@
 const util = require('../utils');
 const router = require('express').Router();
 const User = require("../models/user-models");
+const Admin = require('../models/admin-models');
+const QueueSub = require('../subroutines/queue-subs');
 const Team = require("../models/team-models");
 const passport = require("passport");
 const fs = require('fs');
@@ -246,7 +248,6 @@ router.post('/addMember', passport.authenticate('jwt', {
                             foundTeam.pendingMembers = [];
                         }
                         foundTeam.pendingMembers.push({
-                            "systemId": foundUser._id,
                             "displayName": foundUser.displayName
                         });
 
@@ -254,9 +255,10 @@ router.post('/addMember', passport.authenticate('jwt', {
                             res.status(200).send(
                                 util.returnMessaging(path, "User added to pending members", false, saveOK)
                             );
+                            QueueSub.addToPendingTeamMemberQueue(foundTeam.teamName_lower, foundUser.displayName);
                         }, (teamSaveErr) => {
                             res.status(500).send(
-                                util.returnMessaging(path, "error adding user to team", err)
+                                util.returnMessaging(path, "error adding user to team", teamSaveErr)
                             );
                         });
                     }

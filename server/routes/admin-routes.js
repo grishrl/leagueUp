@@ -9,7 +9,7 @@ const levelRestrict = require("../configs/admin-leveling");
 router.post('/upsertRoles', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.userLevel, (req, res) => {
-    Admin.findOne({ adminId: req.body.id }).then((foundAdmin) => {
+    Admin.AdminLevel.findOne({ adminId: req.body.id }).then((foundAdmin) => {
         if (foundAdmin) {
             var props = Object.keys(req.body);
             props.forEach(function(prop) {
@@ -21,7 +21,7 @@ router.post('/upsertRoles', passport.authenticate('jwt', {
                 res.status(500).send({ "message": "Error saving admin.", "err": err });
             });
         } else {
-            new Admin(req.body).save().then((newAdmin) => {
+            new Admin.AdminLevel(req.body).save().then((newAdmin) => {
                 res.status(200).send({
                     "message": "Admin created",
                     admin: newAdmin
