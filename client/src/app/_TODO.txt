@@ -12,6 +12,7 @@ user
 
 team
 >looking for users
+>disable invite button after it its clicked so that someone invited can not be invited mutliple times;
 
 scheduling
 >schedule matches
@@ -67,3 +68,5 @@ product:
 >standings ... add the w/l to teams? < where to put theseeeee
 
 
+goal for 11/9
+implement delete user; admin delete user; admin delete team
