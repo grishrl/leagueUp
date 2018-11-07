@@ -10,7 +10,7 @@ import { UserService } from '../services/user.service';
   styleUrls: ['./nav.component.css']
 })
 export class NavComponent implements OnInit {
-  userName: String
+  userName: string
   teamName: string
   constructor(public Auth:AuthService, private router: Router, private team:TeamService, private user:UserService) { }
 

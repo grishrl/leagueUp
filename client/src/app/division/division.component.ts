@@ -12,14 +12,14 @@ import { Team } from '../classes/team.class';
   styleUrls: ['./division.component.css']
 })
 export class DivisionComponent implements OnInit {
-  div:String
-  coast:String
+  div:string
+  coast:string
   teams:Team[]
   divSub: Subscription
-  param: String
+  param: string
   navigationSubscription
-  divDisplay: String
-  coastDisplay: String
+  divDisplay: string
+  coastDisplay: string
 
 
   constructor(private division:DivisionService, private route:ActivatedRoute, private router: Router) {

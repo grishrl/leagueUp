@@ -25,8 +25,8 @@ export class ProfileEditComponent implements OnInit {
   formControl = new FormControl('',
   [Validators.required]);
 
-  answers: Object;
-  selectedMedal: String;
+  answers: object;
+  selectedMedal: string;
   displayName : string;
   profileObs : Observable<Profile>;
   returnedProfile = new Profile(null,null,null,null,null);

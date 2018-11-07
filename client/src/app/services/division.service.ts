@@ -10,7 +10,7 @@ import { map } from 'rxjs/operators';
 export class DivisionService {
   url = 'http://localhost:3000/division/get';
   
-  getDivision(divisionName:String, coastalDivision:String):Observable<any>{
+  getDivision(divisionName:string, coastalDivision:string):Observable<any>{
     if(coastalDivision){
       // let query = '';
       // query+= this.url += '?division=' + divisionName;

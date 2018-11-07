@@ -86,7 +86,7 @@ export class Profile {  //addition of stats for future plans
 
 export interface hlRankShema {
     metal: String; //Form input added
-    division: Number; //Form input added
+    division: number; //Form input added
 }
 
 export interface miniTeam{
@@ -96,10 +96,10 @@ export interface miniTeam{
 
 export interface lfgSchema {
   availability: Object; //form input added
-  competitiveLevel: Number; //form input added
+  competitiveLevel: number; //form input added
   descriptionOfPlay: String; //form input added
   role: Object; //
-  averageMmr: Number;  //user average mmr
+  averageMmr: number;  //user average mmr
   timeZone: String; //form input added
   heroLeague: hlRankShema;
   hotsLogsURL: String; //form input added

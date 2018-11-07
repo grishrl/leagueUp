@@ -1,7 +1,7 @@
 export class ServReturn {
-  route:String
-  err:Object
-  message:String
-  returnObject:Object
-  additional:Object
+  route:string
+  err:object
+  message:string
+  returnObject:object
+  additional:object
 }

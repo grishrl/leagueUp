@@ -14,7 +14,7 @@ import { AuthService } from '../services/auth.service';
 })
 export class TeamProfileComponent implements OnInit {
   editOn: boolean = true;
-  teamName:String;
+  teamName:string;
   displayDivison:string=""
   returnedProfile = new Team(null, null, null, null, null, null, null, null, null);
   teamSub: Subscription;

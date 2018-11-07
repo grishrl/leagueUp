@@ -6,12 +6,12 @@ export class Team {
   lookingForMore: Boolean; //added to display form
   lfmDetails: lfmSchema;
   captain: String;
-  teamMMRAvg: Number; //added to display
+  teamMMRAvg: number; //added to display
   teamMembers: [miniUser]; //added to display
   pendingMembers: [miniUser];
 
   constructor(id: String, teamName: String, lookingForMore: Boolean, lfmDetails: lfmSchema, 
-    teamMembers: [miniUser], pendingMembers: [miniUser], captain: String, teamMMRAvg:Number,
+    teamMembers: [miniUser], pendingMembers: [miniUser], captain: String, teamMMRAvg:number,
     teamDivision: division) {
     if (id != null && id != undefined && id.length > 0) {
       this._id = id;
@@ -72,7 +72,8 @@ export class Team {
         "competitiveLevel": null,
         "descriptionOfTeam": "",
         "rolesNeeded": { "tank": false, "assassin": false, "support": false, "offlane": false, "specialist": false }, //form input added,
-        "timeZone": ""
+        "timeZone": "",
+        "teamMMRAvg":0
       }
       
 
@@ -108,7 +109,7 @@ export class Team {
 
 interface lfmSchema {
   "availability": Object,
-  "competitiveLevel": Number,
+  "competitiveLevel": number,
   "descriptionOfTeam": String,
   "rolesNeeded": Object,
   "timeZone": String
@@ -120,6 +121,5 @@ interface division{
 }
 
 interface miniUser {
-  "systemId": String,
   "displayName": String
 }
