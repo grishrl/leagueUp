@@ -1,0 +1,28 @@
+<div class="row">
+    <div class="col">
+        <div class="row">
+            <div class="col">
+                Name: {{player.displayName}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div *ngIf="player.lfgDetails.averageMmr; else noMmr">MMR: {{player.lfgDetails.averageMmr}}</div>
+
+            </div>
+            <ng-template #noMmr>
+                MMR: Player has not updated profile with hots logs URL, please contact them!
+            </ng-template>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div *ngIf="player.lfgDetails.heroLeague && player.lfgDetails.heroLeague.metal && player.lfgDetails.heroLeague.division; else noMetalDiv">
+                    Hero League: {{player.lfgDetails.heroLeague.metal}} - {{player.lfgDetails.heroLeague.division}}
+                </div>
+                <ng-template #noMetalDiv>
+                    Player has not recorded an ingame metal/div in their profole, please contact them!
+                </ng-template>
+            </div>
+        </div>
+    </div>
+</div>
