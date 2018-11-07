@@ -25,6 +25,10 @@ import { ImageUploadComponent } from './image-upload/image-upload.component';
 import { NgxCroppieModule } from 'ngx-croppie';
 import { LogoutComponent } from './logout/logout.component';
 import { CreateTeamComponent } from './create-team/create-team.component';
+import { ApproveMemberComponent } from './admin/approve-member/approve-member.component';
+import { UserQuickViewComponent } from './admin/approve-member/user-quick-view/user-quick-view.component';
+import { TeamQuickViewComponent } from './admin/approve-member/team-quick-view/team-quick-view.component';
+import { ApproveMemberViewComponent } from './admin/approve-member/approve-member-view/approve-member-view.component';
 
 
 @NgModule({
@@ -46,7 +50,11 @@ import { CreateTeamComponent } from './create-team/create-team.component';
     AppFooterComponent,
     ImageUploadComponent,
     LogoutComponent,
-    CreateTeamComponent
+    CreateTeamComponent,
+    ApproveMemberComponent,
+    UserQuickViewComponent,
+    TeamQuickViewComponent,
+    ApproveMemberViewComponent
   ],
   imports: [
     BrowserModule, 
@@ -63,8 +71,7 @@ import { CreateTeamComponent } from './create-team/create-team.component';
     provide:HTTP_INTERCEPTORS,
     useClass:ResponseInterceptor,
     multi:true
-    },
-    { provide: 'xDomainCookie', useValue: window['xDomainCookie']}
+    }
   ],
   bootstrap: [AppComponent]
 })
