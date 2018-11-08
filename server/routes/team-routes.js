@@ -3,6 +3,7 @@ const router = require('express').Router();
 const User = require("../models/user-models");
 const Admin = require('../models/admin-models');
 const QueueSub = require('../subroutines/queue-subs');
+const UserSub = require('../subroutines/user-subs');
 const Team = require("../models/team-models");
 const passport = require("passport");
 const fs = require('fs');
@@ -65,7 +66,7 @@ router.post('/delete', passport.authenticate('jwt', {
         teamName_lower: payloadTeamName
     }).then((deletedTeam) => {
         if (deletedTeam) {
-            removeAffectedUsers(deletedTeam.teamMembers);
+            UserSub.clearUsersTeam(deletedTeam.teamMembers);
             res.status(200).send(util.returnMessaging(path, 'Team has been deleted!', false, false));
         } else {
             res.status(500).send(util.returnMessaging(path, 'Team was not found for deletion'));
@@ -406,7 +407,7 @@ router.post('/removeMember', passport.authenticate('jwt', {
             indiciesToRemove.forEach(function(index) {
                 usersRemoved = usersRemoved.concat(foundTeam.teamMembers.splice(index, 1));
             });
-            removeAffectedUsers(usersRemoved);
+            UserSub.clearUsersTeam(usersRemoved);
             foundTeam.save().then((savedTeam) => {
                 if (savedTeam) {
                     res.status(200).send(
@@ -510,29 +511,6 @@ router.post('/uploadLogo', passport.authenticate('jwt', {
     }
 
 });
-
-
-//helper function that removes users
-function removeAffectedUsers(usersRemoved) {
-    usersRemoved.forEach(function(user) {
-        User.findOne({
-            displayName: user.displayName
-        }).then((foundUser) => {
-            if (foundUser) {
-                foundUser.teamInfo = {};
-                foundUser.save().then((savedUser) => {
-                    console.log('need some persistent logging');
-                }, (err) => {
-                    console.log('need some persistent logging');
-                });
-            } else {
-                console.log('need some persistent logging');
-            }
-        }, (err) => {
-            console.log('need some persistent logging');
-        });
-    });
-}
 
 function deleteFile(path) {
     fs.access(path, error => {
