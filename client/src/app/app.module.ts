@@ -31,6 +31,8 @@ import { TeamQuickViewComponent } from './admin/approve-member/team-quick-view/t
 import { ApproveMemberViewComponent } from './admin/approve-member/approve-member-view/approve-member-view.component';
 import { DialogOverviewExampleDialog } from './profile-edit/profile-edit.component';
 import { DeleteMemberComponent } from './admin/delete-member/delete-member.component';
+import { DeleteTeamComponent } from './admin/delete-team/delete-team.component';
+import { TeamSearchComponent } from './team-search/team-search.component';
 
 
 @NgModule({
@@ -58,7 +60,9 @@ import { DeleteMemberComponent } from './admin/delete-member/delete-member.compo
     TeamQuickViewComponent,
     ApproveMemberViewComponent,
     DialogOverviewExampleDialog,
-    DeleteMemberComponent
+    DeleteMemberComponent,
+    DeleteTeamComponent,
+    TeamSearchComponent
   ],
   entryComponents:[
     DialogOverviewExampleDialog

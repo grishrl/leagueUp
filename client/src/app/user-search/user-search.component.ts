@@ -2,7 +2,6 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 import { UserService } from '../services/user.service';
-import { TeamService } from '../services/team.service';
 
 
 
@@ -14,7 +13,6 @@ import { TeamService } from '../services/team.service';
 export class UserSearchComponent implements OnInit {
 
   usersToFilter: any[] = [];
-  recTeam: string
   priorSelect: any
   lastChange: number = 0;
   selectedUser:any
@@ -62,11 +60,6 @@ export class UserSearchComponent implements OnInit {
     }
   }
 
-  @Input() set passedTeam(team) {
-    if (team != null && team != undefined && team.length > 0) {
-      this.recTeam = team;
-    }
-  }
   message:string
 
   filterUsers(master, remove){
@@ -84,7 +77,7 @@ export class UserSearchComponent implements OnInit {
   foundUsers: any[]
   search: string
 
-  constructor(private users: UserService, private team: TeamService) {
+  constructor(private users: UserService) {
     this.userCtrl.valueChanges.subscribe(
       data => {
         if(data && data.length>2){

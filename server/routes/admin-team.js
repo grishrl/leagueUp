@@ -5,6 +5,7 @@ const Team = require("../models/team-models");
 const Admin = require("../models/admin-models");
 const teamSub = require('../subroutines/team-subs');
 const QueueSub = require('../subroutines/queue-subs');
+const UserSub = require('../subroutines/user-subs');
 const passport = require("passport");
 const levelRestrict = require("../configs/admin-leveling");
 
@@ -127,6 +128,22 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
             "message": "Error finding team",
             "err": err
         });
+    })
+});
+
+router.post('/delete/team', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.teamLevel, (req, res) => {
+    const path = '/admin/delete/team';
+    var team = req.body.teamName;
+    team = team.toLowerCase();
+    Team.findOneAndDelete({ teamName_lower: team }).then((deleted) => {
+        if (deleted) {
+            UserSub.clearUsersTeam(deleted.teamMembers);
+            res.status(200).send(util.returnMessaging(path, 'Team deleted', false, deleted));
+        }
+    }, (err) => {
+        res.status(500).send(util.returnMessaging(path, 'Error deleting team', err));
     })
 });
 
