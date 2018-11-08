@@ -32,26 +32,39 @@ export class AuthService {
     localStorage.removeItem('referral');
   }
 
+  //auth initializater
   createAuth(token,username,teamInfo){
+
     localStorage.setItem('token', token);
     localStorage.setItem('userName', username);
+    
     if(teamInfo){
+
       if (teamInfo.hasOwnProperty('teamName')){
         localStorage.setItem('teamName', teamInfo.teamName);
       }
+
       if(teamInfo.hasOwnProperty('isCaptain')){
         localStorage.setItem('captain', teamInfo.isCaptain.toSting());
       }else{
         localStorage.setItem('captain', 'false');
       }
+    
     }
   }
+
+  //captain methods:
   setCaptain(cap){
     localStorage.setItem('captain', cap);
   }
   getCaptain(){
     localStorage.getItem('captain');
   }
+  destroyCaptain(){
+    localStorage.removeItem('captain');
+  }
+
+  //token methods:
   setToken(token){
     localStorage.setItem('token', token);
   }
@@ -61,21 +74,30 @@ export class AuthService {
   destroyToken(){
     localStorage.removeItem('token');
   }
+
+  //user methods:
   setUser(user){
     localStorage.setItem('userName',user);
   }
   getUser():string{
     return localStorage.getItem('userName');
   }
+  destroyUser() {
+    localStorage.removeItem('userName');
+  }
+
+  //team methods:
   setTeam(teamName){
     localStorage.setItem('teamName', teamName);
   }
   getTeam():string{
     return localStorage.getItem('teamName');
   }
-  destroyUser(){
-    localStorage.removeItem('userName');
+  destroyTeam(){
+    localStorage.removeItem('teamName');
   }
+
+  //destroy all auth
   destroyAuth(){
     let url = 'http://localhost:3000/auth/logout';
 
