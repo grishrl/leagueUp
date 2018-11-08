@@ -47,6 +47,7 @@ FOOTER
 
 TEAM 
 >team members two columns of 3 rows
+> add back some confirm text for inviting a member to the team!
 >player names links, if possible.
 > show pending members?
 > validation warnings
@@ -68,5 +69,4 @@ product:
 >standings ... add the w/l to teams? < where to put theseeeee
 
 
-goal for 11/9
-implement delete user; admin delete user; admin delete team
+11/8 Goals > delete team for client and admin, reassign team captain
