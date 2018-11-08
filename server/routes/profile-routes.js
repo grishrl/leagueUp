@@ -1,6 +1,7 @@
 const util = require('../utils');
 const router = require('express').Router();
 const User = require('../models/user-models');
+const TeamSub = require('../subroutines/team-subs');
 const passport = require("passport");
 
 const authCheck = (req, res, next) => {
@@ -13,10 +14,6 @@ const authCheck = (req, res, next) => {
         next();
     }
 }
-
-router.get('/test', (req, res) => {
-    res.status(200).send({ message: "Eat my butt." });
-});
 
 router.get('/get', (req, res) => {
     var user = req.query.user;
@@ -35,22 +32,28 @@ router.get('/get', (req, res) => {
     )
 });
 
-const checkToken = (req, res, next) => {
-    const header = req.headers['authorization'];
-    console.log('inside check token');
-    if (typeof header !== 'undefined') {
-        const bearer = header.split(' ');
-        const token = bearer[1];
+router.get('/delete', passport.authenticate('jwt', {
+    session: false
+}), (req, res) => {
+    const path = '/user/delete';
+    let user = req.user;
 
-        req.token = token;
-        console.log('heres the token ', token);
-        next();
+    if (req.user.teamInfo.isCaptain) {
+        res.status(400).send(util.returnMessaging(path, 'Cannot delete team captain'));
     } else {
-        console.log('lollollol');
-        //If header is undefined return Forbidden (403)
-        res.sendStatus(403)
+        User.findOneAndDelete({ displayName: user.displayName }).then((deleted) => {
+            res.status(200).send(util.returnMessaging(path, 'User deleted', false, deleted));
+            if (deleted.hasOwnProperty('teamInfo')) {
+                if (deleted.teamInfo.hasOwnProperty('teamName')) {
+                    let lower = deleted.teamInfo.teamName.toLowerCase();
+                    TeamSub.removeUser(lower, deleted.displayName);
+                }
+            }
+        }, (err) => {
+            res.status(500).send(util.returnMessaging(path, 'Error querying user', err));
+        })
     }
-}
+});
 
 router.post('/save', passport.authenticate('jwt', {
         session: false

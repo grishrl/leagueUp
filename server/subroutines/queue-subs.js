@@ -10,10 +10,28 @@ function cleanUpPendingQueue(item) {
 }
 
 function cleanUpPendingQueueTeamnameUsername(teamname, username) {
-    Admin.PendingQueue.findOneAndDelete({ teamName: teamname, userName: username }).then((deleted) => {
-        console.log('pendingQueue item ' + deleted._id + ' deleted.');
+    Admin.PendingQueue.find({ teamName: teamname, userName: username }).then((toDelete) => {
+        if (toDelete && toDelete.length > 0) {
+            toDelete.forEach(ele => {
+                ele.remove();
+                console.log('pendingQueue item ' + deleted._id + ' deleted.');
+            });
+        }
     }, (err) => {
         console.log('err in the pending delete sub ', err);
+    })
+}
+
+function removePendingQueueByUsername(username) {
+    Admin.PendingQueue.find({ userName: username }).then((toDelete) => {
+        if (toDelete && toDelete.length > 0) {
+            toDelete.forEach(ele => {
+                ele.remove();
+                console.log(username + ' scrubbed from pending queue.');
+            });
+        }
+    }, (err) => {
+        console.log('Error ' + username + ' not removed from queue');
     })
 }
 
@@ -35,5 +53,6 @@ function addToPendingTeamMemberQueue(teamLower, user) {
 module.exports = {
     removePendingQueue: cleanUpPendingQueue,
     removePendingByTeamAndUser: cleanUpPendingQueueTeamnameUsername,
-    addToPendingTeamMemberQueue: addToPendingTeamMemberQueue
+    addToPendingTeamMemberQueue: addToPendingTeamMemberQueue,
+    removePendingQueueByUsername: removePendingQueueByUsername
 }

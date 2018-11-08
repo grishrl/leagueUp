@@ -219,8 +219,9 @@ router.post('/addMember', passport.authenticate('jwt', {
         if (foundTeam) {
             var cont = true;
             var foundTeamObject = foundTeam.toObject();
-            if (foundTeamObject.hasOwnProperty('pendingMembers') && cont) {
-                foundTeamObject.pendingMembers.forEach(function(member) {
+            let pendingMembers = util.returnByPath(foundTeam, 'pendingMembers')
+            if (pendingMembers && cont) {
+                pendingMembers.forEach(function(member) {
                     if (member.displayName == payloadMemberToAdd) {
                         cont = false;
                         res.status(500).send(
@@ -229,8 +230,9 @@ router.post('/addMember', passport.authenticate('jwt', {
                     }
                 });
             }
-            if (foundTeamObject.hasOwnProperty('teamMembers') && cont) { //current members
-                foundTeamObject.teamMembers.forEach(function(member) {
+            let currentMembers = util.returnByPath(foundTeam, 'teamMembers');
+            if (currentMembers && cont) { //current members
+                currentMembers.forEach(function(member) {
                     if (member.displayName == payloadMemberToAdd) {
                         cont = false;
                         res.status(500).send(
@@ -244,7 +246,7 @@ router.post('/addMember', passport.authenticate('jwt', {
                     displayName: payloadMemberToAdd
                 }).then((foundUser) => {
                     if (foundUser) {
-                        if (!foundTeamObject.hasOwnProperty('pendingMembers')) {
+                        if (!util.returnBoolByPath(foundTeam, 'pendingMembers')) {
                             foundTeam.pendingMembers = [];
                         }
                         foundTeam.pendingMembers.push({
