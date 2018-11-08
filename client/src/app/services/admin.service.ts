@@ -17,4 +17,16 @@ export class AdminService {
         return res['returnObject'];
       }));
   }
+
+  deleteUser(user){
+    let url ='http://localhost:3000/admin/delete/user';
+    let payload = {displayName:user};
+    return this.http.post(url, payload).pipe(
+      map(
+        res=>{
+          return res;
+        }
+      )
+    )
+  }
 }
