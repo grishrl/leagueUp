@@ -1,11 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { MatDialog } from '@angular/material';
+import { DialogOverviewExampleDialog } from '../profile-edit/profile-edit.component';
 import { TimezoneService } from '../services/timezone.service';
 import { TeamService } from '../services/team.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { merge } from 'lodash';
 import { Subscription } from 'rxjs';
 import { Team } from '../classes/team.class';
 import { AuthService } from '../services/auth.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-team-profile',
@@ -13,6 +16,41 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./team-profile.component.css']
 })
 export class TeamProfileComponent implements OnInit {
+
+  providedProfile: string;
+  @Input() set passedProfile(profile) {
+    if (profile != null && profile != undefined) {
+      this.providedProfile = profile;
+    }
+  }
+
+  confirm: string
+  openDialog(): void {
+
+    const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+      width: '300px',
+      data: { confirm: this.confirm }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+
+      if (result.toLowerCase() == 'delete') {
+        console.log('delete this account!');
+        this.team.deleteTeam(this.returnedProfile.teamName_lower).subscribe(
+          res => {
+            this.returnedProfile = null;
+            this.auth.destroyTeam();
+            this.auth.destroyCaptain();
+            this.router.navigate(['/profile',this.user.routeFriendlyUsername(this.auth.getUser())]);
+          }, err => {
+            console.log(err);
+          }
+        )
+      }
+    });
+  }
+
   editOn: boolean = true;
   teamName:string;
   displayDivison:string=""
@@ -27,7 +65,7 @@ export class TeamProfileComponent implements OnInit {
     { val: 3, display: 'Medium' },
     { val: 5, display: 'High' }
   ]
-  constructor(private auth: AuthService, public timezone: TimezoneService, private team: TeamService, private route:ActivatedRoute) {
+  constructor(private auth: AuthService, private user:UserService, public timezone: TimezoneService, private team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router:Router) {
     this.teamName = team.realTeamName(this.route.snapshot.params['id']);
    }
 
@@ -140,7 +178,13 @@ export class TeamProfileComponent implements OnInit {
 
 
   ngOnInit() {
-    this.teamSub = this.team.getTeam(this.teamName).subscribe((res)=>{
+    let getProfile: string;
+    if (this.providedProfile) {
+      getProfile = this.providedProfile;
+    } else if (this.teamName) {
+      getProfile = this.teamName;
+    }
+    this.teamSub = this.team.getTeam(getProfile).subscribe((res)=>{
       merge(this.returnedProfile, res);
       console.log('team ',this.returnedProfile)
       if(this.returnedProfile.teamDivision){
@@ -162,6 +206,7 @@ export class TeamProfileComponent implements OnInit {
         });
       }
     });
+  
   }
 
 }

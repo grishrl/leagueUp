@@ -27,6 +27,28 @@ export class TeamService {
     );
   };
 
+  deleteTeam(team){
+    let url = 'http://localhost:3000/team/delete';
+    team = team.toLowerCase();
+    let payload = {teamName:team};
+    return this.http.post(url, payload).pipe(
+      map( res =>{
+        return res['returnObject'];
+      })
+    )
+  }
+
+  teamSearch(team){
+    let url = 'http://localhost:3000/search/team';
+    team = team.toLowerCase();
+    let payload = {teamName:team};
+    return this.http.post(url, payload).pipe(
+      map( res=>{
+        return res['returnObject'];
+      })
+    )
+  }
+
   createTeam(team){
     let url = 'http://localhost:3000/team/create';
     return this.http.post<any>(url, team).pipe(
