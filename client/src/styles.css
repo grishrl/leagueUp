@@ -14,3 +14,7 @@ body {
 .footer-padding {
     margin-top: 25px;
 }
+
+.finger {
+    cursor: pointer;
+}
