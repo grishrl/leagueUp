@@ -29,4 +29,17 @@ export class AdminService {
       )
     )
   }
+
+  deleteTeam(team){
+    let url = 'http://localhost:3000/admin/delete/team';
+    team = team.toLowerCase();
+    let payload = { teamName : team};
+    return this.http.post(url, payload).pipe(
+      map(
+        res=>{
+          return res;
+        }
+      )
+    )
+  }
 }

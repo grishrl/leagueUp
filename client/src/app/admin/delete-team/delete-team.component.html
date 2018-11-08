@@ -1,0 +1,27 @@
+<div class="container pt-4">
+    <div class="row">
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <app-team-search (teamSelected)="receiveTeam($event)" [buttonText]="'Select Team For Delete'"></app-team-search>
+                </div>
+                <div class="col">
+                    <div class="row" *ngIf="turnOnForm">
+                        <div class="col">Review team below</div>
+                        <div class="col">
+                            <button type="button" (click)="openDialog()" class="btn btn-danger ">
+                <span class="icon-align">
+                  <i class="material-icons">delete_forever</i> Delete
+                </span>
+              </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" *ngIf="turnOnForm">
+                <div class="col">
+                    <app-team-profile [passedProfile]="recievedProfile"></app-team-profile>
+                </div>
+            </div>
+        </div>
+    </div>
