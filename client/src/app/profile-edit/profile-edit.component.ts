@@ -1,4 +1,5 @@
-import { Component, OnInit, NgModule } from '@angular/core';
+import { Component, OnInit, NgModule, Inject, Input} from '@angular/core';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { TimezoneService } from '../services/timezone.service';
 import { UserService } from '../services/user.service';
@@ -8,6 +9,12 @@ import { Observable, Subscription } from 'rxjs';
 import { ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
 import { merge } from 'lodash';
 import { HotsLogsService } from '../services/hots-logs.service';
+import { Router } from '@angular/router';
+
+export interface DialogData {
+  animal: string;
+  name: string;
+}
 
 @NgModule({
   imports:[
@@ -21,6 +28,39 @@ import { HotsLogsService } from '../services/hots-logs.service';
   styleUrls: ['./profile-edit.component.css']
 })
 export class ProfileEditComponent implements OnInit {
+
+  providedProfile:string;
+  @Input() set passedProfile(profile){
+    if(profile!=null&&profile!=undefined){
+      this.providedProfile = profile;
+    }
+  }
+
+  confirm: string
+
+  openDialog(): void {
+    
+    const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+      width: '300px',
+      data: { confirm: this.confirm }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+
+      if (result.toLowerCase()=='delete'){
+        console.log('delete this account!');
+        this.user.deleteUser().subscribe(
+          res =>{ console.log('deleted!');
+          this.auth.destroyAuth();
+          this.router.navigate(['']);
+         },err=>{
+            console.log(err);
+          }
+        )
+      }
+    });
+  }
 
   formControl = new FormControl('',
   [Validators.required]);
@@ -43,7 +83,7 @@ export class ProfileEditComponent implements OnInit {
     'Low','Medium','High'
   ]
   
-  constructor(public timezone : TimezoneService, private user : UserService, public auth : AuthService, private route : ActivatedRoute, private hotsLogsService: HotsLogsService ) {
+  constructor(public timezone: TimezoneService, private user: UserService, public auth: AuthService, private router:Router, private route: ActivatedRoute, private hotsLogsService: HotsLogsService, public dialog: MatDialog ) {
     this.displayName = user.realUserName(this.route.snapshot.params['id']);
    }
 
@@ -99,8 +139,14 @@ export class ProfileEditComponent implements OnInit {
    }
 
   ngOnInit() {    
-    console.log('new  ', this.returnedProfile);
-    this.profSub = this.user.getUser(this.displayName).subscribe((res) => { 
+    let getProfile:string;
+    if(this.providedProfile){
+      getProfile = this.providedProfile;
+    }else if(this.displayName){
+      getProfile = this.displayName;
+    }
+    console.log('getProfile ',getProfile);
+    this.profSub = this.user.getUser(getProfile).subscribe((res) => { 
       merge(this.returnedProfile, res);
       console.log('this.returnedProfile ', this.returnedProfile)
       } )
@@ -174,3 +220,58 @@ export class ProfileEditComponent implements OnInit {
     this.profSub.unsubscribe();
   }
 }
+
+@Component({
+  selector: 'dialog-overview-example-dialog',
+  templateUrl: 'dialog-overview-example-dialog.html',
+})
+export class DialogOverviewExampleDialog {
+
+  constructor(
+    public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData) { }
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
+}
+
+/*
+export class DialogOverviewExample {
+
+  animal: string;
+  name: string;
+
+  constructor(public dialog: MatDialog) {}
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+      width: '250px',
+      data: {name: this.name, animal: this.animal}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      this.animal = result;
+    });
+  }
+
+}
+
+@Component({
+  selector: 'dialog-overview-example-dialog',
+  templateUrl: 'dialog-overview-example-dialog.html',
+})
+export class DialogOverviewExampleDialog {
+
+  constructor(
+    public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
+}
+*/

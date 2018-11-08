@@ -47,6 +47,13 @@ export class UserService {
       }));
   }
 
+  deleteUser(){
+    let url="http://localhost:3000/user/delete";
+    return this.http.get(url).pipe(
+      map( ret => {return ret;} )
+    )
+  }
+
   outreachResponse(token):Observable<any>{
     let url = 'http://localhost:3000/outreach/inviteResponseComplete';
     if(typeof token != 'object'){

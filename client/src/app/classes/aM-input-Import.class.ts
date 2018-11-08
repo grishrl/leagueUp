@@ -11,6 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatDialogModule } from '@angular/material/dialog';
 
 
 
@@ -18,10 +19,10 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 @NgModule({
   imports: [MatInputModule, MatFormFieldModule, MatCheckboxModule, MatSelectModule, 
     MatSliderModule, MatDatepickerModule, MatGridListModule, MatSlideToggleModule, 
-    MatButtonModule, MatCardModule, MatExpansionModule, MatAutocompleteModule],
+    MatButtonModule, MatCardModule, MatExpansionModule, MatAutocompleteModule, MatDialogModule],
   exports: [MatInputModule, MatFormFieldModule, MatCheckboxModule, MatSelectModule, 
     MatSliderModule, MatDatepickerModule, MatGridListModule, MatSlideToggleModule, 
-    MatButtonModule, MatCardModule, MatExpansionModule, MatAutocompleteModule]
+    MatButtonModule, MatCardModule, MatExpansionModule, MatAutocompleteModule, MatDialogModule]
 })
 
 export class InputFormMaterial{

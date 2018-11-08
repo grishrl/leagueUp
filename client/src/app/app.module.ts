@@ -29,6 +29,8 @@ import { ApproveMemberComponent } from './admin/approve-member/approve-member.co
 import { UserQuickViewComponent } from './admin/approve-member/user-quick-view/user-quick-view.component';
 import { TeamQuickViewComponent } from './admin/approve-member/team-quick-view/team-quick-view.component';
 import { ApproveMemberViewComponent } from './admin/approve-member/approve-member-view/approve-member-view.component';
+import { DialogOverviewExampleDialog } from './profile-edit/profile-edit.component';
+import { DeleteMemberComponent } from './admin/delete-member/delete-member.component';
 
 
 @NgModule({
@@ -54,7 +56,12 @@ import { ApproveMemberViewComponent } from './admin/approve-member/approve-membe
     ApproveMemberComponent,
     UserQuickViewComponent,
     TeamQuickViewComponent,
-    ApproveMemberViewComponent
+    ApproveMemberViewComponent,
+    DialogOverviewExampleDialog,
+    DeleteMemberComponent
+  ],
+  entryComponents:[
+    DialogOverviewExampleDialog
   ],
   imports: [
     BrowserModule, 

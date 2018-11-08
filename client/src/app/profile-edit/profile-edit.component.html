@@ -5,19 +5,22 @@
             <div class="row" *ngIf="auth.getUser() === returnedProfile.displayName">
                 <div class="col-8 offset-2">
                     <div class="row mt-3">
-                        <div class="col-8">
+                        <div class="col-6">
                             Welcome to your team profile!
                         </div>
-                        <div class="col-4">
+                        <div class="col-6">
                             <div *ngIf="editOn == true">
                                 <button type="button" (click)="openEdit()" class="btn btn-primary float-right">Edit</button>
                             </div>
                             <div class="row" *ngIf="!editOn">
                                 <div class="col">
-                                    <button type="button" (click)="save()" class="btn btn-success ">Save</button>
+                                    <button type="button" (click)="openDialog()" class="btn btn-danger "><span class="icon-align"><i class="material-icons">delete_forever</i>Delete</span></button>
                                 </div>
                                 <div class="col">
-                                    <button type="button" (click)="cancel()" class="btn btn-danger">Cancel</button>
+                                    <button type="button" (click)="save()" class="btn btn-success "><span class="icon-align"><i class="material-icons">check</i>Save</span></button>
+                                </div>
+                                <div class="col">
+                                    <button type="button" (click)="cancel()" class="btn btn-danger"><span class="icon-align"><i class="material-icons">close</i>Cancel</span></button>
                                 </div>
                             </div>
                         </div>

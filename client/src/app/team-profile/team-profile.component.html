@@ -65,7 +65,7 @@
                                     </mat-panel-description>
                                 </mat-expansion-panel-header>
 
-                                <app-user-search [passedTeam]="returnedProfile.teamName" [filterUser]="filterUsers"></app-user-search>
+                                <app-user-search [passedTeam]="returnedProfile.teamName" [filterUser]="filterUsers" [buttonText]="'Invite User'" (userSelected)="invite($event)"></app-user-search>
 
                             </mat-expansion-panel>
 
@@ -84,6 +84,11 @@
                                 <button type="button">Invite!</button>
                             </mat-expansion-panel>
                         </mat-accordion>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        {{message}}
                     </div>
                 </div>
 

@@ -42,6 +42,18 @@ export class TeamProfileComponent implements OnInit {
     this.editOn = true;
   }
 
+  message:string
+  invite(user) {
+    if (this.returnedProfile.teamName && user) {
+      this.team.addUser(user, this.returnedProfile.teamName_lower).subscribe(res => {
+        this.message = res.message;
+      }, err => {
+        this.message = err.error.message;
+      });
+    }
+
+  }
+
   hideDay(editSwitch, dayAvailabilty): boolean {
     if (!editSwitch) {
       return false;

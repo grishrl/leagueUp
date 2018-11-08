@@ -95,10 +95,10 @@ export interface miniTeam{
 }
 
 export interface lfgSchema {
-  availability: Object; //form input added
+  availability: object; //form input added
   competitiveLevel: number; //form input added
   descriptionOfPlay: String; //form input added
-  role: Object; //
+  role: object; //
   averageMmr: number;  //user average mmr
   timeZone: String; //form input added
   heroLeague: hlRankShema;

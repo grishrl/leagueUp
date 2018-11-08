@@ -12,6 +12,7 @@ import { BlogViewComponent } from "./blog-view/blog-view.component";
 import { LogoutComponent } from "./logout/logout.component";
 import { CreateTeamComponent } from "./create-team/create-team.component";
 import { ApproveMemberComponent } from "./admin/approve-member/approve-member.component";
+import { DeleteMemberComponent } from "./admin/delete-member/delete-member.component";
 
 const APP_ROUTES: Routes = [
   { path: 'directory', component: DirectoryComponent},
@@ -27,7 +28,8 @@ const APP_ROUTES: Routes = [
   { path: 'email/invite/:id', component:OutreachEmailResponseComponent },
   { path: 'blog', component:BlogListComponent},
   { path: 'blog/:id', component:BlogViewComponent},
-  { path: '_admin/approveTeamQueue', component:ApproveMemberComponent}
+  { path: '_admin/approveTeamQueue', component:ApproveMemberComponent},
+  { path: '_admin/deleteUser', component:DeleteMemberComponent}
 ]
 
 @NgModule({

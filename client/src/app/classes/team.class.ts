@@ -1,17 +1,18 @@
 export class Team {
-  _id: String;
-  teamName: String; //added to display form 
+  _id: string;
+  teamName: string; //added to display form 
+  teamName_lower: string 
   teamDivision: division; //added to display form
-  //"stats": String; //later addition of team statistics
+  //"stats": string; //later addition of team statistics
   lookingForMore: Boolean; //added to display form
   lfmDetails: lfmSchema;
-  captain: String;
+  captain: string;
   teamMMRAvg: number; //added to display
   teamMembers: [miniUser]; //added to display
   pendingMembers: [miniUser];
 
-  constructor(id: String, teamName: String, lookingForMore: Boolean, lfmDetails: lfmSchema, 
-    teamMembers: [miniUser], pendingMembers: [miniUser], captain: String, teamMMRAvg:number,
+  constructor(id: string, teamName: string, lookingForMore: Boolean, lfmDetails: lfmSchema, 
+    teamMembers: [miniUser], pendingMembers: [miniUser], captain: string, teamMMRAvg:number,
     teamDivision: division) {
     if (id != null && id != undefined && id.length > 0) {
       this._id = id;
@@ -20,8 +21,9 @@ export class Team {
     }
     if (teamName != null && teamName != undefined && teamName.length > 0) {
       this.teamName = teamName;
+      this.teamName_lower = teamName.toLowerCase()
     } else {
-      this.teamName = "";
+      this.teamName, this.teamName_lower = "";
     }
     if (lookingForMore != null && lookingForMore != undefined) {
       this.lookingForMore = lookingForMore;
@@ -72,8 +74,7 @@ export class Team {
         "competitiveLevel": null,
         "descriptionOfTeam": "",
         "rolesNeeded": { "tank": false, "assassin": false, "support": false, "offlane": false, "specialist": false }, //form input added,
-        "timeZone": "",
-        "teamMMRAvg":0
+        "timeZone": ""
       }
       
 
@@ -110,9 +111,9 @@ export class Team {
 interface lfmSchema {
   "availability": Object,
   "competitiveLevel": number,
-  "descriptionOfTeam": String,
+  "descriptionOfTeam": string,
   "rolesNeeded": Object,
-  "timeZone": String
+  "timeZone": string
 }
 
 interface division{
@@ -121,5 +122,5 @@ interface division{
 }
 
 interface miniUser {
-  "displayName": String
+  "displayName": string
 }

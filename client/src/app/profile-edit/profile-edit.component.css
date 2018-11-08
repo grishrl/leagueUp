@@ -25,3 +25,8 @@
 .role-margin {
     margin: 0 10px;
 }
+
+.icon-align {
+    display: inline-flex;
+    vertical-align: middle;
+}

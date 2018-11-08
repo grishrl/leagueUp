@@ -1,9 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 import { UserService } from '../services/user.service';
-import { last } from '@angular/router/src/utils/collection';
 import { TeamService } from '../services/team.service';
+
 
 
 @Component({
@@ -13,10 +13,46 @@ import { TeamService } from '../services/team.service';
 })
 export class UserSearchComponent implements OnInit {
 
-  usersToFilter: any[]
+  usersToFilter: any[] = [];
   recTeam: string
-
+  priorSelect: any
   lastChange: number = 0;
+  selectedUser:any
+  btnTxt:string
+  cantClick:boolean = false;
+
+  disableButton() {
+    console.log('this.priorSelect ', this.priorSelect);
+    console.log('this.selectedUser ', this.selectedUser);
+    if (this.priorSelect != undefined && this.priorSelect != null
+      || this.selectedUser != null && this.selectedUser != undefined) {
+      if (this.priorSelect == this.selectedUser) {
+        console.log('returning true A ')
+        return true;
+      } else {
+        console.log('returning false B ')
+        return false;
+      }
+    } else {
+      console.log('returning false C ')
+      return false;
+    }
+  }
+
+  @Output() userSelected = new EventEmitter();
+
+  userSelect(user){
+    this.priorSelect = user;
+    this.userSelected.emit(user);
+  }
+
+  @Input() set buttonText(text){
+    if(text!=undefined&&text!=null){
+      this.btnTxt = text;
+    }else{
+      this.btnTxt = "Seach";
+    }
+  }
 
   @Input() set filterUser(users){
     if(users != null && users != undefined && users.length>0){
@@ -32,19 +68,6 @@ export class UserSearchComponent implements OnInit {
     }
   }
   message:string
-
-  invite(user){
-    if (this.recTeam && user){
-      this.team.addUser(user,this.recTeam).subscribe(res=>{
-        this.message = res.message;
-      }, err=>{
-        this.message = err.error.message;
-      });
-    }
-    
-  }
-
-
 
   filterUsers(master, remove){
     console.log('master ', master, 'remove ', remove)
