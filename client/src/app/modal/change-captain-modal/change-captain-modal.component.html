@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>Select New Captain</h1>
+<div mat-dialog-content>
+    <section class="example-section">
+        <div *ngFor="let member of data.members; let i = index">
+            <mat-checkbox class="example-margin" [checked]="selected === member.displayName" (change)="selected=member.displayName" [disabled]="member.displayName==data.captain">{{member.displayName}}</mat-checkbox>
+        </div>
+    </section>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">No Thanks</button>
+    <button mat-button [mat-dialog-close]="selected" cdkFocusInitial>Ok</button>
+</div>

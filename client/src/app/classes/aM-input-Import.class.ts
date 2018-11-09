@@ -12,6 +12,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatRadioModule } from '@angular/material';
 
 
 
@@ -19,10 +20,12 @@ import { MatDialogModule } from '@angular/material/dialog';
 @NgModule({
   imports: [MatInputModule, MatFormFieldModule, MatCheckboxModule, MatSelectModule, 
     MatSliderModule, MatDatepickerModule, MatGridListModule, MatSlideToggleModule, 
-    MatButtonModule, MatCardModule, MatExpansionModule, MatAutocompleteModule, MatDialogModule],
+    MatButtonModule, MatCardModule, MatExpansionModule, MatAutocompleteModule, MatDialogModule,
+  MatRadioModule],
   exports: [MatInputModule, MatFormFieldModule, MatCheckboxModule, MatSelectModule, 
     MatSliderModule, MatDatepickerModule, MatGridListModule, MatSlideToggleModule, 
-    MatButtonModule, MatCardModule, MatExpansionModule, MatAutocompleteModule, MatDialogModule]
+    MatButtonModule, MatCardModule, MatExpansionModule, MatAutocompleteModule, MatDialogModule,
+  MatRadioModule]
 })
 
 export class InputFormMaterial{
