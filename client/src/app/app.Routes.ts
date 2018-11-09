@@ -31,7 +31,7 @@ const APP_ROUTES: Routes = [
   { path: 'blog/:id', component:BlogViewComponent},
   { path: '_admin/approveTeamQueue', component:ApproveMemberComponent},
   { path: '_admin/deleteUser', component:DeleteMemberComponent},
-  { path: '_admin/deleteTeam', component:DeleteTeamComponent}
+  { path: '_admin/manageTeam', component:DeleteTeamComponent}
 ]
 
 @NgModule({
