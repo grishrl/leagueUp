@@ -33,6 +33,8 @@ import { DialogOverviewExampleDialog } from './profile-edit/profile-edit.compone
 import { DeleteMemberComponent } from './admin/delete-member/delete-member.component';
 import { DeleteTeamComponent } from './admin/delete-team/delete-team.component';
 import { TeamSearchComponent } from './team-search/team-search.component';
+import { ChangeCaptainModalComponent } from './modal/change-captain-modal/change-captain-modal.component';
+import { ChangeCaptainComponent } from './admin/change-captain/change-captain.component';
 
 
 @NgModule({
@@ -62,10 +64,13 @@ import { TeamSearchComponent } from './team-search/team-search.component';
     DialogOverviewExampleDialog,
     DeleteMemberComponent,
     DeleteTeamComponent,
-    TeamSearchComponent
+    TeamSearchComponent,
+    ChangeCaptainModalComponent,
+    ChangeCaptainComponent
   ],
   entryComponents:[
-    DialogOverviewExampleDialog
+    DialogOverviewExampleDialog,
+    ChangeCaptainModalComponent
   ],
   imports: [
     BrowserModule, 
