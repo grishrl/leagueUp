@@ -33,7 +33,40 @@ function clearUsersTeam(usersRemoved) {
     });
 }
 
+function toggleCaptain(user) {
+    User.findOne({ displayName: user }).then((foundUser) => {
+        //get the value in teamInfo, is captain, will be boolean if it's been set before
+        let changed = false;
+        let isCap = util.returnByPath(foundUser, 'teamInfo.isCaptain');
+        //if this is a boolean value, toggle it
+        if (typeof isCap == 'boolean') {
+            changed = true;
+            foundUser.teamInfo.isCaptain = !foundUser.teamInfo.isCaptain;
+        } else {
+            //it the iscaptain didnt exist would be false by default, turn it on
+            if (util.returnBoolByPath(foundUser, 'teamInfo')) {
+                changed = true;
+                foundUser.teamInfo.isCaptain = true;
+            } else {
+                //if for some reason this user didn't have a team, whats the play?
+                //I think it's best to do nothing for now.
+            }
+        }
+        if (changed) {
+            foundUser.save((save) => {
+                console.log(save.displayName + ' user profile update cpttoggle');
+            }, (err) => {
+                console.log('cpt toggle error saving user profile');
+            });
+        }
+
+    }, (err) => {
+        console.log('error toggling user as captain ', err);
+    })
+}
+
 module.exports = {
     scrubUser: scrubUser,
-    clearUsersTeam: clearUsersTeam
+    clearUsersTeam: clearUsersTeam,
+    toggleCaptain: toggleCaptain
 }

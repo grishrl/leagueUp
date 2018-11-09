@@ -22,7 +22,51 @@ router.get('/pendingMemberQueue', passport.authenticate('jwt', {
     }, (err) => {
         res.status(500).send(util.returnMessaging(path, 'Couldn\'t get the queues', err));
     })
-})
+});
+
+router.post('/reassignCaptain', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.teamLevel, (req, res) => {
+    const path = '/admin/reassignCaptain';
+
+    let team = req.body.teamName;
+    let newCpt = req.body.userName;
+
+    Team.findOne({ teamName_lower: team }).then((foundTeam) => {
+        if (foundTeam) {
+            let members = util.returnByPath(foundTeam.toObject(), 'teamMembers');
+            console.log('members ', members);
+            let cont = false;
+            if (members) {
+                members.forEach(element => {
+                    if (element.displayName == newCpt) {
+                        cont = true;
+                    }
+                })
+            }
+            console.log('cont after ', cont);
+            if (cont) {
+                let oldCpt = foundTeam.captain;
+                foundTeam.captain = newCpt;
+                foundTeam.save().then((savedTeam) => {
+                    if (savedTeam) {
+                        UserSub.toggleCaptain(oldCpt);
+                        UserSub.toggleCaptain(savedTeam.captain);
+                        res.status(200).send(util.returnMessaging(path, 'Team captain changed', false, savedTeam));
+                    } else {
+                        res.status(500).send(util.returnMessaging(path, 'Error saving team captain changes'));
+                    }
+                }, (err) => {
+                    res.status(500).send(util.returnMessaging(path, 'Error changing the team captian', err));
+                })
+            } else {
+                res.status(400).send(util.returnMessaging(path, 'User was not found in team members'));
+            }
+        }
+    }, (err) => {
+        res.status(500).send(util.returnMessaging(path, 'Error finding team!', err));
+    })
+});
 
 router.post('/approveMemberAdd', passport.authenticate('jwt', {
     session: false

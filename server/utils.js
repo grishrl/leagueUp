@@ -89,9 +89,12 @@ returnBoolByPath = function(obj, path) {
     let ele = pathArr[0];
     //make sure the property exist on the object
     if (obj.hasOwnProperty(ele)) {
+        if (typeof obj[ele] == 'boolean') {
+            retVal = true;
+        }
         //property exists:
         //property is an object, and the path is deeper, jump in!
-        if (typeof obj[ele] == 'object' && pathArr.length > 1) {
+        else if (typeof obj[ele] == 'object' && pathArr.length > 1) {
             //remove first element of array
             pathArr.splice(0, 1);
             //reconstruct the array back into a string, adding "." if there is more than 1 element

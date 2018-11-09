@@ -16,7 +16,7 @@ function updateTeamMmr(team) {
                 let length = 0;
                 let total = 0;
                 users.forEach(user => {
-                    if (user.lfgDetails.averageMmr) {
+                    if (util.returnBoolByPath(user, 'lfgDetails.averageMmr')) {
                         total += user.lfgDetails.averageMmr;
                         length += 1;
                     }

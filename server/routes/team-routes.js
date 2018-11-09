@@ -21,6 +21,7 @@ delete - deletes team
 addMember - adds member
 removeMember - removes member
 uploadLogo - uploads logo 
+reassignCaptian - moves captain to another team member
 */
 
 
@@ -510,6 +511,50 @@ router.post('/uploadLogo', passport.authenticate('jwt', {
         });
     }
 
+});
+
+router.post('/reassignCaptain', passport.authenticate('jwt', {
+    session: false
+}), confirmCaptain, (req, res) => {
+    const path = '/team/reassignCaptain';
+    var newCapt = req.body.username;
+    var team = req.body.teamName;
+    Team.findOne({ teamName_lower: team }).then(
+        (foundTeam) => {
+            if (foundTeam) {
+                let members = util.returnByPath(foundTeam.toObject(), 'teamMembers');
+                let cont = false;
+                if (members) {
+                    members.forEach(element => {
+                        if (element.displayName == newCapt) {
+                            cont = true;
+                        }
+                    });
+                }
+                if (cont) {
+                    let oldCpt = foundTeam.captain;
+                    foundTeam.captain = newCapt;
+                    foundTeam.save().then(
+                        (savedTeam) => {
+                            if (savedTeam) {
+                                UserSub.toggleCaptain(oldCpt);
+                                UserSub.toggleCaptain(savedTeam.captain);
+                                res.status(200).send(util.returnMessaging(path, 'Team captain changed', false, savedTeam));
+                            } else {
+                                res.status(500).send(util.returnMessaging(path, 'Team captain not changed', false));
+                            }
+                        }, (err) => {
+                            res.status(500).send(util.returnMessaging(path, 'Error changing team captain', err));
+                        });
+
+                } else {
+                    res.status(400).send(util.returnMessaging(path, 'Provided user was not a member of the team'));
+                }
+            }
+        }, (err) => {
+            res.status(500).send(util.returnMessaging(path, 'Error finding team', err));
+        }
+    )
 });
 
 function deleteFile(path) {
