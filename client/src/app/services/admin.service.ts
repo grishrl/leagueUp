@@ -42,4 +42,17 @@ export class AdminService {
       )
     )
   }
+
+  changeCaptain(team, user){
+    let url = 'http://localhost:3000/admin/reassignCaptain';
+    let payload = { teamName: team, userName: user};
+    return this.http.post(url, payload).pipe(
+      map(
+        res=>{
+          return res['returnObject'];
+        }
+      )
+    )
+  }
+
 }

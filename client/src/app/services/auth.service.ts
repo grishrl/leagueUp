@@ -57,8 +57,8 @@ export class AuthService {
   setCaptain(cap){
     localStorage.setItem('captain', cap);
   }
-  getCaptain(){
-    localStorage.getItem('captain');
+  getCaptain():string {
+    return localStorage.getItem('captain');
   }
   destroyCaptain(){
     localStorage.removeItem('captain');

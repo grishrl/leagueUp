@@ -8,19 +8,33 @@
                 <div class="col">
                     <div class="row" *ngIf="turnOnForm">
                         <div class="col">Review team below</div>
-                        <div class="col">
-                            <button type="button" (click)="openDialog()" class="btn btn-danger ">
-                <span class="icon-align">
-                  <i class="material-icons">delete_forever</i> Delete
-                </span>
-              </button>
-                        </div>
                     </div>
                 </div>
             </div>
-            <div class="row" *ngIf="turnOnForm">
-                <div class="col">
-                    <app-team-profile [passedProfile]="recievedProfile"></app-team-profile>
+            <div *ngIf="turnOnForm">
+                <div class="row">
+                    <div class="col">
+                        <button class="btn btn-warning" type="button" (click)="openChangeCaptainDialog()">
+                            <span class="icon-align"><i class="material-icons">cached</i>Change captain</span>
+                        </button>
+                    </div>
+                    <div class="col">
+                        <button class="btn btn-warning" type="button" (click)="save()">
+                            <span class="icon-align"><i class="material-icons">cached</i>Save</span>
+                        </button>
+                    </div>
+                    <div class="col">
+                        <button type="button" (click)="openDialog()" class="btn btn-danger ">
+                        <span class="icon-align">
+                            <i class="material-icons">delete_forever</i> Delete
+                        </span>
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <app-team-profile [passedProfile]="recievedProfile"></app-team-profile>
+                    </div>
                 </div>
             </div>
         </div>

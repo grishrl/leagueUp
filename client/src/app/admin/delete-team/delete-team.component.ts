@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
+import { TeamService } from '../../services/team.service';
 import { DialogOverviewExampleDialog } from '../../profile-edit/profile-edit.component';
+import { ChangeCaptainModalComponent } from '../../modal/change-captain-modal/change-captain-modal.component';
 import { AdminService } from 'src/app/services/admin.service';
 
 @Component({
@@ -10,17 +12,43 @@ import { AdminService } from 'src/app/services/admin.service';
 })
 export class DeleteTeamComponent implements OnInit {
 
-  constructor(public dialog: MatDialog, private admin: AdminService) { }
+  constructor(public dialog: MatDialog, private admin: AdminService, private team: TeamService) { }
 
   recievedProfile
   turnOnForm: boolean = false;
+  pulledProfile:any
 
   receiveTeam(userRec) {
     if (userRec != null && userRec != undefined) {
-      console.log(userRec);
+      
       this.turnOnForm = true;
-      this.recievedProfile = userRec;
+      // this.recievedProfile = userRec;
+      this.team.getTeam(userRec).subscribe( reply=>{
+        this.pulledProfile = reply;
+        this.recievedProfile = reply;
+      } );
     }
+  }
+
+  openChangeCaptainDialog():void{
+    const dialogRef = this.dialog.open(ChangeCaptainModalComponent, {
+      width: '450px',
+      data: { members: this.pulledProfile.teamMembers, captain: this.pulledProfile.captain }
+    });
+
+    dialogRef.afterClosed().subscribe(result=>{
+      if(result!=null&&result!=undefined){
+        this.admin.changeCaptain(this.pulledProfile.teamName_lower, result).subscribe( (res)=>{
+          
+          // this.turnOnForm = false;
+          this.recievedProfile = null;
+          this.recievedProfile = res;
+          this.pulledProfile = res;
+        },(err)=>{
+          console.log(err);
+        } )
+      }
+    });
   }
 
   confirm: string
@@ -32,21 +60,27 @@ export class DeleteTeamComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+      
 
       if (result.toLowerCase() == 'delete') {
-        console.log('delete this account!');
+        
         this.admin.deleteTeam(this.recievedProfile).subscribe(
           res => {
             this.turnOnForm = false;
             this.recievedProfile = null;
-            console.log('deleted!');
+            
           }, err => {
             console.log(err);
           }
         )
       }
     });
+  }
+
+  save(){
+    console.log( 'you clicked save ');
+    console.log('pulledProfile:',this.pulledProfile);
+    console.log('recivedProfile:', this.recievedProfile);
   }
 
 

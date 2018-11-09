@@ -27,6 +27,20 @@ export class TeamService {
     );
   };
 
+  changeCaptain(team, user){
+    let url = 'http://localhost:3000/team/reassignCaptain';
+    team = team.toLowerCase();
+    let payload = {
+      teamName: team,
+      username:user
+    }
+    return this.http.post(url, payload).pipe(
+      map( res=>{
+        return res['returnObject'];
+      })
+    )
+  }
+
   deleteTeam(team){
     let url = 'http://localhost:3000/team/delete';
     team = team.toLowerCase();
