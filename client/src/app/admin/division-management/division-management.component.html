@@ -1,0 +1,85 @@
+<div class="container pt-3">
+    <div class="row">
+        <div class="col">
+            <div class="row border border-dark rounded mb-3 p-2" *ngIf='selectedTeams.length>0 && selectedDiv'>
+                <div class="col">
+                    <h5>Confirmation:</h5>
+                    <div class="row">
+                        <div class="col">
+                            Adding teams:
+                            <div *ngFor="let team of selectedTeams; let i = index">{{team.teamName}}</div>
+                        </div>
+                        <div class="col">
+                            to Division:
+                            <div>{{selectedDiv.displayName}}</div>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-success" (click)="divisionTeams()">Confirm</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row bg-secondary border border-dark text-white p-2">
+                <div class="col">
+                    <div class="row">
+                        <div class="col">
+                            <span>
+                              <h5>Teams:</h5>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            Team Name:
+                        </div>
+                        <div class="col">
+                            Team MMR:
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <div class="col">
+                            <span>
+                              <h5>Divisions:</h5>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            Division Name:
+                        </div>
+                        <div class="col">
+                            Division MMR Bracket:
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="row finger p-2" [ngClass]="{'border border-info bg-info text-white': isSelected(team)}" (click)="teamSelected(team)" *ngFor="let team of undivisionTeams">
+                        <div class="col">
+                            {{team.teamName}}
+                        </div>
+                        <div class="col">
+                            {{team.teamMMRAvg}}
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row finger p-2" [ngClass]="{'border border-warning bg-warning text-dark': isDivSelected(division)}" (click)="divSelected(division)" *ngFor="let division of divisions">
+                        <div class="col">
+                            {{division.displayName}}
+                        </div>
+                        <div class="col">
+                            <div>Max MMR: {{division.maxMMR}}</div>
+                            <div>Min MMR: {{division.maxMMR}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

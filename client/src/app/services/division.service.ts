@@ -8,47 +8,47 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class DivisionService {
+
+  cachedDivisions
   url = 'http://localhost:3000/division/get';
+
+  getDivisionInfo(){
+
+    let turl = 'http://localhost:3000/admin/getDivisionInfo';
+    return this.http.get(turl).pipe(
+      map(
+        res=>{ 
+          let divisionArr =  res['returnObject'];
+          divisionArr.sort((a,b)=>{
+            if(a.sorting<b.sorting){
+              return -1;
+            }
+            if(a.sorting > b.sorting){
+              return 1
+            }
+            return 0;
+          });
+          this.cachedDivisions = divisionArr;
+          return divisionArr;
+        }
+      )
+    )
+  }
+
+  getDivInfo(divisionName){
+    let url = 'http://localhost:3000/admin/getDivInfo'
+    return this.http.get<any>(this.url + '?division=' + divisionName).pipe(
+      map((res) => {
+        return res.returnObject;
+      })); 
+  }
   
-  getDivision(divisionName:string, coastalDivision:string):Observable<any>{
-    if(coastalDivision){
-      // let query = '';
-      // query+= this.url += '?division=' + divisionName;
-      // query+='&coast='+coastalDivision;
-      return this.http.get<any>(this.url+'?division='+divisionName+'&coast='+coastalDivision).pipe(
+  getDivision(divisionName:string):Observable<any>{
+
+    return this.http.get<any>(this.url+'?division='+divisionName).pipe(
         map((res)=>{
           return res.returnObject;
-        })
-        // map(({ _id, teamName, lookingForMore, lfmDetails,
-        //   teamMembers, pendingMembers, captain, teamMMRAvg,
-        //   teamDivision }) => {
-        //   console.log('xxx: ', _id, teamName, lookingForMore, lfmDetails,
-        //     teamMembers, pendingMembers, captain, teamMMRAvg,
-        //     teamDivision)
-        //   return new Team(_id, teamName, lookingForMore, lfmDetails,
-        //     teamMembers, pendingMembers, captain, teamMMRAvg,
-        //     teamDivision);
-        // })
-      );
-    }else{
-      // let query = ''
-      // query += this.url += '?division=' + divisionName;
-      return this.http.get<any>(this.url+'?division=' + divisionName).pipe(
-        map((res)=>{
-          return res.returnObject;
-        })
-        // map(({ _id, teamName, lookingForMore, lfmDetails,
-        //   teamMembers, pendingMembers, captain, teamMMRAvg,
-        //   teamDivision }) => {
-        //   console.log('xxx: ', _id, teamName, lookingForMore, lfmDetails,
-        //     teamMembers, pendingMembers, captain, teamMMRAvg,
-        //     teamDivision)
-        //   return new Team(_id, teamName, lookingForMore, lfmDetails,
-        //     teamMembers, pendingMembers, captain, teamMMRAvg,
-        //     teamDivision);
-        // })
-      );
-    }
+        }));
   }
 
   constructor(private http: HttpClient) {

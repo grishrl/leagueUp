@@ -14,6 +14,7 @@ import { CreateTeamComponent } from "./create-team/create-team.component";
 import { ApproveMemberComponent } from "./admin/approve-member/approve-member.component";
 import { DeleteMemberComponent } from "./admin/delete-member/delete-member.component";
 import { DeleteTeamComponent } from "./admin/delete-team/delete-team.component";
+import { DivisionManagementComponent } from "./admin/division-management/division-management.component";
 
 const APP_ROUTES: Routes = [
   { path: 'directory', component: DirectoryComponent},
@@ -25,13 +26,13 @@ const APP_ROUTES: Routes = [
   { path: 'teamProfile/:id', component: TeamProfileComponent},
   { path: 'teamCreate', component: CreateTeamComponent},
   { path: 'division/:division', component: DivisionComponent, runGuardsAndResolvers:'paramsChange' },
-  { path: 'division/:division/:coast', component: DivisionComponent, runGuardsAndResolvers: 'paramsChange' },
   { path: 'email/invite/:id', component:OutreachEmailResponseComponent },
-  { path: 'blog', component:BlogListComponent},
-  { path: 'blog/:id', component:BlogViewComponent},
-  { path: '_admin/approveTeamQueue', component:ApproveMemberComponent},
-  { path: '_admin/deleteUser', component:DeleteMemberComponent},
-  { path: '_admin/manageTeam', component:DeleteTeamComponent}
+  { path: 'blog', component:BlogListComponent },
+  { path: 'blog/:id', component:BlogViewComponent },
+  { path: '_admin/approveTeamQueue', component:ApproveMemberComponent },
+  { path: '_admin/deleteUser', component:DeleteMemberComponent },
+  { path: '_admin/manageTeam', component:DeleteTeamComponent },
+  { path: '_admin/divisionMgmt', component:DivisionManagementComponent }
 ]
 
 @NgModule({

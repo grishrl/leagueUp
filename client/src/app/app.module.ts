@@ -35,6 +35,7 @@ import { DeleteTeamComponent } from './admin/delete-team/delete-team.component';
 import { TeamSearchComponent } from './team-search/team-search.component';
 import { ChangeCaptainModalComponent } from './modal/change-captain-modal/change-captain-modal.component';
 import { ChangeCaptainComponent } from './admin/change-captain/change-captain.component';
+import { DivisionManagementComponent } from './admin/division-management/division-management.component';
 
 
 @NgModule({
@@ -66,7 +67,8 @@ import { ChangeCaptainComponent } from './admin/change-captain/change-captain.co
     DeleteTeamComponent,
     TeamSearchComponent,
     ChangeCaptainModalComponent,
-    ChangeCaptainComponent
+    ChangeCaptainComponent,
+    DivisionManagementComponent
   ],
   entryComponents:[
     DialogOverviewExampleDialog,

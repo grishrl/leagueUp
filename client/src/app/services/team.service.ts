@@ -27,6 +27,19 @@ export class TeamService {
     );
   };
 
+  getTeams(names){
+    let url = 'http://localhost:3000/team/getTeams';
+    let payload = {teams:names}
+    return this.http.post(url, payload).pipe(
+      map(
+        res=>{
+          console.log(res);
+          return res['returnObject'];
+        }
+      )
+    )
+  }
+
   changeCaptain(team, user){
     let url = 'http://localhost:3000/team/reassignCaptain';
     team = team.toLowerCase();
@@ -95,9 +108,13 @@ export class TeamService {
   }
 
   cleanUpLogoUrl(url):string{
-    let index = url.indexOf('assets');
-    let clean = url.slice(index, url.length);
-    return clean;
+    if(url != null && url != undefined){
+      let index = url.indexOf('assets');
+      let clean = url.slice(index, url.length);
+      return clean;
+    }else{
+      return '';
+    }
   }
 
   routeFriendlyTeamName(teamname):string{

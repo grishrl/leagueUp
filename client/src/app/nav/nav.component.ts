@@ -3,6 +3,7 @@ import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { TeamService } from '../services/team.service';
 import { UserService } from '../services/user.service';
+import { DivisionService } from '../services/division.service';
 
 @Component({
   selector: 'app-nav',
@@ -12,7 +13,9 @@ import { UserService } from '../services/user.service';
 export class NavComponent implements OnInit {
   userName: string
   teamName: string
-  constructor(public Auth:AuthService, private router: Router, private team:TeamService, private user:UserService) { }
+  divisions
+
+  constructor(public Auth:AuthService, private router: Router, private team:TeamService, private user:UserService, private divisionService: DivisionService) { }
 
   navGo(appRoute,path){
     console.log(path);
@@ -23,6 +26,12 @@ export class NavComponent implements OnInit {
     }
   }
   ngOnInit() {
+    this.divisionService.getDivisionInfo().subscribe( res => {
+      console.log('res ', res);
+      this.divisions = res;
+    }, err=>{
+      console.log(err);
+    })
     if(this.Auth.getTeam()){
       this.teamName = this.Auth.getTeam();
     }

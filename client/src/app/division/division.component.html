@@ -3,7 +3,7 @@
         <div class="col-10 mx-auto">
             <div class="row">
                 <div class="col-md-12">
-                    <h2 class="text-center">Division {{divDisplay}} <span *ngIf="coastDisplay">- {{coastDisplay}}</span> </h2>
+                    <h2 class="text-center">{{divDisplay.displayName}} </h2>
                 </div>
             </div>
             <app-team-display [teams]="teams"></app-team-display>

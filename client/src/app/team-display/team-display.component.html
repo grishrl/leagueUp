@@ -6,7 +6,7 @@
                     <div mat-card-avatar class="example-header-image"></div>
                     <mat-card-title><a [routerLink]="['/teamProfile/', team.routeFriendlyTeamName(item.teamName)]">{{item.teamName}}</a></mat-card-title>
                 </mat-card-header>
-                <img mat-card-image src="{{team.cleanUpLogoUrl(item.logo)}}" alt="team logo">
+                <img *ngIf="item.logo" mat-card-image src="{{team.cleanUpLogoUrl(item.logo)}}" alt="team logo">
                 <mat-card-content>
                     <mat-accordion>
                         <mat-expansion-panel>
