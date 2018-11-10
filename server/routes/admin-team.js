@@ -4,6 +4,8 @@ const User = require("../models/user-models");
 const Team = require("../models/team-models");
 const Admin = require("../models/admin-models");
 const teamSub = require('../subroutines/team-subs');
+const DivSub = require('../subroutines/division-subs');
+const OutreachSub = require('../subroutines/outreach-subs');
 const QueueSub = require('../subroutines/queue-subs');
 const UserSub = require('../subroutines/user-subs');
 const passport = require("passport");
@@ -190,5 +192,146 @@ router.post('/delete/team', passport.authenticate('jwt', {
         res.status(500).send(util.returnMessaging(path, 'Error deleting team', err));
     })
 });
+
+router.post('/teamSave', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.teamLevel, (req, res) => {
+    const path = '/admin/teamSave';
+    //this teamName passed in the body is considered a safe source of the orignal team name
+    let team = req.body.teamName;
+    let payload = req.body.teamObj;
+    team = team.toLowerCase();
+    //check if the team was renamed at the client
+    if (team != payload.teamName_lower) {
+        //team was renamed
+        //double check the new name doesn't exist all ready
+        Team.findOne({ teamName_lower: payload.teamName_lower }).then((foundTeam) => {
+                if (foundTeam) {
+                    res.status(400).send(util.returnMessaging(path, 'This team name was all ready taken, can not complete request!'));
+                } else {
+                    //this might be a candidate for refactoring all the team saves into one single sub component - but not until I have a warm fuzzy about including teamName changes into the base sub, which I dont.
+                    //team name was not modified; edit the properties we received.
+                    Team.findOne({
+                        teamName_lower: team
+                    }).then((originalTeam) => {
+                        if (originalTeam) {
+
+                            //update the team name and teamname lower
+                            originalTeam.teamName = payload.teamName;
+                            originalTeam.teamName_lower = payload.teamName.toLowerCase();
+
+                            // check the paylaod and update the found team if the originalTeam property if it existed on the payload
+                            if (util.returnBoolByPath(payload, 'lookingForMore')) {
+                                originalTeam.lookingForMore = payload.lookingForMore;
+                            }
+
+                            if (util.returnBoolByPath(payload, 'lfmDetails.availability')) {
+                                if (!util.returnBoolByPath(originalTeam, 'lfmDetails.availability')) {
+                                    originalTeam.lfmDetails.availability = {};
+                                }
+                                originalTeam.lfmDetails.availability = payload.lfmDetails.availability;
+                            }
+
+                            if (util.returnBoolByPath(payload, 'lfmDetails.competitiveLevel')) {
+                                originalTeam.lfmDetails.competitiveLevel = payload.lfmDetails.competitiveLevel;
+                            }
+
+                            if (util.returnBoolByPath(payload, 'lfmDetails.descriptionOfTeam')) {
+                                originalTeam.lfmDetails.descriptionOfTeam = payload.lfmDetails.descriptionOfTeam;
+                            }
+
+                            if (util.returnBoolByPath(payload, 'lfmDetails.rolesNeeded')) {
+                                if (!util.returnBoolByPath(originalTeam, 'lfmDetails.rolesNeeded')) {
+                                    originalTeam.lfmDetails.rolesNeeded = {};
+                                }
+                                originalTeam.lfmDetails.rolesNeeded = payload.lfmDetails.rolesNeeded;
+                            }
+
+                            if (util.returnBoolByPath(payload, 'lfmDetails.timeZone')) {
+                                originalTeam.lfmDetails.timeZone = payload.lfmDetails.timeZone;
+                            }
+
+                            originalTeam.save().then((savedTeam) => {
+                                var message = "";
+                                message += "Team updated!";
+                                res.status(200).send(util.returnMessaging(path, message, false, savedTeam));
+
+                                //now we need subs to remove all instances of the old team name and replace it with
+                                //this new team name
+                                DivSub.updateTeamNameDivision(team, savedTeam.teamName);
+                                OutreachSub.updateOutreachTeamname(team, savedTeam.teamName);
+                                QueueSub.updatePendingMembersTeamNameChange(team, savedTeam.teamName_lower);
+                                //matches ... not existing yet
+                                UserSub.upsertUsersTeam(savedTeam.teamMembers, savedTeam.teamName);
+                            }, (err) => {
+                                res.status(400).send(util.returnMessaging(path, 'Error saving team information', err));
+                            });
+                        } else {
+                            res.status(400).send(util.returnMessaging(path, "Team not found"));
+                        }
+                    }, (err) => {
+                        res.status(400).send(util.returnMessaging(path, 'Error finding team', err));
+                    })
+                }
+            }, (err) => {
+                res.status(500).send(util.returnMessaging(path, 'Error querying teams!', err));
+            })
+            //delete old team???
+            //save a new instance of the renamed team
+    } else {
+        //team name was not modified; edit the properties we received.
+        Team.findOne({
+            teamName_lower: team
+        }).then((foundTeam) => {
+            if (foundTeam) {
+
+                // check the paylaod and update the found team if the foundTeam property if it existed on the payload
+                if (util.returnBoolByPath(payload, 'lookingForMore')) {
+                    foundTeam.lookingForMore = payload.lookingForMore;
+                }
+
+                if (util.returnBoolByPath(payload, 'lfmDetails.availability')) {
+                    if (!util.returnBoolByPath(foundTeam, 'lfmDetails.availability')) {
+                        foundTeam.lfmDetails.availability = {};
+                    }
+                    foundTeam.lfmDetails.availability = payload.lfmDetails.availability;
+                }
+
+                if (util.returnBoolByPath(payload, 'lfmDetails.competitiveLevel')) {
+                    foundTeam.lfmDetails.competitiveLevel = payload.lfmDetails.competitiveLevel;
+                }
+
+                if (util.returnBoolByPath(payload, 'lfmDetails.descriptionOfTeam')) {
+                    foundTeam.lfmDetails.descriptionOfTeam = payload.lfmDetails.descriptionOfTeam;
+                }
+
+                if (util.returnBoolByPath(payload, 'lfmDetails.rolesNeeded')) {
+                    if (!util.returnBoolByPath(foundTeam, 'lfmDetails.rolesNeeded')) {
+                        foundTeam.lfmDetails.rolesNeeded = {};
+                    }
+                    foundTeam.lfmDetails.rolesNeeded = payload.lfmDetails.rolesNeeded;
+                }
+
+                if (util.returnBoolByPath(payload, 'lfmDetails.timeZone')) {
+                    foundTeam.lfmDetails.timeZone = payload.lfmDetails.timeZone;
+                }
+
+                foundTeam.save().then((savedTeam) => {
+                    var message = "";
+                    message += "Team updated!";
+                    res.status(200).send(util.returnMessaging(path, message, false, savedTeam));
+                }, (err) => {
+                    res.status(400).send(util.returnMessaging(path, 'Error saving team information', err));
+                });
+            } else {
+                res.status(400).send(util.returnMessaging(path, "Team not found"));
+            }
+        }, (err) => {
+            res.status(400).send(util.returnMessaging(path, 'Error finding team', err));
+        })
+
+    }
+});
+
 
 module.exports = router;

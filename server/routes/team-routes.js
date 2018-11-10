@@ -294,52 +294,45 @@ router.post('/save', passport.authenticate('jwt', {
     var payloadTeamName = req.body.teamName;
     var payload = req.body;
     payloadTeamName = payloadTeamName.toLowerCase();
-    Team.findOne({ teamName_lower: payloadTeamName }).then((foundTeam) => {
+    //team name was not modified; edit the properties we received.
+    Team.findOne({
+        teamName_lower: team
+    }).then((foundTeam) => {
         if (foundTeam) {
             // this might be something to be changed later -
             var captainRec = false;
-            if (!util.isNullOrEmpty(payload.lookingForMore)) {
+            // check the paylaod and update the found team if the foundTeam property if it existed on the payload
+            if (util.returnBoolByPath(payload, 'lookingForMore')) {
                 foundTeam.lookingForMore = payload.lookingForMore;
             }
 
-            if (!util.isNullorUndefined(payload.lfmDetails)) {
-
-                if (!util.isNullorUndefined(payload.lfmDetails.availability)) {
-                    if (!foundTeam.lfmDetails.availability) {
-                        foundTeam.lfmDetails.availability = {};
-                    }
-                    foundTeam.lfmDetails.availability = payload.lfmDetails.availability;
-
+            if (util.returnBoolByPath(payload, 'lfmDetails.availability')) {
+                if (!util.returnBoolByPath(foundTeam, 'lfmDetails.availability')) {
+                    foundTeam.lfmDetails.availability = {};
                 }
-
-
-                if (!util.isNullOrEmpty(payload.lfmDetails.competitiveLevel)) {
-                    foundTeam.lfmDetails.competitiveLevel = payload.lfmDetails.competitiveLevel;
-                }
-
-
-                if (!util.isNullOrEmpty(payload.lfmDetails.descriptionOfTeam)) {
-
-                    foundTeam.lfmDetails.descriptionOfTeam = payload.lfmDetails.descriptionOfTeam;
-
-                }
-
-
-                if (!util.isNullOrEmpty(payload.lfmDetails.rolesNeeded)) {
-
-                    if (!foundTeam.lfmDetails.rolesNeeded) {
-                        foundTeam.lfmDetails.rolesNeeded = {};
-                    }
-                    foundTeam.lfmDetails.rolesNeeded = payload.lfmDetails.rolesNeeded;
-                }
-
-
-                if (!util.isNullOrEmpty(payload.lfmDetails.timeZone)) {
-
-                    foundTeam.lfmDetails.timeZone = payload.lfmDetails.timeZone;
-                }
+                foundTeam.lfmDetails.availability = payload.lfmDetails.availability;
             }
-            if (!util.isNullOrEmpty(payload.captain)) {
+
+            if (util.returnBoolByPath(payload, 'lfmDetails.competitiveLevel')) {
+                foundTeam.lfmDetails.competitiveLevel = payload.lfmDetails.competitiveLevel;
+            }
+
+            if (util.returnBoolByPath(payload, 'lfmDetails.descriptionOfTeam')) {
+                foundTeam.lfmDetails.descriptionOfTeam = payload.lfmDetails.descriptionOfTeam;
+            }
+
+            if (util.returnBoolByPath(payload, 'lfmDetails.rolesNeeded')) {
+                if (!util.returnBoolByPath(foundTeam, 'lfmDetails.rolesNeeded')) {
+                    foundTeam.lfmDetails.rolesNeeded = {};
+                }
+                foundTeam.lfmDetails.rolesNeeded = payload.lfmDetails.rolesNeeded;
+            }
+
+            if (util.returnBoolByPath(payload, 'lfmDetails.timeZone')) {
+                foundTeam.lfmDetails.timeZone = payload.lfmDetails.timeZone;
+            }
+
+            if (util.returnBoolByPath(payload, 'captain')) {
                 //do stuff with this
                 //send message back, we won't allow this to change here.
                 captainRec = true;

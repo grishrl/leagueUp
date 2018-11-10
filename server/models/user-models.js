@@ -3,7 +3,6 @@ const Schema = mongoose.Schema;
 
 const miniTeamSchema = new Schema({
     "teamName": String, //form input added
-    "teamId": String,
     "isCaptain": Boolean
 });
 

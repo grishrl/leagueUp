@@ -1,14 +1,15 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { DialogOverviewExampleDialog } from '../profile-edit/profile-edit.component';
+import { ChangeCaptainModalComponent } from '../modal/change-captain-modal/change-captain-modal.component';
 import { TimezoneService } from '../services/timezone.service';
 import { TeamService } from '../services/team.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { merge } from 'lodash';
-import { Subscription } from 'rxjs';
 import { Team } from '../classes/team.class';
 import { AuthService } from '../services/auth.service';
 import { UserService } from '../services/user.service';
+import { AdminService } from '../services/admin.service';
 
 @Component({
   selector: 'app-team-profile',
@@ -17,13 +18,144 @@ import { UserService } from '../services/user.service';
 })
 export class TeamProfileComponent implements OnInit {
 
-  providedProfile: string;
-  @Input() set passedProfile(profile) {
-    if (profile != null && profile != undefined) {
-      this.providedProfile = profile;
+  //these properties are used for inputs
+  editOn: boolean = true;
+  teamName: string;
+  displayDivison: string = ""
+  returnedProfile = new Team(null, null, null, null, null, null, null, null, null);
+  filterUsers: any[] = []
+  tempProfile
+  message: string
+  showMe:boolean = true;
+
+  hlMedals = ['Grand Master', 'Master', 'Diamond', 'Platinum', 'Gold', 'Silver', 'Bronze'];
+  hlDivision = [1, 2, 3, 4, 5];
+  competitonLevel = [
+    { val: 1, display: 'Low' },
+    { val: 3, display: 'Medium' },
+    { val: 5, display: 'High' }
+  ]
+
+  //constructor
+  constructor(private auth: AuthService, private user: UserService, public timezone: TimezoneService, private team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router: Router,
+    private admin:AdminService) {
+    this.teamName = team.realTeamName(this.route.snapshot.params['id']);
+  }
+
+  //init implementation
+  ngOnInit() {
+    let getProfile: string;
+    console.log('typeof this.providedProfile: ', typeof this.providedProfile);
+    console.log('his.providedProfile: ', this.providedProfile);
+    if (this.providedProfile != null && this.providedProfile != undefined) {
+      if (typeof this.providedProfile == 'string') {
+        getProfile = this.providedProfile;
+        this.getTeamByString(getProfile);
+      } else {
+        merge(this.returnedProfile, this.providedProfile);
+        this.cleanUpDivision();
+      }
+    } else if (this.teamName) {
+      getProfile = this.teamName;
+      this.getTeamByString(getProfile);
     }
   }
 
+  //this boolean will keep up with wether the component is embedded in another or is acting as it's own standalone page
+  componentEmbedded: boolean = false;
+  //if this component is used in the admin view the team name can be changed, we most hold on to the old team name to update the proper object
+  orignalName:string = null;
+  
+  // this model change method will be bound to the name change input, so we can update the lower case name along with the display name
+  modelChange() {
+    console.log('model change');
+    console.log('this.returnedProfile.teamName ', this.returnedProfile.teamName);
+    console.log('this.returnedProfile.teamName_lower ', this.returnedProfile.teamName_lower);
+    if (this.returnedProfile.teamName != this.returnedProfile.teamName_lower) {
+      this.returnedProfile.teamName_lower = this.returnedProfile.teamName.toLowerCase();
+    }
+  }
+
+  //provided profile holds anything bound to the component when it's embedded
+  providedProfile: any;
+  //passedProfile binding for when this component is embedded
+  @Input() set passedProfile(profile) {
+    if (profile != null && profile != undefined) {
+      this.providedProfile = profile;
+      //if we received a profile; the component is embedded:
+      this.componentEmbedded = true;
+
+      this.editOn = false;
+      
+      this.ngOnInit();
+    }
+  }
+
+  //this method controls the opening of the change captain modal
+  openCaptainChangeDialog():void{
+    const changeCptDialogRef = this.dialog.open(ChangeCaptainModalComponent, {
+      width:'450px',
+      data:{members:this.returnedProfile.teamMembers, captain:this.returnedProfile.captain}
+    });
+
+    changeCptDialogRef.afterClosed().subscribe( result => {
+        if(result!=undefined&&result!=null){
+
+          this.team.changeCaptain(this.returnedProfile.teamName_lower,result).subscribe(
+            (res)=>{
+              this.auth.destroyCaptain();
+              this.ngOnInit();
+            },
+            (err)=>{
+              console.log(err)
+            }
+          )
+        }
+    });
+  }
+
+  //this method opens the admin change captain modal
+  openAdminCaptainChangeDialog():void{
+    const dialogRef = this.dialog.open(ChangeCaptainModalComponent, {
+      width: '450px',
+      data: { members: this.returnedProfile.teamMembers, captain: this.returnedProfile.captain }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result != null && result != undefined) {
+        this.admin.changeCaptain(this.returnedProfile.teamName_lower, result).subscribe((res) => {
+          this.returnedProfile = null;
+          this.returnedProfile = res;
+        }, (err) => {
+          console.log(err);
+        })
+      }
+    });
+  }
+
+  openAdminDeleteDialog():void{
+    const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+      width: '300px',
+      data: { confirm: this.confirm }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
+
+      if (result.toLowerCase() == 'delete') {
+
+        this.admin.deleteTeam(this.returnedProfile.teamName_lower).subscribe(
+          res => {
+            this.showMe = false;
+          }, err => {
+            console.log(err);
+          }
+        )
+      }
+    });
+  }
+
+  //this method constorls the opening of the delete team confirm modal
   confirm: string
   openDialog(): void {
 
@@ -51,36 +183,57 @@ export class TeamProfileComponent implements OnInit {
     });
   }
 
-  editOn: boolean = true;
-  teamName:string;
-  displayDivison:string=""
-  returnedProfile = new Team(null, null, null, null, null, null, null, null, null);
-  teamSub: Subscription;
-  filterUsers:any[]=[]
+  adminSave(){
+    if (this.validate()) {
+      this.editOn = true;
+      let cptRemoved = Object.assign({}, this.returnedProfile);
+      delete cptRemoved.captain;
+      this.admin.saveTeam(this.orignalName,this.returnedProfile).subscribe((res) => {
+        console.log('team was saved!');
+        this.orignalName = res.teamName_lower;
+        this.returnedProfile = res;
+      }, (err) => {
+        console.log(err);
+        alert(err.message);
+      });
+    } else {
+      //activate validator errors
+      console.log('the data was invalid')
+    }
+  }
 
-  hlMedals = ['Grand Master', 'Master', 'Diamond', 'Platinum', 'Gold', 'Silver', 'Bronze'];
-  hlDivision = [1, 2, 3, 4, 5];
-  competitonLevel = [
-    { val: 1, display: 'Low' },
-    { val: 3, display: 'Medium' },
-    { val: 5, display: 'High' }
-  ]
-  constructor(private auth: AuthService, private user:UserService, public timezone: TimezoneService, private team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router:Router) {
-    this.teamName = team.realTeamName(this.route.snapshot.params['id']);
-   }
-
+  //this method enables form inputs for changes
   openEdit(){
     this.editOn=false;
     this.tempProfile = Object.assign({}, this.returnedProfile);
   } 
 
-  tempProfile
+  //this method resets the profile back to pre-edit state and disables inputs for changes
   cancel() {
     this.returnedProfile = Object.assign({}, this.tempProfile);
     this.editOn = true;
   }
 
-  message:string
+  //this method checks that the inputs are valid and if so, saves the team object
+  save() {
+    if (this.validate()) {
+      this.editOn = true;
+      let cptRemoved = Object.assign({}, this.returnedProfile);
+      delete cptRemoved.captain;
+      this.team.saveTeam(cptRemoved).subscribe((res) => {
+        this.editOn = true;
+      }, (err) => {
+        console.log(err);
+        alert(err.message);
+      });
+    } else {
+      //activate validator errors
+      console.log('the data was invalid')
+    }
+
+  }
+
+  //method for inviting users to join this team
   invite(user) {
     if (this.returnedProfile.teamName && user) {
       this.team.addUser(user, this.returnedProfile.teamName_lower).subscribe(res => {
@@ -89,9 +242,23 @@ export class TeamProfileComponent implements OnInit {
         this.message = err.error.message;
       });
     }
-
   }
 
+  //method takes in the factors at hand to show the captain edit options or the admin edit options
+  showEditDialog(){
+    if(this.componentEmbedded){
+      return false;
+    }else{
+      var isteamcpt = false;
+      if (this.auth.getCaptain()) {
+        isteamcpt = this.auth.getUser() === this.returnedProfile.captain;
+      }
+      return isteamcpt;
+    }
+  }
+
+
+  //method hides or shows days based on whether the team is available or not, and shows all in edit mode.
   hideDay(editSwitch, dayAvailabilty): boolean {
     if (!editSwitch) {
       return false;
@@ -104,24 +271,8 @@ export class TeamProfileComponent implements OnInit {
     }
   }
 
-  save(){
-    if(this.validate()){
-      this.editOn = true;
-      let cptRemoved = Object.assign({}, this.returnedProfile);
-      delete cptRemoved.captain;
-      this.team.saveTeam(cptRemoved).subscribe((res) => {
-        this.editOn = true;
-      }, (err) => {
-        console.log(err);
-        alert(err.message);
-      });
-    }else{
-      //activate validator errors
-      console.log('the data was invalid')
-    }
 
-  }
-
+  //helper function of dubious helpfulness.
   isNullOrEmpty(dat): boolean {
     if (dat == null || dat == undefined) {
       return true;
@@ -145,6 +296,7 @@ export class TeamProfileComponent implements OnInit {
     }
   }
 
+  //method to validate the inputs we require.
   validate() {
     let valid = true;
 
@@ -176,37 +328,34 @@ export class TeamProfileComponent implements OnInit {
     return valid;
   }
 
-
-  ngOnInit() {
-    let getProfile: string;
-    if (this.providedProfile) {
-      getProfile = this.providedProfile;
-    } else if (this.teamName) {
-      getProfile = this.teamName;
-    }
-    this.teamSub = this.team.getTeam(getProfile).subscribe((res)=>{
+  //method to get team by provided string
+  private getTeamByString(getProfile: string) {
+    this.team.getTeam(getProfile).subscribe((res) => {
       merge(this.returnedProfile, res);
-      console.log('team ',this.returnedProfile)
-      if(this.returnedProfile.teamDivision){
-        this.displayDivison+="";
-
-        let divDisplay = this.returnedProfile.teamDivision.divisionName;
-        let char = divDisplay.charAt(0);
-        let capChar = char.toUpperCase();
-        divDisplay = divDisplay.replace(char, capChar);
-
-        this.displayDivison += divDisplay;
-        if (this.returnedProfile.teamDivision.coastalDivision){
-          this.displayDivison += " " + this.returnedProfile.teamDivision.coastalDivision.toUpperCase();
-        }
-      }
-      if (this.returnedProfile.teamMembers && this.returnedProfile.teamMembers.length>0){
-        this.returnedProfile.teamMembers.forEach(element=>{
-          this.filterUsers.push(element.displayName);
-        });
-      }
+      console.log('team ', this.returnedProfile);
+      this.cleanUpDivision();
     });
-  
+  }
+
+  //this method cleans up some things to make a pretty team display and creates some filtering for the invite member search
+  private cleanUpDivision() {
+    this.orignalName = this.returnedProfile.teamName_lower;
+    if (this.returnedProfile.teamDivision) {
+      this.displayDivison += "";
+      let divDisplay = this.returnedProfile.teamDivision.divisionName;
+      let char = divDisplay.charAt(0);
+      let capChar = char.toUpperCase();
+      divDisplay = divDisplay.replace(char, capChar);
+      this.displayDivison += divDisplay;
+      if (this.returnedProfile.teamDivision.coastalDivision) {
+        this.displayDivison += " " + this.returnedProfile.teamDivision.coastalDivision.toUpperCase();
+      }
+    }
+    if (this.returnedProfile.teamMembers && this.returnedProfile.teamMembers.length > 0) {
+      this.returnedProfile.teamMembers.forEach(element => {
+        this.filterUsers.push(element.displayName);
+      });
+    }
   }
 
 }

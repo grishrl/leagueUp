@@ -14,24 +14,56 @@ function scrubUser(username) {
 //accepts an array of users (those removed) and updates their object to be empty
 function clearUsersTeam(usersRemoved) {
     usersRemoved.forEach(function(user) {
-        User.findOne({
-            displayName: user.displayName
-        }).then((foundUser) => {
-            if (foundUser) {
-                foundUser.teamInfo = {};
-                foundUser.save().then((savedUser) => {
-                    console.log('need some persistent logging');
-                }, (err) => {
-                    console.log('need some persistent logging');
-                });
-            } else {
-                console.log('need some persistent logging');
-            }
-        }, (err) => {
-            console.log('need some persistent logging');
-        });
+        clearUserTeam(user);
     });
 }
+
+
+function clearUserTeam(user) {
+    User.findOne({
+        displayName: user.displayName
+    }).then((foundUser) => {
+        if (foundUser) {
+            foundUser.teamInfo = {};
+            foundUser.save().then((savedUser) => {
+                console.log('need some persistent logging');
+            }, (err) => {
+                console.log('need some persistent logging');
+            });
+        } else {
+            console.log('need some persistent logging');
+        }
+    }, (err) => {
+        console.log('need some persistent logging');
+    });
+}
+
+function upsertUsersTeam(users, team) {
+    users.forEach(function(user) {
+        upsertUserTeam(user, team);
+    });
+}
+
+function upsertUserTeam(user, team) {
+    User.findOne({
+        displayName: user.displayName
+    }).then((foundUser) => {
+        if (foundUser) {
+            foundUser.teamInfo = {};
+            foundUser.teamInfo['teamName'] = team;
+            foundUser.save().then((savedUser) => {
+                console.log('need some persistent logging');
+            }, (err) => {
+                console.log('need some persistent logging');
+            });
+        } else {
+            console.log('need some persistent logging');
+        }
+    }, (err) => {
+        console.log('need some persistent logging');
+    });
+}
+
 
 function toggleCaptain(user) {
     User.findOne({ displayName: user }).then((foundUser) => {
@@ -68,5 +100,6 @@ function toggleCaptain(user) {
 module.exports = {
     scrubUser: scrubUser,
     clearUsersTeam: clearUsersTeam,
+    upsertUsersTeam: upsertUsersTeam,
     toggleCaptain: toggleCaptain
 }

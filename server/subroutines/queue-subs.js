@@ -50,9 +50,27 @@ function addToPendingTeamMemberQueue(teamLower, user) {
     }
 }
 
+function updatePendingMembersTeamNameChange(teamnameOld, teamnameNew) {
+    Admin.PendingQueue.find({ teamName: teamnameOld }).then((foundQueue) => {
+        if (foundQueue && foundQueue.length > 0) {
+            foundQueue.forEach(queue => {
+                queue.teamName = teamnameNew;
+                queue.save().then((saved) => {
+                    console.log('pending queue team name updated');
+                }, (err) => {
+                    console.log('err');
+                });
+            })
+        }
+    }, (err) => {
+        console.log('error');
+    })
+}
+
 module.exports = {
     removePendingQueue: cleanUpPendingQueue,
     removePendingByTeamAndUser: cleanUpPendingQueueTeamnameUsername,
     addToPendingTeamMemberQueue: addToPendingTeamMemberQueue,
-    removePendingQueueByUsername: removePendingQueueByUsername
+    removePendingQueueByUsername: removePendingQueueByUsername,
+    updatePendingMembersTeamNameChange: updatePendingMembersTeamNameChange
 }

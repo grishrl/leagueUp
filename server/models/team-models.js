@@ -21,7 +21,6 @@ const lfmSchema = new Schema({
 
 
 const teamSchema = new Schema({
-    "teamId": String,
     "logo": String,
     "teamName": String, //added to display form 
     "teamName_lower": String, //added so we can do case insensitive searching
