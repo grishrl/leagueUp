@@ -2,6 +2,35 @@ const util = require('../utils');
 const Team = require('../models/team-models');
 const User = require('../models/user-models');
 
+//subroutine to update teams division
+function upsertTeamsDivision(teams, division) {
+    teams.forEach(team => {
+        upsertTeamDivision(team, division);
+    });
+}
+
+function upsertTeamDivision(team, division) {
+    let fteam;
+    if (typeof team == 'object') {
+        fteam = team.teamName_lower.toLowerCase();
+    } else {
+        fteam = team.toLowerCase();
+    }
+
+    Team.findOne({ teamName_lower: fteam }).then((foundTeam) => {
+        if (foundTeam) {
+            foundTeam.teamDivision = {};
+            foundTeam.teamDivision = division;
+            foundTeam.save((success) => {
+                console.log('team division updated');
+            }, (err) => {
+                console.log('team saving error');
+            })
+        }
+    }, (err) => {
+        console.log('found team error')
+    })
+}
 
 //subroutine to update a teams average mmr, this will run when it is passed a team and a Provided MMR
 function updateTeamMmr(team) {
@@ -121,5 +150,6 @@ function scrubUserFromTeams(username) {
 module.exports = {
     updateTeamMmr: updateTeamMmr,
     removeUser: removeUser,
-    scrubUserFromTeams: scrubUserFromTeams
+    scrubUserFromTeams: scrubUserFromTeams,
+    upsertTeamsDivision: upsertTeamsDivision
 }

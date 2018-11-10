@@ -2,7 +2,7 @@ const Division = require('../models/division-models');
 const util = require('../utils');
 
 function updateTeamNameDivision(oldteamName, newteamName) {
-    Division.findOne({ 'teams.teamName': oldteamName }).then((foundDiv) => {
+    Division.findOne({ 'teams': oldteamName }).then((foundDiv) => {
         if (foundDiv) {
             foundDiv.teams.forEach(team => {
                 if (team == oldteamName) {

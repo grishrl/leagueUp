@@ -7,6 +7,7 @@ const teamRoutes = require('./routes/team-routes');
 const adminRoutes = require('./routes/admin-routes');
 const adminTeam = require('./routes/admin-team');
 const adminUser = require('./routes/admin-user');
+const adminDivision = require('./routes/admin-division');
 const profileRoutes = require('./routes/profile-routes');
 const divisionRoutes = require('./routes/division-routes');
 const outreachRoutes = require('./routes/outreach-routes');
@@ -70,7 +71,9 @@ app.use('/division', divisionRoutes);
 app.use('/search', searchRoutes);
 app.use('/outreach', outreachRoutes);
 app.use('/admin', adminTeam);
+app.use('/admin', adminDivision);
 app.use('/admin', adminUser);
+
 
 
 //listen for request on port 3000, and as a callback function have the port listened on logged

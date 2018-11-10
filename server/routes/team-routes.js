@@ -53,6 +53,34 @@ router.get('/get', (req, res) => {
     );
 });
 
+//get
+// path: /team/get
+// URI query param - team
+// finds team of passed team name
+// returns found team
+router.post('/getTeams', (req, res) => {
+    const path = '/team/get';
+    var teams = req.body.teams;
+
+    teams.forEach(element => {
+        element = element.toLowerCase();
+    });
+
+    Team.find({
+        teamName_lower: { $in: teams }
+    }).lean().then(
+        (foundTeams) => {
+            if (foundTeams && foundTeams.length > 0) {
+                res.status(200).send(util.returnMessaging(path, 'Found tedam', false, foundTeams));
+            } else {
+                res.status(200).send(util.returnMessaging(path, "Team not found", false, foundTeams));
+            }
+        }, (err) => {
+            res.status(500).send(util.returnMessaging(path, "Error querying teams.", err));
+        }
+    );
+});
+
 // post
 // path /team/delete
 // accpets JSON body, must have teamName:""

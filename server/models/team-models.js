@@ -7,8 +7,8 @@ const miniUser = new Schema({
 });
 
 const division = new Schema({
-    "divisionName": String,
-    "coastalDivision": String
+    "displayName": String,
+    "divisionConcat": String
 });
 
 const lfmSchema = new Schema({

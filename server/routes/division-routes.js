@@ -1,38 +1,24 @@
 const util = require('../utils');
 const router = require('express').Router();
+const Division = require('../models/division-models');
 const User = require("../models/user-models");
 const Team = require("../models/team-models");
 const passport = require("passport");
 
-//return to client teams by division
+
+// this API returns a division according to the recieved division name
 router.get('/get', (req, res) => {
     const path = '/division/get';
     var divisionName = req.query.division;
-    var coastalDivison = req.query.coast;
-    if (util.isNullOrEmpty(coastalDivison)) {
-        Team.find({ "teamDivision.divisionName": divisionName }).exec().then((found) => {
-            if (found && found.length > 0) {
-                res.status(200).send(util.returnMessaging(path, "Found teams!", false, found));
-            } else {
-                res.status(200).send(util.returnMessaging(path, "No teams found for division " + divisionName));
-            }
-        }, (err) => {
-            res.status(500).send(util.returnMessaging(path, "Error finding teams", err));
-        });
-    } else {
-        Team.find({
-            "teamDivision.divisionName": divisionName,
-            "teamDivision.divisionCoast": coastalDivison
-        }).then((found) => {
-            if (found && found.length > 0) {
-                res.status(200).send(util.returnMessaging(path, "Found teams!", false, found));
-            } else {
-                res.status(200).send(util.returnMessaging(path, "No teams found for division " + divisionName));
-            }
-        }, (err) => {
-            res.status(500).send(util.returnMessaging(path, "Error finding teams", err));
-        });
-    }
+    console.log('divisionName ', divisionName);
+    Division.findOne({
+        divisionConcat: divisionName
+    }).then((foundDiv) => {
+        res.status(200).send(util.returnMessaging(path, 'Return division info.', false, foundDiv));
+    }, (err) => {
+        res.status(500).send(util.returnMessaging(path, 'Error finding division.', err));
+    });
 });
+
 
 module.exports = router;

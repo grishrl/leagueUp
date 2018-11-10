@@ -1,12 +1,18 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const divisionSchema = new Schema({
-    "divisionId": String,
+const divisionInfoSchema = new Schema({
+    "sorting": Number,
+    "displayName": String,
     "divisionName": String,
+    "divisionCoast": String,
+    "divisionConcat": String,
+    "maxMMR": Number,
+    "minMMR": Number,
     "teams": [String]
 });
 
-const Divison = mongoose.model('division', divisionSchema);
 
-module.exports = Divison;
+const Division = mongoose.model('division', divisionInfoSchema);
+
+module.exports = Division;
