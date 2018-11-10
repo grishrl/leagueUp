@@ -43,6 +43,19 @@ export class AdminService {
     )
   }
 
+  saveTeam(teamName, teamObj){
+    let url = 'http://localhost:3000/admin/teamSave';
+    let payload = {
+      "teamName": teamName.toLowerCase(),
+      "teamObj":teamObj
+    }
+    return this.http.post(url, payload).pipe(
+      map( res => {
+        return res['returnObject'];
+      })
+    )
+  }
+
   changeCaptain(team, user){
     let url = 'http://localhost:3000/admin/reassignCaptain';
     let payload = { teamName: team, userName: user};
@@ -54,5 +67,7 @@ export class AdminService {
       )
     )
   }
+
+  
 
 }

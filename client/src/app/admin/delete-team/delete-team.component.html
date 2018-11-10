@@ -3,7 +3,7 @@
         <div class="col">
             <div class="row">
                 <div class="col">
-                    <app-team-search (teamSelected)="receiveTeam($event)" [buttonText]="'Select Team For Delete'"></app-team-search>
+                    <app-team-search (teamSelected)="receiveTeam($event)" [buttonText]="'Select Team For Management'"></app-team-search>
                 </div>
                 <div class="col">
                     <div class="row" *ngIf="turnOnForm">
@@ -12,7 +12,7 @@
                 </div>
             </div>
             <div *ngIf="turnOnForm">
-                <div class="row">
+                <!-- <div class="row">
                     <div class="col">
                         <button class="btn btn-warning" type="button" (click)="openChangeCaptainDialog()">
                             <span class="icon-align"><i class="material-icons">cached</i>Change captain</span>
@@ -30,7 +30,7 @@
                         </span>
                         </button>
                     </div>
-                </div>
+                </div> -->
                 <div class="row">
                     <div class="col">
                         <app-team-profile [passedProfile]="recievedProfile"></app-team-profile>

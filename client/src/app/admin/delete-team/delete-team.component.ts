@@ -20,13 +20,8 @@ export class DeleteTeamComponent implements OnInit {
 
   receiveTeam(userRec) {
     if (userRec != null && userRec != undefined) {
-      
       this.turnOnForm = true;
-      // this.recievedProfile = userRec;
-      this.team.getTeam(userRec).subscribe( reply=>{
-        this.pulledProfile = reply;
-        this.recievedProfile = reply;
-      } );
+      this.recievedProfile = userRec;
     }
   }
 
