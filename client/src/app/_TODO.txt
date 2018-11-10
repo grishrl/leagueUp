@@ -69,4 +69,4 @@ product:
 >standings ... add the w/l to teams? < where to put theseeeee
 
 
-11/8 Goals > delete team for client and admin, reassign team captain
+NEXT: Add match scheduler to create matches against teams
