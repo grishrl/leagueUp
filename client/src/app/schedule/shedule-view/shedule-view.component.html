@@ -1,0 +1,45 @@
+<div class="container pt-4">
+    <div class="row">
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <mat-form-field>
+                        <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="calculateRounds()">
+                            <mat-option *ngFor="let division of divisions; let i = index" [value]="division">{{division.displayName}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-form-field>
+                        <mat-select placeholder="Round:" [(ngModel)]="selectedRound" (ngModelChange)="getMatches()">
+                            <mat-option *ngFor="let round of rounds; let i = index" [value]="round">{{round}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div *ngIf="matches.length>0">
+                <div class="row">
+                    <div class="col">
+                        <h2>Matches</h2>
+                    </div>
+                </div>
+                <div class="row" *ngFor="let match of matches">
+                    <div class="col">
+                        <div *ngIf="match.hometeamName">{{match.hometeamName}}</div>
+                    </div>
+                    <div class="col">
+                        - VS -
+                    </div>
+                    <div class="col">
+                        <div *ngIf="match.awayteamName; else bye">{{match.awayteamName}}</div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<ng-template #bye>
+    BYE
+</ng-template>

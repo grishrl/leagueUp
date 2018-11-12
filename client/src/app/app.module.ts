@@ -39,6 +39,8 @@ import { DivisionManagementComponent } from './admin/division-management/divisio
 import { AddTeamComponent } from './admin/division-management/add-team/add-team.component';
 import { DivisionPropsComponent } from './admin/division-management/division-props/division-props.component';
 import { RemoveTeamComponent } from './admin/division-management/remove-team/remove-team.component';
+import { SheduleViewComponent } from './schedule/shedule-view/shedule-view.component';
+import { MatchScheduleComponent } from './schedule/match-schedule/match-schedule.component';
 
 
 @NgModule({
@@ -74,7 +76,9 @@ import { RemoveTeamComponent } from './admin/division-management/remove-team/rem
     DivisionManagementComponent,
     AddTeamComponent,
     DivisionPropsComponent,
-    RemoveTeamComponent
+    RemoveTeamComponent,
+    SheduleViewComponent,
+    MatchScheduleComponent
   ],
   entryComponents:[
     DialogOverviewExampleDialog,

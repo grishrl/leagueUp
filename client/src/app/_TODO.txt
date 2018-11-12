@@ -10,6 +10,9 @@ user
 >Looking for team
 >collect discord userid?
 
+division:
+Create / delete divisions
+
 team
 >looking for users
 >disable invite button after it its clicked so that someone invited can not be invited mutliple times;
