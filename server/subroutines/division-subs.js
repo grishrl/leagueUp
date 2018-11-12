@@ -18,6 +18,8 @@ function updateTeamNameDivision(oldteamName, newteamName) {
     }, (err) => { console.log('Error finding div') })
 }
 
+
+
 module.exports = {
     updateTeamNameDivision: updateTeamNameDivision
 }
