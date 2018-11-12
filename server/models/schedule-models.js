@@ -77,6 +77,6 @@ const matchSchema = new Schema({
 }]
 */
 
-const Scheduling = mongoose.model('scheduling', matchSchema);
+const Scheduling = mongoose.model('schedule', matchSchema);
 
 module.exports = Scheduling;

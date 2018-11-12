@@ -11,6 +11,7 @@ const adminDivision = require('./routes/admin-division');
 const profileRoutes = require('./routes/profile-routes');
 const divisionRoutes = require('./routes/division-routes');
 const outreachRoutes = require('./routes/outreach-routes');
+const scheduleRoutes = require('./routes/schedule-routes');
 const path = require('path');
 const passportSetup = require('./configs/passport-setup');
 const mongoose = require('mongoose');
@@ -73,6 +74,7 @@ app.use('/outreach', outreachRoutes);
 app.use('/admin', adminTeam);
 app.use('/admin', adminDivision);
 app.use('/admin', adminUser);
+app.use('/schedule', scheduleRoutes);
 
 
 
@@ -108,3 +110,6 @@ app.use('/', express.static(path.join(__dirname + '/../client/dist/client/')));
 app.get('*', function(req, res) {
     res.sendFile(path.join(__dirname, '/../client/dist/client/index.html'));
 });
+
+// const sched = require('./subroutines/schedule-subs');
+// sched.generateRoundRobinSchedule(6);

@@ -1,6 +1,7 @@
 const Team = require('../models/team-models');
 const Division = require('../models/division-models');
 const Scheduling = require('../models/schedule-models');
+const uniqid = require('uniqid');
 const swiss = require('swiss-pairing')({
     maxPerRound: 2
 });
@@ -77,24 +78,34 @@ async function generateSeason(season) {
     });
 }
 
+//this method generates a particular round of a tournament with the swiss system
+//NOTE - the matches must be reported, regardless of outcome in order for the swiss
+//to properly generate a schedule!
 function generateRoundSchedules(season, round) {
     Scheduling.findOne({ "season": season }).then((found) => {
         let divisions = found.division;
         let keys = Object.keys(divisions);
+        //get data from the found object
         for (var i = 0; i < keys.length; i++) {
             let key = keys[i];
+            //get data should be of a divsison
             let participants = divisions[key].participants;
             let matches = divisions[key].matches;
+            let roundSchedules = divisions[key].roundSchedules;
             let schedule = swiss.getMatchups(round, participants, matches);
-            let pathString = 'division.' + key + '.roundSchedules';
+            //if a schedule was generated, save it to the round schedules
             if (schedule.length > 0) {
-                if (!util.returnBoolByPath(found, pathString)) {
-                    found['division'][key]['roundSchedules'] = {};
+                //if round schedles didn't exist on the object before, create it
+                if (roundSchedules == undefined || roundSchedules == null) {
+                    divisions[key].roundSchedules = {};
+                    roundSchedules = divisions[key].roundSchedules;
                 }
                 round = round.toString();
-                found['division'][key]['roundSchedules'][round] = schedule;
+                roundSchedules[round] = schedule;
             }
         }
+
+        //save the schedule object.
         found.markModified('division');
         found.save().then((saved) => {
             console.log('fin  schedules');
@@ -103,6 +114,73 @@ function generateRoundSchedules(season, round) {
         })
     });
 }
+
+//this method generates a round robin schedule using the swiss generator: 
+//instead of generating log 2 N rounds with match results to bracketize
+//we generate the N-1 rounds, and keep up with matches, regardless of wins so that we dont rematch
+
+function generateRoundRobinSchedule(season) {
+    Scheduling.findOne({
+        "season": season
+    }).then((found) => {
+        let divisions = found.division;
+        let keys = Object.keys(divisions);
+        //get some data from our found object of
+        for (var i = 0; i < keys.length; i++) {
+            let key = keys[i];
+            //get data from the property - should be a division name:
+            let participants = divisions[key].participants;
+            //variable of rounds to generate, will be N - 1;
+            let rounds = participants.length - 1;
+            let roundSchedules = divisions[key].roundSchedules;
+            let matches = divisions[key].matches;
+            //loop through and create the required number of rounds
+            for (var j = 0; j < rounds; j++) {
+                let round = j + 1;
+                let schedule = swiss.getMatchups(round, participants, matches);
+                //once a round has been generated, add to the matches parameter, 
+                //this way we can ensure that no teams are rematched.
+                schedule.forEach(match => {
+                    let matchObj = {
+                        "round": round,
+                        home: {
+                            id: match.home
+                        },
+                        away: {
+                            id: match.away
+                        }
+                    }
+                    matches.push(matchObj);
+                });
+                //if a schedule was generated, add it to the round schedules
+                if (schedule.length > 0) {
+                    schedule.forEach(match => {
+                        match.matchId = uniqid();
+                    });
+                    //if round schedules didnt exist on the object, create it
+                    if (roundSchedules == undefined || roundSchedules == null) {
+                        divisions[key].roundSchedules = {};
+                        roundSchedules = divisions[key].roundSchedules;
+                    }
+                    round = round.toString();
+                    roundSchedules[round] = schedule;
+                }
+            }
+        }
+        //save the schedule
+        found.markModified('division');
+        found.save().then((saved) => {
+            console.log('fin  schedules');
+        }, (err) => {
+            console.log('ERROR : ', err);
+        })
+    });
+}
+
+/*
+Need to generate 3 rounds ahead of time, then add those to the matches - no score reported
+So that we can generate further schedules without having rematches occur.
+*/
 
 function disbandTeam(season, division, team) {
     //TODO implement
@@ -216,5 +294,6 @@ function reportMatches(season, division, team, round, result) {
 module.exports = {
     generateSeason: generateSeason,
     generateRoundSchedules: generateRoundSchedules,
-    reportMatches: reportMatches
+    reportMatches: reportMatches,
+    generateRoundRobinSchedule: generateRoundRobinSchedule
 };

@@ -3,6 +3,8 @@ const onePerRound = require('swiss-pairing')({
 })
 const twoPerRound = require('swiss-pairing')({ maxPerRound: 2 });
 
+console.log(Date.now());
+
 var odd = {
     participants: [{
             id: 1,
@@ -40,52 +42,61 @@ var even = {
             seed: 800
         }
     ],
-    matches: [{
-            round: 1,
-            home: {
-                id: 'ID 3',
-                points: 1
-            },
-            away: {
-                id: 'ID 4',
-                points: 0
-            }
-        },
-        {
-            round: 1,
-            home: {
-                id: 'ID 1',
-                points: 0
-            },
-            away: {
-                id: 'ID 2',
-                points: 1
-            }
-        },
-        {
-            round: 2,
-            home: {
-                id: 'ID 3',
-                points: 1
-            },
-            away: {
-                id: 'ID 2',
-                points: 0
-            }
-        },
-        {
-            round: 2,
-            home: {
-                id: 'ID 4',
-                points: 0
-            },
-            away: {
-                id: 'ID 1',
-                points: 1
-            }
-        },
-    ]
+    matches: []
 }
+
+var round1 = twoPerRound.getMatchups(1, even.participants, even.matches);
+round1.forEach(match => {
+    let matchObj = {
+        round: 1,
+        home: {
+            id: match.home,
+            points: 2
+        },
+        away: {
+            id: match.away,
+            points: 0
+        }
+    }
+    even.matches.push(matchObj);
+});
+console.log(JSON.stringify(even.matches));
+console.log(JSON.stringify(twoPerRound.getStandings(2, even.participants, even.matches)));
+var round2 = twoPerRound.getMatchups(2, even.participants, even.matches);
+round2.forEach(match => {
+    let matchObj = {
+        round: 2,
+        home: {
+            id: match.home,
+            points: 2
+        },
+        away: {
+            id: match.away,
+            points: 0
+        }
+    }
+    even.matches.push(matchObj);
+});
+console.log(JSON.stringify(twoPerRound.getStandings(3, even.participants, even.matches)));
+// var round3 = twoPerRound.getMatchups(3, even.participants, even.matches);
+// round3.forEach(match => {
+//     let matchObj = {
+//         round: 1,
+//         home: {
+//             id: match.home
+//         },
+//         away: {
+//             id: match.away
+//         }
+//     }
+//     even.matches.push(matchObj);
+// });
+
+
+console.log(JSON.stringify(round1));
+console.log(JSON.stringify(round2));
+
+// console.log(JSON.stringify(round3));
 
 var byeTest = {
     participants: [{
@@ -437,7 +448,7 @@ var evenMatchups = onePerRound.getMatchups(3, even.participants, even.matches)
 //console.log(JSON.stringify(twoPerRound.getStandings(2, byeTest.participants, byeTest.matches)))
 
 var byeMatchups = twoPerRound.getMatchups(3, byeTest.participants, byeTest.matches)
-console.log(JSON.stringify(byeMatchups));
+    //console.log(JSON.stringify(byeMatchups));
 
 if (Object.entries(oddModifiedMedian).length !== 3) {
     throw new Error('getModifiedMedian incorrect for odd data')
