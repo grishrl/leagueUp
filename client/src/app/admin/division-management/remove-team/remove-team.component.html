@@ -1,0 +1,32 @@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <div class="example-container">
+                        <h5>Select division to modify:</h5>
+                        <mat-form-field>
+                            <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="selected(selectedDivision)">
+                                <mat-option *ngFor="let division of divisions; let i = index" [value]="division">{{division.displayName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+            <div class="row" *ngIf="selectedDiv">
+                <div class="col">
+                    <div class="row finger p-2" [ngClass]="{'border border-info bg-info text-white': isSelected(team)}" (click)="teamSelected(team)" *ngFor="let team of selectedDiv.teams">
+                        <div class="col">
+                            {{team}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col">
+                    <button type="button" (click)="removeTeams()" class="btn btn-danger">Remove Selected Teams</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

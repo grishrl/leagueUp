@@ -36,6 +36,9 @@ import { TeamSearchComponent } from './team-search/team-search.component';
 import { ChangeCaptainModalComponent } from './modal/change-captain-modal/change-captain-modal.component';
 import { ChangeCaptainComponent } from './admin/change-captain/change-captain.component';
 import { DivisionManagementComponent } from './admin/division-management/division-management.component';
+import { AddTeamComponent } from './admin/division-management/add-team/add-team.component';
+import { DivisionPropsComponent } from './admin/division-management/division-props/division-props.component';
+import { RemoveTeamComponent } from './admin/division-management/remove-team/remove-team.component';
 
 
 @NgModule({
@@ -68,7 +71,10 @@ import { DivisionManagementComponent } from './admin/division-management/divisio
     TeamSearchComponent,
     ChangeCaptainModalComponent,
     ChangeCaptainComponent,
-    DivisionManagementComponent
+    DivisionManagementComponent,
+    AddTeamComponent,
+    DivisionPropsComponent,
+    RemoveTeamComponent
   ],
   entryComponents:[
     DialogOverviewExampleDialog,

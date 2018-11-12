@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -20,12 +21,41 @@ export class AdminService {
     )
   }
 
+
+  saveDivisionEdits(divname, divobj){
+  let url = "http://localhost:3000/admin/upsertDivision";
+  let payload = {
+    "divObj": divobj,
+    "divName":divname
+  };
+  return this.http.post(url, payload).pipe(
+    map( res=>{
+      return res['returnObject'];
+    })
+  )
+  }
+
   divisionTeam( teamArr, divisionName){
     let url ="http://localhost:3000/admin/divisionTeams";
     let payload = {
       teamInfo:teamArr,
       divisionName:divisionName
     };
+    return this.http.post(url, payload).pipe(
+      map(
+        res=>{
+          return res['returnObject'];
+        }
+      )
+    )
+  }
+
+  removeTeams(teamArr, divName){
+    let url = 'http://localhost:3000/admin/removeTeams';
+    let payload = {
+      "teams":teamArr,
+      "divName":divName
+    }
     return this.http.post(url, payload).pipe(
       map(
         res=>{
@@ -52,7 +82,6 @@ export class AdminService {
         return divisionArr;
       })
     )
-
   }
 
   queuePost(answer){

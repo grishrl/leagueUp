@@ -1,0 +1,56 @@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <div class="example-container">
+                        <h5>Select division to modify:</h5>
+                        <mat-form-field>
+                            <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="selected(selectedDivision)">
+                                <mat-option *ngFor="let division of divisions; let i = index" [value]="division">{{division.displayName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="editDivision">
+                <div class="row">
+                    <div class="col">
+                        <div class="example-container">
+                            <mat-form-field>
+                                <input matInput placeholder="Display Name" [(ngModel)]="editDivision.displayName">
+                            </mat-form-field>
+                            <mat-form-field>
+                                <input matInput placeholder="Division Name" [(ngModel)]="editDivision.divisionName" (ngModelChange)="calculateNewConcat()">
+                            </mat-form-field>
+                            <mat-form-field>
+                                <input matInput placeholder="Division Coast" [(ngModel)]="editDivision.divisionCoast" (ngModelChange)="calculateNewConcat()">
+                            </mat-form-field>
+                            <mat-form-field>
+                                <input matInput placeholder="Division Concat (System Reference)" [(ngModel)]="editDivision.divisionConcat" disabled="true">
+                            </mat-form-field>
+                            <mat-form-field>
+                                <input matInput placeholder="Sorting" [(ngModel)]="editDivision.sorting">
+                            </mat-form-field>
+                            <mat-form-field>
+                                <input matInput placeholder="Max MMR" [(ngModel)]="editDivision.maxMMR">
+                            </mat-form-field>
+                            <mat-form-field>
+                                <input matInput placeholder="Min MMR" [(ngModel)]="editDivision.minMMR">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <button class="btn btn-danger" (click)="revert()">Cancel Changes</button>
+                    </div>
+                    <div class="col">
+                        <button class="btn btn-success" (click)="save(editDivision)">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
