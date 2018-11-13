@@ -22,9 +22,58 @@ export class ScheduleService {
       }
     ) )
 
+  };
+
+  getTeamSchedules(season, team, division){
+    let url = 'http://localhost:3000/schedule/getTeamMatches';
+    team = team.toLowerCase();
+    let payload = {
+      'season':season,
+      'team':team,
+      'division':division
+    };
+    return this.http.post(url, payload).pipe(map(
+      res=>{
+        return res['returnObject'];
+      }
+    ));
   }
 
-  scheduleMatchTime(){
-    
+  getMatchInfo(season, matchId){
+    let url ="http://localhost:3000/schedule/getMatch";
+    let payload={
+      "season":season,
+      "matchId":matchId
+    }
+    return this.http.post(url, payload).pipe(
+      map(
+        res=>{
+          return res['returnObject'];
+        }
+      )
+    )
+  }
+
+  scheduleMatchTime(season, teams, division, round, matchId, scheduledStartTime){
+    let url = 'http://localhost:3000/schedule/setMatchTime';
+
+    teams.forEach(element => {
+      element = element.toLowerCase();
+    });
+    let payload = {
+      "season":season,
+      "teams":teams,
+      "division":division,
+      "round":round,
+      "matchId":matchId,
+      "scheduledStartTime": scheduledStartTime
+    }
+
+    return this.http.post(url, payload).pipe( map(
+      res=>{
+        return res['returnObject'];
+      }
+    ))
+
   }
 }
