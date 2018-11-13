@@ -16,6 +16,8 @@ import { DeleteMemberComponent } from "./admin/delete-member/delete-member.compo
 import { DeleteTeamComponent } from "./admin/delete-team/delete-team.component";
 import { DivisionManagementComponent } from "./admin/division-management/division-management.component";
 import { SheduleViewComponent } from "./schedule/shedule-view/shedule-view.component";
+import { MatchScheduleComponent } from "./schedule/match-schedule/match-schedule.component";
+import { TeamScheduleComponent } from "./schedule/team-schedule/team-schedule.component";
 
 const APP_ROUTES: Routes = [
   { path: 'directory', component: DirectoryComponent},
@@ -34,7 +36,9 @@ const APP_ROUTES: Routes = [
   { path: '_admin/deleteUser', component:DeleteMemberComponent },
   { path: '_admin/manageTeam', component:DeleteTeamComponent },
   { path: '_admin/divisionMgmt', component:DivisionManagementComponent },
-  { path: 'schedule' , component:SheduleViewComponent}
+  { path: 'schedule' , component:SheduleViewComponent},
+  {path: 'schedule/scheduleMatch/:id', component:MatchScheduleComponent},
+  {path: 'schedule/teamSchedule', component:TeamScheduleComponent}
 ]
 
 @NgModule({

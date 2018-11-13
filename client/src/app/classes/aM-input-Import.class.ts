@@ -14,6 +14,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatRadioModule } from '@angular/material';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatNativeDateModule } from '@angular/material';
 
 
 
@@ -21,11 +22,11 @@ import { MatTabsModule } from '@angular/material/tabs';
   imports: [MatInputModule, MatFormFieldModule, MatCheckboxModule, MatSelectModule, 
     MatSliderModule, MatDatepickerModule, MatGridListModule, MatSlideToggleModule, 
     MatButtonModule, MatCardModule, MatExpansionModule, MatAutocompleteModule, MatDialogModule,
-    MatRadioModule, MatTabsModule],
+    MatRadioModule, MatTabsModule , MatNativeDateModule],
   exports: [MatInputModule, MatFormFieldModule, MatCheckboxModule, MatSelectModule, 
     MatSliderModule, MatDatepickerModule, MatGridListModule, MatSlideToggleModule, 
     MatButtonModule, MatCardModule, MatExpansionModule, MatAutocompleteModule, MatDialogModule,
-    MatRadioModule, MatTabsModule]
+    MatRadioModule, MatTabsModule, MatNativeDateModule]
 })
 
 export class InputFormMaterial{

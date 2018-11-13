@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { ScheduleService } from 'src/app/services/schedule.service';
+
 
 @Component({
   selector: 'app-match-schedule',
@@ -7,9 +10,70 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MatchScheduleComponent implements OnInit {
 
-  constructor() { }
+  matchId
+  constructor(private route: ActivatedRoute, private scheduleService:ScheduleService) {
+    this.matchId = this.route.snapshot.params['id'];
+   }
 
+  times:any[]=[];
+
+  match:any
   ngOnInit() {
+    this.scheduleService.getMatchInfo(6, this.matchId).subscribe(
+      res=>{ 
+        console.log(res);
+        this.match = res;
+       },
+      err=>{ console.log(err) }
+    )
+    for(let i=1; i < 13; i++){
+      for(let j=0;j<=3;j++){
+        let min:any = j*15;
+        if(min==0){
+          min = '00';
+        }
+        let time = i+":"+min;
+        this.times.push(time);
+      }
+    }
   }
+
+  mydate = new Date();
+  time:any
+  suffix:any
+
+  saveSched(){
+    console.log(this.mydate);
+    let years = this.mydate.getFullYear();
+    let month = this.mydate.getMonth();
+    let day = this.mydate.getDate();
+
+    let colonSplit = this.time.split(':');
+    colonSplit[1]=parseInt(colonSplit[1]);
+    if(this.suffix == 'PM'){
+      colonSplit[0] = parseInt(colonSplit[0]);
+      colonSplit[0]+=12;
+    }
+    console.log(colonSplit);
+    let setDate = new Date();
+    setDate.setFullYear(years);
+    setDate.setMonth(month);
+    setDate.setDate(day);
+    setDate.setHours(colonSplit[0]);
+    setDate.setMinutes(colonSplit[1]);
+    let msDate = setDate.getTime();
+    this.scheduleService.scheduleMatchTime(6,[this.match.hometeamName, this.match.awayteamName],this.match.division, 
+      this.match.round ,this.match.matchId,msDate).subscribe(
+      res=>{
+        console.log('saved ',res);
+      },
+      err=>{
+        console.log(err)
+      }
+    )
+
+  }
+
+  amPm = ['PM', 'AM'];
 
 }

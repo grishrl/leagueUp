@@ -1,3 +1,10 @@
+
+REFOCUS ; what am i even doing now???
+Work on client flow > particularly in regards to scheduling screens, what is the flow? think it through
+
+scheduling -- cont.
+schedule matches -- cont.
+
 contentfulservice :
 >TRY TO REDUCE THE AMMOUNT OF CONTENTFUL REQUESTS MADE BY USING LOCAL STORAGE -- MAY REQUIRE SOME OBSERVABLE / PROMISE STATE MIXING TO PULL FROM LOCAL OR HTTP 
 >PAGINATION AND LIMITS + PULLING EXTRA ARTICLES 
@@ -16,9 +23,6 @@ Create / delete divisions
 team
 >looking for users
 >disable invite button after it its clicked so that someone invited can not be invited mutliple times;
-
-scheduling
->schedule matches
 
 reporting
 >report match outcomes
@@ -70,6 +74,3 @@ product:
 >need some persistnet logging to keep up with background notices.
 >need a queue of pending team adds for admins to Server .... or can I query teams with pending team adds ....
 >standings ... add the w/l to teams? < where to put theseeeee
-
-
-NEXT: Add match scheduler to create matches against teams

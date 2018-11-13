@@ -2,6 +2,50 @@
     <div class="row">
         <div class="col">
 
+            <div class="row" *ngIf="match">
+                <div class="col">
+                    <div *ngIf="match.hometeamName">{{match.hometeamName}}</div>
+                </div>
+                <div class="col">
+                    - VS -
+                </div>
+                <div class="col">
+                    <div *ngIf="match.awayteamName; else bye">{{match.awayteamName}}</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <mat-form-field>
+                        <input matInput [matDatepicker]="picker" placeholder="Choose a date" [(ngModel)]="mydate">
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-form-field>
+                        <mat-select placeholder="Start Time:" [(ngModel)]="time">
+                            <mat-option *ngFor="let time of times" [value]="time">
+                                {{time}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                        <mat-select placeholder="AM/PM:" [(ngModel)]="suffix">
+                            <mat-option *ngFor="let suffix of amPm" [value]="suffix">
+                                {{suffix}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <button type="button" class="btn btn-success" (click)="saveSched()">Save</button>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
