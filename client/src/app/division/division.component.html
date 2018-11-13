@@ -1,12 +1,35 @@
 <div id="myDiv" class="container">
+
     <div class="row">
-        <div class="col-10 mx-auto">
-            <div class="row">
-                <div class="col-md-12">
-                    <h2 class="text-center">{{divDisplay.displayName}} </h2>
-                </div>
-            </div>
-            <app-team-display [teams]="teams"></app-team-display>
+        <div class="col">
+            <mat-tab-group dynamicHeight>
+                <mat-tab label="Division">
+                    <div class="row">
+                        <div class="col-10 mx-auto">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h2 class="text-center">{{divDisplay.displayName}} </h2>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <app-team-display [teams]="teams"></app-team-display>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Shedule">
+
+                    <app-shedule-view [division]="divDisplay"></app-shedule-view>
+
+                </mat-tab>
+                <mat-tab label="Standings">
+
+                    <!-- TODO: Implement standings -->
+
+                </mat-tab>
+            </mat-tab-group>
         </div>
     </div>
 </div>

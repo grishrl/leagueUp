@@ -1,6 +1,7 @@
 
 REFOCUS ; what am i even doing now???
 Work on client flow > particularly in regards to scheduling screens, what is the flow? think it through
+>> standings
 
 scheduling -- cont.
 schedule matches -- cont.

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
-import { Scheduler } from 'rxjs';
 import { ScheduleService } from 'src/app/services/schedule.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-team-schedule',
@@ -9,12 +9,22 @@ import { ScheduleService } from 'src/app/services/schedule.service';
   styleUrls: ['./team-schedule.component.css']
 })
 export class TeamScheduleComponent implements OnInit {
-
-  constructor(private Auth:AuthService, private scheduleService:ScheduleService) { }
+  recTeam
+  constructor(private Auth: AuthService, private route: ActivatedRoute, private scheduleService:ScheduleService) {
+    if (this.route.snapshot.params['id']) {
+      this.recTeam = this.route.snapshot.params['id'];
+    }
+   }
 
   rounds:any
   ngOnInit() {
-    this.scheduleService.getTeamSchedules(6,this.Auth.getTeam(), null).subscribe(
+    let getTeam;
+    if(this.recTeam){
+      getTeam = this.recTeam;
+    }else{
+      getTeam = this.Auth.getTeam()
+    }
+    this.scheduleService.getTeamSchedules(6, getTeam, null).subscribe(
       res=>{
         this.rounds = res;
         console.log(res);
