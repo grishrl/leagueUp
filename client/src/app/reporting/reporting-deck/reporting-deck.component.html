@@ -1,0 +1,71 @@
+<div class="row" (click)="showHide()">
+    <div class="col">
+        <div *ngIf="recMatch.hometeamName">{{recMatch.hometeamName}}</div>
+    </div>
+    <div class="col">
+        - VS -
+    </div>
+    <div class="col">
+        <div *ngIf="recMatch.awayteamName; else bye">{{recMatch.awayteamName}}</div>
+    </div>
+</div>
+
+<ng-template #bye>
+    BYE
+</ng-template>
+
+<div class="row" *ngIf="show">
+    <div class="col">
+        <div class="row">
+            <div class="col-4">
+                <div class="row">
+                    <div class="col">
+                        Score:
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <mat-form-field class="fullWidth">
+                            <mat-select placeholder="{{recMatch.hometeamName}} Score:" [(ngModel)]="homeScore" (ngModelChange)="scoreSelected('home')" [disabled]=recMatch.reported>
+                                <mat-option [value]="0">0</mat-option>
+                                <mat-option [value]="1">1</mat-option>
+                                <mat-option [value]="2">2</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col">
+
+            </div>
+            <div class="col">
+                <div class="row">
+                    <div class="col">
+                        Score:
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <mat-form-field>
+                            <mat-select placeholder="{{recMatch.awayteamName}} Score:" [(ngModel)]="awayScore" (ngModelChange)="scoreSelected('away')" [disabled]=recMatch.reported>
+                                <mat-option [value]="0">0</mat-option>
+                                <mat-option [value]="1">1</mat-option>
+                                <mat-option [value]="2">2</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+
+                Select file:
+                <input ngf type="file" [(file)]="file">
+                <button (click)="parseFile(file)">Submit</button>
+            </div>
+
+        </div>
+    </div>
+</div>
