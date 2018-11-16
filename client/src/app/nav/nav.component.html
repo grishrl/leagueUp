@@ -34,17 +34,17 @@
                             <div class="dropdown-menu">
                                 <a class="dropdown-item" (click)="navGo('/profile/',user.routeFriendlyUsername(userName))">Profile</a>
                                 <div *ngIf="Auth.getTeam(); else noTeam">
-                                    <a class="dropdown-item" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( Auth.getTeam() ) )" disabled="">Team</a>
-                                    <!-- (click)="navGo('/schedule/teamSchedule/','' )" -->
-                                    <a class="dropdown-item" [routerLink]="['/schedule/teamSchedule']" disabled="">Schedule</a>
+                                    <a class="dropdown-item" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( Auth.getTeam() ) )">Team</a>
+                                    <a class="dropdown-item" [routerLink]="['/schedule/teamSchedule']">Schedule</a>
                                     <div *ngIf="Auth.getCaptain()">
-                                        <a class="dropdown-item" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( Auth.getTeam() ) )" disabled="">Find Players</a>
+                                        <a class="dropdown-item" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( Auth.getTeam() ) )">Find Players</a>
+                                        <a class="dropdown-item" (click)="navGo('/reporting/',team.routeFriendlyTeamName( Auth.getTeam() ) )">Reporting</a>
                                     </div>
 
                                 </div>
                                 <ng-template #noTeam>
                                     <a class="dropdown-item" [routerLink]="['/teamCreate']">Create Team</a>
-                                    <a class="dropdown-item" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( teamName ) )" disabled="">Find Team</a>
+                                    <a class="dropdown-item" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( teamName ) )">Find Team</a>
                                 </ng-template>
 
                                 <div class="dropdown-divider"></div>

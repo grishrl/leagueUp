@@ -42,7 +42,9 @@ import { RemoveTeamComponent } from './admin/division-management/remove-team/rem
 import { SheduleViewComponent } from './schedule/shedule-view/shedule-view.component';
 import { MatchScheduleComponent } from './schedule/match-schedule/match-schedule.component';
 import { TeamScheduleComponent } from './schedule/team-schedule/team-schedule.component';
-
+import { ReportingComponent } from './reporting/reporting.component';
+import { ReportingDeckComponent } from './reporting/reporting-deck/reporting-deck.component';
+import { ngfModule } from 'angular-file';
 
 @NgModule({
   declarations: [
@@ -80,7 +82,9 @@ import { TeamScheduleComponent } from './schedule/team-schedule/team-schedule.co
     RemoveTeamComponent,
     SheduleViewComponent,
     MatchScheduleComponent,
-    TeamScheduleComponent
+    TeamScheduleComponent,
+    ReportingComponent,
+    ReportingDeckComponent
   ],
   entryComponents:[
     DialogOverviewExampleDialog,
@@ -94,7 +98,8 @@ import { TeamScheduleComponent } from './schedule/team-schedule/team-schedule.co
     InputFormMaterial,
     FormsModule,
     ReactiveFormsModule,
-    NgxCroppieModule
+    NgxCroppieModule,
+    ngfModule
   ],
   providers: [
     {

@@ -18,6 +18,7 @@ import { DivisionManagementComponent } from "./admin/division-management/divisio
 import { SheduleViewComponent } from "./schedule/shedule-view/shedule-view.component";
 import { MatchScheduleComponent } from "./schedule/match-schedule/match-schedule.component";
 import { TeamScheduleComponent } from "./schedule/team-schedule/team-schedule.component";
+import { ReportingComponent } from "./reporting/reporting.component";
 
 const APP_ROUTES: Routes = [
   { path: 'directory', component: DirectoryComponent},
@@ -39,7 +40,8 @@ const APP_ROUTES: Routes = [
   { path: 'schedule' , component:SheduleViewComponent},
   {path: 'schedule/scheduleMatch/:id', component:MatchScheduleComponent},
   { path: 'schedule/teamSchedule', component: TeamScheduleComponent },
-  {path: 'schedule/teamSchedule/:id', component:TeamScheduleComponent}
+  {path: 'schedule/teamSchedule/:id', component:TeamScheduleComponent},
+  {path: 'reporting/:id', component:ReportingComponent}
 ]
 
 @NgModule({
