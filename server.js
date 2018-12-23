@@ -34,10 +34,10 @@ app.use(bodyParser.json({
 }));
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use(cors({
-    credentials: true,
-    origin: ['http://localhost:80', 'https://localhost:443']
-}));
+// app.use(cors({
+//     credentials: true,
+//     origin: ['http://localhost:80', 'https://localhost:443']
+// }));
 
 //initialize passport
 app.use(passport.initialize());

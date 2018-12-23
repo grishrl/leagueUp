@@ -99,7 +99,9 @@ export class AuthService {
 
   //destroy all auth
   destroyAuth(){
-    let url = 'http://localhost:3000/auth/logout';
+    // let url = 'http://localhost:3000/auth/logout';
+    let url = '/auth/logout';
+
 
     this.http.get(url).subscribe(
       res => {

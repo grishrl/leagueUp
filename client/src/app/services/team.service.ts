@@ -10,7 +10,8 @@ export class TeamService {
 
   getTeam(name):Observable<any>{
     let encodededID = encodeURIComponent(this.realTeamName(name));
-    let url = 'http://localhost:3000/team/get?team='+encodededID;
+    // let url = 'http://localhost:3000/team/get?team='+encodededID;
+    let url = 'team/get?team=' + encodededID;
     return this.http.get<any>(url)
     .pipe(
       map((res)=>{
@@ -28,7 +29,8 @@ export class TeamService {
   };
 
   getTeams(names){
-    let url = 'http://localhost:3000/team/getTeams';
+    // let url = 'http://localhost:3000/team/getTeams';
+    let url = 'team/getTeams';
     let payload = {teams:names}
     return this.http.post(url, payload).pipe(
       map(
@@ -41,7 +43,8 @@ export class TeamService {
   }
 
   changeCaptain(team, user){
-    let url = 'http://localhost:3000/team/reassignCaptain';
+    // let url = 'http://localhost:3000/team/reassignCaptain';
+    let url = 'team/reassignCaptain';
     team = team.toLowerCase();
     let payload = {
       teamName: team,
@@ -55,7 +58,8 @@ export class TeamService {
   }
 
   deleteTeam(team){
-    let url = 'http://localhost:3000/team/delete';
+    // let url = 'http://localhost:3000/team/delete';
+    let url = 'team/delete';
     team = team.toLowerCase();
     let payload = {teamName:team};
     return this.http.post(url, payload).pipe(
@@ -66,7 +70,8 @@ export class TeamService {
   }
 
   teamSearch(team){
-    let url = 'http://localhost:3000/search/team';
+    // let url = 'http://localhost:3000/search/team';
+    let url = 'search/team';
     team = team.toLowerCase();
     let payload = {teamName:team};
     return this.http.post(url, payload).pipe(
@@ -77,7 +82,8 @@ export class TeamService {
   }
 
   createTeam(team){
-    let url = 'http://localhost:3000/team/create';
+    // let url = 'http://localhost:3000/team/create';
+    let url = 'team/create';
     return this.http.post<any>(url, team).pipe(
       map( res=>{
         return res.returnObject;
@@ -86,7 +92,8 @@ export class TeamService {
   }
 
   saveTeam(team): Observable<any>{
-    let url = 'http://localhost:3000/team/save';
+    // let url = 'http://localhost:3000/team/save';
+    let url = 'team/save';
     return this.http.post<any>(url, team).pipe(
       map( (res)=>{
         return res;

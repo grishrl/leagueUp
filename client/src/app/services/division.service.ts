@@ -10,11 +10,13 @@ import { map } from 'rxjs/operators';
 export class DivisionService {
 
   cachedDivisions
-  url = 'http://localhost:3000/division/get';
+  // url = 'http://localhost:3000/division/get';
+  url = 'division/get';
 
   getDivisionInfo(){
 
-    let turl = 'http://localhost:3000/admin/getDivisionInfo';
+    // let turl = 'http://localhost:3000/admin/getDivisionInfo';
+    let turl = 'admin/getDivisionInfo';
     return this.http.get(turl).pipe(
       map(
         res=>{ 
@@ -36,7 +38,9 @@ export class DivisionService {
   }
 
   getDivInfo(divisionName){
-    let url = 'http://localhost:3000/admin/getDivInfo'
+    // let url = 'http://localhost:3000/admin/getDivInfo'
+    let url = 'admin/getDivInfo'
+
     return this.http.get<any>(this.url + '?division=' + divisionName).pipe(
       map((res) => {
         return res.returnObject;

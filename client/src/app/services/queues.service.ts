@@ -12,7 +12,8 @@ export class QueuesService {
    }
 
    getQueues(queue){
-     let url = 'http://localhost:3000/admin/';
+    //  let url = 'http://localhost:3000/admin/';
+     let url = 'admin/';
      url += queue;
      return this.http.get(url).pipe(
        map(res => {

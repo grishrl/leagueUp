@@ -10,7 +10,8 @@ export class ScheduleService {
   constructor(private http:HttpClient) { }
 
   getScheduleMatches(season, division, round){  
-    let url = 'http://localhost:3000/schedule/getSchedule';
+    // let url = 'http://localhost:3000/schedule/getSchedule';
+    let url = 'schedule/getSchedule';
     let payload = {
       'season':season,
       'division':division,
@@ -25,7 +26,8 @@ export class ScheduleService {
   };
 
   getTeamSchedules(season, team, division){
-    let url = 'http://localhost:3000/schedule/getTeamMatches';
+    // let url = 'http://localhost:3000/schedule/getTeamMatches';
+    let url = 'schedule/getTeamMatches';
     team = team.toLowerCase();
     let payload = {
       'season':season,
@@ -40,7 +42,8 @@ export class ScheduleService {
   }
 
   getMatchInfo(season, matchId){
-    let url ="http://localhost:3000/schedule/getMatch";
+    // let url ="http://localhost:3000/schedule/getMatch";
+    let url = 'schedule/getTeamMatches';
     let payload={
       "season":season,
       "matchId":matchId
@@ -55,7 +58,8 @@ export class ScheduleService {
   }
 
   scheduleMatchTime(season, teams, division, round, matchId, scheduledStartTime){
-    let url = 'http://localhost:3000/schedule/setMatchTime';
+    // let url = 'http://localhost:3000/schedule/setMatchTime';
+    let url = 'schedule/setMatchTime';
 
     teams.forEach(element => {
       element = element.toLowerCase();

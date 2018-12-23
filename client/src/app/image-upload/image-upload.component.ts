@@ -91,8 +91,9 @@ export class ImageUploadComponent implements OnInit {
   }
 
   saveImageFromCroppie() {
-    let url = 'http://localhost:3000/team/uploadLogo';
-
+    // let url = 'http://localhost:3000/team/uploadLogo';
+    let url = 'team/uploadLogo';
+    
     let input = {
       logo: this.croppieImage,
       teamName: 'A test team'
