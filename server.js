@@ -75,10 +75,6 @@ const options = {
 
 const httpsPort = process.env.PORT;
 
-https.createServer(options, admin).listen(adminPort, function() {
-    console.log('https running on ' + adminPort);
-});
-
 https.createServer(options, app).listen(httpsPort, function() {
     console.log('https running on ' + httpsPort);
 });
