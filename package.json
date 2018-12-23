@@ -4,7 +4,8 @@
     "description": "Large package encompassing several capabilities for e-sports leagues",
     "main": "server.js",
     "scripts": {
-        "start": "node server.js"
+        "start": "node server.js",
+        "heroku-postbuild": "cd client && npm install"
     },
     "author": "",
     "license": "ISC",
