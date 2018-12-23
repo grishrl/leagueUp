@@ -109,7 +109,8 @@ export class TeamService {
     }else{
       postData = user;
     }
-    let url = 'http://localhost:3000/team/addMember';
+    // let url = 'http://localhost:3000/team/addMember';
+    let url = 'team/addMember';
     return this.http.post<any>(url, postData);
 
   }
