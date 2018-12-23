@@ -34,9 +34,13 @@ router.get('/getTeamsUndivisioned', passport.authenticate('jwt', {
 });
 
 //this api pulls back all divisions
-router.get('/getDivisionInfo', passport.authenticate('jwt', {
-    session: false
-}), (req, res) => {
+// passport.authenticate('jwt', {
+// session: false
+// }),
+
+//NOTICE this route is not secured because it is used for pulling back division lists et all - no use for replication
+//TODO: further refactor might move this into the division route -- and fix the service provider in client???
+router.get('/getDivisionInfo', (req, res) => {
     const path = '/admin/getDivisonInfo'
 
     Division.find({}).then((found) => {

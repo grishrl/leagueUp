@@ -23,7 +23,7 @@ const fs = require('fs');
 const cors = require('cors');
 
 
-const hostname = '127.0.0.1';
+const hostname = process.env.hostname;
 const port = process.env.PORT;
 
 const app = express();
@@ -64,8 +64,8 @@ app.use('/schedule', scheduleRoutes);
 
 //listen for request on port 3000, and as a callback function have the port listened on logged
 
-app.listen(port, () => {
-    console.log(`Server running at on ${port}/`);
+app.listen(port, hostname, () => {
+    console.log(`Server ${hostname} running at on ${port}/`);
 });
 
 // const options = {

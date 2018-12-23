@@ -30,6 +30,7 @@ router.get('/bnet/redirect', function(req, res, next) {
         console.log('this is in place of the DONE / serializer');
         if (err) {
             console.log("We have an error!");
+            console.log(err);
         }
         if (!user) {
             res.redirect('/');
