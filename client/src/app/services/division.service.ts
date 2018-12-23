@@ -14,9 +14,8 @@ export class DivisionService {
   url = 'division/get';
 
   getDivisionInfo(){
-
     // let turl = 'http://localhost:3000/admin/getDivisionInfo';
-    let turl = 'admin/getDivisionInfo';
+    let turl = '/division/get';
     return this.http.get(turl).pipe(
       map(
         res=>{ 
