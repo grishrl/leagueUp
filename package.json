@@ -7,6 +7,10 @@
         "start": "node server.js",
         "heroku-postbuild": "cd client && npm install"
     },
+    "engines": {
+        "node": "10.10.0",
+        "npm": "6.4.1"
+    },
     "author": "",
     "license": "ISC",
     "dependencies": {
