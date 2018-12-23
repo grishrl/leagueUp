@@ -24,11 +24,11 @@ const cors = require('cors');
 
 
 const hostname = '127.0.0.1';
-const port = 3080;
+const port = 80;
 
 const app = express();
 
-const adminPort = 3443;
+const adminPort = 443;
 const admin = express();
 
 admin.use(bodyParser.json({
@@ -47,11 +47,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 admin.use(cors({
     credentials: true,
-    origin: ['http://localhost:3080', 'https://localhost:3443']
+    origin: ['http://localhost:80', 'https://localhost:443']
 }));
 app.use(cors({
     credentials: true,
-    origin: ['http://localhost:3000', 'https://localhost:3443']
+    origin: ['http://localhost:80', 'https://localhost:443']
 }));
 
 //initialize passport
