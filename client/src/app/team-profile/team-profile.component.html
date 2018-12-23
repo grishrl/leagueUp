@@ -70,14 +70,14 @@
 
             <div class="row mt-3">
                 <div class="col-5">
-                    <app-image-upload [showEdit]="auth.getUser()===returnedProfile.captain" [teamName]="returnedProfile.teamName" [teamLogo]="returnedProfile.logo"></app-image-upload>
+                    <app-image-upload [showEdit]="auth.getUser()===returnedProfile.captain" [teamName]="returnedProfile.teamName" [teamLogo]="imageFQDN(returnedProfile.logo)"></app-image-upload>
                 </div>
                 <div class="col-7">
                     <mat-form-field class="tp-FullWidth">
                         <input matInput placeholder="Team Name" [(ngModel)]="returnedProfile.teamName" (ngModelChange)="modelChange()" [disabled]="!componentEmbedded">
                     </mat-form-field>
                     <mat-form-field class="tp-FullWidth">
-                        <input matInput placeholder="Team Divison" [(ngModel)]="displayDivison" disabled="true">
+                        <input matInput placeholder="Team Divison" [(ngModel)]="returnedProfile.teamDivision.displayName" disabled="true">
                     </mat-form-field>
                     <mat-form-field class="tp-FullWidth">
                         <input matInput placeholder="Team MMR Average" [(ngModel)]="returnedProfile.teamMMRAvg" disabled="true">

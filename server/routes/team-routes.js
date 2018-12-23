@@ -8,6 +8,15 @@ const Team = require("../models/team-models");
 const passport = require("passport");
 const fs = require('fs');
 const imageDataURI = require('image-data-uri');
+const AWS = require('aws-sdk');
+
+AWS.config.update({
+    accessKeyId: process.env.S3accessKeyId,
+    secretAccessKey: process.env.S3secretAccessKey,
+    region: process.env.S3region
+});
+
+const s3Bucket = new AWS.S3({ params: { Bucket: process.env.S3bucket } });
 
 /*
 routes for team management --
@@ -452,7 +461,7 @@ router.post('/uploadLogo', passport.authenticate('jwt', {
     session: false
 }), confirmCaptain, (req, res) => {
     const path = '/team/uploadLogo';
-    let uploadDir = "../client/src/assets/teamImgs/";
+    let uploadedFileName = "";
 
     let teamName = req.body.teamName;
     let dataURI = req.body.logo;
@@ -472,24 +481,28 @@ router.post('/uploadLogo', passport.authenticate('jwt', {
         stamp = stamp.toString();
         stamp = stamp.slice(stamp.length - 4, stamp.length);
 
-        uploadDir += teamName + stamp + "_logo";
-        if (png > -1) {
-            uploadDir += '.png'
-        }
-        if (jpg > -1) {
-            uploadDir += '.jpg'
-        }
-        if (jpeg > -1) {
-            uploadDir += '.jpeg'
-        }
-        if (gif > -1) {
-            uploadDir += '.gif'
-        }
-        imageDataURI.outputFile(dataURI, uploadDir).then((req) => {
-            console.log('saved');
-        }, (err) => {
-            console.log('error saving');
+        uploadedFileName += teamName + stamp + "_logo.png";
+
+
+        var buf = new Buffer.from(dataURI.replace(/^data:image\/\w+;base64,/, ""), 'base64');
+        // var buf = new Buffer.from(dataURI, 'base64');
+
+        var data = {
+            Key: uploadedFileName,
+            Body: buf,
+            ContentEncoding: 'base64',
+            ContentType: 'image/png'
+        };
+        s3Bucket.putObject(data, function(err, data) {
+            if (err) {
+                console.log(err);
+                console.log('Error uploading data: ', data);
+            } else {
+                console.log(data);
+                console.log('succesfully uploaded the image!');
+            }
         });
+
         let lower = teamName.toLowerCase();
         Team.findOne({
             teamName_lower: lower
@@ -504,7 +517,7 @@ router.post('/uploadLogo', passport.authenticate('jwt', {
                         if (logoToDelete) {
                             deleteFile(logoToDelete);
                         }
-                        foundTeam.logo = uploadDir;
+                        foundTeam.logo = uploadedFileName;
                         foundTeam.save().then((savedTeam) => {
                             if (savedTeam) {
                                 res.status(200).send(util.returnMessaging(path, "File uploaded!", false, savedTeam));
@@ -579,15 +592,26 @@ router.post('/reassignCaptain', passport.authenticate('jwt', {
 });
 
 function deleteFile(path) {
-    fs.access(path, error => {
-        if (!error) {
-            fs.unlink(path, function(error) {
-                console.log(error);
-            });
-        } else {
-            console.log(error);
-        }
-    });
+    let data = {
+        Bucket: process.env.S3bucket,
+        Key: path
+    };
+    s3Bucket.deleteObject(data, (err, data) => {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log('file deleted from s3 ', data);
+            }
+        })
+        // fs.access(path, error => {
+        //     if (!error) {
+        //         fs.unlink(path, function(error) {
+        //             console.log(error);
+        //         });
+        //     } else {
+        //         console.log(error);
+        //     }
+        // });
 }
 
 function renameFile(path, newPath) {
@@ -604,6 +628,7 @@ function confirmCaptain(req, res, next) {
     var callingUser = req.user;
     var payloadTeamName = req.body.teamName;
     let lower = payloadTeamName.toLowerCase();
+    console.log('cpt check rec team name: ', lower);
     Team.findOne({
         teamName_lower: lower
     }).then((foundTeam) => {

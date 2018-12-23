@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -15,13 +16,13 @@ export class TeamService {
     return this.http.get<any>(url)
     .pipe(
       map((res)=>{
-        console.log('res ',res)
-        if(res.hasOwnProperty('returnObject')){
-          if (res.returnObject.hasOwnProperty('logo')){
-            let logoURL = res.returnObject.logo;
-            res.returnObject.logo = this.cleanUpLogoUrl(logoURL);
-          }
-        }
+        // console.log('res ',res)
+        // if(res.hasOwnProperty('returnObject')){
+        //   if (res.returnObject.hasOwnProperty('logo')){
+        //     let logoURL = res.returnObject.logo;
+        //     res.returnObject.logo = this.cleanUpLogoUrl(logoURL);
+        //   }
+        // }
        return res.returnObject;
       }
       )
@@ -115,14 +116,19 @@ export class TeamService {
 
   }
 
-  cleanUpLogoUrl(url):string{
-    if(url != null && url != undefined){
-      let index = url.indexOf('assets');
-      let clean = url.slice(index, url.length);
-      return clean;
-    }else{
-      return '';
-    }
+  // cleanUpLogoUrl(url):string{
+  //   if(url != null && url != undefined){
+  //     let index = url.indexOf('assets');
+  //     let clean = url.slice(index, url.length);
+  //     return clean;
+  //   }else{
+  //     return '';
+  //   }
+  // }
+
+  imageFQDN(img) {
+    let imgFQDN = 'https://s3.amazonaws.com/' + environment.s3bucket + '/';
+    return imgFQDN += img;
   }
 
   routeFriendlyTeamName(teamname):string{

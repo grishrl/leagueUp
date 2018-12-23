@@ -96,7 +96,7 @@ export class ImageUploadComponent implements OnInit {
     
     let input = {
       logo: this.croppieImage,
-      teamName: 'A test team'
+      teamName: this._teamName
     }
 
     this.http.post(url, input).subscribe(res=>{

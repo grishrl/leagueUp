@@ -11,6 +11,7 @@ import { AuthService } from '../services/auth.service';
 import { UserService } from '../services/user.service';
 import { AdminService } from '../services/admin.service';
 
+
 @Component({
   selector: 'app-team-profile',
   templateUrl: './team-profile.component.html',
@@ -53,7 +54,7 @@ export class TeamProfileComponent implements OnInit {
         this.getTeamByString(getProfile);
       } else {
         merge(this.returnedProfile, this.providedProfile);
-        this.cleanUpDivision();
+        // this.cleanUpDivision();
       }
     } else if (this.teamName) {
       getProfile = this.teamName;
@@ -333,29 +334,35 @@ export class TeamProfileComponent implements OnInit {
     this.team.getTeam(getProfile).subscribe((res) => {
       merge(this.returnedProfile, res);
       console.log('team ', this.returnedProfile);
-      this.cleanUpDivision();
+      // this.cleanUpDivision();
     });
   }
 
-  //this method cleans up some things to make a pretty team display and creates some filtering for the invite member search
-  private cleanUpDivision() {
-    this.orignalName = this.returnedProfile.teamName_lower;
-    if (this.returnedProfile.teamDivision) {
-      this.displayDivison += "";
-      let divDisplay = this.returnedProfile.teamDivision.divisionName;
-      let char = divDisplay.charAt(0);
-      let capChar = char.toUpperCase();
-      divDisplay = divDisplay.replace(char, capChar);
-      this.displayDivison += divDisplay;
-      if (this.returnedProfile.teamDivision.coastalDivision) {
-        this.displayDivison += " " + this.returnedProfile.teamDivision.coastalDivision.toUpperCase();
-      }
-    }
-    if (this.returnedProfile.teamMembers && this.returnedProfile.teamMembers.length > 0) {
-      this.returnedProfile.teamMembers.forEach(element => {
-        this.filterUsers.push(element.displayName);
-      });
-    }
+
+  imageFQDN(img){
+    return this.team.imageFQDN(img);
   }
+
+  //this method cleans up some things to make a pretty team display and creates some filtering for the invite member search
+  // TODO: DELETE IF NO LONGER NEEDED
+  // private cleanUpDivision() {
+  //   this.orignalName = this.returnedProfile.teamName_lower;
+  //   if (this.returnedProfile.teamDivision) {
+  //     this.displayDivison += "";
+  //     let divDisplay = this.returnedProfile.teamDivision.divisionName;
+  //     let char = divDisplay.charAt(0);
+  //     let capChar = char.toUpperCase();
+  //     divDisplay = divDisplay.replace(char, capChar);
+  //     this.displayDivison += divDisplay;
+  //     if (this.returnedProfile.teamDivision.coastalDivision) {
+  //       this.displayDivison += " " + this.returnedProfile.teamDivision.coastalDivision.toUpperCase();
+  //     }
+  //   }
+  //   if (this.returnedProfile.teamMembers && this.returnedProfile.teamMembers.length > 0) {
+  //     this.returnedProfile.teamMembers.forEach(element => {
+  //       this.filterUsers.push(element.displayName);
+  //     });
+  //   }
+  // }
 
 }

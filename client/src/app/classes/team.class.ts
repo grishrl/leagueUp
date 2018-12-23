@@ -10,6 +10,8 @@ export class Team {
   teamMMRAvg: number; //added to display
   teamMembers: [miniUser]; //added to display
   pendingMembers: [miniUser];
+  logo: string;
+
 
   constructor(id: string, teamName: string, lookingForMore: Boolean, lfmDetails: lfmSchema, 
     teamMembers: [miniUser], pendingMembers: [miniUser], captain: string, teamMMRAvg:number,
@@ -108,6 +110,11 @@ export class Team {
   }
 }
 
+interface divInfo {
+  displayName : string,
+  divisionConcat : string
+}
+
 interface lfmSchema {
   "availability": schedule,
   "competitiveLevel": number,
@@ -141,8 +148,8 @@ interface roles {
 }
 
 interface division{
-  "divisionName":string,
-  "coastalDivision":string
+  "displayName":string,
+  "divisionConcat":string
 }
 
 interface miniUser {

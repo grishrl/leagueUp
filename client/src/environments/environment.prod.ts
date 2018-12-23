@@ -7,5 +7,6 @@ export const environment = {
       news: '4LLQW3MgwogACQUQ6q2esA',
       jumbotron: '1XdCWD3XK0i4a8OuSK62c2'
     }
-  }
+  },
+  s3bucket:'test-ngs-storage'
 };
