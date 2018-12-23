@@ -24,11 +24,11 @@ const cors = require('cors');
 
 
 const hostname = '127.0.0.1';
-const port = 3000;
+const port = 3080;
 
 const app = express();
 
-const adminPort = 3444;
+const adminPort = 3443;
 const admin = express();
 
 admin.use(bodyParser.json({
@@ -47,7 +47,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 admin.use(cors({
     credentials: true,
-    origin: ['http://localhost:3000', 'https://localhost:3443']
+    origin: ['http://localhost:3080', 'https://localhost:3443']
 }));
 app.use(cors({
     credentials: true,
