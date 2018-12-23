@@ -24,20 +24,9 @@ const cors = require('cors');
 
 
 const hostname = '127.0.0.1';
-const port = 80;
+// const port = 80;
 
 const app = express();
-
-const adminPort = 443;
-const admin = express();
-
-admin.use(bodyParser.json({
-    limit: '2.5mb',
-    extended: true
-}));
-admin.use(bodyParser.urlencoded({
-    extended: false
-}));
 
 app.use(bodyParser.json({
     limit: '2.5mb',
@@ -45,17 +34,12 @@ app.use(bodyParser.json({
 }));
 app.use(bodyParser.urlencoded({ extended: false }));
 
-admin.use(cors({
-    credentials: true,
-    origin: ['http://localhost:80', 'https://localhost:443']
-}));
 app.use(cors({
     credentials: true,
     origin: ['http://localhost:80', 'https://localhost:443']
 }));
 
 //initialize passport
-admin.use(passport.initialize());
 app.use(passport.initialize());
 
 //connect to mongo db
@@ -79,19 +63,17 @@ app.use('/schedule', scheduleRoutes);
 
 
 //listen for request on port 3000, and as a callback function have the port listened on logged
-admin.listen(adminPort, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`);
-});
-app.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`);
-});
+
+// app.listen(port, hostname, () => {
+//     console.log(`Server running at http://${hostname}:${port}/`);
+// });
 
 const options = {
     cert: fs.readFileSync(path.join('./server/ssl', 'server.crt')),
     key: fs.readFileSync(path.join('./server/ssl', 'server.key'))
 }
 
-const httpsPort = 3443;
+const httpsPort = process.env.PORT;
 
 https.createServer(options, admin).listen(adminPort, function() {
     console.log('https running on ' + adminPort);
@@ -101,10 +83,6 @@ https.createServer(options, app).listen(httpsPort, function() {
     console.log('https running on ' + httpsPort);
 });
 
-admin.use('/', express.static(path.join(__dirname + '/../../leagueUpAdmin/dist/')));
-admin.get('*', function(req, res) {
-    res.sendFile(path.join(__dirname, '/../../leagueUpAdmin/dist/index.html'));
-});
 app.use('/', express.static(path.join(__dirname + '/../client/dist/client/')));
 
 app.get('*', function(req, res) {
