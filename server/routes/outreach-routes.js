@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 const Outreach = require('../models/outreach-model');
 const Team = require('../models/team-models');
 const router = require('express').Router();
-const keys = require('../configs/keys');
+// const keys = require('../configs/keys');
 const passport = require("passport");
 const util = require('../utils');
 
@@ -20,8 +20,8 @@ function encrypt(text) {
 var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: keys.mailer.user,
-        pass: keys.mailer.pass
+        user: 'nil', //update with env var
+        pass: 'nil' //update with env var
     }
 });
 

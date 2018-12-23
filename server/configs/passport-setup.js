@@ -5,7 +5,7 @@ const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const Admin = require('../models/admin-models');
 const jwt = require('jsonwebtoken');
-const keys = require('./keys');
+// const keys = require('./keys');
 const User = require('../models/user-models');
 
 
@@ -24,7 +24,7 @@ const User = require('../models/user-models');
 // });
 var jwtOptions = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: keys.session.jwtToken
+    secretOrKey: process.env.jwtToken
 }
 
 passport.use(new JwtStrategy(jwtOptions, function(jwt_payload, next) {
