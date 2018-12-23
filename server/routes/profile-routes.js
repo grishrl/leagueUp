@@ -69,6 +69,7 @@ router.post('/save', passport.authenticate('jwt', {
         if (req.user._id.toString() === sentUser._id) {
             User.findOne({ _id: req.user._id }).then(function(found) {
                 if (found) {
+                    console.log('FOUND: ', found);
                     //validate all the data before saving --
 
                     if (!util.isNullOrEmpty(sentUser.lookingForGroup)) {
@@ -102,8 +103,12 @@ router.post('/save', passport.authenticate('jwt', {
                         });
                     }
 
-                    console.log('sentUser.lfgDetails.averageMmr ', sentUser.lfgDetails.averageMmr);
+                    // console.log('sentUser.lfgDetails.averageMmr ', sentUser.lfgDetails.averageMmr);
                     if (!util.isNullOrEmpty(sentUser.lfgDetails.averageMmr)) {
+                        // console.log('util.returnBoolByPath(found, \'lfgDetails\') ', util.returnBoolByPath(found, 'lfgDetails'))
+                        if (!util.returnBoolByPath(found, 'lfgDetails')) {
+                            found.lfgDetails = {};
+                        }
                         found.lfgDetails.averageMmr = sentUser.lfgDetails.averageMmr;
                     }
 
