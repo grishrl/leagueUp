@@ -10,7 +10,7 @@ import { MarkdownParserService } from '../services/markdown-parser.service';
 })
 export class BlogViewComponent implements OnInit {
 
-  constructor(private contentfulService:ContentfulService, private route: ActivatedRoute, private md:MarkdownParserService) {
+  constructor(private contentfulService:ContentfulService, private route: ActivatedRoute, public md:MarkdownParserService) {
     if(this.route.snapshot.params['id']){
       this.recId = this.route.snapshot.params['id'];
     }

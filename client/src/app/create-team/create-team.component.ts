@@ -21,7 +21,7 @@ export class CreateTeamComponent implements OnInit {
     { val: 5, display: 'High'}
   ]
   
-  constructor(private team: TeamService, private timezone:TimezoneService, private auth: AuthService, private route:Router) { }
+  constructor(private team: TeamService, public timezone:TimezoneService, private auth: AuthService, private route:Router) { }
 
   ngOnInit() {
     this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null);

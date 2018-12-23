@@ -109,11 +109,35 @@ export class Team {
 }
 
 interface lfmSchema {
-  "availability": Object,
+  "availability": schedule,
   "competitiveLevel": number,
   "descriptionOfTeam": string,
-  "rolesNeeded": Object,
+  "rolesNeeded": roles,
   "timeZone": string
+}
+
+interface schedule {
+  monday: atset,
+  tuesday: atset,
+  wednesday: atset,
+  thursday: atset,
+  friday: atset,
+  saturday: atset,
+  sunday: atset
+}
+
+interface atset {
+  available: boolean,
+  startTime: number,
+  endTime: number
+}
+
+interface roles {
+  tank: boolean,
+  assassin: boolean,
+  offlane: boolean,
+  support: boolean,
+  specialist: boolean
 }
 
 interface division{

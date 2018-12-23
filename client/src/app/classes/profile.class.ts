@@ -95,14 +95,38 @@ export interface miniTeam{
 }
 
 export interface lfgSchema {
-  availability: object; //form input added
+  availability: schedule; //form input added
   competitiveLevel: number; //form input added
   descriptionOfPlay: String; //form input added
-  role: object; //
+  role: roles; //
   averageMmr: number;  //user average mmr
   timeZone: String; //form input added
   heroLeague: hlRankShema;
   hotsLogsURL: String; //form input added
+}
+
+export interface schedule {
+  monday: atset,
+  tuesday: atset,
+  wednesday: atset,
+  thursday: atset,
+  friday: atset,
+  saturday: atset,
+  sunday: atset
+}
+
+export interface atset {
+  available:boolean,
+  startTime:number,
+  endTime: number
+}
+
+export interface roles {
+  tank: boolean,
+  assassin:boolean,
+  offlane:boolean,
+  support:boolean,
+  specialist:boolean
 }
 
 export enum Metal{

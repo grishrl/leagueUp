@@ -7,13 +7,14 @@ import { AuthService } from 'src/app/services/auth.service';
   templateUrl: './change-captain-modal.component.html',
   styleUrls: ['./change-captain-modal.component.css']
 })
+
 export class ChangeCaptainModalComponent implements OnInit {
   selected:string
   newCaptain:string
   memberSelected:string
   constructor(
     public dialogRef: MatDialogRef<ChangeCaptainModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: object) {
+    @Inject(MAT_DIALOG_DATA) public data: dataModel) {
     console.log(data);
      }
   
@@ -25,4 +26,8 @@ export class ChangeCaptainModalComponent implements OnInit {
   ngOnInit() {
   }
 
+}
+
+export interface dataModel {
+  members: any
 }

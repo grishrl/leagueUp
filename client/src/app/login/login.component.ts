@@ -12,7 +12,7 @@ import { UserService } from '../services/user.service';
 export class LoginComponent implements OnInit {
   profile: string
 
-  constructor(private route: ActivatedRoute, private Auth: AuthService, private router: Router, private user : UserService ) {
+  constructor(private route: ActivatedRoute, public Auth: AuthService, private router: Router, private user : UserService ) {
     if(route.snapshot.params['token']){
       let URI = decodeURIComponent(route.snapshot.params['token']);
       

@@ -12,13 +12,16 @@ import { TeamService } from '../services/team.service';
   templateUrl: './division.component.html',
   styleUrls: ['./division.component.css']
 })
+
 export class DivisionComponent implements OnInit {
+
+
  
   teams:Team[]
   divSub: Subscription
   param: string
   navigationSubscription
-  divDisplay = {};
+  divDisplay;
 
   
 
@@ -37,7 +40,7 @@ export class DivisionComponent implements OnInit {
    }
   
   initialise(){
-    this.divDisplay = {};
+    this.divDisplay;
     this.teams = [];
     this.divSub = this.division.getDivision(this.param).subscribe((res) => {
 
