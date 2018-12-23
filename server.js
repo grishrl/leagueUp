@@ -24,7 +24,7 @@ const cors = require('cors');
 
 
 const hostname = '127.0.0.1';
-// const port = 80;
+const port = process.env.PORT;
 
 const app = express();
 
@@ -64,20 +64,20 @@ app.use('/schedule', scheduleRoutes);
 
 //listen for request on port 3000, and as a callback function have the port listened on logged
 
-// app.listen(port, hostname, () => {
-//     console.log(`Server running at http://${hostname}:${port}/`);
-// });
-
-const options = {
-    cert: fs.readFileSync(path.join('./server/ssl', 'server.crt')),
-    key: fs.readFileSync(path.join('./server/ssl', 'server.key'))
-}
-
-const httpsPort = process.env.PORT;
-
-https.createServer(options, app).listen(httpsPort, function() {
-    console.log('https running on ' + httpsPort);
+app.listen(port, hostname, () => {
+    console.log(`Server running at http://${hostname}:${port}/`);
 });
+
+// const options = {
+//     cert: fs.readFileSync(path.join('./server/ssl', 'server.crt')),
+//     key: fs.readFileSync(path.join('./server/ssl', 'server.key'))
+// }
+
+// const httpsPort = process.env.PORT;
+
+// https.createServer(options, app).listen(httpsPort, function() {
+//     console.log('https running on ' + httpsPort);
+// });
 
 app.use('/', express.static(path.join(__dirname + '/../client/dist/client/')));
 
