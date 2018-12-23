@@ -246,15 +246,15 @@ export class TeamProfileComponent implements OnInit {
 
   //method takes in the factors at hand to show the captain edit options or the admin edit options
   showEditDialog(){
-    if(this.componentEmbedded){
-      return false;
-    }else{
+    // if(this.componentEmbedded){
+    //   return false;
+    // }else{
       var isteamcpt = false;
       if (this.auth.getCaptain()) {
         isteamcpt = this.auth.getUser() === this.returnedProfile.captain;
       }
       return isteamcpt;
-    }
+    // }
   }
 
 

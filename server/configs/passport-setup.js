@@ -62,7 +62,7 @@ passport.use(new BnetStrategy({
     var id = profile.id.toString()
     User.findOne({ bNetId: id }).then((prof) => {
         if (prof) {
-            var token = jwt.sign({ id: prof._id }, keys.session.jwtToken);
+            var token = jwt.sign({ id: prof._id }, process.env.jwtToken);
             var reply = {
                 displayName: prof.displayName,
                 token: token
@@ -90,7 +90,7 @@ passport.use(new BnetStrategy({
                 bNetId: id
             }).save().then((newUser) => {
                 console.log('created new user: ' + newUser);
-                var token = jwt.sign({ id: newUser._id }, keys.session.jwtToken)
+                var token = jwt.sign({ id: newUser._id }, process.env.jwtToken)
                 var reply = { displayName: newUser.displayName, token: token }
                 done(null, reply);
             });

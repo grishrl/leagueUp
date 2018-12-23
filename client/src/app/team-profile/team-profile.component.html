@@ -42,22 +42,20 @@
                     </div>
                 </div>
                 <!-- admin options -->
-                <div class="row" *ngIf="!showEditDialog()">
+                <div class="row" *ngIf="componentEmbedded">
                     <div class="col-8 offset-2">
                         <div class="row">
                             <div class="col">
                                 <div class="dropdown">
                                     <button type="button" class="btn btn-danger dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="icon-align">
-                  <i class="material-icons md-18">settings</i>
-                  Manage
-                </span>
-              </button>
+                                        <span class="icon-align">
+                                            <i class="material-icons md-18">settings</i>
+                                                 Manage
+                                        </span>
+                                    </button>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                        <a class="dropdown-item finger" (click)="openAdminCaptainChangeDialog()"><span class="icon-align"><i class="material-icons">cached</i>Change
-                    captain</span></a>
-                                        <a class="dropdown-item finger" (click)="openAdminDeleteDialog()"><span class="icon-align"><i class="material-icons">delete_forever</i>Delete
-                    team</span></a>
+                                        <a class="dropdown-item finger" (click)="openAdminCaptainChangeDialog()"><span class="icon-align"><i class="material-icons">cached</i>Change captain</span></a>
+                                        <a class="dropdown-item finger" (click)="openAdminDeleteDialog()"><span class="icon-align"><i class="material-icons">delete_forever</i>Delete team</span></a>
                                     </div>
                                 </div>
 
