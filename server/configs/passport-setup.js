@@ -57,6 +57,8 @@ passport.use(new BnetStrategy({
     region: "us"
 }, function(accessToken, refreshToken, profile, done) {
 
+    console.log('returned from bnet ', profile);
+
     var id = profile.id.toString()
     User.findOne({ bNetId: id }).then((prof) => {
         if (prof) {

@@ -1,23 +1,23 @@
 //Load HTTP module
 const express = require("express");
 const passport = require('passport');
-const authRoutes = require('./routes/auth-routes');
-const searchRoutes = require('./routes/search-routes');
-const teamRoutes = require('./routes/team-routes');
-const adminRoutes = require('./routes/admin-routes');
-const adminTeam = require('./routes/admin-team');
-const adminUser = require('./routes/admin-user');
-const adminDivision = require('./routes/admin-division');
-const profileRoutes = require('./routes/profile-routes');
-const divisionRoutes = require('./routes/division-routes');
-const outreachRoutes = require('./routes/outreach-routes');
-const scheduleRoutes = require('./routes/schedule-routes');
+const authRoutes = require('./server/routes/auth-routes');
+const searchRoutes = require('./server/routes/search-routes');
+const teamRoutes = require('./server/routes/team-routes');
+const adminRoutes = require('./server/routes/admin-routes');
+const adminTeam = require('./server/routes/admin-team');
+const adminUser = require('./server/routes/admin-user');
+const adminDivision = require('./server/routes/admin-division');
+const profileRoutes = require('./server/routes/profile-routes');
+const divisionRoutes = require('./server/routes/division-routes');
+const outreachRoutes = require('./server/routes/outreach-routes');
+const scheduleRoutes = require('./server/routes/schedule-routes');
 const path = require('path');
-const passportSetup = require('./configs/passport-setup');
+const passportSetup = require('./server/configs/passport-setup');
 const mongoose = require('mongoose');
 const https = require('https');
 const http = require("http");
-const keys = require('./configs/keys');
+const keys = require('./server/configs/keys');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const cors = require('cors');
@@ -87,8 +87,8 @@ app.listen(port, hostname, () => {
 });
 
 const options = {
-    cert: fs.readFileSync(path.join('ssl', 'server.crt')),
-    key: fs.readFileSync(path.join('ssl', 'server.key'))
+    cert: fs.readFileSync(path.join('./server/ssl', 'server.crt')),
+    key: fs.readFileSync(path.join('./server/ssl', 'server.key'))
 }
 
 const httpsPort = 3443;
