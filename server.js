@@ -59,7 +59,7 @@ admin.use(passport.initialize());
 app.use(passport.initialize());
 
 //connect to mongo db
-mongoose.connect(keys.mongodb.dbURI, () => {
+mongoose.connect(process.env.mongoURI, () => {
     console.log('connected to mongodb');
 });
 

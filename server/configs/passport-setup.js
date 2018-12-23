@@ -51,8 +51,8 @@ passport.use(new JwtStrategy(jwtOptions, function(jwt_payload, next) {
 
 // Use the BnetStrategy within Passport.
 passport.use(new BnetStrategy({
-    clientID: keys.bNet.clientID,
-    clientSecret: keys.bNet.clientSecret,
+    clientID: process.env.bNetClientID,
+    clientSecret: process.env.bNetClientSecret,
     callbackURL: "https://localhost:3443/auth/bnet/redirect",
     region: "us"
 }, function(accessToken, refreshToken, profile, done) {
