@@ -1,39 +1,34 @@
 
-REFOCUS ; what am i even doing now???
 Work on client flow > particularly in regards to scheduling screens, what is the flow? think it through
+
 >> standings
+>> scheduling -- cont. system generated schedules
+>> schedule matches -- cont. captains putting time/date to a match
 
-scheduling -- cont.
-schedule matches -- cont.
-
-contentfulservice :
->TRY TO REDUCE THE AMMOUNT OF CONTENTFUL REQUESTS MADE BY USING LOCAL STORAGE -- MAY REQUIRE SOME OBSERVABLE / PROMISE STATE MIXING TO PULL FROM LOCAL OR HTTP 
->PAGINATION AND LIMITS + PULLING EXTRA ARTICLES 
-> order posts in the list by date.
-
-contenful:
->ADD CATEGORY FOR EACH DIVISON TO LINK BLOG POSTS TO
-
-user
->Looking for team
->collect discord userid?
-
-division:
+ADMIN:
+division: 
 Create / delete divisions
 
 team
+> validation warnings!!!!! HIGH RPI
 >looking for users
 >disable invite button after it its clicked so that someone invited can not be invited mutliple times;
+>team members two columns of 3 rows
+> add back some confirm text for inviting a member to the team!
+> player names links, if possible.
+> show pending members?
+
 
 reporting
 >report match outcomes
 
->match 
->need match creation routines
->match routes to handle scheduling
+>match
+>need match creation routines //done-ish
+ 
+>match routes to handle scheduling //inflight
  >when match results are reported we will likewise update the standings
  >of the teams.
->need match logic!
+>need match logic! //done-ish
 {
   teamA: 'teamname',
   teamB: 'teamname',
@@ -50,28 +45,34 @@ reporting
   }
 }
 
+user
+>collect discord userid?
+>Looking for team (marketplace)
+
+
+>podcasts on the blogging?
+
+contenful:
+>ADD CATEGORY FOR EACH DIVISON TO LINK BLOG POSTS TO
+
+contentfulservice :
+>TRY TO REDUCE THE AMMOUNT OF CONTENTFUL REQUESTS MADE BY USING LOCAL STORAGE -- MAY REQUIRE SOME OBSERVABLE / PROMISE STATE MIXING TO PULL FROM LOCAL OR HTTP 
+>PAGINATION AND LIMITS + PULLING EXTRA ARTICLES 
+> order posts in the list by date.
+
 FOOTER
 > GET FOOTER WORKING
 
-TEAM 
->team members two columns of 3 rows
-> add back some confirm text for inviting a member to the team!
->player names links, if possible.
-> show pending members?
-> validation warnings
-
-user
-> validation warnings
-
 product:
-> disabled mat inputs are very muted for looking at
-> remove hardcoded URLs from all locations
 > probably need some modals for request waiting and requests confimations
 > branding
+> disabled mat inputs are very muted for looking at
+> remove hardcoded URLs from all locations //have replaced alot of these with relative calls
+
 
 > Server, 
->post to discord when someone is looking for team
->post to discord when team is looking for someone
 >need some persistnet logging to keep up with background notices.
->need a queue of pending team adds for admins to Server .... or can I query teams with pending team adds ....
+>post to discord when someone is looking for team 
+>post to discord when team is looking for someone
 >standings ... add the w/l to teams? < where to put theseeeee
+>need a queue of pending team adds for admins to Server .... or can I query teams with pending team adds .... //done-ish 

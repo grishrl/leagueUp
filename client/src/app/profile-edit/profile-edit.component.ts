@@ -6,10 +6,11 @@ import { UserService } from '../services/user.service';
 import { AuthService } from '../services/auth.service';
 import { Profile } from '../classes/profile.class';
 import { Observable, Subscription } from 'rxjs';
-import { ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormControl, Validators, FormGroup } from '@angular/forms';
 import { merge } from 'lodash';
 import { HotsLogsService } from '../services/hots-logs.service';
 import { Router } from '@angular/router';
+import { map, catchError } from 'rxjs/operators';
 
 @NgModule({
   imports:[
@@ -23,6 +24,96 @@ import { Router } from '@angular/router';
   styleUrls: ['./profile-edit.component.css']
 })
 export class ProfileEditComponent implements OnInit {
+
+  constructor(public timezone: TimezoneService, private user: UserService, public auth: AuthService, private router: Router, private route: ActivatedRoute, private hotsLogsService: HotsLogsService, public dialog: MatDialog) {
+    this.displayName = user.realUserName(this.route.snapshot.params['id']);
+  }
+
+  editOn = true;
+
+  hotsLogsFormControl = new FormControl({value:'',disabled:true} ,[
+    Validators.required,
+    this.hotslogsUrlPatternValidator
+  ]);
+
+  heroeLeagueDivisionControl = new FormControl({ value: '',disabled:true}, [
+    Validators.required
+  ]);
+
+  heroeLeagueRankControl = new FormControl({ value: '', disabled: true }, [
+    Validators.required
+  ]);
+
+  timezoneControl = new FormControl({ value: '', disabled: true }, [
+    Validators.required
+  ]);
+
+  hotslogsUrlPatternValidator(control: FormControl) {
+  let hotslogsURL = control.value;
+    let regex = new RegExp(/^((https):\/)\/www\.hotslogs\.com\/player\/profile\?playerid\=[0-9]+/, 'i');
+    if (regex.test(hotslogsURL)) {
+      return null;
+  }else{
+    console.log('simply invalid');
+      return {
+        invalidurl:true
+        }
+      };
+  }
+
+  profileForm = new FormGroup({
+    hotslogurl: this.hotsLogsFormControl,
+    hlDivision: this.heroeLeagueDivisionControl,
+    hlRank: this.heroeLeagueRankControl,
+    timezone: this.timezoneControl
+  })
+
+  formControlledEnable(){
+this.hotsLogsFormControl.enable();
+this.heroeLeagueDivisionControl.enable();
+this.heroeLeagueRankControl.enable();
+this.timezoneControl.enable();
+  }
+
+  formControlledDisable(){
+    this.hotsLogsFormControl.disable();
+    this.heroeLeagueDivisionControl.disable();
+    this.heroeLeagueRankControl.disable();
+    this.timezoneControl.disable();
+  }
+
+  // hotslogsUrlValidator(hotslogsservice:HotsLogsService) {
+  //   return (control : AbstractControl)=>{
+  //     let hotslogsURL = control.value;
+  //     return this.hotsLogsService.validCheck(hotslogsURL).pipe(
+  //       map(res => {
+  //         if (res.hasOwnProperty('Message')){
+  //           if(res.Message.indexOf('invald')>-1){
+  //             console.log('invalid');
+  //             return {invalidurl:true}
+  //           }
+  //         }else{
+  //           console.log('valid');
+  //           return null;
+  //         }
+  //       }
+  //       )
+  //     )
+  //   }
+
+
+  //   }
+
+  /*       return this.hotsLogsService.validCheck(hotslogsURL).subscribe(res=>{
+        console.log('validated');
+        return null;
+      }, err=>{
+        console.log('invalid URL');
+        return {
+          invalidurl:true
+          };
+        }
+      ) */
 
   providedProfile:string;
   @Input() set passedProfile(profile){
@@ -70,17 +161,12 @@ export class ProfileEditComponent implements OnInit {
   profSub: Subscription;
   tempProfile: Profile;
 
-  editOn = true;
-
   hlMedals = ['Grand Master','Master','Diamond','Platinum','Gold','Silver','Bronze'];
   hlDivision = [1,2,3,4,5];
   competitonLevel = [
     'Low','Medium','High'
   ]
   
-  constructor(public timezone: TimezoneService, private user: UserService, public auth: AuthService, private router:Router, private route: ActivatedRoute, private hotsLogsService: HotsLogsService, public dialog: MatDialog ) {
-    this.displayName = user.realUserName(this.route.snapshot.params['id']);
-   }
 
    hideDay(editSwitch, dayAvailabilty): boolean {
      if (!editSwitch){
@@ -96,12 +182,17 @@ export class ProfileEditComponent implements OnInit {
 
    openEdit(){
      this.editOn=false;
-     this.tempProfile = Object.assign({}, this.returnedProfile);
+     this.formControlledEnable();
+     this.tempProfile = new Profile(null, null, null, null, null);
+     merge(this.tempProfile, this.returnedProfile);
    }
 
    cancel(){
+     console.log('temp ',this.tempProfile);
+     console.log('returned ', this.returnedProfile);
      this.returnedProfile = Object.assign({}, this.tempProfile);
      this.editOn = true;
+     this.formControlledDisable();
    }
 
    save(){
@@ -109,19 +200,27 @@ export class ProfileEditComponent implements OnInit {
        if (!this.isNullOrEmpty(this.returnedProfile.lfgDetails.hotsLogsURL)){
          this.hotsLogsService.getMMR(this.returnedProfile.lfgDetails.hotsLogsURL).subscribe(res => {
            console.log(res);
-           this.returnedProfile.lfgDetails.averageMmr = res;
-           this.user.saveUser(this.returnedProfile).subscribe((res) => {
-             if (res) {
-               this.editOn = true;
-             } else {
-               alert("error");
-             }
-           });
+           if (res != 'error') {
+             this.returnedProfile.lfgDetails.averageMmr = res;
+             this.user.saveUser(this.returnedProfile).subscribe((res) => {
+               if (res) {
+                 this.editOn = true;
+                 this.hotsLogsFormControl.disable()
+               } else {
+                 alert("error");
+               }
+             });
+            }else{
+              alert('We could not validate your hots logs, please recheck the URL!');
+              this.cancel();
+            }
+
          });
        }else{
          this.user.saveUser(this.returnedProfile).subscribe((res) => {
            if (res) {
              this.editOn = true;
+             this.formControlledDisable();
            } else {
              alert("error");
            }

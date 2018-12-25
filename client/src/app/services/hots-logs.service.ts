@@ -35,8 +35,24 @@ export class HotsLogsService {
              }
            });
            return Math.round(totalMMR/inc);
+         }else{
+           if( res.hasOwnProperty('Message') ){
+             if(res['Message'].indexOf('invalid') > -1){
+               return 'error';
+             }
+           }
          }
        })
      )
+   }
+
+   validCheck(url):Observable<any>{
+     console.log('a')
+     let playerId = '';
+     if (url.indexOf('https://www.hotslogs.com/Player/Profile?PlayerID=') > -1) {
+       playerId = url.slice(url.indexOf("=") + 1, url.length);
+     }
+     let callUrl = this.url.replace('?id', playerId);
+     return this.http.get(callUrl);
    }
 }

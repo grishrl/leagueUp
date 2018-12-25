@@ -177,7 +177,7 @@ router.post('/save', passport.authenticate('jwt', {
                             found.teamInfo[key] = sentUser.teamInfo[key];
                         });
                     }
-                    console.log('? ? ?');
+
                     sendRes = false;
 
                     found.save(function(err, updatedUser) {

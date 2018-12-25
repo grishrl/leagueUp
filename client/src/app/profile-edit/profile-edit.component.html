@@ -17,7 +17,7 @@
                                     <button type="button" (click)="openDialog()" class="btn btn-danger "><span class="icon-align"><i class="material-icons">delete_forever</i>Delete</span></button>
                                 </div>
                                 <div class="col">
-                                    <button type="button" (click)="save()" class="btn btn-success "><span class="icon-align"><i class="material-icons">check</i>Save</span></button>
+                                    <button type="button" [disabled]="!profileForm.valid" (click)="save()" class="btn btn-success "><span class="icon-align"><i class="material-icons">check</i>Save</span></button>
                                 </div>
                                 <div class="col">
                                     <button type="button" (click)="cancel()" class="btn btn-danger"><span class="icon-align"><i class="material-icons">close</i>Cancel</span></button>
@@ -34,18 +34,18 @@
                             <input matInput placeholder="Display Name" [(ngModel)]="returnedProfile.displayName" disabled="true">
                         </mat-form-field>
                         <mat-form-field>
-                            <input matInput placeholder="HOTS LOGS URL" disabled="{{editOn}}" [(ngModel)]="returnedProfile.lfgDetails.hotsLogsURL">
+                            <input matInput placeholder="HOTS LOGS URL" [formControl]="hotsLogsFormControl" [(ngModel)]="returnedProfile.lfgDetails.hotsLogsURL">
                         </mat-form-field>
                         <mat-form-field>
-                            <mat-select placeholder="Hero League Division" disabled="{{editOn}}" [(ngModel)]="returnedProfile.lfgDetails.heroLeague.metal">
+                            <mat-select placeholder="Hero League Division" [formControl]="heroeLeagueDivisionControl" [(ngModel)]="returnedProfile.lfgDetails.heroLeague.metal">
                                 <mat-option *ngFor="let medal of hlMedals" [value]="medal">
                                     {{medal}}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
-                        <div class="pe-full-width" *ngIf="selectedMedal != 'Master' && selectedMedal != 'Grand Master'">
+                        <div class="pe-full-width" *ngIf="returnedProfile.lfgDetails.heroLeague.metal != 'Master' && returnedProfile.lfgDetails.heroLeague.metal != 'Grand Master'">
                             <mat-form-field class="pe-full-width">
-                                <mat-select placeholder="Hero League Rank" disabled="{{editOn}}" [(ngModel)]="returnedProfile.lfgDetails.heroLeague.division">
+                                <mat-select placeholder="Hero League Rank" [formControl]="heroeLeagueRankControl" [(ngModel)]="returnedProfile.lfgDetails.heroLeague.division">
                                     <mat-option *ngFor="let rank of hlDivision" [value]="rank">
                                         {{rank}}
                                     </mat-option>
@@ -53,9 +53,9 @@
                             </mat-form-field>
                         </div>
 
-                        <div class="pe-full-width" *ngIf="selectedMedal == 'Master' || selectedMedal == 'Grand Master'">
+                        <div class="pe-full-width" *ngIf="returnedProfile.lfgDetails.heroLeague.metal == 'Master' || returnedProfile.lfgDetails.heroLeague.metal == 'Grand Master'">
                             <mat-form-field class="pe-full-width">
-                                <input matInput placeholder="Rank Number" disabled="{{editOn}}" [(ngModel)]="returnedProfile.lfgDetails.heroLeague.division">
+                                <input matInput placeholder="Rank Number" [formControl]="heroeLeagueRankControl" [(ngModel)]="returnedProfile.lfgDetails.heroLeague.division">
                             </mat-form-field>
                         </div>
 
@@ -212,7 +212,7 @@
                         <div class="row mt-3">
                             <div class="col">
                                 <mat-form-field class="pe-full-width">
-                                    <mat-select placeholder="Timezone:" disabled="{{editOn}}" [(ngModel)]="returnedProfile.lfgDetails.timeZone">
+                                    <mat-select placeholder="Timezone:" [formControl]="timezoneControl" [(ngModel)]="returnedProfile.lfgDetails.timeZone">
                                         <mat-option *ngFor="let zone of timezone.timezones" [value]="zone.value">
                                             {{zone.text}}
                                         </mat-option>
