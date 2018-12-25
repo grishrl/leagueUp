@@ -16,13 +16,6 @@ export class TeamService {
     return this.http.get<any>(url)
     .pipe(
       map((res)=>{
-        // console.log('res ',res)
-        // if(res.hasOwnProperty('returnObject')){
-        //   if (res.returnObject.hasOwnProperty('logo')){
-        //     let logoURL = res.returnObject.logo;
-        //     res.returnObject.logo = this.cleanUpLogoUrl(logoURL);
-        //   }
-        // }
        return res.returnObject;
       }
       )

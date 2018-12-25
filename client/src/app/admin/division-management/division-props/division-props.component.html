@@ -12,6 +12,10 @@
                         </mat-form-field>
                     </div>
                 </div>
+                <div class="col">
+                    <h5>Create new division</h5>
+                    <button (click)="createNew()">Create new</button>
+                </div>
             </div>
 
             <div *ngIf="editDivision">
@@ -19,10 +23,10 @@
                     <div class="col">
                         <div class="example-container">
                             <mat-form-field>
-                                <input matInput placeholder="Display Name" [(ngModel)]="editDivision.displayName">
+                                <input matInput placeholder="Display Name" [formControl]="displayNameControl" [(ngModel)]="editDivision.displayName">
                             </mat-form-field>
                             <mat-form-field>
-                                <input matInput placeholder="Division Name" [(ngModel)]="editDivision.divisionName" (ngModelChange)="calculateNewConcat()">
+                                <input matInput placeholder="Division Name" [formControl]="divisionNameControl" [(ngModel)]="editDivision.divisionName" (ngModelChange)="calculateNewConcat()">
                             </mat-form-field>
                             <mat-form-field>
                                 <input matInput placeholder="Division Coast" [(ngModel)]="editDivision.divisionCoast" (ngModelChange)="calculateNewConcat()">
@@ -34,20 +38,23 @@
                                 <input matInput placeholder="Sorting" [(ngModel)]="editDivision.sorting">
                             </mat-form-field>
                             <mat-form-field>
-                                <input matInput placeholder="Max MMR" [(ngModel)]="editDivision.maxMMR">
+                                <input matInput placeholder="Max MMR" [formControl]="maxMMRControl" [(ngModel)]="editDivision.maxMMR">
                             </mat-form-field>
                             <mat-form-field>
-                                <input matInput placeholder="Min MMR" [(ngModel)]="editDivision.minMMR">
+                                <input matInput placeholder="Min MMR" [formControl]="minMMRControl" [(ngModel)]="editDivision.minMMR">
                             </mat-form-field>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <button class="btn btn-danger" (click)="revert()">Cancel Changes</button>
+                        <button class="btn btn-warning" (click)="revert()">Cancel Changes</button>
+                    </div>
+                    <div class="col" *ngIf="!newDiv">
+                        <button class="btn btn-danger" (click)="delete(editDivision.divisionConcat)">Delete Selected Division</button>
                     </div>
                     <div class="col">
-                        <button class="btn btn-success" (click)="save(editDivision)">Save</button>
+                        <button class="btn btn-success" [disabled]="!divisionForm.valid" (click)="save(editDivision)">Save</button>
                     </div>
                 </div>
             </div>

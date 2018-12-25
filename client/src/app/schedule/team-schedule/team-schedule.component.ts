@@ -22,8 +22,9 @@ export class TeamScheduleComponent implements OnInit {
     if(this.recTeam){
       getTeam = this.recTeam;
     }else{
-      getTeam = this.Auth.getTeam()
+      getTeam = this.Auth.getTeam();
     }
+    //TODO: remove hard coded season 6!!!
     this.scheduleService.getTeamSchedules(6, getTeam, null).subscribe(
       res=>{
         this.rounds = res;

@@ -5,7 +5,7 @@
             <div class="row mt-3">
                 <div class="col">
                     <mat-form-field class="tp-FullWidth">
-                        <input matInput placeholder="Team Name" [(ngModel)]="returnedProfile.teamName">
+                        <input matInput placeholder="Team Name*" [formControl]="nameContorl" [(ngModel)]="returnedProfile.teamName">
                     </mat-form-field>
                     <mat-slide-toggle [(ngModel)]="returnedProfile.lookingForMore">
                         Looking for More.
@@ -46,118 +46,120 @@
             <!-- Availability Schedule -->
             <div class="row mt-3">
                 <div class="col">
-                    Times the team plays and practices:
+                    Times the team plays and practices: <span class="req-field">*At least one time is required to create team.</span>
                 </div>
             </div>
-            <div class="row mt-3">
-                <div class="col">
-                    <mat-checkbox [(ngModel)]="returnedProfile.lfmDetails.availability.monday.available">Monday</mat-checkbox>
+            <div [ngClass]="{'error-avail':errorAvail}">
+                <div class="row mt-3">
+                    <div class="col">
+                        <mat-checkbox [(ngModel)]="returnedProfile.lfmDetails.availability.monday.available">Monday</mat-checkbox>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.monday.startTime" placeholder="Start Time">
+                        </mat-form-field>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput [(ngModel)]="returnedProfile.lfmDetails.availability.monday.endTime" type="time" placeholder="End Time">
+                        </mat-form-field>
+                    </div>
                 </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.monday.startTime" placeholder="Start Time">
-                    </mat-form-field>
+                <div class="row">
+                    <div class="col">
+                        <mat-checkbox class="" [(ngModel)]="returnedProfile.lfmDetails.availability.tuesday.available">Tuesday</mat-checkbox>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.tuesday.startTime" placeholder="Start Time">
+                        </mat-form-field>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.tuesday.endTime" placeholder="End Time">
+                        </mat-form-field>
+                    </div>
                 </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput [(ngModel)]="returnedProfile.lfmDetails.availability.monday.endTime" type="time" placeholder="End Time">
-                    </mat-form-field>
+                <div class="row">
+                    <div class="col">
+                        <mat-checkbox class="" [(ngModel)]="returnedProfile.lfmDetails.availability.wednesday.available">Wednesday</mat-checkbox>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.wednesday.startTime" placeholder="Start Time">
+                        </mat-form-field>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.wednesday.endTime" placeholder="End Time">
+                        </mat-form-field>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <mat-checkbox class="" [(ngModel)]="returnedProfile.lfmDetails.availability.tuesday.available">Tuesday</mat-checkbox>
+                <div class="row">
+                    <div class="col">
+                        <mat-checkbox class="" [(ngModel)]="returnedProfile.lfmDetails.availability.thursday.available">Thursday</mat-checkbox>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.thursday.startTime" placeholder="Start Time">
+                        </mat-form-field>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.thursday.endTime" placeholder="End Time">
+                        </mat-form-field>
+                    </div>
                 </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.tuesday.startTime" placeholder="Start Time">
-                    </mat-form-field>
+                <div class="row">
+                    <div class="col">
+                        <mat-checkbox class="" [(ngModel)]="returnedProfile.lfmDetails.availability.friday.available">Friday</mat-checkbox>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.friday.startTime" placeholder="Start Time">
+                        </mat-form-field>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.friday.endTime" placeholder="End Time">
+                        </mat-form-field>
+                    </div>
                 </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.tuesday.endTime" placeholder="End Time">
-                    </mat-form-field>
+                <div class="row">
+                    <div class="col">
+                        <mat-checkbox class="" [(ngModel)]="returnedProfile.lfmDetails.availability.saturday.available">Saturday</mat-checkbox>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.saturday.startTime" placeholder="Start Time">
+                        </mat-form-field>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.saturday.endTime" placeholder="End Time">
+                        </mat-form-field>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <mat-checkbox class="" [(ngModel)]="returnedProfile.lfmDetails.availability.wednesday.available">Wednesday</mat-checkbox>
-                </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.wednesday.startTime" placeholder="Start Time">
-                    </mat-form-field>
-                </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.wednesday.endTime" placeholder="End Time">
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <mat-checkbox class="" [(ngModel)]="returnedProfile.lfmDetails.availability.thursday.available">Thursday</mat-checkbox>
-                </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.thursday.startTime" placeholder="Start Time">
-                    </mat-form-field>
-                </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.thursday.endTime" placeholder="End Time">
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <mat-checkbox class="" [(ngModel)]="returnedProfile.lfmDetails.availability.friday.available">Friday</mat-checkbox>
-                </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.friday.startTime" placeholder="Start Time">
-                    </mat-form-field>
-                </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.friday.endTime" placeholder="End Time">
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <mat-checkbox class="" [(ngModel)]="returnedProfile.lfmDetails.availability.saturday.available">Saturday</mat-checkbox>
-                </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.saturday.startTime" placeholder="Start Time">
-                    </mat-form-field>
-                </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.saturday.endTime" placeholder="End Time">
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <mat-checkbox class="" [(ngModel)]="returnedProfile.lfmDetails.availability.sunday.available">Sunday</mat-checkbox>
-                </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.sunday.startTime" placeholder="Start Time">
-                    </mat-form-field>
-                </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.sunday.endTime" placeholder="End Time">
-                    </mat-form-field>
+                <div class="row">
+                    <div class="col">
+                        <mat-checkbox class="" [(ngModel)]="returnedProfile.lfmDetails.availability.sunday.available">Sunday</mat-checkbox>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.sunday.startTime" placeholder="Start Time">
+                        </mat-form-field>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.sunday.endTime" placeholder="End Time">
+                        </mat-form-field>
+                    </div>
                 </div>
             </div>
             <div class="row mt-3">
                 <div class="col">
                     <mat-form-field class="tp-FullWidth">
-                        <mat-select placeholder="Timezone:" [(ngModel)]="returnedProfile.lfmDetails.timeZone">
+                        <mat-select placeholder="Timezone:*" [formControl]="timeZoneControl" [(ngModel)]="returnedProfile.lfmDetails.timeZone">
                             <mat-option *ngFor="let zone of timezone.timezones" [value]="zone.value">
                                 {{zone.text}}
                             </mat-option>
@@ -168,7 +170,7 @@
             <div class="row mt-3 mb-3">
 
                 <div class="col">
-                    <button type="button" (click)="save()" class="btn btn-success ">Save</button>
+                    <button type="button" [disabled]="!validate()" (click)="save()" class="btn btn-success ">Save</button>
                 </div>
                 <div class="col">
                     <button type="button" (click)="cancel()" class="btn btn-danger">Cancel</button>

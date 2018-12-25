@@ -5,3 +5,16 @@
 .role-margin {
     margin: 0 10px;
 }
+
+.error-avail {
+    border-style: solid;
+    border-width: 2px;
+    border-color: red;
+    padding-left: 10px;
+}
+
+.req-field {
+    color: red;
+    font-size: .80em;
+    font-weight: 600;
+}

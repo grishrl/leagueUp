@@ -11,7 +11,9 @@ export class AdminService {
   constructor(private http:HttpClient) { }
 
   getTeamsNotDivisioned(){
-    let url = 'http://localhost:3000/admin/getTeamsUndivisioned';
+    // let url = 'http://localhost:3000/admin/getTeamsUndivisioned';
+    let url = 'admin/getTeamsUndivisioned';
+
     return this.http.get(url).pipe(
       map( 
         res=>{ 
@@ -23,7 +25,9 @@ export class AdminService {
 
 
   saveDivisionEdits(divname, divobj){
-  let url = "http://localhost:3000/admin/upsertDivision";
+  // let url = "http://localhost:3000/admin/upsertDivision";
+  let url = "admin/upsertDivision";
+
   let payload = {
     "divObj": divobj,
     "divName":divname
@@ -36,7 +40,9 @@ export class AdminService {
   }
 
   divisionTeam( teamArr, divisionName){
-    let url ="http://localhost:3000/admin/divisionTeams";
+    // let url ="http://localhost:3000/admin/divisionTeams";
+    let url = "admin/divisionTeams";
+
     let payload = {
       teamInfo:teamArr,
       divisionName:divisionName
@@ -51,7 +57,8 @@ export class AdminService {
   }
 
   removeTeams(teamArr, divName){
-    let url = 'http://localhost:3000/admin/removeTeams';
+    // let url = 'http://localhost:3000/admin/removeTeams';
+    let url = 'admin/removeTeams';
     let payload = {
       "teams":teamArr,
       "divName":divName
@@ -66,7 +73,9 @@ export class AdminService {
   }
 
   getDivisionList(){
-    let url = 'http://localhost:3000/admin/getDivisionInfo';
+    // let url = 'http://localhost:3000/admin/getDivisionInfo';
+    let url = 'admin/getDivisionInfo';
+
     return this.http.get(url).pipe(
       map(res=>{
         let divisionArr = res['returnObject'];
@@ -85,7 +94,9 @@ export class AdminService {
   }
 
   queuePost(answer){
-    let url='http://localhost:3000/admin/approveMemberAdd';
+    // let url='http://localhost:3000/admin/approveMemberAdd';
+    let url = 'admin/approveMemberAdd';
+
 
     return this.http.post(url, answer).pipe(
       map( res =>{
@@ -94,7 +105,9 @@ export class AdminService {
   }
 
   deleteUser(user){
-    let url ='http://localhost:3000/admin/delete/user';
+    // let url ='http://localhost:3000/admin/delete/user';
+    let url = 'admin/delete/user';
+
     let payload = {displayName:user};
     return this.http.post(url, payload).pipe(
       map(
@@ -106,7 +119,9 @@ export class AdminService {
   }
 
   deleteTeam(team){
-    let url = 'http://localhost:3000/admin/delete/team';
+    // let url = 'http://localhost:3000/admin/delete/team';
+    let url = 'admin/delete/team';
+
     team = team.toLowerCase();
     let payload = { teamName : team};
     return this.http.post(url, payload).pipe(
@@ -119,7 +134,9 @@ export class AdminService {
   }
 
   saveTeam(teamName, teamObj){
-    let url = 'http://localhost:3000/admin/teamSave';
+    // let url = 'http://localhost:3000/admin/teamSave';
+     let url = 'admin/teamSave'
+
     let payload = {
       "teamName": teamName.toLowerCase(),
       "teamObj":teamObj
@@ -132,7 +149,9 @@ export class AdminService {
   }
 
   changeCaptain(team, user){
-    let url = 'http://localhost:3000/admin/reassignCaptain';
+    // let url = 'http://localhost:3000/admin/reassignCaptain';
+    let url = 'admin/reassignCaptain';
+
     let payload = { teamName: team, userName: user};
     return this.http.post(url, payload).pipe(
       map(
@@ -143,6 +162,28 @@ export class AdminService {
     )
   }
 
-  
+  createDivision(divObj){
+    let url = 'admin/createDivision';
+    let payload = {division:divObj};
+    return this.http.post(url, payload).pipe(
+      map(
+        res=>{
+          return res;
+        }
+      )
+    )
+  }
+
+  deleteDivision(div){
+    let url = 'admin/deleteDivision';
+    let payload = {division:div};
+    return this.http.post(url, payload).pipe(
+      map(
+        res=>{
+          return res;
+        }
+      )
+    )
+  }
 
 }

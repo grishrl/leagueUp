@@ -5,17 +5,18 @@ Work on client flow > particularly in regards to scheduling screens, what is the
 >> scheduling -- cont. system generated schedules
 >> schedule matches -- cont. captains putting time/date to a match
 
->>> remove all hard codings of season 6 with something... else MEDIUM PRIO
+ADMIN:
+division: 
+Create / delete divisions
 
 team
 > validation warnings!!!!! HIGH RPI
->looking for users
->disable invite button after it its clicked so that someone invited can not be invited mutliple times;
+>disable invite button after it its clicked so that someone invited can not be invited mutliple times  !!! High
 >team members two columns of 3 rows
 > add back some confirm text for inviting a member to the team!
 > player names links, if possible.
 > show pending members?
-
+>looking for users (marketplace)
 
 reporting
 >report match outcomes
@@ -44,11 +45,10 @@ reporting
 }
 
 user
+>server side checking if battle tag changed !!! High
 >collect discord userid?
 >Looking for team (marketplace)
 
-admin division:
-keep interactions between tabs up to date; IE if div is created or deleted the other pages refresh their lists.
 
 >podcasts on the blogging?
 

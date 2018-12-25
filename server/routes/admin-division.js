@@ -17,9 +17,11 @@ router.get('/getTeamsUndivisioned', passport.authenticate('jwt', {
         $or: [
             { teamDivision: null },
             { teamDivision: { $exists: false } },
-            { "teamDivision.teamName": null },
             {
-                "teamDivision.teamName": {
+                "teamDivision.divisionConcat": null
+            },
+            {
+                "teamDivision.divisionConcat": {
                     $exists: false
                 }
             }
@@ -181,6 +183,81 @@ router.post('/removeTeams', passport.authenticate('jwt', {
         res.status(500).send(util.returnMessaging(path, 'Error finding division', err));
     })
 })
+
+router.post('/createDivision', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.divisionLevel, (req, res) => {
+    const path = '/admin/createDivision';
+    const recievedDivision = req.body.division;
+
+    Division.findOne({ divisionConcat: recievedDivision.divisionConcat }).then(
+        (found) => {
+            if (found) {
+                res.status(400).send(util.returnMessaging(path, 'Division All ready exists', false, found));
+            } else {
+                new Division(
+                    recievedDivision
+                ).save().then(
+                    (saved) => {
+                        res.status(200).send(util.returnMessaging(path, 'Division Created', false, saved));
+                    },
+                    (err) => {
+                        res.status(500).send(util.returnMessaging(path, 'Division not created', err));
+                    }
+                )
+            }
+        },
+        (err) => {
+            res.status(500).send(util.returnMessaging(path, 'Error creating division', err));
+        }
+    )
+});
+
+router.post('/deleteDivision', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.divisionLevel, (req, res) => {
+    const path = '/admin/deleteDivision';
+    const recievedDivision = req.body.division;
+
+    Division.findOneAndDelete({ divisionConcat: recievedDivision }).then(
+            (removed) => {
+                if (removed) {
+                    //touch each team that was in the division and remove the division from them
+                    res.status(200).send(util.returnMessaging(path, 'Division was deleted.', false, removed));
+                    TeamSubs.upsertTeamsDivision(removed.teams, {});
+
+                } else {
+                    res.status(400).send(util.returnMessaging(path, 'Division not found', false));
+                }
+            },
+            (err) => {
+                res.status(500).send(util.returnMessaging(path, 'Division delete failed', err));
+            }
+        )
+        // Division.findOne({
+        //     divisionConcat: recievedDivision.divisionConcat
+        // }).then(
+        //     (found) => {
+        //         if (found) {
+        //             res.status(400).send(util.returnMessaging(path, 'Division All ready exists', false, found));
+        //         } else {
+        //             new Division(
+        //                 recievedDivision
+        //             ).save().then(
+        //                 (saved) => {
+        //                     res.status(200).send(util.returnMessaging(path, 'Division Created', false, saved));
+        //                 },
+        //                 (err) => {
+        //                     res.status(500).send(util.returnMessaging(path, 'Division not created', err));
+        //                 }
+        //             )
+        //         }
+        //     },
+        //     (err) => {
+        //         res.status(500).send(util.returnMessaging(path, 'Error creating division', err));
+        //     }
+        // )
+});
 
 
 module.exports = router;

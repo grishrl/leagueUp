@@ -37,11 +37,10 @@ const APP_ROUTES: Routes = [
   { path: '_admin/deleteUser', component:DeleteMemberComponent },
   { path: '_admin/manageTeam', component:DeleteTeamComponent },
   { path: '_admin/divisionMgmt', component:DivisionManagementComponent },
-  { path: 'schedule' , component:SheduleViewComponent},
   {path: 'schedule/scheduleMatch/:id', component:MatchScheduleComponent},
-  { path: 'schedule/teamSchedule', component: TeamScheduleComponent },
-  {path: 'schedule/teamSchedule/:id', component:TeamScheduleComponent},
-  {path: 'reporting/:id', component:ReportingComponent}
+  {path: 'schedule/teamSchedule', component: TeamScheduleComponent },
+  {path: 'schedule/teamSchedule/:id', component:TeamScheduleComponent}, //accepts team name as url parameter
+  {path: 'reporting/:id', component:ReportingComponent} //accepts team name as url parameter
 ]
 
 @NgModule({

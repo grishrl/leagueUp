@@ -173,7 +173,7 @@
                 </div> -->
             <div class="row mt-3">
                 <div class="col">
-                    Roles the team needs: editOn : {{editOn}}
+                    Roles the team needs:
                     <section>
                         <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.lfmDetails.rolesNeeded.tank" [disabled]="editOn">Tank</mat-checkbox>
                         <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.lfmDetails.rolesNeeded.offlane" [disabled]="editOn">Offlane</mat-checkbox>
@@ -189,115 +189,122 @@
                     Times the team plays or practices:
                 </div>
             </div>
-            <div class="row mt-3" [hidden]="hideDay(editOn,returnedProfile.lfmDetails.availability.monday.available)">
-                <div class="col">
-                    <mat-checkbox [(ngModel)]="returnedProfile.lfmDetails.availability.monday.available" [disabled]="editOn">Monday</mat-checkbox>
+            <div>
+                <div class="row mt-3" [hidden]="validate()">
+                    <div class="col">
+                        <p>Please enter at least 1 time available!</p>
+                    </div>
                 </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.monday.startTime" placeholder="Start Time" [disabled]="editOn">
-                    </mat-form-field>
+                <div class="row mt-3" [hidden]="hideDay(editOn,returnedProfile.lfmDetails.availability.monday.available)">
+                    <div class="col">
+                        <mat-checkbox [(ngModel)]="returnedProfile.lfmDetails.availability.monday.available" [disabled]="editOn">Monday</mat-checkbox>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.monday.startTime" placeholder="Start Time" [disabled]="editOn">
+                        </mat-form-field>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput [(ngModel)]="returnedProfile.lfmDetails.availability.monday.endTime" type="time" placeholder="End Time" [disabled]="editOn">
+                        </mat-form-field>
+                    </div>
                 </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput [(ngModel)]="returnedProfile.lfmDetails.availability.monday.endTime" type="time" placeholder="End Time" [disabled]="editOn">
-                    </mat-form-field>
+                <div class="row" [hidden]="hideDay(editOn,returnedProfile.lfmDetails.availability.tuesday.available)">
+                    <div class="col">
+                        <mat-checkbox class="" [(ngModel)]="returnedProfile.lfmDetails.availability.tuesday.available" [disabled]="editOn">Tuesday</mat-checkbox>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.tuesday.startTime" placeholder="Start Time" [disabled]="editOn">
+                        </mat-form-field>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.tuesday.endTime" placeholder="End Time" [disabled]="editOn">
+                        </mat-form-field>
+                    </div>
                 </div>
-            </div>
-            <div class="row" [hidden]="hideDay(editOn,returnedProfile.lfmDetails.availability.tuesday.available)">
-                <div class="col">
-                    <mat-checkbox class="" [(ngModel)]="returnedProfile.lfmDetails.availability.tuesday.available" [disabled]="editOn">Tuesday</mat-checkbox>
+                <div class="row" [hidden]="hideDay(editOn,returnedProfile.lfmDetails.availability.wednesday.available)">
+                    <div class="col">
+                        <mat-checkbox class="" [(ngModel)]="returnedProfile.lfmDetails.availability.wednesday.available" [disabled]="editOn">Wednesday</mat-checkbox>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.wednesday.startTime" placeholder="Start Time" [disabled]="editOn">
+                        </mat-form-field>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.wednesday.endTime" placeholder="End Time" [disabled]="editOn">
+                        </mat-form-field>
+                    </div>
                 </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.tuesday.startTime" placeholder="Start Time" [disabled]="editOn">
-                    </mat-form-field>
+                <div class="row" [hidden]="hideDay(editOn,returnedProfile.lfmDetails.availability.thursday.available)">
+                    <div class="col">
+                        <mat-checkbox class="" [(ngModel)]="returnedProfile.lfmDetails.availability.thursday.available" [disabled]="editOn">Thursday</mat-checkbox>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.thursday.startTime" placeholder="Start Time" [disabled]="editOn">
+                        </mat-form-field>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.thursday.endTime" placeholder="End Time" [disabled]="editOn">
+                        </mat-form-field>
+                    </div>
                 </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.tuesday.endTime" placeholder="End Time" [disabled]="editOn">
-                    </mat-form-field>
+                <div class="row" [hidden]="hideDay(editOn,returnedProfile.lfmDetails.availability.friday.available)">
+                    <div class="col">
+                        <mat-checkbox class="" [(ngModel)]="returnedProfile.lfmDetails.availability.friday.available" [disabled]="editOn">Friday</mat-checkbox>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.friday.startTime" placeholder="Start Time" [disabled]="editOn">
+                        </mat-form-field>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.friday.endTime" placeholder="End Time" [disabled]="editOn">
+                        </mat-form-field>
+                    </div>
                 </div>
-            </div>
-            <div class="row" [hidden]="hideDay(editOn,returnedProfile.lfmDetails.availability.wednesday.available)">
-                <div class="col">
-                    <mat-checkbox class="" [(ngModel)]="returnedProfile.lfmDetails.availability.wednesday.available" [disabled]="editOn">Wednesday</mat-checkbox>
+                <div class="row" [hidden]="hideDay(editOn,returnedProfile.lfmDetails.availability.saturday.available)">
+                    <div class="col">
+                        <mat-checkbox class="" [(ngModel)]="returnedProfile.lfmDetails.availability.saturday.available" [disabled]="editOn">Saturday</mat-checkbox>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.saturday.startTime" placeholder="Start Time" [disabled]="editOn">
+                        </mat-form-field>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.saturday.endTime" placeholder="End Time" [disabled]="editOn">
+                        </mat-form-field>
+                    </div>
                 </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.wednesday.startTime" placeholder="Start Time" [disabled]="editOn">
-                    </mat-form-field>
-                </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.wednesday.endTime" placeholder="End Time" [disabled]="editOn">
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="row" [hidden]="hideDay(editOn,returnedProfile.lfmDetails.availability.thursday.available)">
-                <div class="col">
-                    <mat-checkbox class="" [(ngModel)]="returnedProfile.lfmDetails.availability.thursday.available" [disabled]="editOn">Thursday</mat-checkbox>
-                </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.thursday.startTime" placeholder="Start Time" [disabled]="editOn">
-                    </mat-form-field>
-                </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.thursday.endTime" placeholder="End Time" [disabled]="editOn">
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="row" [hidden]="hideDay(editOn,returnedProfile.lfmDetails.availability.friday.available)">
-                <div class="col">
-                    <mat-checkbox class="" [(ngModel)]="returnedProfile.lfmDetails.availability.friday.available" [disabled]="editOn">Friday</mat-checkbox>
-                </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.friday.startTime" placeholder="Start Time" [disabled]="editOn">
-                    </mat-form-field>
-                </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.friday.endTime" placeholder="End Time" [disabled]="editOn">
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="row" [hidden]="hideDay(editOn,returnedProfile.lfmDetails.availability.saturday.available)">
-                <div class="col">
-                    <mat-checkbox class="" [(ngModel)]="returnedProfile.lfmDetails.availability.saturday.available" [disabled]="editOn">Saturday</mat-checkbox>
-                </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.saturday.startTime" placeholder="Start Time" [disabled]="editOn">
-                    </mat-form-field>
-                </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.saturday.endTime" placeholder="End Time" [disabled]="editOn">
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="row" [hidden]="hideDay(editOn,returnedProfile.lfmDetails.availability.sunday.available)">
-                <div class="col">
-                    <mat-checkbox class="" [(ngModel)]="returnedProfile.lfmDetails.availability.sunday.available" [disabled]="editOn">Sunday</mat-checkbox>
-                </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.sunday.startTime" placeholder="Start Time" [disabled]="editOn">
-                    </mat-form-field>
-                </div>
-                <div class="col">
-                    <mat-form-field>
-                        <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.sunday.endTime" placeholder="End Time" [disabled]="editOn">
-                    </mat-form-field>
+                <div class="row" [hidden]="hideDay(editOn,returnedProfile.lfmDetails.availability.sunday.available)">
+                    <div class="col">
+                        <mat-checkbox class="" [(ngModel)]="returnedProfile.lfmDetails.availability.sunday.available" [disabled]="editOn">Sunday</mat-checkbox>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.sunday.startTime" placeholder="Start Time" [disabled]="editOn">
+                        </mat-form-field>
+                    </div>
+                    <div class="col">
+                        <mat-form-field>
+                            <input matInput type="time" [(ngModel)]="returnedProfile.lfmDetails.availability.sunday.endTime" placeholder="End Time" [disabled]="editOn">
+                        </mat-form-field>
+                    </div>
                 </div>
             </div>
             <div class="row mt-3">
                 <div class="col">
                     <mat-form-field class="tp-FullWidth">
-                        <mat-select placeholder="Timezone:" [(ngModel)]="returnedProfile.lfmDetails.timeZone">
+                        <mat-select placeholder="Timezone:" [formControl]="timezoneControl" [(ngModel)]="returnedProfile.lfmDetails.timeZone">
                             <mat-option *ngFor="let zone of timezone.timezones" [value]="zone.value" [disabled]="editOn">
                                 {{zone.text}}
                             </mat-option>
