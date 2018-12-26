@@ -21,7 +21,7 @@ export class DivisionComponent implements OnInit {
   divSub: Subscription
   param: string
   navigationSubscription
-  divDisplay;
+  divDisplay = {displayName:''};
 
   
 

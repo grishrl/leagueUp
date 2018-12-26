@@ -2,3 +2,9 @@ section {
     padding-top: 56px;
     height: 100%;
 }
+
+:host {
+    box-sizing: border-box;
+    display: block;
+    height: 100%;
+}

@@ -1,11 +1,10 @@
 <div id="myDiv" class="container">
-
     <div class="row">
         <div class="col">
-            <mat-tab-group dynamicHeight>
-                <mat-tab label="Division">
-                    <div class="row">
-                        <div class="col-10 mx-auto">
+            <div id="wrapper">
+                <mat-tab-group id="tab-group" dynamicHeight class="mb-3">
+                    <mat-tab label="Division">
+                        <div>
                             <div class="row">
                                 <div class="col-md-12">
                                     <h2 class="text-center">{{divDisplay.displayName}} </h2>
@@ -17,19 +16,20 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </mat-tab>
-                <mat-tab label="Shedule">
 
-                    <app-shedule-view [division]="divDisplay"></app-shedule-view>
+                    </mat-tab>
+                    <mat-tab label="Shedule">
 
-                </mat-tab>
-                <mat-tab label="Standings">
+                        <app-shedule-view [division]="divDisplay"></app-shedule-view>
 
-                    <!-- TODO: Implement standings -->
+                    </mat-tab>
+                    <mat-tab label="Standings">
 
-                </mat-tab>
-            </mat-tab-group>
+                        <!-- TODO: Implement standings -->
+
+                    </mat-tab>
+                </mat-tab-group>
+            </div>
         </div>
     </div>
 </div>

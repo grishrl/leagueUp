@@ -52,7 +52,7 @@ router.get('/get', (req, res) => {
     }).lean().then(
         (foundTeam) => {
             if (foundTeam) {
-                res.status(200).send(util.returnMessaging(path, 'Found tedam', false, foundTeam));
+                res.status(200).send(util.returnMessaging(path, 'Found team', false, foundTeam));
             } else {
                 res.status(200).send(util.returnMessaging(path, "Team not found", false, foundTeam));
             }
@@ -68,19 +68,20 @@ router.get('/get', (req, res) => {
 // finds team of passed team name
 // returns found team
 router.post('/getTeams', (req, res) => {
-    const path = '/team/get';
+    const path = '/team/getTeams';
     var teams = req.body.teams;
 
+    let searchArray = [];
     teams.forEach(element => {
-        element = element.toLowerCase();
+        searchArray.push(element.toLowerCase());
     });
 
     Team.find({
-        teamName_lower: { $in: teams }
+        teamName_lower: { $in: searchArray }
     }).lean().then(
         (foundTeams) => {
             if (foundTeams && foundTeams.length > 0) {
-                res.status(200).send(util.returnMessaging(path, 'Found tedam', false, foundTeams));
+                res.status(200).send(util.returnMessaging(path, 'Found team', false, foundTeams));
             } else {
                 res.status(200).send(util.returnMessaging(path, "Team not found", false, foundTeams));
             }
