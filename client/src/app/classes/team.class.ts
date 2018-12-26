@@ -105,7 +105,10 @@ export class Team {
       if(teamDivision!=null && teamDivision !=undefined){
         this.teamDivision = teamDivision;
       }else{
-        this.teamDivision = null;
+        this.teamDivision = {
+          displayName:'',
+          divisionConcat:''
+        };
       }
   }
 }

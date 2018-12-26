@@ -339,8 +339,7 @@ export class TeamProfileComponent implements OnInit {
     }else{
       this.timezoneControl.setErrors(null);
     }
-
-    console.log('validate() ', valid);
+    
     return valid;
   }
 

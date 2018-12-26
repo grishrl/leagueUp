@@ -69,10 +69,10 @@
             </div>
 
             <div class="row mt-3">
-                <div class="col-5">
+                <div class="col-sm-12 col-md-5">
                     <app-image-upload [showEdit]="auth.getUser()===returnedProfile.captain" [teamName]="returnedProfile.teamName" [teamLogo]="imageFQDN(returnedProfile.logo)"></app-image-upload>
                 </div>
-                <div class="col-7">
+                <div class="col-sm-12 col-md-7">
                     <mat-form-field class="tp-FullWidth">
                         <input matInput placeholder="Team Name" [(ngModel)]="returnedProfile.teamName" (ngModelChange)="modelChange()" [disabled]="!componentEmbedded">
                     </mat-form-field>
