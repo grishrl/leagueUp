@@ -11,7 +11,6 @@ import { AuthService } from '../services/auth.service';
 import { UserService } from '../services/user.service';
 import { AdminService } from '../services/admin.service';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
-import { Profile } from 'selenium-webdriver/firefox';
 
 
 @Component({
@@ -416,7 +415,7 @@ export class TeamProfileComponent implements OnInit {
       }
     }
     return !!retVal;
-  }ret
+  }
   //this method cleans up some things to make a pretty team display and creates some filtering for the invite member search
   // TODO: DELETE IF NO LONGER NEEDED
   // private cleanUpDivision() {
