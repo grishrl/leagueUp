@@ -31,7 +31,7 @@
 
                                     </div>
                                     <div class="col">
-                                        <button type="button" (click)="save()" class="btn btn-success ">Save</button>
+                                        <button type="button" [disabled]="!validate()" (click)="save()" class="btn btn-success ">Save</button>
                                     </div>
                                     <div class="col">
                                         <button type="button" (click)="cancel()" class="btn btn-danger">Cancel</button>
@@ -189,10 +189,10 @@
                     Times the team plays or practices:
                 </div>
             </div>
-            <div>
-                <div class="row mt-3" [hidden]="validate()">
+            <div [ngClass]="{'error-avail':errorAvail}">
+                <div class="row mt-3" [hidden]="!errorAvail">
                     <div class="col">
-                        <p>Please enter at least 1 time available!</p>
+                        <p class="req-field">Please enter at least 1 time available!</p>
                     </div>
                 </div>
                 <div class="row mt-3" [hidden]="hideDay(editOn,returnedProfile.lfmDetails.availability.monday.available)">

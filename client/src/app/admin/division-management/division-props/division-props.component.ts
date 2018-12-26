@@ -60,7 +60,7 @@ export class DivisionPropsComponent implements OnInit {
     this.safeSource = Object.assign({},this.selectedDivision);
   }
 
-  createNew(div){
+  createNew(){
     this.newDiv = true;
     this.editDivision = Object.assign({});
   }

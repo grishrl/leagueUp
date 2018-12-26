@@ -108,6 +108,7 @@ export class CreateTeamComponent implements OnInit {
       valid = true;
       this.errorAvail = false;
     }else{
+      valid = false;
       this.errorAvail = true;
     }
 

@@ -10,6 +10,8 @@ import { Team } from '../classes/team.class';
 import { AuthService } from '../services/auth.service';
 import { UserService } from '../services/user.service';
 import { AdminService } from '../services/admin.service';
+import { FormControl, Validators, FormGroup } from '@angular/forms';
+import { Profile } from 'selenium-webdriver/firefox';
 
 
 @Component({
@@ -28,6 +30,7 @@ export class TeamProfileComponent implements OnInit {
   tempProfile
   message: string
   showMe:boolean = true;
+  errorAvail:boolean = false;
 
   hlMedals = ['Grand Master', 'Master', 'Diamond', 'Platinum', 'Gold', 'Silver', 'Bronze'];
   hlDivision = [1, 2, 3, 4, 5];
@@ -43,6 +46,19 @@ export class TeamProfileComponent implements OnInit {
     this.teamName = team.realTeamName(this.route.snapshot.params['id']);
   }
 
+
+  timezoneControl = new FormControl({ value: '', disabled: true }, [
+    Validators.required
+  ]);
+
+  formControlledEnable() {
+    this.timezoneControl.enable();
+  }
+
+  formControlledDisable() {
+    this.timezoneControl.disable();
+  }
+
   //init implementation
   ngOnInit() {
     let getProfile: string;
@@ -54,9 +70,10 @@ export class TeamProfileComponent implements OnInit {
         this.getTeamByString(getProfile);
       } else {
         merge(this.returnedProfile, this.providedProfile);
+        this.orignalName = this.returnedProfile.teamName_lower;
         // this.cleanUpDivision();
       }
-    } else if (this.teamName) {
+    } else {
       getProfile = this.teamName;
       this.getTeamByString(getProfile);
     }
@@ -64,7 +81,7 @@ export class TeamProfileComponent implements OnInit {
 
   //this boolean will keep up with wether the component is embedded in another or is acting as it's own standalone page
   componentEmbedded: boolean = false;
-  //if this component is used in the admin view the team name can be changed, we most hold on to the old team name to update the proper object
+  //if this component is used in the admin view the team name can be changed, we must hold on to the old team name to update the proper object
   orignalName:string = null;
   
   // this model change method will be bound to the name change input, so we can update the lower case name along with the display name
@@ -87,6 +104,7 @@ export class TeamProfileComponent implements OnInit {
       this.componentEmbedded = true;
 
       this.editOn = false;
+      this.formControlledDisable();
       
       this.ngOnInit();
     }
@@ -187,6 +205,7 @@ export class TeamProfileComponent implements OnInit {
   adminSave(){
     if (this.validate()) {
       this.editOn = true;
+      this.formControlledDisable();
       let cptRemoved = Object.assign({}, this.returnedProfile);
       delete cptRemoved.captain;
       this.admin.saveTeam(this.orignalName,this.returnedProfile).subscribe((res) => {
@@ -206,6 +225,7 @@ export class TeamProfileComponent implements OnInit {
   //this method enables form inputs for changes
   openEdit(){
     this.editOn=false;
+    this.formControlledEnable();
     this.tempProfile = Object.assign({}, this.returnedProfile);
   } 
 
@@ -213,16 +233,19 @@ export class TeamProfileComponent implements OnInit {
   cancel() {
     this.returnedProfile = Object.assign({}, this.tempProfile);
     this.editOn = true;
+    this.formControlledDisable();
   }
 
   //this method checks that the inputs are valid and if so, saves the team object
   save() {
     if (this.validate()) {
       this.editOn = true;
+      this.formControlledDisable();
       let cptRemoved = Object.assign({}, this.returnedProfile);
       delete cptRemoved.captain;
       this.team.saveTeam(cptRemoved).subscribe((res) => {
         this.editOn = true;
+        this.formControlledDisable();
       }, (err) => {
         console.log(err);
         alert(err.message);
@@ -299,34 +322,52 @@ export class TeamProfileComponent implements OnInit {
 
   //method to validate the inputs we require.
   validate() {
+
     let valid = true;
-
-    //validate looking for team:
-    if (this.isNullOrEmpty(this.returnedProfile.lookingForMore)) {
+    if (this.checkAvailabilityDays()){
+      valid = true;
+      this.errorAvail = false;
+    }else{
       valid = false;
+      this.errorAvail = true;
     }
-
-    //will we require the comp level, play history, roles?
-
-    //validate that we have start and end times for available days
-    for (let day in this.returnedProfile.lfmDetails.availability) {
-      let checkDay = this.returnedProfile.lfmDetails.availability[day];
-      if (checkDay.available) {
-        console.log('the times S, E', checkDay.startTime, checkDay.endTime)
-        if (checkDay.startTime == null && checkDay.endTime == null) {
-          return false;
-        } else if (checkDay.startTime.length == 0 && checkDay.endTime.length == 0) {
-          return false;
-        }
-      }
-    }
-
+    
     //ensure time zone
     if (this.isNullOrEmpty(this.returnedProfile.lfmDetails.timeZone)) {
       valid = false;
+      this.timezoneControl.setErrors({required:true});
+    }else{
+      this.timezoneControl.setErrors(null);
     }
 
+    console.log('validate() ', valid);
     return valid;
+  }
+
+  checkAvailabilityDays(): boolean {
+    let ret = true;
+    let nodays = 0;
+    if (this.returnBoolByPath(this.returnedProfile, 'lfmDetails.availability')) {
+      //validate that we have start and end times for available days
+      for (let day in this.returnedProfile.lfmDetails.availability) {
+        let checkDay = this.returnedProfile.lfmDetails.availability[day];
+        if (checkDay.available) {
+          if (checkDay.startTime == null && checkDay.endTime == null) {
+            ret = false;
+          } else if (checkDay.startTime.length == 0 && checkDay.endTime.length == 0) {
+            ret = false;
+          }
+        } else {
+          nodays += 1;
+        }
+      }
+    } else {
+      ret = false;
+    }
+    if (nodays == 7) {
+      ret = false;
+    }
+    return ret;
   }
 
   //method to get team by provided string
@@ -343,10 +384,43 @@ export class TeamProfileComponent implements OnInit {
     return this.team.imageFQDN(img);
   }
 
+  returnBoolByPath(obj, path): boolean {
+    //path is a string representing a dot notation object path;
+    //create an array of the string for easier manipulation
+    let pathArr = path.split('.');
+    //return value
+    let retVal = null;
+    //get the first element of the array for testing
+    let ele = pathArr[0];
+    //make sure the property exist on the object
+    if (obj.hasOwnProperty(ele)) {
+      if (typeof obj[ele] == 'boolean') {
+        retVal = true;
+      }
+      //property exists:
+      //property is an object, and the path is deeper, jump in!
+      else if (typeof obj[ele] == 'object' && pathArr.length > 1) {
+        //remove first element of array
+        pathArr.splice(0, 1);
+        //reconstruct the array back into a string, adding "." if there is more than 1 element
+        if (pathArr.length > 1) {
+          path = pathArr.join('.');
+        } else {
+          path = pathArr[0];
+        }
+        //recurse this function using the current place in the object, plus the rest of the path
+        retVal = this.returnBoolByPath(obj[ele], path);
+      } else if (typeof obj[ele] == 'object' && pathArr.length == 0) {
+        retVal = obj[ele];
+      } else {
+        retVal = obj[ele]
+      }
+    }
+    return !!retVal;
+  }ret
   //this method cleans up some things to make a pretty team display and creates some filtering for the invite member search
   // TODO: DELETE IF NO LONGER NEEDED
   // private cleanUpDivision() {
-  //   this.orignalName = this.returnedProfile.teamName_lower;
   //   if (this.returnedProfile.teamDivision) {
   //     this.displayDivison += "";
   //     let divDisplay = this.returnedProfile.teamDivision.divisionName;
