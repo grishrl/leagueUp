@@ -7,16 +7,6 @@ Work on client flow > particularly in regards to scheduling screens, what is the
 
 >>> remove all hard codings of season 6 with something... else MEDIUM PRIO
 
-team
-> validation warnings!!!!! HIGH RPI
->looking for users
->disable invite button after it its clicked so that someone invited can not be invited mutliple times;
->team members two columns of 3 rows
-> add back some confirm text for inviting a member to the team!
-> player names links, if possible.
-> show pending members?
-
-
 reporting
 >report match outcomes
 
@@ -42,6 +32,14 @@ reporting
     }
   }
 }
+
+team
+>disable invite button after it its clicked so that someone invited can not be invited mutliple times;
+>team members two columns of 3 rows
+> add back some confirm text for inviting a member to the team!
+> player names links, if possible.
+>looking for users (market place)
+> show pending members?
 
 user
 >collect discord userid?
