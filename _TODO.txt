@@ -1,11 +1,13 @@
 
 Work on client flow > particularly in regards to scheduling screens, what is the flow? think it through
-
+***!!!returnboolbypath is not working on any document returned from mongo investigate further!!!***
 >> standings
 >> scheduling -- cont. system generated schedules
 >> schedule matches -- cont. captains putting time/date to a match
 
 >>> remove all hard codings of season 6 with something... else MEDIUM PRIO
+
+>>> caster level access to add themselves to matches with links etc.
 
 reporting
 >report match outcomes
@@ -42,6 +44,7 @@ team
 > show pending members?
 
 user
+>uuid 
 >collect discord userid?
 >Looking for team (marketplace)
 

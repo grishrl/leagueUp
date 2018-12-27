@@ -2,16 +2,27 @@
     <div class="row">
         <div class="col">
 
+
             <div class="row" *ngIf="match">
                 <div class="col">
-                    <div *ngIf="match.hometeamName">{{match.hometeamName}}</div>
+                    <div class="row">
+                        <div class="col">
+                            Round {{match.round}}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div *ngIf="match.home.teamName">{{match.home.teamName}}</div>
+                        </div>
+                        <div class="col">
+                            - VS -
+                        </div>
+                        <div class="col">
+                            <div *ngIf="match.away.teamName; else bye">{{match.away.teamName}}</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col">
-                    - VS -
-                </div>
-                <div class="col">
-                    <div *ngIf="match.awayteamName; else bye">{{match.awayteamName}}</div>
-                </div>
+
             </div>
 
             <div class="row">

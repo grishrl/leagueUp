@@ -15,12 +15,8 @@ const scheduleRoutes = require('./server/routes/schedule-routes');
 const path = require('path');
 const passportSetup = require('./server/configs/passport-setup');
 const mongoose = require('mongoose');
-const https = require('https');
-const http = require("http");
-//const keys = require('./server/configs/keys');
 const bodyParser = require('body-parser');
-const fs = require('fs');
-const cors = require('cors');
+
 
 
 const hostname = process.env.hostname;
@@ -32,12 +28,9 @@ app.use(bodyParser.json({
     limit: '2.5mb',
     extended: true
 }));
+
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// app.use(cors({
-//     credentials: true,
-//     origin: ['http://localhost:80', 'https://localhost:443']
-// }));
 
 //initialize passport
 app.use(passport.initialize());
@@ -68,22 +61,16 @@ app.listen(port, hostname, () => {
     console.log(`Server ${hostname} running at on ${port}/`);
 });
 
-// const options = {
-//     cert: fs.readFileSync(path.join('./server/ssl', 'server.crt')),
-//     key: fs.readFileSync(path.join('./server/ssl', 'server.key'))
-// }
-
-// const httpsPort = process.env.PORT;
-
-// https.createServer(options, app).listen(httpsPort, function() {
-//     console.log('https running on ' + httpsPort);
-// });
-
 app.use('/', express.static(path.join(__dirname, './client/dist/client/')));
 
 app.get('*', function(req, res) {
     res.sendFile(path.join(__dirname, './client/dist/client/index.html'));
 });
 
-// const sched = require('./subroutines/schedule-subs');
-// sched.generateRoundRobinSchedule(6);
+// const sched = require('./server/subroutines/schedule-subs');
+// sched.generateSeason(6).then((res) => {
+//     console.log(res);
+//     if (res) {
+//         sched.generateRoundRobinSchedule(6)
+//     }
+// })

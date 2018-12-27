@@ -5,6 +5,7 @@ const uniqid = require('uniqid');
 const swiss = require('swiss-pairing')({
     maxPerRound: 2
 });
+const Match = require('../models/match-model');
 const util = require('../utils');
 
 
@@ -68,14 +69,16 @@ async function generateSeason(season) {
         "division": divObj
     }
     console.log('this is divObj before creating new schedule obj: ', schedObj);
-    new Scheduling(
+    let sched = await new Scheduling(
         schedObj
     ).save().then((saved) => {
         console.log('fin', JSON.stringify(saved));
-
+        return true;
     }, (err) => {
         console.log(err);
+        return false;
     });
+    return sched;
 }
 
 //this method generates a particular round of a tournament with the swiss system
@@ -170,6 +173,58 @@ function generateRoundRobinSchedule(season) {
         //save the schedule
         found.markModified('division');
         found.save().then((saved) => {
+            /*
+            
+            Now create the new table that is matches only!
+
+            */
+            let matchesToInsert = [];
+            let divisions = saved.division;
+            let divisionNames = Object.keys(divisions);
+            //get some data from our found object of
+            for (var i = 0; i < divisionNames.length; i++) {
+                let divisionName = divisionNames[i];
+                let roundSchedules = divisions[divisionName].roundSchedules;
+                if (roundSchedules != null || roundSchedules != undefined) {
+                    if (Object.entries(roundSchedules).length > 0) {
+                        let rounds = Object.keys(roundSchedules);
+                        rounds.forEach(round => {
+                            let matches = roundSchedules[round];
+                            matches.forEach(match => {
+                                console.log('match ', match)
+                                let newMatch = Object.assign({}, match);
+                                newMatch.round = round;
+                                newMatch.home = {};
+                                if (match.home == null) {
+                                    newMatch.home.id = 'null';
+                                } else {
+                                    newMatch.home.id = match.home;
+                                }
+                                newMatch.away = {};
+                                if (match.away == null) {
+                                    newMatch.away.id = 'null';
+                                } else {
+                                    newMatch.away.id = match.away;
+                                }
+                                // newMatch.home.id = match.home;
+                                // newMatch.away.id = match.away;
+                                newMatch.season = season;
+                                newMatch.division = {};
+                                newMatch.division.divisionConcat = divisionName;
+                                console.log('newMatch ', newMatch);
+                                matchesToInsert.push(newMatch);
+                            });
+                        });
+                    }
+                }
+            }
+            if (matchesToInsert.length > 0) {
+                Match.insertMany(matchesToInsert).then(res => {
+                    console.log('matches inserted!');
+                }, err => {
+                    console.log('error inserting matches');
+                })
+            }
             console.log('fin  schedules');
         }, (err) => {
             console.log('ERROR : ', err);
@@ -182,118 +237,121 @@ Need to generate 3 rounds ahead of time, then add those to the matches - no scor
 So that we can generate further schedules without having rematches occur.
 */
 
-function disbandTeam(season, division, team) {
-    //TODO implement
-}
 
-function dropOutTeam(season, division, team) {
-    //TODO implement
-}
-
-function dateTimeMatch(season, division, round, team, dateTime) {
-    //TODO implement 
-}
-
-
-function reportMatches(season, division, team, round, result) {
-    Scheduling.findOne({ "season": season }).then((found) => {
-        let targetDiv = found.division[division];
-        // console.log('targetDiv ', targetDiv);
-        let targetRound = targetDiv['roundSchedules'];
-        // console.log('targetRound ', targetRound);
-        targetRound = targetRound[round.toString()];
-        // console.log('narrowed round ', targetRound);
-        let targetMatch = null;
-        let teamIsHome = false;
-        targetRound.forEach(match => {
-            console.log(match.home, match.away);
-            if (match.home && match.home.toString() == team) {
-                targetMatch = match;
-                teamIsHome = true;
-            } else if (match.away && match.away.toString() == team) {
-                targetMatch = match;
-            }
-        });
-
-        let reportedMatch = {};
-        //ensure that we matched a team;
-        if (targetMatch) {
-            reportedMatch['round'] = round;
-            //check if the team that's reporting is the home team
-            if (teamIsHome) {
-                //if they report 2 points, give them 2 and the away 0,
-                let homePoints = 0;
-                let awayPoints = 0;
-                if (result == 2) {
-                    homePoints = result
-                } else if (result == 1) {
-                    //if they report 1 point split the points
-                    homePoints = 1;
-                    awayPoints = 1;
-                } else if (result == 0) {
-                    //if they report 0 points give the away team 2
-                    homePoints = 0;
-                    awayPoints = 2;
-                } else {
-                    console.log('this isnt a valid result.')
-                }
-                reportedMatch['home'] = {
-                    id: targetMatch.home,
-                    points: homePoints
-                };
-                reportedMatch['away'] = {
-                    id: targetMatch.away,
-                    points: awayPoints
-                }
-            } else {
-                //the reporting team was the away team;
-                let homePoints = 0;
-                let awayPoints = 0;
-                //give away all the points
-                if (result == 2) {
-                    awayPoints = result
-                } else if (result == 1) {
-                    //if they report 1 point split the points
-                    homePoints = 1;
-                    awayPoints = 1;
-                } else if (result == 0) {
-                    //if they report 0 points give the home team 2
-                    awayPoints = 0;
-                    homePoints = 2;
-                } else {
-                    console.log('this isnt a valid result.')
-                }
-                reportedMatch['home'] = {
-                    id: targetMatch.home,
-                    points: homePoints
-                };
-                reportedMatch['away'] = {
-                    id: targetMatch.away,
-                    points: awayPoints
-                }
-            }
-
-            found.division[division]['matches'].push(reportedMatch);
-            found.markModified('division');
-            found.save().then(
-                (saved) => {
-                    console.log('fin match reporting ', saved);
-                }, (err) => {
-                    console.log('Error match reporting ', err);
-                }
-            )
-        } else {
-            console.log('we got some bad something here pal');
-        }
-
-    }, (err) => {
-
-    });
-}
 
 module.exports = {
     generateSeason: generateSeason,
     generateRoundSchedules: generateRoundSchedules,
-    reportMatches: reportMatches,
     generateRoundRobinSchedule: generateRoundRobinSchedule
 };
+
+// function disbandTeam(season, division, team) {
+//     //TODO implement
+// }
+
+// function dropOutTeam(season, division, team) {
+//     //TODO implement
+// }
+
+// function dateTimeMatch(season, division, round, team, dateTime) {
+//     //TODO implement 
+// }
+
+
+// //
+
+// function reportMatches(season, division, team, round, result) {
+//     Scheduling.findOne({ "season": season }).then((found) => {
+//         let targetDiv = found.division[division];
+//         // console.log('targetDiv ', targetDiv);
+//         let targetRound = targetDiv['roundSchedules'];
+//         // console.log('targetRound ', targetRound);
+//         targetRound = targetRound[round.toString()];
+//         // console.log('narrowed round ', targetRound);
+//         let targetMatch = null;
+//         let teamIsHome = false;
+//         targetRound.forEach(match => {
+//             console.log(match.home, match.away);
+//             if (match.home && match.home.toString() == team) {
+//                 targetMatch = match;
+//                 teamIsHome = true;
+//             } else if (match.away && match.away.toString() == team) {
+//                 targetMatch = match;
+//             }
+//         });
+
+//         let reportedMatch = {};
+//         //ensure that we matched a team;
+//         if (targetMatch) {
+//             reportedMatch['round'] = round;
+//             //check if the team that's reporting is the home team
+//             if (teamIsHome) {
+//                 //if they report 2 points, give them 2 and the away 0,
+//                 let homePoints = 0;
+//                 let awayPoints = 0;
+//                 if (result == 2) {
+//                     homePoints = result
+//                 } else if (result == 1) {
+//                     //if they report 1 point split the points
+//                     homePoints = 1;
+//                     awayPoints = 1;
+//                 } else if (result == 0) {
+//                     //if they report 0 points give the away team 2
+//                     homePoints = 0;
+//                     awayPoints = 2;
+//                 } else {
+//                     console.log('this isnt a valid result.')
+//                 }
+//                 reportedMatch['home'] = {
+//                     id: targetMatch.home,
+//                     points: homePoints
+//                 };
+//                 reportedMatch['away'] = {
+//                     id: targetMatch.away,
+//                     points: awayPoints
+//                 }
+//             } else {
+//                 //the reporting team was the away team;
+//                 let homePoints = 0;
+//                 let awayPoints = 0;
+//                 //give away all the points
+//                 if (result == 2) {
+//                     awayPoints = result
+//                 } else if (result == 1) {
+//                     //if they report 1 point split the points
+//                     homePoints = 1;
+//                     awayPoints = 1;
+//                 } else if (result == 0) {
+//                     //if they report 0 points give the home team 2
+//                     awayPoints = 0;
+//                     homePoints = 2;
+//                 } else {
+//                     console.log('this isnt a valid result.')
+//                 }
+//                 reportedMatch['home'] = {
+//                     id: targetMatch.home,
+//                     points: homePoints
+//                 };
+//                 reportedMatch['away'] = {
+//                     id: targetMatch.away,
+//                     points: awayPoints
+//                 }
+//             }
+
+//             found.division[division]['matches'].push(reportedMatch);
+//             found.markModified('division');
+//             found.save().then(
+//                 (saved) => {
+//                     console.log('fin match reporting ', saved);
+//                 }, (err) => {
+//                     console.log('Error match reporting ', err);
+//                 }
+//             )
+//         } else {
+//             console.log('we got some bad something here pal');
+//         }
+
+//     }, (err) => {
+
+//     });
+// }

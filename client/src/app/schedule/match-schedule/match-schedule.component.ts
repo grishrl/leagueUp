@@ -62,8 +62,9 @@ export class MatchScheduleComponent implements OnInit {
     setDate.setHours(colonSplit[0]);
     setDate.setMinutes(colonSplit[1]);
     let msDate = setDate.getTime();
-    this.scheduleService.scheduleMatchTime(6,[this.match.hometeamName, this.match.awayteamName],this.match.division, 
-      this.match.round ,this.match.matchId,msDate).subscribe(
+    let endDate = msDate + 5400000;
+    console.log(msDate);
+    this.scheduleService.scheduleMatchTime(this.match.matchId, msDate, endDate).subscribe(
       res=>{
         console.log('saved ',res);
       },

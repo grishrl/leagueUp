@@ -120,7 +120,7 @@ export class TeamService {
   // }
 
   imageFQDN(img) {
-    let imgFQDN = 'https://s3.amazonaws.com/' + environment.s3bucket + '/';
+    let imgFQDN = 'https://s3.amazonaws.com/' + environment.s3bucketImages + '/';
     return imgFQDN += img;
   }
 

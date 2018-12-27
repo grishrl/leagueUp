@@ -8,5 +8,6 @@ export const environment = {
       jumbotron: '1XdCWD3XK0i4a8OuSK62c2'
     }
   },
-  s3bucket:'test-ngs-storage'
+  s3bucketImages:'test-ngs-image-storage',
+  s3bucketReplays:'test-ngs-replay-storage'
 };

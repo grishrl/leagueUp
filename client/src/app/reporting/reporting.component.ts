@@ -27,10 +27,29 @@ export class ReportingComponent implements OnInit {
       getTeam = this.Auth.getTeam()
     }
 
-    this.scheduleService.getTeamSchedules(6, getTeam, null).subscribe(
+    this.scheduleService.getTeamSchedules(6, getTeam).subscribe(
       res => {
-        this.rounds = res;
+        // this.rounds = res;
+        // console.log(res);
+
         console.log(res);
+        let matches = res;
+        for (var i = 1; i <= matches.length; i++) {
+          if (this.rounds == null || this.rounds == undefined) {
+            this.rounds = {};
+          }
+          matches.forEach(match => {
+            if (match.round == i) {
+              if (this.rounds[i.toString()] == null || this.rounds[i.toString()] == undefined) {
+                this.rounds[i.toString()] = [];
+              }
+              this.rounds[i.toString()].push(match);
+            }
+          });
+
+        }
+        this.rounds;
+        console.log(this.rounds);
       },
       err => { console.log(err) }
     )

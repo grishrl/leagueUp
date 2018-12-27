@@ -69,7 +69,7 @@ returnByPath = function(obj, path) {
                 path = pathArr[0];
             }
             //recurse this function using the current place in the object, plus the rest of the path
-            retVal = returnPath(obj[ele], path);
+            retVal = returnByPath(obj[ele], path);
         } else if (typeof obj[ele] == 'object' && pathArr.length == 0) {
             retVal = obj[ele];
         } else {
@@ -87,6 +87,10 @@ returnBoolByPath = function(obj, path) {
     let retVal = null;
     //get the first element of the array for testing
     let ele = pathArr[0];
+    //add some error checking to make sure we don't have null object passed
+    if (obj == null || obj == undefined) {
+        return false;
+    }
     //make sure the property exist on the object
     if (obj.hasOwnProperty(ele)) {
         if (typeof obj[ele] == 'boolean') {

@@ -16,7 +16,11 @@ AWS.config.update({
     region: process.env.S3region
 });
 
-const s3Bucket = new AWS.S3({ params: { Bucket: process.env.S3bucket } });
+const s3Bucket = new AWS.S3({
+    params: {
+        Bucket: process.env.s3bucketImages
+    }
+});
 
 /*
 routes for team management --
@@ -334,7 +338,7 @@ router.post('/save', passport.authenticate('jwt', {
     payloadTeamName = payloadTeamName.toLowerCase();
     //team name was not modified; edit the properties we received.
     Team.findOne({
-        teamName_lower: team
+        teamName_lower: payloadTeamName
     }).then((foundTeam) => {
         if (foundTeam) {
             // this might be something to be changed later -
@@ -345,6 +349,8 @@ router.post('/save', passport.authenticate('jwt', {
             }
 
             if (util.returnBoolByPath(payload, 'lfmDetails.availability')) {
+                console.log("util.returnBoolByPath(foundTeam, 'lfmDetails.availability')",
+                    util.returnBoolByPath(foundTeam, 'lfmDetails.availability'));
                 if (!util.returnBoolByPath(foundTeam, 'lfmDetails.availability')) {
                     foundTeam.lfmDetails.availability = {};
                 }
@@ -594,7 +600,7 @@ router.post('/reassignCaptain', passport.authenticate('jwt', {
 
 function deleteFile(path) {
     let data = {
-        Bucket: process.env.S3bucket,
+        Bucket: process.env.s3bucketImages,
         Key: path
     };
     s3Bucket.deleteObject(data, (err, data) => {

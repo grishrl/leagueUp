@@ -1,12 +1,12 @@
 <div class="row" (click)="showHide()">
     <div class="col">
-        <div *ngIf="recMatch.hometeamName">{{recMatch.hometeamName}}</div>
+        <div *ngIf="recMatch.home.teamName">{{recMatch.home.teamName}}</div>
     </div>
     <div class="col">
         - VS -
     </div>
     <div class="col">
-        <div *ngIf="recMatch.awayteamName; else bye">{{recMatch.awayteamName}}</div>
+        <div *ngIf="recMatch.away.teamName; else bye">{{recMatch.away.teamName}}</div>
     </div>
 </div>
 
@@ -26,7 +26,7 @@
                 <div class="row">
                     <div class="col">
                         <mat-form-field class="fullWidth">
-                            <mat-select placeholder="{{recMatch.hometeamName}} Score:" [(ngModel)]="homeScore" (ngModelChange)="scoreSelected('home')" [disabled]=recMatch.reported>
+                            <mat-select [formControl]="homeScoreControl" placeholder="{{recMatch.hometeamName}} Score:" [(ngModel)]="homeScore" (ngModelChange)="scoreSelected('home')">
                                 <mat-option [value]="0">0</mat-option>
                                 <mat-option [value]="1">1</mat-option>
                                 <mat-option [value]="2">2</mat-option>
@@ -48,7 +48,7 @@
                 <div class="row">
                     <div class="col">
                         <mat-form-field>
-                            <mat-select placeholder="{{recMatch.awayteamName}} Score:" [(ngModel)]="awayScore" (ngModelChange)="scoreSelected('away')" [disabled]=recMatch.reported>
+                            <mat-select [formControl]="awayScoreControl" placeholder="{{recMatch.awayteamName}} Score:" [(ngModel)]="awayScore" (ngModelChange)="scoreSelected('away')">
                                 <mat-option [value]="0">0</mat-option>
                                 <mat-option [value]="1">1</mat-option>
                                 <mat-option [value]="2">2</mat-option>
@@ -59,13 +59,25 @@
             </div>
         </div>
         <div class="row">
-            <div class="col">
+            <div class="col" *ngIf="hideReplaySubmit() else fileUrl">
 
-                Select file:
-                <input ngf type="file" [(file)]="file">
-                <button (click)="parseFile(file)">Submit</button>
+                Select file*:
+                <input type="file" [formControl]="replay1Control" ngf accept=".StormReplay" [(file)]="replay1">
+                <!-- <button (click)="parseFile(replay1)">Submit</button> -->
+
             </div>
+            <div class="col" *ngIf="hideReplaySubmit() else fileUrl">
 
+                Select file*:
+                <input type="file" [formControl]="replay2Control" ngf accept=".StormReplay" [(file)]="replay2">
+                <!-- <button (click)="parseFile(replay2)">Submit</button> -->
+
+            </div>
+        </div>
+        <div class="row" [hidden]="hideButton">
+            <div class="col">
+                <button [disabled]="reportForm.invalid" (click)="report()"> Submit </button>
+            </div>
         </div>
     </div>
 </div>

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { map } from 'rxjs/operators'
 
 @Injectable({
@@ -11,7 +11,7 @@ export class ScheduleService {
 
   getScheduleMatches(season, division, round){  
     // let url = 'http://localhost:3000/schedule/getSchedule';
-    let url = 'schedule/getSchedule';
+    let url = 'schedule/get/matches/all';
     let payload = {
       'season':season,
       'division':division,
@@ -25,14 +25,13 @@ export class ScheduleService {
 
   };
 
-  getTeamSchedules(season, team, division){
+  getTeamSchedules(season, team){
     // let url = 'http://localhost:3000/schedule/getTeamMatches';
-    let url = 'schedule/getTeamMatches';
+    let url = 'schedule/get/matches/team';
     team = team.toLowerCase();
     let payload = {
       'season':season,
-      'team':team,
-      'division':division
+      'team':team
     };
     return this.http.post(url, payload).pipe(map(
       res=>{
@@ -43,7 +42,7 @@ export class ScheduleService {
 
   getMatchInfo(season, matchId){
     // let url ="http://localhost:3000/schedule/getMatch";
-    let url = 'schedule/getTeamMatches';
+    let url = 'schedule/get/match';
     let payload={
       "season":season,
       "matchId":matchId
@@ -57,21 +56,17 @@ export class ScheduleService {
     )
   }
 
-  scheduleMatchTime(season, teams, division, round, matchId, scheduledStartTime){
+  scheduleMatchTime(matchId, scheduledStartTime, scheduledEndTime){
     // let url = 'http://localhost:3000/schedule/setMatchTime';
-    let url = 'schedule/setMatchTime';
-
-    teams.forEach(element => {
-      element = element.toLowerCase();
-    });
+    let url = 'schedule/update/match/time';
+  
     let payload = {
-      "season":season,
-      "teams":teams,
-      "division":division,
-      "round":round,
       "matchId":matchId,
-      "scheduledStartTime": scheduledStartTime
+      "scheduledStartTime": scheduledStartTime,
+      "scheduledEndTime":scheduledEndTime
     }
+
+    console.log('payload ', payload);
 
     return this.http.post(url, payload).pipe( map(
       res=>{
@@ -79,5 +74,24 @@ export class ScheduleService {
       }
     ))
 
+  }
+
+  reportMatch(payload){
+    let url = 'schedule/report/match';
+    // let httpUploadOptions = {
+    //   headers: new HttpHeaders({"Content-Type":"multipart/form-data"})
+    // }
+    let input = new FormData();
+
+    let keys = Object.keys(payload);
+    keys.forEach(element=>{
+      input.append(element, payload[element]);
+    });
+
+    return this.http.post(url, input).pipe(map(
+      res => {
+        return res;
+      }
+    ))
   }
 }
