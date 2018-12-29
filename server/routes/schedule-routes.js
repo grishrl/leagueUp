@@ -195,51 +195,7 @@ router.post('/update/match/time', passport.authenticate('jwt', {
         }
     }, (err) => {
         res.status(500).send(util.returnMessaging(path, 'Error updating match time.', err));
-    })
-
-    // Team.find({ teamName_lower: { $in: teams } }).then((foundTeams) => {
-    //     let isCapt = false;
-    //     if (foundTeams && foundTeams.length > 0) {
-    //         foundTeams.forEach(team => {
-    //             if (team.captain == requester) {
-    //                 isCapt = true;
-    //             }
-    //         });
-    //         if (isCapt) {
-    //             Schedule.findOne({ "season": season }).then((foundSeason) => {
-    //                 if (foundSeason) {
-    //                     let match;
-    //                     let divInfo = foundSeason.division[division];
-    //                     let roundInfo = divInfo.roundSchedules[round];
-    //                     match = _.find(roundInfo, { "matchId": matchId });
-    //                     if (match != undefined && match != null) {
-    //                         match.scheduledStartTime = scheduledStartTime;
-    //                         match.scheduledEndTime = scheduledEndTime;
-    //                         foundSeason.markModified('division');
-    //                         foundSeason.save().then(
-    //                             (saved) => {
-    //                                 res.status(200).send(util.returnMessaging(path, 'Saved the match time.', false, saved));
-    //                             },
-    //                             (err) => {
-    //                                 res.status(500).send(util.returnMessaging(path, 'Error saving match time', err));
-    //                             }
-    //                         )
-    //                     } else {
-    //                         res.status(400).send(util.returnMessaging(path, 'Error finding match!'));
-    //                     }
-    //                 }
-    //             }, (err) => {
-    //                 res.status(500).send(util.returnMessaging(path, 'Error finding schedule information', err));
-    //             })
-    //         } else {
-    //             res.status(401).send(util.returnMessaging(path, 'Unauthorized, requester is not a captain of the teams.'));
-    //         }
-    //     } else {
-    //         res.status(400).send(util.returnMessaging(path, 'Error updating match time.'));
-    //     }
-    // }, (err) => {
-    //     res.status(500).send(util.returnMessaging(path, 'Error updating match time.', err));
-    // });
+    });
 })
 
 router.post('/get/match', passport.authenticate('jwt', {

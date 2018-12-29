@@ -72,7 +72,7 @@ export class MatchManagementComponent implements OnInit {
       let pass = false;
       if (div && round && team) {
         if (div == match.divisionConcat && round == match.round && 
-          (away.indexOf(team) > -1 || home.indexOf(team) >-1 ) {
+          (away.indexOf(team) > -1 || home.indexOf(team) >-1 )) {
           pass = true;
         }
       } else if (div && round){

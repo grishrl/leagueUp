@@ -1,9 +1,7 @@
 const util = require('../utils');
 const router = require('express').Router();
 // const User = require("../models/user-models");
-// const Team = require("../models/team-models");
 // const Admin = require("../models/admin-models");
-// const teamSub = require('../subroutines/team-subs');
 // const DivSub = require('../subroutines/division-subs');
 // const OutreachSub = require('../subroutines/outreach-subs');
 // const QueueSub = require('../subroutines/queue-subs');

@@ -144,43 +144,25 @@ router.post('/create', passport.authenticate('jwt', {
         recievedTeam.captain = req.user.displayName;
 
         recievedTeam.teamMembers.push({
-            "_id": req.user._id,
-            "displayName": req.user.displayName
+            _id: req.user._id,
+            'displayName': req.user.displayName
         });
 
         var name, lfm, lfmDet, avail, tz = false;
-        if (util.isNullOrEmpty(recievedTeam.teamName)) {
+        if (!util.returnBoolByPath(recievedTeam, 'teamName')) {
             status = 400;
             message.nameError = "Null team name not allowed!";
         }
-        if (util.isNullOrEmpty(recievedTeam.lookingForMore)) {
-            status = 400;
-            message.lookingForMoreError += "Must have a looking for more status!";
-        }
         //time zone should be in here.. although not sure if that's even necessary for a minimal creation
-        if (recievedTeam.hasOwnProperty('lfmDetails')) {
-
-            if (recievedTeam.lfmDetails.hasOwnProperty('availability')) {
-                if (util.isNullOrEmpty(recievedTeam.lfmDetails.availability)) {
-                    let keys = Object.keys(recievedTeam.lfmDetails.availability);
-                    for (var i = 0; i < keys.length; i++) {
-                        let ele = keys[i];
-                        if (util.isNullOrEmpty(recievedTeam.lfmDetails.availability[ele])) {
-                            delete recievedTeam.lfmDetails.availability[ele];
-                        }
-                    }
-                }
-                if (util.isNullOrEmpty(recievedTeam.lfmDetails.availability)) {
-                    delete recievedTeam.lfmDetails.availability;
-                }
-            }
-            if (util.isNullOrEmpty(recievedTeam.lfmDetails.timeZone)) {
-                status = 400;
-                message = {
-                    "message": "Must have a looking for more details > timezone!"
-                };
-            }
+        console.log(recievedTeam);
+        console.log(util.returnBoolByPath(recievedTeam, 'timeZone'));
+        if (!util.returnBoolByPath(recievedTeam, 'timeZone')) {
+            status = 400;
+            message = {
+                "message": "Must have a timezone!"
+            };
         }
+
         if (recievedTeam.hasOwnProperty('_id')) {
             delete recievedTeam._id;
         }
@@ -230,12 +212,13 @@ router.post('/create', passport.authenticate('jwt', {
                             console.log("error happened: ", err);
                         });
                     }, (err) => {
+                        console.log(err);
                         res.status(500).send(util.returnMessaging(path, "Error creating new team", err));
                     });
                 }
             }, (err) => {
                 res.status(500).send(util.returnMessaging(path, "We encountered an error saving the team!", err));
-            })
+            });
         }
     }
 });
@@ -250,9 +233,6 @@ router.post('/addMember', passport.authenticate('jwt', {
     session: false
 }), confirmCaptain, (req, res) => {
     const path = '/team/addMember';
-    //make sure the caller has access to add people to the team
-
-    var callingUser = req.user;
 
     var payloadTeamName = req.body.teamName;
     var payloadMemberToAdd = req.body.addMember;
@@ -293,6 +273,7 @@ router.post('/addMember', passport.authenticate('jwt', {
                         if (!util.returnBoolByPath(foundTeam, 'pendingMembers')) {
                             foundTeam.pendingMembers = [];
                         }
+
                         foundTeam.pendingMembers.push({
                             "displayName": foundUser.displayName
                         });
@@ -344,36 +325,31 @@ router.post('/save', passport.authenticate('jwt', {
             // this might be something to be changed later -
             var captainRec = false;
             // check the paylaod and update the found team if the foundTeam property if it existed on the payload
+
             if (util.returnBoolByPath(payload, 'lookingForMore')) {
                 foundTeam.lookingForMore = payload.lookingForMore;
             }
 
-            if (util.returnBoolByPath(payload, 'lfmDetails.availability')) {
-                console.log("util.returnBoolByPath(foundTeam, 'lfmDetails.availability')",
-                    util.returnBoolByPath(foundTeam, 'lfmDetails.availability'));
-                if (!util.returnBoolByPath(foundTeam, 'lfmDetails.availability')) {
-                    foundTeam.lfmDetails.availability = {};
-                }
-                foundTeam.lfmDetails.availability = payload.lfmDetails.availability;
+            if (util.returnBoolByPath(payload, 'availability')) {
+                foundTeam.availability = {};
+                foundTeam.availability = payload.availability;
             }
 
-            if (util.returnBoolByPath(payload, 'lfmDetails.competitiveLevel')) {
-                foundTeam.lfmDetails.competitiveLevel = payload.lfmDetails.competitiveLevel;
+            if (util.returnBoolByPath(payload, 'competitiveLevel')) {
+                foundTeam.competitiveLevel = payload.competitiveLevel;
             }
 
-            if (util.returnBoolByPath(payload, 'lfmDetails.descriptionOfTeam')) {
-                foundTeam.lfmDetails.descriptionOfTeam = payload.lfmDetails.descriptionOfTeam;
+            if (util.returnBoolByPath(payload, 'descriptionOfTeam')) {
+                foundTeam.descriptionOfTeam = payload.descriptionOfTeam;
             }
 
-            if (util.returnBoolByPath(payload, 'lfmDetails.rolesNeeded')) {
-                if (!util.returnBoolByPath(foundTeam, 'lfmDetails.rolesNeeded')) {
-                    foundTeam.lfmDetails.rolesNeeded = {};
-                }
-                foundTeam.lfmDetails.rolesNeeded = payload.lfmDetails.rolesNeeded;
+            if (util.returnBoolByPath(payload, 'rolesNeeded')) {
+                foundTeam.rolesNeeded = {};
+                foundTeam.rolesNeeded = payload.rolesNeeded;
             }
 
-            if (util.returnBoolByPath(payload, 'lfmDetails.timeZone')) {
-                foundTeam.lfmDetails.timeZone = payload.lfmDetails.timeZone;
+            if (util.returnBoolByPath(payload, 'timeZone')) {
+                foundTeam.timeZone = payload.timeZone;
             }
 
             if (util.returnBoolByPath(payload, 'captain')) {
@@ -604,29 +580,12 @@ function deleteFile(path) {
         Key: path
     };
     s3Bucket.deleteObject(data, (err, data) => {
-            if (err) {
-                console.log(err);
-            } else {
-                console.log('file deleted from s3 ', data);
-            }
-        })
-        // fs.access(path, error => {
-        //     if (!error) {
-        //         fs.unlink(path, function(error) {
-        //             console.log(error);
-        //         });
-        //     } else {
-        //         console.log(error);
-        //     }
-        // });
-}
-
-function renameFile(path, newPath) {
-    fs.rename(path, newPath, function(err) {
         if (err) {
-            console.log('rename err: ', err);
+            console.log(err);
+        } else {
+            console.log('file deleted from s3 ', data);
         }
-    });
+    })
 }
 
 //this confirms that the calling user is a captain of the team

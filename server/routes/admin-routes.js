@@ -1,7 +1,5 @@
 const util = require('../utils');
 const router = require('express').Router();
-const User = require("../models/user-models");
-const Team = require("../models/team-models");
 const Admin = require("../models/admin-models");
 const passport = require("passport");
 const levelRestrict = require("../configs/admin-leveling");

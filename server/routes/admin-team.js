@@ -185,6 +185,7 @@ router.post('/delete/team', passport.authenticate('jwt', {
     team = team.toLowerCase();
     Team.findOneAndDelete({ teamName_lower: team }).then((deleted) => {
         if (deleted) {
+            //TODO : need to remove this team from division if it was in one!!!!
             UserSub.clearUsersTeam(deleted.teamMembers);
             res.status(200).send(util.returnMessaging(path, 'Team deleted', false, deleted));
         }
@@ -225,30 +226,26 @@ router.post('/teamSave', passport.authenticate('jwt', {
                                 originalTeam.lookingForMore = payload.lookingForMore;
                             }
 
-                            if (util.returnBoolByPath(payload, 'lfmDetails.availability')) {
-                                if (!util.returnBoolByPath(originalTeam, 'lfmDetails.availability')) {
-                                    originalTeam.lfmDetails.availability = {};
-                                }
-                                originalTeam.lfmDetails.availability = payload.lfmDetails.availability;
+                            if (util.returnBoolByPath(payload, 'availability')) {
+                                originalTeam.availability = {};
+                                originalTeam.availability = payload.availability;
                             }
 
-                            if (util.returnBoolByPath(payload, 'lfmDetails.competitiveLevel')) {
-                                originalTeam.lfmDetails.competitiveLevel = payload.lfmDetails.competitiveLevel;
+                            if (util.returnBoolByPath(payload, 'competitiveLevel')) {
+                                originalTeam.competitiveLevel = payload.competitiveLevel;
                             }
 
-                            if (util.returnBoolByPath(payload, 'lfmDetails.descriptionOfTeam')) {
-                                originalTeam.lfmDetails.descriptionOfTeam = payload.lfmDetails.descriptionOfTeam;
+                            if (util.returnBoolByPath(payload, 'descriptionOfTeam')) {
+                                originalTeam.descriptionOfTeam = payload.descriptionOfTeam;
                             }
 
-                            if (util.returnBoolByPath(payload, 'lfmDetails.rolesNeeded')) {
-                                if (!util.returnBoolByPath(originalTeam, 'lfmDetails.rolesNeeded')) {
-                                    originalTeam.lfmDetails.rolesNeeded = {};
-                                }
-                                originalTeam.lfmDetails.rolesNeeded = payload.lfmDetails.rolesNeeded;
+                            if (util.returnBoolByPath(payload, 'rolesNeeded')) {
+                                originalTeam.rolesNeeded = {};
+                                originalTeam.rolesNeeded = payload.rolesNeeded;
                             }
 
-                            if (util.returnBoolByPath(payload, 'lfmDetails.timeZone')) {
-                                originalTeam.lfmDetails.timeZone = payload.lfmDetails.timeZone;
+                            if (util.returnBoolByPath(payload, 'timeZone')) {
+                                originalTeam.timeZone = payload.timeZone;
                             }
 
                             originalTeam.save().then((savedTeam) => {
@@ -290,30 +287,28 @@ router.post('/teamSave', passport.authenticate('jwt', {
                     foundTeam.lookingForMore = payload.lookingForMore;
                 }
 
-                if (util.returnBoolByPath(payload, 'lfmDetails.availability')) {
-                    if (!util.returnBoolByPath(foundTeam, 'lfmDetails.availability')) {
-                        foundTeam.lfmDetails.availability = {};
-                    }
-                    foundTeam.lfmDetails.availability = payload.lfmDetails.availability;
+                if (util.returnBoolByPath(payload, 'availability')) {
+
+                    foundTeam.availability = {};
+
+                    foundTeam.availability = payload.availability;
                 }
 
-                if (util.returnBoolByPath(payload, 'lfmDetails.competitiveLevel')) {
-                    foundTeam.lfmDetails.competitiveLevel = payload.lfmDetails.competitiveLevel;
+                if (util.returnBoolByPath(payload, 'competitiveLevel')) {
+                    foundTeam.competitiveLevel = payload.competitiveLevel;
                 }
 
-                if (util.returnBoolByPath(payload, 'lfmDetails.descriptionOfTeam')) {
-                    foundTeam.lfmDetails.descriptionOfTeam = payload.lfmDetails.descriptionOfTeam;
+                if (util.returnBoolByPath(payload, 'descriptionOfTeam')) {
+                    foundTeam.descriptionOfTeam = payload.descriptionOfTeam;
                 }
 
-                if (util.returnBoolByPath(payload, 'lfmDetails.rolesNeeded')) {
-                    if (!util.returnBoolByPath(foundTeam, 'lfmDetails.rolesNeeded')) {
-                        foundTeam.lfmDetails.rolesNeeded = {};
-                    }
-                    foundTeam.lfmDetails.rolesNeeded = payload.lfmDetails.rolesNeeded;
+                if (util.returnBoolByPath(payload, 'rolesNeeded')) {
+                    foundTeam.rolesNeeded = {};
+                    foundTeam.rolesNeeded = payload.rolesNeeded;
                 }
 
-                if (util.returnBoolByPath(payload, 'lfmDetails.timeZone')) {
-                    foundTeam.lfmDetails.timeZone = payload.lfmDetails.timeZone;
+                if (util.returnBoolByPath(payload, 'timeZone')) {
+                    foundTeam.timeZone = payload.timeZone;
                 }
 
                 foundTeam.save().then((savedTeam) => {

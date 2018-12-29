@@ -1,21 +1,28 @@
 export class Team {
   _id: string;
+  logo: string;
   teamName: string; //added to display form 
-  teamName_lower: string 
-  teamDivision: division; //added to display form
+  teamName_lower: string ;
+  divisionDisplayName: string;
+  divisionConcat: string;
   //"stats": string; //later addition of team statistics
   lookingForMore: Boolean; //added to display form
-  lfmDetails: lfmSchema;
+  availability: schedule;
+  competitiveLevel: number;
+  rolesNeeded: roles;
+  descriptionOfTeam: string;
+  timeZone: string;
   captain: string;
   teamMMRAvg: number; //added to display
-  teamMembers: [miniUser]; //added to display
-  pendingMembers: [miniUser];
-  logo: string;
+  teamMembers: [string]; //added to display
+  pendingMembers: [string];
+  
 
 
-  constructor(id: string, teamName: string, lookingForMore: Boolean, lfmDetails: lfmSchema, 
-    teamMembers: [miniUser], pendingMembers: [miniUser], captain: string, teamMMRAvg:number,
-    teamDivision: division) {
+  constructor(id: string, logo:string, teamName: string, lookingForMore: Boolean, availability:schedule,
+    competitiveLevel: number, rolesNeeded: roles, descriptionOfTeam: string, timeZone: string,
+    teamMembers: [string], pendingMembers: [string], captain: string, teamMMRAvg:number,
+    divisionDisplayName: string, divisionConcat:string) {
     if (id != null && id != undefined && id.length > 0) {
       this._id = id;
     } else {
@@ -32,57 +39,68 @@ export class Team {
     } else {
       this.lookingForMore = false;
     }
-    if (lfmDetails != null && lfmDetails != undefined) {
-      this.lfmDetails = lfmDetails;
-    } else {
-      this.lfmDetails = {
-        "availability": {
-          "monday": {
-            "available": false,
-            "startTime": null,
-            "endTime": null
-          },
-          "tuesday": {
-            "available": false,
-            "startTime": null,
-            "endTime": null
-          },
-          "wednesday": {
-            "available": false,
-            "startTime": null,
-            "endTime": null
-          }
-          , "thursday": {
-            "available": false,
-            "startTime": null,
-            "endTime": null
-          }
-          , "friday": {
-            "available": false,
-            "startTime": null,
-            "endTime": null
-          }
-          , "saturday": {
-            "available": false,
-            "startTime": null,
-            "endTime": null
-          }
-          , "sunday": {
-            "available": false,
-            "startTime": null,
-            "endTime": null
-          }
+    if(availability != null && availability != undefined){
+      this.availability = availability;
+    }else{
+      this.availability = {
+        "monday": {
+          "available": false,
+          "startTime": null,
+          "endTime": null
         },
-        "competitiveLevel": null,
-        "descriptionOfTeam": "",
-        "rolesNeeded": { "tank": false, "assassin": false, "support": false, "offlane": false, "specialist": false }, //form input added,
-        "timeZone": ""
+        "tuesday": {
+          "available": false,
+          "startTime": null,
+          "endTime": null
+        },
+        "wednesday": {
+          "available": false,
+          "startTime": null,
+          "endTime": null
+        }
+        , "thursday": {
+          "available": false,
+          "startTime": null,
+          "endTime": null
+        }
+        , "friday": {
+          "available": false,
+          "startTime": null,
+          "endTime": null
+        }
+        , "saturday": {
+          "available": false,
+          "startTime": null,
+          "endTime": null
+        }
+        , "sunday": {
+          "available": false,
+          "startTime": null,
+          "endTime": null
+        }
       }
-      
-
+    }
+    if (competitiveLevel != null && competitiveLevel != undefined){
+      this.competitiveLevel = competitiveLevel;
+    }else{
+      this.competitiveLevel = null;
+    }
+    if(descriptionOfTeam!=null&&descriptionOfTeam!=undefined){
+      this.descriptionOfTeam = descriptionOfTeam;
+    }else{
+      this.descriptionOfTeam = null;
+    }
+    if(rolesNeeded!=null&&rolesNeeded!=undefined){
+      this.rolesNeeded = rolesNeeded;
+    }else{
+      this.rolesNeeded = { "tank": false, "assassin": false, "support": false, "offlane": false, "specialist": false };
+    }
+    if(timeZone!=null&&timeZone!=undefined){
+      this.timeZone=timeZone;
+    }else{
+      this.timeZone = "";
     }
     if (teamMembers != null && teamMembers != undefined) {
-
       this.teamMembers = teamMembers;
     } else {
       this.teamMembers = null;
@@ -102,28 +120,17 @@ export class Team {
       }else{
         this.teamMMRAvg = 0;
       }
-      if(teamDivision!=null && teamDivision !=undefined){
-        this.teamDivision = teamDivision;
+      if(divisionDisplayName!=null && divisionDisplayName !=undefined){
+        this.divisionDisplayName = divisionDisplayName;
       }else{
-        this.teamDivision = {
-          displayName:'',
-          divisionConcat:''
-        };
+        this.divisionDisplayName = null;
       }
+    if (divisionConcat != null && divisionConcat != undefined) {
+      this.divisionConcat = divisionConcat;
+    } else {
+      this.divisionConcat = null;
+    }
   }
-}
-
-interface divInfo {
-  displayName : string,
-  divisionConcat : string
-}
-
-interface lfmSchema {
-  "availability": schedule,
-  "competitiveLevel": number,
-  "descriptionOfTeam": string,
-  "rolesNeeded": roles,
-  "timeZone": string
 }
 
 interface schedule {
@@ -148,13 +155,4 @@ interface roles {
   offlane: boolean,
   support: boolean,
   specialist: boolean
-}
-
-interface division{
-  "displayName":string,
-  "divisionConcat":string
-}
-
-interface miniUser {
-  "displayName": string
 }

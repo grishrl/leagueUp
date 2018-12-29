@@ -11,23 +11,21 @@ const division = new Schema({
     "divisionConcat": String
 });
 
-const lfmSchema = new Schema({
-    "availability": Object,
-    "competitiveLevel": Number,
-    "descriptionOfTeam": String,
-    "rolesNeeded": Object,
-    "timeZone": String
-});
-
 
 const teamSchema = new Schema({
     "logo": String,
     "teamName": String, //added to display form 
     "teamName_lower": String, //added so we can do case insensitive searching
-    "teamDivision": division, //added to display form -- maybe an object???
+    "divisionDisplayName": String,
+    "divisionConcat": String,
     "stats": String, //later addition of team statistics
     "lookingForMore": Boolean, //added to display form
-    "lfmDetails": lfmSchema,
+    "availability": Object,
+    "competitiveLevel": Number,
+    "rolesNeeded": Object,
+    "descriptionOfTeam": String,
+    "timeZone": String,
+    // "lfmDetails": lfmSchema,
     "captain": String,
     "teamMMRAvg": Number, //added to display
     "teamMembers": [miniUser], //added to display

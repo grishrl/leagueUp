@@ -15,13 +15,17 @@ router.get('/getTeamsUndivisioned', passport.authenticate('jwt', {
     const path = '/admin/getTeamsUndivisioned';
     Team.find({
         $or: [
-            { teamDivision: null },
-            { teamDivision: { $exists: false } },
+            { divisionConcat: null },
             {
-                "teamDivision.divisionConcat": null
+                divisionConcat: {
+                    $exists: false
+                }
             },
             {
-                "teamDivision.divisionConcat": {
+                "divisionDisplayName": null
+            },
+            {
+                "divisionDisplayName": {
                     $exists: false
                 }
             }

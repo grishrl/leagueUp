@@ -19,8 +19,8 @@ function upsertTeamDivision(team, division) {
 
     Team.findOne({ teamName_lower: fteam }).then((foundTeam) => {
         if (foundTeam) {
-            foundTeam.teamDivision = {};
-            foundTeam.teamDivision = division;
+            foundTeam.divisionDisplayName = division.displayName;
+            foundTeam.divisionConcat = division.divisionConcat;
             foundTeam.save((success) => {
                 console.log('team division updated');
             }, (err) => {

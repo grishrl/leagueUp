@@ -332,7 +332,7 @@ export class TeamProfileComponent implements OnInit {
     }
     
     //ensure time zone
-    if (this.isNullOrEmpty(this.returnedProfile.lfmDetails.timeZone)) {
+    if (this.isNullOrEmpty(this.returnedProfile.timeZone)) {
       valid = false;
       this.timezoneControl.setErrors({required:true});
     }else{
@@ -345,10 +345,10 @@ export class TeamProfileComponent implements OnInit {
   checkAvailabilityDays(): boolean {
     let ret = true;
     let nodays = 0;
-    if (this.returnBoolByPath(this.returnedProfile, 'lfmDetails.availability')) {
+    if (this.returnBoolByPath(this.returnedProfile, 'availability')) {
       //validate that we have start and end times for available days
-      for (let day in this.returnedProfile.lfmDetails.availability) {
-        let checkDay = this.returnedProfile.lfmDetails.availability[day];
+      for (let day in this.returnedProfile.availability) {
+        let checkDay = this.returnedProfile.availability[day];
         if (checkDay.available) {
           if (checkDay.startTime == null && checkDay.endTime == null) {
             ret = false;

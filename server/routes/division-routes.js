@@ -2,7 +2,6 @@ const util = require('../utils');
 const router = require('express').Router();
 const Division = require('../models/division-models');
 const User = require("../models/user-models");
-const Team = require("../models/team-models");
 const passport = require("passport");
 
 
