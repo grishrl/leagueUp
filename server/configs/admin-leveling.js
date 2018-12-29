@@ -12,8 +12,18 @@ function divisionLevel(req, res, next) {
     adminCheck('DIVISION', req, res, next);
 }
 
+function casterLevel(req, res, next) {
+    adminCheck('CASTER', req, res, next);
+}
+
+function matchLevel(req, res, nest) {
+    adminCheck('MATCH', req, res, nest);
+}
+
 module.exports = {
     teamLevel: teamLevel,
     userLevel: userLevel,
-    divisionLevel: divisionLevel
+    divisionLevel: divisionLevel,
+    casterLevel: casterLevel,
+    matchLevel: matchLevel
 }

@@ -1,0 +1,119 @@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="row">
+                <div class="col">Match ID: {{match.matchId}}</div>
+            </div>
+            <div class="row">
+                <div class="col">Season: {{match.season}}</div>
+                <div class="col">Round: {{match.round}}</div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    Division: {{match.divisionConcat}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div *ngIf="match.home.teamName!=null&&match.home.teamName!=undefined&&match.home.teamName.length>0 else bye">{{match.home.teamName}}</div>
+                </div>
+                <div class="col">
+                    <div *ngIf="match.away.teamName!=null&&match.away.teamName!=undefined&&match.away.teamName.length>0 else bye">{{match.away.teamName}}</div>
+                </div>
+                <ng-template #bye> BYE </ng-template>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h3>Scores:</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    <div class="row">
+                        <div class="col">
+                            <mat-form-field class="fullWidth">
+                                <mat-select placeholder="{{match.home.teamName}} Score:" [(ngModel)]="homeScore" (ngModelChange)="scoreSelected('home')">
+                                    <mat-option [value]="0">0</mat-option>
+                                    <mat-option [value]="1">1</mat-option>
+                                    <mat-option [value]="2">2</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col">
+
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <div class="col">
+                            <mat-form-field>
+                                <mat-select placeholder="{{match.away.teamName}} Score:" [(ngModel)]="awayScore" (ngModelChange)="scoreSelected('away')">
+                                    <mat-option [value]="0">0</mat-option>
+                                    <mat-option [value]="1">1</mat-option>
+                                    <mat-option [value]="2">2</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h3>Time:</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field>
+                        <input matInput [matDatepicker]="picker" placeholder="Choose a date" [(ngModel)]="friendlyDate">
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-form-field>
+                        <mat-select placeholder="Start Time:" [(ngModel)]="friendlyTime">
+                            <mat-option *ngFor="let time of times" [value]="time">
+                                {{time}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                        <mat-select placeholder="AM/PM:" [(ngModel)]="suffix">
+                            <mat-option *ngFor="let suffix of amPm" [value]="suffix">
+                                {{suffix}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h3>Caster Info:</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="tp-FullWidth">
+                        <input matInput placeholder="Caster Name" [(ngModel)]="match.casterName">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="tp-FullWidth">
+                        <input matInput placeholder="Caster URL" [(ngModel)]="match.casterUrl">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <button class="btn btn-success" (click)="saveMatch(match)"> Save </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

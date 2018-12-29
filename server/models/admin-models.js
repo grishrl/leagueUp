@@ -6,7 +6,9 @@ const adminSchema = new Schema({
     "TEAM": Boolean,
     "USER": Boolean,
     "DIVISON": Boolean,
-    "STANDINGS": Boolean
+    "STANDINGS": Boolean,
+    "CASTER": Boolean,
+    "MATCH": Boolean
         //more as needed
 });
 

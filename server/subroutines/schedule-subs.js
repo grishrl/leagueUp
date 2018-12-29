@@ -133,8 +133,14 @@ function generateRoundRobinSchedule(season) {
             let key = keys[i];
             //get data from the property - should be a division name:
             let participants = divisions[key].participants;
-            //variable of rounds to generate, will be N - 1;
-            let rounds = participants.length - 1;
+            //variable of rounds to generate, will be N - 1 if even, or N if odd number teamas;
+
+            let rounds;
+            if (participants.length % 2 == 0) {
+                rounds = participants.length - 1;
+            } else {
+                rounds = participants.length;
+            }
             let roundSchedules = divisions[key].roundSchedules;
             let matches = divisions[key].matches;
             //loop through and create the required number of rounds
@@ -209,8 +215,7 @@ function generateRoundRobinSchedule(season) {
                                 // newMatch.home.id = match.home;
                                 // newMatch.away.id = match.away;
                                 newMatch.season = season;
-                                newMatch.division = {};
-                                newMatch.division.divisionConcat = divisionName;
+                                newMatch.divisionConcat = divisionName;
                                 console.log('newMatch ', newMatch);
                                 matchesToInsert.push(newMatch);
                             });

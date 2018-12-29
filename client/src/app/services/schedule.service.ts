@@ -9,9 +9,21 @@ export class ScheduleService {
 
   constructor(private http:HttpClient) { }
 
+  getAllMatches(){
+    let url = 'schedule/get/matches/all';
+    let payload = {
+
+    };
+    return this.http.post(url,payload).pipe(map(
+      res => {
+        return res['returnObject'];
+      }
+    ))
+  }
+
   getScheduleMatches(season, division, round){  
     // let url = 'http://localhost:3000/schedule/getSchedule';
-    let url = 'schedule/get/matches/all';
+    let url = 'schedule/get/matches';
     let payload = {
       'season':season,
       'division':division,
@@ -78,9 +90,6 @@ export class ScheduleService {
 
   reportMatch(payload){
     let url = 'schedule/report/match';
-    // let httpUploadOptions = {
-    //   headers: new HttpHeaders({"Content-Type":"multipart/form-data"})
-    // }
     let input = new FormData();
 
     let keys = Object.keys(payload);
@@ -93,5 +102,15 @@ export class ScheduleService {
         return res;
       }
     ))
+  }
+
+  // /match/add / caster
+  addCaster(payload) {
+    let url = 'schedule/match/add/caster';
+    return this.http.post(url, payload).pipe(map(
+      res => {
+        return res;
+      }
+    ));
   }
 }

@@ -7,6 +7,7 @@ const teamRoutes = require('./server/routes/team-routes');
 const adminRoutes = require('./server/routes/admin-routes');
 const adminTeam = require('./server/routes/admin-team');
 const adminUser = require('./server/routes/admin-user');
+const adminMatch = require('./server/routes/admin-match');
 const adminDivision = require('./server/routes/admin-division');
 const profileRoutes = require('./server/routes/profile-routes');
 const divisionRoutes = require('./server/routes/division-routes');
@@ -51,6 +52,7 @@ app.use('/outreach', outreachRoutes);
 app.use('/admin', adminTeam);
 app.use('/admin', adminDivision);
 app.use('/admin', adminUser);
+app.use('/admin', adminMatch);
 app.use('/schedule', scheduleRoutes);
 
 

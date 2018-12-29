@@ -45,6 +45,11 @@ import { TeamScheduleComponent } from './schedule/team-schedule/team-schedule.co
 import { ReportingComponent } from './reporting/reporting.component';
 import { ReportingDeckComponent } from './reporting/reporting-deck/reporting-deck.component';
 import { ngfModule } from 'angular-file';
+import { DashboardComponent } from './admin/dashboard/dashboard.component';
+import { CasterDashboardComponent } from './caster-tools/caster-dashboard/caster-dashboard.component';
+import { CasterInputsComponent } from './caster-tools/caster-dashboard/caster-inputs/caster-inputs.component';
+import { MatchEditComponent } from './admin/match-management/match-edit/match-edit.component';
+import { MatchManagementComponent } from './admin/match-management/match-management.component';
 
 @NgModule({
   declarations: [
@@ -84,7 +89,12 @@ import { ngfModule } from 'angular-file';
     MatchScheduleComponent,
     TeamScheduleComponent,
     ReportingComponent,
-    ReportingDeckComponent
+    ReportingDeckComponent,
+    DashboardComponent,
+    CasterDashboardComponent,
+    CasterInputsComponent,
+    MatchManagementComponent,
+    MatchEditComponent
   ],
   entryComponents:[
     DialogOverviewExampleDialog,

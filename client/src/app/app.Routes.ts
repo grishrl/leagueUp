@@ -19,6 +19,10 @@ import { SheduleViewComponent } from "./schedule/shedule-view/shedule-view.compo
 import { MatchScheduleComponent } from "./schedule/match-schedule/match-schedule.component";
 import { TeamScheduleComponent } from "./schedule/team-schedule/team-schedule.component";
 import { ReportingComponent } from "./reporting/reporting.component";
+import { DashboardComponent } from "./admin/dashboard/dashboard.component";
+import { CasterDashboardComponent } from "./caster-tools/caster-dashboard/caster-dashboard.component";
+import { MatchManagementComponent } from "./admin/match-management/match-management.component";
+import { MatchEditComponent } from "./admin/match-management/match-edit/match-edit.component";
 
 const APP_ROUTES: Routes = [
   { path: 'directory', component: DirectoryComponent},
@@ -37,10 +41,20 @@ const APP_ROUTES: Routes = [
   { path: '_admin/deleteUser', component:DeleteMemberComponent },
   { path: '_admin/manageTeam', component:DeleteTeamComponent },
   { path: '_admin/divisionMgmt', component:DivisionManagementComponent },
+  { path: '_admin/matchMgmt', component: MatchManagementComponent },
+  { path: '_admin/matchMgmt/:id', component: MatchEditComponent },
   {path: 'schedule/scheduleMatch/:id', component:MatchScheduleComponent},
   {path: 'schedule/teamSchedule', component: TeamScheduleComponent },
   {path: 'schedule/teamSchedule/:id', component:TeamScheduleComponent}, //accepts team name as url parameter
-  {path: 'reporting/:id', component:ReportingComponent} //accepts team name as url parameter
+  {path: 'reporting/:id', component:ReportingComponent}, //accepts team name as url parameter
+  {
+    path: '_admin/dashboard', component: DashboardComponent, children: [
+      { path: 'approveTeamQueue', component: ApproveMemberComponent },
+      { path: 'deleteUser', component: DeleteMemberComponent },
+      { path: 'manageTeam', component: DeleteTeamComponent },
+      { path: 'divisionMgmt', component: DivisionManagementComponent }
+    ]},
+  { path: '_casterDashboard', component: CasterDashboardComponent}
 ]
 
 @NgModule({

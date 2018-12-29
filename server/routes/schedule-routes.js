@@ -9,6 +9,7 @@ const _ = require('lodash');
 const router = require('express').Router();
 const AWS = require('aws-sdk');
 const uniqid = require('uniqid');
+const levelRestrict = require("../configs/admin-leveling")
 
 AWS.config.update({
     accessKeyId: process.env.S3accessKeyId,
@@ -28,10 +29,10 @@ const s3replayBucket = new AWS.S3({
  * return matches that fit the criterea
  * 
  */
-router.post('/get/matches/all', passport.authenticate('jwt', {
+router.post('/get/matches', passport.authenticate('jwt', {
     session: false
 }), (req, res) => {
-    const path = 'schedule/get/matches/all';
+    const path = 'schedule/get/matches';
     let season = req.body.season;
     let division = req.body.division;
     let round = req.body.round;
@@ -40,7 +41,7 @@ router.post('/get/matches/all', passport.authenticate('jwt', {
         $and: [
             { season: season },
             { round: round },
-            { "division.divisionConcat": division }
+            { divisionConcat: division }
         ]
     }).lean().then((found) => {
         if (found) {
@@ -58,6 +59,30 @@ router.post('/get/matches/all', passport.authenticate('jwt', {
         res.status(500).send(util.returnMessaging(path, 'Error finding matches', err));
     });
 });
+
+/*
+ */
+router.post('/get/matches/all',
+    passport.authenticate('jwt', {
+        session: false
+    }), (req, res) => {
+        const path = 'schedule/get/matches/all';
+        Match.find().lean().then((found) => {
+            if (found) {
+                let teams = findTeamIds(found);
+                addTeamNamesToMatch(teams, found).then((processed) => {
+                    console.log(processed);
+                    res.status(200).send(util.returnMessaging(path, 'Found matches', false, processed));
+                }, (err) => {
+                    res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
+                });
+            } else {
+                res.status(400).send(util.returnMessaging(path, 'No matches found for criteria', false, found));
+            }
+        }, (err) => {
+            res.status(500).send(util.returnMessaging(path, 'Error finding matches', err));
+        });
+    });
 
 /**
  * returns matches that are generated
@@ -423,6 +448,34 @@ router.post('/report/match', passport.authenticate('jwt', {
     });
 });
 
+
+router.post('/match/add/caster', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.casterLevel, (req, res) => {
+    let path = 'schedule/match/add/caster';
+    let matchid = req.body.matchId;
+    let casterName = req.body.casterName;
+    let casterUrl = req.body.casterUrl;
+
+    Match.findOne({ matchId: matchid }).then((found) => {
+        if (found) {
+            found.casterName = casterName;
+            found.casterUrl = casterUrl;
+            found.save().then(
+                (saved) => {
+                    res.status(200).send(util.returnMessaging(path, 'Match updated', false, saved));
+                },
+                (err) => {
+                    res.stutus(500).send(util.returnMessaging(path, 'Error updating match', err));
+                }
+            )
+        } else {
+            res.status(400).send(util.returnMessaging(path, 'Could not find match', false, found));
+        }
+    }, (err) => {
+        res.stutus(500).send(util.returnMessaging(path, 'Error updating match', err));
+    })
+});
 
 module.exports = router;
 

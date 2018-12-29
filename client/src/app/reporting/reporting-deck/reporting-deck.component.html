@@ -59,14 +59,14 @@
             </div>
         </div>
         <div class="row">
-            <div class="col" *ngIf="hideReplaySubmit() else fileUrl">
+            <div class="col" *ngIf="hideReplaySubmit()">
 
                 Select file*:
                 <input type="file" [formControl]="replay1Control" ngf accept=".StormReplay" [(file)]="replay1">
                 <!-- <button (click)="parseFile(replay1)">Submit</button> -->
 
             </div>
-            <div class="col" *ngIf="hideReplaySubmit() else fileUrl">
+            <div class="col" *ngIf="hideReplaySubmit()">
 
                 Select file*:
                 <input type="file" [formControl]="replay2Control" ngf accept=".StormReplay" [(file)]="replay2">

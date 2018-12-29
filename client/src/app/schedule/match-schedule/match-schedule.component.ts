@@ -17,7 +17,7 @@ export class MatchScheduleComponent implements OnInit {
 
   times:any[]=[];
 
-  match:any
+ match:any;
   ngOnInit() {
     this.scheduleService.getMatchInfo(6, this.matchId).subscribe(
       res=>{ 
@@ -34,6 +34,29 @@ export class MatchScheduleComponent implements OnInit {
         }
         let time = i+":"+min;
         this.times.push(time);
+      }
+    }
+  }
+
+  homeScore:number
+  awayScore:number
+  scoreSelected(changed) {
+    console.log(changed, this.homeScore, this.awayScore);
+    if (changed == 'home') {
+      if (this.homeScore == 2) {
+        this.awayScore = 0;
+      } else if (this.homeScore == 1) {
+        this.awayScore = 1;
+      } else if (this.homeScore == 0) {
+        this.awayScore = 2;
+      }
+    } else {
+      if (this.awayScore == 2) {
+        this.homeScore = 0;
+      } else if (this.awayScore == 1) {
+        this.homeScore = 1;
+      } else if (this.awayScore == 0) {
+        this.homeScore = 2;
       }
     }
   }

@@ -28,32 +28,21 @@ const replaySchema = new Schema({
     }
 }, { strict: false });
 
-const division = new Schema({
-    "displayName": String,
-    "divisionConcat": String
-}, {
-    strict: false
-});
-
-const streamerSchema = new Schema({
-    "name": String,
-    "url": String
-}, {
-    strict: false
-});
-
 const matchSchema = new Schema({
     "matchId": String,
     "season": Number,
-    "divison": division,
+    // "divison": division,
+    "division": String,
+    "divisionConcat": String,
     "round": Number,
     "home": team,
     "away": team,
     "scheduledTime": scheduleSubSchema,
     "replays": replaySchema,
-    "streamer": streamerSchema,
+    "casterName": String,
+    "casterUrl": String,
     "reported": Boolean
-});
+}, { useNestedStrict: false });
 
 
 const Match = mongoose.model('match', matchSchema);

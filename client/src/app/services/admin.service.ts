@@ -186,4 +186,18 @@ export class AdminService {
     )
   }
 
+  matchUpdate(match){
+    let url = 'admin/match/update';
+    let payload = {
+      match:match
+    };
+    return this.http.post(url, payload).pipe(
+      map(
+        res=>{
+          return res;
+        }
+      )
+    );
+  }
+
 }
