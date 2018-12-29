@@ -50,6 +50,8 @@ import { CasterDashboardComponent } from './caster-tools/caster-dashboard/caster
 import { CasterInputsComponent } from './caster-tools/caster-dashboard/caster-inputs/caster-inputs.component';
 import { MatchEditComponent } from './admin/match-management/match-edit/match-edit.component';
 import { MatchManagementComponent } from './admin/match-management/match-management.component';
+import { AdminAclManagementComponent } from './admin/admin-acl-management/admin-acl-management.component';
+import { UpdateRolesComponent } from './admin/admin-acl-management/update-roles/update-roles.component';
 
 @NgModule({
   declarations: [
@@ -94,7 +96,9 @@ import { MatchManagementComponent } from './admin/match-management/match-managem
     CasterDashboardComponent,
     CasterInputsComponent,
     MatchManagementComponent,
-    MatchEditComponent
+    MatchEditComponent,
+    AdminAclManagementComponent,
+    UpdateRolesComponent
   ],
   entryComponents:[
     DialogOverviewExampleDialog,

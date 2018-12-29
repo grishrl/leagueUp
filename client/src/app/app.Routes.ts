@@ -1,7 +1,7 @@
 import { HomeComponent } from "./home/home.component";
 import { DirectoryComponent } from "./directory/directory.component";
 import { RouterModule, Routes } from '@angular/router';
-import { NgModule } from "@angular/core";
+import { NgModule, Component } from "@angular/core";
 import { LoginComponent } from "./login/login.component";
 import { ProfileEditComponent } from "./profile-edit/profile-edit.component";
 import { TeamProfileComponent } from "./team-profile/team-profile.component";
@@ -23,6 +23,8 @@ import { DashboardComponent } from "./admin/dashboard/dashboard.component";
 import { CasterDashboardComponent } from "./caster-tools/caster-dashboard/caster-dashboard.component";
 import { MatchManagementComponent } from "./admin/match-management/match-management.component";
 import { MatchEditComponent } from "./admin/match-management/match-edit/match-edit.component";
+import { AdminAclManagementComponent } from './admin/admin-acl-management/admin-acl-management.component';
+import { UpdateRolesComponent } from "./admin/admin-acl-management/update-roles/update-roles.component";
 
 const APP_ROUTES: Routes = [
   { path: 'directory', component: DirectoryComponent},
@@ -43,6 +45,8 @@ const APP_ROUTES: Routes = [
   { path: '_admin/divisionMgmt', component:DivisionManagementComponent },
   { path: '_admin/matchMgmt', component: MatchManagementComponent },
   { path: '_admin/matchMgmt/:id', component: MatchEditComponent },
+  { path: '_admin/userACLMgmt', component: AdminAclManagementComponent },
+  { path: '_admin/userACLMgmt/:id', component: UpdateRolesComponent },
   {path: 'schedule/scheduleMatch/:id', component:MatchScheduleComponent},
   {path: 'schedule/teamSchedule', component: TeamScheduleComponent },
   {path: 'schedule/teamSchedule/:id', component:TeamScheduleComponent}, //accepts team name as url parameter

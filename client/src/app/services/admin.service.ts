@@ -200,4 +200,40 @@ export class AdminService {
     );
   }
 
+  getUsersAcls(){
+    let url = 'admin/user/get/usersacl/all';
+    return this.http.get(url).pipe(
+      map(
+        res=>{
+          return res['returnObject'];
+        }
+      )
+    )
+  }
+  getUserAcls(id) {
+    let url = 'admin/user/get/usersacl';
+    let payload = {
+      id:id
+    };
+    return this.http.post(url, payload).pipe(
+      map(
+        res => {
+          return res['returnObject'];
+        }
+      )
+    )
+  }
+
+  upsertUserAcls( userACL ){
+    let url ='admin/user/upsertRoles';
+    // let payload ={
+    //   acl:userACL
+    // };
+    return this.http.post(url, userACL).pipe(
+      map(
+        res=> {return res['returnObject'];}
+      )
+    )
+  }
+
 }

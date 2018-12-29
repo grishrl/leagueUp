@@ -1,0 +1,47 @@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <h2>Admin Management</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <div class="col">
+                            User Name:
+                        </div>
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    Current Admin Rights:
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="row" *ngFor="let user of users">
+                        <div class="col">
+                            {{user.displayName}}
+                        </div>
+                        <div class="col">
+                            <div class="row" *ngFor="let acl of user.adminRights | keyvalue">
+                                <div class="col">
+                                    {{acl.key}} : {{acl.value}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <a [routerLink]="[user._id]" class="btn btn-success">Edit</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,23 @@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    {{user.displayName}}
+                </div>
+                <div class="col">
+                    <div class="row" *ngFor="let acl of rights">
+                        <div class="col">
+                            <mat-checkbox [(ngModel)]="acl.value">{{acl.key}}</mat-checkbox>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <button (click)="updateUserRights()" class="btn btn-success">Update Users Admin Roles</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
