@@ -17,10 +17,9 @@ router.post('/delete/user', passport.authenticate('jwt', {
         User.findOne({
             displayName: user
         }).then((foundUser) => {
-            let team = util.returnByPath(foundUser, 'teamInfo.teamName');
             if (foundUser) {
                 //if user is a captain to not delete:
-                if (util.returnBoolByPath(foundUser, 'teamInfo.isCaptain')) {
+                if (util.returnByPath(foundUser, 'isCaptain')) {
                     //if user is a capt, send error back
                     res.status(400).send(util.returnMessaging(path, 'Cannot delete user that is captain', false, foundUser));
                 } else {

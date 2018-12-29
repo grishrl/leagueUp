@@ -11,7 +11,7 @@ import { AdminService } from 'src/app/services/admin.service';
 export class MatchEditComponent implements OnInit {
 
   matchId;
-  match:any;
+  
   constructor(private route: ActivatedRoute, private scheduleService: ScheduleService, private adminService: AdminService) { 
     if (this.route.snapshot.params['id']) {
       this.matchId = this.route.snapshot.params['id'];

@@ -108,16 +108,15 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
                                 foundTeam.teamMembers.push(foundTeamObject.pendingMembers[index]);
                                 foundTeam.pendingMembers.splice(index, 1);
                                 //update the user with the team info
-                                foundUser.teamInfo = {
-                                    "teamName": teamName,
-                                    "teamId": foundTeam._id
-                                }
+                                foundUser.teamName = teamName;
+                                foundUser.teamId = foundTeam._id
                             } else {
                                 //remove the member from the pending members
                                 foundTeam.pendingMembers.splice(index, 1);
                                 //make sure that the member's teaminfo is cleared.
-                                if (foundUser.teamInfo) {
-                                    foundUser.teamInfo = {};
+                                if (foundUser.teamName || foundUser.teamId) {
+                                    foundUser.teamName = null;
+                                    foundUser.teamId = null;
                                 }
                             }
                             //save the team and the user
@@ -259,7 +258,7 @@ router.post('/teamSave', passport.authenticate('jwt', {
                                 OutreachSub.updateOutreachTeamname(team, savedTeam.teamName);
                                 QueueSub.updatePendingMembersTeamNameChange(team, savedTeam.teamName_lower);
                                 //matches ... not existing yet
-                                UserSub.upsertUsersTeam(savedTeam.teamMembers, savedTeam.teamName);
+                                UserSub.upsertUsersTeamName(savedTeam.teamMembers, savedTeam.teamName);
                             }, (err) => {
                                 res.status(400).send(util.returnMessaging(path, 'Error saving team information', err));
                             });

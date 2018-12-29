@@ -20,8 +20,8 @@ export class UserService {
 
     console.log('url '+url)
     return this.http.get<Profile>(url).pipe(
-      map(({ _id, displayName, lookingForGroup, lfgDetails, teamInfo}) => {
-        return new Profile(_id, displayName, lookingForGroup, lfgDetails, teamInfo);
+      map((res) => {
+        return res;
       })
     );
     

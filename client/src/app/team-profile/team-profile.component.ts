@@ -24,7 +24,7 @@ export class TeamProfileComponent implements OnInit {
   editOn: boolean = true;
   teamName: string;
   displayDivison: string = ""
-  returnedProfile = new Team(null, null, null, null, null, null, null, null, null);
+  returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
   filterUsers: any[] = []
   tempProfile
   message: string

@@ -55,11 +55,11 @@ export class CreateTeamComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null);
+    this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
   }
 
   cancel() {
-    this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null);
+    this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
   }
 
   save() {

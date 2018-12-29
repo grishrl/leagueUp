@@ -4,17 +4,6 @@ const User = require('../models/user-models');
 const TeamSub = require('../subroutines/team-subs');
 const passport = require("passport");
 
-const authCheck = (req, res, next) => {
-    console.log(req.user);
-    if (!req.user) {
-        console.log('unauthenticated!');
-        //if user is not logged in:
-        res.redirect('/');
-    } else {
-        next();
-    }
-}
-
 router.get('/get', (req, res) => {
     var user = req.query.user;
     user = decodeURIComponent(user);
@@ -43,11 +32,9 @@ router.get('/delete', passport.authenticate('jwt', {
     } else {
         User.findOneAndDelete({ displayName: user.displayName }).then((deleted) => {
             res.status(200).send(util.returnMessaging(path, 'User deleted', false, deleted));
-            if (deleted.hasOwnProperty('teamInfo')) {
-                if (deleted.teamInfo.hasOwnProperty('teamName')) {
-                    let lower = deleted.teamInfo.teamName.toLowerCase();
-                    TeamSub.removeUser(lower, deleted.displayName);
-                }
+            if (deleted.hasOwnProperty('teamName')) {
+                let lower = deleted.teamName.toLowerCase();
+                TeamSub.removeUser(lower, deleted.displayName);
             }
         }, (err) => {
             res.status(500).send(util.returnMessaging(path, 'Error querying user', err));
@@ -59,123 +46,52 @@ router.post('/save', passport.authenticate('jwt', {
         session: false
     }),
     function(req, res) {
-        var status = 200;
-        var message = "";
-
+        const path = 'user/save';
         var sentUser = req.body;
         var id = req.user._id.toString();
-
-        console.log(id, " === ", sentUser._id)
+        //ensure saving requesting user is the user being saved
+        console.log(id, " === ", sentUser._id);
         if (req.user._id.toString() === sentUser._id) {
             User.findOne({ _id: req.user._id }).then(function(found) {
                 if (found) {
                     console.log('FOUND: ', found);
                     //validate all the data before saving --
 
-                    if (!util.isNullOrEmpty(sentUser.lookingForGroup)) {
+                    if (util.returnBoolByPath(sentUser, 'lookingForGroup')) {
                         found.lookingForGroup = sentUser.lookingForGroup
                     }
-
-                    if (sentUser.lfgDetails.hasOwnProperty('availability')) {
-                        console.log('you are here!');
-                        var days = Object.keys(sentUser.lfgDetails.availability)
-                        days.forEach(function(day) {
-                            console.log('day ', day);
-                            var dayObj = sentUser.lfgDetails.availability[day];
-                            console.log('dayObj ', dayObj)
-                            console.log('!util.isNullOrEmpty(dayObj) ', !util.isNullOrEmpty(dayObj));
-                            console.log('dayObj.availability ', dayObj.availability)
-
-                            if (!util.isNullOrEmpty(dayObj) && dayObj.available) {
-                                if (!found.lfgDetails) {
-                                    found.lfgDetails = {};
-                                }
-                                if (!found.lfgDetails.availability) {
-                                    found.lfgDetails.availability = {};
-                                }
-                                if (!found.lfgDetails.availability[day]) {
-                                    found.lfgDetails.availability[day] = {};
-                                }
-                                found.lfgDetails.availability[day].available = dayObj.available;
-                                found.lfgDetails.availability[day].startTime = dayObj.startTime;
-                                found.lfgDetails.availability[day].endTime = dayObj.endTime;
-                            }
-                        });
+                    if (util.returnBoolByPath(sentUser, 'availability')) {
+                        found.availability = {};
+                        found.availability = sentUser.availability;
                     }
 
-                    // console.log('sentUser.lfgDetails.averageMmr ', sentUser.lfgDetails.averageMmr);
-                    if (!util.isNullOrEmpty(sentUser.lfgDetails.averageMmr)) {
-                        // console.log('util.returnBoolByPath(found, \'lfgDetails\') ', util.returnBoolByPath(found, 'lfgDetails'))
-                        if (!util.returnBoolByPath(found, 'lfgDetails')) {
-                            found.lfgDetails = {};
-                        }
-                        found.lfgDetails.averageMmr = sentUser.lfgDetails.averageMmr;
+                    // console.log('sentUser.averageMmr ', sentUser.averageMmr);
+                    if (util.returnBoolByPath(sentUser, 'averageMmr')) {
+                        found.averageMmr = sentUser.averageMmr;
                     }
 
-                    if (!util.isNullOrEmpty(sentUser.lfgDetails.competitiveLevel)) {
-                        if (!found.lfgDetails) {
-                            found.lfgDetails = {};
-                        }
-                        found.lfgDetails.competitiveLevel = sentUser.lfgDetails.competitiveLevel;
+                    if (util.returnBoolByPath(sentUser, 'competitiveLevel')) {
+                        found.competitiveLevel = sentUser.competitiveLevel;
                     }
-                    if (!util.isNullOrEmpty(sentUser.lfgDetails.descriptionOfPlay)) {
-                        if (!found.lfgDetails) {
-                            found.lfgDetails = {};
-                        }
-                        found.lfgDetails.descriptionOfPlay = sentUser.lfgDetails.descriptionOfPlay;
+                    if (util.returnBoolByPath(sentUser, 'descriptionOfPlay')) {
+                        found.descriptionOfPlay = sentUser.descriptionOfPlay;
                     }
-                    if (!util.isNullOrEmpty(sentUser.lfgDetails.role)) {
-                        if (!found.lfgDetails) {
-                            found.lfgDetails = {};
-                        }
-                        if (!found.lfgDetails.role) {
-                            found.lfgDetails.role = {
-                                "tank": false,
-                                "assassin": false,
-                                "support": false,
-                                "offlane": false,
-                                "specialist": false
-                            };
-                        }
-                        var roles = Object.keys(sentUser.lfgDetails.role);
-                        roles.forEach(function(role) {
-                            found.lfgDetails.role[role] = sentUser.lfgDetails.role[role];
-                        });
+                    if (util.returnBoolByPath(sentUser, 'role')) {
+                        found.role = {};
+                        found.role = sentUser.role;
                     }
 
-                    if (!util.isNullOrEmpty(sentUser.lfgDetails.timeZone)) {
-                        if (!found.lfgDetails) {
-                            found.lfgDetails = {};
-                        }
-                        found.lfgDetails.timeZone = sentUser.lfgDetails.timeZone
+                    if (util.returnBoolByPath(sentUser, 'timeZone')) {
+                        found.timeZone = sentUser.timeZone
                     }
-                    if (!util.isNullOrEmpty(sentUser.lfgDetails.heroLeague)) {
-                        if (!found.lfgDetails) {
-                            found.lfgDetails = {};
-                        }
-                        if (!found.lfgDetails.heroLeague) {
-                            found.lfgDetails.heroLeague = {};
-                        }
-                        var keys = Object.keys(sentUser.lfgDetails.heroLeague);
-                        keys.forEach(function(key) {
-                            console.log(key);
-                            found.lfgDetails.heroLeague[key] = sentUser.lfgDetails.heroLeague[key];
-                        });
+                    if (util.returnBoolByPath(sentUser, 'hlRankMetal')) {
+                        found.hlRankMetal = sentUser.hlRankMetal
                     }
-                    if (!util.isNullOrEmpty(sentUser.lfgDetails.hotsLogsURL)) {
-                        if (!found.lfgDetails) {
-                            found.lfgDetails = {};
-                        }
-                        found.lfgDetails.hotsLogsURL = sentUser.lfgDetails.hotsLogsURL;
+                    if (util.returnBoolByPath(sentUser, 'hlRankDivision')) {
+                        found.hlRankDivision = sentUser.hlRankDivision
                     }
-                    if (!util.isNullOrEmpty(sentUser.teamInfo)) {
-                        if (!foundUser.teamInfo) {
-                            foundUser.teamInfo = {};
-                        }
-                        var keys = Object.keys(sentUser.teamInfo);
-                        keys.forEach(function(key) {
-                            found.teamInfo[key] = sentUser.teamInfo[key];
-                        });
+                    if (util.returnBoolByPath(sentUser, 'hotsLogsURL')) {
+                        found.hotsLogsURL = sentUser.hotsLogsURL;
                     }
 
                     sendRes = false;
@@ -183,27 +99,24 @@ router.post('/save', passport.authenticate('jwt', {
                     found.save(function(err, updatedUser) {
                         if (err) {
                             console.log('error saving: ', err);
-                            res.status(500).send('Nope');
+                            res.status(500).send(util.returnMessaging(path, 'Error saving user', err));
                         }
 
                         if (updatedUser) {
-                            res.status(200).send({ "udpated": true })
+                            res.status(200).send(util.returnMessaging(path, 'User update successful', false, updatedUser));
                         }
                     });
 
 
                 } else {
-                    status = 500;
-                    message = "User ID not found.";
+                    res.status(400).send(util.returnMessaging(path, 'User ID not found.', false));
                 }
             })
         } else {
-            status = 401;
-            message = "Unauthorized to mofify this profile.";
+            res.status(401).send(util.returnMessaging(path, 'Unauthorized to mofify this profile.', false))
         }
 
-    }
-);
+    });
 
 
 function removeUneeded(user) {

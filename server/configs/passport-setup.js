@@ -10,18 +10,6 @@ const User = require('../models/user-models');
 
 
 
-// passport.serializeUser((user, done) => {
-//     console.log('serializeUser user: ', user);
-//     done(null, user._id);
-// });
-
-// passport.deserializeUser((user, done) => {
-//     console.log('deserializeUser user ', user);
-//     User.findById(user).then((found) => {
-//         console.log('found ', found);
-//         done(null, found);
-//     });
-// });
 var jwtOptions = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: process.env.jwtToken
@@ -61,6 +49,8 @@ passport.use(new BnetStrategy({
 
     var id = profile.id.toString()
     User.findOne({ bNetId: id }).then((prof) => {
+        //TODO: IMPLEMENT A CHECK TO MAKE SURE THE USERS DISPLAY NAME HAS NOT CHANGED!!
+        //IF IT HAS, UPDATE IT!!!
         if (prof) {
             var token = jwt.sign({ id: prof._id }, process.env.jwtToken);
             var reply = {
@@ -97,27 +87,3 @@ passport.use(new BnetStrategy({
         }
     })
 }));
-
-// passport.use(new GoogleStrategy({
-//     callbackURL: '/auth/google/redirect',
-//     clientID: keys.google.clientID,
-//     clientSecret: keys.google.clientSecret
-// }, (accessToken, refreshToken, profile, done) => {
-//     //check if profile exists all ready
-//     User.findOne({ googleId: profile.id }).then((prof) => {
-//         if (prof) {
-//             console.log('user is:' + prof)
-//             done(null, prof);
-//         } else {
-//             //this user did not exist yet;
-//             new User({
-//                 username: profile.displayName,
-//                 googleId: profile.id
-//             }).save().then((newUser) => {
-//                 console.log('created new user: ' + newUser);
-//                 done(null, newUser);
-//             });
-//         }
-//     });
-
-// }));

@@ -9,10 +9,6 @@ import { map } from 'rxjs/operators';
 })
 export class DivisionService {
 
-  cachedDivisions
-  // url = 'http://localhost:3000/division/get';
-  url = 'division/get';
-
   getDivisionInfo(){
     // let turl = 'http://localhost:3000/admin/getDivisionInfo';
     let turl = '/admin/getDivisionInfo';
@@ -29,7 +25,6 @@ export class DivisionService {
             }
             return 0;
           });
-          this.cachedDivisions = divisionArr;
           return divisionArr;
         }
       )
@@ -40,15 +35,15 @@ export class DivisionService {
     // let url = 'http://localhost:3000/admin/getDivInfo'
     let url = 'admin/getDivInfo'
 
-    return this.http.get<any>(this.url + '?division=' + divisionName).pipe(
+    return this.http.get<any>(url + '?division=' + divisionName).pipe(
       map((res) => {
         return res.returnObject;
       })); 
   }
   
   getDivision(divisionName:string):Observable<any>{
-
-    return this.http.get<any>(this.url+'?division='+divisionName).pipe(
+    let url = 'admin/getDivInfo'
+    return this.http.get<any>(url+'?division='+divisionName).pipe(
         map((res)=>{
           return res.returnObject;
         }));

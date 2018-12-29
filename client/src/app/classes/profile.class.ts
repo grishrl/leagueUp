@@ -1,13 +1,28 @@
 export class Profile {  //addition of stats for future plans
   _id:String;
   displayName: String;
-  lookingForGroup : Boolean;
-  lfgDetails: lfgSchema;
-  teamInfo:  miniTeam;
+  teamId: string;
+  teamName: string;
+  isCaptain:Boolean;
+  hlRankMetal: string;
+  hlRankDivision: number;
+  //stats:object // not implemented
+  //messageCenter: Array // not implemented
+  lookingForGroup: Boolean;
+  availability: schedule; //form input added
+  competitiveLevel: number; //form input added
+  descriptionOfPlay: String; //form input added
+  role: roles; //
+  timeZone: string; //form input added
+  hotsLogsURL: String; //form input added
+  averageMmr: number;  //user average mmr
   __v: String;//useless
 
 
-  constructor (id: String, displayName: String, lookingForGroup: Boolean, lfgDetails: lfgSchema, teamInfo: miniTeam){
+  constructor (id: String, displayName: String, teamId:string, teamName:string, isCaptain:boolean,
+    hlRankMetal:string, hlRankDivision:number, lookingForGroup: Boolean, availability:schedule, 
+    competitiveLevel:number, descriptionOfPlay:string, role:roles, timeZone:string, hotsLogsURL:string,
+    averageMmr:number){
   if (id != null && id != undefined && id.length > 0) {
     this._id = id;
   } else {
@@ -18,92 +33,110 @@ export class Profile {  //addition of stats for future plans
   } else {
     this.displayName = "";
   }
+    if (teamId != null && teamId != undefined && teamId.length > 0) {
+      this.teamId = teamId;
+    } else {
+      this.teamId = "";
+    }
+    if (teamName != null && teamName != undefined && teamName.length > 0) {
+      this.teamName = teamName;
+    } else {
+      this.teamName = "";
+    }
+    if (isCaptain != null && isCaptain != undefined) {
+      this.isCaptain = isCaptain;
+    } else {
+      this.isCaptain = null;
+    }
+    if (hlRankMetal != null && hlRankMetal != undefined && hlRankMetal.length > 0) {
+      this.hlRankMetal = hlRankMetal;
+    } else {
+      this.hlRankMetal = "";
+    }
+    if (hlRankDivision != null && hlRankDivision != undefined ) {
+      this.hlRankDivision = hlRankDivision;
+    } else {
+      this.hlRankDivision = null;
+    }
   if (lookingForGroup != null && lookingForGroup != undefined) {
     this.lookingForGroup = lookingForGroup;
   } else {
     this.lookingForGroup = false;
   }
-  if (lfgDetails != null && lfgDetails != undefined) {
-    this.lfgDetails = lfgDetails;
-  } else {
-    this.lfgDetails = {
-      "availability": {
-        "monday": {
-          "available": false,
-          "startTime": null,
-          "endTime": null
-        },
-        "tuesday": {
-          "available": false,
-          "startTime": null,
-          "endTime": null
-        },
-        "wednesday": {
-          "available": false,
-          "startTime": null,
-          "endTime": null
-        }
-        , "thursday": {
-          "available": false,
-          "startTime": null,
-          "endTime": null
-        }
-        , "friday": {
-          "available": false,
-          "startTime": null,
-          "endTime": null
-        }
-        , "saturday": {
-          "available": false,
-          "startTime": null,
-          "endTime": null 
-        }
-        , "sunday": {
-          "available": false,
-          "startTime": null,
-          "endTime": null
-        }
+  if(availability != null && availability != undefined){
+    this.availability = availability;
+  }else{
+    this.availability = {
+      "monday": {
+        "available": false,
+        "startTime": null,
+        "endTime": null
       },
-      "averageMmr":null,
-      "competitiveLevel":null, 
-      "descriptionOfPlay":"",
-      "role": { "tank": false, "assassin": false, "support": false, "offlane": false, "specialist": false }, //form input added,
-      "timeZone":"",
-      "heroLeague":{"metal":"","division":null},
-      "hotsLogsURL":""
+      "tuesday": {
+        "available": false,
+        "startTime": null,
+        "endTime": null
+      },
+      "wednesday": {
+        "available": false,
+        "startTime": null,
+        "endTime": null
+      }
+      , "thursday": {
+        "available": false,
+        "startTime": null,
+        "endTime": null
+      }
+      , "friday": {
+        "available": false,
+        "startTime": null,
+        "endTime": null
+      }
+      , "saturday": {
+        "available": false,
+        "startTime": null,
+        "endTime": null
+      }
+      , "sunday": {
+        "available": false,
+        "startTime": null,
+        "endTime": null
+      }
+    };
   }
-  if (teamInfo != null && teamInfo != undefined) {
-    this.teamInfo = teamInfo;
-  } else {
-    this.teamInfo = { "teamName": "", "teamId": "" };
-  }
-
+    if (competitiveLevel != null && competitiveLevel != undefined ) {
+      this.competitiveLevel = competitiveLevel;
+    } else {
+      this.competitiveLevel = null;
+    }
+    if (descriptionOfPlay != null && descriptionOfPlay != undefined) {
+      this.descriptionOfPlay = descriptionOfPlay;
+    } else {
+      this.descriptionOfPlay = null;
+    }
+    if (role != null && role != undefined) {
+      this.role = role;
+    } else {
+      this.role = { "tank": false, "assassin": false, "support": false, "offlane": false, "specialist": false };
+    }
+    if (timeZone != null && timeZone != undefined) {
+      this.timeZone = timeZone;
+    } else {
+      this.timeZone = '';
+    }
+    if (hotsLogsURL != null && hotsLogsURL != undefined) {
+      this.hotsLogsURL = hotsLogsURL;
+    } else {
+      this.hotsLogsURL = null;
+    }
+    if (averageMmr != null && averageMmr != undefined) {
+      this.averageMmr = averageMmr;
+    } else {
+      this.averageMmr = null;
+    }
+}
 }
 
-}
-}
-
-
-export interface hlRankShema {
-    metal: String; //Form input added
-    division: number; //Form input added
-}
-
-export interface miniTeam{
-    teamName: String; //form input added
-    teamId: String;
-}
-
-export interface lfgSchema {
-  availability: schedule; //form input added
-  competitiveLevel: number; //form input added
-  descriptionOfPlay: String; //form input added
-  role: roles; //
-  averageMmr: number;  //user average mmr
-  timeZone: String; //form input added
-  heroLeague: hlRankShema;
-  hotsLogsURL: String; //form input added
-}
 
 export interface schedule {
   monday: atset,
@@ -127,14 +160,4 @@ export interface roles {
   offlane:boolean,
   support:boolean,
   specialist:boolean
-}
-
-export enum Metal{
-  GrandMaster = "GRAND MASTER",
-  Master = "MASTER",
-  Diamond = "DIAMOND",
-  Platinum = "PLATINUM",
-  Gold = "GOLD",
-  Silver = "SILVER",
-  Bronze = "BRONZE"
 }

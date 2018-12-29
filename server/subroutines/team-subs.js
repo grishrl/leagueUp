@@ -32,7 +32,7 @@ function upsertTeamDivision(team, division) {
     })
 }
 
-//subroutine to update a teams average mmr, this will run when it is passed a team and a Provided MMR
+//subroutine to update a teams average mmr, this will run when it is passed a team
 function updateTeamMmr(team) {
     console.log('welcome to the sub ', team)
     Team.findOne({ teamName_lower: team.teamName_lower }).then((foundTeam) => {
@@ -45,8 +45,8 @@ function updateTeamMmr(team) {
                 let length = 0;
                 let total = 0;
                 users.forEach(user => {
-                    if (util.returnBoolByPath(user, 'lfgDetails.averageMmr')) {
-                        total += user.lfgDetails.averageMmr;
+                    if (util.returnBoolByPath(user.toObject(), 'averageMmr')) {
+                        total += user.averageMmr;
                         length += 1;
                     }
                 });

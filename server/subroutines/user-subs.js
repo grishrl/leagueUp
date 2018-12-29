@@ -24,7 +24,9 @@ function clearUserTeam(user) {
         displayName: user.displayName
     }).then((foundUser) => {
         if (foundUser) {
-            foundUser.teamInfo = {};
+            foundUser.teamId = null;
+            foundUser.teamName = null;
+            foundUser.isCaptain = null;
             foundUser.save().then((savedUser) => {
                 console.log('need some persistent logging');
             }, (err) => {
@@ -38,19 +40,18 @@ function clearUserTeam(user) {
     });
 }
 
-function upsertUsersTeam(users, team) {
+function upsertUsersTeamName(users, team) {
     users.forEach(function(user) {
-        upsertUserTeam(user, team);
+        upsertUserTeamName(user, team);
     });
 }
 
-function upsertUserTeam(user, team) {
+function upsertUserTeamName(user, team) {
     User.findOne({
         displayName: user.displayName
     }).then((foundUser) => {
         if (foundUser) {
-            foundUser.teamInfo = {};
-            foundUser.teamInfo['teamName'] = team;
+            foundUser.teamName = team;
             foundUser.save().then((savedUser) => {
                 console.log('need some persistent logging');
             }, (err) => {
@@ -69,19 +70,16 @@ function toggleCaptain(user) {
     User.findOne({ displayName: user }).then((foundUser) => {
         //get the value in teamInfo, is captain, will be boolean if it's been set before
         let changed = false;
-        let isCap = util.returnByPath(foundUser, 'teamInfo.isCaptain');
+        let isCap = util.returnByPath(foundUser, 'isCaptain');
         //if this is a boolean value, toggle it
         if (typeof isCap == 'boolean') {
             changed = true;
-            foundUser.teamInfo.isCaptain = !foundUser.teamInfo.isCaptain;
+            foundUser.isCaptain = !foundUser.isCaptain;
         } else {
-            //it the iscaptain didnt exist would be false by default, turn it on
-            if (util.returnBoolByPath(foundUser, 'teamInfo')) {
+            //iF the iscaptain didnt exist would be false by default, turn it on
+            if (util.returnBoolByPath(foundUser.toObject(), 'isCaptain')) {
                 changed = true;
-                foundUser.teamInfo.isCaptain = true;
-            } else {
-                //if for some reason this user didn't have a team, whats the play?
-                //I think it's best to do nothing for now.
+                foundUser.isCaptain = true;
             }
         }
         if (changed) {
@@ -100,6 +98,6 @@ function toggleCaptain(user) {
 module.exports = {
     scrubUser: scrubUser,
     clearUsersTeam: clearUsersTeam,
-    upsertUsersTeam: upsertUsersTeam,
+    upsertUsersTeamName: upsertUsersTeamName,
     toggleCaptain: toggleCaptain
 }

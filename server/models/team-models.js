@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-// const user = require(__dirname + '/user-models');
 const Schema = mongoose.Schema;
 
 const miniUser = new Schema({

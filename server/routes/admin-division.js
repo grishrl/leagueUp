@@ -1,6 +1,5 @@
 const util = require('../utils');
 const router = require('express').Router();
-const User = require("../models/user-models");
 const Division = require("../models/division-models");
 const DivSubs = require('../subroutines/division-subs');
 const TeamSubs = require('../subroutines/team-subs');
@@ -75,7 +74,7 @@ router.post('/divisionTeams',
             }).then((foundDiv) => {
                 if (foundDiv) {
                     //make sure we don't double up teams in here
-                    if (util.returnBoolByPath(foundDiv, 'teams')) {
+                    if (util.returnBoolByPath(foundDiv.toObject(), 'teams')) {
                         foundDiv.teams.forEach(element => {
                             let index = teams.indexOf(element);
                             if (index > -1) {

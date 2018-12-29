@@ -26,8 +26,8 @@ export class ApproveMemberViewComponent implements OnInit {
 
   hidePanel:boolean = true;
 
-  player = new Profile(null, null, null, null, null);
-  viewTeam = new Team(null, null, null, null, null, null, null, null, null);
+  player = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+  viewTeam = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
   resultantMmr:number
 
   ngOnInit() {
@@ -37,9 +37,9 @@ export class ApproveMemberViewComponent implements OnInit {
       });
       this.team.getTeam(this._info.teamName).subscribe(resT=>{
         this.viewTeam = resT;
-        console.log('this.player.lfgDetails.averageMmr && this.viewTeam.teamMMRAvg', this.player.lfgDetails.averageMmr, this.viewTeam.teamMMRAvg)
-        if (this.player.lfgDetails.averageMmr && this.viewTeam.teamMMRAvg) {
-          this.resultantMmr = Math.round((this.player.lfgDetails.averageMmr + this.viewTeam.teamMMRAvg) / 2);
+        console.log('this.player.averageMmr && this.viewTeam.teamMMRAvg', this.player.averageMmr, this.viewTeam.teamMMRAvg)
+        if (this.player.averageMmr && this.viewTeam.teamMMRAvg) {
+          this.resultantMmr = Math.round((this.player.averageMmr + this.viewTeam.teamMMRAvg) / 2);
         }
       })
     }

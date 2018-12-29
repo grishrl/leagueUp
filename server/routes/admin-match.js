@@ -1,11 +1,5 @@
 const util = require('../utils');
 const router = require('express').Router();
-// const User = require("../models/user-models");
-// const Admin = require("../models/admin-models");
-// const DivSub = require('../subroutines/division-subs');
-// const OutreachSub = require('../subroutines/outreach-subs');
-// const QueueSub = require('../subroutines/queue-subs');
-// const UserSub = require('../subroutines/user-subs');
 const passport = require("passport");
 const levelRestrict = require("../configs/admin-leveling");
 const Match = require('../models/match-model');

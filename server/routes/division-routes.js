@@ -1,8 +1,6 @@
 const util = require('../utils');
 const router = require('express').Router();
 const Division = require('../models/division-models');
-const User = require("../models/user-models");
-const passport = require("passport");
 
 
 // this API returns a division according to the recieved division name

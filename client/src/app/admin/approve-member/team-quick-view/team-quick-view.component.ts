@@ -16,7 +16,7 @@ export class TeamQuickViewComponent implements OnInit {
     }
   }
 
-  disTeam = new Team(null, null, null, null, null, null, null, null, null);
+  disTeam = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
   constructor(private team : TeamService) { }
 

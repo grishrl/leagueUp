@@ -155,7 +155,7 @@ this.timezoneControl.enable();
   selectedMedal: string;
   displayName : string;
   profileObs : Observable<Profile>;
-  returnedProfile = new Profile(null,null,null,null,null);
+  returnedProfile = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
   dataRet = false;
   profSub: Subscription;
@@ -183,7 +183,7 @@ this.timezoneControl.enable();
    openEdit(){
      this.editOn=false;
      this.formControlledEnable();
-     this.tempProfile = new Profile(null, null, null, null, null);
+     this.tempProfile = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
      merge(this.tempProfile, this.returnedProfile);
    }
 
@@ -197,11 +197,11 @@ this.timezoneControl.enable();
 
    save(){
      if(this.validate()){
-       if (!this.isNullOrEmpty(this.returnedProfile.lfgDetails.hotsLogsURL)){
-         this.hotsLogsService.getMMR(this.returnedProfile.lfgDetails.hotsLogsURL).subscribe(res => {
+       if (!this.isNullOrEmpty(this.returnedProfile.hotsLogsURL)){
+         this.hotsLogsService.getMMR(this.returnedProfile.hotsLogsURL).subscribe(res => {
            console.log(res);
            if (res != 'error') {
-             this.returnedProfile.lfgDetails.averageMmr = res;
+             this.returnedProfile.averageMmr = res;
              this.user.saveUser(this.returnedProfile).subscribe((res) => {
                if (res) {
                  this.editOn = true;
@@ -249,13 +249,14 @@ this.timezoneControl.enable();
   validate(){
     let valid = true;
     //validate the hotslogs URL
-    if (this.isNullOrEmpty(this.returnedProfile.lfgDetails.hotsLogsURL) ||
-      this.returnedProfile.lfgDetails.hotsLogsURL.indexOf('https://www.hotslogs.com/Player/Profile?PlayerID=') == -1){
+    if (this.isNullOrEmpty(this.returnedProfile.hotsLogsURL) ||
+      this.returnedProfile.hotsLogsURL.indexOf('https://www.hotslogs.com/Player/Profile?PlayerID=') == -1){
       valid = false;
     }
 
     //validate the hero leauge information
-    if(this.isNullOrEmpty(this.returnedProfile.lfgDetails.heroLeague)){
+    //TODO: Check that this is in the validation!
+    if (this.isNullOrEmpty(this.returnedProfile.hlRankMetal) && this.isNullOrEmpty(this.returnedProfile.hlRankDivision)){
       valid = false;
     }
 
@@ -267,8 +268,8 @@ this.timezoneControl.enable();
     //will we require the comp level, play history, roles?
 
     //validate that we have start and end times for available days
-    for (let day in this.returnedProfile.lfgDetails.availability){
-      let checkDay = this.returnedProfile.lfgDetails.availability[day];
+    for (let day in this.returnedProfile.availability){
+      let checkDay = this.returnedProfile.availability[day];
       if (checkDay.available){
         console.log('the times S, E', checkDay.startTime, checkDay.endTime )
         if (checkDay.startTime == null && checkDay.endTime == null){
@@ -280,7 +281,7 @@ this.timezoneControl.enable();
     }
 
     //ensure time zone
-    if (this.isNullOrEmpty(this.returnedProfile.lfgDetails.timeZone)) {
+    if (this.isNullOrEmpty(this.returnedProfile.timeZone)) {
       valid = false;
     }
 

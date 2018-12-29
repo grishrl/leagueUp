@@ -3,6 +3,7 @@ const router = require('express').Router();
 const User = require("../models/user-models");
 const Admin = require('../models/admin-models');
 const QueueSub = require('../subroutines/queue-subs');
+const TeamSub = require('../subroutines/team-subs');
 const UserSub = require('../subroutines/user-subs');
 const Team = require("../models/team-models");
 const passport = require("passport");
@@ -132,7 +133,7 @@ router.post('/create', passport.authenticate('jwt', {
     CREATE A TEAM ON BEHALF OF SOMEONE ELSE, THIS WILL BE HANDLED LATER!!!!
     */
     var callingUser = req.user;
-    if (callingUser.hasOwnProperty('teamInfo') && !util.isNullOrEmpty(callingUser.teamInfo) && callingUser.teamInfo.teamName) {
+    if (callingUser.hasOwnProperty('teamName')) {
         res.status(500).send(util.returnMessaging(path, 'This user all ready belongs to a team!'));
     } else {
         var status;
@@ -148,7 +149,6 @@ router.post('/create', passport.authenticate('jwt', {
             'displayName': req.user.displayName
         });
 
-        var name, lfm, lfmDet, avail, tz = false;
         if (!util.returnBoolByPath(recievedTeam, 'teamName')) {
             status = 400;
             message.nameError = "Null team name not allowed!";
@@ -167,7 +167,6 @@ router.post('/create', passport.authenticate('jwt', {
             delete recievedTeam._id;
         }
 
-
         if (!util.isNullOrEmpty(status) && !util.isNullOrEmpty(message)) {
             //we were missing data so send an error back.
             res.status(status).send(util.returnMessaging(path, message));
@@ -183,6 +182,7 @@ router.post('/create', passport.authenticate('jwt', {
                     new Team(
                         recievedTeam
                     ).save().then((newTeam) => {
+                        TeamSub.updateTeamMmr(newTeam.toObject());
                         res.status(200).send(util.returnMessaging(path, "Team created successfully", false, newTeam));
                         //this may need some refactoring if we add the ability for an admin to create a team!
                         User.findOne({

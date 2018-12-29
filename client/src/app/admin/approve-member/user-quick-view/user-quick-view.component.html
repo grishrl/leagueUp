@@ -7,7 +7,7 @@
         </div>
         <div class="row">
             <div class="col">
-                <div *ngIf="player.lfgDetails.averageMmr; else noMmr">MMR: {{player.lfgDetails.averageMmr}}</div>
+                <div *ngIf="player.averageMmr; else noMmr">MMR: {{player.averageMmr}}</div>
 
             </div>
             <ng-template #noMmr>
@@ -16,8 +16,8 @@
         </div>
         <div class="row">
             <div class="col">
-                <div *ngIf="player.lfgDetails.heroLeague && player.lfgDetails.heroLeague.metal && player.lfgDetails.heroLeague.division; else noMetalDiv">
-                    Hero League: {{player.lfgDetails.heroLeague.metal}} - {{player.lfgDetails.heroLeague.division}}
+                <div *ngIf="player.hlRankMetal && player.hlRankDivision; else noMetalDiv">
+                    Hero League: {{player.hlRankMeatal}} - {{player.hlRankDivision}}
                 </div>
                 <ng-template #noMetalDiv>
                     Player has not recorded an ingame metal/div in their profole, please contact them!

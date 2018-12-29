@@ -164,7 +164,7 @@ router.post('/update/match/time', passport.authenticate('jwt', {
                     }
                 })
                 if (isCapt) {
-                    if (util.returnBoolByPath(foundMatch, 'scheduledTime')) {
+                    if (util.returnBoolByPath(foundMatch.toObject(), 'scheduledTime')) {
                         if (foundMatch.scheduledTime.priorScheduled) {
                             res.status(400).send(util.returnMessaging(path, 'Match has all ready been scheduled'));
                         } else {
@@ -256,8 +256,6 @@ router.post('/report/match', passport.authenticate('jwt', {
                         foundTeams.forEach(team => {
                             let teamid = team._id.toString();
                             let homeid, awayid;
-
-                            console.log('util.returnBoolByPath(foundMatch, \'home.id\) ', util.returnBoolByPath(foundMatch.toObject(), 'home.id'));
                             if (util.returnBoolByPath(foundMatch.toObject(), 'home.id')) {
                                 homeid = foundMatch.home.id.toString();
                             }
