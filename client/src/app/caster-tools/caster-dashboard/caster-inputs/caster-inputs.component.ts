@@ -14,6 +14,9 @@ export class CasterInputsComponent implements OnInit {
   hideForm = true;
   _id:string;
 
+  name:string;
+  URL: string;
+  
   @Input() set matchId(id) {
     if (id != null && id != undefined) {
       this._id = id;

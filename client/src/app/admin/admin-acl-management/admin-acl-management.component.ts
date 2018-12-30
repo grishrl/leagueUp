@@ -20,10 +20,9 @@ export class AdminAclManagementComponent implements OnInit {
             delete element.adminRights.__v;
             delete element.adminRights._id;
           }
-        });
-      // console.log(this.users)},
+        })
+      },
     (err)=>{ console.log(err);}
     )
   }
-
 }
