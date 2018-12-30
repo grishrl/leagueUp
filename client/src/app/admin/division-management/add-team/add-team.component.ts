@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminService } from 'src/app/services/admin.service';
 import { indexOf } from 'lodash';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-add-team',
@@ -10,16 +11,20 @@ import { indexOf } from 'lodash';
 export class AddTeamComponent implements OnInit {
 
 
-  constructor(private admin: AdminService) { }
+  constructor(private admin: AdminService, private router:Router) { }
 
   undivisionTeams
   divisions
   ngOnInit() {
+    this.selectedTeams = [];
+    this.selectedDiv = undefined;
+    this.undivisionTeams=[];
     this.admin.getTeamsNotDivisioned().subscribe(res => {
       this.undivisionTeams = res;
     }, (err) => {
       console.log(err)
     })
+    this.divisions=[];
     this.admin.getDivisionList().subscribe(res => {
       this.divisions = res;
     }, (err) => {
@@ -30,14 +35,13 @@ export class AddTeamComponent implements OnInit {
   selectedTeams: any = [];
   teamSelected(team) {
     //if team is in the array, remove and deactivate it
-    console.log('clicked')
     let index = indexOf(this.selectedTeams, team)
     if (index > -1) {
       this.selectedTeams.splice(index, 1);
     } else {
       this.selectedTeams.push(team);
     }
-    console.log(this.selectedTeams);
+    // console.log(this.selectedTeams);
   }
 
   selectedDiv
@@ -66,7 +70,6 @@ export class AddTeamComponent implements OnInit {
   divisionTeams() {
     this.admin.divisionTeam(this.selectedTeams, this.selectedDiv.divisionConcat).subscribe(
       res => {
-        console.log('added to division');
         this.ngOnInit();
       }, (err) => {
         console.log(err)

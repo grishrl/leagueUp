@@ -7,7 +7,6 @@ const Division = require('../models/division-models');
 router.get('/get', (req, res) => {
     const path = '/division/get';
     var divisionName = req.query.division;
-    console.log('divisionName ', divisionName);
     Division.findOne({
         divisionConcat: divisionName
     }).then((foundDiv) => {

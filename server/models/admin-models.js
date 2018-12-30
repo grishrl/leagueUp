@@ -5,10 +5,11 @@ const adminSchema = new Schema({
     "adminId": String,
     "TEAM": Boolean,
     "USER": Boolean,
-    "DIVISON": Boolean,
+    "DIVISION": Boolean,
     "STANDINGS": Boolean,
     "CASTER": Boolean,
-    "MATCH": Boolean
+    "MATCH": Boolean,
+    "SCHEDULEGEN": Boolean
         //more as needed
 });
 

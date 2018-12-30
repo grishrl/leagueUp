@@ -42,7 +42,7 @@ export class DivisionService {
   }
   
   getDivision(divisionName:string):Observable<any>{
-    let url = 'admin/getDivInfo'
+    let url = '/division/get'
     return this.http.get<any>(url+'?division='+divisionName).pipe(
         map((res)=>{
           return res.returnObject;

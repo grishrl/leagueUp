@@ -67,41 +67,37 @@ router.post('/divisionTeams',
         recTeam.forEach(element => {
             teams.push(element.teamName);
         });
-
-        Division.findOne({ divisionConcat: div }).then((divInfo) => {
-            Division.findOne({
-                divisionConcat: divInfo.divisionConcat
-            }).then((foundDiv) => {
-                if (foundDiv) {
-                    //make sure we don't double up teams in here
-                    if (util.returnBoolByPath(foundDiv.toObject(), 'teams')) {
-                        foundDiv.teams.forEach(element => {
-                            let index = teams.indexOf(element);
-                            if (index > -1) {
-                                teams.splice(index, 1);
-                            }
-                        });
-                        foundDiv.teams.concat(teams);
-                    } else {
-                        foundDiv.teams = teams;
-                    }
-                    foundDiv.save().then((saved) => {
-                        runTeamSub = true;
-                        res.status(200).send(util.returnMessaging(path, 'Saved division', false, saved));
-                        TeamSubs.upsertTeamsDivision(teams, {
-                            displayName: divInfo.displayName,
-                            divisionConcat: divInfo.divisionConcat
-                        });
-                    }, (err) => {
-                        res.status(500).send(util.returnMessaging(path, 'Error saving divsion', err));
-                    })
+        console.log('div ', div)
+        Division.findOne({
+            divisionConcat: div
+        }).then((foundDiv) => {
+            if (foundDiv) {
+                //make sure we don't double up teams in here
+                if (foundDiv.teams) {
+                    teams.forEach(team => {
+                        if (foundDiv.teams.indexOf(team) == -1) {
+                            foundDiv.teams.push(team);
+                        }
+                    });
+                } else {
+                    foundDiv.teams = teams;
                 }
-            }, (err) => {
-                res.status(500).send(util.returnMessaging(path, 'Error finding division', err))
-            })
+                foundDiv.markModified('teams');
+                foundDiv.save().then((saved) => {
+                    runTeamSub = true;
+                    res.status(200).send(util.returnMessaging(path, 'Saved division', false, saved));
+                    TeamSubs.upsertTeamsDivision(teams, {
+                        displayName: saved.displayName,
+                        divisionConcat: saved.divisionConcat
+                    });
+                }, (err) => {
+                    res.status(500).send(util.returnMessaging(path, 'Error saving divsion', err));
+                })
+            }
         }, (err) => {
-            res.status(500).send(util.returnMessaging(path, 'Error finding div info', err));
-        });
+            res.status(500).send(util.returnMessaging(path, 'Error finding division', err))
+        })
+
     });
 
 router.post('/upsertDivision', passport.authenticate('jwt', {

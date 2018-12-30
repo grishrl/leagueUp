@@ -1,6 +1,4 @@
-const Schedule = require('../models/schedule-models');
 const Team = require('../models/team-models');
-const Division = require('../models/division-models');
 const ParsedReplay = require('../models/replay-parsed-models');
 const Match = require('../models/match-model');
 const util = require('../utils');
@@ -9,7 +7,8 @@ const _ = require('lodash');
 const router = require('express').Router();
 const AWS = require('aws-sdk');
 const uniqid = require('uniqid');
-const levelRestrict = require("../configs/admin-leveling")
+const levelRestrict = require("../configs/admin-leveling");
+const scheduleGenerator = require('../subroutines/schedule-subs');
 
 AWS.config.update({
     accessKeyId: process.env.S3accessKeyId,
@@ -428,7 +427,27 @@ router.post('/match/add/caster', passport.authenticate('jwt', {
         }
     }, (err) => {
         res.stutus(500).send(util.returnMessaging(path, 'Error updating match', err));
+    });
+});
+
+router.post('/generate/schedules', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.scheduleGenerator, (req, res) => {
+    const path = 'schedule/generate/schedules';
+    let season = req.body.season;
+    scheduleGenerator.generateSeason(season).then((process) => {
+        console.log(process);
+        if (process) {
+            scheduleGenerator.generateRoundRobinSchedule(season);
+            res.status(200).send(util.returnMessaging(path, 'Schedules generated!', false));
+        } else {
+            res.status(500).send(util.returnMessaging(path, 'Error occured in schedule generator'));
+        }
+    }, (err) => {
+        res.status(500).send(util.returnMessaging(path, 'Error occured in schedule generator'));
     })
+
+
 });
 
 module.exports = router;

@@ -17,7 +17,11 @@ function casterLevel(req, res, next) {
 }
 
 function matchLevel(req, res, nest) {
-    adminCheck('MATCH', req, res, nest);
+    adminCheck('MATCH', req, res, next);
+}
+
+function scheduleGenerator(req, res, next) {
+    adminCheck('SCHEDULEGEN', req, res, next);
 }
 
 module.exports = {
@@ -25,5 +29,6 @@ module.exports = {
     userLevel: userLevel,
     divisionLevel: divisionLevel,
     casterLevel: casterLevel,
-    matchLevel: matchLevel
+    matchLevel: matchLevel,
+    scheduleGenerator: scheduleGenerator
 }

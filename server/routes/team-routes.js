@@ -80,7 +80,6 @@ router.post('/getTeams', (req, res) => {
     teams.forEach(element => {
         searchArray.push(element.toLowerCase());
     });
-
     Team.find({
         teamName_lower: { $in: searchArray }
     }).lean().then(

@@ -27,8 +27,9 @@ export class UpdateRolesComponent implements OnInit {
     { key:"DIVISON", value: false},
     { key:"STANDINGS", value: false},
     { key:"CASTER", value: false},
-    { key:"MATCH", value: false}
-  ]
+    { key:"MATCH", value: false},
+    { key: "SCHEDULEGEN", value:false}
+  ];
 
   ngOnInit() {
     this.adminService.getUserAcls(this.recId).subscribe(
