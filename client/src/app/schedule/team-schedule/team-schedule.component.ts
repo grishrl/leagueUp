@@ -27,7 +27,6 @@ export class TeamScheduleComponent implements OnInit {
     //TODO: remove hard coded season 6!!!
     this.scheduleService.getTeamSchedules(6, getTeam).subscribe(
       res=>{
-        console.log(res);
         let matches = res;
         for(var i = 1; i<=matches.length; i++){
           if(this.rounds == null || this.rounds == undefined){
@@ -44,7 +43,6 @@ export class TeamScheduleComponent implements OnInit {
           
         }
         this.rounds;
-        console.log(this.rounds);
       },
       err=>{console.log(err)}
     )
@@ -69,10 +67,9 @@ export class TeamScheduleComponent implements OnInit {
     }
   }
 
+  //TODO: seen this code or similiar a few times, can we refactor?
   displayTime(ms){
-    console.log(typeof ms);
     let d = new Date(parseInt(ms));
-    console.log(d);
     let day = d.getDate();
     let year = d.getFullYear();
     let month = d.getMonth();
@@ -83,10 +80,8 @@ export class TeamScheduleComponent implements OnInit {
       hours = hours-12;
       suffix = "PM";
     }
-    
     let min = d.getMinutes();
     let minStr;
-    console.log('min ',min);
     if(min == 0){
       minStr = '00';
     }else{

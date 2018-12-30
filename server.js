@@ -70,11 +70,3 @@ app.use('/', express.static(path.join(__dirname, './client/dist/client/')));
 app.get('*', function(req, res) {
     res.sendFile(path.join(__dirname, './client/dist/client/index.html'));
 });
-
-// const sched = require('./server/subroutines/schedule-subs');
-// sched.generateSeason(6).then((res) => {
-//     console.log(res);
-//     if (res) {
-//         sched.generateRoundRobinSchedule(6)
-//     }
-// })

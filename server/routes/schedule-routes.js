@@ -45,7 +45,6 @@ router.post('/get/matches', passport.authenticate('jwt', {
         if (found) {
             let teams = findTeamIds(found);
             addTeamNamesToMatch(teams, found).then((processed) => {
-                console.log(processed);
                 res.status(200).send(util.returnMessaging(path, 'Found matches', false, processed));
             }, (err) => {
                 res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
@@ -69,7 +68,6 @@ router.post('/get/matches/all',
             if (found) {
                 let teams = findTeamIds(found);
                 addTeamNamesToMatch(teams, found).then((processed) => {
-                    console.log(processed);
                     res.status(200).send(util.returnMessaging(path, 'Found matches', false, processed));
                 }, (err) => {
                     res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
@@ -111,7 +109,6 @@ router.post('/get/matches/team', passport.authenticate('jwt', {
                     }
                 ]
             }).lean().then((foundMatches) => {
-                console.log(foundMatches);
                 let teams = findTeamIds(foundMatches);
                 addTeamNamesToMatch(teams, foundMatches).then((processed) => {
                     res.status(200).send(util.returnMessaging(path, 'Found matches', false, processed));
@@ -144,19 +141,14 @@ router.post('/update/match/time', passport.authenticate('jwt', {
 
     Match.findOne({ matchId: matchId }).then((foundMatch) => {
         if (foundMatch) {
-            console.log('foundMatch ', foundMatch);
             let teams = findTeamIds([foundMatch.toObject()]);
-            console.log('team ids ', teams);
             Team.find({
                 _id: {
                     $in: teams
                 }
             }).lean().then((foundTeams) => {
                 let isCapt = false;
-                console.log('foundTeams ', foundTeams);
-                console.log('requester ', requester);
                 foundTeams.forEach(team => {
-                    console.log('team.captain ', team.captain)
                     if (team.captain == requester) {
                         isCapt = true;
                     }
@@ -270,7 +262,6 @@ router.post('/report/match', passport.authenticate('jwt', {
                             }
                         });
 
-                        console.log('FFFFF ', foundMatch);
                         let isCapt = false;
                         foundTeams.forEach(team => {
                             if (team.captain == requester) {
@@ -304,7 +295,6 @@ router.post('/report/match', passport.authenticate('jwt', {
                                 otherTeamId = foundMatch.away.id;
                             }
 
-                            console.log(submitterUserName, submitterTeamId, submitterTeamName, otherTeamName, otherTeamId);
                             let replayfilenames = [];
                             parsed.forEach(element => {
                                 let tieBack = {};
@@ -358,10 +348,10 @@ router.post('/report/match', passport.authenticate('jwt', {
                                 };
                                 s3replayBucket.putObject(data, function(err, data) {
                                     if (err) {
-                                        console.log(err);
+                                        console.log(err); // static logging??
                                         console.log('Error uploading data: ', data);
                                     } else {
-                                        console.log(data);
+                                        console.log(data); //static logging??
                                         console.log('succesfully uploaded the replay!');
                                     }
                                 });
@@ -369,7 +359,7 @@ router.post('/report/match', passport.authenticate('jwt', {
 
                             ParsedReplay.collection.insertMany(parsed).then(
                                 (records) => {
-                                    console.log('replays written');
+                                    console.log('replays written'); //static logging??
                                     foundMatch.reported = true;
                                     foundMatch.save((saved) => {
                                         res.status(200).send(util.returnMessaging(path, 'Match reported', false, saved));
@@ -435,7 +425,6 @@ router.post('/generate/schedules', passport.authenticate('jwt', {
     const path = 'schedule/generate/schedules';
     let season = req.body.season;
     scheduleGenerator.generateSeason(season).then((process) => {
-        console.log(process);
         if (process) {
             scheduleGenerator.generateRoundRobinSchedule(season);
             res.status(200).send(util.returnMessaging(path, 'Schedules generated!', false));

@@ -78,8 +78,6 @@ export class ScheduleService {
       "scheduledEndTime":scheduledEndTime
     }
 
-    console.log('payload ', payload);
-
     return this.http.post(url, payload).pipe( map(
       res=>{
         return res['returnObject'];

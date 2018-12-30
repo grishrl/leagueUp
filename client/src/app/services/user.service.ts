@@ -14,11 +14,8 @@ export class UserService {
 
   getUser(id): Observable<Profile>{
     let encodedID = encodeURIComponent(id);
-    console.log('encode ', encodedID)
-    // let url = 'http://localhost:3000/user/get?user=' + encodedID;
     let url = 'user/get?user=' + encodedID;
 
-    console.log('url '+url)
     return this.http.get<Profile>(url).pipe(
       map((res) => {
         return res;
@@ -28,7 +25,6 @@ export class UserService {
   }
 
   userSearch(id):Observable<any>{
-  //  let url = 'http://localhost:3000/search/user';
     let url = 'search/user';
     
   if(typeof id != 'object'){
@@ -40,7 +36,6 @@ export class UserService {
   }
 
   saveUser(user):Observable<any>{
-    // let url = "http://localhost:3000/user/save";
     let url = "user/save";
 
     return this.http.post(url, user).pipe(
@@ -54,7 +49,6 @@ export class UserService {
   }
 
   deleteUser(){
-    // let url="http://localhost:3000/user/delete";
     let url = "user/delete";
 
     return this.http.get(url).pipe(
@@ -63,7 +57,6 @@ export class UserService {
   }
 
   outreachResponse(token):Observable<any>{
-    // let url = 'http://localhost:3000/outreach/inviteResponseComplete';
     let url = 'outreach/inviteResponseComplete';
 
     if(typeof token != 'object'){

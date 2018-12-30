@@ -17,7 +17,7 @@ export class DeleteMemberComponent implements OnInit {
 
   receiveUser(userRec){
     if (userRec != null && userRec!=undefined){
-      console.log(userRec);
+      // console.log(userRec);
       this.turnOnForm = true;
       this.recievedProfile = userRec;
     }
@@ -32,15 +32,15 @@ export class DeleteMemberComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+      // console.log('The dialog was closed');
 
       if (result.toLowerCase() == 'delete') {
-        console.log('delete this account!');
+        // console.log('delete this account!');
         this.admin.deleteUser(this.recievedProfile).subscribe(
           res => {
             this.turnOnForm = false;
             this.recievedProfile = null;
-            console.log('deleted!');
+            // console.log('deleted!');
           }, err => {
             console.log(err);
           }

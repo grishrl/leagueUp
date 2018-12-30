@@ -15,7 +15,7 @@ export class ChangeCaptainModalComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<ChangeCaptainModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: dataModel) {
-    console.log(data);
+    
      }
   
     

@@ -29,7 +29,6 @@ export class TeamService {
     return this.http.post(url, payload).pipe(
       map(
         res=>{
-          console.log(res);
           return res['returnObject'];
         }
       )

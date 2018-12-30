@@ -21,7 +21,7 @@ export class AdminAclManagementComponent implements OnInit {
             delete element.adminRights._id;
           }
         });
-      console.log(this.users)},
+      // console.log(this.users)},
     (err)=>{ console.log(err);}
     )
   }

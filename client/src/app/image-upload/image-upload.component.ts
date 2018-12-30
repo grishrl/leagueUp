@@ -21,7 +21,6 @@ export class ImageUploadComponent implements OnInit {
   }
   _showEdit:boolean=false;
   @Input() set showEdit(show){
-    console.log(show)
     if (show != null && show != undefined) {
       this._showEdit = show;
     } else {

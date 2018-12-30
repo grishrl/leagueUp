@@ -10,12 +10,14 @@ function updateTeamNameDivision(oldteamName, newteamName) {
                 }
             });
             foundDiv.save((savedDiv) => {
-                console.log('saved div');
+                console.log('saved div'); //static logging
             }, (err) => {
-                console.log('error saving div')
+                console.log('error saving div') //static logging
             })
         }
-    }, (err) => { console.log('Error finding div') })
+    }, (err) => {
+        console.log('Error finding div') //static logging
+    })
 }
 
 

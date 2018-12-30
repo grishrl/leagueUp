@@ -31,7 +31,6 @@ export class ContentfulService {
   async getBlogs(query?:object):Promise<Entry<any>[]>{
     try {
       const res = await this.client.getEntries((Object.assign({ content_type: 'blogPost'}, query)));
-      console.log(res.items);
       this.clearCache();
       return res.items;
     }
@@ -41,7 +40,6 @@ export class ContentfulService {
   }
 
   async getBlog(blog) {
-    console.log('this is the blog id u sent me ', blog);
     const res = await this.client.getEntry(blog);
     return res;
   }

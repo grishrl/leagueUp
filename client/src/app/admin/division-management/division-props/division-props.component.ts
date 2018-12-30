@@ -43,7 +43,7 @@ export class DivisionPropsComponent implements OnInit {
   editDivision
 
   calculateNewConcat(){
-    console.log('this.editDivision.divisionName ', this.editDivision.divisionName, ' this.editDivision.divisionCoast ', this.editDivision.divisionCoast )
+    // console.log('this.editDivision.divisionName ', this.editDivision.divisionName, ' this.editDivision.divisionCoast ', this.editDivision.divisionCoast )
     let div = this.editDivision.divisionName?this.editDivision.divisionName.toLowerCase():'' 
     
     let coast = this.editDivision.divisionCoast?this.editDivision.divisionCoast.toLowerCase():'';
@@ -107,7 +107,7 @@ export class DivisionPropsComponent implements OnInit {
 
   save(){
     if(this.newDiv){
-      console.log(this.editDivision);
+      // console.log(this.editDivision);
       this.adminService.createDivision(this.editDivision).subscribe(
         res=>{
           this.newDiv = false;
@@ -122,7 +122,7 @@ export class DivisionPropsComponent implements OnInit {
         res => {
           this.editDivision = null;
           this.ngOnInit();
-          console.log(res);
+          // console.log(res);
         }, err => {
           console.log(err)
         }

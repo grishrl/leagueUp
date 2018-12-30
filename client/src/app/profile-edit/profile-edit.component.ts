@@ -54,7 +54,6 @@ export class ProfileEditComponent implements OnInit {
     if (regex.test(hotslogsURL)) {
       return null;
   }else{
-    console.log('simply invalid');
       return {
         invalidurl:true
         }
@@ -82,39 +81,6 @@ this.timezoneControl.enable();
     this.timezoneControl.disable();
   }
 
-  // hotslogsUrlValidator(hotslogsservice:HotsLogsService) {
-  //   return (control : AbstractControl)=>{
-  //     let hotslogsURL = control.value;
-  //     return this.hotsLogsService.validCheck(hotslogsURL).pipe(
-  //       map(res => {
-  //         if (res.hasOwnProperty('Message')){
-  //           if(res.Message.indexOf('invald')>-1){
-  //             console.log('invalid');
-  //             return {invalidurl:true}
-  //           }
-  //         }else{
-  //           console.log('valid');
-  //           return null;
-  //         }
-  //       }
-  //       )
-  //     )
-  //   }
-
-
-  //   }
-
-  /*       return this.hotsLogsService.validCheck(hotslogsURL).subscribe(res=>{
-        console.log('validated');
-        return null;
-      }, err=>{
-        console.log('invalid URL');
-        return {
-          invalidurl:true
-          };
-        }
-      ) */
-
   providedProfile:string;
   @Input() set passedProfile(profile){
     if(profile!=null&&profile!=undefined){
@@ -132,12 +98,9 @@ this.timezoneControl.enable();
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-
       if (result.toLowerCase()=='delete'){
-        console.log('delete this account!');
         this.user.deleteUser().subscribe(
-          res =>{ console.log('deleted!');
+          res =>{
           this.auth.destroyAuth();
           this.router.navigate(['']);
          },err=>{
@@ -188,8 +151,6 @@ this.timezoneControl.enable();
    }
 
    cancel(){
-     console.log('temp ',this.tempProfile);
-     console.log('returned ', this.returnedProfile);
      this.returnedProfile = Object.assign({}, this.tempProfile);
      this.editOn = true;
      this.formControlledDisable();
@@ -199,7 +160,6 @@ this.timezoneControl.enable();
      if(this.validate()){
        if (!this.isNullOrEmpty(this.returnedProfile.hotsLogsURL)){
          this.hotsLogsService.getMMR(this.returnedProfile.hotsLogsURL).subscribe(res => {
-           console.log(res);
            if (res != 'error') {
              this.returnedProfile.averageMmr = res;
              this.user.saveUser(this.returnedProfile).subscribe((res) => {
@@ -227,7 +187,7 @@ this.timezoneControl.enable();
          });
        }
      }else{
-       
+       //todo: do something?
        console.log('the data was invalid we cant save');
      }
    }
@@ -239,10 +199,8 @@ this.timezoneControl.enable();
     }else if(this.displayName){
       getProfile = this.displayName;
     }
-    console.log('getProfile ',getProfile);
     this.profSub = this.user.getUser(getProfile).subscribe((res) => { 
       merge(this.returnedProfile, res);
-      console.log('this.returnedProfile ', this.returnedProfile)
       } )
   }
 
@@ -271,7 +229,6 @@ this.timezoneControl.enable();
     for (let day in this.returnedProfile.availability){
       let checkDay = this.returnedProfile.availability[day];
       if (checkDay.available){
-        console.log('the times S, E', checkDay.startTime, checkDay.endTime )
         if (checkDay.startTime == null && checkDay.endTime == null){
           return false;
         }else if (checkDay.startTime.length == 0 && checkDay.endTime.length == 0){

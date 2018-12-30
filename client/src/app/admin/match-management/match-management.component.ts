@@ -52,7 +52,7 @@ export class MatchManagementComponent implements OnInit {
   team
   */
   doFilterMatches(div, round, team) {
-    console.log('div ', div, ' round ', round, ' team ', team);
+    // console.log('div ', div, ' round ', round, ' team ', team);
     this.filterMatches = this.originalMatches.filter(match => {
       let home, away;
       if(!match.away.teamName){
@@ -92,7 +92,6 @@ export class MatchManagementComponent implements OnInit {
           pass = true;
         }
       } else if (round) {
-        console.log('c')
         if (round == match.round) {
           pass = true;
         }
@@ -101,7 +100,6 @@ export class MatchManagementComponent implements OnInit {
           pass = true;
         }
       } else {
-        console.log('d')
         pass = true
       }
       return pass;
@@ -110,9 +108,7 @@ export class MatchManagementComponent implements OnInit {
   }
 
   displayTime(ms) {
-    console.log(typeof ms);
     let d = new Date(parseInt(ms));
-    console.log(d);
     let day = d.getDate();
     let year = d.getFullYear();
     let month = d.getMonth();
@@ -126,7 +122,6 @@ export class MatchManagementComponent implements OnInit {
 
     let min = d.getMinutes();
     let minStr;
-    console.log('min ', min);
     if (min == 0) {
       minStr = '00';
     } else {

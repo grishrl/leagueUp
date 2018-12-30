@@ -32,13 +32,13 @@ async function generateSeason(season) {
     });
     for (var i = 0; i < getDivision.length; i++) {
         let thisDiv = getDivision[i];
-        console.log('thisDiv ', thisDiv)
+        // console.log('thisDiv ', thisDiv)
         divObj[thisDiv.divisionConcat] = {};
         let lowerTeam = [];
         thisDiv.teams.forEach(iterTeam => {
             lowerTeam.push(iterTeam.toLowerCase());
         });
-        console.log('lowerTeam ', lowerTeam)
+        // console.log('lowerTeam ', lowerTeam)
         let participants = await Team.find({
             teamName_lower: {
                 $in: lowerTeam
@@ -63,19 +63,19 @@ async function generateSeason(season) {
         divObj[thisDiv.divisionConcat]['roundSchedules'] = {};
     }
 
-    console.log('this is divObj before creating new schedule obj: ', divObj);
+    // console.log('this is divObj before creating new schedule obj: ', divObj);
     let schedObj = {
-        "season": season,
-        "division": divObj
-    }
-    console.log('this is divObj before creating new schedule obj: ', schedObj);
+            "season": season,
+            "division": divObj
+        }
+        // console.log('this is divObj before creating new schedule obj: ', schedObj);
     let sched = await new Scheduling(
         schedObj
     ).save().then((saved) => {
-        console.log('fin', JSON.stringify(saved));
+        // console.log('fin', JSON.stringify(saved));
         return true;
     }, (err) => {
-        console.log(err);
+        // console.log(err);
         return false;
     });
     return sched;
@@ -111,9 +111,9 @@ function generateRoundSchedules(season, round) {
         //save the schedule object.
         found.markModified('division');
         found.save().then((saved) => {
-            console.log('fin  schedules');
+            // console.log('fin  schedules');
         }, (err) => {
-            console.log('ERROR : ', err);
+            // console.log('ERROR : ', err);
         })
     });
 }
@@ -197,7 +197,7 @@ function generateRoundRobinSchedule(season) {
                         rounds.forEach(round => {
                             let matches = roundSchedules[round];
                             matches.forEach(match => {
-                                console.log('match ', match)
+                                // console.log('match ', match)
                                 let newMatch = Object.assign({}, match);
                                 newMatch.round = round;
                                 newMatch.home = {};
@@ -216,7 +216,7 @@ function generateRoundRobinSchedule(season) {
                                 // newMatch.away.id = match.away;
                                 newMatch.season = season;
                                 newMatch.divisionConcat = divisionName;
-                                console.log('newMatch ', newMatch);
+                                // console.log('newMatch ', newMatch);
                                 matchesToInsert.push(newMatch);
                             });
                         });
@@ -225,14 +225,14 @@ function generateRoundRobinSchedule(season) {
             }
             if (matchesToInsert.length > 0) {
                 Match.insertMany(matchesToInsert).then(res => {
-                    console.log('matches inserted!');
+                    // console.log('matches inserted!');
                 }, err => {
-                    console.log('error inserting matches');
+                    // console.log('error inserting matches');
                 })
             }
-            console.log('fin  schedules');
+            // console.log('fin  schedules');
         }, (err) => {
-            console.log('ERROR : ', err);
+            // console.log('ERROR : ', err);
         })
     });
 }

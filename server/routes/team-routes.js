@@ -153,8 +153,6 @@ router.post('/create', passport.authenticate('jwt', {
             message.nameError = "Null team name not allowed!";
         }
         //time zone should be in here.. although not sure if that's even necessary for a minimal creation
-        console.log(recievedTeam);
-        console.log(util.returnBoolByPath(recievedTeam, 'timeZone'));
         if (!util.returnBoolByPath(recievedTeam, 'timeZone')) {
             status = 400;
             message = {
@@ -476,10 +474,10 @@ router.post('/uploadLogo', passport.authenticate('jwt', {
         };
         s3Bucket.putObject(data, function(err, data) {
             if (err) {
-                console.log(err);
+                console.log(err); //static logging??
                 console.log('Error uploading data: ', data);
             } else {
-                console.log(data);
+                console.log(data); //static logging??
                 console.log('succesfully uploaded the image!');
             }
         });
@@ -592,7 +590,6 @@ function confirmCaptain(req, res, next) {
     var callingUser = req.user;
     var payloadTeamName = req.body.teamName;
     let lower = payloadTeamName.toLowerCase();
-    console.log('cpt check rec team name: ', lower);
     Team.findOne({
         teamName_lower: lower
     }).then((foundTeam) => {

@@ -10,7 +10,7 @@ import { Team } from '../../../classes/team.class';
 export class TeamQuickViewComponent implements OnInit {
   _teamName: string
   @Input() set teamName(team){
-    console.log('set teamName ',team)
+    // console.log('set teamName ',team)
     if(team!=undefined&&team!=null){
       this.disTeam = team;
     }

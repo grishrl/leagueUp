@@ -12,11 +12,9 @@ export class StandingsService {
     let payload = {
       division:div
     };
-    console.log('payload ',payload)
     return this.http.post(url, payload).pipe(
       map(
         res => {
-          console.log(res);
           return res['returnObject'];
         }
       )

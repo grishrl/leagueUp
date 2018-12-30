@@ -30,23 +30,19 @@ export class BlogListComponent implements OnInit {
 
   updateDisplay(val){
     val = val.value
-    console.log('val', val);
     if(val == 'all'){
-      console.log('in the all if')
       this.selection = val;
       this.contentfulService.getBlogs().then(
         res => {
           this.createMyDisplay(res);
         });
     }else if (val !== this.selection){
-      console.log('in the if')
       this.selection = val;
       this.contentfulService.getBlogs({ 'links_to_entry': this.selection }).then(
       res => {
         this.createMyDisplay(res);
       });
     }else{
-      console.log('did nothing');
       //do nothing
     }
  

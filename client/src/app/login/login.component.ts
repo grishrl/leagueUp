@@ -18,10 +18,10 @@ export class LoginComponent implements OnInit {
       
       let parsed = JSON.parse(URI);
 
-      console.log('parsed ',parsed );
+      // console.log('parsed ',parsed );
       
-      Auth.createAuth(parsed.token, parsed.displayName, parsed.teamInfo);
-      console.log('init in login ', Auth.getReferral());
+      Auth.createAuth(parsed.token);
+      // console.log('init in login ', Auth.getReferral());
       if (Auth.getReferral()) {
         this.user.outreachResponse(Auth.getReferral()).subscribe((res) => {
           Auth.destroyReferral();
@@ -30,7 +30,7 @@ export class LoginComponent implements OnInit {
         this.profile = user.routeFriendlyUsername(Auth.getUser());
       }
       
-      router.navigateByUrl('/profile/'+user.routeFriendlyUsername(parsed.displayName));
+      router.navigateByUrl('/profile/'+user.routeFriendlyUsername(Auth.getUser()));
     }
    }
 

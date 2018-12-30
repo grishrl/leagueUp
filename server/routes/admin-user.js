@@ -42,7 +42,6 @@ router.post('/delete/user', passport.authenticate('jwt', {
 router.get('/user/get/usersacl/all', passport.authenticate('jwt', {
     session: false
 }), (req, res) => {
-    console.log('hit')
     const path = 'admin/user/get/usersacl/all';
     User.find({}).lean().then(
         users => {
@@ -118,8 +117,7 @@ router.post('/user/get/usersacl', passport.authenticate('jwt', {
 router.post('/user/upsertRoles', passport.authenticate('jwt', {
     session: false
 }), (req, res) => {
-    const path = 'admin/user/upsertRoles'
-    console.log('hit this');
+    const path = 'admin/user/upsertRoles';
     Admin.AdminLevel.findOne({
         adminId: req.body.adminId
     }).then((foundAdmin) => {

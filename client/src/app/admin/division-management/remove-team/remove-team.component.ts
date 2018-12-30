@@ -31,14 +31,14 @@ export class RemoveTeamComponent implements OnInit {
   selectedTeams: any = [];
   teamSelected(team) {
     //if team is in the array, remove and deactivate it
-    console.log('clicked')
+    // console.log('clicked')
     let index = indexOf(this.selectedTeams, team)
     if (index > -1) {
       this.selectedTeams.splice(index, 1);
     } else {
       this.selectedTeams.push(team);
     }
-    console.log(this.selectedTeams);
+    // console.log(this.selectedTeams);
   }
   isSelected(team): boolean {
     let index = indexOf(this.selectedTeams, team)
@@ -51,6 +51,7 @@ export class RemoveTeamComponent implements OnInit {
 
   removeTeams(){
     this.adminService.removeTeams(this.selectedTeams, this.selectedDiv.divisionConcat).subscribe( (res)=>{
+      //TODO : see if anything needs to be done here
       console.log(res);
     }, (err)=>{
       console.log(err);

@@ -15,16 +15,6 @@ export class ResponseInterceptor implements HttpInterceptor {
           Authorization: `Bearer ${this.auth.getToken()}`
         } });
         return next.handle(req);
-    // return next.handle(req).pipe(tap((event: HttpEvent<any>) => {
-    //   console.log('here is an intercepted event!!', event)
-    //   if (event instanceof HttpRequest) {
-    //     console.log('you see the HTTP request! ', event)
-    //     event.clone({ setHeaders:{
-    //       Authorization: `Bearer ${this.auth.getToken()}`
-    //     } });
-    //   }
-    //   return event;
-    // }));
 
   }
 

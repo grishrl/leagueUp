@@ -19,13 +19,13 @@ export class BlogViewComponent implements OnInit {
   displayBlog:any
   ngOnInit() {
     if(this.contentfulService.getCache()){
-      console.log('a cached blog was found', this.contentfulService.getCache())
       this.displayBlog = this.contentfulService.getCache();
       this.contentfulService.getCache();
     }else{
       this.contentfulService.getBlog(this.recId).then(
         res=>{
           this.displayBlog = res;
+          //todo: do something?
           console.log(res);
         }
       )

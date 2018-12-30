@@ -67,7 +67,6 @@ router.post('/divisionTeams',
         recTeam.forEach(element => {
             teams.push(element.teamName);
         });
-        console.log('div ', div)
         Division.findOne({
             divisionConcat: div
         }).then((foundDiv) => {

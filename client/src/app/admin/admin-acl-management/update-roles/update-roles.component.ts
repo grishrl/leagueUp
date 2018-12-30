@@ -34,7 +34,7 @@ export class UpdateRolesComponent implements OnInit {
   ngOnInit() {
     this.adminService.getUserAcls(this.recId).subscribe(
       (res)=>{
-        console.log("RES ", res);
+        // console.log("RES ", res);
         if(res.adminRights){
           delete res.adminRights.adminId;
           delete res.adminRights.__v;
@@ -64,9 +64,9 @@ export class UpdateRolesComponent implements OnInit {
       }
     });
     resultantACL['adminId'] = this.user['_id'];
-    console.log(resultantACL);
+    // console.log(resultantACL);
     this.adminService.upsertUserAcls(resultantACL).subscribe(res=>{
-      console.log('saved! ', res);
+      // console.log('saved! ', res);
       this.router.navigate(['/_admin/userACLMgmt']);
     },err=>{
       console.log(err)

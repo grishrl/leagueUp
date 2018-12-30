@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 
 @Injectable({providedIn: 'root'})
@@ -10,6 +11,8 @@ export class AuthService {
   constructor(private router:Router, private http: HttpClient){
    
   }
+
+  helper = new JwtHelperService();
 
   isAuthenticated():Boolean{
     var test = localStorage.getItem('token');
@@ -33,24 +36,22 @@ export class AuthService {
   }
 
   //auth initializater
-  createAuth(token,username,teamInfo){
-
+  createAuth(token){
+    let decodedToken = this.helper.decodeToken(token);
+    // console.log(decodedToken);
     localStorage.setItem('token', token);
-    localStorage.setItem('userName', username);
-    
-    if(teamInfo){
-
-      if (teamInfo.hasOwnProperty('teamName')){
-        localStorage.setItem('teamName', teamInfo.teamName);
+    localStorage.setItem('userName', decodedToken.displayName);
+    if (decodedToken.teamInfo){
+      if (decodedToken.teamInfo.hasOwnProperty('teamName')){
+        localStorage.setItem('teamName', decodedToken.teamInfo.teamName);
       }
-
-      if(teamInfo.hasOwnProperty('isCaptain')){
-        localStorage.setItem('captain', teamInfo.isCaptain.toString());
+      if (decodedToken.teamInfo.hasOwnProperty('isCaptain')){
+        localStorage.setItem('captain', decodedToken.teamInfo.isCaptain.toString());
       }else{
         localStorage.setItem('captain', 'false');
       }
-    
     }
+    //TODO: do something with the new admin bits passed to local
   }
 
   //captain methods:

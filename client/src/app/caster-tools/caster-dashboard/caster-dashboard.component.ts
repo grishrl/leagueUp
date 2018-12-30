@@ -44,26 +44,22 @@ export class CasterDashboardComponent implements OnInit {
   }
 
   doFilterMatches(div, round){
-    console.log('div ', div, ' round ', round);
+    
     this.filterMatches = this.originalMatches.filter( match=>{
       let pass = false;
       if(div && round){
-        console.log('a' )
         if (div == match.divisionConcat && round == match.round){
           pass = true;
         }
       }else if(div){
-        console.log('b')
         if (div == match.divisionConcat) {
           pass = true;
         }
-      }else if(round){
-        console.log('c')
+      }else if(round){ 
         if (round == match.round) {
           pass = true;
         }
       }else{
-        console.log('d')
         pass = true
       }
       return pass;
@@ -72,9 +68,7 @@ export class CasterDashboardComponent implements OnInit {
   }
 
   displayTime(ms) {
-    console.log(typeof ms);
     let d = new Date(parseInt(ms));
-    console.log(d);
     let day = d.getDate();
     let year = d.getFullYear();
     let month = d.getMonth();
@@ -88,7 +82,6 @@ export class CasterDashboardComponent implements OnInit {
 
     let min = d.getMinutes();
     let minStr;
-    console.log('min ', min);
     if (min == 0) {
       minStr = '00';
     } else {

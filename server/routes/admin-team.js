@@ -37,7 +37,6 @@ router.post('/reassignCaptain', passport.authenticate('jwt', {
     Team.findOne({ teamName_lower: team }).then((foundTeam) => {
         if (foundTeam) {
             let members = util.returnByPath(foundTeam.toObject(), 'teamMembers');
-            console.log('members ', members);
             let cont = false;
             if (members) {
                 members.forEach(element => {
@@ -46,7 +45,6 @@ router.post('/reassignCaptain', passport.authenticate('jwt', {
                     }
                 })
             }
-            console.log('cont after ', cont);
             if (cont) {
                 let oldCpt = foundTeam.captain;
                 foundTeam.captain = newCpt;

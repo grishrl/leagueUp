@@ -1,5 +1,5 @@
 {
-    "name": "leagueUp",
+    "name": "ngsMeanCore",
     "version": "0.0.1",
     "description": "Large package encompassing several capabilities for e-sports leagues",
     "main": "server.js",

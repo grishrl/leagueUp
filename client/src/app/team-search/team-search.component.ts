@@ -15,25 +15,6 @@ export class TeamSearchComponent implements OnInit {
   btnTxt: string
   cantClick: boolean = false;
 
-  //needs some work ...
-  // disableButton() {
-  //   console.log('this.priorSelect ', this.priorSelect);
-  //   console.log('this.selectedUser ', this.selectedUser);
-  //   if (this.priorSelect != undefined && this.priorSelect != null
-  //     || this.selectedUser != null && this.selectedUser != undefined) {
-  //     if (this.priorSelect == this.selectedUser) {
-  //       console.log('returning true A ')
-  //       return true;
-  //     } else {
-  //       console.log('returning false B ')
-  //       return false;
-  //     }
-  //   } else {
-  //     console.log('returning false C ')
-  //     return false;
-  //   }
-  // }
-
   @Output() teamSelected = new EventEmitter();
 
   nameSelect(user) {

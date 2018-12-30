@@ -37,7 +37,7 @@ export class ApproveMemberViewComponent implements OnInit {
       });
       this.team.getTeam(this._info.teamName).subscribe(resT=>{
         this.viewTeam = resT;
-        console.log('this.player.averageMmr && this.viewTeam.teamMMRAvg', this.player.averageMmr, this.viewTeam.teamMMRAvg)
+        // console.log('this.player.averageMmr && this.viewTeam.teamMMRAvg', this.player.averageMmr, this.viewTeam.teamMMRAvg)
         if (this.player.averageMmr && this.viewTeam.teamMMRAvg) {
           this.resultantMmr = Math.round((this.player.averageMmr + this.viewTeam.teamMMRAvg) / 2);
         }

@@ -21,7 +21,6 @@ export class MatchScheduleComponent implements OnInit {
   ngOnInit() {
     this.scheduleService.getMatchInfo(6, this.matchId).subscribe(
       res=>{ 
-        console.log(res);
         this.match = res;
        },
       err=>{ console.log(err) }
@@ -41,7 +40,6 @@ export class MatchScheduleComponent implements OnInit {
   homeScore:number
   awayScore:number
   scoreSelected(changed) {
-    console.log(changed, this.homeScore, this.awayScore);
     if (changed == 'home') {
       if (this.homeScore == 2) {
         this.awayScore = 0;
@@ -66,18 +64,15 @@ export class MatchScheduleComponent implements OnInit {
   suffix:any
 
   saveSched(){
-    console.log(this.mydate);
     let years = this.mydate.getFullYear();
     let month = this.mydate.getMonth();
     let day = this.mydate.getDate();
-
     let colonSplit = this.time.split(':');
     colonSplit[1]=parseInt(colonSplit[1]);
     if(this.suffix == 'PM'){
       colonSplit[0] = parseInt(colonSplit[0]);
       colonSplit[0]+=12;
     }
-    console.log(colonSplit);
     let setDate = new Date();
     setDate.setFullYear(years);
     setDate.setMonth(month);
@@ -86,10 +81,10 @@ export class MatchScheduleComponent implements OnInit {
     setDate.setMinutes(colonSplit[1]);
     let msDate = setDate.getTime();
     let endDate = msDate + 5400000;
-    console.log(msDate);
     this.scheduleService.scheduleMatchTime(this.match.matchId, msDate, endDate).subscribe(
       res=>{
-        console.log('saved ',res);
+        //TODO: DO something?
+        // console.log('saved ',res);
       },
       err=>{
         console.log(err)

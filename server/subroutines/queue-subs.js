@@ -3,9 +3,9 @@ const util = require('../utils');
 
 function cleanUpPendingQueue(item) {
     Admin.PendingQueue.findByIdAndDelete(item._id).then((deleted) => {
-        console.log('pendingQueue item ' + deleted._id + ' deleted.');
+        console.log('pendingQueue item ' + deleted._id + ' deleted.'); //static logging
     }, (err) => {
-        console.log('err in the pending delete sub ', err);
+        console.log('err in the pending delete sub ', err); //static logging
     })
 }
 
@@ -14,11 +14,11 @@ function cleanUpPendingQueueTeamnameUsername(teamname, username) {
         if (toDelete && toDelete.length > 0) {
             toDelete.forEach(ele => {
                 ele.remove();
-                console.log('pendingQueue item ' + deleted._id + ' deleted.');
+                console.log('pendingQueue item ' + deleted._id + ' deleted.'); //static logging
             });
         }
     }, (err) => {
-        console.log('err in the pending delete sub ', err);
+        console.log('err in the pending delete sub ', err); //static logging
     })
 }
 
@@ -27,11 +27,11 @@ function removePendingQueueByUsername(username) {
         if (toDelete && toDelete.length > 0) {
             toDelete.forEach(ele => {
                 ele.remove();
-                console.log(username + ' scrubbed from pending queue.');
+                console.log(username + ' scrubbed from pending queue.'); //static logging
             });
         }
     }, (err) => {
-        console.log('Error ' + username + ' not removed from queue');
+        console.log('Error ' + username + ' not removed from queue'); //static logging
     })
 }
 
@@ -43,9 +43,9 @@ function addToPendingTeamMemberQueue(teamLower, user) {
             "teamName": teamLower,
             "userName": user
         }).save().then((savedQueue) => {
-            console.log('added to pendingteam member queue');
+            console.log('added to pendingteam member queue'); //static logging
         }, (err) => {
-            console.log('we had an error creating this queue');
+            console.log('we had an error creating this queue'); //static logging
         })
     }
 }
@@ -56,14 +56,14 @@ function updatePendingMembersTeamNameChange(teamnameOld, teamnameNew) {
             foundQueue.forEach(queue => {
                 queue.teamName = teamnameNew;
                 queue.save().then((saved) => {
-                    console.log('pending queue team name updated');
+                    console.log('pending queue team name updated'); //static logging
                 }, (err) => {
-                    console.log('err');
+                    console.log('err'); //static logging
                 });
             })
         }
     }, (err) => {
-        console.log('error');
+        console.log('error'); //static logging
     })
 }
 

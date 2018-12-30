@@ -9,14 +9,14 @@ function updateOutreachTeamname(oldteamName, newteamName) {
                     outreach.teamName = newteamName;
                 }
                 foundOutreach.save().then((saved) => {
-                    console.log('outreached saved');
+                    console.log('outreached saved'); //static logging
                 }, (err) => {
-                    console.log('error saving outreach');
+                    console.log('error saving outreach'); //static logging
                 })
             });
         }
     }, (err) => {
-        console.log('error finding outreach')
+        console.log('error finding outreach') //static logging
     })
 }
 

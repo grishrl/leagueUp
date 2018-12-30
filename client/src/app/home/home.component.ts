@@ -22,7 +22,6 @@ export class HomeComponent implements OnInit {
     this.contentfulService.getBlogs((Object.assign({content_type: 'blogPost'}, { links_to_entry: environment.contentful.categoryIDs.news, order:'-sys.createdAt', limit:6 }))).then(
       res => { 
         this.createMyDisplay(res);
-        console.log('rows ', this.rows);  
       } 
     );
     this, this.contentfulService.getBlogs((Object.assign({ content_type: 'blogPost' }, { links_to_entry: environment.contentful.categoryIDs.jumbotron, order: '-sys.createdAt', limit: 3 }))).then( res => {

@@ -50,11 +50,9 @@ router.post('/save', passport.authenticate('jwt', {
         var sentUser = req.body;
         var id = req.user._id.toString();
         //ensure saving requesting user is the user being saved
-        console.log(id, " === ", sentUser._id);
         if (req.user._id.toString() === sentUser._id) {
             User.findOne({ _id: req.user._id }).then(function(found) {
                 if (found) {
-                    console.log('FOUND: ', found);
                     //validate all the data before saving --
 
                     if (util.returnBoolByPath(sentUser, 'lookingForGroup')) {
@@ -65,7 +63,6 @@ router.post('/save', passport.authenticate('jwt', {
                         found.availability = sentUser.availability;
                     }
 
-                    // console.log('sentUser.averageMmr ', sentUser.averageMmr);
                     if (util.returnBoolByPath(sentUser, 'averageMmr')) {
                         found.averageMmr = sentUser.averageMmr;
                     }
@@ -98,7 +95,6 @@ router.post('/save', passport.authenticate('jwt', {
 
                     found.save(function(err, updatedUser) {
                         if (err) {
-                            console.log('error saving: ', err);
                             res.status(500).send(util.returnMessaging(path, 'Error saving user', err));
                         }
 

@@ -18,7 +18,6 @@ export class NavComponent implements OnInit {
   constructor(public Auth:AuthService, private router: Router, private team:TeamService, private user:UserService, private divisionService: DivisionService) { }
 
   navGo(appRoute,path){
-    console.log(path);
     if(path != null && path != undefined && path.length>0){
       this.router.navigateByUrl(appRoute+path);
     }else{
@@ -27,7 +26,6 @@ export class NavComponent implements OnInit {
   }
   ngOnInit() {
     this.divisionService.getDivisionInfo().subscribe( res => {
-      console.log('res ', res);
       this.divisions = res;
     }, err=>{
       console.log(err);

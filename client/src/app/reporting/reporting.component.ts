@@ -29,10 +29,6 @@ export class ReportingComponent implements OnInit {
 
     this.scheduleService.getTeamSchedules(6, getTeam).subscribe(
       res => {
-        // this.rounds = res;
-        // console.log(res);
-
-        console.log(res);
         let matches = res;
         for (var i = 1; i <= matches.length; i++) {
           if (this.rounds == null || this.rounds == undefined) {
@@ -49,7 +45,6 @@ export class ReportingComponent implements OnInit {
 
         }
         this.rounds;
-        console.log(this.rounds);
       },
       err => { console.log(err) }
     )

@@ -66,7 +66,6 @@ export class CreateTeamComponent implements OnInit {
     let checkName = this.returnedProfile.teamName.toLowerCase()
     this.team.getTeam(checkName).subscribe( res =>{
       if(res && res.teamName){
-        console.log(res);
         alert('Team name is taken!');
         this.nameContorl.setErrors({taken:true});
       }else{
@@ -78,7 +77,6 @@ export class CreateTeamComponent implements OnInit {
             // go to the team profile page.
             this.route.navigate(['/teamProfile', this.team.routeFriendlyTeamName(res.teamName)]);
           }, err=>{
-            console.log(res);
             alert(err);
           })
         }else{
