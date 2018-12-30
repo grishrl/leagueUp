@@ -8,7 +8,7 @@ router.post('/get/division', passport.authenticate('jwt', {
     session: false
 }), (req, res) => {
     const path = 'standings/get/division'
-    let division = req.division;
+    let division = req.body.division;
     Standings.calulateStandings(division).then(
         (processed) => {
             res.status(200).send(util.returnMessaging(path, 'Calculated Standings', false, processed));

@@ -7,20 +7,20 @@
     <div class="row">
         <div class="col">
             <ul class="list-inline">
+                <li class="list-inline-item link-borders">
+                    <a [routerLink]="['/_admin/approveTeamQueue']">Add User To Team</a>
+                </li>
+                <li class="list-inline-item link-borders">
+                    <a [routerLink]="['/_admin/deleteUser']">Delete User</a>
+                </li>
+                <li class="list-inline-item link-borders">
+                    <a [routerLink]="['/_admin/divisionMgmt']">Division Management</a>
+                </li>
+                <li class="list-inline-item link-borders">
+                    <a [routerLink]="['/_admin/manageTeam']">Team Management</a>
+                </li>
                 <li class="list-inline-item">
-                    <a [routerLink]="['./approveTeamQueue']">Add User To Team</a>
-                </li>
-                <li class="list-inline-item link-borders">
-                    <a [routerLink]="['./deleteUser']">Delete User</a>
-                </li>
-                <li class="list-inline-item link-borders">
-                    <a [routerLink]="['./divisionMgmt']">Division Management</a>
-                </li>
-                <li class="list-inline-item link-borders">
-                    <a [routerLink]="['./manageTeam']">Team Management</a>
-                </li>
-                <li class="list-inline-item">
-                    <a></a> User ACL Management</li>
+                    <a [routerLink]="['/_admin/userACLMgmt']">User ACL Management</a> </li>
             </ul>
             <!-- <h3>User Management</h3> -->
         </div>

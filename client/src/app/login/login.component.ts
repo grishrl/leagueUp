@@ -18,7 +18,7 @@ export class LoginComponent implements OnInit {
       
       let parsed = JSON.parse(URI);
 
-      console.log('parsed ',parsed )
+      console.log('parsed ',parsed );
       
       Auth.createAuth(parsed.token, parsed.displayName, parsed.teamInfo);
       console.log('init in login ', Auth.getReferral());

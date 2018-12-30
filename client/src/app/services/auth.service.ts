@@ -45,7 +45,7 @@ export class AuthService {
       }
 
       if(teamInfo.hasOwnProperty('isCaptain')){
-        localStorage.setItem('captain', teamInfo.isCaptain.toSting());
+        localStorage.setItem('captain', teamInfo.isCaptain.toString());
       }else{
         localStorage.setItem('captain', 'false');
       }

@@ -188,11 +188,9 @@ router.post('/create', passport.authenticate('jwt', {
                             displayName: req.user.displayName
                         }).then((found) => {
                             if (found) {
-                                found.teamInfo = {
-                                    "teamId": newTeam._id,
-                                    "teamName": newTeam.teamName,
-                                    "isCaptain": true
-                                };
+                                found["teamId"] = newTeam._id,
+                                    found["teamName"] = newTeam.teamName,
+                                    found["isCaptain"] = true;
                                 found.save().then((save) => {
                                     if (save) {
                                         //maybe some event logging, IDK.
@@ -204,8 +202,9 @@ router.post('/create', passport.authenticate('jwt', {
                                     console.log("err hannepend: ", err);
                                 })
                             } else {
-
+                                //wasnt found
                             }
+
                         }, (err) => {
                             //maybe add some error logging
                             console.log("error happened: ", err);

@@ -35,7 +35,6 @@ router.post('/get/matches', passport.authenticate('jwt', {
     let season = req.body.season;
     let division = req.body.division;
     let round = req.body.round;
-    console.log(season, division, round);
     Match.find({
         $and: [
             { season: season },
@@ -493,10 +492,12 @@ async function addTeamNamesToMatch(teams, found) {
                     }
                     if (teamid == homeid) {
                         match.home['teamName'] = team.teamName;
+                        match.home['logo'] = team.logo;
                         match.home['teamName_lower'] = team.teamName_lower;
                     }
                     if (teamid == awayid) {
                         match.away['teamName'] = team.teamName;
+                        match.away['logo'] = team.logo;
                         match.away['teamName_lower'] = team.teamName_lower;
                     }
                 });

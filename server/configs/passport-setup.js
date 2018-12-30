@@ -57,20 +57,9 @@ passport.use(new BnetStrategy({
                 displayName: prof.displayName,
                 token: token
             }
-
-            let teamInfo = prof.teamInfo;
-            if (teamInfo) {
-                reply.teamInfo = {};
-                if (teamInfo.teamName) {
-
-                    if (teamInfo.hasOwnProperty('isCaptain')) {
-
-                        reply.teamInfo.isCaptain = prof.teamInfo.isCaptain;
-                    }
-
-                    reply.teamInfo.teamName = prof.teamInfo.teamName;
-                }
-            }
+            reply.teamInfo = {};
+            reply.teamInfo.teamName = prof.teamName;
+            reply.teamInfo.isCaptain = prof.isCaptain;
 
             done(null, reply);
         } else {

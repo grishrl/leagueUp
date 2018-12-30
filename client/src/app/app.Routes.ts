@@ -52,12 +52,7 @@ const APP_ROUTES: Routes = [
   {path: 'schedule/teamSchedule/:id', component:TeamScheduleComponent}, //accepts team name as url parameter
   {path: 'reporting/:id', component:ReportingComponent}, //accepts team name as url parameter
   {
-    path: '_admin/dashboard', component: DashboardComponent, children: [
-      { path: 'approveTeamQueue', component: ApproveMemberComponent },
-      { path: 'deleteUser', component: DeleteMemberComponent },
-      { path: 'manageTeam', component: DeleteTeamComponent },
-      { path: 'divisionMgmt', component: DivisionManagementComponent }
-    ]},
+    path: '_admin/dashboard', component: DashboardComponent},
   { path: '_casterDashboard', component: CasterDashboardComponent}
 ]
 
@@ -67,3 +62,11 @@ const APP_ROUTES: Routes = [
 })
 
 export class AppRoutingModule{}
+/*
+, children: [
+      { path: 'approveTeamQueue', component: ApproveMemberComponent },
+      { path: 'deleteUser', component: DeleteMemberComponent },
+      { path: 'manageTeam', component: DeleteTeamComponent },
+      { path: 'divisionMgmt', component: DivisionManagementComponent }
+    ]
+*/

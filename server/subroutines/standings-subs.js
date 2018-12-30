@@ -1,32 +1,43 @@
 const Match = require('../models/match-model');
+const util = require('../utils');
+const Team = require('../models/team-models');
 
 async function calulateStandings(division) {
     let teams;
-    console.log('a');
+    // console.log('a ', division);
     let matchesForDivision = await Match.find({ divisionConcat: division }).lean().then(
         (matches) => {
+            // console.log('b ', matches);
             if (matches) {
+                // console.log('b.1 ')
                 teams = findTeamIds(matches);
+                // console.log('b.2 ', teams)
                 return addTeamNamesToMatch(teams, matches).then(
                     (processed) => {
+                        // console.log('b.3 ', processed)
                         return processed;
                     },
                     (err) => {
+                        // console.log('b.4 ', err)
                         return false;
                     }
                 )
             } else {
+                // console.log('b.5 ')
                 return false;
             }
         },
         (err) => {
+            // console.log('b.6 ', err)
             return false;
         }
     );
-    console.log('matchesForDivision ', matchesForDivision);
+    // console.log('matchesForDivision ', matchesForDivision);
     let standings = [];
     if (matchesForDivision != false) {
+        // console.log('c');
         teams.forEach(team => {
+            // console.log('c.1 ', team);
             let standing = {};
             standing['wins'] = 0;
             standing['losses'] = 0;
@@ -60,9 +71,21 @@ async function calulateStandings(division) {
                     }
                 }
             });
+            // console.log('c.z ', standing);
+
+            standings.push(standing);
         });
     }
-
+    standings.sort((a, b) => {
+        if (a.wins > b.wins) {
+            return true;
+        } else {
+            return false;
+        }
+    });
+    for (var i = 0; i < standings.length; i++) {
+        standings[i]['standing'] = i + 1;
+    }
     return standings;
 }
 

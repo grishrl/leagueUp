@@ -1,6 +1,11 @@
 <div class="container pt-4">
     <div class="row">
         <div class="col">
+            <a [routerLink]="['/_admin/dashboard']">Back to Dashboard</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
             <div class="row">
                 <div class="col">
                     <app-team-search (teamSelected)="receiveTeam($event)" [buttonText]="'Select Team For Management'"></app-team-search>

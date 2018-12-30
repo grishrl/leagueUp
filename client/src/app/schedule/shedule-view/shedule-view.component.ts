@@ -44,6 +44,9 @@ export class SheduleViewComponent implements OnInit {
     }
     this.rounds = [];
     this.matches=[];
+    if (roundNumber == 0){
+      roundNumber = 1;
+    }
     for (let i = 0; i < roundNumber; i++) {
       this.rounds.push(i + 1);
     }
@@ -57,6 +60,7 @@ export class SheduleViewComponent implements OnInit {
     }else{
       div = this.selectedDivision.divisionConcat;
     }
+
     let season = 6;
     this.scheduleService.getScheduleMatches(season, div, this.selectedRound).subscribe(
       res=>{ this.matches = res },

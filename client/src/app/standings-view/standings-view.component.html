@@ -1,0 +1,35 @@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h3>Standings</h3>
+        </div>
+    </div>
+    <div class="row" *ngFor="let standing of standings">
+        <div class="col">
+            Position
+        </div>
+        <div class="col">
+            Team Name
+        </div>
+        <div class="col">
+            Wins
+        </div>
+        <div class="col">
+            Losses
+        </div>
+    </div>
+    <div class="row" *ngFor="let standing of standings">
+        <div class="col">
+            {{standing.standing}}
+        </div>
+        <div class="col">
+            {{standing.teamName}}
+        </div>
+        <div class="col">
+            {{standing.wins}}
+        </div>
+        <div class="col">
+            {{standing.losses}}
+        </div>
+    </div>
+</div>

@@ -9,18 +9,12 @@
                 <li class="nav-item">
                     <a class="nav-link" [routerLink]="['/blog','5fM1r95mrm4UkmuCAmgOyC']">Rules</a>
                 </li>
-                <!-- <li class="nav-item">
-                    TODO: only when logged in and captain ???
-                    <a class="nav-link" href="services.html">Reporting</a>
-                </li> -->
-
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle finger" id="divisionDropdown" role="button" data-toggle="dropdown" aria-expanded="false">Divisions</a>
                     <div class="dropdown-menu">
                         <a class="dropdown-item" *ngFor="let division of divisions" [routerLink]="['/division/',division.divisionConcat]">{{division.displayName}}</a>
                     </div>
                 </li>
-
                 <li class="nav-item">
                     <a class="nav-link" [routerLink]="['/blog']">Blog</a>
                 </li>
@@ -30,25 +24,25 @@
                     </li>
                     <ng-template #loggedIn>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false"> {{Auth.getUser()}} </a>
+                            <a class="nav-link dropdown-toggle finger" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">{{Auth.getUser()}} </a>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" (click)="navGo('/profile/',user.routeFriendlyUsername(userName))">Profile</a>
+                                <a class="dropdown-item finger" (click)="navGo('/profile/',user.routeFriendlyUsername(userName))">Profile</a>
                                 <div *ngIf="Auth.getTeam(); else noTeam">
-                                    <a class="dropdown-item" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( Auth.getTeam() ) )">Team</a>
-                                    <a class="dropdown-item" [routerLink]="['/schedule/teamSchedule']">Schedule</a>
+                                    <a class="dropdown-item finger" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( Auth.getTeam() ) )">Team</a>
+                                    <a class="dropdown-item finger" [routerLink]="['/schedule/teamSchedule']">Schedule</a>
                                     <div *ngIf="Auth.getCaptain()">
-                                        <a class="dropdown-item" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( Auth.getTeam() ) )">Find Players</a>
-                                        <a class="dropdown-item" (click)="navGo('/reporting/',team.routeFriendlyTeamName( Auth.getTeam() ) )">Reporting</a>
+                                        <!--TODO: implement Find players <a class="dropdown-item" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( Auth.getTeam() ) )">Find Players</a> -->
+                                        <a class="dropdown-item finger" (click)="navGo('/reporting/',team.routeFriendlyTeamName( Auth.getTeam() ) )">Reporting</a>
                                     </div>
 
                                 </div>
                                 <ng-template #noTeam>
-                                    <a class="dropdown-item" [routerLink]="['/teamCreate']">Create Team</a>
-                                    <a class="dropdown-item" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( teamName ) )">Find Team</a>
+                                    <a class="dropdown-item finger" [routerLink]="['/teamCreate']">Create Team</a>
+                                    <a class="dropdown-item finger" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( teamName ) )">Find Team</a>
                                 </ng-template>
 
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" (click)="Auth.destroyAuth()">Logout</a>
+                                <a class="dropdown-item finger" (click)="Auth.destroyAuth()">Logout</a>
                             </div>
                         </li>
                     </ng-template>
