@@ -2,6 +2,8 @@ const util = require('../utils');
 const Team = require('../models/team-models');
 const User = require('../models/user-models');
 
+const numberOfTopMembersToUse = 4;
+
 //subroutine to update teams division
 function upsertTeamsDivision(teams, division) {
     teams.forEach(team => {
@@ -40,7 +42,7 @@ function updateTeamMmr(team) {
         foundTeam.teamMembers.forEach(element => {
             members.push(element.displayName);
         });
-        top5memberMmr(members).then((processed) => {
+        topMemberMmr(members).then((processed) => {
             if (processed) {
                 foundTeam.teamMMRAvg = processed;
                 foundTeam.save().then(saved => {
@@ -57,7 +59,7 @@ function updateTeamMmr(team) {
     });
 }
 
-async function top5memberMmr(members) {
+async function topMemberMmr(members) {
     let usersMmr = await User.find({ displayName: { $in: members } }).lean().then((users) => {
         if (users && users.length > 0) {
             let mmrArr = [];
@@ -76,8 +78,8 @@ async function top5memberMmr(members) {
                 });
                 let total = 0;
                 let membersUsed;
-                if (mmrArr.length >= 5) {
-                    membersUsed = 5;
+                if (mmrArr.length >= numberOfTopMembersToUse) {
+                    membersUsed = numberOfTopMembersToUse;
                 } else {
                     membersUsed = mmrArr.length;
                 }
@@ -125,8 +127,8 @@ async function resultantMMR(userMmrToAdd, members) {
                 });
                 let total = 0;
                 let membersUsed;
-                if (mmrArr.length >= 5) {
-                    membersUsed = 5;
+                if (mmrArr.length >= numberOfTopMembersToUse) {
+                    membersUsed = numberOfTopMembersToUse;
                 } else {
                     membersUsed = mmrArr.length;
                 }
