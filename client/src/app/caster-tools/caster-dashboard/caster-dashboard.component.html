@@ -7,14 +7,19 @@
     <div class="row">
         <div class="col">
             <h5>Filter Matches By:</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
             <mat-form-field>
                 <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="doFilterMatches(selectedDivision, selectedRound)">
                     <mat-option [value]="null"> </mat-option>
                     <mat-option *ngFor="let division of divisions; let i = index" [value]="division.divisionConcat">{{division.displayName}}</mat-option>
                 </mat-select>
             </mat-form-field>
+        </div>
+        <div class="col">
             <mat-form-field>
-                <!--  -->
                 <mat-select placeholder="Round:" [(ngModel)]="selectedRound" (ngModelChange)="doFilterMatches(selectedDivision, selectedRound)">
                     <mat-option [value]="null"> </mat-option>
                     <mat-option *ngFor="let round of rounds" [value]="round">{{round}}</mat-option>
@@ -22,11 +27,11 @@
             </mat-form-field>
         </div>
     </div>
-    <div class="row" *ngFor="let match of filterMatches">
+    <div class="row mb-3" *ngFor="let match of filterMatches">
         <div class="col">
             <div class="row">
                 <div class="col">
-                    <!-- {{match.division.displayName}} -->
+                    {{match.divisionDisplayName}}
                 </div>
             </div>
             <div class="row">
@@ -50,7 +55,7 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <div *ngIf="match.casterName !=undefined && match.casterName !=null else addCasterButton">
+                    <div *ngIf="match.casterName != undefined && match.casterName != null else addCasterButton">
                         Caster: {{match.casterName}} Url: {{match.casterUrl}}
                     </div>
                     <ng-template #addCasterButton>

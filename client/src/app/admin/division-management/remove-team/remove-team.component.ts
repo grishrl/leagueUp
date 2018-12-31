@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { indexOf } from 'lodash';
 import { AdminService } from 'src/app/services/admin.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-remove-team',
@@ -9,7 +10,7 @@ import { AdminService } from 'src/app/services/admin.service';
 })
 export class RemoveTeamComponent implements OnInit {
 
-  constructor(private adminService:AdminService) { }
+  constructor(private adminService:AdminService, private router: Router) { }
 
   divisions:any = [];
 
@@ -53,6 +54,9 @@ export class RemoveTeamComponent implements OnInit {
     this.adminService.removeTeams(this.selectedTeams, this.selectedDiv.divisionConcat).subscribe( (res)=>{
       //TODO : see if anything needs to be done here
       console.log(res);
+      this.selectedDiv = null;
+      this.selectedTeams = [];
+      // this.router.navigate(['_admin/divisonMgmt']);
     }, (err)=>{
       console.log(err);
     })

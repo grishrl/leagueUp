@@ -24,7 +24,7 @@ export class UpdateRolesComponent implements OnInit {
   rights = [
     { key:"TEAM", value: false},
     { key:"USER", value: false},
-    { key:"DIVISON", value: false},
+    { key:"DIVISION", value: false},
     { key:"STANDINGS", value: false},
     { key:"CASTER", value: false},
     { key:"MATCH", value: false},

@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 import { UserService } from '../services/user.service';
+import { AuthService } from '../services/auth.service';
 
 
 
@@ -13,6 +14,7 @@ import { UserService } from '../services/user.service';
 export class UserSearchComponent implements OnInit {
 
   usersToFilter: any[] = [];
+  
   priorSelect: any
   lastChange: number = 0;
   selectedUser:any
@@ -76,7 +78,7 @@ export class UserSearchComponent implements OnInit {
   foundUsers: any[]
   search: string
 
-  constructor(private users: UserService) {
+  constructor(private users: UserService, private Auth:AuthService) {
     this.userCtrl.valueChanges.subscribe(
       data => {
         if(data && data.length>2){
@@ -89,15 +91,13 @@ export class UserSearchComponent implements OnInit {
             });
           }
         }
-
-
       }
     )
 
   }
 
   ngOnInit(){
-  
+    this.usersToFilter.push(this.Auth.getUser());
   }
 
 }

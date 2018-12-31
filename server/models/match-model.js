@@ -31,7 +31,6 @@ const replaySchema = new Schema({
 const matchSchema = new Schema({
     "matchId": String,
     "season": Number,
-    // "divison": division,
     "division": String,
     "divisionConcat": String,
     "round": Number,

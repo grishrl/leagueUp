@@ -3,15 +3,18 @@
         <button (click)="hideForm = !hideForm"> Add Caster </button>
     </div>
 </div>
-
 <div [hidden]="hideForm" class="row">
     <div class="col">
         <mat-form-field class="tp-FullWidth">
             <input matInput [formControl]="casterNameControl" placeholder="Caster Name" [(ngModel)]="name">
         </mat-form-field>
+    </div>
+    <div class="col">
         <mat-form-field class="tp-FullWidth">
             <input matInput [formControl]="casterUrlControl" placeholder="Caster URL" [(ngModel)]="URL">
         </mat-form-field>
+    </div>
+    <div class="col">
         <button [disabled]="casterInputForm.invalid" (click)="saveCasterInfo(name, URL)">Submit</button>
     </div>
 </div>

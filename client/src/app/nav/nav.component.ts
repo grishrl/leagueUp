@@ -21,6 +21,7 @@ export class NavComponent implements OnInit {
     if(path != null && path != undefined && path.length>0){
       this.router.navigateByUrl(appRoute+path);
     }else{
+      this.router.navigateByUrl(appRoute);
       //nah
     }
   }

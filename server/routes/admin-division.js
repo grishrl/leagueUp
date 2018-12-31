@@ -46,7 +46,7 @@ router.get('/getTeamsUndivisioned', passport.authenticate('jwt', {
 //NOTICE this route is not secured because it is used for pulling back division lists et all - no use for replication
 //TODO: further refactor might move this into the division route -- and fix the service provider in client???
 router.get('/getDivisionInfo', (req, res) => {
-    const path = '/admin/getDivisonInfo'
+    const path = '/admin/getDivisionInfo'
 
     Division.find({}).then((found) => {
         res.status(200).send(util.returnMessaging(path, 'Returning division info.', false, found));

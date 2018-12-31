@@ -23,7 +23,7 @@ export class TeamProfileComponent implements OnInit {
   //these properties are used for inputs
   editOn: boolean = true;
   teamName: string;
-  displayDivison: string = ""
+  displayDivision: string = ""
   returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
   filterUsers: any[] = []
   tempProfile
@@ -101,13 +101,18 @@ export class TeamProfileComponent implements OnInit {
       this.providedProfile = profile;
       //if we received a profile; the component is embedded:
       this.componentEmbedded = true;
-
       this.editOn = false;
-      this.formControlledDisable();
+      this.formControlledEnable();
       
       this.ngOnInit();
     }
   }
+
+  embedSource:string='';
+  @Input() set source(_source){
+    this.embedSource = _source;
+  } 
+
 
   //this method controls the opening of the change captain modal
   openCaptainChangeDialog():void{
@@ -269,15 +274,15 @@ export class TeamProfileComponent implements OnInit {
 
   //method takes in the factors at hand to show the captain edit options or the admin edit options
   showEditDialog(){
-    // if(this.componentEmbedded){
-    //   return false;
-    // }else{
-      var isteamcpt = false;
+    if(this.embedSource == 'admin'){
+      return false;
+    }else{
+      let isteamcpt;
       if (this.auth.getCaptain()) {
         isteamcpt = this.auth.getUser() === this.returnedProfile.captain;
       }
       return isteamcpt;
-    // }
+    }
   }
 
 

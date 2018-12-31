@@ -38,7 +38,7 @@ export class AuthService {
   //auth initializater
   createAuth(token){
     let decodedToken = this.helper.decodeToken(token);
-    // console.log(decodedToken);
+    console.log(decodedToken);
     localStorage.setItem('token', token);
     localStorage.setItem('userName', decodedToken.displayName);
     if (decodedToken.teamInfo){
@@ -52,8 +52,35 @@ export class AuthService {
       }
     }
     //TODO: do something with the new admin bits passed to local
+    if(decodedToken.adminLevel){
+      let adminString = '';
+      decodedToken.adminLevel.forEach(element => {
+        let keys = Object.keys(element);
+        if(keys.length>0){
+          if(keys[0]!='CASTER'){
+            adminString += keys[0].toLowerCase()
+          }else{
+            localStorage.setItem('caster', 'true');
+          }
+        }
+        
+      });
+      if(adminString.length>0){
+        localStorage.setItem('admin', adminString);
+      }
+    }
   }
 
+  //caster methods
+  setCaster(caster){
+    localStorage.setItem('caster', caster);
+  }
+  getCaster(){
+    return localStorage.getItem('caster');
+  }
+  destroyCaster(){
+    localStorage.removeItem('caster');
+  }
   //captain methods:
   setCaptain(cap){
     localStorage.setItem('captain', cap);
@@ -87,6 +114,22 @@ export class AuthService {
     localStorage.removeItem('userName');
   }
 
+  //admin methods
+  setAdmin(admin){
+    localStorage.setItem('admin', admin.toLowerCase());
+  }
+  getAdmin():string{
+    return localStorage.getItem('admin');
+  }
+  destroyAdmin(){
+    localStorage.removeItem('admin');
+  }
+
+  checkAdminLevel(level){
+    let admin = localStorage.getItem('admin');
+    return !!admin.indexOf(level.toLowerCase());
+  }
+
   //team methods:
   setTeam(teamName){
     localStorage.setItem('teamName', teamName);
@@ -110,6 +153,8 @@ export class AuthService {
         localStorage.removeItem('token');
         localStorage.removeItem('teamName');
         localStorage.removeItem('captain');
+        this.destroyAdmin();
+        this.destroyCaster();
         this.router.navigate(['/logout']);
       }
     );

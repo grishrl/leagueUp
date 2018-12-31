@@ -1,68 +1,28 @@
 
 Work on client flow > particularly in regards to scheduling screens, what is the flow? think it through
 ***!!!returnboolbypath is not working on any document returned from mongo investigate further!!!***
->> standings
->> scheduling -- cont. system generated schedules
->> schedule matches -- cont. captains putting time/date to a match
 
 >>> remove all hard codings of season 6 with something... else MEDIUM PRIO
 
->>> caster level access to add themselves to matches with links etc.
+ADMIN > TEAM:
+ADD A REGENERATE TEAM MMR BUTTON
+ADD A WAY TO REMOVE MEMBERS FROM A TEAM
 
-reporting
->report match outcomes
+ADMIN > DIVISION:
+Investigate making the tabs lazy load, ngInit every tab navigate!!!!
 
->match
->need match creation routines //done-ish
- 
->match routes to handle scheduling //inflight
- >when match results are reported we will likewise update the standings
- >of the teams.
->need match logic! //done-ish
-{
-  teamA: 'teamname',
-  teamB: 'teamname',
-  dateTime: dateTime,
-  outcome:{
-    game1:{
-      winTeam:'teamname',
-      replayFile:url
-    },
-    game2:{
-      winTeam:'teamname',
-      replayFile:url
-    }
-  }
-}
 
 team
 >disable invite button after it its clicked so that someone invited can not be invited mutliple times;
 >team members two columns of 3 rows
 > add back some confirm text for inviting a member to the team!
 > player names links, if possible.
->looking for users (market place)
 > show pending members?
 
 user
->uuid 
+>uuid AKA toonId- FROM BLIIZARD TO TIE THEM BACK TO REPLAYS 
 >collect discord userid?
 >Looking for team (marketplace)
-
-admin division:
-keep interactions between tabs up to date; IE if div is created or deleted the other pages refresh their lists.
-
->podcasts on the blogging?
-
-contenful:
->ADD CATEGORY FOR EACH DIVISON TO LINK BLOG POSTS TO
-
-contentfulservice :
->TRY TO REDUCE THE AMMOUNT OF CONTENTFUL REQUESTS MADE BY USING LOCAL STORAGE -- MAY REQUIRE SOME OBSERVABLE / PROMISE STATE MIXING TO PULL FROM LOCAL OR HTTP 
->PAGINATION AND LIMITS + PULLING EXTRA ARTICLES 
-> order posts in the list by date.
-
-FOOTER
-> GET FOOTER WORKING
 
 product:
 > probably need some modals for request waiting and requests confimations
@@ -70,6 +30,24 @@ product:
 > disabled mat inputs are very muted for looking at
 > remove hardcoded URLs from all locations //have replaced alot of these with relative calls
 
+contentfulservice :
+contenful:
+>podcasts on the blogging?
+>ADD CATEGORY FOR EACH DIVISION TO LINK BLOG POSTS TO
+>TRY TO REDUCE THE AMMOUNT OF CONTENTFUL REQUESTS MADE BY USING LOCAL STORAGE -- MAY REQUIRE SOME OBSERVABLE / PROMISE STATE MIXING TO PULL FROM LOCAL OR HTTP 
+>PAGINATION AND LIMITS + PULLING EXTRA ARTICLES 
+> order posts in the list by date.
+
+admin division:
+keep interactions between tabs up to date; IE if div is created or deleted the other pages refresh their lists.
+
+
+
+FOOTER
+> GET FOOTER WORKING
+
+MARKETPLACE:
+>looking for users (market place)
 
 > Server, 
 >need some persistnet logging to keep up with background notices.

@@ -6,47 +6,65 @@
                     <a [routerLink]="['/_admin/dashboard']">Back to Dashboard</a>
                 </div>
             </div>
-            <div class="row">
+            <div class="row m-2">
                 <div class="col">
                     <h2>Admin Management</h2>
                 </div>
             </div>
-            <div class="row">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">User Name:</th>
+                        <th scope="col">Current Admin Rights:</th>
+                        <th scope="col">Edit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let user of users">
+                        <td>{{user.displayName}}</td>
+                        <td>
+                            <div class="row" *ngFor="let acl of user.adminRights | keyvalue">
+                                <div class="col">
+                                    {{acl.key}} : {{acl.value}}
+                                </div>
+                            </div>
+                        </td>
+                        <td><a [routerLink]="[user._id]" class="btn btn-success">Edit</a></td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- <div class="row">
                 <div class="col">
                     <div class="row">
                         <div class="col">
-                            User Name:
+                            
                         </div>
                         <div class="col">
                             <div class="row">
                                 <div class="col">
-                                    Current Admin Rights:
+                                    
                                 </div>
                             </div>
                         </div>
                         <div class="col"></div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
+            </div> -->
+            <!-- <div class="row">
                 <div class="col">
                     <div class="row" *ngFor="let user of users">
                         <div class="col">
                             {{user.displayName}}
                         </div>
                         <div class="col">
-                            <div class="row" *ngFor="let acl of user.adminRights | keyvalue">
-                                <div class="col">
-                                    {{acl.key}} : {{acl.value}}
-                                </div>
-                            </div>
+                            
                         </div>
                         <div class="col">
                             <a [routerLink]="[user._id]" class="btn btn-success">Edit</a>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>
