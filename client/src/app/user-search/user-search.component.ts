@@ -21,27 +21,14 @@ export class UserSearchComponent implements OnInit {
   btnTxt:string
   cantClick:boolean = false;
 
-  disableButton() {
-
-    if (this.priorSelect != undefined && this.priorSelect != null
-      || this.selectedUser != null && this.selectedUser != undefined) {
-      if (this.priorSelect == this.selectedUser) {
-
-        return true;
-      } else {
-   
-        return false;
-      }
-    } else {
-
-      return false;
-    }
-  }
+  disableButton:boolean = false;
 
   @Output() userSelected = new EventEmitter();
 
   userSelect(user){
-    this.priorSelect = user;
+    this.priorSelect = this.selectedUser;
+    this.selectedUser = user;
+    this.disableButton = true;
     this.userSelected.emit(user);
   }
 
@@ -82,6 +69,7 @@ export class UserSearchComponent implements OnInit {
     this.userCtrl.valueChanges.subscribe(
       data => {
         if(data && data.length>2){
+          this.disableButton = false;
           //give this a delay so we don't swamp the server with calls! .875 seconds to make call
           let timestamp = Date.now();
           if (timestamp - this.lastChange > 1000) {

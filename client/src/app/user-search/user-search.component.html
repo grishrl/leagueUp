@@ -16,7 +16,7 @@
         </form>
     </div>
     <div class="col">
-        <button type="button" (click)="userSelect(selectedUser)"> {{btnTxt}} </button>
+        <button type="button" [disabled]="disableButton" (click)="userSelect(selectedUser)"> {{btnTxt}} </button>
     </div>
 </div>
 

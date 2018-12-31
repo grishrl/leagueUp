@@ -69,12 +69,27 @@ export class TeamProfileComponent implements OnInit {
         this.getTeamByString(getProfile);
       } else {
         merge(this.returnedProfile, this.providedProfile);
+        this.setUpTeamMemberFilter(this.returnedProfile);
         this.orignalName = this.returnedProfile.teamName_lower;
         // this.cleanUpDivision();
       }
     } else {
       getProfile = this.teamName;
       this.getTeamByString(getProfile);
+    }
+  }
+
+  setUpTeamMemberFilter(teamProfile){
+    if (teamProfile.teamMembers && teamProfile.teamMembers.length > 0) {
+      teamProfile.teamMembers.forEach(element => {
+        this.filterUsers.push(element['displayName']);
+      });
+    }
+    console.log('teamProfile ',teamProfile);
+    if (teamProfile.pendingMembers && teamProfile.pendingMembers.length > 0) {
+      teamProfile.pendingMembers.forEach(element => {
+        this.filterUsers.push(element['displayName']);
+      });
     }
   }
 
@@ -263,9 +278,12 @@ export class TeamProfileComponent implements OnInit {
 
   //method for inviting users to join this team
   invite(user) {
+    console.log(user);
     if (this.returnedProfile.teamName && user) {
       this.team.addUser(user, this.returnedProfile.teamName_lower).subscribe(res => {
         this.message = res.message;
+        this.filterUsers.push(user);
+        console.log(this.filterUsers);
       }, err => {
         this.message = err.error.message;
       });
@@ -377,6 +395,7 @@ export class TeamProfileComponent implements OnInit {
   private getTeamByString(getProfile: string) {
     this.team.getTeam(getProfile).subscribe((res) => {
       merge(this.returnedProfile, res);
+      this.setUpTeamMemberFilter(this.returnedProfile);
       console.log('team ', this.returnedProfile);
       // this.cleanUpDivision();
     });
