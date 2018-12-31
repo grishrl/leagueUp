@@ -24,12 +24,23 @@ export class UserService {
     
   }
 
-  userSearch(id):Observable<any>{
-    let url = 'search/user';
+  userSearch(id, type?):Observable<any>{
+    let allUrl = 'search/user';
+    let unTeamedUrl = '/search/user/unteamed';
+    let url;
     
-  if(typeof id != 'object'){
-      id = {'userName':id}
+    if(typeof id != 'object'){
+        id = {'userName':id}
+    }
+
+   if(type==undefined||type==null){
+    url = allUrl;
+   }else if( type == 'unteamed'){
+     url = unTeamedUrl;
+   }else if( type == 'all'){
+     url = allUrl;
    }
+   console.log(type, url);
    return this.http.post<any>(url, id).pipe(map(res=>{
      return res.returnObject;
    }))

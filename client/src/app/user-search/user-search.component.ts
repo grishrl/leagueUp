@@ -40,6 +40,15 @@ export class UserSearchComponent implements OnInit {
     }
   }
 
+  userSearchType:string = 'all';
+  @Input() set type(_type){
+    if (_type != null && _type != undefined && _type.length > 0) {
+      this.userSearchType = _type;
+    } else {
+      this.userSearchType = 'all'
+    }
+  }
+
   @Input() set filterUser(users){
     if(users != null && users != undefined && users.length>0){
       this.usersToFilter = users;
@@ -74,9 +83,9 @@ export class UserSearchComponent implements OnInit {
           let timestamp = Date.now();
           if (timestamp - this.lastChange > 1000) {
             this.lastChange = timestamp;
-            this.users.userSearch(data).subscribe(res => {
-              this.foundUsers = this.filterUsers(res, this.usersToFilter);
-            });
+              this.users.userSearch(data, this.userSearchType).subscribe(res => {
+                this.foundUsers = this.filterUsers(res, this.usersToFilter);
+              });
           }
         }
       }

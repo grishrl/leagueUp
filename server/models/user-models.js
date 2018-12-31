@@ -19,7 +19,8 @@ const userSchema = new Schema({
     "role": Object, //form input added
     "timeZone": String, //form input added
     "hotsLogsURL": String, //form input added
-    "averageMmr": Number
+    "averageMmr": Number,
+    "pendingTeam": Boolean
 });
 
 

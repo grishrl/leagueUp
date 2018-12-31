@@ -11,6 +11,11 @@ ADD A WAY TO REMOVE MEMBERS FROM A TEAM
 ADMIN > DIVISION:
 Investigate making the tabs lazy load, ngInit every tab navigate!!!!
 
+ADMIN> user delete selecting another profile does not refresh the profile page
+
+ADMIN > refresh team MMR button
+
+USER > when user updates profile, if a MMR was included, if that user is member of a team, update that teams MMR
 
 team
 >disable invite button after it its clicked so that someone invited can not be invited mutliple times;
