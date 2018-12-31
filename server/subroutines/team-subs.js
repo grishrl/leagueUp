@@ -40,29 +40,64 @@ function updateTeamMmr(team) {
         foundTeam.teamMembers.forEach(element => {
             members.push(element.displayName);
         });
-        User.find({ displayName: { $in: members } }).then((users) => {
-            if (users && users.length > 0) {
-                let length = 0;
-                let total = 0;
-                users.forEach(user => {
-                    if (util.returnBoolByPath(user.toObject(), 'averageMmr')) {
-                        total += user.averageMmr;
-                        length += 1;
-                    }
-                });
-                if (total > 1) {
-                    foundTeam.teamMMRAvg = Math.round(total / length);
-                } else {
-                    console.log('we had a zero total');
-                }
-                foundTeam.save();
+        top5memberMmr(members).then((processed) => {
+            if (processed) {
+                foundTeam.teamMMRAvg = processed;
+                foundTeam.save().then(saved => {
+                    console.log('team mmr updated successfully');
+                }, err => {
+                    console.log('error saving');
+                })
+            } else {
+                console.log('there was an error');
             }
-        }, (err) => {
-            console.log('updateMmr routine failed');
-        })
+        });
     }, (err) => {
         console.log('updateMmr routine failed');
     });
+}
+
+async function top5memberMmr(members) {
+    let usersMmr = await User.find({ displayName: { $in: members } }).lean().then((users) => {
+        if (users && users.length > 0) {
+            let mmrArr = [];
+            users.forEach(user => {
+                if (util.returnBoolByPath(user, 'averageMmr')) {
+                    mmrArr.push(user.averageMmr);
+                }
+            });
+            if (mmrArr.length > 1) {
+                mmrArr.sort((a, b) => {
+                    if (a > b) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                });
+                let total = 0;
+                let membersUsed;
+                if (mmrArr.length >= 5) {
+                    membersUsed = 5;
+                } else {
+                    membersUsed = mmrArr.length;
+                }
+                for (let i = 0; i < membersUsed; i++) {
+                    total += mmrArr[i];
+                }
+
+                let average = total / membersUsed;
+                if (!isNaN(average)) {
+                    average = Math.round(average);
+                }
+                return average;
+            } else {
+                return null;
+            }
+        }
+    }, (err) => {
+        return null
+    });
+    return usersMmr;
 }
 
 function removeUser(team, user) {

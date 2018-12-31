@@ -70,3 +70,6 @@ app.use('/', express.static(path.join(__dirname, './client/dist/client/')));
 app.get('*', function(req, res) {
     res.sendFile(path.join(__dirname, './client/dist/client/index.html'));
 });
+
+// let teamsub = require('./server/subroutines/team-subs');
+// teamsub.updateTeamMmr({ 'teamName_lower': 'wraithling test team' });

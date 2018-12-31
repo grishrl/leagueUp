@@ -66,9 +66,9 @@ async function calulateStandings(division) {
     }
     standings.sort((a, b) => {
         if (a.wins > b.wins) {
-            return true;
+            return -1;
         } else {
-            return false;
+            return 1;
         }
     });
     for (var i = 0; i < standings.length; i++) {
