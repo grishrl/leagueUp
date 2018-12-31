@@ -100,6 +100,55 @@ async function top5memberMmr(members) {
     return usersMmr;
 }
 
+//this is used to calculate MMRS on the fly for admin to apporve a team add
+async function resultantMMR(userMmrToAdd, members) {
+    let usersMmr = await User.find({
+        displayName: {
+            $in: members
+        }
+    }).lean().then((users) => {
+        if (users && users.length > 0) {
+            let mmrArr = [];
+            users.forEach(user => {
+                if (util.returnBoolByPath(user, 'averageMmr')) {
+                    mmrArr.push(user.averageMmr);
+                }
+            });
+            mmrArr.push(userMmrToAdd);
+            if (mmrArr.length > 1) {
+                mmrArr.sort((a, b) => {
+                    if (a > b) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                });
+                let total = 0;
+                let membersUsed;
+                if (mmrArr.length >= 5) {
+                    membersUsed = 5;
+                } else {
+                    membersUsed = mmrArr.length;
+                }
+                for (let i = 0; i < membersUsed; i++) {
+                    total += mmrArr[i];
+                }
+
+                let average = total / membersUsed;
+                if (!isNaN(average)) {
+                    average = Math.round(average);
+                }
+                return average;
+            } else {
+                return null;
+            }
+        }
+    }, (err) => {
+        return null
+    });
+    return usersMmr;
+}
+
 function removeUser(team, user) {
     team = team.toLowerCase();
     Team.findOne({ teamName_lower: team }).then((foundTeam) => {
@@ -186,5 +235,6 @@ module.exports = {
     updateTeamMmr: updateTeamMmr,
     removeUser: removeUser,
     scrubUserFromTeams: scrubUserFromTeams,
-    upsertTeamsDivision: upsertTeamsDivision
+    upsertTeamsDivision: upsertTeamsDivision,
+    resultantMMR: resultantMMR
 }

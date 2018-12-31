@@ -39,6 +39,21 @@ export class AdminService {
   )
   }
 
+  resultantMmr(userMmr, teamName){
+    let url ='/admin/resultantmmr';
+    let payload = {
+      userMmr: userMmr,
+      teamName: teamName
+    }
+    return this.http.post(url, payload).pipe(
+      map(
+        res => {
+          return res['returnObject'];
+        }
+      )
+    )
+  }
+
   divisionTeam( teamArr, divisionName){
     // let url ="http://localhost:3000/admin/divisionTeams";
     let url = "admin/divisionTeams";

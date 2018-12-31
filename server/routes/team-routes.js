@@ -238,7 +238,6 @@ router.post('/addMember', passport.authenticate('jwt', {
     }).then((foundTeam) => {
         if (foundTeam) {
             var cont = true;
-            var foundTeamObject = foundTeam.toObject();
             let pendingMembers = util.returnByPath(foundTeam, 'pendingMembers')
             if (pendingMembers && cont) {
                 pendingMembers.forEach(function(member) {
@@ -275,6 +274,7 @@ router.post('/addMember', passport.authenticate('jwt', {
                         });
 
                         foundTeam.save().then((saveOK) => {
+                            UserSub.togglePendingTeam(foundUser.displayName);
                             res.status(200).send(
                                 util.returnMessaging(path, "User added to pending members", false, saveOK)
                             );

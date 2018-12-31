@@ -83,7 +83,7 @@ function toggleCaptain(user) {
             }
         }
         if (changed) {
-            foundUser.save((save) => {
+            foundUser.save().then((save) => {
                 console.log(save.displayName + ' user profile update cpttoggle');
             }, (err) => {
                 console.log('cpt toggle error saving user profile');
@@ -95,9 +95,41 @@ function toggleCaptain(user) {
     })
 }
 
+function togglePendingTeam(user) {
+    console.log('zzzzz');
+    User.findOne({
+        displayName: user
+    }).then((foundUser) => {
+        console.log('foundUser ', foundUser);
+        //get the value in teamInfo, is captain, will be boolean if it's been set before
+        let changed = false;
+        let pendingTeam = foundUser.pendingTeam;
+        //if this is a boolean value, toggle it
+        if (typeof pendingTeam == 'boolean') {
+            changed = true;
+            foundUser.pendingTeam = !foundUser.pendingTeam;
+        } else if (pendingTeam == null || pendingTeam == undefined) {
+            changed = true;
+            foundUser.pendingTeam = true;
+        }
+        console.log(changed);
+        if (changed) {
+            foundUser.save().then((save) => {
+                console.log(save.displayName + ' user profile update pendingTeamToggle');
+            }, (err) => {
+                console.log('pendingteam toggle error saving user profile');
+            });
+        }
+
+    }, (err) => {
+        console.log('error toggling user as pending ', err);
+    })
+}
+
 module.exports = {
     scrubUser: scrubUser,
     clearUsersTeam: clearUsersTeam,
     upsertUsersTeamName: upsertUsersTeamName,
-    toggleCaptain: toggleCaptain
+    toggleCaptain: toggleCaptain,
+    togglePendingTeam: togglePendingTeam
 }

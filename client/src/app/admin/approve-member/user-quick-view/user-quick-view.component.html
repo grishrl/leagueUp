@@ -17,7 +17,7 @@
         <div class="row">
             <div class="col">
                 <div *ngIf="player.hlRankMetal && player.hlRankDivision; else noMetalDiv">
-                    Hero League: {{player.hlRankMeatal}} - {{player.hlRankDivision}}
+                    Hero League: {{player.hlRankMetal}} - {{player.hlRankDivision}}
                 </div>
                 <ng-template #noMetalDiv>
                     Player has not recorded an ingame metal/div in their profole, please contact them!

@@ -108,6 +108,7 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
                                 //update the user with the team info
                                 foundUser.teamName = teamName;
                                 foundUser.teamId = foundTeam._id
+                                foundUser.pendingTeam = false;
                             } else {
                                 //remove the member from the pending members
                                 foundTeam.pendingMembers.splice(index, 1);
@@ -115,6 +116,7 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
                                 if (foundUser.teamName || foundUser.teamId) {
                                     foundUser.teamName = null;
                                     foundUser.teamId = null;
+                                    foundUser.pendingTeam = false;
                                 }
                             }
                             //save the team and the user
@@ -323,6 +325,39 @@ router.post('/teamSave', passport.authenticate('jwt', {
         })
 
     }
+});
+
+router.post('/resultantmmr', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.teamLevel, (req, res) => {
+    const path = '/admin/resultantmmr'
+    let userMmr = req.body.userMmr;
+    let teamName = req.body.teamName;
+
+    Team.findOne({
+        teamName_lower: teamName.toLowerCase()
+    }).then((foundTeam) => {
+        if (foundTeam) {
+            let members = [];
+            foundTeam.teamMembers.forEach(element => {
+                members.push(element.displayName);
+            });
+            teamSub.resultantMMR(userMmr, members).then((processed) => {
+                if (processed) {
+                    res.status(200).send(util.returnMessaging(path, "Team mmr calculated.", false, { resultantMmr: processed }));
+                } else {
+                    res.status(400).send(util.returnMessaging(path, "Team mmr not calculated."));
+                }
+            }, (err) => {
+                res.status(400).send(util.returnMessaging(path, "Team mmr not calculated.", err));
+            })
+        } else {
+            res.status(400).send(util.returnMessaging(path, "Team not found"));
+        }
+    }, (err) => {
+        res.status(500).send(util.returnMessaging(path, 'Error finding team', err));
+    })
+
 });
 
 
