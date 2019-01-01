@@ -85,6 +85,7 @@ this.timezoneControl.enable();
   @Input() set passedProfile(profile){
     if(profile!=null&&profile!=undefined){
       this.providedProfile = profile;
+      this.ngOnInit();
     }
   }
 

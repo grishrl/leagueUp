@@ -8,12 +8,7 @@ ADMIN > TEAM:
 ADD A REGENERATE TEAM MMR BUTTON
 ADD A WAY TO REMOVE MEMBERS FROM A TEAM
 
-ADMIN > DIVISION:
-Investigate making the tabs lazy load, ngInit every tab navigate!!!!
-
 ADMIN> user delete selecting another profile does not refresh the profile page
-
-ADMIN > refresh team MMR button
 
 product:
 > probably need some modals for request waiting and requests confimations
@@ -28,9 +23,6 @@ contenful:
 >TRY TO REDUCE THE AMMOUNT OF CONTENTFUL REQUESTS MADE BY USING LOCAL STORAGE -- MAY REQUIRE SOME OBSERVABLE / PROMISE STATE MIXING TO PULL FROM LOCAL OR HTTP 
 >PAGINATION AND LIMITS + PULLING EXTRA ARTICLES 
 > order posts in the list by date.
-
-admin division:
-keep interactions between tabs up to date; IE if div is created or deleted the other pages refresh their lists.
 
 team
 >team members two columns of 3 rows
@@ -51,5 +43,3 @@ MARKETPLACE:
 >need some persistnet logging to keep up with background notices.
 >post to discord when someone is looking for team 
 >post to discord when team is looking for someone
->standings ... add the w/l to teams? < where to put theseeeee
->need a queue of pending team adds for admins to Server .... or can I query teams with pending team adds .... //done-ish 

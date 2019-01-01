@@ -23,6 +23,20 @@ export class AdminService {
     )
   }
 
+  refreshTeamMMR(team){
+    let url = 'admin/team/refreshMmr';
+    let payload = {
+      teamName:team
+    }
+    return this.http.post(url, payload).pipe(
+      map(
+        res=>{
+          return res['returnObject'];
+        }
+      )
+    )
+  }
+
 
   saveDivisionEdits(divname, divobj){
   // let url = "http://localhost:3000/admin/upsertDivision";

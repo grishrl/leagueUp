@@ -16,6 +16,7 @@ export class DeleteMemberComponent implements OnInit {
   turnOnForm:boolean=false;
 
   receiveUser(userRec){
+    this.turnOnForm = false;
     if (userRec != null && userRec!=undefined){
       // console.log(userRec);
       this.turnOnForm = true;

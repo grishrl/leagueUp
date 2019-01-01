@@ -242,5 +242,6 @@ module.exports = {
     removeUser: removeUser,
     scrubUserFromTeams: scrubUserFromTeams,
     upsertTeamsDivision: upsertTeamsDivision,
-    resultantMMR: resultantMMR
+    resultantMMR: resultantMMR,
+    returnTeamMMR: topMemberMmr
 }

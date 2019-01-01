@@ -71,6 +71,17 @@ export class TeamProfileComponent implements OnInit {
     }
   }
 
+  adminRefreshMMR(){
+    this.admin.refreshTeamMMR(this.returnedProfile.teamName_lower).subscribe(
+      (res)=>{
+        this.returnedProfile.teamMMRAvg = res.newMMR;
+      },
+      (err)=>{
+        console.log(err);
+      }
+    )
+  }
+
 
   formControlledEnable() {
     this.timezoneControl.enable();

@@ -360,5 +360,47 @@ router.post('/resultantmmr', passport.authenticate('jwt', {
 
 });
 
+router.post('/team/refreshMmr', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.teamLevel, (req, res) => {
+    const path = 'admin/team/refreshMmr';
+    let teamName = req.body.teamName;
+    teamName = teamName.toLowerCase();
+    Team.findOne({ teamName_lower: teamName }).then(
+        (foundTeam) => {
+            let members = [];
+            foundTeam.teamMembers.forEach(member => {
+                members.push(member.displayName);
+            })
+            teamSub.returnTeamMMR(members).then(
+                (processed) => {
+                    if (processed) {
+                        foundTeam.teamMMRAverage = processed;
+                        foundTeam.save().then(
+                            (saved) => {
+                                res.status(200).send(util.returnMessaging(path, 'Recalculated Team', false, {
+                                    newMMR: processed
+                                }));
+                            },
+                            (err) => {
+                                res.status(500).send(util.returnMessaging(path, 'Error saving team', err));
+                            }
+                        )
+
+                    } else {
+                        res.status(500).send(util.returnMessaging(path, 'Error finding team', err));
+                    }
+                },
+                (err) => {
+                    res.status(500).send(util.returnMessaging(path, 'Error finding team', err));
+                }
+            )
+        },
+        (err) => {
+            res.status(500).send(util.returnMessaging(path, 'Error finding team', err));
+        }
+    )
+})
+
 
 module.exports = router;
