@@ -420,6 +420,7 @@ router.post('/removeMember', passport.authenticate('jwt', {
             UserSub.clearUsersTeam(usersRemoved);
             foundTeam.save().then((savedTeam) => {
                 if (savedTeam) {
+                    TeamSub.updateTeamMmr(foundTeam);
                     res.status(200).send(
                         util.returnMessaging(path, "users removed from team", false, savedTeam)
                     );

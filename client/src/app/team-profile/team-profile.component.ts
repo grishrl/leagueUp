@@ -11,6 +11,7 @@ import { AuthService } from '../services/auth.service';
 import { UserService } from '../services/user.service';
 import { AdminService } from '../services/admin.service';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
+import { Profile } from '../classes/profile.class';
 
 
 @Component({
@@ -30,6 +31,8 @@ export class TeamProfileComponent implements OnInit {
   message: string
   showMe:boolean = true;
   errorAvail:boolean = false;
+  displayMembersLeft: any[] = [];
+  displayMembersRight: any[] = [];
 
   hlMedals = ['Grand Master', 'Master', 'Diamond', 'Platinum', 'Gold', 'Silver', 'Bronze'];
   hlDivision = [1, 2, 3, 4, 5];
@@ -39,13 +42,7 @@ export class TeamProfileComponent implements OnInit {
     { val: 5, display: 'High' }
   ]
 
-  //constructor
-  constructor(private auth: AuthService, private user: UserService, public timezone: TimezoneService, private team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router: Router,
-    private admin:AdminService) {
-    this.teamName = team.realTeamName(this.route.snapshot.params['id']);
-  }
-
-
+  //form controls
   timezoneControl = new FormControl({ value: '', disabled: true }, [
     Validators.required
   ]);
@@ -55,20 +52,57 @@ export class TeamProfileComponent implements OnInit {
     Validators.required
   ]);
 
-  emailAddress:string;
-  inviteEmail(){
+  emailAddress: string;
+  inviteEmail() {
     let storedEmail = this.emailAddress;
     this.emailAddress = '';
-    if (storedEmail.length>0){
+    if (storedEmail.length > 0) {
       this.user.emailOutreach(storedEmail).subscribe(
-        (res)=>{
+        (res) => {
           this.message = res['message'];
         },
-        (err)=>{
+        (err) => {
 
         }
       )
     }
+  }
+
+  //constructor
+  constructor(private auth: AuthService, private user: UserService, public timezone: TimezoneService, private team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router: Router,
+    private admin:AdminService) {
+    this.teamName = team.realTeamName(this.route.snapshot.params['id']);
+  }
+
+  //methods
+
+  deleteUserButtonOn(player){
+    return player==this.returnedProfile.captain;
+  }
+
+  removeMember(player){
+    if(this.componentEmbedded){
+      this.admin.removeMembers(this.returnedProfile.teamName_lower, player).subscribe(
+        (res) => {
+          console.log('user removed');
+          this.ngOnInit();
+        },
+        (err) => {
+          console.log(err);
+        }
+      )
+    }else{
+      this.team.removeUser(player, this.returnedProfile.teamName_lower).subscribe(
+        (res) => {
+          console.log('user removed');
+          this.ngOnInit();
+        },
+        (err) => {
+          console.log(err);
+        }
+      )
+    }
+
   }
 
   adminRefreshMMR(){
@@ -93,6 +127,9 @@ export class TeamProfileComponent implements OnInit {
 
   //init implementation
   ngOnInit() {
+    this.displayMembersLeft = [];
+    this.displayMembersRight = [];
+    this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     let getProfile: string;
     console.log('typeof this.providedProfile: ', typeof this.providedProfile);
     console.log('his.providedProfile: ', this.providedProfile);
@@ -103,6 +140,7 @@ export class TeamProfileComponent implements OnInit {
       } else {
         merge(this.returnedProfile, this.providedProfile);
         this.setUpTeamMemberFilter(this.returnedProfile);
+        this.stratifyTeamMembers()
         this.orignalName = this.returnedProfile.teamName_lower;
         // this.cleanUpDivision();
       }
@@ -424,11 +462,30 @@ export class TeamProfileComponent implements OnInit {
     return ret;
   }
 
+  stratifyTeamMembers(){
+    this.displayMembersLeft = [];
+    this.displayMembersRight = [];
+    if(this.returnedProfile.teamMembers.length>3){
+      let half = Math.round(this.returnedProfile.teamMembers.length / 2);
+      for(var i = 0; i < half; i++){
+        this.displayMembersLeft.push(this.returnedProfile.teamMembers[i]);
+      }
+
+      for (var j = half; j < this.returnedProfile.teamMembers.length; j++){
+        this.displayMembersRight.push(this.returnedProfile.teamMembers[j]);
+      }
+    }else{
+      this.displayMembersLeft = this.returnedProfile.teamMembers;
+      this.displayMembersRight = [];
+    }
+  }
+
   //method to get team by provided string
   private getTeamByString(getProfile: string) {
     this.team.getTeam(getProfile).subscribe((res) => {
       merge(this.returnedProfile, res);
       this.setUpTeamMemberFilter(this.returnedProfile);
+      this.stratifyTeamMembers()
       console.log('team ', this.returnedProfile);
       // this.cleanUpDivision();
     });
@@ -473,25 +530,5 @@ export class TeamProfileComponent implements OnInit {
     }
     return !!retVal;
   }
-  //this method cleans up some things to make a pretty team display and creates some filtering for the invite member search
-  // TODO: DELETE IF NO LONGER NEEDED
-  // private cleanUpDivision() {
-  //   if (this.returnedProfile.teamDivision) {
-  //     this.displayDivison += "";
-  //     let divDisplay = this.returnedProfile.teamDivision.divisionName;
-  //     let char = divDisplay.charAt(0);
-  //     let capChar = char.toUpperCase();
-  //     divDisplay = divDisplay.replace(char, capChar);
-  //     this.displayDivison += divDisplay;
-  //     if (this.returnedProfile.teamDivision.coastalDivision) {
-  //       this.displayDivison += " " + this.returnedProfile.teamDivision.coastalDivision.toUpperCase();
-  //     }
-  //   }
-  //   if (this.returnedProfile.teamMembers && this.returnedProfile.teamMembers.length > 0) {
-  //     this.returnedProfile.teamMembers.forEach(element => {
-  //       this.filterUsers.push(element.displayName);
-  //     });
-  //   }
-  // }
 
 }

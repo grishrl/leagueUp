@@ -26,6 +26,63 @@ router.get('/pendingMemberQueue', passport.authenticate('jwt', {
     })
 });
 
+router.post('/team/removeMember', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.teamLevel, (req, res) => {
+    const path = '/admin/team/removeMember';
+    let teamName = req.body.teamName;
+    let payloadUser = req.body.removeUser;
+    Team.findOne({ teamName_lower: teamName }).then(
+        (foundTeam) => {
+            if (foundTeam) {
+                let indiciesToRemove = [];
+                let usersRemoved = [];
+                if (Array.isArray(payloadUser)) {
+                    for (var i = 0; i < foundTeam.teamMembers.length; i++) {
+                        if (payloadUser.indexOf(foundTeam.teamMembers[i].displayName) > -1) {
+                            indiciesToRemove.push(i);
+                        }
+                    }
+                } else {
+                    for (var i = 0; i < foundTeam.teamMembers.length; i++) {
+                        if (payloadUser == foundTeam.teamMembers[i].displayName) {
+                            indiciesToRemove.push(i);
+                        }
+                    }
+                }
+                if (indiciesToRemove.length == 0) {
+                    res.status(400).send(
+                        util.returnMessaging(path, "User not found on team.", false, foundTeam)
+                    );
+                } else {
+                    indiciesToRemove.forEach(function(index) {
+                        usersRemoved = usersRemoved.concat(foundTeam.teamMembers.splice(index, 1));
+                    });
+                    UserSub.clearUsersTeam(usersRemoved);
+                    foundTeam.save().then((savedTeam) => {
+                        if (savedTeam) {
+                            teamSub.updateTeamMmr(foundTeam);
+                            res.status(200).send(
+                                util.returnMessaging(path, "users removed from team", false, savedTeam)
+                            );
+                        } else {
+                            res.status(400).send(
+                                util.returnMessaging(path, "users not removed from team", false, savedTeam));
+                        }
+                    }, (err) => {
+                        res.status(400).send(util.returnMessaging(path, "Unable to save team", err));
+                    });
+                }
+            } else {
+                res.status(400).send(util.returnMessaging(path, 'Team not found!'));
+            }
+        },
+        (err) => {
+            res.status(500).send(util.returnMessaging(path, 'Error finding team!', err));
+        }
+    )
+});
+
 router.post('/reassignCaptain', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.teamLevel, (req, res) => {
@@ -375,7 +432,7 @@ router.post('/team/refreshMmr', passport.authenticate('jwt', {
             teamSub.returnTeamMMR(members).then(
                 (processed) => {
                     if (processed) {
-                        foundTeam.teamMMRAverage = processed;
+                        foundTeam.teamMMRAvg = processed;
                         foundTeam.save().then(
                             (saved) => {
                                 res.status(200).send(util.returnMessaging(path, 'Recalculated Team', false, {
@@ -388,7 +445,7 @@ router.post('/team/refreshMmr', passport.authenticate('jwt', {
                         )
 
                     } else {
-                        res.status(500).send(util.returnMessaging(path, 'Error finding team', err));
+                        res.status(500).send(util.returnMessaging(path, 'Error processing mmr team'));
                     }
                 },
                 (err) => {

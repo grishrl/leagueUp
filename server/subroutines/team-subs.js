@@ -65,6 +65,7 @@ function updateTeamMmr(team) {
 
 async function topMemberMmr(members) {
     let usersMmr = await User.find({ displayName: { $in: members } }).lean().then((users) => {
+
         if (users && users.length > 0) {
             let mmrArr = [];
             users.forEach(user => {
@@ -72,6 +73,7 @@ async function topMemberMmr(members) {
                     mmrArr.push(user.averageMmr);
                 }
             });
+
             if (mmrArr.length > 1) {
                 mmrArr.sort((a, b) => {
                     if (a > b) {
@@ -81,12 +83,13 @@ async function topMemberMmr(members) {
                     }
                 });
                 let total = 0;
-                let membersUsed;
+                let membersUsed = 0;
                 if (mmrArr.length >= numberOfTopMembersToUse) {
                     membersUsed = numberOfTopMembersToUse;
                 } else {
                     membersUsed = mmrArr.length;
                 }
+
                 for (let i = 0; i < membersUsed; i++) {
                     total += mmrArr[i];
                 }
@@ -97,7 +100,7 @@ async function topMemberMmr(members) {
                 }
                 return average;
             } else {
-                return null;
+                return mmrArr[0];
             }
         }
     }, (err) => {

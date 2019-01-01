@@ -23,6 +23,21 @@ export class AdminService {
     )
   }
 
+  removeMembers(team, member){
+    let url = 'admin/team/removeMember';
+    let payload = {
+      teamName:team,
+      removeUser:member
+    }
+    return this.http.post(url, payload).pipe(
+      map(
+        res => {
+          return res['returnObject'];
+        }
+      )
+    )
+  }
+
   refreshTeamMMR(team){
     let url = 'admin/team/refreshMmr';
     let payload = {

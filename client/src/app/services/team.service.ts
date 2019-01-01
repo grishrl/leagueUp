@@ -94,6 +94,19 @@ export class TeamService {
     );
   }
 
+  removeUser(user, team){
+    let url = '/team/removeMember';
+    let payload = {
+      remove: user,
+      teamName: team
+    }
+    return this.http.post<any>(url, payload).pipe(
+      map((res) => {
+        return res;
+      })
+    )
+  }
+
   addUser(user, team){
     let postData = {}
     if(typeof user!='object'){

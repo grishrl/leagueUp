@@ -4,12 +4,6 @@ Work on client flow > particularly in regards to scheduling screens, what is the
 
 >>> remove all hard codings of season 6 with something... else MEDIUM PRIO
 
-ADMIN > TEAM:
-ADD A REGENERATE TEAM MMR BUTTON
-ADD A WAY TO REMOVE MEMBERS FROM A TEAM
-
-ADMIN> user delete selecting another profile does not refresh the profile page
-
 product:
 > probably need some modals for request waiting and requests confimations
 > branding
