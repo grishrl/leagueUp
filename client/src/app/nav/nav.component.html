@@ -40,7 +40,7 @@
                                     <a class="dropdown-item finger" [routerLink]="['/teamCreate']">Create Team</a>
                                     <a class="dropdown-item finger" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( teamName ) )">Find Team</a>
                                 </ng-template>
-                                <a *ngIf="Auth.getAdmin().length>0" class="dropdown-item finger" (click)="navGo('/_admin/dashboard')">Admin Dashboard</a>
+                                <a *ngIf="Auth.getAdmin() && Auth.getAdmin().length>0" class="dropdown-item finger" (click)="navGo('/_admin/dashboard')">Admin Dashboard</a>
                                 <a *ngIf="Auth.getCaster()" class="dropdown-item finger" (click)="navGo('/_casterDashboard')">Caster Dashboard</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item finger" (click)="Auth.destroyAuth()">Logout</a>

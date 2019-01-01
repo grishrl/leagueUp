@@ -23,7 +23,7 @@ export class LoginComponent implements OnInit {
       Auth.createAuth(parsed.token);
       // console.log('init in login ', Auth.getReferral());
       if (Auth.getReferral()) {
-        this.user.outreachResponse(Auth.getReferral()).subscribe((res) => {
+        this.user.outreachResponse(Auth.getReferral(), Auth.getUser()).subscribe((res) => {
           Auth.destroyReferral();
         }, (err) => { Auth.destroyReferral();});
       } else if (Auth.isAuthenticated()) {

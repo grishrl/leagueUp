@@ -67,11 +67,11 @@ export class UserService {
     )
   }
 
-  outreachResponse(token):Observable<any>{
+  outreachResponse(token, user):Observable<any>{
     let url = 'outreach/inviteResponseComplete';
 
     if(typeof token != 'object'){
-      token = { "referral":token };
+      token = { "referral":token , "user":user };
     }
     return this.http.post(url, token)
   }

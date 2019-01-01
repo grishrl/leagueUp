@@ -96,7 +96,6 @@ function toggleCaptain(user) {
 }
 
 function togglePendingTeam(user) {
-    console.log('zzzzz');
     User.findOne({
         displayName: user
     }).then((foundUser) => {

@@ -2,9 +2,10 @@ const nodemailer = require('nodemailer');
 const Outreach = require('../models/outreach-model');
 const Team = require('../models/team-models');
 const router = require('express').Router();
-// const keys = require('../configs/keys');
 const passport = require("passport");
 const util = require('../utils');
+const UserSubs = require('../subroutines/user-subs');
+const QueueSub = require('../subroutines/queue-subs');
 
 var crypto = require('crypto'),
     algorithm = 'aes-256-ctr',
@@ -20,8 +21,8 @@ function encrypt(text) {
 var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'nil', //update with env var
-        pass: 'nil' //update with env var
+        user: process.env.outreachEmail, //update with env var
+        pass: process.env.outreachPw //update with env var
     }
 });
 
@@ -36,13 +37,14 @@ router.post('/invite', passport.authenticate('jwt', {
 
     var data = encrypt(stamp);
 
+    let callback = process.env.outreachCallback;
 
     var mailOptions = {
-        from: keys.mailer.user,
+        from: 'Nexus Gaming Series',
         to: req.body.userEmail,
         subject: "A friend has invited you to join NGS!",
         text: "Hello \n Your friend " + req.user.displayName + " has invited you to join his team and us at the Nexus Gaming Series, amatuer Heroes of the Storm Leuage! \n" +
-            "Please join us by clicking this link and creating an account! \n" + " https://localhost:3443/email/invite/" + data
+            "Please join us by clicking this link and creating an account! \n " + callback + "/email/invite/" + data + ""
     }
 
     transporter.sendMail(mailOptions, function(err, info) {
@@ -52,7 +54,7 @@ router.post('/invite', passport.authenticate('jwt', {
         } else {
             new Outreach({
                 key: data,
-                teamName: req.user.teamInfo.teamName
+                teamName: req.user.teamName
             }).save().then((saved) => {
                 res.status(200).send(util.returnMessaging(path, 'This user has been successfully invited, let them to know to be looking for an email from NGS!', false, saved));
             }, (err) => {
@@ -68,6 +70,7 @@ router.post('/inviteResponseComplete', passport.authenticate('jwt', {
 }), (req, res) => {
     const path = '/outreach/inviteResponseComplete'
     let refToken = req.body.referral;
+    let user = req.body.user;
     Outreach.findOneAndDelete({
         key: refToken
     }).then((deletedRef) => {
@@ -79,7 +82,24 @@ router.post('/inviteResponseComplete', passport.authenticate('jwt', {
             Team.findOne({
                 teamName_lower: lower
             }).then((foundTeam) => {
-                res.status(200).send(util.returnMessaging(path, "We added the user to pending members"));
+                if (foundTeam.pendingMembers) {
+                    foundTeam.pendingMembers.push({
+                        "displayName": user
+                    });
+                } else {
+                    foundTeam.pendingMembers = [{ "displayName": user }];
+                }
+                UserSubs.togglePendingTeam(user);
+                QueueSub.addToPendingTeamMemberQueue(foundTeam.teamName_lower, user);
+                console.log(foundTeam);
+                foundTeam.save().then(
+                    saved => {
+                        res.status(200).send(util.returnMessaging(path, "We added the user to pending members"));
+                    },
+                    err => {
+                        res.status(500).send(util.returnMessaging(path, "We encountered an error completing the email response", err));
+                    }
+                )
             }, (err) => {
                 res.status(500).send(util.returnMessaging(path, "We encountered an error completing the email response", err));
             })
