@@ -36,6 +36,10 @@ function upsertTeamDivision(team, division) {
 
 //subroutine to update a teams average mmr, this will run when it is passed a team
 function updateTeamMmr(team) {
+    if (typeof team == 'string') {
+        team = team.toLowerCase();
+        team = { teamName_lower: team }
+    }
     console.log('welcome to the sub ', team)
     Team.findOne({ teamName_lower: team.teamName_lower }).then((foundTeam) => {
         let members = [];

@@ -15,14 +15,6 @@ ADMIN> user delete selecting another profile does not refresh the profile page
 
 ADMIN > refresh team MMR button
 
-USER > when user updates profile, if a MMR was included, if that user is member of a team, update that teams MMR
-
-team
->team members two columns of 3 rows
-> add back some confirm text for inviting a member to the team!
-> player names links, if possible.
-> show pending members?
-
 user
 >uuid AKA toonId- FROM BLIIZARD TO TIE THEM BACK TO REPLAYS 
 >collect discord userid?
@@ -45,7 +37,10 @@ contenful:
 admin division:
 keep interactions between tabs up to date; IE if div is created or deleted the other pages refresh their lists.
 
-
+team
+>team members two columns of 3 rows
+> player names links, if possible.
+> show pending members?
 
 FOOTER
 > GET FOOTER WORKING
