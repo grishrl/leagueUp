@@ -50,6 +50,28 @@ export class TeamProfileComponent implements OnInit {
     Validators.required
   ]);
 
+  emailControl = new FormControl({ value: '' }, [
+    Validators.email,
+    Validators.required
+  ]);
+
+  emailAddress:string;
+  inviteEmail(){
+    let storedEmail = this.emailAddress;
+    this.emailAddress = '';
+    if (storedEmail.length>0){
+      this.user.emailOutreach(storedEmail).subscribe(
+        (res)=>{
+          this.message = res['message'];
+        },
+        (err)=>{
+
+        }
+      )
+    }
+  }
+
+
   formControlledEnable() {
     this.timezoneControl.enable();
   }

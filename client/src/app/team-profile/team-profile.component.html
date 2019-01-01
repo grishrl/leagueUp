@@ -122,15 +122,24 @@
                                         Invite a user to join NGS!
                                     </mat-panel-description>
                                 </mat-expansion-panel-header>
-                                <mat-form-field>
-                                    <input matInput placeholder="Enter users email to send them an invite to NGS!">
-                                </mat-form-field>
-                                <button type="button">Invite!</button>
+                                <div class="row">
+                                    <div class="col-7">
+                                        <mat-form-field class="tp-FullWidth">
+                                            <input matInput [formControl]="emailControl" [(ngModel)]="emailAddress" placeholder="Enter users email to send them an invite to NGS!">
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col">
+                                        <button type="button" [disabled]="emailControl.invalid" (click)="inviteEmail()">Invite!</button>
+                                    </div>
+                                </div>
+
+
+
                             </mat-expansion-panel>
                         </mat-accordion>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row mt-3">
                     <div class="col">
                         <span class="p-3 text-success">{{message}}</span>
                     </div>

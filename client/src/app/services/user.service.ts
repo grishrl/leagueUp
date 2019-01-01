@@ -24,6 +24,18 @@ export class UserService {
     
   }
 
+  emailOutreach(email){
+    let url = '/outreach/invite';
+    let payload = {
+      userEmail:email
+    }
+    return this.http.post(url, payload).pipe(
+      map(
+        res=>{ return res;}
+      )
+    )
+  }
+
   userSearch(id, type?):Observable<any>{
     let allUrl = 'search/user';
     let unTeamedUrl = '/search/user/unteamed';

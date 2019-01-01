@@ -18,7 +18,6 @@ ADMIN > refresh team MMR button
 USER > when user updates profile, if a MMR was included, if that user is member of a team, update that teams MMR
 
 team
->disable invite button after it its clicked so that someone invited can not be invited mutliple times;
 >team members two columns of 3 rows
 > add back some confirm text for inviting a member to the team!
 > player names links, if possible.
