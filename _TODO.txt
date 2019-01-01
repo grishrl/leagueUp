@@ -2,6 +2,8 @@
 Work on client flow > particularly in regards to scheduling screens, what is the flow? think it through
 ***!!!returnboolbypath is not working on any document returned from mongo investigate further!!!***
 
+>>admin team needs list of teams;
+
 >>> remove all hard codings of season 6 with something... else MEDIUM PRIO
 
 product:
@@ -19,7 +21,6 @@ contenful:
 > order posts in the list by date.
 
 team
->team members two columns of 3 rows
 > player names links, if possible.
 > show pending members?
 

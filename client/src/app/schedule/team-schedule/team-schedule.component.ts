@@ -15,7 +15,7 @@ export class TeamScheduleComponent implements OnInit {
       this.recTeam = this.route.snapshot.params['id'];
     }
    }
-
+  noMatches:boolean;
   rounds:any
   ngOnInit() {
     let getTeam;
@@ -28,6 +28,11 @@ export class TeamScheduleComponent implements OnInit {
     this.scheduleService.getTeamSchedules(6, getTeam).subscribe(
       res=>{
         let matches = res;
+        if (matches.length == 0 ){
+          this.noMatches = true;
+        }else{
+          this.noMatches = false;
+        }
         for(var i = 1; i<=matches.length; i++){
           if(this.rounds == null || this.rounds == undefined){
             this.rounds = {};

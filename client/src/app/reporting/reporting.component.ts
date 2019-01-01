@@ -18,6 +18,7 @@ export class ReportingComponent implements OnInit {
     }
   }
   rounds:any
+  noMatches: Boolean;
   ngOnInit() {
     let getTeam;
     if (this.recTeam) {
@@ -27,9 +28,15 @@ export class ReportingComponent implements OnInit {
       getTeam = this.Auth.getTeam()
     }
 
+    
     this.scheduleService.getTeamSchedules(6, getTeam).subscribe(
       res => {
         let matches = res;
+        if(matches.length == 0){
+          this.noMatches = true;
+        }else{
+          this.noMatches = false;
+        }
         for (var i = 1; i <= matches.length; i++) {
           if (this.rounds == null || this.rounds == undefined) {
             this.rounds = {};
