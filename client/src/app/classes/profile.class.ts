@@ -16,13 +16,15 @@ export class Profile {  //addition of stats for future plans
   timeZone: string; //form input added
   hotsLogsURL: String; //form input added
   averageMmr: number;  //user average mmr
+  toonId:string;
+  discordTag:string;
   __v: String;//useless
 
 
   constructor (id: String, displayName: String, teamId:string, teamName:string, isCaptain:boolean,
     hlRankMetal:string, hlRankDivision:number, lookingForGroup: Boolean, availability:schedule, 
     competitiveLevel:number, descriptionOfPlay:string, role:roles, timeZone:string, hotsLogsURL:string,
-    averageMmr:number){
+    averageMmr: number, toonId: string, discordTag:string){
   if (id != null && id != undefined && id.length > 0) {
     this._id = id;
   } else {
@@ -133,6 +135,16 @@ export class Profile {  //addition of stats for future plans
       this.averageMmr = averageMmr;
     } else {
       this.averageMmr = null;
+    }
+    if (toonId != null && toonId != undefined) {
+      this.toonId = toonId;
+    } else {
+      this.toonId = null;
+    }
+    if (discordTag != null && discordTag != undefined) {
+      this.discordTag = toonId;
+    } else {
+      this.discordTag = null;
     }
 }
 }

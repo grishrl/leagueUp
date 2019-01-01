@@ -118,7 +118,7 @@ this.timezoneControl.enable();
   selectedMedal: string;
   displayName : string;
   profileObs : Observable<Profile>;
-  returnedProfile = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+  returnedProfile = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
   dataRet = false;
   profSub: Subscription;
@@ -146,7 +146,7 @@ this.timezoneControl.enable();
    openEdit(){
      this.editOn=false;
      this.formControlledEnable();
-     this.tempProfile = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+     this.tempProfile = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
      merge(this.tempProfile, this.returnedProfile);
    }
 

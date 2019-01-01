@@ -17,7 +17,7 @@ export class UserQuickViewComponent implements OnInit {
     
   }
 
-  player = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+  player = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
   constructor(private user: UserService) { }
 

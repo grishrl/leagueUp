@@ -84,6 +84,12 @@ router.post('/save', passport.authenticate('jwt', {
                     if (util.returnBoolByPath(sentUser, 'timeZone')) {
                         found.timeZone = sentUser.timeZone
                     }
+                    if (util.returnBoolByPath(sentUser, 'toonId')) {
+                        found.toonId = sentUser.toonId
+                    }
+                    if (util.returnBoolByPath(sentUser, 'discordTag')) {
+                        found.discordTag = sentUser.discordTag
+                    }
                     if (util.returnBoolByPath(sentUser, 'hlRankMetal')) {
                         found.hlRankMetal = sentUser.hlRankMetal
                     }

@@ -26,7 +26,7 @@ export class ApproveMemberViewComponent implements OnInit {
 
   hidePanel:boolean = true;
 
-  player = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+  player = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
   viewTeam = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
   resultantMmr:number
 

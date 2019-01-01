@@ -37,6 +37,9 @@
                             <input matInput placeholder="HOTS LOGS URL" [formControl]="hotsLogsFormControl" [(ngModel)]="returnedProfile.hotsLogsURL">
                         </mat-form-field>
                         <mat-form-field>
+                            <input matInput placeholder="Discord Tag" [(ngModel)]="returnedProfile.discordTag" disabled="true">
+                        </mat-form-field>
+                        <mat-form-field>
                             <mat-select placeholder="Hero League Division" [formControl]="heroeLeagueDivisionControl" [(ngModel)]="returnedProfile.hlRankMetal">
                                 <mat-option *ngFor="let medal of hlMedals" [value]="medal">
                                     {{medal}}
@@ -82,6 +85,13 @@
                                 <mat-form-field class="pe-full-width">
                                     <mat-label>Describe your play history / style</mat-label>
                                     <textarea matInput cdkTextareaAutosize disabled="{{editOn}}" [(ngModel)]="returnedProfile.descriptionOfPlay"></textarea>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col">
+                                <mat-form-field class="pe-full-width">
+                                    <input matInput placeholder="Enter your toon ID, we will use this tie your profile to submitted replays" [(ngModel)]="returnedProfile.toonId" disabled="{{editOn}}">
                                 </mat-form-field>
                             </div>
                         </div>
