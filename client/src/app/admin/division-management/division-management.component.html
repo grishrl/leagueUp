@@ -8,13 +8,19 @@
         <div class="col">
             <mat-tab-group>
                 <mat-tab label="Add Teams To Division">
-                    <app-add-team></app-add-team>
+                    <ng-template matTabContent>
+                        <app-add-team></app-add-team>
+                    </ng-template>
                 </mat-tab>
                 <mat-tab label="Division Management">
-                    <app-division-props></app-division-props>
+                    <ng-template matTabContent>
+                        <app-division-props></app-division-props>
+                    </ng-template>
                 </mat-tab>
                 <mat-tab label="Remove Teams From Division">
-                    <app-remove-team></app-remove-team>
+                    <ng-template matTabContent>
+                        <app-remove-team></app-remove-team>
+                    </ng-template>
                 </mat-tab>
             </mat-tab-group>
         </div>
