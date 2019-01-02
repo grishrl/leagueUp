@@ -10,6 +10,12 @@ export class AdminService {
 
   constructor(private httpService: HttpServiceService) { }
 
+  //returns a list of all teams
+  getTeams(){
+    let url = 'admin/get/teams/all';
+    return this.httpService.httpGet(url,[]);
+  }
+
   //returns a list of teams not assigned to division
   getTeamsNotDivisioned(){
     let url = 'admin/getTeamsUndivisioned';

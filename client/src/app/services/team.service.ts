@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { HttpServiceService } from './http-service.service';
@@ -123,5 +121,5 @@ export class TeamService {
     
   }
 
-  constructor(private httpService: HttpServiceService, private http: HttpClient) { }
+  constructor(private httpService: HttpServiceService) { }
 }

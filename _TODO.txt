@@ -2,15 +2,10 @@
 Work on client flow > particularly in regards to scheduling screens, what is the flow? think it through
 ***!!!returnboolbypath is not working on any document returned from mongo investigate further!!!***
 
->>admin team needs list of teams;
-
 >>> remove all hard codings of season 6 with something... else MEDIUM PRIO
 
 product:
-> probably need some modals for request waiting and requests confimations
-> branding
-> disabled mat inputs are very muted for looking at
-> remove hardcoded URLs from all locations //have replaced alot of these with relative calls
+> branding added the favico!
 
 contentfulservice :
 contenful:
@@ -25,7 +20,6 @@ team
 > show pending members?
 
 user
-> add a picture of where to find toon id?
 >Looking for team (marketplace)
 
 FOOTER

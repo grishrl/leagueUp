@@ -38,7 +38,7 @@
                                 </div>
                                 <ng-template #noTeam>
                                     <a class="dropdown-item finger" [routerLink]="['/teamCreate']">Create Team</a>
-                                    <a class="dropdown-item finger" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( teamName ) )">Find Team</a>
+                                    <!-- TODO: implement a find team <a class="dropdown-item finger" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( teamName ) )">Find Team</a> -->
                                 </ng-template>
                                 <a *ngIf="Auth.getAdmin() && Auth.getAdmin().length>0" class="dropdown-item finger" (click)="navGo('/_admin/dashboard')">Admin Dashboard</a>
                                 <a *ngIf="Auth.getCaster()" class="dropdown-item finger" (click)="navGo('/_casterDashboard')">Caster Dashboard</a>

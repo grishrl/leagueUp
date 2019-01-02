@@ -1,0 +1,18 @@
+.icon-align {
+    display: inline-flex;
+    vertical-align: middle;
+}
+
+.oddRow {
+    background-color: #e0e0eb
+}
+
+.rowBorder {
+    border-style: solid;
+    border-width: 1px;
+    border-color: lightgrey;
+}
+
+.titles {
+    font-weight: bold
+}

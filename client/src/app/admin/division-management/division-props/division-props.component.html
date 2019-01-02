@@ -24,9 +24,15 @@
                         <div class="example-container">
                             <mat-form-field>
                                 <input matInput placeholder="Display Name" [formControl]="displayNameControl" [(ngModel)]="editDivision.displayName">
+                                <mat-error *ngIf="displayNameControl.hasError('required')">
+                                    Display name is required
+                                </mat-error>
                             </mat-form-field>
                             <mat-form-field>
                                 <input matInput placeholder="Division Name" [formControl]="divisionNameControl" [(ngModel)]="editDivision.divisionName" (ngModelChange)="calculateNewConcat()">
+                                <mat-error *ngIf="divisionNameControl.hasError('required')">
+                                    Division name is required
+                                </mat-error>
                             </mat-form-field>
                             <mat-form-field>
                                 <input matInput placeholder="Division Coast" [(ngModel)]="editDivision.divisionCoast" (ngModelChange)="calculateNewConcat()">
@@ -39,9 +45,15 @@
                             </mat-form-field>
                             <mat-form-field>
                                 <input matInput placeholder="Max MMR" [formControl]="maxMMRControl" [(ngModel)]="editDivision.maxMMR">
+                                <mat-error *ngIf="maxMMRControl.hasError('required')">
+                                    Max MMR is required
+                                </mat-error>
                             </mat-form-field>
                             <mat-form-field>
                                 <input matInput placeholder="Min MMR" [formControl]="minMMRControl" [(ngModel)]="editDivision.minMMR">
+                                <mat-error *ngIf="minMMRControl.hasError('required')">
+                                    Min MMR is required
+                                </mat-error>
                             </mat-form-field>
                         </div>
                     </div>

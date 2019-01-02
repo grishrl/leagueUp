@@ -119,7 +119,7 @@ export class Profile {  //addition of stats for future plans
     if (role != null && role != undefined) {
       this.role = role;
     } else {
-      this.role = { "tank": false, "assassin": false, "support": false, "offlane": false, "specialist": false };
+      this.role = { "tank": false, "meleeassassin": false, "rangedassassin": false, "support": false, "offlane": false, "flex": false };
     }
     if (timeZone != null && timeZone != undefined) {
       this.timeZone = timeZone;
@@ -168,8 +168,9 @@ export interface atset {
 
 export interface roles {
   tank: boolean,
-  assassin:boolean,
-  offlane:boolean,
-  support:boolean,
-  specialist:boolean
+  'meleeassassin': boolean,
+  'rangedassassin': boolean,
+  offlane: boolean,
+  support: boolean,
+  flex: boolean
 }

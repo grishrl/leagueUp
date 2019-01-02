@@ -136,7 +136,9 @@ export class TeamProfileComponent implements OnInit {
     if (this.providedProfile != null && this.providedProfile != undefined) {
       if (typeof this.providedProfile == 'string') {
         getProfile = this.providedProfile;
+        this.orignalName = this.team.realTeamName(this.providedProfile);
         this.getTeamByString(getProfile);
+        
       } else {
         merge(this.returnedProfile, this.providedProfile);
         this.setUpTeamMemberFilter(this.returnedProfile);

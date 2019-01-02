@@ -7,11 +7,17 @@
     <div class="col">
         <mat-form-field class="tp-FullWidth">
             <input matInput [formControl]="casterNameControl" placeholder="Caster Name" [(ngModel)]="name">
+            <mat-error *ngIf="casterNameControl.hasError('required')">
+                Caster Name is required
+            </mat-error>
         </mat-form-field>
     </div>
     <div class="col">
         <mat-form-field class="tp-FullWidth">
             <input matInput [formControl]="casterUrlControl" placeholder="Caster URL" [(ngModel)]="URL">
+            <mat-error *ngIf="casterUrlControl.hasError('required')">
+                Caster URL is required
+            </mat-error>
         </mat-form-field>
     </div>
     <div class="col">

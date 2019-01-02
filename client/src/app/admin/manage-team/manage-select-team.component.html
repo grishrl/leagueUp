@@ -1,0 +1,69 @@
+<div class="container pt-4">
+    <div class="row">
+        <div class="col">
+            <a [routerLink]="['/_admin/dashboard']">Back to Dashboard</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            Search for team:
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <app-team-search (teamSelected)="receiveTeam($event)" [buttonText]="'Select Team For Management'"></app-team-search>
+        </div>
+        <div class="col-3">
+            <div class="row" *ngIf="turnOnForm">
+                <div class="col">Review team below</div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            - or -
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            Select from list:
+        </div>
+    </div>
+    <div class="row mt-2 p-3 rowBorder" *ngFor="let team of teams; let ind = index" [ngClass]="{oddRow : ind%2!=0}">
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <span class="titles">Team Name:</span> {{team.teamName}}
+                </div>
+                <div class="col">
+                    <span class="titles">Divison:</span> <i>(if assigned)</i>
+                    <span *ngIf="team.divisionDisplayName">{{team.divisionDisplayName}}</span>
+                </div>
+                <div class="col">
+                    <span class="titles">Captain:</span> {{team.captain}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <span class="titles">Members:</span> {{team.teamMembers.length}}
+                </div>
+                <div class="col">
+                    <span class="titles">MMR:</span> {{team.teamMMRAvg}}
+                </div>
+                <div class="col">
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-center">
+                    <a class="btn btn-secondary" (click)="selectedFromList(team)">Select this team for management</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- <div *ngIf="turnOnForm">
+
+    </div> -->
+</div>

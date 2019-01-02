@@ -4,25 +4,36 @@ import { TeamService } from '../../services/team.service';
 import { DialogOverviewExampleDialog } from '../../profile-edit/profile-edit.component';
 import { ChangeCaptainModalComponent } from '../../modal/change-captain-modal/change-captain-modal.component';
 import { AdminService } from 'src/app/services/admin.service';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-delete-team',
-  templateUrl: './delete-team.component.html',
-  styleUrls: ['./delete-team.component.css']
+  selector: 'app-manage-select-team',
+  templateUrl: './manage-select-team.component.html',
+  styleUrls: ['./manage-select-team.component.css']
 })
-export class DeleteTeamComponent implements OnInit {
+export class ManageSelectTeamComponent implements OnInit {
 
-  constructor(public dialog: MatDialog, private admin: AdminService, private team: TeamService) { }
+  constructor(public dialog: MatDialog, private admin: AdminService, private team: TeamService, private router:Router) { }
 
   recievedProfile
   turnOnForm: boolean = false;
   pulledProfile:any
+  teams:any[]=[];
 
   receiveTeam(userRec) {
     if (userRec != null && userRec != undefined) {
-      this.turnOnForm = true;
-      this.recievedProfile = userRec;
+      //this.turnOnForm = true;
+      //this.recievedProfile = userRec;
+      this.goView(this.team.routeFriendlyTeamName(userRec.teamName_lower));
     }
+  }
+
+  selectedFromList(prof){
+    this.goView(this.team.routeFriendlyTeamName(prof.teamName_lower));
+  }
+
+  goView(id){
+    this.router.navigate(['_admin/manageTeam/', id]);
   }
 
   openChangeCaptainDialog():void{
@@ -81,6 +92,14 @@ export class DeleteTeamComponent implements OnInit {
 
 
   ngOnInit() {
+    this.admin.getTeams().subscribe(
+      (res)=>{
+        this.teams = res;
+      },
+      (err)=>{
+        console.log(err);
+      }
+    )
   }
 
 }

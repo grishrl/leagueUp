@@ -31,6 +31,9 @@
                                 <mat-option [value]="1">1</mat-option>
                                 <mat-option [value]="2">2</mat-option>
                             </mat-select>
+                            <mat-error *ngIf="homeScoreControl.hasError('required')">
+                                Home Score is required
+                            </mat-error>
                         </mat-form-field>
                     </div>
                 </div>
@@ -53,6 +56,9 @@
                                 <mat-option [value]="1">1</mat-option>
                                 <mat-option [value]="2">2</mat-option>
                             </mat-select>
+                            <mat-error *ngIf="awayScoreControl.hasError('required')">
+                                Away Score is required
+                            </mat-error>
                         </mat-form-field>
                     </div>
                 </div>
@@ -62,14 +68,24 @@
             <div class="col" *ngIf="hideReplaySubmit()">
 
                 Select file*:
-                <input type="file" [formControl]="replay1Control" ngf accept=".StormReplay" [(file)]="replay1">
+                <mat-form-field>
+                    <input type="file" [formControl]="replay1Control" ngf accept=".StormReplay" [(file)]="replay1">
+                    <mat-error *ngIf="replay1Control.hasError('required')">
+                        Replay 1 is required
+                    </mat-error>
+                </mat-form-field>
                 <!-- <button (click)="parseFile(replay1)">Submit</button> -->
 
             </div>
             <div class="col" *ngIf="hideReplaySubmit()">
 
                 Select file*:
-                <input type="file" [formControl]="replay2Control" ngf accept=".StormReplay" [(file)]="replay2">
+                <mat-form-field>
+                    <input type="file" [formControl]="replay2Control" ngf accept=".StormReplay" [(file)]="replay2">
+                    <mat-error *ngIf="replay2Control.hasError('required')">
+                        Replay 2 is required
+                    </mat-error>
+                </mat-form-field>
                 <!-- <button (click)="parseFile(replay2)">Submit</button> -->
 
             </div>

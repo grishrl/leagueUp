@@ -94,7 +94,13 @@ export class CreateTeamComponent implements OnInit {
       this.nameContorl.setErrors({required:true});
       valid = false;
     }else{
-      this.nameContorl.setErrors(null);
+      let regEx = new RegExp(/[^A-Z0-9\s]/ig);
+      if(regEx.test(this.returnedProfile.teamName)){
+        this.nameContorl.setErrors({invalidCharacters:true});
+      }else{
+        this.nameContorl.setErrors(null);
+      }
+      
     }
     //validate looking for team:
     if (!this.returnBoolByPath(this.returnedProfile, 'lookingForMore')) {

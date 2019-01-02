@@ -31,7 +31,7 @@ import { TeamQuickViewComponent } from './admin/approve-member/team-quick-view/t
 import { ApproveMemberViewComponent } from './admin/approve-member/approve-member-view/approve-member-view.component';
 import { DialogOverviewExampleDialog } from './profile-edit/profile-edit.component';
 import { DeleteMemberComponent } from './admin/delete-member/delete-member.component';
-import { DeleteTeamComponent } from './admin/delete-team/delete-team.component';
+import { ManageSelectTeamComponent } from './admin/manage-team/manage-select-team.component';
 import { TeamSearchComponent } from './team-search/team-search.component';
 import { ChangeCaptainModalComponent } from './modal/change-captain-modal/change-captain-modal.component';
 import { ChangeCaptainComponent } from './admin/change-captain/change-captain.component';
@@ -54,6 +54,7 @@ import { AdminAclManagementComponent } from './admin/admin-acl-management/admin-
 import { UpdateRolesComponent } from './admin/admin-acl-management/update-roles/update-roles.component';
 import { StandingsViewComponent } from './standings-view/standings-view.component';
 import { SnackbarComponent } from './snackbar/snackbar.component';
+import { ManageTeamViewComponent } from './admin/manage-team/manage-team-view/manage-team-view.component';
 
 @NgModule({
   declarations: [
@@ -81,7 +82,7 @@ import { SnackbarComponent } from './snackbar/snackbar.component';
     ApproveMemberViewComponent,
     DialogOverviewExampleDialog,
     DeleteMemberComponent,
-    DeleteTeamComponent,
+    ManageSelectTeamComponent,
     TeamSearchComponent,
     ChangeCaptainModalComponent,
     ChangeCaptainComponent,
@@ -102,7 +103,8 @@ import { SnackbarComponent } from './snackbar/snackbar.component';
     AdminAclManagementComponent,
     UpdateRolesComponent,
     StandingsViewComponent,
-    SnackbarComponent
+    SnackbarComponent,
+    ManageTeamViewComponent
   ],
   entryComponents:[
     DialogOverviewExampleDialog,

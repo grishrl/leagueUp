@@ -93,7 +93,7 @@ export class Team {
     if(rolesNeeded!=null&&rolesNeeded!=undefined){
       this.rolesNeeded = rolesNeeded;
     }else{
-      this.rolesNeeded = { "tank": false, "assassin": false, "support": false, "offlane": false, "specialist": false };
+      this.rolesNeeded = { "tank": false, "meleeassassin": false, "rangedassassin": false, "support": false, "offlane": false, "flex": false };
     }
     if(timeZone!=null&&timeZone!=undefined){
       this.timeZone=timeZone;
@@ -151,8 +151,9 @@ interface atset {
 
 interface roles {
   tank: boolean,
-  assassin: boolean,
+  'meleeassassin': boolean,
+  'rangedassassin':boolean,
   offlane: boolean,
   support: boolean,
-  specialist: boolean
+  flex: boolean
 }

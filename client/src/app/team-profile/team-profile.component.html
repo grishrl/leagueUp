@@ -202,9 +202,10 @@
                     <section>
                         <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.tank" [disabled]="editOn">Tank</mat-checkbox>
                         <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.offlane" [disabled]="editOn">Offlane</mat-checkbox>
-                        <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.assassin" [disabled]="editOn">Assassin</mat-checkbox>
+                        <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.meleeassassin" [disabled]="editOn">Melee Assassin</mat-checkbox>
+                        <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.rangedassassin" [disabled]="editOn">Ranged Assassin</mat-checkbox>
                         <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.support" [disabled]="editOn">Support</mat-checkbox>
-                        <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.specialist" [disabled]="editOn">Specialist</mat-checkbox>
+                        <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.flex" [disabled]="editOn">Flex</mat-checkbox>
                     </section>
                 </div>
             </div>
@@ -334,6 +335,9 @@
                                 {{zone.text}}
                             </mat-option>
                         </mat-select>
+                        <mat-error *ngIf="timezoneControl.hasError('required')">
+                            Timezone is required
+                        </mat-error>
                     </mat-form-field>
                 </div>
             </div>

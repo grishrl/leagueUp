@@ -6,6 +6,12 @@
                 <div class="col">
                     <mat-form-field class="tp-FullWidth">
                         <input matInput placeholder="Team Name*" [formControl]="nameContorl" [(ngModel)]="returnedProfile.teamName">
+                        <mat-error *ngIf="nameContorl.hasError('required')">
+                            Team name is required
+                        </mat-error>
+                        <mat-error *ngIf="nameContorl.hasError('invalidCharacters')">
+                            Special characters are not allowed in team names
+                        </mat-error>
                     </mat-form-field>
                     <mat-slide-toggle [(ngModel)]="returnedProfile.lookingForMore">
                         Looking for More.
@@ -37,9 +43,10 @@
                     <section>
                         <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.tank">Tank</mat-checkbox>
                         <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.offlane">Offlane</mat-checkbox>
-                        <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.assassin">Assassin</mat-checkbox>
+                        <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.meleeassassin">Melee Assassin</mat-checkbox>
+                        <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.rangedassassin">Ranged Assassin</mat-checkbox>
                         <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.support">Support</mat-checkbox>
-                        <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.specialist">Specialist</mat-checkbox>
+                        <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.flex">Flex</mat-checkbox>
                     </section>
                 </div>
             </div>
@@ -164,6 +171,9 @@
                                 {{zone.text}}
                             </mat-option>
                         </mat-select>
+                        <mat-error *ngIf="timeZoneControl.hasError('required')">
+                            Timezone is required
+                        </mat-error>
                     </mat-form-field>
                 </div>
             </div>

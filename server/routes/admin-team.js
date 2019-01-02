@@ -11,7 +11,7 @@ const UserSub = require('../subroutines/user-subs');
 const passport = require("passport");
 const levelRestrict = require("../configs/admin-leveling");
 
-
+//returns the lists of users who are awaiting admin attention to complete the team join process
 router.get('/pendingMemberQueue', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.teamLevel, (req, res) => {
@@ -26,6 +26,7 @@ router.get('/pendingMemberQueue', passport.authenticate('jwt', {
     })
 });
 
+//removes the supplied member from the supplied team
 router.post('/team/removeMember', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.teamLevel, (req, res) => {
@@ -84,6 +85,8 @@ router.post('/team/removeMember', passport.authenticate('jwt', {
     )
 });
 
+
+//reassigns captain from the supplied team to the supplied teammember
 router.post('/reassignCaptain', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.teamLevel, (req, res) => {
@@ -126,6 +129,9 @@ router.post('/reassignCaptain', passport.authenticate('jwt', {
     })
 });
 
+
+//approves a pending team member queue, removes the item from the queue and adds the member to the team
+//updates the members profile to now be part of the team
 router.post('/approveMemberAdd', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.teamLevel, (req, res) => {
@@ -235,6 +241,9 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
     })
 });
 
+
+//deletes the supplied team,
+//removes all team information from users profiles
 router.post('/delete/team', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.teamLevel, (req, res) => {
@@ -252,6 +261,7 @@ router.post('/delete/team', passport.authenticate('jwt', {
     })
 });
 
+//Saves a supplied team
 router.post('/teamSave', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.teamLevel, (req, res) => {
@@ -386,6 +396,8 @@ router.post('/teamSave', passport.authenticate('jwt', {
     }
 });
 
+
+//calculates the resultant MMR from a pending member add for suplied memebers MMR and supplied team
 router.post('/resultantmmr', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.teamLevel, (req, res) => {
@@ -419,6 +431,8 @@ router.post('/resultantmmr', passport.authenticate('jwt', {
 
 });
 
+
+//refreshes the MMR of a supplied team, in case the team mmr may need to be updated
 router.post('/team/refreshMmr', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.teamLevel, (req, res) => {
@@ -459,7 +473,28 @@ router.post('/team/refreshMmr', passport.authenticate('jwt', {
             res.status(500).send(util.returnMessaging(path, 'Error finding team', err));
         }
     )
-})
+});
+
+
+//returns a list of all teams!
+router.get('/get/teams/all', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.teamLevel, (req, res) => {
+    const path = 'admin/get/teams/all';
+    Team.find().then(
+        (foundTeams) => {
+            if (foundTeams) {
+                res.status(200).send(util.returnMessaging(path, 'Found teams', false, foundTeams));
+            } else {
+                res.status(200).send(util.returnMessaging(path, 'No teams found', false));
+            }
+        },
+        (err) => {
+            res.status(500).send(util.returnMessaging(path, 'Error finding teams', err));
+        }
+    )
+
+});
 
 
 module.exports = router;

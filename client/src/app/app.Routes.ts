@@ -13,7 +13,7 @@ import { LogoutComponent } from "./logout/logout.component";
 import { CreateTeamComponent } from "./create-team/create-team.component";
 import { ApproveMemberComponent } from "./admin/approve-member/approve-member.component";
 import { DeleteMemberComponent } from "./admin/delete-member/delete-member.component";
-import { DeleteTeamComponent } from "./admin/delete-team/delete-team.component";
+import { ManageSelectTeamComponent } from "./admin/manage-team/manage-select-team.component";
 import { DivisionManagementComponent } from "./admin/division-management/division-management.component";
 import { SheduleViewComponent } from "./schedule/shedule-view/shedule-view.component";
 import { MatchScheduleComponent } from "./schedule/match-schedule/match-schedule.component";
@@ -25,6 +25,7 @@ import { MatchManagementComponent } from "./admin/match-management/match-managem
 import { MatchEditComponent } from "./admin/match-management/match-edit/match-edit.component";
 import { AdminAclManagementComponent } from './admin/admin-acl-management/admin-acl-management.component';
 import { UpdateRolesComponent } from "./admin/admin-acl-management/update-roles/update-roles.component";
+import { ManageTeamViewComponent } from './admin/manage-team/manage-team-view/manage-team-view.component';
 
 const APP_ROUTES: Routes = [
   { path: 'directory', component: DirectoryComponent},
@@ -41,7 +42,8 @@ const APP_ROUTES: Routes = [
   { path: 'blog/:id', component:BlogViewComponent },
   { path: '_admin/approveTeamQueue', component:ApproveMemberComponent },
   { path: '_admin/deleteUser', component:DeleteMemberComponent },
-  { path: '_admin/manageTeam', component:DeleteTeamComponent },
+  { path: '_admin/manageTeam', component:ManageSelectTeamComponent },
+  { path : '_admin/manageTeam/:id', component:ManageTeamViewComponent },
   { path: '_admin/divisionMgmt', component:DivisionManagementComponent },
   { path: '_admin/matchMgmt', component: MatchManagementComponent },
   { path: '_admin/matchMgmt/:id', component: MatchEditComponent },
