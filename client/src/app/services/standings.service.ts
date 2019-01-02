@@ -1,25 +1,21 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
+import { HttpServiceService } from './http-service.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StandingsService {
 
-  getStandings(div){
+  //accepts the divisionConcat and returns the standings of the division based on reported matches
+  getStandings(div:string){
     let url = 'standings/get/division';
     let payload = {
       division:div
     };
-    return this.http.post(url, payload).pipe(
-      map(
-        res => {
-          return res['returnObject'];
-        }
-      )
-    )
+    return this.httpService.httpPost(url, payload);
   }
 
-  constructor(private http: HttpClient) { }
+  constructor(private httpService: HttpServiceService) { }
 }

@@ -1,74 +1,58 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { map } from 'rxjs/operators'
+import { HttpServiceService } from './http-service.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ScheduleService {
 
-  constructor(private http:HttpClient) { }
+  constructor(private httpService: HttpServiceService) { }
 
+  //returns all generated matches
   getAllMatches(){
     let url = 'schedule/get/matches/all';
     let payload = {
 
     };
-    return this.http.post(url,payload).pipe(map(
-      res => {
-        return res['returnObject'];
-      }
-    ))
+    return this.httpService.httpPost(url, payload);
   }
 
-  getScheduleMatches(season, division, round){  
-    // let url = 'http://localhost:3000/schedule/getSchedule';
+  //returns matches that match criteria of season, division, round
+  getScheduleMatches(season, division:string, round:number){  
     let url = 'schedule/get/matches';
     let payload = {
       'season':season,
       'division':division,
       'round':round
     };
-    return this.http.post(url, payload).pipe( map(
-      res=>{
-        return res['returnObject'];
-      }
-    ) )
-
+    return this.httpService.httpPost(url, payload);
   };
 
-  getTeamSchedules(season, team){
-    // let url = 'http://localhost:3000/schedule/getTeamMatches';
+  //returns matches that match criteria of provided season and team
+  getTeamSchedules(season:number, team:string){
     let url = 'schedule/get/matches/team';
     team = team.toLowerCase();
     let payload = {
       'season':season,
       'team':team
     };
-    return this.http.post(url, payload).pipe(map(
-      res=>{
-        return res['returnObject'];
-      }
-    ));
+    return this.httpService.httpPost(url, payload);
   }
 
-  getMatchInfo(season, matchId){
-    // let url ="http://localhost:3000/schedule/getMatch";
+  //returns a match given the matchId and season
+  getMatchInfo(season, matchId:string){
     let url = 'schedule/get/match';
     let payload={
       "season":season,
       "matchId":matchId
     }
-    return this.http.post(url, payload).pipe(
-      map(
-        res=>{
-          return res['returnObject'];
-        }
-      )
-    )
+    return this.httpService.httpPost(url, payload);
   }
 
-  scheduleMatchTime(matchId, scheduledStartTime, scheduledEndTime){
+  //accepts match id and two dates, schedules the provided match stard, and end times
+  scheduleMatchTime(matchId:string, scheduledStartTime:number, scheduledEndTime:number){
     // let url = 'http://localhost:3000/schedule/setMatchTime';
     let url = 'schedule/update/match/time';
   
@@ -77,15 +61,19 @@ export class ScheduleService {
       "scheduledStartTime": scheduledStartTime,
       "scheduledEndTime":scheduledEndTime
     }
-
-    return this.http.post(url, payload).pipe( map(
-      res=>{
-        return res['returnObject'];
-      }
-    ))
-
+    return this.httpService.httpPost(url, payload);
   }
 
+  //accepts an object that contains elements for reporting the match outcome:
+  /*
+    {
+      replay1:File,
+      replay2:File,
+      awayScore:number,
+      homeScore:number,
+      matchId:string
+    }
+  */
   reportMatch(payload){
     let url = 'schedule/report/match';
     let input = new FormData();
@@ -95,20 +83,17 @@ export class ScheduleService {
       input.append(element, payload[element]);
     });
 
-    return this.http.post(url, input).pipe(map(
-      res => {
-        return res;
-      }
-    ))
+    return this.httpService.httpPost(url, input);
   }
 
   // /match/add / caster
-  addCaster(payload) {
+  addCaster(matchId:string, casterName:string, casterUrl:string) {
+    let payload = {
+      matchId:matchId,
+      casterName:casterName,
+      casterUrl:casterUrl
+    }
     let url = 'schedule/match/add/caster';
-    return this.http.post(url, payload).pipe(map(
-      res => {
-        return res;
-      }
-    ));
+    return this.httpService.httpPost(url, payload);
   }
 }

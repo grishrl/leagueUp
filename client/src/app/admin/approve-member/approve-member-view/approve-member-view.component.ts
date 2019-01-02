@@ -56,13 +56,7 @@ export class ApproveMemberViewComponent implements OnInit {
 
 
   actionAccount(act){
-    
-    let answer = {
-      "teamName":this.viewTeam.teamName,
-      "member":this.player.displayName,
-      "approved":act
-    };
-    this.admin.queuePost(answer).subscribe( res =>{
+    this.admin.queuePost(this.viewTeam.teamName, this.player.displayName, act).subscribe( res =>{
       this.accountActioner();
     }, err=>{
       console.log(err);

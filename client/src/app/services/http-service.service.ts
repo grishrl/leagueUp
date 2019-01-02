@@ -32,7 +32,10 @@ export class HttpServiceService {
    });
     return this.http.get(url).pipe(
       map(
-        res=>{ return res['returnObject']}
+        res=>{ 
+          console.log(res);
+          return res['returnObject']
+        }
       )
     )
   }

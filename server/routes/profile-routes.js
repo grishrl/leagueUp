@@ -5,13 +5,14 @@ const TeamSub = require('../subroutines/team-subs');
 const passport = require("passport");
 
 router.get('/get', (req, res) => {
+    const path = '/user/get';
     var user = req.query.user;
     user = decodeURIComponent(user);
     User.findOne({ displayName: user }).lean().then(
         (foundUser) => {
             if (foundUser) {
                 var temp = removeUneeded(foundUser);
-                res.status(200).send(temp);
+                res.status(200).send(util.returnMessaging(path, 'User Found', false, temp));
             } else {
                 res.status(400).send({ "message": "User not found" });
             }

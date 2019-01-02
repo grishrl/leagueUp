@@ -11,7 +11,7 @@ export class StandingsViewComponent implements OnInit {
   constructor(private standingsService:StandingsService) { }
 
   div:any;
-  standings:any[];
+  standings:any[]=[];
   @Input() set division(div){
     if(div!=null&&div!=undefined){
       this.div = div;

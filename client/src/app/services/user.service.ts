@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { map, tap } from 'rxjs/operators';
 import { Profile } from  '../classes/profile.class';
 import { Observable } from 'rxjs';
+import { HttpServiceService } from './http-service.service';
 
 
 
@@ -12,31 +13,27 @@ import { Observable } from 'rxjs';
 
 export class UserService {
 
+  //gets the user profile to match
   getUser(id): Observable<Profile>{
     let encodedID = encodeURIComponent(id);
-    let url = 'user/get?user=' + encodedID;
-
-    return this.http.get<Profile>(url).pipe(
-      map((res) => {
-        return res;
-      })
-    );
-    
+    let url = 'user/get';
+    let params = [{user: encodedID}];
+    return this.httpService.httpGet(url, params);    
   }
 
+  //sends the information to the outreach route
   emailOutreach(email){
     let url = '/outreach/invite';
     let payload = {
       userEmail:email
     }
-    return this.http.post(url, payload).pipe(
-      map(
-        res=>{ return res;}
-      )
-    )
+    return this.httpService.httpPost(url, payload);
+
   }
 
+  //searchs for users
   userSearch(id, type?):Observable<any>{
+
     let allUrl = 'search/user';
     let unTeamedUrl = '/search/user/unteamed';
     let url;
@@ -52,59 +49,51 @@ export class UserService {
    }else if( type == 'all'){
      url = allUrl;
    }
-   console.log(type, url);
-   return this.http.post<any>(url, id).pipe(map(res=>{
-     return res.returnObject;
-   }))
+
+   return this.httpService.httpPost(url, id);   
+
   }
 
+  //saves user profile
   saveUser(user):Observable<any>{
     let url = "user/save";
-
-    return this.http.post(url, user).pipe(
-      tap((ret)=>{
-        if(ret){
-          return ret.updated;
-        }else{  
-          return false;
-        }
-      }));
+    return this.httpService.httpPost(url, user);
   }
 
+  //deletes the user
   deleteUser(){
     let url = "user/delete";
-
-    return this.http.get(url).pipe(
-      map( ret => {return ret;} )
-    )
+    return this.httpService.httpGet(url,[]);
   }
 
+  //captures and sends created user and the invite token they used when logging in;
+  //this clears the pending outreach in queue
   outreachResponse(token, user):Observable<any>{
     let url = 'outreach/inviteResponseComplete';
 
     if(typeof token != 'object'){
       token = { "referral":token , "user":user };
     }
-    return this.http.post(url, token)
+    return this.httpService.httpPost(url, token);
   }
 
+  //replaces URL safe character # with _ for URLs for usernames
   routeFriendlyUsername(username): string {
     if(username!=null&&username!=undefined){
       return username.replace('#', '_');
     }else{
       return '';
     }
-    
   }
 
+  //turns any user name that has been sanatised for URL back to the real user name
   realUserName(username): string {
     if (username != null && username != undefined) {
       return username.replace('_', '#');
     }else{
       return '';
     }
-    
   }
 
-  constructor(private http: HttpClient) { }
+  constructor(private httpService: HttpServiceService) { }
 }

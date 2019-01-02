@@ -166,7 +166,7 @@ this.timezoneControl.enable();
              this.user.saveUser(this.returnedProfile).subscribe((res) => {
                if (res) {
                  this.editOn = true;
-                 this.hotsLogsFormControl.disable()
+                 this.formControlledDisable();
                } else {
                  alert("error");
                }

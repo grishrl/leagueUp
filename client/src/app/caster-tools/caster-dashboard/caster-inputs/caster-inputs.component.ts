@@ -39,14 +39,13 @@ export class CasterInputsComponent implements OnInit {
   }
 
   saveCasterInfo(casterName, casterUrl) {
-    let payload = {};
+    let matchId;
+
     if (this._id != null && this._id != undefined){
-      payload['matchId'] = this._id;
+      matchId = this._id;
       if (casterName != null && casterName != undefined) {
-        payload['casterName'] = casterName;
         if (casterUrl != null && casterUrl != undefined) {
-          payload['casterUrl'] = casterUrl;
-          this.scheduleService.addCaster(payload).subscribe(
+          this.scheduleService.addCaster(matchId, casterName, casterUrl).subscribe(
             (res)=>{
               
             },

@@ -32,6 +32,7 @@ router.post('/team/removeMember', passport.authenticate('jwt', {
     const path = '/admin/team/removeMember';
     let teamName = req.body.teamName;
     let payloadUser = req.body.removeUser;
+    teamName = teamName.toLowerCase();
     Team.findOne({ teamName_lower: teamName }).then(
         (foundTeam) => {
             if (foundTeam) {
@@ -128,6 +129,7 @@ router.post('/reassignCaptain', passport.authenticate('jwt', {
 router.post('/approveMemberAdd', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.teamLevel, (req, res) => {
+    const path = '/admin/approveMemberAdd';
     var teamName = req.body.teamName;
     var member = req.body.member;
     var approved = req.body.approved;

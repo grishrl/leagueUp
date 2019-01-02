@@ -3,110 +3,79 @@ import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { HttpServiceService } from './http-service.service';
+import { Team } from '../classes/team.class';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TeamService {
 
-  getTeam(name):Observable<any>{
+  //returns requested team
+  getTeam(name:string):Observable<any>{
     let encodededID = encodeURIComponent(this.realTeamName(name));
-    // let url = 'http://localhost:3000/team/get?team='+encodededID;
-    let url = 'team/get?team=' + encodededID;
-    return this.http.get<any>(url)
-    .pipe(
-      map((res)=>{
-       return res.returnObject;
-      }
-      )
-    );
+    let url = 'team/get';
+    let params = [{team:encodededID}];
+    return this.httpService.httpGet(url, params);
   };
 
+  //retuns teams from an array of team names
   getTeams(names){
-    // let url = 'http://localhost:3000/team/getTeams';
     let url = 'team/getTeams';
     let payload = {teams:names}
-    return this.http.post(url, payload).pipe(
-      map(
-        res=>{
-          return res['returnObject'];
-        }
-      )
-    )
+    return this.httpService.httpPost(url, payload)
   }
 
-  changeCaptain(team, user){
-    // let url = 'http://localhost:3000/team/reassignCaptain';
+  //changes the teams captain to passed user
+  changeCaptain(team:string, user:string){
     let url = 'team/reassignCaptain';
     team = team.toLowerCase();
     let payload = {
       teamName: team,
       username:user
     }
-    return this.http.post(url, payload).pipe(
-      map( res=>{
-        return res['returnObject'];
-      })
-    )
+    return this.httpService.httpPost(url, payload);
   }
 
-  deleteTeam(team){
-    // let url = 'http://localhost:3000/team/delete';
+  //deletes the passed team
+  deleteTeam(team:string){
     let url = 'team/delete';
     team = team.toLowerCase();
     let payload = {teamName:team};
-    return this.http.post(url, payload).pipe(
-      map( res =>{
-        return res['returnObject'];
-      })
-    )
+    return this.httpService.httpPost(url, payload);
   }
 
-  teamSearch(team){
-    // let url = 'http://localhost:3000/search/team';
+  //searches team via provided string
+  teamSearch(team:string){
     let url = 'search/team';
     team = team.toLowerCase();
     let payload = {teamName:team};
-    return this.http.post(url, payload).pipe(
-      map( res=>{
-        return res['returnObject'];
-      })
-    )
+    return this.httpService.httpPost(url, payload);
   }
 
-  createTeam(team){
-    // let url = 'http://localhost:3000/team/create';
+  //create team
+  createTeam(team:Team){
     let url = 'team/create';
-    return this.http.post<any>(url, team).pipe(
-      map( res=>{
-        return res.returnObject;
-      } )
-    )
+    return this.httpService.httpPost(url, team);
   }
 
-  saveTeam(team): Observable<any>{
-    // let url = 'http://localhost:3000/team/save';
+  //saves any changes to team info
+  saveTeam(team:Team): Observable<any>{
     let url = 'team/save';
-    return this.http.post<any>(url, team).pipe(
-      map( (res)=>{
-        return res;
-      })
-    );
+    return this.httpService.httpPost(url, team);
   }
 
-  removeUser(user, team){
+  //removes user from team members list
+  removeUser(user:string, team:string){
     let url = '/team/removeMember';
     let payload = {
       remove: user,
       teamName: team
     }
-    return this.http.post<any>(url, payload).pipe(
-      map((res) => {
-        return res;
-      })
-    )
+    return this.httpService.httpPost(url, payload);
   }
 
+  //adds user to perscribed team
   addUser(user, team){
     let postData = {}
     if(typeof user!='object'){
@@ -115,27 +84,18 @@ export class TeamService {
     }else{
       postData = user;
     }
-    // let url = 'http://localhost:3000/team/addMember';
     let url = 'team/addMember';
-    return this.http.post<any>(url, postData);
-
+    return this.httpService.httpPost(url, postData);
   }
 
-  // cleanUpLogoUrl(url):string{
-  //   if(url != null && url != undefined){
-  //     let index = url.indexOf('assets');
-  //     let clean = url.slice(index, url.length);
-  //     return clean;
-  //   }else{
-  //     return '';
-  //   }
-  // }
 
+  //retuns a formatted string that includes the requisite info to retrieve an image from s3 bucket
   imageFQDN(img) {
     let imgFQDN = 'https://s3.amazonaws.com/' + environment.s3bucketImages + '/';
     return imgFQDN += img;
   }
 
+  //returns a route friendly URL name for a team, removing any spaces
   routeFriendlyTeamName(teamname):string{
     var pattern = ' ';
     var re = new RegExp(pattern, "g");
@@ -146,6 +106,7 @@ export class TeamService {
     }
   }
 
+  //returns team name re formatted with spaces
   realTeamName(teamname):string{
     var pattern = '_';
     var re = new RegExp(pattern, "g");
@@ -157,5 +118,5 @@ export class TeamService {
     
   }
 
-  constructor(private http: HttpClient) { }
+  constructor(private httpService: HttpServiceService, private http: HttpClient) { }
 }
