@@ -12,35 +12,38 @@ export class RemoveTeamComponent implements OnInit {
 
   constructor(private adminService:AdminService, private router: Router) { }
 
+  //component properties
   divisions:any = [];
+  selectedDiv = null;
+  selectedDivision
+  selectedTeams: any = [];
 
   ngOnInit() {
+    //grab division list for display
     this.adminService.getDivisionList().subscribe((res) => {
       this.divisions = res;
     }, (err) => {
       console.log(err);
     })
   }
-  
-  selectedDiv = null;
-  selectedDivision
+
+  //Assings the local property selectedDiv to a copy of the division chose.
   selected(){
     this.selectedDiv = Object.assign({},this.selectedDivision);
   }
 
-
-  selectedTeams: any = [];
+  
+  //toggles provided team into or out of the selectedTeams array
   teamSelected(team) {
-    //if team is in the array, remove and deactivate it
-    // console.log('clicked')
+    //if team is in the array, remove it
     let index = indexOf(this.selectedTeams, team)
     if (index > -1) {
       this.selectedTeams.splice(index, 1);
-    } else {
+    } else { //else push the team into the array
       this.selectedTeams.push(team);
     }
-    // console.log(this.selectedTeams);
   }
+  //function accepts team and returns true if it is in the selected array - conditional styling for view
   isSelected(team): boolean {
     let index = indexOf(this.selectedTeams, team)
     if (index > -1) {
@@ -50,13 +53,11 @@ export class RemoveTeamComponent implements OnInit {
     }
   }
 
+  //calls the admin service to remove the selected teams from the selected divison
   removeTeams(){
     this.adminService.removeTeams(this.selectedTeams, this.selectedDiv.divisionConcat).subscribe( (res)=>{
-      //TODO : see if anything needs to be done here
-      console.log(res);
       this.selectedDiv = null;
       this.selectedTeams = [];
-      // this.router.navigate(['_admin/divisonMgmt']);
     }, (err)=>{
       console.log(err);
     })

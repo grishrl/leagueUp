@@ -9,30 +9,49 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./team-schedule.component.css']
 })
 export class TeamScheduleComponent implements OnInit {
-  recTeam
+  
+  //component properties
+  recTeam  //holds id received in the url route
+  noMatches: boolean; // set to true if there are no matches returned or false if there are, used for displaying certain messages
+  rounds: any //local variable to parse received team matches into
+  
   constructor(private Auth: AuthService, private route: ActivatedRoute, private scheduleService:ScheduleService) {
+    //get the ID from the route
     if (this.route.snapshot.params['id']) {
       this.recTeam = this.route.snapshot.params['id'];
     }
    }
-  noMatches:boolean;
-  rounds:any
+
+
   ngOnInit() {
+    //get the team from the route, if it that is not present get it from the auth service
     let getTeam;
     if(this.recTeam){
       getTeam = this.recTeam;
     }else{
       getTeam = this.Auth.getTeam();
     }
+    
     //TODO: remove hard coded season 6!!!
     this.scheduleService.getTeamSchedules(6, getTeam).subscribe(
       res=>{
         let matches = res;
+        //set the nomatches state
         if (matches.length == 0 ){
           this.noMatches = true;
         }else{
           this.noMatches = false;
         }
+
+        //build out the rounds object:
+        /*
+        rounds = { 
+          'roundNubmer':[
+                          {matchObject},
+                          {matchObject}
+                        ] 
+                      }
+        */
         for(var i = 1; i<=matches.length; i++){
           if(this.rounds == null || this.rounds == undefined){
             this.rounds = {};
@@ -45,7 +64,6 @@ export class TeamScheduleComponent implements OnInit {
               this.rounds[i.toString()].push(match);
             }
           });
-          
         }
         this.rounds;
       },
@@ -63,6 +81,8 @@ export class TeamScheduleComponent implements OnInit {
       }
   }
 
+
+  //hides rows if the team has a bye week, no need for scheduling
   byeWeekHide(match){
     //if this is a bye week don't show
     if (!this.returnBoolByPath(match, 'away.teamName') || !this.returnBoolByPath(match, 'home.teamName')) {

@@ -190,7 +190,6 @@ this.timezoneControl.enable();
          });
        }
      }else{
-       //todo: do something?
        console.log('the data was invalid we cant save');
      }
    }
@@ -216,7 +215,6 @@ this.timezoneControl.enable();
     }
 
     //validate the hero leauge information
-    //TODO: Check that this is in the validation!
     if (this.isNullOrEmpty(this.returnedProfile.hlRankMetal) && this.isNullOrEmpty(this.returnedProfile.hlRankDivision)){
       valid = false;
     }

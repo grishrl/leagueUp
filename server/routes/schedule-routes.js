@@ -127,7 +127,6 @@ router.post('/get/matches/team', passport.authenticate('jwt', {
 })
 
 
-//TODO: test new scheduling route!
 router.post('/update/match/time', passport.authenticate('jwt', {
     session: false
 }), (req, res) => {

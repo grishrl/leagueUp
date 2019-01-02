@@ -20,8 +20,32 @@ function updateTeamNameDivision(oldteamName, newteamName) {
     })
 }
 
+function removeTeamFromDivision(team) {
+    Division.findOne({
+        teams: team
+    }).then(
+        (foundDiv) => {
+            if (foundDiv) {
+                let ind = foundDiv.teams.indexOf(team);
+                foundDiv.teams.splice(ind, 1);
+                foundDiv.save().then(saved => {
+                    console.log('team removed from division');
+                }, err => {
+                    console.log('error saving div');
+                })
+            } else {
+                console.log('Error finding div'); //static logging
+            }
+        },
+        (err) => {
+            console.log('error finding division');
+        }
+    )
+}
+
 
 
 module.exports = {
-    updateTeamNameDivision: updateTeamNameDivision
+    updateTeamNameDivision: updateTeamNameDivision,
+    removeTeamFromDivision: removeTeamFromDivision
 }
