@@ -64,11 +64,11 @@ router.post('/team/removeMember', passport.authenticate('jwt', {
                         if (savedTeam) {
                             teamSub.updateTeamMmr(foundTeam);
                             res.status(200).send(
-                                util.returnMessaging(path, "users removed from team", false, savedTeam)
+                                util.returnMessaging(path, "Users removed from team", false, savedTeam)
                             );
                         } else {
                             res.status(400).send(
-                                util.returnMessaging(path, "users not removed from team", false, savedTeam));
+                                util.returnMessaging(path, "Users not removed from team", false, savedTeam));
                         }
                     }, (err) => {
                         res.status(400).send(util.returnMessaging(path, "Unable to save team", err));
@@ -308,7 +308,7 @@ router.post('/teamSave', passport.authenticate('jwt', {
 
                             originalTeam.save().then((savedTeam) => {
                                 var message = "";
-                                message += "Team updated!";
+                                message += "Team updated";
                                 res.status(200).send(util.returnMessaging(path, message, false, savedTeam));
 
                                 //now we need subs to remove all instances of the old team name and replace it with
@@ -403,12 +403,12 @@ router.post('/resultantmmr', passport.authenticate('jwt', {
             });
             teamSub.resultantMMR(userMmr, members).then((processed) => {
                 if (processed) {
-                    res.status(200).send(util.returnMessaging(path, "Team mmr calculated.", false, { resultantMmr: processed }));
+                    res.status(200).send(util.returnMessaging(path, "Team MMR calculated.", false, { resultantMmr: processed }));
                 } else {
-                    res.status(400).send(util.returnMessaging(path, "Team mmr not calculated."));
+                    res.status(400).send(util.returnMessaging(path, "Team MMR not calculated."));
                 }
             }, (err) => {
-                res.status(400).send(util.returnMessaging(path, "Team mmr not calculated.", err));
+                res.status(400).send(util.returnMessaging(path, "Team MMR not calculated.", err));
             })
         } else {
             res.status(400).send(util.returnMessaging(path, "Team not found"));

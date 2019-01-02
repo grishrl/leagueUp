@@ -27,7 +27,7 @@ export class UserService {
     let payload = {
       userEmail:email
     }
-    return this.httpService.httpPost(url, payload);
+    return this.httpService.httpPost(url, payload, true);
 
   }
 
@@ -57,13 +57,13 @@ export class UserService {
   //saves user profile
   saveUser(user):Observable<any>{
     let url = "user/save";
-    return this.httpService.httpPost(url, user);
+    return this.httpService.httpPost(url, user, true);
   }
 
   //deletes the user
   deleteUser(){
     let url = "user/delete";
-    return this.httpService.httpGet(url,[]);
+    return this.httpService.httpGet(url,[], true);
   }
 
   //captures and sends created user and the invite token they used when logging in;

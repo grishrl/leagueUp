@@ -110,7 +110,7 @@ router.post('/delete', passport.authenticate('jwt', {
     }).then((deletedTeam) => {
         if (deletedTeam) {
             UserSub.clearUsersTeam(deletedTeam.teamMembers);
-            res.status(200).send(util.returnMessaging(path, 'Team has been deleted!', false, false));
+            res.status(200).send(util.returnMessaging(path, 'Team has been deleted', false, false));
         } else {
             res.status(500).send(util.returnMessaging(path, 'Team was not found for deletion'));
         }
@@ -422,7 +422,7 @@ router.post('/removeMember', passport.authenticate('jwt', {
                 if (savedTeam) {
                     TeamSub.updateTeamMmr(foundTeam);
                     res.status(200).send(
-                        util.returnMessaging(path, "users removed from team", false, savedTeam)
+                        util.returnMessaging(path, "Users removed from team", false, savedTeam)
                     );
                 } else {
                     res.status(400).send(
@@ -500,7 +500,7 @@ router.post('/uploadLogo', passport.authenticate('jwt', {
                         foundTeam.logo = uploadedFileName;
                         foundTeam.save().then((savedTeam) => {
                             if (savedTeam) {
-                                res.status(200).send(util.returnMessaging(path, "File uploaded!", false, savedTeam));
+                                res.status(200).send(util.returnMessaging(path, "File uploaded", false, savedTeam));
                             }
                         }, (err) => {
 

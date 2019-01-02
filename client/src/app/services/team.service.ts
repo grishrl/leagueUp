@@ -34,7 +34,7 @@ export class TeamService {
       teamName: team,
       username:user
     }
-    return this.httpService.httpPost(url, payload);
+    return this.httpService.httpPost(url, payload, true);
   }
 
   //deletes the passed team
@@ -42,7 +42,7 @@ export class TeamService {
     let url = 'team/delete';
     team = team.toLowerCase();
     let payload = {teamName:team};
-    return this.httpService.httpPost(url, payload);
+    return this.httpService.httpPost(url, payload, true);
   }
 
   //searches team via provided string
@@ -56,13 +56,13 @@ export class TeamService {
   //create team
   createTeam(team:Team){
     let url = 'team/create';
-    return this.httpService.httpPost(url, team);
+    return this.httpService.httpPost(url, team, true);
   }
 
   //saves any changes to team info
   saveTeam(team:Team): Observable<any>{
     let url = 'team/save';
-    return this.httpService.httpPost(url, team);
+    return this.httpService.httpPost(url, team, true);
   }
 
   //removes user from team members list
@@ -72,7 +72,7 @@ export class TeamService {
       remove: user,
       teamName: team
     }
-    return this.httpService.httpPost(url, payload);
+    return this.httpService.httpPost(url, payload, true);
   }
 
   //adds user to perscribed team
@@ -85,7 +85,12 @@ export class TeamService {
       postData = user;
     }
     let url = 'team/addMember';
-    return this.httpService.httpPost(url, postData);
+    return this.httpService.httpPost(url, postData, true);
+  }
+
+  logoUpload(imgInput){
+    let url = 'team/uploadLogo';
+    return this.httpService.httpPost(url, imgInput, true);
   }
 
 

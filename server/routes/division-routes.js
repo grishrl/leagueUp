@@ -10,9 +10,9 @@ router.get('/get', (req, res) => {
     Division.findOne({
         divisionConcat: divisionName
     }).then((foundDiv) => {
-        res.status(200).send(util.returnMessaging(path, 'Return division info.', false, foundDiv));
+        res.status(200).send(util.returnMessaging(path, 'Return division info', false, foundDiv));
     }, (err) => {
-        res.status(500).send(util.returnMessaging(path, 'Error finding division.', err));
+        res.status(500).send(util.returnMessaging(path, 'Error finding division', err));
     });
 });
 

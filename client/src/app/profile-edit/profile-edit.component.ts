@@ -11,6 +11,7 @@ import { merge } from 'lodash';
 import { HotsLogsService } from '../services/hots-logs.service';
 import { Router } from '@angular/router';
 import { map, catchError } from 'rxjs/operators';
+import { NotificationService } from '../services/notification.service';
 
 @NgModule({
   imports:[
@@ -25,7 +26,7 @@ import { map, catchError } from 'rxjs/operators';
 })
 export class ProfileEditComponent implements OnInit {
 
-  constructor(public timezone: TimezoneService, private user: UserService, public auth: AuthService, private router: Router, private route: ActivatedRoute, private hotsLogsService: HotsLogsService, public dialog: MatDialog) {
+  constructor(private notificationService:NotificationService, public timezone: TimezoneService, private user: UserService, public auth: AuthService, private router: Router, private route: ActivatedRoute, private hotsLogsService: HotsLogsService, public dialog: MatDialog) {
     this.displayName = user.realUserName(this.route.snapshot.params['id']);
   }
 
@@ -160,6 +161,7 @@ this.timezoneControl.enable();
    save(){
      if(this.validate()){
        if (!this.isNullOrEmpty(this.returnedProfile.hotsLogsURL)){
+
          this.hotsLogsService.getMMR(this.returnedProfile.hotsLogsURL).subscribe(res => {
            if (res != 'error') {
              this.returnedProfile.averageMmr = res;

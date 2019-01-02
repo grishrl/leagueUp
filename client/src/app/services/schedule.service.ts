@@ -61,7 +61,7 @@ export class ScheduleService {
       "scheduledStartTime": scheduledStartTime,
       "scheduledEndTime":scheduledEndTime
     }
-    return this.httpService.httpPost(url, payload);
+    return this.httpService.httpPost(url, payload, true);
   }
 
   //accepts an object that contains elements for reporting the match outcome:
@@ -83,7 +83,7 @@ export class ScheduleService {
       input.append(element, payload[element]);
     });
 
-    return this.httpService.httpPost(url, input);
+    return this.httpService.httpPost(url, input, true);
   }
 
   // /match/add / caster
@@ -94,6 +94,6 @@ export class ScheduleService {
       casterUrl:casterUrl
     }
     let url = 'schedule/match/add/caster';
-    return this.httpService.httpPost(url, payload);
+    return this.httpService.httpPost(url, payload, true);
   }
 }

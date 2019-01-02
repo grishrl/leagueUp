@@ -53,6 +53,7 @@ import { MatchManagementComponent } from './admin/match-management/match-managem
 import { AdminAclManagementComponent } from './admin/admin-acl-management/admin-acl-management.component';
 import { UpdateRolesComponent } from './admin/admin-acl-management/update-roles/update-roles.component';
 import { StandingsViewComponent } from './standings-view/standings-view.component';
+import { SnackbarComponent } from './snackbar/snackbar.component';
 
 @NgModule({
   declarations: [
@@ -100,7 +101,8 @@ import { StandingsViewComponent } from './standings-view/standings-view.componen
     MatchEditComponent,
     AdminAclManagementComponent,
     UpdateRolesComponent,
-    StandingsViewComponent
+    StandingsViewComponent,
+    SnackbarComponent
   ],
   entryComponents:[
     DialogOverviewExampleDialog,

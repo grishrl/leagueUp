@@ -427,7 +427,7 @@ router.post('/generate/schedules', passport.authenticate('jwt', {
     scheduleGenerator.generateSeason(season).then((process) => {
         if (process) {
             scheduleGenerator.generateRoundRobinSchedule(season);
-            res.status(200).send(util.returnMessaging(path, 'Schedules generated!', false));
+            res.status(200).send(util.returnMessaging(path, 'Schedules generated', false));
         } else {
             res.status(500).send(util.returnMessaging(path, 'Error occured in schedule generator'));
         }

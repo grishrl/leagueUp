@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { CroppieOptions } from 'croppie';
 import { NgxCroppieComponent } from 'ngx-croppie';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { TeamService } from '../services/team.service';
 
 @Component({
   selector: 'app-image-upload',
@@ -44,7 +44,7 @@ export class ImageUploadComponent implements OnInit {
   currentImage: string;
   croppieImage: string;
 
-  constructor(private http: HttpClient){
+  constructor(private teamService:TeamService){
 
   }
 
@@ -90,20 +90,19 @@ export class ImageUploadComponent implements OnInit {
   }
 
   saveImageFromCroppie() {
-    // let url = 'http://localhost:3000/team/uploadLogo';
-    let url = 'team/uploadLogo';
     
     let input = {
       logo: this.croppieImage,
       teamName: this._teamName
     }
 
-    this.http.post(url, input).subscribe(res=>{
+    this.teamService.logoUpload(input).subscribe(res=>{
       this.currentImage = this.croppieImage;
       this.croppieImage = null;
       this.editClicked = true;
-    }, err=>{
-    })
+    },(err)=>{
+      console.log(err);
+    });
    
   }
 
