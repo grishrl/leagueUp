@@ -10,15 +10,9 @@ import { AdminService } from 'src/app/services/admin.service';
 })
 export class MatchEditComponent implements OnInit {
 
+  //component properties
   matchId;
-  
-  constructor(private route: ActivatedRoute, private scheduleService: ScheduleService, private adminService: AdminService) { 
-    if (this.route.snapshot.params['id']) {
-      this.matchId = this.route.snapshot.params['id'];
-    }
-  }
   times: any[] = [];
-  
   match: any = {
     home: {
       teamName: '',
@@ -30,12 +24,26 @@ export class MatchEditComponent implements OnInit {
     },
     casterName: null,
     casterUrl: null
-  };
+  }; //match prototype
+  homeScore: number;
+  awayScore: number;
+  suffix;
+  friendlyTime;
+  friendlyDate;
+  amPm = ['PM', 'AM'];
+
+  
+  constructor(private route: ActivatedRoute, private scheduleService: ScheduleService, private adminService: AdminService) { 
+    if (this.route.snapshot.params['id']) {
+      this.matchId = this.route.snapshot.params['id'];
+    }
+  }
+  
+
 
 
   ngOnInit() {
     this.scheduleService.getMatchInfo(6, this.matchId).subscribe(res=>{
-
       this.match = res;
       if (this.match.away.score || this.match.home.score) {
         this.homeScore = this.match.home.score;
@@ -46,7 +54,6 @@ export class MatchEditComponent implements OnInit {
       }else{
         this.backwardsCompatTime(this.match.scheduledTime.startTime)
       }
-      console.log('this.match ',this.match)
     }, err=>{
       console.log(err);
     })
@@ -62,12 +69,7 @@ export class MatchEditComponent implements OnInit {
     }
   }
 
-
-  homeScore: number;
-  awayScore: number;
-
   scoreSelected(changed) {
-    console.log(changed, this.homeScore, this.awayScore);
     if (changed == 'home') {
       if (this.homeScore == 2) {
         this.awayScore = 0;
@@ -87,15 +89,7 @@ export class MatchEditComponent implements OnInit {
     }
   }
 
-  suffix;
-  friendlyTime;
-  friendlyDate;
-
-  amPm = ['PM', 'AM'];
-
-
   backwardsCompatTime(msDate){
-    console.log('mstime ', msDate);
     let time = new Date(parseInt(msDate));
     this.friendlyDate = time;
     this.suffix = 'AM';
@@ -108,7 +102,7 @@ export class MatchEditComponent implements OnInit {
 
     let min = time.getMinutes();
     let minStr;
-    console.log('min ', min);
+
     if (min == 0) {
       minStr = '00';
     } else {
@@ -121,7 +115,6 @@ export class MatchEditComponent implements OnInit {
 
   saveMatch(match){
     if(this.friendlyDate && this.friendlyTime){
-      console.log(this.friendlyDate);
       let years = this.friendlyDate.getFullYear();
       let month = this.friendlyDate.getMonth();
       let day = this.friendlyDate.getDate();
@@ -132,7 +125,6 @@ export class MatchEditComponent implements OnInit {
         colonSplit[0] = parseInt(colonSplit[0]);
         colonSplit[0] += 12;
       }
-      console.log(colonSplit);
       let setDate = new Date();
       setDate.setFullYear(years);
       setDate.setMonth(month);
@@ -141,7 +133,6 @@ export class MatchEditComponent implements OnInit {
       setDate.setMinutes(colonSplit[1]);
       let msDate = setDate.getTime();
       let endDate = msDate + 5400000;
-      console.log(msDate, endDate);
       match.scheduledTime.startTime = msDate;
       match.scheduledTime.endDate = endDate;
     } else if (this.friendlyDate && !this.friendlyTime){
@@ -152,7 +143,6 @@ export class MatchEditComponent implements OnInit {
 
     this.adminService.matchUpdate(match).subscribe(
       (res)=>{
-        console.log('saved');
         this.ngOnInit();
       },
       (err)=>{

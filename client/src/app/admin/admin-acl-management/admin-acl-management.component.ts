@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminService } from 'src/app/services/admin.service';
+import { AclServiceService } from './acl-service.service';
 
 @Component({
   selector: 'app-admin-acl-management',
@@ -8,18 +9,18 @@ import { AdminService } from 'src/app/services/admin.service';
 })
 export class AdminAclManagementComponent implements OnInit {
 
-  constructor(private adminService:AdminService) { }
+  //component properties
+  users: any = [];
 
-  users:any = [];
+  constructor(private adminService:AdminService, private aclService: AclServiceService) { }
+
   ngOnInit() {
     this.adminService.getUsersAcls().subscribe(
-      (res)=>{this.users = res;
+      (res)=>{
+        //assign return to local property
+        this.users = res;
         this.users.forEach(element => {
-          if (element.adminRights){
-            delete element.adminRights.adminId;
-            delete element.adminRights.__v;
-            delete element.adminRights._id;
-          }
+          element = this.aclService.removeUnwantedProps(element);
         })
       },
     (err)=>{ console.log(err);}

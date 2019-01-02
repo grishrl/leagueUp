@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminService } from 'src/app/services/admin.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AclServiceService } from '../acl-service.service';
 
 @Component({
   selector: 'app-update-roles',
@@ -9,37 +10,33 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class UpdateRolesComponent implements OnInit {
 
-  recId;
+  //local component properties
+  recId; // local var  for id recieved in route
   user = {
     displayName:'',
     adminRights:{}
-  };
-  constructor(private adminService: AdminService, private route: ActivatedRoute, private router: Router) {
+  };  //prototype user object
+  rights: any //application rights
+
+  constructor(private adminService: AdminService, private route: ActivatedRoute, private router: Router, private aclSerive:AclServiceService) {
+    //get id from route
     if (this.route.snapshot.params['id']) {
       this.recId = this.route.snapshot.params['id'];
     }
    }
 
 
-  rights = [
-    { key:"TEAM", value: false},
-    { key:"USER", value: false},
-    { key:"DIVISION", value: false},
-    { key:"STANDINGS", value: false},
-    { key:"CASTER", value: false},
-    { key:"MATCH", value: false},
-    { key: "SCHEDULEGEN", value:false}
-  ];
+
 
   ngOnInit() {
+    //assign rights from the service to the local var
+    this.rights = this.aclSerive.rights;
+    //get the users ACLs provided in the route
     this.adminService.getUserAcls(this.recId).subscribe(
       (res)=>{
-        // console.log("RES ", res);
-        if(res.adminRights){
-          delete res.adminRights.adminId;
-          delete res.adminRights.__v;
-          delete res.adminRights._id;
-        }
+
+        res = this.aclSerive.removeUnwantedProps(res);
+
         let key = Object.keys(res.adminRights);
         key.forEach(element=>{
           this.rights.forEach((statRight)=>{
@@ -47,7 +44,8 @@ export class UpdateRolesComponent implements OnInit {
               statRight.value=true;
             }
           });
-        })
+        });
+
         this.user = res;
       },
       (err)=>{
@@ -56,6 +54,7 @@ export class UpdateRolesComponent implements OnInit {
     )
   }
 
+  //updates the user rights
   updateUserRights(){
     let resultantACL = {};
     this.rights.forEach(right=>{
@@ -64,9 +63,7 @@ export class UpdateRolesComponent implements OnInit {
       }
     });
     resultantACL['adminId'] = this.user['_id'];
-    // console.log(resultantACL);
     this.adminService.upsertUserAcls(resultantACL).subscribe(res=>{
-      // console.log('saved! ', res);
       this.router.navigate(['/_admin/userACLMgmt']);
     },err=>{
       console.log(err)

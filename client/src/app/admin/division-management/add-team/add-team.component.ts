@@ -10,15 +10,21 @@ import { Router } from '@angular/router';
 })
 export class AddTeamComponent implements OnInit {
 
+  //component properties
+  undivisionTeams //local variable for holding/displaying teams that have no division
+  divisions //local variable for holding/displaying the divisions
+  selectedTeams: any = []; //local variable holds the selected teams to assign to a division
+  selectedDiv //local variable holds the info of the selected div to add teams to
 
   constructor(private admin: AdminService, private router:Router) { }
 
-  undivisionTeams
-  divisions
   ngOnInit() {
+    //set the local vars to empty / uninitialised 
     this.selectedTeams = [];
     this.selectedDiv = undefined;
     this.undivisionTeams=[];
+
+    //get teams and divisions
     this.admin.getTeamsNotDivisioned().subscribe(res => {
       this.undivisionTeams = res;
     }, (err) => {
@@ -30,9 +36,10 @@ export class AddTeamComponent implements OnInit {
     }, (err) => {
       console.log(err);
     })
+
   }
 
-  selectedTeams: any = [];
+  //method accepts team name and toggles it's inclusion in the array of teams to be added
   teamSelected(team) {
     //if team is in the array, remove and deactivate it
     let index = indexOf(this.selectedTeams, team)
@@ -41,14 +48,14 @@ export class AddTeamComponent implements OnInit {
     } else {
       this.selectedTeams.push(team);
     }
-    // console.log(this.selectedTeams);
   }
 
-  selectedDiv
+  //sets the selected division variable
   divSelected(div) {
     this.selectedDiv = div;
   }
 
+  //method for selective styling of team elements, returns true if team is in the selectedArray ,false if not
   isSelected(team): boolean {
     let index = indexOf(this.selectedTeams, team)
     if (index > -1) {
@@ -58,7 +65,7 @@ export class AddTeamComponent implements OnInit {
     }
   }
 
-
+  //method for selectinve styling of the division element, returns true if div is the selectedDiv, false if not
   isDivSelected(div): boolean {
     if (this.selectedDiv == div) {
       return true;
@@ -67,6 +74,7 @@ export class AddTeamComponent implements OnInit {
     }
   }
 
+  //method to handle assigning selected teams to selected division
   divisionTeams() {
     this.admin.divisionTeam(this.selectedTeams, this.selectedDiv.divisionConcat).subscribe(
       res => {

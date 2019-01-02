@@ -12,17 +12,19 @@ import { findIndex } from 'lodash';
 
 export class ApproveMemberComponent implements OnInit {
 
+  //component properties
+  queue 
 
   constructor(private queueService:QueuesService) {
    }
-
-  queue 
+  
   ngOnInit() {
     this.queueService.getQueues('pendingMemberQueue').subscribe( res=>{
       this.queue = res;
     } );
   }
 
+  //removes an item from the view if it has been actioned
   updateView(item){
     let index = findIndex(this.queue, item);
     if(index>-1){

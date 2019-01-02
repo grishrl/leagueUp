@@ -8,6 +8,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class ManageTeamViewComponent implements OnInit {
 
+  //component properties
   recievedProfile:string = '';
 
   constructor(private route:ActivatedRoute) { 

@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ChangeCaptainComponent } from './change-captain.component';
+import { DeleteConfrimModalComponent } from './delete-confrim-modal.component';
 
-describe('ChangeCaptainComponent', () => {
-  let component: ChangeCaptainComponent;
-  let fixture: ComponentFixture<ChangeCaptainComponent>;
+describe('DeleteConfrimModalComponent', () => {
+  let component: DeleteConfrimModalComponent;
+  let fixture: ComponentFixture<DeleteConfrimModalComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ChangeCaptainComponent ]
+      declarations: [ DeleteConfrimModalComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ChangeCaptainComponent);
+    fixture = TestBed.createComponent(DeleteConfrimModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

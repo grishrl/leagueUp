@@ -29,12 +29,10 @@ import { ApproveMemberComponent } from './admin/approve-member/approve-member.co
 import { UserQuickViewComponent } from './admin/approve-member/user-quick-view/user-quick-view.component';
 import { TeamQuickViewComponent } from './admin/approve-member/team-quick-view/team-quick-view.component';
 import { ApproveMemberViewComponent } from './admin/approve-member/approve-member-view/approve-member-view.component';
-import { DialogOverviewExampleDialog } from './profile-edit/profile-edit.component';
 import { DeleteMemberComponent } from './admin/delete-member/delete-member.component';
 import { ManageSelectTeamComponent } from './admin/manage-team/manage-select-team.component';
 import { TeamSearchComponent } from './team-search/team-search.component';
 import { ChangeCaptainModalComponent } from './modal/change-captain-modal/change-captain-modal.component';
-import { ChangeCaptainComponent } from './admin/change-captain/change-captain.component';
 import { DivisionManagementComponent } from './admin/division-management/division-management.component';
 import { AddTeamComponent } from './admin/division-management/add-team/add-team.component';
 import { DivisionPropsComponent } from './admin/division-management/division-props/division-props.component';
@@ -55,6 +53,7 @@ import { UpdateRolesComponent } from './admin/admin-acl-management/update-roles/
 import { StandingsViewComponent } from './standings-view/standings-view.component';
 import { SnackbarComponent } from './snackbar/snackbar.component';
 import { ManageTeamViewComponent } from './admin/manage-team/manage-team-view/manage-team-view.component';
+import { DeleteConfrimModalComponent } from './modal/delete-confrim-modal/delete-confrim-modal.component';
 
 @NgModule({
   declarations: [
@@ -80,12 +79,10 @@ import { ManageTeamViewComponent } from './admin/manage-team/manage-team-view/ma
     UserQuickViewComponent,
     TeamQuickViewComponent,
     ApproveMemberViewComponent,
-    DialogOverviewExampleDialog,
     DeleteMemberComponent,
     ManageSelectTeamComponent,
     TeamSearchComponent,
     ChangeCaptainModalComponent,
-    ChangeCaptainComponent,
     DivisionManagementComponent,
     AddTeamComponent,
     DivisionPropsComponent,
@@ -104,10 +101,11 @@ import { ManageTeamViewComponent } from './admin/manage-team/manage-team-view/ma
     UpdateRolesComponent,
     StandingsViewComponent,
     SnackbarComponent,
-    ManageTeamViewComponent
+    ManageTeamViewComponent,
+    DeleteConfrimModalComponent
   ],
   entryComponents:[
-    DialogOverviewExampleDialog,
+    DeleteConfrimModalComponent,
     ChangeCaptainModalComponent
   ],
   imports: [

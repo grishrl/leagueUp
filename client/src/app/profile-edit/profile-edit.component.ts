@@ -1,5 +1,5 @@
-import { Component, OnInit, NgModule, Inject, Input} from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Component, OnInit, NgModule, Input} from '@angular/core';
+import { MatDialog } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { TimezoneService } from '../services/timezone.service';
 import { UserService } from '../services/user.service';
@@ -10,8 +10,8 @@ import { ReactiveFormsModule, FormControl, Validators, FormGroup } from '@angula
 import { merge } from 'lodash';
 import { HotsLogsService } from '../services/hots-logs.service';
 import { Router } from '@angular/router';
-import { map, catchError } from 'rxjs/operators';
 import { NotificationService } from '../services/notification.service';
+import { DeleteConfrimModalComponent } from '../modal/delete-confrim-modal/delete-confrim-modal.component'
 
 @NgModule({
   imports:[
@@ -94,7 +94,7 @@ this.timezoneControl.enable();
 
   openDialog(): void {
     
-    const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+    const dialogRef = this.dialog.open(DeleteConfrimModalComponent, {
       width: '300px',
       data: { confirm: this.confirm }
     });
@@ -272,27 +272,4 @@ this.timezoneControl.enable();
   ngOnDestroy(){
     this.profSub.unsubscribe();
   }
-}
-
-
-//!!!-------------------------------!!!
-//component for the modal!!!! 
-export interface DialogData {
-  confirm: string;
-}
-
-@Component({
-  selector: 'dialog-overview-example-dialog',
-  templateUrl: 'dialog-overview-example-dialog.html',
-})
-export class DialogOverviewExampleDialog {
-
-  constructor(
-    public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData) { }
-
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-
 }

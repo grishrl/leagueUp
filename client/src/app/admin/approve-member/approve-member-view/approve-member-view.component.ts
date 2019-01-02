@@ -12,24 +12,32 @@ import { AdminService } from '../../../services/admin.service';
 })
 
 export class ApproveMemberViewComponent implements OnInit {
-  _info:any
   
+  //component properties
+  player = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null); //local user profile - blank user profile
+  viewTeam = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null); //local team profile - blank team profile
+  resultantMmr: number //local var for holding returned resultant MMR calculation
+  _info: any  //local var, holds the bindings passed to this component
+  
+
+  //Input bindings , object that has username and teamname
   @Input() set info(info){
     if(info!=null&&info!=undefined){
       this._info = info;
     }
   }
 
+  //Output bindings
   @Output() accountActioned = new EventEmitter();
+
+  //sends events to accountActioned output binding
+  accountActioner() {
+    this.accountActioned.emit(this._info);
+  }
 
   constructor(private user:UserService, private team:TeamService, private admin:AdminService) { }
 
-  hidePanel:boolean = true;
-
-  player = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-  viewTeam = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-  resultantMmr:number
-
+  //grabs appropriate team and user information based on privided input binding
   ngOnInit() {
     if(this._info.teamName && this._info.userName){
       this.user.getUser(this._info.userName).subscribe( res =>{
@@ -50,11 +58,7 @@ export class ApproveMemberViewComponent implements OnInit {
 
   }
 
-  accountActioner(){
-    this.accountActioned.emit(this._info);
-  }
-
-
+  //handles the approval chosen by the admin
   actionAccount(act){
     this.admin.queuePost(this.viewTeam.teamName, this.player.displayName, act).subscribe( res =>{
       this.accountActioner();

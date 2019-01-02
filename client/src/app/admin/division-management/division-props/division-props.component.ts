@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { AdminService } from 'src/app/services/admin.service';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
-import { DialogOverviewExampleDialog } from '../../../profile-edit/profile-edit.component';
+import { DeleteConfrimModalComponent } from '../../../modal/delete-confrim-modal/delete-confrim-modal.component';
 
 @Component({
   selector: 'app-division-props',
@@ -10,6 +10,13 @@ import { DialogOverviewExampleDialog } from '../../../profile-edit/profile-edit.
   styleUrls: ['./division-props.component.css']
 })
 export class DivisionPropsComponent implements OnInit {
+
+  //component properties
+  newDiv: boolean = false;
+  divisions: any = [];
+  selectedDivision: any = null;
+  safeSource
+  editDivision
 
   constructor(private dialog: MatDialog, private adminService: AdminService) { }
 
@@ -36,14 +43,8 @@ export class DivisionPropsComponent implements OnInit {
     minMMR: this.minMMRControl
   })
 
-  newDiv:boolean=false;
-  divisions:any=[];
-  selectedDivision:any=null;
-  safeSource
-  editDivision
-
+  //creates a new concatinated system id from provided inputs
   calculateNewConcat(){
-    // console.log('this.editDivision.divisionName ', this.editDivision.divisionName, ' this.editDivision.divisionCoast ', this.editDivision.divisionCoast )
     let div = this.editDivision.divisionName?this.editDivision.divisionName.toLowerCase():'' 
     
     let coast = this.editDivision.divisionCoast?this.editDivision.divisionCoast.toLowerCase():'';
@@ -55,17 +56,20 @@ export class DivisionPropsComponent implements OnInit {
     this.editDivision.divisionConcat = this.editDivision.divisionConcat.replace(/[^A-Z0-9\-]+/ig, "-");
   }
 
+  //division selected from dropdown, creates a safe source to cancel back to
   selected(div){
     this.editDivision = Object.assign({}, this.selectedDivision);
     this.safeSource = Object.assign({},this.selectedDivision);
   }
 
+  //sets up an empty object to create a new division from
   createNew(){
     this.newDiv = true;
     this.editDivision = Object.assign({});
   }
 
   ngOnInit() {
+    //gets division list
     this.adminService.getDivisionList().subscribe( (res)=>{
       this.divisions = res;
     }, (err)=> {
@@ -73,6 +77,7 @@ export class DivisionPropsComponent implements OnInit {
     })
   }
 
+  //reverts any changes to a dib object back to the safe source created at selection
   revert(){
     if(this.newDiv){
       this.editDivision = null;  
@@ -80,10 +85,11 @@ export class DivisionPropsComponent implements OnInit {
     this.editDivision = Object.assign({}, this.safeSource);
   }
 
+  //opens a modal to receive confirmation to delete
   confirm: string
   delete(divConcat): void {
 
-    const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+    const dialogRef = this.dialog.open(DeleteConfrimModalComponent, {
       width: '300px',
       data: { confirm: this.confirm }
     });
@@ -105,9 +111,10 @@ export class DivisionPropsComponent implements OnInit {
     });
   }
 
+  //handles the saving of edits to a division or the creation of a new division
+  //resets the view on success
   save(){
     if(this.newDiv){
-      // console.log(this.editDivision);
       this.adminService.createDivision(this.editDivision).subscribe(
         res=>{
           this.newDiv = false;
@@ -122,7 +129,6 @@ export class DivisionPropsComponent implements OnInit {
         res => {
           this.editDivision = null;
           this.ngOnInit();
-          // console.log(res);
         }, err => {
           console.log(err)
         }

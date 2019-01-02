@@ -1,6 +1,6 @@
 import { Component, OnInit, Input} from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { DialogOverviewExampleDialog } from '../profile-edit/profile-edit.component';
+import { DeleteConfrimModalComponent } from '../modal/delete-confrim-modal/delete-confrim-modal.component'
 import { ChangeCaptainModalComponent } from '../modal/change-captain-modal/change-captain-modal.component';
 import { TimezoneService } from '../services/timezone.service';
 import { TeamService } from '../services/team.service';
@@ -245,16 +245,13 @@ export class TeamProfileComponent implements OnInit {
   }
 
   openAdminDeleteDialog():void{
-    const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+    const dialogRef = this.dialog.open(DeleteConfrimModalComponent, {
       width: '300px',
       data: { confirm: this.confirm }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-
-
       if (result.toLowerCase() == 'delete') {
-
         this.admin.deleteTeam(this.returnedProfile.teamName_lower).subscribe(
           res => {
             this.showMe = false;
@@ -270,16 +267,13 @@ export class TeamProfileComponent implements OnInit {
   confirm: string
   openDialog(): void {
 
-    const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+    const dialogRef = this.dialog.open(DeleteConfrimModalComponent, {
       width: '300px',
       data: { confirm: this.confirm }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-
       if (result.toLowerCase() == 'delete') {
-        console.log('delete this account!');
         this.team.deleteTeam(this.returnedProfile.teamName_lower).subscribe(
           res => {
             this.returnedProfile = null;

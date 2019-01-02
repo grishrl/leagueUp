@@ -9,16 +9,18 @@ import { AdminService } from 'src/app/services/admin.service';
 })
 export class MatchManagementComponent implements OnInit {
 
-  constructor(private scheduleService: ScheduleService, private adminService: AdminService) { }
-
+  //component properties
   hideForm = true;
   selectedRound: any
   selectedDivision: any
   originalMatches: any
   filterMatches: any
-  filterTeam:any
+  filterTeam: any
   rounds = [];
   divisions = []
+
+  constructor(private scheduleService: ScheduleService, private adminService: AdminService) { }
+
   ngOnInit() {
     this.adminService.getDivisionList().subscribe((res) => {
       this.divisions = res;
@@ -42,6 +44,7 @@ export class MatchManagementComponent implements OnInit {
       console.log(err);
     });
   }
+
   /*
   div, round, team
   div, round, 
@@ -51,6 +54,7 @@ export class MatchManagementComponent implements OnInit {
   round, 
   team
   */
+ //filters the matches based on selected criteria
   doFilterMatches(div, round, team) {
     // console.log('div ', div, ' round ', round, ' team ', team);
     this.filterMatches = this.originalMatches.filter(match => {
