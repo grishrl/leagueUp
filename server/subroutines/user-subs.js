@@ -1,6 +1,7 @@
 const util = require('../utils');
 const User = require('../models/user-models');
 const TeamSubs = require('./team-subs');
+const Team = require('../models/team-models');
 const QueueSubs = require('./queue-subs');
 
 //sub to handle complete removal of user from data locations:
@@ -125,10 +126,65 @@ function togglePendingTeam(user) {
     })
 }
 
+async function updateUserName(id, newUserName) {
+    let user = await User.findById(id).then(
+        (foundUser) => {
+            if (foundUser) {
+                return foundUser;
+            } else {
+                return null;
+            }
+        },
+        (err) => {
+            return null;
+        }
+    );
+    let team = await Team.findOne({
+        $or: [{
+                captain: user.displayName
+            },
+            {
+                'teamMembers.displayName': user.displayName
+            }
+        ]
+    }).then((foundTeam) => {
+        if (foundTeam) {
+            return foundTeam;
+        } else {
+            return null;
+        }
+    }, (err) => {
+        return null;
+    });
+    if (team) {
+        if (team.captain == user.displayName) {
+            team.captain = newUserName;
+        }
+        team.teamMembers.forEach(member => {
+            if (member.displayName == user.displayName) {
+                member.displayName = newUserName;
+            }
+        });
+        let teamSave = await team.save().then(
+            (saved) => { return saved; },
+            (err) => { return null; }
+        );
+    }
+    user.displayName = newUserName;
+    let userSave = await user.save().then(saved => {
+        return saved;
+    }, err => {
+        return null;
+    });
+
+    return userSave;
+}
+
 module.exports = {
     scrubUser: scrubUser,
     clearUsersTeam: clearUsersTeam,
     upsertUsersTeamName: upsertUsersTeamName,
     toggleCaptain: toggleCaptain,
-    togglePendingTeam: togglePendingTeam
+    togglePendingTeam: togglePendingTeam,
+    updateUserName: updateUserName
 }

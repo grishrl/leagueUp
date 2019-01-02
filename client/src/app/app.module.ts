@@ -54,6 +54,7 @@ import { StandingsViewComponent } from './standings-view/standings-view.componen
 import { SnackbarComponent } from './snackbar/snackbar.component';
 import { ManageTeamViewComponent } from './admin/manage-team/manage-team-view/manage-team-view.component';
 import { DeleteConfrimModalComponent } from './modal/delete-confrim-modal/delete-confrim-modal.component';
+import { NoAccessComponent } from './no-access/no-access.component';
 
 @NgModule({
   declarations: [
@@ -102,7 +103,8 @@ import { DeleteConfrimModalComponent } from './modal/delete-confrim-modal/delete
     StandingsViewComponent,
     SnackbarComponent,
     ManageTeamViewComponent,
-    DeleteConfrimModalComponent
+    DeleteConfrimModalComponent,
+    NoAccessComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

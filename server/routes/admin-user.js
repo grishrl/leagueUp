@@ -38,10 +38,11 @@ router.post('/delete/user', passport.authenticate('jwt', {
     }
 
 });
-//res.status(500).send(util.returnMessaging(path, 'Error getting users acl', err));
+
+//returns all users and acl lists
 router.get('/user/get/usersacl/all', passport.authenticate('jwt', {
     session: false
-}), (req, res) => {
+}), levelRestrict.userACL, (req, res) => {
     const path = 'admin/user/get/usersacl/all';
     User.find({}).lean().then(
         users => {
@@ -82,9 +83,10 @@ router.get('/user/get/usersacl/all', passport.authenticate('jwt', {
     )
 });
 
+//returns specified users ACL
 router.post('/user/get/usersacl', passport.authenticate('jwt', {
     session: false
-}), (req, res) => {
+}), levelRestrict.userACL, (req, res) => {
     let id = req.body.id;
     const path = 'admin/user/get/usersacl';
     User.findById(id).lean().then(
@@ -114,9 +116,10 @@ router.post('/user/get/usersacl', passport.authenticate('jwt', {
     )
 });
 
+//updates or creates user acl list
 router.post('/user/upsertRoles', passport.authenticate('jwt', {
     session: false
-}), (req, res) => {
+}), levelRestrict.userACL, (req, res) => {
     const path = 'admin/user/upsertRoles';
     Admin.AdminLevel.findOne({
         adminId: req.body.adminId

@@ -24,11 +24,16 @@ function scheduleGenerator(req, res, next) {
     adminCheck('SCHEDULEGEN', req, res, next);
 }
 
+function userACL(req, res, next) {
+    adminCheck('ACL', req, res, next);
+}
+
 module.exports = {
     teamLevel: teamLevel,
     userLevel: userLevel,
     divisionLevel: divisionLevel,
     casterLevel: casterLevel,
     matchLevel: matchLevel,
-    scheduleGenerator: scheduleGenerator
+    scheduleGenerator: scheduleGenerator,
+    userACL: userACL
 }

@@ -132,8 +132,8 @@ router.post('/create', passport.authenticate('jwt', {
     CREATE A TEAM ON BEHALF OF SOMEONE ELSE, THIS WILL BE HANDLED LATER!!!!
     */
     var callingUser = req.user;
-    if (callingUser.hasOwnProperty('teamName')) {
-        res.status(500).send(util.returnMessaging(path, 'This user all ready belongs to a team!'));
+    if (util.returnBoolByPath(callingUser, 'teamName')) {
+        res.status(400).send(util.returnMessaging(path, 'This user all ready belongs to a team!'));
     } else {
         var status;
         var message = {};

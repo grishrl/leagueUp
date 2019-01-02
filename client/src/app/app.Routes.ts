@@ -26,6 +26,8 @@ import { MatchEditComponent } from "./admin/match-management/match-edit/match-ed
 import { AdminAclManagementComponent } from './admin/admin-acl-management/admin-acl-management.component';
 import { UpdateRolesComponent } from "./admin/admin-acl-management/update-roles/update-roles.component";
 import { ManageTeamViewComponent } from './admin/manage-team/manage-team-view/manage-team-view.component';
+import { AuthGuardService } from "./services/auth-guard.service";
+import { NoAccessComponent } from "./no-access/no-access.component";
 
 const APP_ROUTES: Routes = [
   { path: 'directory', component: DirectoryComponent},
@@ -40,22 +42,22 @@ const APP_ROUTES: Routes = [
   { path: 'email/invite/:id', component:OutreachEmailResponseComponent },
   { path: 'blog', component:BlogListComponent },
   { path: 'blog/:id', component:BlogViewComponent },
-  { path: '_admin/approveTeamQueue', component:ApproveMemberComponent },
-  { path: '_admin/deleteUser', component:DeleteMemberComponent },
-  { path: '_admin/manageTeam', component:ManageSelectTeamComponent },
-  { path : '_admin/manageTeam/:id', component:ManageTeamViewComponent },
-  { path: '_admin/divisionMgmt', component:DivisionManagementComponent },
-  { path: '_admin/matchMgmt', component: MatchManagementComponent },
-  { path: '_admin/matchMgmt/:id', component: MatchEditComponent },
-  { path: '_admin/userACLMgmt', component: AdminAclManagementComponent },
-  { path: '_admin/userACLMgmt/:id', component: UpdateRolesComponent },
-  {path: 'schedule/scheduleMatch/:id', component:MatchScheduleComponent},
-  {path: 'schedule/teamSchedule', component: TeamScheduleComponent },
-  {path: 'schedule/teamSchedule/:id', component:TeamScheduleComponent}, //accepts team name as url parameter
-  {path: 'reporting/:id', component:ReportingComponent}, //accepts team name as url parameter
-  {
-    path: '_admin/dashboard', component: DashboardComponent},
-  { path: '_casterDashboard', component: CasterDashboardComponent}
+  { path: '_admin/approveTeamQueue', component:ApproveMemberComponent, canActivate:[AuthGuardService], data:{role:'team'} },
+  { path: '_admin/deleteUser', component: DeleteMemberComponent, canActivate: [AuthGuardService], data: { role: 'user' } },
+  { path: '_admin/manageTeam', component: ManageSelectTeamComponent, canActivate: [AuthGuardService], data: { role: 'team' } },
+  { path: '_admin/manageTeam/:id', component: ManageTeamViewComponent, canActivate: [AuthGuardService], data: { role: 'team' } },
+  { path: '_admin/divisionMgmt', component: DivisionManagementComponent, canActivate: [AuthGuardService], data: { role: 'division' } },
+  { path: '_admin/matchMgmt', component: MatchManagementComponent, canActivate: [AuthGuardService], data: { role: 'match' } },
+  { path: '_admin/matchMgmt/:id', component: MatchEditComponent, canActivate: [AuthGuardService], data: { role: 'match' } },
+  { path: '_admin/userACLMgmt', component: AdminAclManagementComponent, canActivate: [AuthGuardService], data: { role: 'acl' } },
+  { path: '_admin/userACLMgmt/:id', component: UpdateRolesComponent, canActivate: [AuthGuardService], data: { role: 'acl' } },
+  { path: 'schedule/scheduleMatch/:id', component:MatchScheduleComponent},
+  { path: 'schedule/teamSchedule', component: TeamScheduleComponent },
+  { path: 'schedule/teamSchedule/:id', component:TeamScheduleComponent}, //accepts team name as url parameter
+  { path: 'reporting/:id', component:ReportingComponent}, //accepts team name as url parameter
+  { path: '_admin/dashboard', component: DashboardComponent, canActivate: [AuthGuardService]},
+  { path: '_casterDashboard', component: CasterDashboardComponent, canActivate: [AuthGuardService], data: { role: 'caster' }},
+  { path: 'noAccess/:id', component:NoAccessComponent}
 ]
 
 @NgModule({
