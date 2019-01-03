@@ -118,10 +118,18 @@ returnBoolByPath = function(obj, path) {
     return !!retVal;
 }
 
+function appendResHeader(request, response, next) {
+    if (request.user.token != null || request.user.token != undefined) {
+        response.setHeader('Authorization', 'Bearer ' + request.user.token);
+    }
+    next();
+}
+
 module.exports = {
     isNullOrEmpty: isNullOrEmpty,
     isNullorUndefined: isNullorUndefined,
     returnMessaging: returnMessaging,
     returnByPath: returnByPath,
-    returnBoolByPath: returnBoolByPath
+    returnBoolByPath: returnBoolByPath,
+    appendResHeader: appendResHeader
 };

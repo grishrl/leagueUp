@@ -599,7 +599,7 @@ function confirmCaptain(req, res, next) {
                 req.team = foundTeam;
                 next();
             } else {
-                res.status(401).send(
+                res.status(403).send(
                     util.returnMessaging(path, "User not authorized to change team."));
             }
         } else {

@@ -103,8 +103,7 @@ this.timezoneControl.enable();
       if (result.toLowerCase()=='delete'){
         this.user.deleteUser().subscribe(
           res =>{
-          this.auth.destroyAuth();
-          this.router.navigate(['']);
+          this.auth.destroyAuth('/logout');
          },err=>{
             console.log(err);
           }

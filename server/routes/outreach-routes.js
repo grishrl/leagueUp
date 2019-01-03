@@ -28,7 +28,7 @@ var transporter = nodemailer.createTransport({
 
 router.post('/invite', passport.authenticate('jwt', {
     session: false
-}), (req, res) => {
+}), util.appendResHeader, (req, res) => {
     const path = '/outreach/invite';
     let stamp = Date.now();
     stamp = stamp.toString();
@@ -67,7 +67,7 @@ router.post('/invite', passport.authenticate('jwt', {
 
 router.post('/inviteResponseComplete', passport.authenticate('jwt', {
     session: false
-}), (req, res) => {
+}), util.appendResHeader, (req, res) => {
     const path = '/outreach/inviteResponseComplete'
     let refToken = req.body.referral;
     let user = req.body.user;

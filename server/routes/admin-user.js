@@ -9,7 +9,7 @@ const router = require('express').Router();
 
 router.post('/delete/user', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.userLevel, (req, res) => {
+}), levelRestrict.userLevel, util.appendResHeader, (req, res) => {
     const path = '/admin/delete/user';
     let user = req.body.displayName;
     if (user == req.user.displayName) {
@@ -42,7 +42,7 @@ router.post('/delete/user', passport.authenticate('jwt', {
 //returns all users and acl lists
 router.get('/user/get/usersacl/all', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.userACL, (req, res) => {
+}), levelRestrict.userACL, util.appendResHeader, (req, res) => {
     const path = 'admin/user/get/usersacl/all';
     User.find({}).lean().then(
         users => {
@@ -86,7 +86,7 @@ router.get('/user/get/usersacl/all', passport.authenticate('jwt', {
 //returns specified users ACL
 router.post('/user/get/usersacl', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.userACL, (req, res) => {
+}), levelRestrict.userACL, util.appendResHeader, (req, res) => {
     let id = req.body.id;
     const path = 'admin/user/get/usersacl';
     User.findById(id).lean().then(
@@ -119,7 +119,7 @@ router.post('/user/get/usersacl', passport.authenticate('jwt', {
 //updates or creates user acl list
 router.post('/user/upsertRoles', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.userACL, (req, res) => {
+}), levelRestrict.userACL, util.appendResHeader, (req, res) => {
     const path = 'admin/user/upsertRoles';
     Admin.AdminLevel.findOne({
         adminId: req.body.adminId

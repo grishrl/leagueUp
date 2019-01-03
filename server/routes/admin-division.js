@@ -10,7 +10,7 @@ const levelRestrict = require("../configs/admin-leveling");
 //this api retrieves all teams that do not have a division assigned, 
 router.get('/getTeamsUndivisioned', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.divisionLevel, (req, res) => {
+}), levelRestrict.divisionLevel, util.appendResHeader, (req, res) => {
     const path = '/admin/getTeamsUndivisioned';
     Team.find({
         $or: [
@@ -59,7 +59,7 @@ router.get('/getDivisionInfo', (req, res) => {
 router.post('/divisionTeams',
     passport.authenticate('jwt', {
         session: false
-    }), levelRestrict.divisionLevel, (req, res) => {
+    }), levelRestrict.divisionLevel, util.appendResHeader, (req, res) => {
         const path = '/admin/divisionTeams';
         let div = req.body.divisionName;
         let recTeam = req.body.teamInfo;
@@ -101,7 +101,7 @@ router.post('/divisionTeams',
 
 router.post('/upsertDivision', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.divisionLevel, (req, res) => {
+}), levelRestrict.divisionLevel, util.appendResHeader, (req, res) => {
     const path = '/admin/upsertDivision';
     let division = req.body.divObj;
     let name = req.body.divName;
@@ -156,7 +156,7 @@ router.post('/upsertDivision', passport.authenticate('jwt', {
 
 router.post('/removeTeams', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.divisionLevel, (req, res) => {
+}), levelRestrict.divisionLevel, util.appendResHeader, (req, res) => {
     const path = '/admin/removeTeams';
     let removeTeams = req.body.teams;
     let div = req.body.divName;
@@ -184,7 +184,7 @@ router.post('/removeTeams', passport.authenticate('jwt', {
 
 router.post('/createDivision', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.divisionLevel, (req, res) => {
+}), levelRestrict.divisionLevel, util.appendResHeader, (req, res) => {
     const path = '/admin/createDivision';
     const recievedDivision = req.body.division;
 
@@ -213,7 +213,7 @@ router.post('/createDivision', passport.authenticate('jwt', {
 
 router.post('/deleteDivision', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.divisionLevel, (req, res) => {
+}), levelRestrict.divisionLevel, util.appendResHeader, (req, res) => {
     const path = '/admin/deleteDivision';
     const recievedDivision = req.body.division;
 

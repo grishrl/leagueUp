@@ -43,7 +43,7 @@
                                 <a *ngIf="Auth.getAdmin() && Auth.getAdmin().length>0" class="dropdown-item finger" (click)="navGo('/_admin/dashboard')">Admin Dashboard</a>
                                 <a *ngIf="Auth.getCaster()" class="dropdown-item finger" (click)="navGo('/_casterDashboard')">Caster Dashboard</a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item finger" (click)="Auth.destroyAuth()">Logout</a>
+                                <a class="dropdown-item finger" (click)="Auth.destroyAuth('/logout')">Logout</a>
                             </div>
                         </li>
                     </ng-template>

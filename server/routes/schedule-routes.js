@@ -30,7 +30,7 @@ const s3replayBucket = new AWS.S3({
  */
 router.post('/get/matches', passport.authenticate('jwt', {
     session: false
-}), (req, res) => {
+}), util.appendResHeader, (req, res) => {
     const path = 'schedule/get/matches';
     let season = req.body.season;
     let division = req.body.division;
@@ -62,7 +62,7 @@ router.post('/get/matches', passport.authenticate('jwt', {
 router.post('/get/matches/all',
     passport.authenticate('jwt', {
         session: false
-    }), (req, res) => {
+    }), util.appendResHeader, (req, res) => {
         const path = 'schedule/get/matches/all';
         Match.find().lean().then((found) => {
             if (found) {
@@ -88,7 +88,7 @@ router.post('/get/matches/all',
  */
 router.post('/get/matches/team', passport.authenticate('jwt', {
     session: false
-}), (req, res) => {
+}), util.appendResHeader, (req, res) => {
     const path = 'schedule/get/matches/team';
     let team = req.body.team;
     let season = req.body.season;
@@ -129,7 +129,7 @@ router.post('/get/matches/team', passport.authenticate('jwt', {
 
 router.post('/update/match/time', passport.authenticate('jwt', {
     session: false
-}), (req, res) => {
+}), util.appendResHeader, (req, res) => {
     const path = '/update/match/time';
     let requester = req.user.displayName;
     //let season = req.body.season;
@@ -174,7 +174,7 @@ router.post('/update/match/time', passport.authenticate('jwt', {
                         res.status(500).send(util.returnMessaging(path, 'Error updating match time.', err));
                     })
                 } else {
-                    res.status(401).send(util.returnMessaging(path, 'Requester is not authorized'));
+                    res.status(403).send(util.returnMessaging(path, 'Requester is not authorized'));
                 }
             }, (err) => {
                 res.status(500).send(util.returnMessaging(path, 'Error updating match time.', err));
@@ -189,7 +189,7 @@ router.post('/update/match/time', passport.authenticate('jwt', {
 
 router.post('/get/match', passport.authenticate('jwt', {
     session: false
-}), (req, res) => {
+}), util.appendResHeader, (req, res) => {
     const path = 'schedule/get/match';
     let season = req.body.season;
     let matchId = req.body.matchId;
@@ -211,7 +211,7 @@ router.post('/get/match', passport.authenticate('jwt', {
 
 router.post('/report/match', passport.authenticate('jwt', {
     session: false
-}), (req, res) => {
+}), util.appendResHeader, (req, res) => {
     const path = '/schedule/report/match';
     const formidable = require('formidable');
     const parser = require('hots-parser');
@@ -373,7 +373,7 @@ router.post('/report/match', passport.authenticate('jwt', {
 
 
                         } else {
-                            res.status(401).send(path, 'Unauthorized', false);
+                            res.status(403).send(path, 'Unauthorized', false);
                         }
                     }, (err) => {
                         res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err));
@@ -392,7 +392,7 @@ router.post('/report/match', passport.authenticate('jwt', {
 
 router.post('/match/add/caster', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.casterLevel, (req, res) => {
+}), levelRestrict.casterLevel, util.appendResHeader, (req, res) => {
     let path = 'schedule/match/add/caster';
     let matchid = req.body.matchId;
     let casterName = req.body.casterName;
@@ -420,7 +420,7 @@ router.post('/match/add/caster', passport.authenticate('jwt', {
 
 router.post('/generate/schedules', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.scheduleGenerator, (req, res) => {
+}), levelRestrict.scheduleGenerator, util.appendResHeader, (req, res) => {
     const path = 'schedule/generate/schedules';
     let season = req.body.season;
     scheduleGenerator.generateSeason(season).then((process) => {

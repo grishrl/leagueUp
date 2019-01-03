@@ -28,6 +28,7 @@ import { UpdateRolesComponent } from "./admin/admin-acl-management/update-roles/
 import { ManageTeamViewComponent } from './admin/manage-team/manage-team-view/manage-team-view.component';
 import { AuthGuardService } from "./services/auth-guard.service";
 import { NoAccessComponent } from "./no-access/no-access.component";
+import { SessionTimeoutComponent } from "./session-timeout/session-timeout.component";
 
 const APP_ROUTES: Routes = [
   { path: 'directory', component: DirectoryComponent},
@@ -57,7 +58,8 @@ const APP_ROUTES: Routes = [
   { path: 'reporting/:id', component:ReportingComponent}, //accepts team name as url parameter
   { path: '_admin/dashboard', component: DashboardComponent, canActivate: [AuthGuardService]},
   { path: '_casterDashboard', component: CasterDashboardComponent, canActivate: [AuthGuardService], data: { role: 'caster' }},
-  { path: 'noAccess/:id', component:NoAccessComponent}
+  { path: 'noAccess/:id', component:NoAccessComponent},
+  { path: 'sessionTimeOut', component: SessionTimeoutComponent}
 ]
 
 @NgModule({

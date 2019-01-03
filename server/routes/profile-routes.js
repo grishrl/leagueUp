@@ -24,7 +24,7 @@ router.get('/get', (req, res) => {
 
 router.get('/delete', passport.authenticate('jwt', {
     session: false
-}), (req, res) => {
+}), util.appendResHeader, (req, res) => {
     const path = '/user/delete';
     let user = req.user;
 
@@ -45,7 +45,7 @@ router.get('/delete', passport.authenticate('jwt', {
 
 router.post('/save', passport.authenticate('jwt', {
         session: false
-    }),
+    }), util.appendResHeader,
     function(req, res) {
         const path = 'user/save';
         var sentUser = req.body;
@@ -119,7 +119,7 @@ router.post('/save', passport.authenticate('jwt', {
                 }
             })
         } else {
-            res.status(401).send(util.returnMessaging(path, 'Unauthorized to mofify this profile.', false))
+            res.status(403).send(util.returnMessaging(path, 'Unauthorized to mofify this profile.', false))
         }
 
     });

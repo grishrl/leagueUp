@@ -6,7 +6,7 @@ const Match = require('../models/match-model');
 
 router.post('/match/update', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.matchLevel, (req, res) => {
+}), levelRestrict.matchLevel, util.appendResHeader, (req, res) => {
     const path = 'admin/match/update'
     if (req.body.match) {
         let match = req.body.match;

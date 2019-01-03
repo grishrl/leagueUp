@@ -14,12 +14,13 @@ const levelRestrict = require("../configs/admin-leveling");
 //returns the lists of users who are awaiting admin attention to complete the team join process
 router.get('/pendingMemberQueue', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.teamLevel, (req, res) => {
+}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
     const path = '/admin/pendingMemberQueue';
     const query = Admin.PendingQueue.find();
     query.sort('-timestamp');
     query.limit(20);
     query.exec().then((reply) => {
+
         res.status(200).send(util.returnMessaging(path, 'Found queues', false, reply));
     }, (err) => {
         res.status(500).send(util.returnMessaging(path, 'Couldn\'t get the queues', err));
@@ -29,7 +30,7 @@ router.get('/pendingMemberQueue', passport.authenticate('jwt', {
 //removes the supplied member from the supplied team
 router.post('/team/removeMember', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.teamLevel, (req, res) => {
+}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
     const path = '/admin/team/removeMember';
     let teamName = req.body.teamName;
     let payloadUser = req.body.removeUser;
@@ -89,7 +90,7 @@ router.post('/team/removeMember', passport.authenticate('jwt', {
 //reassigns captain from the supplied team to the supplied teammember
 router.post('/reassignCaptain', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.teamLevel, (req, res) => {
+}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
     const path = '/admin/reassignCaptain';
 
     let team = req.body.teamName;
@@ -134,7 +135,7 @@ router.post('/reassignCaptain', passport.authenticate('jwt', {
 //updates the members profile to now be part of the team
 router.post('/approveMemberAdd', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.teamLevel, (req, res) => {
+}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
     const path = '/admin/approveMemberAdd';
     var teamName = req.body.teamName;
     var member = req.body.member;
@@ -246,7 +247,7 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
 //removes all team information from users profiles
 router.post('/delete/team', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.teamLevel, (req, res) => {
+}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
     const path = '/admin/delete/team';
     var team = req.body.teamName;
     team = team.toLowerCase();
@@ -264,7 +265,7 @@ router.post('/delete/team', passport.authenticate('jwt', {
 //Saves a supplied team
 router.post('/teamSave', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.teamLevel, (req, res) => {
+}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
     const path = '/admin/teamSave';
     //this teamName passed in the body is considered a safe source of the orignal team name
     let team = req.body.teamName;
@@ -400,7 +401,7 @@ router.post('/teamSave', passport.authenticate('jwt', {
 //calculates the resultant MMR from a pending member add for suplied memebers MMR and supplied team
 router.post('/resultantmmr', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.teamLevel, (req, res) => {
+}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
     const path = '/admin/resultantmmr'
     let userMmr = req.body.userMmr;
     let teamName = req.body.teamName;
@@ -435,7 +436,7 @@ router.post('/resultantmmr', passport.authenticate('jwt', {
 //refreshes the MMR of a supplied team, in case the team mmr may need to be updated
 router.post('/team/refreshMmr', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.teamLevel, (req, res) => {
+}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
     const path = 'admin/team/refreshMmr';
     let teamName = req.body.teamName;
     teamName = teamName.toLowerCase();
@@ -479,7 +480,7 @@ router.post('/team/refreshMmr', passport.authenticate('jwt', {
 //returns a list of all teams!
 router.get('/get/teams/all', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.teamLevel, (req, res) => {
+}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
     const path = 'admin/get/teams/all';
     Team.find().then(
         (foundTeams) => {

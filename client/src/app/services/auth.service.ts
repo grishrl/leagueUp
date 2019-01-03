@@ -38,7 +38,7 @@ export class AuthService {
   //auth initializater
   createAuth(token){
     let decodedToken = this.helper.decodeToken(token);
-    console.log(decodedToken);
+    // console.log(decodedToken);
     localStorage.setItem('token', token);
     localStorage.setItem('userName', decodedToken.displayName);
     if (decodedToken.teamInfo){
@@ -142,7 +142,7 @@ export class AuthService {
   }
 
   //destroy all auth
-  destroyAuth(){
+  destroyAuth(route){
     // let url = 'http://localhost:3000/auth/logout';
     let url = '/auth/logout';
 
@@ -155,7 +155,7 @@ export class AuthService {
         localStorage.removeItem('captain');
         this.destroyAdmin();
         this.destroyCaster();
-        this.router.navigate(['/logout']);
+        this.router.navigate([route]);
       }
     );
 
