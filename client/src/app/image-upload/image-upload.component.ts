@@ -30,7 +30,7 @@ export class ImageUploadComponent implements OnInit {
 
   @Input() set teamLogo(img){
     if (img != null && img != undefined && img.length) {
-      this.currentImage = img;
+      this.currentImage = this.teamService.imageFQDN(img);
     } else {
       this.currentImage = null;
     }
@@ -49,9 +49,12 @@ export class ImageUploadComponent implements OnInit {
   }
 
   public get imageToDisplay() {
-    if (this.currentImage) { return this.currentImage; }
-    if (this.imageUrl) { return this.imageUrl; }
-    return `http://placehold.it/${this.widthPx}x${this.heightPx}`;
+    let imgRet;
+    if (this.currentImage) { imgRet = this.currentImage; }
+    else if (this.imageUrl) { imgRet = this.imageUrl; }else{
+      imgRet = `https://placehold.it/${this.widthPx}x${this.heightPx}`;
+    }
+    return imgRet
   }
 
   public get croppieOptions(): CroppieOptions {

@@ -84,7 +84,7 @@ export class TeamProfileComponent implements OnInit {
     if(this.componentEmbedded){
       this.admin.removeMembers(this.returnedProfile.teamName_lower, player).subscribe(
         (res) => {
-          console.log('user removed');
+          // console.log('user removed');
           this.ngOnInit();
         },
         (err) => {
@@ -158,7 +158,7 @@ export class TeamProfileComponent implements OnInit {
         this.filterUsers.push(element['displayName']);
       });
     }
-    console.log('teamProfile ',teamProfile);
+    // console.log('teamProfile ',teamProfile);
     if (teamProfile.pendingMembers && teamProfile.pendingMembers.length > 0) {
       teamProfile.pendingMembers.forEach(element => {
         this.filterUsers.push(element['displayName']);
@@ -173,9 +173,9 @@ export class TeamProfileComponent implements OnInit {
   
   // this model change method will be bound to the name change input, so we can update the lower case name along with the display name
   modelChange() {
-    console.log('model change');
-    console.log('this.returnedProfile.teamName ', this.returnedProfile.teamName);
-    console.log('this.returnedProfile.teamName_lower ', this.returnedProfile.teamName_lower);
+    // console.log('model change');
+    // console.log('this.returnedProfile.teamName ', this.returnedProfile.teamName);
+    // console.log('this.returnedProfile.teamName_lower ', this.returnedProfile.teamName_lower);
     if (this.returnedProfile.teamName != this.returnedProfile.teamName_lower) {
       this.returnedProfile.teamName_lower = this.returnedProfile.teamName.toLowerCase();
     }
@@ -295,7 +295,7 @@ export class TeamProfileComponent implements OnInit {
       let cptRemoved = Object.assign({}, this.returnedProfile);
       delete cptRemoved.captain;
       this.admin.saveTeam(this.orignalName,this.returnedProfile).subscribe((res) => {
-        console.log('team was saved!');
+        // console.log('team was saved!');
         this.orignalName = res.teamName_lower;
         this.returnedProfile = res;
       }, (err) => {
@@ -345,12 +345,12 @@ export class TeamProfileComponent implements OnInit {
 
   //method for inviting users to join this team
   invite(user) {
-    console.log(user);
+    // console.log(user);
     if (this.returnedProfile.teamName && user) {
       this.team.addUser(user, this.returnedProfile.teamName_lower).subscribe(res => {
         this.message = res.message;
         this.filterUsers.push(user);
-        console.log(this.filterUsers);
+        // console.log(this.filterUsers);
       }, err => {
         this.message = err.error.message;
       });
@@ -482,7 +482,7 @@ export class TeamProfileComponent implements OnInit {
       merge(this.returnedProfile, res);
       this.setUpTeamMemberFilter(this.returnedProfile);
       this.stratifyTeamMembers()
-      console.log('team ', this.returnedProfile);
+      // console.log('team ', this.returnedProfile);
       // this.cleanUpDivision();
     });
   }
