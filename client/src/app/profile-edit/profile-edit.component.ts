@@ -37,6 +37,10 @@ export class ProfileEditComponent implements OnInit {
     this.hotslogsUrlPatternValidator
   ]);
 
+  discordTagFormControl = new FormControl({ value: '', disabled: true }, [
+    Validators.required
+  ]);
+
   heroeLeagueDivisionControl = new FormControl({ value: '',disabled:true}, [
     Validators.required
   ]);
@@ -63,6 +67,7 @@ export class ProfileEditComponent implements OnInit {
 
   profileForm = new FormGroup({
     hotslogurl: this.hotsLogsFormControl,
+    discordTag: this.discordTagFormControl,
     hlDivision: this.heroeLeagueDivisionControl,
     hlRank: this.heroeLeagueRankControl,
     timezone: this.timezoneControl
@@ -70,6 +75,7 @@ export class ProfileEditComponent implements OnInit {
 
   formControlledEnable(){
 this.hotsLogsFormControl.enable();
+this.discordTagFormControl.enable();
 this.heroeLeagueDivisionControl.enable();
 this.heroeLeagueRankControl.enable();
 this.timezoneControl.enable();
@@ -77,6 +83,7 @@ this.timezoneControl.enable();
 
   formControlledDisable(){
     this.hotsLogsFormControl.disable();
+    this.discordTagFormControl.disable();
     this.heroeLeagueDivisionControl.disable();
     this.heroeLeagueRankControl.disable();
     this.timezoneControl.disable();
@@ -112,9 +119,6 @@ this.timezoneControl.enable();
     });
   }
 
-  formControl = new FormControl('',
-  [Validators.required]);
-
   answers: object;
   selectedMedal: string;
   displayName : string;
@@ -144,9 +148,26 @@ this.timezoneControl.enable();
      }
    }
 
+  markFormGroupTouched(formGroup: FormGroup) {
+
+  if (formGroup.controls) {
+    const keys = Object.keys(formGroup.controls);
+    for (let i = 0; i < keys.length; i++) {
+      const control = formGroup.controls[keys[i]];
+
+      if (control instanceof FormControl) {
+        control.markAsTouched();
+      } else if (control instanceof FormGroup) {
+        this.markFormGroupTouched(control);
+      }
+    }
+  }
+}
+
    openEdit(){
      this.editOn=false;
      this.formControlledEnable();
+     this.markFormGroupTouched(this.profileForm);
      this.tempProfile = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
      merge(this.tempProfile, this.returnedProfile);
    }

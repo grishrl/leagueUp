@@ -23,8 +23,14 @@ export class CreateTeamComponent implements OnInit {
   ]
   
   constructor(private team: TeamService, public timezone:TimezoneService, private auth: AuthService, private route:Router) { }
+
   nameContorl = new FormControl();
   timeZoneControl = new FormControl();
+
+  createTeamControlGroup = new FormGroup({
+    nameControl: this.nameContorl,
+    timeZone: this.timeZoneControl
+  })
 
   errorAvail:boolean=false;
   //check that the availability exists and that at least one day has been set to true and has time
@@ -55,6 +61,7 @@ export class CreateTeamComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.markFormGroupTouched(this.createTeamControlGroup);
     this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
   }
 
@@ -86,6 +93,21 @@ export class CreateTeamComponent implements OnInit {
     });
   }
 
+  markFormGroupTouched(formGroup: FormGroup) {
+
+    if (formGroup.controls) {
+      const keys = Object.keys(formGroup.controls);
+      for (let i = 0; i < keys.length; i++) {
+        const control = formGroup.controls[keys[i]];
+
+        if (control instanceof FormControl) {
+          control.markAsTouched();
+        } else if (control instanceof FormGroup) {
+          this.markFormGroupTouched(control);
+        }
+      }
+    }
+  }
 
   validate() {
     let valid = true;

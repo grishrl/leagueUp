@@ -44,7 +44,10 @@
 
                         </mat-form-field>
                         <mat-form-field>
-                            <input matInput placeholder="Discord Tag" [(ngModel)]="returnedProfile.discordTag" disabled="true">
+                            <input matInput placeholder="Discord Tag" [formControl]="discordTagFormControl" [(ngModel)]="returnedProfile.discordTag">
+                            <mat-error *ngIf="discordTagFormControl.hasError('required')">
+                                Discord Tag is required.
+                            </mat-error>
                         </mat-form-field>
                         <mat-form-field>
                             <mat-select placeholder="Hero League Division" [formControl]="heroeLeagueDivisionControl" [(ngModel)]="returnedProfile.hlRankMetal">
