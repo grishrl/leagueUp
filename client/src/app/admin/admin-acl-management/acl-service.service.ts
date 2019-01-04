@@ -14,7 +14,8 @@ export class AclServiceService {
     { key: "STANDINGS", value: false },
     { key: "CASTER", value: false },
     { key: "MATCH", value: false },
-    { key: "SCHEDULEGEN", value: false }
+    { key: "SCHEDULEGEN", value: false },
+    { key: "ACL", value: false}
   ];
 
   removeUnwantedProps(acl){
