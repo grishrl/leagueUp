@@ -21,6 +21,9 @@ export class HttpServiceService {
             this.notificationService.subj_notification.next(res['message']);
           }
           return res['returnObject'];
+        },
+        err=>{
+          console.log('httpPostService ', err);
         }
       )
     )
@@ -49,6 +52,9 @@ export class HttpServiceService {
             this.notificationService.subj_notification.next('Working..');
           }
           return res['returnObject']
+        },
+        err=>{
+          console.log('httpGetService ', err);
         }
       )
     )

@@ -22,7 +22,8 @@ const userSchema = new Schema({
     "averageMmr": Number,
     "pendingTeam": Boolean,
     "toonHandle": String, //used for tieng profile to replays submitted
-    "discordTag": String
+    "discordTag": String,
+    "lastTouched": String
 });
 
 

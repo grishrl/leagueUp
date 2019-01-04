@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { UtilitiesService } from './utilities.service';
 
 
 @Injectable({providedIn: 'root'})
 
 export class AuthService {
 
-  constructor(private router:Router, private http: HttpClient){
+  constructor(private router:Router, private http: HttpClient, private util:UtilitiesService){
    
   }
 
@@ -42,10 +43,10 @@ export class AuthService {
     localStorage.setItem('token', token);
     localStorage.setItem('userName', decodedToken.displayName);
     if (decodedToken.teamInfo){
-      if (this.returnBoolByPath(decodedToken, 'teamInfo.teamName')){
+      if (this.util.returnBoolByPath(decodedToken, 'teamInfo.teamName')){
         localStorage.setItem('teamName', decodedToken.teamInfo.teamName);
       }
-      if (this.returnBoolByPath(decodedToken, 'teamInfo.isCaptain')){
+      if (this.util.returnBoolByPath(decodedToken, 'teamInfo.isCaptain')){
         localStorage.setItem('captain', decodedToken.teamInfo.isCaptain.toString());
       }else{
         localStorage.setItem('captain', 'false');
@@ -161,38 +162,4 @@ export class AuthService {
 
   }
 
-  returnBoolByPath(obj, path): boolean {
-    //path is a string representing a dot notation object path;
-    //create an array of the string for easier manipulation
-    let pathArr = path.split('.');
-    //return value
-    let retVal = null;
-    //get the first element of the array for testing
-    let ele = pathArr[0];
-    //make sure the property exist on the object
-    if (obj.hasOwnProperty(ele)) {
-      if (typeof obj[ele] == 'boolean') {
-        retVal = true;
-      }
-      //property exists:
-      //property is an object, and the path is deeper, jump in!
-      else if (typeof obj[ele] == 'object' && pathArr.length > 1) {
-        //remove first element of array
-        pathArr.splice(0, 1);
-        //reconstruct the array back into a string, adding "." if there is more than 1 element
-        if (pathArr.length > 1) {
-          path = pathArr.join('.');
-        } else {
-          path = pathArr[0];
-        }
-        //recurse this function using the current place in the object, plus the rest of the path
-        retVal = this.returnBoolByPath(obj[ele], path);
-      } else if (typeof obj[ele] == 'object' && pathArr.length == 0) {
-        retVal = obj[ele];
-      } else {
-        retVal = obj[ele]
-      }
-    }
-    return !!retVal;
-  }
 }

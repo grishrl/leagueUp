@@ -1,0 +1,1 @@
+const Team = require('./server/schedule-routines/update-team-mmr');

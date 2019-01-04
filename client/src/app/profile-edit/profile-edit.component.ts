@@ -53,6 +53,8 @@ export class ProfileEditComponent implements OnInit {
     Validators.required
   ]);
 
+  timesAvailControl = new FormControl();
+
   hotslogsUrlPatternValidator(control: FormControl) {
   let hotslogsURL = control.value;
     let regex = new RegExp(/^((https):\/)\/www\.hotslogs\.com\/player\/profile\?playerid\=[0-9]+/, 'i');
@@ -70,7 +72,8 @@ export class ProfileEditComponent implements OnInit {
     discordTag: this.discordTagFormControl,
     hlDivision: this.heroeLeagueDivisionControl,
     hlRank: this.heroeLeagueRankControl,
-    timezone: this.timezoneControl
+    timezone: this.timezoneControl,
+    timeAvail:this.timesAvailControl
   })
 
   formControlledEnable(){
@@ -226,6 +229,16 @@ this.timezoneControl.enable();
       } )
   }
 
+  validAvailTimes:boolean=false;
+  recieveAvailTimeValidity(event){
+    this.validAvailTimes = event;
+    if(event){
+      this.timesAvailControl.setErrors(null);
+    }else{
+      this.timesAvailControl.setErrors({ invalid: true });
+    }
+  }  
+
   validate(){
     let valid = true;
     //validate the hotslogs URL
@@ -247,15 +260,11 @@ this.timezoneControl.enable();
     //will we require the comp level, play history, roles?
 
     //validate that we have start and end times for available days
-    for (let day in this.returnedProfile.availability){
-      let checkDay = this.returnedProfile.availability[day];
-      if (checkDay.available){
-        if (checkDay.startTime == null && checkDay.endTime == null){
-          return false;
-        }else if (checkDay.startTime.length == 0 && checkDay.endTime.length == 0){
-          return false;
-        }
-      }
+    if(!this.validAvailTimes){
+      valid=false;
+      this.timesAvailControl.setErrors({invalid:true});
+    }else{
+      this.timesAvailControl.setErrors(null);
     }
 
     //ensure time zone

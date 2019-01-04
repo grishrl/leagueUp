@@ -3,6 +3,7 @@ const Team = require('../models/team-models');
 const User = require('../models/user-models');
 
 const numberOfTopMembersToUse = 4;
+const daysLastTouched = 5;
 
 //subroutine to update teams division
 function upsertTeamsDivision(teams, division) {

@@ -56,6 +56,7 @@ import { ManageTeamViewComponent } from './admin/manage-team/manage-team-view/ma
 import { DeleteConfrimModalComponent } from './modal/delete-confrim-modal/delete-confrim-modal.component';
 import { NoAccessComponent } from './no-access/no-access.component';
 import { SessionTimeoutComponent } from './session-timeout/session-timeout.component';
+import { TimesAvailableComponent } from './times-available/times-available.component';
 
 @NgModule({
   declarations: [
@@ -106,7 +107,8 @@ import { SessionTimeoutComponent } from './session-timeout/session-timeout.compo
     ManageTeamViewComponent,
     DeleteConfrimModalComponent,
     NoAccessComponent,
-    SessionTimeoutComponent
+    SessionTimeoutComponent,
+    TimesAvailableComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

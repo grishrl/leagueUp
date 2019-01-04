@@ -28,7 +28,8 @@ const teamSchema = new Schema({
     "captain": String,
     "teamMMRAvg": Number, //added to display
     "teamMembers": [miniUser], //added to display
-    "pendingMembers": [miniUser]
+    "pendingMembers": [miniUser],
+    "lastTouched": String
 });
 
 const Team = mongoose.model('team', teamSchema);

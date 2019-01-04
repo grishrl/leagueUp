@@ -9,7 +9,8 @@ const divisionInfoSchema = new Schema({
     "divisionConcat": String,
     "maxMMR": Number,
     "minMMR": Number,
-    "teams": [String]
+    "teams": [String],
+    "lastTouched": String
 });
 
 
