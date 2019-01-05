@@ -63,6 +63,15 @@ router.post('/divisionTeams',
         let div = req.body.divisionName;
         let recTeam = req.body.teamInfo;
         let teams = [];
+
+        //log object
+        let logObj = {};
+        logObj.actor = req.user.displayName;
+        logObj.action = 'add team to division ';
+        logObj.target = div + ' : ' + teams.toString();
+        logObj.logLevel = 'ADMIN';
+
+
         recTeam.forEach(element => {
             teams.push(element.teamName);
         });
@@ -83,17 +92,17 @@ router.post('/divisionTeams',
                 foundDiv.markModified('teams');
                 foundDiv.save().then((saved) => {
                     runTeamSub = true;
-                    res.status(200).send(util.returnMessaging(path, 'Saved division', false, saved));
+                    res.status(200).send(util.returnMessaging(path, 'Saved division', false, saved, null, logObj));
                     TeamSubs.upsertTeamsDivision(teams, {
                         displayName: saved.displayName,
                         divisionConcat: saved.divisionConcat
                     });
                 }, (err) => {
-                    res.status(500).send(util.returnMessaging(path, 'Error saving divsion', err));
+                    res.status(500).send(util.returnMessaging(path, 'Error saving divsion', err, null, null, logObj));
                 })
             }
         }, (err) => {
-            res.status(500).send(util.returnMessaging(path, 'Error finding division', err))
+            res.status(500).send(util.returnMessaging(path, 'Error finding division', err, null, null, logObj))
         })
 
     });
@@ -113,6 +122,13 @@ router.post('/upsertDivision', passport.authenticate('jwt', {
         runSubs = true;
     }
 
+    //log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = 'create or edit division ';
+    logObj.target = div;
+    logObj.logLevel = 'ADMIN';
+
     Division.findOne({ divisionConcat: name }).then((found) => {
         if (found) {
             //check one more time to ensure we dont need to run sub routines:
@@ -125,7 +141,7 @@ router.post('/upsertDivision', passport.authenticate('jwt', {
             });
             found.save().then(
                 (saved) => {
-                    res.status(200).send(util.returnMessaging(path, 'Division updated', false, saved));
+                    res.status(200).send(util.returnMessaging(path, 'Division updated', false, saved, null, logObj));
                     if (runSubs) {
                         TeamSubs.upsertTeamsDivision(found.teams, {
                             "displayName": saved.displayName,
@@ -133,7 +149,7 @@ router.post('/upsertDivision', passport.authenticate('jwt', {
                         });
                     }
                 }, (err) => {
-                    res.status(500).send(util.returnMessaging(path, 'Error saving Division', err));
+                    res.status(500).send(util.returnMessaging(path, 'Error saving Division', err, null, null, logObj));
                 }
             )
 
@@ -141,14 +157,14 @@ router.post('/upsertDivision', passport.authenticate('jwt', {
             new Division(
                 division
             ).save().then((newDivision) => {
-                res.status(200).send(util.returnMessaging(path, 'Created new division', false, newDivision));
+                res.status(200).send(util.returnMessaging(path, 'Created new division', false, newDivision, null, logObj));
             }, (err) => {
-                res.status(500).send(util.returnMessaging(path, 'Error creating new division', err));
+                res.status(500).send(util.returnMessaging(path, 'Error creating new division', err, null, null, logObj));
             });
         }
 
     }, (err) => {
-        res.status(500).send(util.returnMessaging(path, 'Error finding division', err));
+        res.status(500).send(util.returnMessaging(path, 'Error finding division', err, null, null, logObj));
     })
 
 });
@@ -161,6 +177,13 @@ router.post('/removeTeams', passport.authenticate('jwt', {
     let div = req.body.divName;
     let removed = [];
 
+    //log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = 'remove team from division ';
+    logObj.target = div + ' : ' + removeTeams.toString();
+    logObj.logLevel = 'ADMIN';
+
     Division.findOne({ divisionConcat: div }).then((found) => {
         if (found) {
             removeTeams.forEach(team => {
@@ -168,16 +191,18 @@ router.post('/removeTeams', passport.authenticate('jwt', {
                 removed = removed.concat(found.teams.splice(i, 1));
             });
             found.save((saved) => {
-                res.status(200).send(util.returnMessaging(path, 'Saved division', false, saved));
+                res.status(200).send(util.returnMessaging(path, 'Saved division', false, saved, null, logObj));
                 TeamSubs.upsertTeamsDivision(removed, {});
             }, (err) => {
-                res.status(500).send(util.returnMessaging(path, 'Error saving division', err));
+                res.status(500).send(util.returnMessaging(path, 'Error saving division', err, null, null, logObj));
             })
         } else {
-            res.status(200).send(util.returnMessaging(path, 'No division found', false, found));
+            logObj.logLevel = 'ERROR';
+            logObj.error = 'Division was not found';
+            res.status(200).send(util.returnMessaging(path, 'No division found', false, found, null, logObj));
         }
     }, (err) => {
-        res.status(500).send(util.returnMessaging(path, 'Error finding division', err));
+        res.status(500).send(util.returnMessaging(path, 'Error finding division', err, null, null, logObj));
     })
 })
 
@@ -187,25 +212,34 @@ router.post('/createDivision', passport.authenticate('jwt', {
     const path = '/admin/createDivision';
     const recievedDivision = req.body.division;
 
+    //log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = 'create division ';
+    logObj.target = recievedDivision.divisionConcat;
+    logObj.logLevel = 'ADMIN';
+
     Division.findOne({ divisionConcat: recievedDivision.divisionConcat }).then(
         (found) => {
             if (found) {
-                res.status(400).send(util.returnMessaging(path, 'Division All ready exists', false, found));
+                logObj.logLevel = 'ERROR';
+                logObj.error = 'Division all ready exists';
+                res.status(400).send(util.returnMessaging(path, 'Division All ready exists', false, found, null, logObj));
             } else {
                 new Division(
                     recievedDivision
                 ).save().then(
                     (saved) => {
-                        res.status(200).send(util.returnMessaging(path, 'Division Created', false, saved));
+                        res.status(200).send(util.returnMessaging(path, 'Division Created', false, saved, null, logObj));
                     },
                     (err) => {
-                        res.status(500).send(util.returnMessaging(path, 'Division not created', err));
+                        res.status(500).send(util.returnMessaging(path, 'Division not created', err, null, null, logObj));
                     }
                 )
             }
         },
         (err) => {
-            res.status(500).send(util.returnMessaging(path, 'Error creating division', err));
+            res.status(500).send(util.returnMessaging(path, 'Error creating division', err, null, null, logObj));
         }
     )
 });
@@ -216,19 +250,28 @@ router.post('/deleteDivision', passport.authenticate('jwt', {
     const path = '/admin/deleteDivision';
     const recievedDivision = req.body.division;
 
+    //log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = 'delete division ';
+    logObj.target = recievedDivision;
+    logObj.logLevel = 'ADMIN';
+
     Division.findOneAndDelete({ divisionConcat: recievedDivision }).then(
         (removed) => {
             if (removed) {
                 //touch each team that was in the division and remove the division from them
-                res.status(200).send(util.returnMessaging(path, 'Division was deleted', false, removed));
+                res.status(200).send(util.returnMessaging(path, 'Division was deleted', false, removed, null, logObj));
                 TeamSubs.upsertTeamsDivision(removed.teams, {});
 
             } else {
-                res.status(400).send(util.returnMessaging(path, 'Division not found', false));
+                logObj.logLevel = 'ERROR';
+                logObj.error = 'Divison not found'
+                res.status(400).send(util.returnMessaging(path, 'Division not found', false, null, null, logObj));
             }
         },
         (err) => {
-            res.status(500).send(util.returnMessaging(path, 'Division delete failed', err));
+            res.status(500).send(util.returnMessaging(path, 'Division delete failed', err, null, null, logObj));
         }
     )
 });
