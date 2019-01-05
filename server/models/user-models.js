@@ -23,7 +23,7 @@ const userSchema = new Schema({
     "pendingTeam": Boolean,
     "toonHandle": String, //used for tieng profile to replays submitted
     "discordTag": String,
-    "lastTouched": String
+    "lastTouched": Number
 });
 
 
