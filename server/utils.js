@@ -71,6 +71,7 @@ returnMessaging = function(route, message, err, obj, additional, logInfo) {
             logObj.error = logInfo.error;
         }
     }
+    logObj.location = route;
     logObj.timeStamp = new Date().getTime();
     //dont log if we didnt get all the info from the caller
     if (logInfo) {

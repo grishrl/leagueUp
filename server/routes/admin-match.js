@@ -11,7 +11,7 @@ router.post('/match/update', passport.authenticate('jwt', {
 
     const path = 'admin/match/update'
 
-    logInfo.action = 'update match ' + path;
+    logInfo.action = 'update match ';
     logInfo.admin = 'ADMIN';
     logInfo.actor = req.user.displayName;
     logInfo.target = req.body.match;

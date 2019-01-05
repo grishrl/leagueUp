@@ -4,6 +4,12 @@ const User = require('../models/user-models');
 const TeamSub = require('../subroutines/team-subs');
 const passport = require("passport");
 
+/*
+/get
+/delete
+/save
+*/
+
 router.get('/get', (req, res) => {
     const path = '/user/get';
     var user = req.query.user;
@@ -54,7 +60,7 @@ router.post('/save', passport.authenticate('jwt', {
         //construct log object
         let logObj = {};
         logObj.actor = req.user.displayName;
-        logObj.action = 'user profile save ' + path;
+        logObj.action = 'user profile save ';
         logObj.target = sentUser.displayName;
         logObj.logLevel = 'STD';
 

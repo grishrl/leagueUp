@@ -15,7 +15,8 @@ const logSchema = new Schema({
     "action": String,
     "target": String,
     "timeStamp": Number,
-    "error": String
+    "error": String,
+    'location': String
 })
 
 const System = mongoose.model('system', systemSchema);
