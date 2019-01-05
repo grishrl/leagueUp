@@ -14,7 +14,7 @@ function cleanUpPendingQueueTeamnameUsername(teamname, username) {
         if (toDelete && toDelete.length > 0) {
             toDelete.forEach(ele => {
                 ele.remove();
-                console.log('pendingQueue item ' + deleted._id + ' deleted.'); //static logging
+                console.log('pendingQueue item ' + ele._id + ' deleted.'); //static logging
             });
         }
     }, (err) => {

@@ -47,7 +47,6 @@ router.get('/getTeamsUndivisioned', passport.authenticate('jwt', {
 //TODO: further refactor might move this into the division route -- and fix the service provider in client???
 router.get('/getDivisionInfo', (req, res) => {
     const path = '/admin/getDivisionInfo'
-
     Division.find({}).then((found) => {
         res.status(200).send(util.returnMessaging(path, 'Returning division info.', false, found));
     }, (err) => {

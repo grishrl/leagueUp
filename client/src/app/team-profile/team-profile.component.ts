@@ -462,6 +462,31 @@ export class TeamProfileComponent implements OnInit {
     });
   }
 
+  //method to determine if user is a member of a team but not captain
+  //shows button to leave team if so, and is not admin embedded
+  showLeaveTeam(playerName){
+    if(this.componentEmbedded){
+      return false;
+    }else{
+      if (this.returnedProfile.teamName == this.auth.getTeam() && this.returnedProfile.captain != this.auth.getUser() && playerName == this.auth.getUser()) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
+  leaveTeam(){
+    this.team.removeUser(this.auth.getUser(), this.returnedProfile.teamName_lower).subscribe(
+      (res) => {
+        console.log('team left');
+        this.ngOnInit();
+      },
+      (err) => {
+        console.log(err);
+      }
+    )
+  }
 
   imageFQDN(img){
     return this.team.imageFQDN(img);

@@ -11,6 +11,21 @@
                     <h2>Admin Management</h2>
                 </div>
             </div>
+            <div class="row m-2">
+                <div class="col">
+                    <h4>Filter by name:</h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="tp-FullWidth">
+                        <input matInput placeholder="Filter by name" [(ngModel)]="filterName" (ngModelChange)="filterUsers(filterName)">
+                    </mat-form-field>
+                </div>
+            </div>
+            <mat-paginator [length]="length" [pageSize]="pageSize" (page)="pageEventHandler($event)">
+
+            </mat-paginator>
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -20,7 +35,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let user of users">
+                    <tr *ngFor="let user of displayArray">
                         <td>{{user.displayName}}</td>
                         <td>
                             <div class="row" *ngFor="let acl of user.adminRights | keyvalue">

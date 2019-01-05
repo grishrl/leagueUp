@@ -352,9 +352,7 @@ router.post('/addMember', passport.authenticate('jwt', {
 
                         foundTeam.save().then((saveOK) => {
                             UserSub.togglePendingTeam(foundUser.displayName);
-                            res.status(200).send(
-                                util.returnMessaging(path, "User added to pending members", false, saveOK, null, logObj);
-                            );
+                            res.status(200).send(util.returnMessaging(path, "User added to pending members", false, saveOK, null, logObj));
                             QueueSub.addToPendingTeamMemberQueue(foundTeam.teamName_lower, foundUser.displayName);
                         }, (teamSaveErr) => {
                             logObj.logLevel = 'ERROR';

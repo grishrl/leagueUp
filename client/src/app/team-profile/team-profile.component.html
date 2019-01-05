@@ -160,6 +160,11 @@
                                 <input matInput placeholder="Player Name" value={{player.displayName}} disabled="true">
                             </mat-form-field>
                         </div>
+                        <div *ngIf="showLeaveTeam(player.displayName)" class="col">
+                            <button class="btn btn-danger" (click)="removeMember(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)">
+                                Leave Team 
+                            </button>
+                        </div>
                         <div *ngIf="!editOn" class="col">
                             <button class="btn btn-danger" (click)="removeMember(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)"> X </button>
                         </div>
@@ -171,6 +176,11 @@
                             <mat-form-field class="tp-FullWidth">
                                 <input matInput placeholder="Player Name" value={{player.displayName}} disabled="true">
                             </mat-form-field>
+                        </div>
+                        <div *ngIf="showLeaveTeam(player.displayName)" class="col">
+                            <button class="btn btn-danger" (click)="removeMember(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)">
+                                Leave Team 
+                            </button>
                         </div>
                         <div *ngIf="!editOn" class="col">
                             <button class="btn btn-danger" (click)="removeMember(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)"> X </button>
