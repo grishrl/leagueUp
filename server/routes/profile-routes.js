@@ -48,7 +48,16 @@ router.post('/save', passport.authenticate('jwt', {
     }), util.appendResHeader,
     function(req, res) {
         const path = 'user/save';
+
         var sentUser = req.body;
+
+        //construct log object
+        let logObj = {};
+        logObj.actor = req.user.displayName;
+        logObj.action = 'user profile save ' + path;
+        logObj.target = sentUser.displayName;
+        logObj.logLevel = 'STD';
+
         var id = req.user._id.toString();
         //ensure saving requesting user is the user being saved
         if (req.user._id.toString() === sentUser._id) {
@@ -105,21 +114,24 @@ router.post('/save', passport.authenticate('jwt', {
 
                     found.save(function(err, updatedUser) {
                         if (err) {
-                            res.status(500).send(util.returnMessaging(path, 'Error saving user', err));
+                            logObj.logLevel = "ERROR"
+                            res.status(500).send(util.returnMessaging(path, 'Error saving user', err, null, null, logObj));
                         }
 
                         if (updatedUser) {
-                            res.status(200).send(util.returnMessaging(path, 'User update successful', false, updatedUser));
+                            res.status(200).send(util.returnMessaging(path, 'User update successful', false, updatedUser, null, logObj));
                         }
                     });
 
 
                 } else {
-                    res.status(400).send(util.returnMessaging(path, 'User ID not found.', false));
+                    logObj.error = 'User ID not found.';
+                    res.status(400).send(util.returnMessaging(path, 'User ID not found.', false, null, null, logObj));
                 }
             })
         } else {
-            res.status(403).send(util.returnMessaging(path, 'Unauthorized to mofify this profile.', false))
+            logObj.error = 'Unauthorized to mofify this profile.';
+            res.status(403).send(util.returnMessaging(path, 'Unauthorized to mofify this profile.', false, null, null, logObj))
         }
 
     });

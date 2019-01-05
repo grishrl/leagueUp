@@ -39,6 +39,8 @@ router.post('/delete/user', passport.authenticate('jwt', {
 
 });
 
+
+
 //returns all users and acl lists
 router.get('/user/get/usersacl/all', passport.authenticate('jwt', {
     session: false

@@ -1,3 +1,5 @@
+const logger = require('./subroutines/sys-logging-subs');
+
 isNullOrEmpty = function(dat) {
     if (dat == null || dat == undefined) {
         return true;
@@ -30,7 +32,7 @@ isNullorUndefined = function(dat) {
     }
 }
 
-returnMessaging = function(route, message, err, obj, additional) {
+returnMessaging = function(route, message, err, obj, additional, logInfo) {
     var ret = {
         "route": route,
         "message": message
@@ -44,6 +46,37 @@ returnMessaging = function(route, message, err, obj, additional) {
     if (!isNullOrEmpty(additional)) {
         ret = Object.assign(additional, ret);
     }
+
+    let logObj = {};
+    if (!isNullOrEmpty(err) && err) {
+        logObj.logLevel = 'ERROR';
+        logObj.error = err;
+    } else {
+        logObj.logLevel = 'STD';
+    }
+    if (logInfo) {
+        if (logInfo.admin) {
+            logObj.logLevel = 'ADMIN';
+        }
+        if (logInfo.actor) {
+            logObj.actor = logInfo.actor;
+        }
+        if (logInfo.action) {
+            logObj.action = logInfo.action;
+        }
+        if (logInfo.target) {
+            logObj.target = logInfo.target;
+        }
+        if (logInfo.error) {
+            logObj.error = logInfo.error;
+        }
+    }
+    logObj.timeStamp = new Date().getTime();
+    //dont log if we didnt get all the info from the caller
+    if (logInfo) {
+        logger(logObj);
+    }
+
     return ret;
 }
 
