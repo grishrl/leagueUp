@@ -4,32 +4,24 @@
             <a [routerLink]="['/_admin/dashboard']">Back to Dashboard</a>
         </div>
     </div>
-    <div class="row">
+
+    <div class="row mt-3">
         <div class="col">
-            Search for team:
+            <h3>Select from list:</h3>
         </div>
     </div>
+
     <div class="row">
         <div class="col">
-            <app-team-search (teamSelected)="receiveTeam($event)" [buttonText]="'Select Team For Management'"></app-team-search>
-        </div>
-        <div class="col-3">
-            <div class="row" *ngIf="turnOnForm">
-                <div class="col">Review team below</div>
-            </div>
+            <mat-form-field class="tp-FullWidth">
+                <input matInput placeholder="Filter by name" [(ngModel)]="filterName" (ngModelChange)="filterTeams(filterName)">
+            </mat-form-field>
         </div>
     </div>
-    <div class="row">
-        <div class="col">
-            - or -
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            Select from list:
-        </div>
-    </div>
-    <div class="row mt-2 p-3 rowBorder" *ngFor="let team of teams; let ind = index" [ngClass]="{oddRow : ind%2!=0}">
+    <mat-paginator [length]="length" [pageSize]="pageSize" (page)="pageEventHandler($event)">
+
+    </mat-paginator>
+    <div class="row mt-2 p-3 rowBorder" *ngFor="let team of displayArray; let ind = index" [ngClass]="{oddRow : ind%2!=0}">
         <div class="col">
             <div class="row">
                 <div class="col">

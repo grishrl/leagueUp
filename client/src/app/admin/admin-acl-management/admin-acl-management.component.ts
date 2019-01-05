@@ -43,7 +43,7 @@ export class AdminAclManagementComponent implements OnInit {
     }else{
       this.filteredArray = [];
       this.users.forEach(element => {
-        if (element.displayName.toLowerCase().indexOf(filterName)>-1){
+        if (element.displayName.toLowerCase().indexOf(filterName.toLowerCase())>-1){
           this.filteredArray.push(element);
         }
       });

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { TeamService } from '../../services/team.service';
 import { AdminService } from 'src/app/services/admin.service';
 import { Router } from '@angular/router';
+import { PageEvent } from '@angular/material';
 
 @Component({
   selector: 'app-manage-select-team',
@@ -18,11 +19,50 @@ export class ManageSelectTeamComponent implements OnInit {
   pulledProfile:any
   teams:any[]=[];
 
+  users: any = [];
+  filterName: string = '';
+  displayArray = [];
+  length: number;
+  pageSize: number = 10;
+  filteredArray: any = [];
+
+
+  pageEventHandler(pageEvent: PageEvent) {
+    console.log(pageEvent);
+    let i = pageEvent.pageIndex * this.pageSize;
+    let endSlice = i + this.pageSize
+    if (endSlice > this.filteredArray.length) {
+      endSlice = this.filteredArray.length;
+    }
+    console.log('index start ', i, ' endSlice ', endSlice);
+    this.displayArray = [];
+    this.displayArray = this.filteredArray.slice(i, endSlice)
+
+  } 
+  
   //callback function that is passed to the search component, accepts the profile selected from that component
   //santaizes the returned profile for URL and routes to that profile 
   receiveTeam(teamProf) {
     if (teamProf != null && teamProf != undefined) {
       this.goView(this.team.routeFriendlyTeamName(teamProf.teamName_lower));
+    }
+  }
+
+  filterTeams(filterName) {
+    if (filterName == null || filterName == undefined || filterName.length == 0) {
+      this.filteredArray = this.teams;
+      this.length = this.filteredArray.length;
+      this.displayArray = this.filteredArray.slice(0, 10);
+    } else {
+      this.filteredArray = [];
+      this.teams.forEach(element => {
+        if (element.teamName_lower.toLowerCase().indexOf(filterName.toLowerCase()) > -1) {
+          this.filteredArray.push(element);
+        }
+      });
+      this.length = this.filteredArray.length;
+      this.displayArray = this.filteredArray.slice(0, 10);
+
     }
   }
 
@@ -43,6 +83,9 @@ export class ManageSelectTeamComponent implements OnInit {
     this.admin.getTeams().subscribe(
       (res)=>{
         this.teams = res;
+        this.filteredArray = this.teams;
+        this.length = this.filteredArray.length;
+        this.displayArray = this.teams.slice(0,10);
       },
       (err)=>{
         console.log(err);
