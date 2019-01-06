@@ -49,7 +49,7 @@ export class HttpServiceService {
       map(
         res=>{ 
           if (showNotification) {
-            this.notificationService.subj_notification.next('Working..');
+            this.notificationService.subj_notification.next(res['message']);
           }
           return res['returnObject']
         },

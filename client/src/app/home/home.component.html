@@ -12,7 +12,7 @@
             </ol>
             <div class="carousel-inner" role="listbox">
                 <!-- Slide One - Set the background image for this slide in the line below -->
-                <div (click)="goToBlogPage(jumboSlide)" *ngFor="let jumboSlide of jumboTron let i = index" class="carousel-item finger" [ngClass]="{'active':i==0}" [style.background-image]="'url('+jumboSlide.fields.heroImage.fields.file.url+'?w=1900&h=1080&fit=scale)'">
+                <div (click)="goToBlogPage(jumboSlide)" *ngFor="let jumboSlide of jumboTron let i = index" class="carousel-item finger" [ngClass]="{'active':i==0}" [style.background-image]="'url('+jumboSlide.fields.heroImage.fields.file.url+'?w=1920&h=1080&fit=scale)'">
                     <div class="carousel-caption d-none d-md-block">
 
                         <h3>{{jumboSlide.fields.title}}</h3>
@@ -32,7 +32,7 @@
         </div>
     </header>
 
-    <h1 class="my-4">Welcome to the site!</h1>
+    <h1 class="my-4 text-center">Welcome to Nexus Gaming Series!</h1>
 
     <h2>Recent news</h2>
 
@@ -44,7 +44,7 @@
                     <mat-card-title><span class="anchor" (click)="goToBlogPage(item)">{{item.fields.title}}</span></mat-card-title>
                     <mat-card-subtitle>{{item.fields.author.fields.name}}</mat-card-subtitle>
                 </mat-card-header>
-                <img mat-card-image src="{{item.fields.heroImage.fields.file.url}}?w=450&h=300&fit=scale" alt="{{item.fields.heroImage.fields.description}}">
+                <img mat-card-image src="{{item.fields.heroImage.fields.file.url}}?w=400&h=300&fit=scale" alt="{{item.fields.heroImage.fields.description}}">
                 <mat-card-content>
                     <div>{{item.fields.description}}</div>
                 </mat-card-content>
