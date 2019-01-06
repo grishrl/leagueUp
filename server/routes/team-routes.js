@@ -10,6 +10,7 @@ const passport = require("passport");
 const fs = require('fs');
 const imageDataURI = require('image-data-uri');
 const AWS = require('aws-sdk');
+const sysModels = require('../models/system-models');
 
 const logger = require('../subroutines/sys-logging-subs');
 
@@ -724,6 +725,24 @@ router.post('/reassignCaptain', passport.authenticate('jwt', {
             }
         }, (err) => {
             res.status(500).send(util.returnMessaging(path, 'Error finding team', err, null, null, logObj));
+        }
+    )
+});
+//system
+router.post('/get/sys/dat', passport.authenticate('jwt', {
+    session: false
+}), (req, res) => {
+    let path = '/team/get/sys/dat'
+    let request = req.body.data;
+    sysModels.system.findOne({ 'dataName': request }).then(
+        (found) => {
+            if (found) {
+                res.status(200).send(util.returnMessaging(path, 'Found sys data', false, found))
+            } else {
+                res.status(404).send(util.returnMessaging(path, 'Sys data not found', false));
+            }
+        }, (err) => {
+            res.status(500).send(util.returnMessaging(path, 'error querying data', err));
         }
     )
 });

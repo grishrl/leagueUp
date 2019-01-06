@@ -29,6 +29,7 @@ import { ManageTeamViewComponent } from './admin/manage-team/manage-team-view/ma
 import { AuthGuardService } from "./services/auth-guard.service";
 import { NoAccessComponent } from "./no-access/no-access.component";
 import { SessionTimeoutComponent } from "./session-timeout/session-timeout.component";
+import { QuestionaireComponent } from "./questionaire/questionaire.component";
 
 const APP_ROUTES: Routes = [
   { path: 'directory', component: DirectoryComponent},
@@ -59,7 +60,8 @@ const APP_ROUTES: Routes = [
   { path: '_admin/dashboard', component: DashboardComponent, canActivate: [AuthGuardService]},
   { path: '_casterDashboard', component: CasterDashboardComponent, canActivate: [AuthGuardService], data: { role: 'caster' }},
   { path: 'noAccess/:id', component:NoAccessComponent},
-  { path: 'sessionTimeOut', component: SessionTimeoutComponent}
+  { path: 'sessionTimeOut', component: SessionTimeoutComponent},
+  { path: 'questionnaire', component:QuestionaireComponent}
 ]
 
 @NgModule({

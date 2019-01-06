@@ -9,6 +9,13 @@ import { Team } from '../classes/team.class';
 })
 export class TeamService {
 
+  //returns sys data
+  getSysData(name:string){
+    let url = 'team/get/sys/dat';
+    let payload = {'data':name};
+    return this.httpService.httpPost(url, payload);
+  }
+
   //returns requested team
   getTeam(name:string):Observable<any>{
     let encodededID = encodeURIComponent(this.realTeamName(name));

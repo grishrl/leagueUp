@@ -57,6 +57,7 @@ import { DeleteConfrimModalComponent } from './modal/delete-confrim-modal/delete
 import { NoAccessComponent } from './no-access/no-access.component';
 import { SessionTimeoutComponent } from './session-timeout/session-timeout.component';
 import { TimesAvailableComponent } from './times-available/times-available.component';
+import { QuestionaireComponent } from './questionaire/questionaire.component';
 
 @NgModule({
   declarations: [
@@ -108,7 +109,8 @@ import { TimesAvailableComponent } from './times-available/times-available.compo
     DeleteConfrimModalComponent,
     NoAccessComponent,
     SessionTimeoutComponent,
-    TimesAvailableComponent
+    TimesAvailableComponent,
+    QuestionaireComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

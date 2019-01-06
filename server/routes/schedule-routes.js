@@ -9,6 +9,7 @@ const AWS = require('aws-sdk');
 const uniqid = require('uniqid');
 const levelRestrict = require("../configs/admin-leveling");
 const scheduleGenerator = require('../subroutines/schedule-subs');
+const logger = require('../subroutines/sys-logging-subs');
 
 AWS.config.update({
     accessKeyId: process.env.S3accessKeyId,
@@ -138,6 +139,13 @@ router.post('/update/match/time', passport.authenticate('jwt', {
     let scheduledStartTime = req.body.scheduledStartTime;
     let scheduledEndTime = req.body.scheduledEndTime;
 
+    //log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = 'schedule match';
+    logObj.target = matchId;
+    logObj.logLevel = 'STD';
+
     Match.findOne({ matchId: matchId }).then((foundMatch) => {
         if (foundMatch) {
             let teams = findTeamIds([foundMatch.toObject()]);
@@ -155,7 +163,9 @@ router.post('/update/match/time', passport.authenticate('jwt', {
                 if (isCapt) {
                     if (util.returnBoolByPath(foundMatch.toObject(), 'scheduledTime')) {
                         if (foundMatch.scheduledTime.priorScheduled) {
-                            res.status(400).send(util.returnMessaging(path, 'Match has all ready been scheduled'));
+                            logObj.logLevel = 'ERROR';
+                            logObj.error = 'Match has all ready been scheduled';
+                            res.status(400).send(util.returnMessaging(path, 'Match has all ready been scheduled', false, null, null, logObj));
                         } else {
                             foundMatch.scheduledTime.priorScheduled = true;
                             foundMatch.scheduledTime.startTime = scheduledStartTime;
@@ -169,30 +179,36 @@ router.post('/update/match/time', passport.authenticate('jwt', {
                     }
                     foundMatch.markModified('scheduledTime');
                     foundMatch.save((saved) => {
-                        res.status(200).send(util.returnMessaging(path, 'Match schedule saved', false, saved));
+                        res.status(200).send(util.returnMessaging(path, 'Match schedule saved', false, saved, null, logObj));
                     }, (err) => {
-                        res.status(500).send(util.returnMessaging(path, 'Error updating match time.', err));
+                        res.status(500).send(util.returnMessaging(path, 'Error updating match time.', err, null, null, logObj));
                     })
                 } else {
-                    res.status(403).send(util.returnMessaging(path, 'Requester is not authorized'));
+                    logObj.logLevel = 'ERROR';
+                    logObj.error = 'Requester is not authorized';
+                    res.status(403).send(util.returnMessaging(path, 'Requester is not authorized', null, null, null, logObj));
                 }
             }, (err) => {
-                res.status(500).send(util.returnMessaging(path, 'Error updating match time.', err));
+                res.status(500).send(util.returnMessaging(path, 'Error updating match time.', err, null, null, logObj));
             });
         } else {
-            res.status(500).send(util.returnMessaging(path, 'Error updating match time.', err));
+            res.status(500).send(util.returnMessaging(path, 'Error updating match time.', err, null, null, logObj));
         }
     }, (err) => {
-        res.status(500).send(util.returnMessaging(path, 'Error updating match time.', err));
+        res.status(500).send(util.returnMessaging(path, 'Error updating match time.', err, null, null, logObj));
     });
 })
 
+/*
+for getting a match specified by ID
+*/
 router.post('/get/match', passport.authenticate('jwt', {
     session: false
 }), util.appendResHeader, (req, res) => {
     const path = 'schedule/get/match';
     let season = req.body.season;
     let matchId = req.body.matchId;
+
     Match.findOne({ matchId: matchId }).lean().then((foundMatch) => {
         if (foundMatch) {
             let teams = findTeamIds([foundMatch]);
@@ -209,6 +225,10 @@ router.post('/get/match', passport.authenticate('jwt', {
     });
 });
 
+
+/*
+for reporting matches and injesting replay files
+*/
 router.post('/report/match', passport.authenticate('jwt', {
     session: false
 }), util.appendResHeader, (req, res) => {
@@ -231,7 +251,15 @@ router.post('/report/match', passport.authenticate('jwt', {
         submitterTeamName = util.returnByPath(req.user, 'teamInfo.teamName');
     }
 
+    //log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = 'report match';
+    logObj.logLevel = 'STD';
+
     form.parse(req, (req, fields, files) => {
+
+        logObj.target = fields.matchId;
 
         Match.findOne({ matchId: fields.matchId }).then(
             (foundMatch) => {
@@ -347,49 +375,74 @@ router.post('/report/match', passport.authenticate('jwt', {
                                 };
                                 s3replayBucket.putObject(data, function(err, data) {
                                     if (err) {
-                                        console.log(err); // static logging??
-                                        console.log('Error uploading data: ', data);
+                                        //log object
+                                        let sysLog = {};
+                                        sysLog.actor = 'SYS';
+                                        sysLog.action = ' upload replay ';
+                                        sysLog.logLevel = 'ERROR';
+                                        sysLog.target = data.key
+                                        sysLog.timeStamp = new Date().getTime();
+                                        sysLog.error = err;
+                                        logger(sysLog);
                                     } else {
-                                        console.log(data); //static logging??
-                                        console.log('succesfully uploaded the replay!');
+                                        //log object
+                                        let sysLog = {};
+                                        sysLog.actor = 'SYS';
+                                        sysLog.action = ' upload replay ';
+                                        sysLog.logLevel = 'SYSTEM';
+                                        sysLog.target = data.key
+                                        sysLog.timeStamp = new Date().getTime();
+                                        logger(sysLog);
                                     }
                                 });
                             }
 
                             ParsedReplay.collection.insertMany(parsed).then(
                                 (records) => {
-                                    console.log('replays written'); //static logging??
+                                    //log object
+                                    let sysLog = {};
+                                    sysLog.actor = 'SYS';
+                                    sysLog.action = ' parsed replay stored';
+                                    sysLog.logLevel = 'SYSTEM';
+                                    sysLog.target = replayfilenames.toString();
+                                    sysLog.timeStamp = new Date().getTime();
+                                    logger(sysLog);
+
                                     foundMatch.reported = true;
                                     foundMatch.save((saved) => {
-                                        res.status(200).send(util.returnMessaging(path, 'Match reported', false, saved));
+                                        res.status(200).send(util.returnMessaging(path, 'Match reported', false, saved, null, logObj));
                                     }, (err) => {
-                                        res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err));
+                                        res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
                                     })
                                 },
                                 (err) => {
-                                    res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err));
+                                    res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
                                 }
                             )
 
 
                         } else {
-                            res.status(403).send(path, 'Unauthorized', false);
+                            logObj.logLevel = 'ERROR';
+                            logObj.error = 'Unauthorized to report'
+                            res.status(403).send(path, 'Unauthorized', false, null, null, logObj);
                         }
                     }, (err) => {
-                        res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err));
+                        res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
                     })
                 } else {
-                    res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err));
+                    res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
                 }
             },
             (err) => {
-                res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err));
+                res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
             }
         )
     });
 });
 
-
+/*
+this is to add a caster to a match
+*/
 router.post('/match/add/caster', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.casterLevel, util.appendResHeader, (req, res) => {
@@ -398,40 +451,60 @@ router.post('/match/add/caster', passport.authenticate('jwt', {
     let casterName = req.body.casterName;
     let casterUrl = req.body.casterUrl;
 
+    //log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = ' add caster ';
+    logObj.logLevel = 'STD';
+    logObj.target = matchid;
+
     Match.findOne({ matchId: matchid }).then((found) => {
         if (found) {
             found.casterName = casterName;
             found.casterUrl = casterUrl;
             found.save().then(
                 (saved) => {
-                    res.status(200).send(util.returnMessaging(path, 'Match updated', false, saved));
+                    res.status(200).send(util.returnMessaging(path, 'Match updated', false, saved, null, logObj));
                 },
                 (err) => {
-                    res.stutus(500).send(util.returnMessaging(path, 'Error updating match', err));
+                    res.stutus(500).send(util.returnMessaging(path, 'Error updating match', err, null, null, logObj));
                 }
             )
         } else {
-            res.status(400).send(util.returnMessaging(path, 'Could not find match', false, found));
+            logObj.logLevel = 'ERROR';
+            logObj.error = 'Could not find match';
+            res.status(400).send(util.returnMessaging(path, 'Could not find match', false, found, null, logObj));
         }
     }, (err) => {
-        res.stutus(500).send(util.returnMessaging(path, 'Error updating match', err));
+        res.stutus(500).send(util.returnMessaging(path, 'Error updating match', err, null, null, logObj));
     });
 });
 
+/*
+generates the schedules
+*/
 router.post('/generate/schedules', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.scheduleGenerator, util.appendResHeader, (req, res) => {
     const path = 'schedule/generate/schedules';
     let season = req.body.season;
+    //log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = ' generated season schedules ';
+    logObj.logLevel = 'STD';
+    logObj.target = 'season: ' + season;
     scheduleGenerator.generateSeason(season).then((process) => {
         if (process) {
             scheduleGenerator.generateRoundRobinSchedule(season);
-            res.status(200).send(util.returnMessaging(path, 'Schedules generated', false));
+            res.status(200).send(util.returnMessaging(path, 'Schedules generated', false, null, null, logObj));
         } else {
-            res.status(500).send(util.returnMessaging(path, 'Error occured in schedule generator'));
+            logObj.logLevel = 'ERROR';
+            logObj.error = 'Error occured in schedule generator, got null schedule'
+            res.status(500).send(util.returnMessaging(path, 'Error occured in schedule generator', false, null, null, logObj));
         }
     }, (err) => {
-        res.status(500).send(util.returnMessaging(path, 'Error occured in schedule generator'));
+        res.status(500).send(util.returnMessaging(path, 'Error occured in schedule generator', err, null, null, logObj));
     })
 
 

@@ -17,9 +17,9 @@ const logSchema = new Schema({
     "timeStamp": Number,
     "error": String,
     'location': String
-})
+});
 
 const System = mongoose.model('system', systemSchema);
 const Log = mongoose.model('log', logSchema);
 
-module.exports = { systemSchema: systemSchema, Log: Log };
+module.exports = { system: System, Log: Log };
