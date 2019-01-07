@@ -24,6 +24,7 @@ async function calulateStandings(division) {
             return false;
         }
     );
+
     let standings = [];
     if (matchesForDivision != false) {
         teams.forEach(team => {
@@ -60,7 +61,6 @@ async function calulateStandings(division) {
                     }
                 }
             });
-
             standings.push(standing);
         });
     }
@@ -86,12 +86,12 @@ function findTeamIds(found) {
 
     found.forEach(match => {
         if (util.returnBoolByPath(match, 'home.id')) {
-            if (match.home.id != 'null' && teams.indexOf(match.home.id.toString())) {
+            if (match.home.id != 'null' && teams.indexOf(match.home.id.toString()) == -1) {
                 teams.push(match.home.id.toString());
             }
         }
         if (util.returnBoolByPath(match, 'away.id')) {
-            if (match.away.id != 'null' && teams.indexOf(match.away.id.toString())) {
+            if (match.away.id != 'null' && teams.indexOf(match.away.id.toString()) == -1) {
                 teams.push(match.away.id.toString());
             }
         }

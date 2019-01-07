@@ -58,6 +58,43 @@ router.post('/get/matches', passport.authenticate('jwt', {
     });
 });
 
+/**
+ * returns matches that are generated
+ * accepts season, division, round
+ * return matches that fit the criterea
+ * 
+ */
+router.post('/get/division/matches', passport.authenticate('jwt', {
+    session: false
+}), util.appendResHeader, (req, res) => {
+    const path = 'schedule/get/division/matches';
+    let season = req.body.season;
+    let division = req.body.division;
+    let round = req.body.round;
+    Match.find({
+        $and: [{
+                season: season
+            },
+            {
+                divisionConcat: division
+            }
+        ]
+    }).lean().then((found) => {
+        if (found) {
+            let teams = findTeamIds(found);
+            addTeamNamesToMatch(teams, found).then((processed) => {
+                res.status(200).send(util.returnMessaging(path, 'Found matches', false, processed));
+            }, (err) => {
+                res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
+            });
+        } else {
+            res.status(400).send(util.returnMessaging(path, 'No matches found for criteria', false, found));
+        }
+    }, (err) => {
+        res.status(500).send(util.returnMessaging(path, 'Error finding matches', err));
+    });
+});
+
 /*
  */
 router.post('/get/matches/all',
@@ -521,12 +558,12 @@ function findTeamIds(found) {
 
     found.forEach(match => {
         if (util.returnBoolByPath(match, 'home.id')) {
-            if (match.home.id != 'null' && teams.indexOf(match.home.id.toString())) {
+            if (match.home.id != 'null' && teams.indexOf(match.home.id.toString()) == -1) {
                 teams.push(match.home.id.toString());
             }
         }
         if (util.returnBoolByPath(match, 'away.id')) {
-            if (match.away.id != 'null' && teams.indexOf(match.away.id.toString())) {
+            if (match.away.id != 'null' && teams.indexOf(match.away.id.toString()) == -1) {
                 teams.push(match.away.id.toString());
             }
         }

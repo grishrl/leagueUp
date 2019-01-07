@@ -37,16 +37,17 @@ export class ReportingComponent implements OnInit {
         }else{
           this.noMatches = false;
         }
-        for (var i = 1; i <= matches.length; i++) {
+        for (var i = 0; i <= matches.length; i++) {
           if (this.rounds == null || this.rounds == undefined) {
             this.rounds = {};
           }
+          let realMatchNumber = i+1;
           matches.forEach(match => {
-            if (match.round == i) {
-              if (this.rounds[i.toString()] == null || this.rounds[i.toString()] == undefined) {
-                this.rounds[i.toString()] = [];
+            if (match.round == realMatchNumber) {
+              if (this.rounds[realMatchNumber.toString()] == null || this.rounds[realMatchNumber.toString()] == undefined) {
+                this.rounds[realMatchNumber.toString()] = [];
               }
-              this.rounds[i.toString()].push(match);
+              this.rounds[realMatchNumber.toString()].push(match);
             }
           });
 

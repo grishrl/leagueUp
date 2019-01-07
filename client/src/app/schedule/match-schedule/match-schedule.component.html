@@ -34,6 +34,7 @@
                     </mat-form-field>
                 </div>
                 <div class="col">
+                    <span>Time is in local time</span>
                     <mat-form-field>
                         <mat-select placeholder="Start Time:" [(ngModel)]="time">
                             <mat-option *ngFor="let time of times" [value]="time">

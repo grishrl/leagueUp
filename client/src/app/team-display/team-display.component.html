@@ -1,12 +1,12 @@
 <div class="container nav-padding">
-    <div class="row" *ngFor="let row of rows">
+    <div class="row mt-3" *ngFor="let row of rows">
         <div class="col-4" *ngFor="let item of row">
             <mat-card class="example-card">
                 <mat-card-header>
                     <div mat-card-avatar class="example-header-image"></div>
                     <mat-card-title><a [routerLink]="['/teamProfile/', team.routeFriendlyTeamName(item.teamName)]">{{item.teamName}}</a></mat-card-title>
                 </mat-card-header>
-                <img *ngIf="item.logo" mat-card-image src="{{team.imageFQDN(item.logo)}}" alt="team logo">
+                <img mat-card-image src="{{teamImage(item.logo)}}" alt="team logo">
                 <mat-card-content>
                     <mat-accordion>
                         <mat-expansion-panel>

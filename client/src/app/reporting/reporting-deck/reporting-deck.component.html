@@ -64,30 +64,20 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col" *ngIf="hideReplaySubmit()">
-
+        <div class="row" *ngIf="hideReplaySubmit()">
+            <div class="col">
                 Select file*:
-                <mat-form-field>
-                    <input type="file" [formControl]="replay1Control" ngf accept=".StormReplay" [(file)]="replay1">
-                    <mat-error *ngIf="replay1Control.hasError('required')">
-                        Replay 1 is required
-                    </mat-error>
-                </mat-form-field>
-                <!-- <button (click)="parseFile(replay1)">Submit</button> -->
-
+                <input type="file" [formControl]="replay1Control" ngf accept=".StormReplay" [(file)]="replay1">
+                <mat-error *ngIf="replay1Control.hasError('required')">
+                    Replay 1 is required
+                </mat-error>
             </div>
-            <div class="col" *ngIf="hideReplaySubmit()">
-
+            <div class="col">
                 Select file*:
-                <mat-form-field>
-                    <input type="file" [formControl]="replay2Control" ngf accept=".StormReplay" [(file)]="replay2">
-                    <mat-error *ngIf="replay2Control.hasError('required')">
-                        Replay 2 is required
-                    </mat-error>
-                </mat-form-field>
-                <!-- <button (click)="parseFile(replay2)">Submit</button> -->
-
+                <input type="file" [formControl]="replay2Control" ngf accept=".StormReplay" [(file)]="replay2">
+                <mat-error *ngIf="replay2Control.hasError('required')">
+                    Replay 2 is required
+                </mat-error>
             </div>
         </div>
         <div class="row" [hidden]="hideButton">

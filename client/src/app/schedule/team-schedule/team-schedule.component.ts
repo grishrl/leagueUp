@@ -53,19 +53,22 @@ export class TeamScheduleComponent implements OnInit {
                         ] 
                       }
         */
-        for(var i = 1; i<=matches.length; i++){
+        for(var i = 0; i<=matches.length; i++){
           if(this.rounds == null || this.rounds == undefined){
             this.rounds = {};
           }
+          let realRoundNumber = i+1;
           matches.forEach(match => {
-            if(match.round == i){
-              if (this.rounds[i.toString()] == null || this.rounds[i.toString()] == undefined){
-                this.rounds[i.toString()] = [];
+            if (match.round == realRoundNumber){
+              if (this.rounds[realRoundNumber.toString()] == null || this.rounds[realRoundNumber.toString()] == undefined){
+                this.rounds[realRoundNumber.toString()] = [];
               }
-              this.rounds[i.toString()].push(match);
+              this.rounds[realRoundNumber.toString()].push(match);
             }
           });
         }
+
+
         this.rounds;
       },
       err=>{console.log(err)}

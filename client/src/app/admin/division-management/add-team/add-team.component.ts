@@ -27,6 +27,15 @@ export class AddTeamComponent implements OnInit {
     //get teams and divisions
     this.admin.getTeamsNotDivisioned().subscribe(res => {
       this.undivisionTeams = res;
+      this.undivisionTeams = this.undivisionTeams.sort( (a,b)=>{
+        if (a.teamMMRAvg < b.teamMMRAvg) {
+          return -1;
+        }
+        if (a.teamMMRAvg > b.teamMMRAvg) {
+          return 1
+        }
+        return 0;
+      } )
     }, (err) => {
       console.log(err)
     })

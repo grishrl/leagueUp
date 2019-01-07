@@ -19,6 +19,16 @@ export class ScheduleService {
     return this.httpService.httpPost(url, payload);
   }
 
+  //returns matches that match criteria of season, division
+  getDivisionScheduleMatches(season, division: string) {
+    let url = 'schedule/get/division/matches';
+    let payload = {
+      'season': season,
+      'division': division
+    };
+    return this.httpService.httpPost(url, payload);
+  };
+
   //returns matches that match criteria of season, division, round
   getScheduleMatches(season, division:string, round:number){  
     let url = 'schedule/get/matches';

@@ -126,7 +126,7 @@ router.post('/upsertDivision', passport.authenticate('jwt', {
     let logObj = {};
     logObj.actor = req.user.displayName;
     logObj.action = 'create or edit division ';
-    logObj.target = div;
+    logObj.target = division;
     logObj.logLevel = 'ADMIN';
 
     Division.findOne({ divisionConcat: name }).then((found) => {

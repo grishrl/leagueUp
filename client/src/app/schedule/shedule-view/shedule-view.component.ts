@@ -27,6 +27,7 @@ export class SheduleViewComponent implements OnInit {
   @Input() set division(div){
     if(div!=undefined && div != null){
       this.provDiv = div;
+      console.log(this.provDiv)
       this.calculateRounds();
     }
   }
@@ -38,7 +39,12 @@ export class SheduleViewComponent implements OnInit {
   calculateRounds() {
     let roundNumber = 0;
     if (this.provDiv != undefined && this.provDiv != null && this.provDiv.teams != undefined && this.provDiv.teams != null) {
-      roundNumber = this.provDiv.teams.length - 1;
+      if(this.provDiv % 2 == 0){
+        roundNumber = this.provDiv.teams.length - 1;
+      }else{
+        roundNumber = this.provDiv.teams.length;
+      }
+      
     } else if (this.selectedDivision != null && this.selectedDivision != undefined && this.selectedDivision.teams != undefined && this.selectedDivision.teams != null){
       roundNumber = this.selectedDivision.teams.length - 1;
     }

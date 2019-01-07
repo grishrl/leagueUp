@@ -36,10 +36,13 @@ export class ReportingDeckComponent implements OnInit {
   }
 
   hideReplaySubmit(){
+    console.log(this.recMatch.replays);
     if(this.recMatch.replays){
+      return false;
+    }else{
       return true;
     }
-    return false;
+    
   }
 
   awayScoreControl = new FormControl('', [
