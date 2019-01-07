@@ -3,11 +3,11 @@ import { DivisionService } from 'src/app/services/division.service';
 import { ScheduleService } from 'src/app/services/schedule.service';
 
 @Component({
-  selector: 'app-shedule-view',
-  templateUrl: './shedule-view.component.html',
-  styleUrls: ['./shedule-view.component.css']
+  selector: 'app-schedule-view',
+  templateUrl: './schedule-view.component.html',
+  styleUrls: ['./schedule-view.component.css']
 })
-export class SheduleViewComponent implements OnInit {
+export class ScheduleViewComponent implements OnInit {
 
   constructor(private divisionService: DivisionService, private scheduleService: ScheduleService) { }
   divisions:any=[];

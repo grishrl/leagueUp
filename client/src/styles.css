@@ -23,3 +23,7 @@ body {
 .finger {
     cursor: pointer;
 }
+
+.container {
+    background-color: white
+}

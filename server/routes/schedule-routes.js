@@ -307,6 +307,14 @@ router.post('/report/match', passport.authenticate('jwt', {
                             $in: teamIds
                         }
                     }).then((foundTeams) => {
+                        let homeDominate = false;
+                        let awayDominate = false;
+                        if (fields.homeTeamScore == 2 && fields.awayTeamScore == 0) {
+                            homeDominate = true;
+                        } else if (fields.homeTeamScore == 0 && fields.awayTeamScore == 2) {
+                            awayDominate = true;
+                        }
+
                         foundTeams.forEach(team => {
                             let teamid = team._id.toString();
                             let homeid, awayid;
@@ -317,14 +325,30 @@ router.post('/report/match', passport.authenticate('jwt', {
                                 awayid = foundMatch.away.id.toString();
                             }
                             if (teamid == homeid) {
+                                if (homeDominate) {
+                                    foundMatch.home.dominator = true;
+                                }
                                 foundMatch.home.teamName = team.teamName;
                                 foundMatch.home.score = fields.homeTeamScore;
                             }
                             if (teamid == awayid) {
+                                if (awayDominate) {
+                                    foundMatch.away.dominator = true;
+                                }
                                 foundMatch.away.teamName = team.teamName;
                                 foundMatch.away.score = fields.awayTeamScore;
                             }
                         });
+
+                        if (fields.otherDetails != null && fields.otherDetails != undefined) {
+                            foundMatch.other = JSON.parse(fields.otherDetails);
+                        }
+
+                        if (fields.mapBans != null && fields.mapBans != undefined) {
+                            foundMatch.mapBans = JSON.parse(fields.mapBans);
+                        }
+
+
 
                         let isCapt = false;
                         foundTeams.forEach(team => {

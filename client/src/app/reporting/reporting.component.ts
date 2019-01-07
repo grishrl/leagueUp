@@ -41,7 +41,9 @@ export class ReportingComponent implements OnInit {
           if (this.rounds == null || this.rounds == undefined) {
             this.rounds = {};
           }
+          
           let realMatchNumber = i+1;
+          this.rounds[realMatchNumber.toString()]=[];
           matches.forEach(match => {
             if (match.round == realMatchNumber) {
               if (this.rounds[realMatchNumber.toString()] == null || this.rounds[realMatchNumber.toString()] == undefined) {

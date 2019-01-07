@@ -17,15 +17,21 @@
             <ng-template #showMatches>
                 <div class="row mt-2" *ngFor="let round of rounds | keyvalue">
                     <div class="col">
-                        <h4>Round: {{round.key}}</h4>
-                        <div class="row finger" *ngFor="let match of round.value">
-                            <div class="col">
-                                <app-reporting-deck [match]="match"></app-reporting-deck>
+                        <h4>Week: {{round.key}}</h4>
+                        <div *ngIf="round.value.length>0 else bye">
+                            <div class="row finger" *ngFor="let match of round.value">
+                                <div class="col">
+                                    <app-reporting-deck [match]="match"></app-reporting-deck>
+                                </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </ng-template>
         </div>
     </div>
 </div>
+<ng-template #bye>
+    <span>BYE</span>
+</ng-template>

@@ -15,7 +15,7 @@ import { ApproveMemberComponent } from "./admin/approve-member/approve-member.co
 import { DeleteMemberComponent } from "./admin/delete-member/delete-member.component";
 import { ManageSelectTeamComponent } from "./admin/manage-team/manage-select-team.component";
 import { DivisionManagementComponent } from "./admin/division-management/division-management.component";
-import { SheduleViewComponent } from "./schedule/shedule-view/shedule-view.component";
+import { ScheduleViewComponent } from "./schedule/schedule-view/schedule-view.component";
 import { MatchScheduleComponent } from "./schedule/match-schedule/match-schedule.component";
 import { TeamScheduleComponent } from "./schedule/team-schedule/team-schedule.component";
 import { ReportingComponent } from "./reporting/reporting.component";

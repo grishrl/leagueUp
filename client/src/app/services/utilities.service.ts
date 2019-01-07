@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { FormGroup, FormControl } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -6,6 +7,22 @@ import { Injectable } from '@angular/core';
 export class UtilitiesService {
 
   constructor() { }
+
+  markFormGroupTouched(formGroup: FormGroup) {
+
+    if (formGroup.controls) {
+      const keys = Object.keys(formGroup.controls);
+      for (let i = 0; i < keys.length; i++) {
+        const control = formGroup.controls[keys[i]];
+
+        if (control instanceof FormControl) {
+          control.markAsTouched();
+        } else if (control instanceof FormGroup) {
+          this.markFormGroupTouched(control);
+        }
+      }
+    }
+  }
 
   returnBoolByPath(obj, path): boolean {
     //path is a string representing a dot notation object path;

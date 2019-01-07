@@ -37,7 +37,7 @@ import { DivisionManagementComponent } from './admin/division-management/divisio
 import { AddTeamComponent } from './admin/division-management/add-team/add-team.component';
 import { DivisionPropsComponent } from './admin/division-management/division-props/division-props.component';
 import { RemoveTeamComponent } from './admin/division-management/remove-team/remove-team.component';
-import { SheduleViewComponent } from './schedule/shedule-view/shedule-view.component';
+import { ScheduleViewComponent } from './schedule/schedule-view/schedule-view.component';
 import { MatchScheduleComponent } from './schedule/match-schedule/match-schedule.component';
 import { TeamScheduleComponent } from './schedule/team-schedule/team-schedule.component';
 import { ReportingComponent } from './reporting/reporting.component';
@@ -91,7 +91,7 @@ import { QuestionaireComponent } from './questionaire/questionaire.component';
     AddTeamComponent,
     DivisionPropsComponent,
     RemoveTeamComponent,
-    SheduleViewComponent,
+    ScheduleViewComponent,
     MatchScheduleComponent,
     TeamScheduleComponent,
     ReportingComponent,

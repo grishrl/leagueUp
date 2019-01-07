@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 const team = new Schema({
     "id": String,
     "teamName": String,
-    "score": Number
+    "score": Number,
+    "dominator": Boolean
 }, {
     strict: false
 });
@@ -40,6 +41,8 @@ const matchSchema = new Schema({
     "replays": replaySchema,
     "casterName": String,
     "casterUrl": String,
+    "mapBans": Object,
+    "other": Object,
     "reported": Boolean
 }, { useNestedStrict: false });
 
