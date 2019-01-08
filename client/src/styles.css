@@ -2,6 +2,7 @@
 
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 @import '../node_modules/bootstrap/dist/css/bootstrap.css';
+@import "../node_modules/angular-calendar/css/angular-calendar.css";
 body,
 html {
     height: 100%;
@@ -14,6 +15,7 @@ html {
 
 body {
     font-family: 'Roboto', sans-serif;
+    background-image: url('/assets/testGutter.png');
 }
 
 .footer-padding {
@@ -22,4 +24,14 @@ body {
 
 .finger {
     cursor: pointer;
+}
+
+.container {
+    background-color: white;
+    height: 100%;
+}
+
+.forceFull {
+    height: 100%;
+    background-color: white;
 }

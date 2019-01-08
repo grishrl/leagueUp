@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ScheduleService } from 'src/app/services/schedule.service';
 
 
@@ -21,7 +21,7 @@ export class MatchScheduleComponent implements OnInit {
   awayScore: number //local prop for scores
   amPm = ['PM', 'AM']; //local propery holds array for the am/pm dropdown
 
-  constructor(private route: ActivatedRoute, private scheduleService:ScheduleService) {
+  constructor(private route: ActivatedRoute, private scheduleService:ScheduleService, private router:Router) {
     //get the id provided in the URL route
     this.matchId = this.route.snapshot.params['id'];
    }
@@ -82,6 +82,7 @@ export class MatchScheduleComponent implements OnInit {
     this.scheduleService.scheduleMatchTime(this.match.matchId, msDate, endDate).subscribe(
       res=>{
         //TODO: will i need to implement a route here?
+        this.router.navigateByUrl('/schedule/teamSchedule');
       },
       err=>{
         console.log(err)

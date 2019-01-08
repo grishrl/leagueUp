@@ -1,88 +1,137 @@
-<div class="row" (click)="showHide()">
-    <div class="col">
-        <div *ngIf="recMatch.home.teamName">{{recMatch.home.teamName}}</div>
-    </div>
-    <div class="col">
-        - VS -
-    </div>
-    <div class="col">
-        <div *ngIf="recMatch.away.teamName; else bye">{{recMatch.away.teamName}}</div>
-    </div>
-</div>
-
-<ng-template #bye>
-    BYE
-</ng-template>
-
-<div class="row" *ngIf="show">
-    <div class="col">
-        <div class="row">
-            <div class="col-4">
-                <div class="row">
-                    <div class="col">
-                        Score:
-                    </div>
+<div class="container">
+    <div class="row bg-white">
+        <div class="col">
+            <div class="row matchBoxPadder finger" [ngClass]="{'matchBox':show}" (click)="showHide()">
+                <div class="col">
+                    <div *ngIf="recMatch.home.teamName">{{recMatch.home.teamName}}</div>
                 </div>
-                <div class="row">
-                    <div class="col">
-                        <mat-form-field class="fullWidth">
-                            <mat-select [formControl]="homeScoreControl" placeholder="{{recMatch.hometeamName}} Score:" [(ngModel)]="homeScore" (ngModelChange)="scoreSelected('home')">
-                                <mat-option [value]="0">0</mat-option>
-                                <mat-option [value]="1">1</mat-option>
-                                <mat-option [value]="2">2</mat-option>
-                            </mat-select>
-                            <mat-error *ngIf="homeScoreControl.hasError('required')">
-                                Home Score is required
-                            </mat-error>
-                        </mat-form-field>
-                    </div>
+                <div class="col">
+                    - VS -
                 </div>
-
-            </div>
-            <div class="col">
-
-            </div>
-            <div class="col">
-                <div class="row">
-                    <div class="col">
-                        Score:
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <mat-form-field>
-                            <mat-select [formControl]="awayScoreControl" placeholder="{{recMatch.awayteamName}} Score:" [(ngModel)]="awayScore" (ngModelChange)="scoreSelected('away')">
-                                <mat-option [value]="0">0</mat-option>
-                                <mat-option [value]="1">1</mat-option>
-                                <mat-option [value]="2">2</mat-option>
-                            </mat-select>
-                            <mat-error *ngIf="awayScoreControl.hasError('required')">
-                                Away Score is required
-                            </mat-error>
-                        </mat-form-field>
-                    </div>
+                <div class="col">
+                    <div *ngIf="recMatch.away.teamName">{{recMatch.away.teamName}} <i *ngIf="!show" class="float-right material-icons">arrow_drop_down</i><i *ngIf="show" class="float-right material-icons">arrow_drop_up</i></div>
                 </div>
             </div>
-        </div>
-        <div class="row" *ngIf="hideReplaySubmit()">
-            <div class="col">
-                Select file*:
-                <input type="file" [formControl]="replay1Control" ngf accept=".StormReplay" [(file)]="replay1">
-                <mat-error *ngIf="replay1Control.hasError('required')">
-                    Replay 1 is required
-                </mat-error>
-            </div>
-            <div class="col">
-                Select file*:
-                <input type="file" [formControl]="replay2Control" ngf accept=".StormReplay" [(file)]="replay2">
-                <mat-error *ngIf="replay2Control.hasError('required')">
-                    Replay 2 is required
-                </mat-error>
-            </div>
-        </div>
-        <div class="row" [hidden]="hideButton">
-            <div class="col">
-                <button [disabled]="reportForm.invalid" (click)="report()"> Submit </button>
+
+            <div class="row reportingDiv" *ngIf="show">
+                <div class="col">
+                    <div class="row m-t-20">
+                        <div class="col">
+                            Home Map Ban
+                            <div class="row m-t-5">
+                                <div class="col">
+                                    <mat-select placeholder="Map " [(ngModel)]="mapBans.home">
+                                        <mat-option *ngFor="let map of maps | keyvalue" [value]="map.value">{{map.value}}</mat-option>
+                                    </mat-select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+
+                        </div>
+                        <div class="col">
+                            Away Map Ban
+                            <div class="row">
+                                <div class="col">
+                                    <mat-select placeholder="Map " [(ngModel)]="mapBans.away">
+                                        <mat-option *ngFor="let map of maps | keyvalue" [value]="map.value">{{map.value}}</mat-option>
+                                    </mat-select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row gameBorder" *ngFor="let game of games | keyvalue">
+
+                        <div class="col">
+                            <div class="row m-t-20">
+                                <div class="col">
+                                    Game {{game.key}} <span *ngIf="!recMatch.reported" (click)="removeGame(game.key, games)"><i class="float-right material-icons">close</i></span>
+                                </div>
+                            </div>
+                            <!-- report hero bans -->
+                            <div class="row m-t-10">
+                                <div class="col">
+                                    Home Hero Bans:
+                                    <div class="m-t-5" *ngFor="let ban of game.value.homeBans">{{ban}} <span *ngIf="!recMatch.reported" (click)="removeBan(ban, game.value.homeBans)"><i class="float-right material-icons">close</i></span></div>
+                                    <div class="row m-t-5" *ngIf="game.value.homeBans.length<3">
+                                        <div class=" col ">
+                                            <mat-select placeholder="Hero Banned " [(ngModel)]="game.value.tmp.leftSelect ">
+                                                <mat-option *ngFor="let hero of heroes | keyvalue " [value]="hero.value ">{{hero.value}}</mat-option>
+                                            </mat-select>
+                                        </div>
+                                        <div class="col ">
+                                            <button [disabled]="!game.value.tmp.leftSelect || recMatch.reported" (click)="addBan(game.value.tmp.leftSelect, game.value.homeBans) "> Add Ban </button>
+
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                                <div class="col ">
+                                    <!-- space holder -->
+                                </div>
+                                <div class="col ">
+                                    Away Hero Bans:
+                                    <div class="m-t-5" *ngFor="let ban of game.value.awayBans ">{{ban}}<span *ngIf="!recMatch.reported" (click)="removeBan(ban, game.value.awayBans) "><i class="float-right material-icons ">close</i></span></div>
+                                    <div class="row m-t-5 " *ngIf="game.value.awayBans.length<3 ">
+                                        <div class="col ">
+                                            <mat-select placeholder="Hero Banned " [(ngModel)]="game.value.tmp.rightSelect ">
+                                                <mat-option *ngFor="let hero of heroes | keyvalue " [value]="hero.value ">{{hero.value}}</mat-option>
+                                            </mat-select>
+                                        </div>
+                                        <div class="col">
+                                            <button [disabled]="!game.value.tmp.rightSelect || recMatch.reported" (click)="addBan(game.value.tmp.rightSelect, game.value.awayBans) ">Add Ban </button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <!-- report match winner -->
+                            <div class="row m-t-20 ">
+                                <div class="col ">
+                                    Who won this game?
+                                </div>
+                            </div>
+                            <div class="row m-t-5 ">
+                                <div class="col ">
+                                    <mat-radio-group [(ngModel)]='game.value.winner'>
+                                        <mat-radio-button class="example-margin " value="home">Home</mat-radio-button>
+                                    </mat-radio-group>
+                                </div>
+                                <div class="col ">
+
+                                </div>
+                                <div class="col ">
+                                    <mat-radio-group [(ngModel)]='game.value.winner'>
+                                        <mat-radio-button class="example-margin " value="away">Away</mat-radio-button>
+                                    </mat-radio-group>
+                                </div>
+                            </div>
+                            <!-- match replay -->
+                            <div class="row m-t-20">
+                                <div *ngIf="!recMatch.reported">
+                                    <div class="col" *ngIf="!game.value.replay">
+                                        Select file*:
+                                        <input type="file" ngf accept=".StormReplay" [(file)]="game.value.replay">
+                                    </div>
+                                    <div class="col">
+                                        {{game.value.replay.name}} <span (click)="resetReplay(game)"><i class="float-right material-icons">close</i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row m-t-20">
+                        <div class="col" *ngIf="showAdd && !recMatch.reported">
+                            <button class="btn btn-success" (click)="addGame() ">Add Game</button>
+                        </div>
+                        <div class="col" *ngIf="showReport">
+                            <button class="btn" (click)="report() ">Report Match!</button>
+                        </div>
+                    </div>
+
+
+                </div>
             </div>
         </div>
     </div>

@@ -37,7 +37,7 @@ import { DivisionManagementComponent } from './admin/division-management/divisio
 import { AddTeamComponent } from './admin/division-management/add-team/add-team.component';
 import { DivisionPropsComponent } from './admin/division-management/division-props/division-props.component';
 import { RemoveTeamComponent } from './admin/division-management/remove-team/remove-team.component';
-import { SheduleViewComponent } from './schedule/shedule-view/shedule-view.component';
+import { ScheduleViewComponent } from './schedule/schedule-view/schedule-view.component';
 import { MatchScheduleComponent } from './schedule/match-schedule/match-schedule.component';
 import { TeamScheduleComponent } from './schedule/team-schedule/team-schedule.component';
 import { ReportingComponent } from './reporting/reporting.component';
@@ -58,6 +58,11 @@ import { NoAccessComponent } from './no-access/no-access.component';
 import { SessionTimeoutComponent } from './session-timeout/session-timeout.component';
 import { TimesAvailableComponent } from './times-available/times-available.component';
 import { QuestionaireComponent } from './questionaire/questionaire.component';
+import { LogsViewerComponent } from './admin/logs-viewer/logs-viewer.component';
+import { CalendarViewComponent } from './calendar-view/calendar-view.component';
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+ 
 
 @NgModule({
   declarations: [
@@ -91,7 +96,7 @@ import { QuestionaireComponent } from './questionaire/questionaire.component';
     AddTeamComponent,
     DivisionPropsComponent,
     RemoveTeamComponent,
-    SheduleViewComponent,
+    ScheduleViewComponent,
     MatchScheduleComponent,
     TeamScheduleComponent,
     ReportingComponent,
@@ -110,7 +115,9 @@ import { QuestionaireComponent } from './questionaire/questionaire.component';
     NoAccessComponent,
     SessionTimeoutComponent,
     TimesAvailableComponent,
-    QuestionaireComponent
+    QuestionaireComponent,
+    LogsViewerComponent,
+    CalendarViewComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
@@ -125,7 +132,11 @@ import { QuestionaireComponent } from './questionaire/questionaire.component';
     FormsModule,
     ReactiveFormsModule,
     NgxCroppieModule,
-    ngfModule
+    ngfModule,
+    CalendarModule.forRoot({
+      provide: DateAdapter,
+      useFactory: adapterFactory
+    })
   ],
   providers: [
     {

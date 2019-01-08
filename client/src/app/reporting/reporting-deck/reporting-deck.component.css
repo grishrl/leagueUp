@@ -1,3 +1,44 @@
 .FullWidth {
     width: 100%;
 }
+
+.invalid {
+    color: red;
+}
+
+.matchBox {
+    border-left-style: solid;
+    border-right-style: solid;
+    border-width: 2px;
+    border-top-style: solid;
+    border-color: grey;
+    padding: 25px;
+}
+
+.matchBoxPadder {
+    padding: 25px;
+}
+
+.reportingDiv {
+    border-style: solid;
+    border-width: 2px;
+    border-color: grey;
+    padding: 10px;
+}
+
+.m-t-20 {
+    margin-top: 20px
+}
+
+.m-t-10 {
+    margin-top: 10px
+}
+
+.m-t-5 {
+    margin-top: 5px;
+}
+
+.gameBorder {
+    border-bottom-style: solid;
+    padding-bottom: 10px;
+}

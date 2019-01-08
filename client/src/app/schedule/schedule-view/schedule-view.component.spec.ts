@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SheduleViewComponent } from './shedule-view.component';
+import { ScheduleViewComponent } from './schedule-view.component';
 
-describe('SheduleViewComponent', () => {
-  let component: SheduleViewComponent;
-  let fixture: ComponentFixture<SheduleViewComponent>;
+describe('ScheduleViewComponent', () => {
+  let component: ScheduleViewComponent;
+  let fixture: ComponentFixture<ScheduleViewComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SheduleViewComponent ]
+      declarations: [ ScheduleViewComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SheduleViewComponent);
+    fixture = TestBed.createComponent(ScheduleViewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

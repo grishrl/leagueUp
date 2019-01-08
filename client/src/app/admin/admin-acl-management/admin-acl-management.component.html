@@ -1,5 +1,5 @@
 <div class="container">
-    <div class="row">
+    <div class="row bg-white">
         <div class="col">
             <div class="row">
                 <div class="col">
@@ -11,16 +11,20 @@
                     <h2>Admin Management</h2>
                 </div>
             </div>
-            <div class="row m-2">
+            <!-- <div class="row m-2">
                 <div class="col">
                     <h4>Filter by name:</h4>
                 </div>
-            </div>
+            </div> -->
             <div class="row">
                 <div class="col">
+                </div>
+                <div class="col-5">
                     <mat-form-field class="tp-FullWidth">
                         <input matInput placeholder="Filter by name" [(ngModel)]="filterName" (ngModelChange)="filterUsers(filterName)">
                     </mat-form-field>
+                </div>
+                <div class="col">
                 </div>
             </div>
             <mat-paginator [length]="length" [pageSize]="pageSize" (page)="pageEventHandler($event)">

@@ -30,33 +30,50 @@ async function calulateStandings(division) {
         teams.forEach(team => {
             let standing = {};
             standing['wins'] = 0;
+            standing['points'] = 0;
             standing['losses'] = 0;
+            standing['dominations'] = 0;
             standing['id'] = team;
             matchesForDivision.forEach(match => {
                 if (match.away.id == team) {
                     standing['teamName'] = match.away.teamName;
                     let score = match.away.score
+                    let dominator = match.away.dominator;
                     if (score) {
                         if (score == 2) {
                             standing['wins'] += 2;
+                            standing['points'] += 2;
                         } else if (score == 1) {
                             standing['wins'] += 1;
                             standing['losses'] += 1;
+                            standing['points'] += 1;
                         } else {
                             standing['losses'] += 2;
                         }
                     }
+                    if (dominator) {
+                        standing['dominations'] += 1;
+                        standing['points'] += 1;
+                    }
                 } else if (match.home.id == team) {
                     standing['teamName'] = match.home.teamName;
                     let score = match.home.score
+                    let dominator = match.home.dominator;
                     if (score) {
                         if (score == 2) {
+                            standing['points'] += 2;
                             standing['wins'] += 2;
                         } else if (score == 1) {
+                            standing['points'] += 1;
                             standing['wins'] += 1;
                             standing['losses'] += 1;
                         } else {
+                            standing['points'] += 1;
                             standing['losses'] += 2;
+                        }
+                        if (dominator) {
+                            standing['dominations'] += 1;
+                            standing['points'] += 1;
                         }
                     }
                 }
@@ -65,7 +82,7 @@ async function calulateStandings(division) {
         });
     }
     standings.sort((a, b) => {
-        if (a.wins > b.wins) {
+        if (a.points > b.points) {
             return -1;
         } else {
             return 1;

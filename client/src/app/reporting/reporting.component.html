@@ -1,5 +1,5 @@
 <div class="container pt-4">
-    <div class="row">
+    <div class="row bg-white">
         <div class="col">
             <div class="row">
                 <div class="col">
@@ -15,17 +15,38 @@
                 </div>
             </div>
             <ng-template #showMatches>
+                <div class="row">
+                    <div class="col">
+                        Home Team
+                    </div>
+                    <div class="col">
+
+                    </div>
+                    <div class="col">
+                        Away Team
+                    </div>
+                </div>
                 <div class="row mt-2" *ngFor="let round of rounds | keyvalue">
                     <div class="col">
-                        <h4>Round: {{round.key}}</h4>
-                        <div class="row finger" *ngFor="let match of round.value">
-                            <div class="col">
-                                <app-reporting-deck [match]="match"></app-reporting-deck>
+                        <h4>Week: {{round.key}}</h4>
+                        <div *ngIf="round.value.length>0 else bye">
+                            <div class="row" *ngFor="let match of round.value">
+                                <div class="col">
+                                    <app-reporting-deck [match]="match"></app-reporting-deck>
+                                </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </ng-template>
         </div>
     </div>
 </div>
+<ng-template #bye>
+    <div class="row mt-2 matchBoxPadder">
+        <div class="col text-center">
+            <span>BYE</span>
+        </div>
+    </div>
+</ng-template>

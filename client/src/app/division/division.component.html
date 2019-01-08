@@ -1,5 +1,5 @@
 <div id="myDiv" class="container">
-    <div class="row">
+    <div class="row forceFull">
         <div class="col">
             <div id="wrapper">
                 <mat-tab-group id="tab-group" dynamicHeight class="mb-3">
@@ -20,9 +20,9 @@
                         </ng-template>
 
                     </mat-tab>
-                    <mat-tab label="Shedule">
+                    <mat-tab label="Schedule">
                         <ng-template matTabContent>
-                            <app-shedule-view [division]="divDisplay"></app-shedule-view>
+                            <app-schedule-view [division]="divDisplay"></app-schedule-view>
                         </ng-template>
                     </mat-tab>
                     <mat-tab label="Standings">

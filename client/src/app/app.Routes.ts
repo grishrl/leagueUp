@@ -15,7 +15,7 @@ import { ApproveMemberComponent } from "./admin/approve-member/approve-member.co
 import { DeleteMemberComponent } from "./admin/delete-member/delete-member.component";
 import { ManageSelectTeamComponent } from "./admin/manage-team/manage-select-team.component";
 import { DivisionManagementComponent } from "./admin/division-management/division-management.component";
-import { SheduleViewComponent } from "./schedule/shedule-view/shedule-view.component";
+import { ScheduleViewComponent } from "./schedule/schedule-view/schedule-view.component";
 import { MatchScheduleComponent } from "./schedule/match-schedule/match-schedule.component";
 import { TeamScheduleComponent } from "./schedule/team-schedule/team-schedule.component";
 import { ReportingComponent } from "./reporting/reporting.component";
@@ -30,6 +30,7 @@ import { AuthGuardService } from "./services/auth-guard.service";
 import { NoAccessComponent } from "./no-access/no-access.component";
 import { SessionTimeoutComponent } from "./session-timeout/session-timeout.component";
 import { QuestionaireComponent } from "./questionaire/questionaire.component";
+import { CalendarViewComponent } from "./calendar-view/calendar-view.component";
 
 const APP_ROUTES: Routes = [
   { path: 'directory', component: DirectoryComponent},
@@ -61,7 +62,8 @@ const APP_ROUTES: Routes = [
   { path: '_casterDashboard', component: CasterDashboardComponent, canActivate: [AuthGuardService], data: { role: 'caster' }},
   { path: 'noAccess/:id', component:NoAccessComponent},
   { path: 'sessionTimeOut', component: SessionTimeoutComponent},
-  { path: 'questionnaire', component:QuestionaireComponent}
+  { path: 'questionnaire', component:QuestionaireComponent},
+  { path: 'calendar' , component:CalendarViewComponent}
 ]
 
 @NgModule({

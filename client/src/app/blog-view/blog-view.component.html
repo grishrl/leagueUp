@@ -1,44 +1,40 @@
 <div class="container">
-
-    <!-- Page Heading/Breadcrumbs -->
-    <h1 class="mt-4 mb-3">{{displayBlog.fields.title}}
-        <small>by
-<i>{{displayBlog.fields.author.fields.name}}</i>
-    </small>
-    </h1>
-
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-            <a [routerLink]="['/blog']">Blog Home</a>
-        </li>
-        <li class="breadcrumb-item active">{{displayBlog.fields.title}}</li>
-    </ol>
-
-    <div class="row">
-
-        <!-- Post Content Column -->
+    <div class="row bg-white">
         <div class="col">
+            <!-- Page Heading/Breadcrumbs -->
+            <h1 class="mt-4 mb-3">{{displayBlog.fields.title}}
+                <small>by<i>{{displayBlog.fields.author.fields.name}}</i></small>
+            </h1>
 
-            <!-- Preview Image -->
-            <div class="text-center"><img class="img-fluid rounded" src="{{displayBlog.fields.heroImage.fields.file.url}}?w=900&h=300" alt=""></div>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a [routerLink]="['/blog']">Blog Home</a>
+                </li>
+                <li class="breadcrumb-item active">{{displayBlog.fields.title}}</li>
+            </ol>
 
+            <div class="row">
+                <!-- Post Content Column -->
+                <div class="col">
+                    <!-- Preview Image -->
+                    <div class="text-center"><img class="img-fluid rounded" src="{{displayBlog.fields.heroImage.fields.file.url}}?w=900&h=300" alt=""></div>
+                    <hr>
+                    <!-- Date/Time -->
+                    <p>Posted on {{displayBlog.fields.publishDate | date}}</p>
+                    <hr>
+                    <!-- Post Content -->
+                    <p class="lead">{{displayBlog.fields.description}}</p>
+                    <div [innerHTML]="md.convertMarkdown(displayBlog.fields.body)"></div>
+                    <hr>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-            <hr>
-
-            <!-- Date/Time -->
-            <p>Posted on {{displayBlog.fields.publishDate | date}}</p>
-
-            <hr>
-
-            <!-- Post Content -->
-            <p class="lead">{{displayBlog.fields.description}}</p>
-            <div [innerHTML]="md.convertMarkdown(displayBlog.fields.body)"></div>
-
-            <hr>
-
-            <!-- Comments Form -->
-            <!-- comments disabled for now -->
-            <!-- <div class="card my-4">
+<!-- Comments Form -->
+<!-- comments disabled for now -->
+<!-- <div class="card my-4">
                 <h5 class="card-header">Leave a Comment:</h5>
                 <div class="card-body">
                     <form>
@@ -50,8 +46,8 @@
                 </div>
             </div> -->
 
-            <!-- Single Comment -->
-            <!-- <div class="media mb-4">
+<!-- Single Comment -->
+<!-- <div class="media mb-4">
                 <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
                 <div class="media-body">
                     <h5 class="mt-0">Commenter Name</h5>
@@ -59,8 +55,8 @@
                 </div>
             </div> -->
 
-            <!-- Comment with nested comments -->
-            <!-- <div class="media mb-4">
+<!-- Comment with nested comments -->
+<!-- <div class="media mb-4">
                 <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
                 <div class="media-body">
                     <h5 class="mt-0">Commenter Name</h5>
@@ -84,14 +80,11 @@
 
                 </div>
             </div> -->
+<!-- Sidebar Widgets Column -->
+<!-- <div class="col-md-4"> -->
 
-        </div>
-
-        <!-- Sidebar Widgets Column -->
-        <!-- <div class="col-md-4"> -->
-
-        <!-- Search Widget -->
-        <!-- <div class="card mb-4">
+<!-- Search Widget -->
+<!-- <div class="card mb-4">
                 <h5 class="card-header">Search</h5>
                 <div class="card-body">
                     <div class="input-group">
@@ -103,8 +96,8 @@
                 </div>
             </div> -->
 
-        <!-- Categories Widget -->
-        <!-- <div class="card my-4">
+<!-- Categories Widget -->
+<!-- <div class="card my-4">
                 <h5 class="card-header">Categories</h5>
                 <div class="card-body">
                     <div class="row">
@@ -138,17 +131,15 @@
                 </div>
             </div> -->
 
-        <!-- Side Widget -->
-        <!-- <div class="card my-4">
+<!-- Side Widget -->
+<!-- <div class="card my-4">
                 <h5 class="card-header">Side Widget</h5>
                 <div class="card-body">
                     You can put anything you want inside of these side widgets. They are easy to use, and feature the new Bootstrap 4 card containers!
                 </div>
             </div> -->
 
-        <!-- </div>
+<!-- </div>
 
     </div> -->
-        <!-- /.row -->
-
-    </div>
+<!-- /.row -->
