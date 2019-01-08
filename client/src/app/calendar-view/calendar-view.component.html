@@ -68,10 +68,7 @@
             <br><br><br>
 
             <h3>
-                Edit events
-                <button class="btn btn-primary pull-right" (click)="addEvent()">
-    Add new
-  </button>
+                List events
                 <div class="clearfix"></div>
             </h3>
 
@@ -81,34 +78,24 @@
                     <tr>
                         <th>Title</th>
                         <th>Primary color</th>
-                        <th>Secondary color</th>
                         <th>Starts at</th>
                         <th>Ends at</th>
-                        <th>Remove</th>
                     </tr>
                 </thead>
 
                 <tbody>
                     <tr *ngFor="let event of events; let index = index">
                         <td>
-                            <input type="text" class="form-control" [(ngModel)]="event.title" (keyup)="refresh.next()">
+                            <input type="text" disabled="true" class="form-control" [(ngModel)]="event.title" (keyup)="refresh.next()">
                         </td>
                         <td>
-                            <input type="color" [(ngModel)]="event.color.primary" (change)="refresh.next()">
+                            <input type="color" disabled="true" [(ngModel)]="event.color.primary">
                         </td>
                         <td>
-                            <input type="color" [(ngModel)]="event.color.secondary" (change)="refresh.next()">
+                            <input class="form-control" disabled="true" type="text" mwlFlatpickr [(ngModel)]="event.start" dateFormat="Y-m-dTH:i" altFormat="F j, Y H:i">
                         </td>
                         <td>
-                            <input class="form-control" type="text" mwlFlatpickr [(ngModel)]="event.start" (ngModelChange)="refresh.next()" dateFormat="Y-m-dTH:i" altFormat="F j, Y H:i" placeholder="Not set">
-                        </td>
-                        <td>
-                            <input class="form-control" type="text" mwlFlatpickr [(ngModel)]="event.end" (ngModelChange)="refresh.next()" dateFormat="Y-m-dTH:i" altFormat="F j, Y H:i" placeholder="Not set">
-                        </td>
-                        <td>
-                            <button class="btn btn-danger" (click)="events.splice(index, 1); refresh.next()">
-          Delete
-        </button>
+                            <input class="form-control" disabled="true" type="text" mwlFlatpickr [(ngModel)]="event.end" dateFormat="Y-m-dTH:i" altFormat="F j, Y H:i">
                         </td>
                     </tr>
                 </tbody>

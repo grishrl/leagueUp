@@ -174,9 +174,13 @@ router.get('/get/matches/scheduled', (req, res) => {
             $exists: true
         }
     }).then((found) => {
-
+        if (found) {
+            res.status(200).send(util.returnMessaging(path, 'Found scheduled matches', false, found));
+        } else {
+            res.status(400).send(util.returnMessaging(path, 'No matches found'));
+        }
     }, (err) => {
-
+        res.status(400).send(util.returnMessaging(path, 'Error in query', err));
     })
 });
 

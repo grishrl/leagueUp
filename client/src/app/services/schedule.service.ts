@@ -18,6 +18,11 @@ export class ScheduleService {
     };
     return this.httpService.httpPost(url, payload);
   }
+  //schedule/get/matches/scheduled
+  getAllMatchesWithStartTime(){
+    let url = 'schedule/get/matches/scheduled';
+    return this.httpService.httpGet(url, []);
+  }
 
   //returns matches that match criteria of season, division
   getDivisionScheduleMatches(season, division: string) {
