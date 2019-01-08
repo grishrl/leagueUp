@@ -3,6 +3,7 @@ import { ngf } from 'angular-file';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { UtilitiesService } from 'src/app/services/utilities.service';
+import { element } from '@angular/core/src/render3/instructions';
 
 @Component({
   selector: 'app-reporting-deck',
@@ -86,6 +87,18 @@ removeBan(hero, arr){
     console.log(this.games);
   }
 
+  returnFilteredHeroes(game){
+    let disArr = [];
+    let currentArr = game.value.homeBans.concat(game.value.awayBans);
+    let keys = Object.keys(this.heroes);
+    keys.forEach(element=>{
+      let heroName = this.heroes[element];
+      if(currentArr.indexOf(heroName)==-1){
+        disArr.push(this.heroes[element]);
+      }
+    });
+    return disArr;
+  }
 
   heroes = {
     "Abat": "Abathur",
@@ -133,12 +146,14 @@ removeBan(hero, arr){
     "Drya": "Lunara",
     "Maie": "Maiev",
     "Malf": "Malfurion",
+    "Malg":"Mal'Ganis",
     "MALT": "Malthael",
     "Mdvh": "Medivh",
     "Mura": "Muradin",
     "Murk": "Murky",
     "Witc": "Nazeebo",
     "Nova": "Nova",
+    "Oprh":"Orphea",
     "Prob": "Probius",
     "Ragn": "Ragnaros",
     "Rayn": "Raynor",
@@ -176,7 +191,7 @@ addBan(hero, arr){
 }
 
 resetReplay(game){
-  game.replay=null;
+  game.value.replay=null;
 }
 
   formControlsDisable(){
@@ -344,6 +359,12 @@ resetReplay(game){
         winner : game.winner
       }
     });
+
+    if (report.homeTeamScore == 1 && report.awayTeamScore == 1 || report.awayTeamScore == 1 && report.homeTeamScore == 1){
+      submittable = false;
+      alert('This out come is not allowed, matches must end 2-0 or 2-1');
+    }
+
     report['otherDetails']=JSON.stringify(otherData);
     report['mapBans']=JSON.stringify(this.mapBans);
 
@@ -352,6 +373,8 @@ resetReplay(game){
     if(submittable){
       this.scheduleService.reportMatch(report).subscribe( res=>{
         console.log(res);
+        this.recMatch.reported = true;
+        this.showReport = false;
       })
     }  
 

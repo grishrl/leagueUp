@@ -16,7 +16,7 @@ function casterLevel(req, res, next) {
     adminCheck('CASTER', req, res, next);
 }
 
-function matchLevel(req, res, nest) {
+function matchLevel(req, res, next) {
     adminCheck('MATCH', req, res, next);
 }
 

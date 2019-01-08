@@ -51,12 +51,13 @@
                             <!-- report hero bans -->
                             <div class="row m-t-10">
                                 <div class="col">
-                                    Home Hero Bans:
-                                    <div class="m-t-5" *ngFor="let ban of game.value.homeBans">{{ban}} <span *ngIf="!recMatch.reported" (click)="removeBan(ban, game.value.homeBans)"><i class="float-right material-icons">close</i></span></div>
+                                    Home Hero Bans: <span *ngIf="game.value.homeBans.length == 3"><i class="material-icons text-success">done</i></span>
+
                                     <div class="row m-t-5" *ngIf="game.value.homeBans.length<3">
                                         <div class=" col ">
                                             <mat-select placeholder="Hero Banned " [(ngModel)]="game.value.tmp.leftSelect ">
-                                                <mat-option *ngFor="let hero of heroes | keyvalue " [value]="hero.value ">{{hero.value}}</mat-option>
+                                                <!-- heroes | keyvalue -->
+                                                <mat-option *ngFor="let hero of returnFilteredHeroes(game)" [value]="hero ">{{hero}}</mat-option>
                                             </mat-select>
                                         </div>
                                         <div class="col ">
@@ -64,24 +65,32 @@
 
                                         </div>
                                     </div>
-
+                                    <div class="m-t-10 banBox">
+                                        <div *ngFor="let ban of game.value.homeBans">{{ban}} <span *ngIf="!recMatch.reported" (click)="removeBan(ban, game.value.homeBans)"><i
+                                                    class="float-right material-icons">close</i></span></div>
+                                    </div>
 
                                 </div>
                                 <div class="col ">
                                     <!-- space holder -->
                                 </div>
                                 <div class="col ">
-                                    Away Hero Bans:
-                                    <div class="m-t-5" *ngFor="let ban of game.value.awayBans ">{{ban}}<span *ngIf="!recMatch.reported" (click)="removeBan(ban, game.value.awayBans) "><i class="float-right material-icons ">close</i></span></div>
+                                    Away Hero Bans: <span *ngIf="game.value.awayBans.length == 3"><i class="material-icons text-success">done</i></span>
+
                                     <div class="row m-t-5 " *ngIf="game.value.awayBans.length<3 ">
                                         <div class="col ">
                                             <mat-select placeholder="Hero Banned " [(ngModel)]="game.value.tmp.rightSelect ">
-                                                <mat-option *ngFor="let hero of heroes | keyvalue " [value]="hero.value ">{{hero.value}}</mat-option>
+                                                <!-- heroes | keyvalue -->
+                                                <mat-option *ngFor="let hero of returnFilteredHeroes(game)  " [value]="hero ">{{hero}}</mat-option>
                                             </mat-select>
                                         </div>
                                         <div class="col">
                                             <button [disabled]="!game.value.tmp.rightSelect || recMatch.reported" (click)="addBan(game.value.tmp.rightSelect, game.value.awayBans) ">Add Ban </button>
                                         </div>
+                                    </div>
+                                    <div class="banBox m-t-10">
+                                        <div *ngFor="let ban of game.value.awayBans ">{{ban}}<span *ngIf="!recMatch.reported" (click)="removeBan(ban, game.value.awayBans) "><i
+                                                    class="float-right material-icons ">close</i></span></div>
                                     </div>
 
                                 </div>
@@ -89,13 +98,13 @@
                             <!-- report match winner -->
                             <div class="row m-t-20 ">
                                 <div class="col ">
-                                    Who won this game?
+                                    Who won this game? <span *ngIf="game.value.winner"><i class="material-icons text-success">done</i></span>
                                 </div>
                             </div>
                             <div class="row m-t-5 ">
                                 <div class="col ">
                                     <mat-radio-group [(ngModel)]='game.value.winner'>
-                                        <mat-radio-button class="example-margin " value="home">Home</mat-radio-button>
+                                        <mat-radio-button class="example-margin" [disabled]="recMatch.reported" value="home">Home</mat-radio-button>
                                     </mat-radio-group>
                                 </div>
                                 <div class="col ">
@@ -103,30 +112,33 @@
                                 </div>
                                 <div class="col ">
                                     <mat-radio-group [(ngModel)]='game.value.winner'>
-                                        <mat-radio-button class="example-margin " value="away">Away</mat-radio-button>
+                                        <mat-radio-button class="example-margin" [disabled]="recMatch.reported" value="away">Away</mat-radio-button>
                                     </mat-radio-group>
                                 </div>
                             </div>
                             <!-- match replay -->
-                            <div class="row m-t-20">
-                                <div *ngIf="!recMatch.reported">
-                                    <div class="col" *ngIf="!game.value.replay">
-                                        Select file*:
-                                        <input type="file" ngf accept=".StormReplay" [(file)]="game.value.replay">
-                                    </div>
-                                    <div class="col">
-                                        {{game.value.replay.name}} <span (click)="resetReplay(game)"><i class="float-right material-icons">close</i></span>
-                                    </div>
+                            <div class="row m-t-20" *ngIf="!recMatch.reported">
+                                <div class="col" *ngIf="!game.value.replay else fileReported">
+                                    Select file*:
+                                    <input type="file" ngf accept=".StormReplay" [(file)]="game.value.replay">
                                 </div>
+                                <ng-template #fileReported>
+                                    <div class="col-7">
+                                        {{game.value.replay.name}} <span *ngIf="game.value.replay"><i class="material-icons text-success">done</i></span>
+                                    </div>
+                                    <div class="col-2">
+                                        <span class="float-right finger" (click)="resetReplay(game)"><i class="material-icons">close</i> Remove</span>
+                                    </div>
+                                </ng-template>
                             </div>
                         </div>
                     </div>
                     <div class="row m-t-20">
                         <div class="col" *ngIf="showAdd && !recMatch.reported">
-                            <button class="btn btn-success" (click)="addGame() ">Add Game</button>
+                            <button class="btn btn-primary" (click)="addGame() ">Add Game</button>
                         </div>
                         <div class="col" *ngIf="showReport">
-                            <button class="btn" (click)="report() ">Report Match!</button>
+                            <button class="btn btn-success" (click)="report() ">Report Match!</button>
                         </div>
                     </div>
 

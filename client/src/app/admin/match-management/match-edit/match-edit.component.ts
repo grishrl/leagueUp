@@ -69,25 +69,25 @@ export class MatchEditComponent implements OnInit {
     }
   }
 
-  scoreSelected(changed) {
-    if (changed == 'home') {
-      if (this.homeScore == 2) {
-        this.awayScore = 0;
-      } else if (this.homeScore == 1) {
-        this.awayScore = 1;
-      } else if (this.homeScore == 0) {
-        this.awayScore = 2;
-      }
-    } else {
-      if (this.awayScore == 2) {
-        this.homeScore = 0;
-      } else if (this.awayScore == 1) {
-        this.homeScore = 1;
-      } else if (this.awayScore == 0) {
-        this.homeScore = 2;
-      }
-    }
-  }
+  // scoreSelected(changed) {
+  //   if (changed == 'home') {
+  //     if (this.homeScore == 2) {
+  //       this.awayScore = 0;
+  //     } else if (this.homeScore == 1) {
+  //       this.awayScore = 1;
+  //     } else if (this.homeScore == 0) {
+  //       this.awayScore = 2;
+  //     }
+  //   } else {
+  //     if (this.awayScore == 2) {
+  //       this.homeScore = 0;
+  //     } else if (this.awayScore == 1) {
+  //       this.homeScore = 1;
+  //     } else if (this.awayScore == 0) {
+  //       this.homeScore = 2;
+  //     }
+  //   }
+  // }
 
   backwardsCompatTime(msDate){
     let time = new Date(parseInt(msDate));
@@ -114,6 +114,17 @@ export class MatchEditComponent implements OnInit {
   }
 
   saveMatch(match){
+    let submittable = true;
+    if(this.homeScore == 1 && this.awayScore == 2 || this.awayScore == 1 && this.homeScore ==2){
+      //ok
+    }else if(this.homeScore + this.awayScore > 3){
+      submittable = false;
+      alert('these scores are not allowed');
+    }else{
+      submittable = false;
+      alert('these scores are not allowed');
+    }
+
     if(this.friendlyDate && this.friendlyTime){
       let years = this.friendlyDate.getFullYear();
       let month = this.friendlyDate.getMonth();
@@ -141,14 +152,17 @@ export class MatchEditComponent implements OnInit {
       alert('You have entered a time but no date!');
     }
 
-    this.adminService.matchUpdate(match).subscribe(
-      (res)=>{
-        this.ngOnInit();
-      },
-      (err)=>{
-        console.log(err);
-      }
-    )
+    if(submittable){
+      this.adminService.matchUpdate(match).subscribe(
+        (res) => {
+          this.ngOnInit();
+        },
+        (err) => {
+          console.log(err);
+        }
+      )
+    }
+    
     
   }
  
