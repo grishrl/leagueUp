@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { AdminService } from 'src/app/services/admin.service';
+import { UtilitiesService } from 'src/app/services/utilities.service';
 
 @Component({
   selector: 'app-match-edit',
@@ -33,14 +34,11 @@ export class MatchEditComponent implements OnInit {
   amPm = ['PM', 'AM'];
 
   
-  constructor(private route: ActivatedRoute, private scheduleService: ScheduleService, private adminService: AdminService) { 
+  constructor(private route: ActivatedRoute, private scheduleService: ScheduleService, private adminService: AdminService, private util:UtilitiesService) { 
     if (this.route.snapshot.params['id']) {
       this.matchId = this.route.snapshot.params['id'];
     }
   }
-  
-
-
 
   ngOnInit() {
     this.scheduleService.getMatchInfo(6, this.matchId).subscribe(res=>{
@@ -52,7 +50,9 @@ export class MatchEditComponent implements OnInit {
       if(!this.match.scheduledTime){
         this.match.scheduledTime = {};
       }else{
-        this.backwardsCompatTime(this.match.scheduledTime.startTime)
+        this.friendlyDate = this.util.getDatePickerFormatFromMS(this.match.scheduledTime.startTime);
+        this.friendlyTime = this.util.getTimeFromMS(this.match.scheduledTime.startTime);
+        this.suffix = this.util.getSuffixFromMS(this.match.scheduledTime.startTime);
       }
     }, err=>{
       console.log(err);
@@ -69,53 +69,11 @@ export class MatchEditComponent implements OnInit {
     }
   }
 
-  // scoreSelected(changed) {
-  //   if (changed == 'home') {
-  //     if (this.homeScore == 2) {
-  //       this.awayScore = 0;
-  //     } else if (this.homeScore == 1) {
-  //       this.awayScore = 1;
-  //     } else if (this.homeScore == 0) {
-  //       this.awayScore = 2;
-  //     }
-  //   } else {
-  //     if (this.awayScore == 2) {
-  //       this.homeScore = 0;
-  //     } else if (this.awayScore == 1) {
-  //       this.homeScore = 1;
-  //     } else if (this.awayScore == 0) {
-  //       this.homeScore = 2;
-  //     }
-  //   }
-  // }
-
-  backwardsCompatTime(msDate){
-    let time = new Date(parseInt(msDate));
-    this.friendlyDate = time;
-    this.suffix = 'AM';
-    let hours = time.getHours();
-    
-    if (hours > 12) {
-      hours = hours - 12;
-      this.suffix = "PM";
-    }
-
-    let min = time.getMinutes();
-    let minStr;
-
-    if (min == 0) {
-      minStr = '00';
-    } else {
-      minStr = min.toString();
-    }
-
-    this.friendlyTime = hours+":"+minStr
-
-  }
-
   saveMatch(match){
     let submittable = true;
     if(this.homeScore == 1 && this.awayScore == 2 || this.awayScore == 1 && this.homeScore ==2){
+      //ok
+    } else if (this.homeScore == 0 && this.awayScore == 2 || this.awayScore == 0 && this.homeScore == 2){
       //ok
     }else if(this.homeScore + this.awayScore > 3){
       submittable = false;

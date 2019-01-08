@@ -27,7 +27,6 @@ export class TeamDisplayComponent implements OnInit {
   }
 
   teamImage(img){
-    console.log('img ', img);
     if(img == null || img == undefined){
       return this.team.imageFQDN('defaultTeamLogo.png');
     }else{

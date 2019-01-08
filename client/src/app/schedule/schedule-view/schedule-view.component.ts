@@ -2,6 +2,8 @@ import { Component, OnInit, Input } from '@angular/core';
 import { DivisionService } from 'src/app/services/division.service';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { TeamService } from 'src/app/services/team.service';
+import { StandingsService } from 'src/app/services/standings.service';
+import { UtilitiesService } from 'src/app/services/utilities.service';
 
 @Component({
   selector: 'app-schedule-view',
@@ -10,8 +12,9 @@ import { TeamService } from 'src/app/services/team.service';
 })
 export class ScheduleViewComponent implements OnInit {
 
-  constructor(private divisionService: DivisionService, private scheduleService: ScheduleService, public team: TeamService) { }
+  constructor(private divisionService: DivisionService, private standingsService:StandingsService, private scheduleService: ScheduleService, public team: TeamService, public util:UtilitiesService) { }
   divisions:any=[];
+  standings:any[]=[];
 
   ngOnInit() {
     if (this.provDiv == undefined && this.provDiv == null) {
@@ -28,7 +31,6 @@ export class ScheduleViewComponent implements OnInit {
   @Input() set division(div){
     if(div!=undefined && div != null){
       this.provDiv = div;
-      console.log(this.provDiv)
       this.calculateRounds();
     }
   }
@@ -70,7 +72,34 @@ export class ScheduleViewComponent implements OnInit {
 
     let season = 6;
     this.scheduleService.getScheduleMatches(season, div, this.selectedRound).subscribe(
-      res=>{ this.matches = res },
+      res=>{
+        this.matches = res; 
+        this.standingsService.getStandings(this.provDiv.divisionConcat).subscribe(
+          res => {
+            this.standings = res;
+            this.matches.forEach(match => {
+          this.standings.forEach(standing=>{
+            if (match.home.teamName == standing.teamName){
+              match.home['losses']=standing.losses;
+              match.home['wins']=standing.wins;
+            }
+            if(match.away.teamName == standing.teamName){
+              match.away['losses'] = standing.losses;
+              match.away['wins'] = standing.wins;
+            }
+          });
+          if(match.scheduledTime){
+            match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
+            match['friendlyTime']=this.util.getTimeFromMS(match.scheduledTime.startTime);
+            match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
+          }
+          },
+          err => {
+            console.log(err);
+          }
+        ) 
+        });
+      },
       err=>{ console.log(err)}
     )
   }

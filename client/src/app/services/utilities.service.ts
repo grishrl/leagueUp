@@ -8,6 +8,61 @@ export class UtilitiesService {
 
   constructor() { }
 
+  prePendHttp(link){
+    if(link.indexOf('http://www.')==-1 || link.indexOf('https://wwww.')==-1){
+      return 'http://www.'+link;
+    }else{
+      return link;
+    }
+  }
+
+  getTimeFromMS(msDate) {
+    let time = new Date(parseInt(msDate));
+    // this.friendlyDate = time;
+    // this.suffix = 'AM';
+    let hours = time.getHours();
+    if (hours > 12) {
+      hours = hours - 12;
+    }
+    let min = time.getMinutes();
+    let minStr;
+    if (min == 0) {
+      minStr = '00';
+    } else {
+      minStr = min.toString();
+    }
+    return hours + ":" + minStr
+  }
+
+  dayOfWeekAsString(dayIndex) {
+    return ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][dayIndex];
+}
+
+  getDatePickerFormatFromMS(msDate) {
+    return new Date(parseInt(msDate));
+  }
+
+  getDateFromMS(msDate){
+    let time = new Date(parseInt(msDate));
+    let year = time.getFullYear();
+    let day = this.dayOfWeekAsString(time.getDay());
+    let date = time.getDate();
+    let month = time.getMonth()+1;
+    return day + ' ' + month + '/'+date+'/'+year;
+  }
+
+  getSuffixFromMS(msDate){
+    let suffix = 'AM';
+    let time = new Date(parseInt(msDate));
+    let hours = time.getHours();
+    if (hours > 12) {
+      hours = hours - 12;
+      suffix = "PM";
+    }
+    return suffix;
+
+  }
+
   markFormGroupTouched(formGroup: FormGroup) {
 
     if (formGroup.controls) {
