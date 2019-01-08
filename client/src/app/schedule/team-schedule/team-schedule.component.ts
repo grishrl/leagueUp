@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { ScheduleService } from 'src/app/services/schedule.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UtilitiesService } from 'src/app/services/utilities.service';
+import { TeamService } from 'src/app/services/team.service';
+import { StandingsService } from 'src/app/services/standings.service';
 
 @Component({
   selector: 'app-team-schedule',
@@ -16,13 +18,18 @@ export class TeamScheduleComponent implements OnInit {
   noMatches: boolean; // set to true if there are no matches returned or false if there are, used for displaying certain messages
   rounds: any //local variable to parse received team matches into
   
-  constructor(private Auth: AuthService, private route: ActivatedRoute, private scheduleService:ScheduleService, private util:UtilitiesService) {
+  constructor(private Auth: AuthService, private route: ActivatedRoute, private router: Router, private scheduleService:ScheduleService, private util:UtilitiesService, public team: TeamService, private standingsService:StandingsService) {
     //get the ID from the route
     if (this.route.snapshot.params['id']) {
       this.recTeam = this.route.snapshot.params['id'];
     }
    }
 
+
+  scheduleMatch(id){
+    console.log(id);
+    this.router.navigate(['schedule/scheduleMatch', id]);
+  }
 
   ngOnInit() {
     //get the team from the route, if it that is not present get it from the auth service
@@ -44,6 +51,31 @@ export class TeamScheduleComponent implements OnInit {
           this.noMatches = false;
         }
 
+        let div = matches[0].divisionConcat
+        this.standingsService.getStandings(div).subscribe(
+          res => {
+            let standings = res;
+            matches.forEach(match => {
+              standings.forEach(standing => {
+                if (match.home.teamName == standing.teamName) {
+                  match.home['losses'] = standing.losses;
+                  match.home['wins'] = standing.wins;
+                }
+                if (match.away.teamName == standing.teamName) {
+                  match.away['losses'] = standing.losses;
+                  match.away['wins'] = standing.wins;
+                }
+              });
+              if (match.scheduledTime) {
+                match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
+                match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
+                match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
+              }
+            })
+          },err=>{
+            console.log(err);
+          });
+
         //build out the rounds object:
         /*
         rounds = { 
@@ -53,22 +85,24 @@ export class TeamScheduleComponent implements OnInit {
                         ] 
                       }
         */
+       console.log(matches)
         for(var i = 0; i<=matches.length; i++){
           if(this.rounds == null || this.rounds == undefined){
             this.rounds = {};
           }
           let realRoundNumber = i+1;
           matches.forEach(match => {
-            if (match.round == realRoundNumber){
               if (this.rounds[realRoundNumber.toString()] == null || this.rounds[realRoundNumber.toString()] == undefined){
                 this.rounds[realRoundNumber.toString()] = [];
               }
-              this.rounds[realRoundNumber.toString()].push(match);
-            }
+              if(match.round == realRoundNumber){
+                this.rounds[realRoundNumber.toString()].push(match);
+              }
+              
           });
         }
 
-
+        console.log('rounds ', this.rounds)
         this.rounds;
       },
       err=>{console.log(err)}

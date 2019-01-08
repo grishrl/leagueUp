@@ -1,5 +1,5 @@
 <div class="container pt-4 forceFull">
-    <div class="row">
+    <div class="row bg-white">
         <div class="col">
             <div class="row">
                 <div class="col">
@@ -16,6 +16,73 @@
             </div>
             <ng-template #showMatches>
                 <div class="row mt-2" *ngFor="let round of rounds | keyvalue">
+                    <div class="col">
+                        <h4>Week: {{round.key}}</h4>
+                        <div *ngIf="round.value.length>0 else bye">
+                            <div class="row mt-3" *ngFor="let match of round.value">
+                                <div class="col">
+                                    <div class="row">
+                                        <div class="col-5">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <img class="img-fluid" src="{{team.imageFQDN(match.home.logo)}}" width="150" alt="Team Logo">
+                                                </div>
+                                                <div class="col vertical-middle">
+                                                    <div *ngIf="match.home.teamName">{{match.home.teamName}}</div>
+
+                                                </div>
+                                                <div class="col vertical-middle">
+                                                    <span> {{match.home.wins}} - {{match.home.losses}} </span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-2 vertical-middle">
+                                            - VS -
+                                        </div>
+                                        <div class="col-5">
+                                            <div class="row">
+                                                <div class="col vertical-middle">
+                                                    <span> {{match.away.wins}} - {{match.away.losses}} </span>
+                                                </div>
+                                                <div class="col vertical-middle">
+                                                    <div *ngIf="match.away.teamName; else bye">{{match.away.teamName}}</div>
+                                                </div>
+                                                <div class="col">
+                                                    <img class="img-fluid" src="{{team.imageFQDN(match.away.logo)}}" width="150" alt="Team Logo">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+
+                                        </div>
+                                        <div class="col-7 text-center">
+                                            <span *ngIf="match.scheduledTime else tbd">Scheduled Time: {{match.friendlyDate}} - {{match.friendlyTime}} {{match.suffix}}</span>
+                                            <ng-template #tbd>
+                                                <button class="btn btn-info" (click)="scheduleMatch(match.matchId)"> Schedule this match! </button>
+                                            </ng-template>
+                                        </div>
+                                        <div class="col">
+
+                                        </div>
+                                    </div>
+                                    <div class="row" *ngIf="match.casterName && match.casterUrl">
+                                        <div class="col"></div>
+                                        <div class="col-7 text-center">
+                                            <span> Casted by:</span> {{match.casterName}} : <a href="{{util.prePendHttp(match.casterUrl)}}" target="_blank">{{match.casterUrl}}</a>
+                                        </div>
+                                        <div class="col"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- <div class="row mt-2" *ngFor="let round of rounds | keyvalue">
                     <div class="col">
                         <h4>Round: {{round.key}}</h4>
                         <div class="row" *ngFor="let match of round.value">
@@ -42,12 +109,17 @@
                         </div>
                     </div>
 
-                </div>
+                </div> -->
             </ng-template>
 
         </div>
     </div>
 </div>
 <ng-template #bye>
-    BYE
+    <div class="row">
+        <div class="col text-center">
+            BYE
+        </div>
+    </div>
+
 </ng-template>
