@@ -164,11 +164,27 @@ router.post('/get/matches/team', passport.authenticate('jwt', {
     })
 })
 
+/*
+
+*/
+router.get('/get/matches/scheduled', (req, res) => {
+    const path = 'schedule/get/matches/scheduled';
+    Match.find({
+        scheduledTime: {
+            $exists: true
+        }
+    }).then((found) => {
+
+    }, (err) => {
+
+    })
+});
+
 
 router.post('/update/match/time', passport.authenticate('jwt', {
     session: false
 }), util.appendResHeader, (req, res) => {
-    const path = '/update/match/time';
+    const path = 'schedule/update/match/time';
     let requester = req.user.displayName;
     //let season = req.body.season;
 

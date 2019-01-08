@@ -60,7 +60,7 @@
                                             </mat-select>
                                         </div>
                                         <div class="col ">
-                                            <button [disabled]="!game.value.tmp.leftSelect || !recMatch.reported" (click)="addBan(game.value.tmp.leftSelect, game.value.homeBans) "> Add Ban </button>
+                                            <button [disabled]="!game.value.tmp.leftSelect || recMatch.reported" (click)="addBan(game.value.tmp.leftSelect, game.value.homeBans) "> Add Ban </button>
 
                                         </div>
                                     </div>
@@ -80,7 +80,7 @@
                                             </mat-select>
                                         </div>
                                         <div class="col">
-                                            <button [disabled]="!game.value.tmp.rightSelect || !recMatch.reported" (click)="addBan(game.value.tmp.rightSelect, game.value.awayBans) ">Add Ban </button>
+                                            <button [disabled]="!game.value.tmp.rightSelect || recMatch.reported" (click)="addBan(game.value.tmp.rightSelect, game.value.awayBans) ">Add Ban </button>
                                         </div>
                                     </div>
 

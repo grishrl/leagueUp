@@ -30,6 +30,7 @@ import { AuthGuardService } from "./services/auth-guard.service";
 import { NoAccessComponent } from "./no-access/no-access.component";
 import { SessionTimeoutComponent } from "./session-timeout/session-timeout.component";
 import { QuestionaireComponent } from "./questionaire/questionaire.component";
+import { CalendarViewComponent } from "./calendar-view/calendar-view.component";
 
 const APP_ROUTES: Routes = [
   { path: 'directory', component: DirectoryComponent},
@@ -61,7 +62,8 @@ const APP_ROUTES: Routes = [
   { path: '_casterDashboard', component: CasterDashboardComponent, canActivate: [AuthGuardService], data: { role: 'caster' }},
   { path: 'noAccess/:id', component:NoAccessComponent},
   { path: 'sessionTimeOut', component: SessionTimeoutComponent},
-  { path: 'questionnaire', component:QuestionaireComponent}
+  { path: 'questionnaire', component:QuestionaireComponent},
+  { path: 'calendar' , component:CalendarViewComponent}
 ]
 
 @NgModule({

@@ -58,6 +58,11 @@ import { NoAccessComponent } from './no-access/no-access.component';
 import { SessionTimeoutComponent } from './session-timeout/session-timeout.component';
 import { TimesAvailableComponent } from './times-available/times-available.component';
 import { QuestionaireComponent } from './questionaire/questionaire.component';
+import { LogsViewerComponent } from './admin/logs-viewer/logs-viewer.component';
+import { CalendarViewComponent } from './calendar-view/calendar-view.component';
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+ 
 
 @NgModule({
   declarations: [
@@ -110,7 +115,9 @@ import { QuestionaireComponent } from './questionaire/questionaire.component';
     NoAccessComponent,
     SessionTimeoutComponent,
     TimesAvailableComponent,
-    QuestionaireComponent
+    QuestionaireComponent,
+    LogsViewerComponent,
+    CalendarViewComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
@@ -125,7 +132,11 @@ import { QuestionaireComponent } from './questionaire/questionaire.component';
     FormsModule,
     ReactiveFormsModule,
     NgxCroppieModule,
-    ngfModule
+    ngfModule,
+    CalendarModule.forRoot({
+      provide: DateAdapter,
+      useFactory: adapterFactory
+    })
   ],
   providers: [
     {
