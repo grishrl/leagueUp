@@ -1,15 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { TeamService } from '../../services/team.service';
 import { AdminService } from 'src/app/services/admin.service';
 import { Router } from '@angular/router';
-import { PageEvent } from '@angular/material';
+import { PageEvent, MatPaginator } from '@angular/material';
 
 @Component({
   selector: 'app-manage-select-team',
   templateUrl: './manage-select-team.component.html',
   styleUrls: ['./manage-select-team.component.css']
 })
-export class ManageSelectTeamComponent implements OnInit {
+export class ManageSelectTeamComponent implements OnInit, AfterViewInit {
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(private admin: AdminService, private team: TeamService, private router:Router) { }
 
@@ -26,15 +28,16 @@ export class ManageSelectTeamComponent implements OnInit {
   pageSize: number = 10;
   filteredArray: any = [];
 
+  ngAfterViewInit() {
+    this.paginator.pageIndex = 0;
+  }
 
   pageEventHandler(pageEvent: PageEvent) {
-    console.log(pageEvent);
     let i = pageEvent.pageIndex * this.pageSize;
     let endSlice = i + this.pageSize
     if (endSlice > this.filteredArray.length) {
       endSlice = this.filteredArray.length;
     }
-    console.log('index start ', i, ' endSlice ', endSlice);
     this.displayArray = [];
     this.displayArray = this.filteredArray.slice(i, endSlice)
 
@@ -53,6 +56,7 @@ export class ManageSelectTeamComponent implements OnInit {
       this.filteredArray = this.teams;
       this.length = this.filteredArray.length;
       this.displayArray = this.filteredArray.slice(0, 10);
+      this.paginator.firstPage();
     } else {
       this.filteredArray = [];
       this.teams.forEach(element => {
@@ -62,7 +66,7 @@ export class ManageSelectTeamComponent implements OnInit {
       });
       this.length = this.filteredArray.length;
       this.displayArray = this.filteredArray.slice(0, 10);
-
+      this.paginator.firstPage();
     }
   }
 

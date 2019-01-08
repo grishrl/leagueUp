@@ -36,14 +36,17 @@
                         </mat-form-field>
                     </div>
                 </div>
-                <div class="row" *ngFor="let match of filterMatches">
+                <mat-paginator [length]="length" [pageIndex]="pageIndex" [pageSize]="pageSize" (page)="pageEventHandler($event)">
+
+                </mat-paginator>
+                <div class="row p-2" *ngFor="let match of displayArray; let ind = index;" [ngClass]="{'bg-light': ind%2!=0}">
                     <div class="col-10">
                         <div class="row">
                             <div class="col">
                                 <!-- {{match.division.displayName}} -->
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row mt-2">
                             <div class="col">
                                 {{match.home.teamName}}
                             </div>
@@ -54,7 +57,7 @@
                                 {{match.away.teamName}}
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row mt-2">
                             <div class="col">
                                 Scheduled Time: <span *ngIf="match.scheduledTime !=undefined && match.scheduledTime !=null else notScheduled">{{displayTime(match.scheduledTime.startTime)}}</span>
                                 <ng-template #notScheduled>
@@ -62,12 +65,11 @@
                                 </ng-template>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row" *ngIf="match.casterName !=undefined && match.casterName !=null">
                             <div class="col">
-                                <div *ngIf="match.casterName !=undefined && match.casterName !=null">
+                                <div>
                                     Caster: {{match.casterName}} Url: {{match.casterUrl}}
                                 </div>
-
                             </div>
                         </div>
 

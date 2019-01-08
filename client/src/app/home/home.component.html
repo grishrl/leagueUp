@@ -37,7 +37,7 @@
 
         <h2>Recent news</h2>
         <div class="row m-t" *ngFor="let row of rows">
-            <div class="col" *ngFor="let item of row">
+            <div class="col-4" *ngFor="let item of row">
                 <mat-card (click)="goToBlogPage(item)" class="blog-card finger">
                     <mat-card-header>
                         <img mat-card-avatar src="{{item.fields.author.fields.image.fields.file.url}}" class="author-image">

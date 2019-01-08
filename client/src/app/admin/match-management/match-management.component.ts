@@ -1,13 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { AdminService } from 'src/app/services/admin.service';
+import { MatPaginator, PageEvent } from '@angular/material';
 
 @Component({
   selector: 'app-match-management',
   templateUrl: './match-management.component.html',
   styleUrls: ['./match-management.component.css']
 })
-export class MatchManagementComponent implements OnInit {
+export class MatchManagementComponent implements OnInit, AfterViewInit {
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   //component properties
   hideForm = true;
@@ -20,6 +23,10 @@ export class MatchManagementComponent implements OnInit {
   divisions = []
 
   constructor(private scheduleService: ScheduleService, private adminService: AdminService) { }
+
+  ngAfterViewInit() {
+    this.paginator.pageIndex = 0;
+  }
 
   ngOnInit() {
     this.adminService.getDivisionList().subscribe((res) => {
@@ -38,12 +45,33 @@ export class MatchManagementComponent implements OnInit {
             }
           });
           this.rounds.sort();
+          this.length = this.filterMatches.length;
+          this.displayArray = this.filterMatches.slice(0, this.pageSize);
         }
       )
     }, (err) => {
       console.log(err);
     });
   }
+
+  displayArray = [];
+  length: number;
+  pageSize: number = 10;
+  filteredArray: any = [];
+  pageIndex: number;
+
+  pageEventHandler(pageEvent: PageEvent) {
+    console.log(pageEvent);
+    let i = pageEvent.pageIndex * this.pageSize;
+    let endSlice = i + this.pageSize
+    if (endSlice > this.filterMatches.length) {
+      endSlice = this.filterMatches.length;
+    }
+    console.log('index start ', i, ' endSlice ', endSlice);
+    this.displayArray = [];
+    this.displayArray = this.filterMatches.slice(i, endSlice)
+
+  } 
 
   /*
   div, round, team
@@ -109,6 +137,10 @@ export class MatchManagementComponent implements OnInit {
       return pass;
     }
     );
+
+    this.length = this.filterMatches.length;
+    this.displayArray = this.filterMatches.slice(0, this.pageSize > this.length ? this.length : this.pageSize);
+    this.paginator.firstPage();
   }
 
   displayTime(ms) {

@@ -27,7 +27,6 @@ export class TeamScheduleComponent implements OnInit {
 
 
   scheduleMatch(id){
-    console.log(id);
     this.router.navigate(['schedule/scheduleMatch', id]);
   }
 

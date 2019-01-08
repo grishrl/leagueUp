@@ -1,6 +1,6 @@
 <div class="row">
-    <div class="col">
-        <button (click)="hideForm = !hideForm"> Add Caster </button>
+    <div class="col text-center">
+        <button class="btn btn-info" (click)="hideForm = !hideForm"> Add Caster </button>
     </div>
 </div>
 <div [hidden]="hideForm" class="row">
@@ -21,6 +21,6 @@
         </mat-form-field>
     </div>
     <div class="col">
-        <button [disabled]="casterInputForm.invalid" (click)="saveCasterInfo(name, URL)">Submit</button>
+        <button class="btn btn-success" [disabled]="casterInputForm.invalid" (click)="saveCasterInfo(name, URL)">Submit</button>
     </div>
 </div>

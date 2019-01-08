@@ -16,7 +16,7 @@
                 <div class="row">
                     <div class="col">
                         <mat-form-field>
-                            <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="doFilterMatches(selectedDivision, selectedRound)">
+                            <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="doFilterMatches(selectedDivision, selectedRound, filterTeam)">
                                 <mat-option [value]="null"> </mat-option>
                                 <mat-option *ngFor="let division of divisions; let i = index" [value]="division.divisionConcat">{{division.displayName}}</mat-option>
                             </mat-select>
@@ -24,14 +24,27 @@
                     </div>
                     <div class="col">
                         <mat-form-field>
-                            <mat-select placeholder="Round:" [(ngModel)]="selectedRound" (ngModelChange)="doFilterMatches(selectedDivision, selectedRound)">
+                            <mat-select placeholder="Round:" [(ngModel)]="selectedRound" (ngModelChange)="doFilterMatches(selectedDivision, selectedRound, filterTeam)">
                                 <mat-option [value]="null"> </mat-option>
                                 <mat-option *ngFor="let round of rounds" [value]="round">{{round}}</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
+                    <div class="col">
+                        <mat-form-field class="tp-FullWidth">
+                            <input matInput placeholder="Team Name" [(ngModel)]="filterTeam" (ngModelChange)="doFilterMatches(selectedDivision, selectedRound, filterTeam)">
+                        </mat-form-field>
+                    </div>
                 </div>
-                <div class="row mb-3" *ngFor="let match of filterMatches">
+                <div class="row">
+                    <div class="col">
+                        <mat-checkbox [(ngModel)]="scheduledOnly" (ngModelChange)="filterScheduled(scheduledOnly)">Only Scheduled Matches.</mat-checkbox>
+                    </div>
+                </div>
+                <mat-paginator [length]="length" [pageIndex]="pageIndex" [pageSize]="pageSize" (page)="pageEventHandler($event)">
+
+                </mat-paginator>
+                <div class="row mb-3 p-4" *ngFor="let match of displayArray; let ind = index" [ngClass]="{'bg-light':ind%2==0}">
                     <div class="col">
                         <div class="row">
                             <div class="col">
@@ -49,7 +62,7 @@
                                 {{match.away.teamName}}
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row mt-2">
                             <div class="col">
                                 Scheduled Time: <span *ngIf="match.scheduledTime !=undefined && match.scheduledTime !=null else notScheduled">{{displayTime(match.scheduledTime.startTime)}}</span>
                                 <ng-template #notScheduled>
@@ -57,13 +70,12 @@
                                 </ng-template>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row mt-2">
                             <div class="col">
                                 <div *ngIf="match.casterName != undefined && match.casterName != null else addCasterButton">
                                     Caster: {{match.casterName}} Url: {{match.casterUrl}}
                                 </div>
                                 <ng-template #addCasterButton>
-
                                     <app-caster-inputs [matchId]="match.matchId"></app-caster-inputs>
                                 </ng-template>
                             </div>
