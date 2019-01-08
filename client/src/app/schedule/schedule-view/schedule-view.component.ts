@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { DivisionService } from 'src/app/services/division.service';
 import { ScheduleService } from 'src/app/services/schedule.service';
+import { TeamService } from 'src/app/services/team.service';
 
 @Component({
   selector: 'app-schedule-view',
@@ -9,7 +10,7 @@ import { ScheduleService } from 'src/app/services/schedule.service';
 })
 export class ScheduleViewComponent implements OnInit {
 
-  constructor(private divisionService: DivisionService, private scheduleService: ScheduleService) { }
+  constructor(private divisionService: DivisionService, private scheduleService: ScheduleService, public team: TeamService) { }
   divisions:any=[];
 
   ngOnInit() {

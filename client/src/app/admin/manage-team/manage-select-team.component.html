@@ -1,57 +1,63 @@
 <div class="container pt-4">
-    <div class="row">
-        <div class="col">
-            <a [routerLink]="['/_admin/dashboard']">Back to Dashboard</a>
-        </div>
-    </div>
-
-    <div class="row mt-3">
-        <div class="col">
-            <h3>Select from list:</h3>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col">
-            <mat-form-field class="tp-FullWidth">
-                <input matInput placeholder="Filter by name" [(ngModel)]="filterName" (ngModelChange)="filterTeams(filterName)">
-            </mat-form-field>
-        </div>
-    </div>
-    <mat-paginator [length]="length" [pageSize]="pageSize" (page)="pageEventHandler($event)">
-
-    </mat-paginator>
-    <div class="row mt-2 p-3 rowBorder" *ngFor="let team of displayArray; let ind = index" [ngClass]="{oddRow : ind%2!=0}">
-        <div class="col">
-            <div class="row">
-                <div class="col">
-                    <span class="titles">Team Name:</span> {{team.teamName}}
+    <div class="">
+        <div class="row bg-white">
+            <div class="col">
+                <div class="row">
+                    <div class="col">
+                        <a [routerLink]="['/_admin/dashboard']">Back to Dashboard</a>
+                    </div>
                 </div>
-                <div class="col">
-                    <span class="titles">Divison: </span> <i *ngIf="!team.divisionDisplayName">(not assigned)</i>
-                    <span *ngIf="team.divisionDisplayName">{{team.divisionDisplayName}}</span>
+
+                <div class="row mt-3">
+                    <div class="col">
+                        <h3>Select from list:</h3>
+                    </div>
                 </div>
-                <div class="col">
-                    <span class="titles">Captain:</span> {{team.captain}}
+
+                <div class="row">
+                    <div class="col">
+                        <mat-form-field class="tp-FullWidth">
+                            <input matInput placeholder="Filter by name" [(ngModel)]="filterName" (ngModelChange)="filterTeams(filterName)">
+                        </mat-form-field>
+                    </div>
+                </div>
+                <mat-paginator [length]="length" [pageSize]="pageSize" (page)="pageEventHandler($event)">
+
+                </mat-paginator>
+                <div class="row mt-2 p-3 rowBorder" *ngFor="let team of displayArray; let ind = index" [ngClass]="{oddRow : ind%2!=0}">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col">
+                                <span class="titles">Team Name:</span> {{team.teamName}}
+                            </div>
+                            <div class="col">
+                                <span class="titles">Divison: </span> <i *ngIf="!team.divisionDisplayName">(not assigned)</i>
+                                <span *ngIf="team.divisionDisplayName">{{team.divisionDisplayName}}</span>
+                            </div>
+                            <div class="col">
+                                <span class="titles">Captain:</span> {{team.captain}}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <span class="titles">Members:</span> {{team.teamMembers.length}}
+                            </div>
+                            <div class="col">
+                                <span class="titles">MMR:</span> {{team.teamMMRAvg}}
+                            </div>
+                            <div class="col">
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col text-center">
+                                <a class="btn btn-secondary" (click)="selectedFromList(team)">Select this team for management</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col">
-                    <span class="titles">Members:</span> {{team.teamMembers.length}}
-                </div>
-                <div class="col">
-                    <span class="titles">MMR:</span> {{team.teamMMRAvg}}
-                </div>
-                <div class="col">
-
-                </div>
-            </div>
-            <div class="row">
-                <div class="col text-center">
-                    <a class="btn btn-secondary" (click)="selectedFromList(team)">Select this team for management</a>
-                </div>
-            </div>
         </div>
-
+        <!--  -->
     </div>
 </div>

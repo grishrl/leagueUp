@@ -101,8 +101,14 @@ export class TeamService {
 
   //retuns a formatted string that includes the requisite info to retrieve an image from s3 bucket
   imageFQDN(img) {
-    let imgFQDN = 'https://s3.amazonaws.com/' + environment.s3bucketImages + '/';
-    return imgFQDN += img;
+    let imgFQDN = 'https://s3.amazonaws.com/' + environment.s3bucketImages + '/'
+    if(img){
+      imgFQDN += img;
+    }else{
+      imgFQDN += 'defaultTeamLogo.png';
+    }
+    
+    return imgFQDN;
   }
 
   //returns a route friendly URL name for a team, removing any spaces

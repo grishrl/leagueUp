@@ -1,75 +1,83 @@
 <div class="container">
-    <div class="row">
-        <div class="col">
-            <a [routerLink]="['/_admin/dashboard']">Back to Dashboard</a>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <h2>Match Admin Dashboard</h2>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <mat-form-field class="tp-FullWidth">
-                <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="doFilterMatches(selectedDivision, selectedRound, filterTeam)">
-                    <mat-option [value]="null"> </mat-option>
-                    <mat-option *ngFor="let division of divisions; let i = index" [value]="division.divisionConcat">{{division.displayName}}</mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
-        <div class="col">
-            <mat-form-field class="tp-FullWidth">
-                <mat-select placeholder="Round:" [(ngModel)]="selectedRound" (ngModelChange)="doFilterMatches(selectedDivision, selectedRound, filterTeam)">
-                    <mat-option [value]="null"> </mat-option>
-                    <mat-option *ngFor="let round of rounds" [value]="round">{{round}}</mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
-        <div class="col">
-            <mat-form-field class="tp-FullWidth">
-                <input matInput placeholder="Team Division" [(ngModel)]="filterTeam" (ngModelChange)="doFilterMatches(selectedDivision, selectedRound, filterTeam)">
-            </mat-form-field>
-        </div>
-    </div>
-    <div class="row" *ngFor="let match of filterMatches">
-        <div class="col-10">
-            <div class="row">
-                <div class="col">
-                    <!-- {{match.division.displayName}} -->
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    {{match.home.teamName}}
-                </div>
-                <div class="col">
-                    -VS-
-                </div>
-                <div class="col">
-                    {{match.away.teamName}}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    Scheduled Time: <span *ngIf="match.scheduledTime !=undefined && match.scheduledTime !=null else notScheduled">{{displayTime(match.scheduledTime.startTime)}}</span>
-                    <ng-template #notScheduled>
-                        <span>Not Yet Scheduled</span>
-                    </ng-template>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <div *ngIf="match.casterName !=undefined && match.casterName !=null">
-                        Caster: {{match.casterName}} Url: {{match.casterUrl}}
+    <div class="">
+        <div class="row bg-white">
+            <div class="col">
+
+                <div class="row">
+                    <div class="col">
+                        <a [routerLink]="['/_admin/dashboard']">Back to Dashboard</a>
                     </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <h2>Match Admin Dashboard</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <mat-form-field class="tp-FullWidth">
+                            <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="doFilterMatches(selectedDivision, selectedRound, filterTeam)">
+                                <mat-option [value]="null"> </mat-option>
+                                <mat-option *ngFor="let division of divisions; let i = index" [value]="division.divisionConcat">{{division.displayName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col">
+                        <mat-form-field class="tp-FullWidth">
+                            <mat-select placeholder="Round:" [(ngModel)]="selectedRound" (ngModelChange)="doFilterMatches(selectedDivision, selectedRound, filterTeam)">
+                                <mat-option [value]="null"> </mat-option>
+                                <mat-option *ngFor="let round of rounds" [value]="round">{{round}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col">
+                        <mat-form-field class="tp-FullWidth">
+                            <input matInput placeholder="Team Division" [(ngModel)]="filterTeam" (ngModelChange)="doFilterMatches(selectedDivision, selectedRound, filterTeam)">
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row" *ngFor="let match of filterMatches">
+                    <div class="col-10">
+                        <div class="row">
+                            <div class="col">
+                                <!-- {{match.division.displayName}} -->
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                {{match.home.teamName}}
+                            </div>
+                            <div class="col">
+                                -VS-
+                            </div>
+                            <div class="col">
+                                {{match.away.teamName}}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                Scheduled Time: <span *ngIf="match.scheduledTime !=undefined && match.scheduledTime !=null else notScheduled">{{displayTime(match.scheduledTime.startTime)}}</span>
+                                <ng-template #notScheduled>
+                                    <span>Not Yet Scheduled</span>
+                                </ng-template>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div *ngIf="match.casterName !=undefined && match.casterName !=null">
+                                    Caster: {{match.casterName}} Url: {{match.casterUrl}}
+                                </div>
 
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col">
+                        <a [routerLink]="[match.matchId]" class="btn btn-primary">Manage</a>
+                    </div>
                 </div>
             </div>
-
         </div>
-        <div class="col">
-            <a [routerLink]="[match.matchId]" class="btn btn-primary">Manage</a>
-        </div>
+        <!--  -->
     </div>
 </div>

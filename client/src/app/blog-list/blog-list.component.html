@@ -1,34 +1,37 @@
 <div class="container">
-
-    <div class="row">
-        <div class="col"></div>
-        <div class="col-6">
-            <mat-form-field class="example-container">
-                <mat-select placeholder="Filter by Category" (selectionChange)="updateDisplay($event)" disableOptionCentering>
-                    <mat-option [value]="'all'">
-                        All
-                    </mat-option>
-                    <mat-option *ngFor="let category of categories" [value]="category.sys.id">
-                        {{category.fields.title}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
-        <div class="col"></div>
-    </div>
-    <div class="row m-t" *ngFor="let row of rows">
-        <div class="col" *ngFor="let item of row">
-            <mat-card class="blog-card">
-                <mat-card-header>
-                    <img mat-card-avatar src="{{item.fields.author.fields.image.fields.file.url}}" class="author-image">
-                    <mat-card-title><span class="anchor" (click)="goToBlogPage(item)">{{item.fields.title}}</span></mat-card-title>
-                    <mat-card-subtitle>{{item.fields.author.fields.name}}</mat-card-subtitle>
-                </mat-card-header>
-                <img mat-card-image src="{{item.fields.heroImage.fields.file.url}}?w=450&h=300&fit=scale" alt="{{item.fields.heroImage.fields.description}}">
-                <mat-card-content>
-                    <div>{{item.fields.description}}</div>
-                </mat-card-content>
-            </mat-card>
+    <div class="row bg-white">
+        <div class="col">
+            <div class="row">
+                <div class="col"></div>
+                <div class="col-6">
+                    <mat-form-field class="example-container">
+                        <mat-select placeholder="Filter by Category" (selectionChange)="updateDisplay($event)" disableOptionCentering>
+                            <mat-option [value]="'all'">
+                                All
+                            </mat-option>
+                            <mat-option *ngFor="let category of categories" [value]="category.sys.id">
+                                {{category.fields.title}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col"></div>
+            </div>
+            <div class="row m-t" *ngFor="let row of rows">
+                <div class="col" *ngFor="let item of row">
+                    <mat-card class="blog-card">
+                        <mat-card-header>
+                            <img mat-card-avatar src="{{item.fields.author.fields.image.fields.file.url}}" class="author-image">
+                            <mat-card-title><span class="anchor" (click)="goToBlogPage(item)">{{item.fields.title}}</span></mat-card-title>
+                            <mat-card-subtitle>{{item.fields.author.fields.name}}</mat-card-subtitle>
+                        </mat-card-header>
+                        <img mat-card-image src="{{item.fields.heroImage.fields.file.url}}?w=450&h=300&fit=scale" alt="{{item.fields.heroImage.fields.description}}">
+                        <mat-card-content>
+                            <div>{{item.fields.description}}</div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </div>
         </div>
     </div>
 </div>

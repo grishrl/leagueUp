@@ -12,6 +12,11 @@
     border-width: 2px;
     border-top-style: solid;
     border-color: grey;
+    padding: 25px;
+}
+
+.matchBoxPadder {
+    padding: 25px;
 }
 
 .reportingDiv {
