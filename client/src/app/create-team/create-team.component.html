@@ -20,7 +20,7 @@
             </div>
 
             <mat-form-field class="tp-FullWidth">
-                <mat-select placeholder="Team Competitive Level" [(ngModel)]="returnedProfile.competitiveLevel">
+                <mat-select placeholder="Team Competitive Level" [(ngModel)]="returnedProfile.competitiveLevel" disableOptionCentering>
                     <mat-option *ngFor="let level of competitonLevel" [value]="level.val">
                         {{level.display}}
                     </mat-option>

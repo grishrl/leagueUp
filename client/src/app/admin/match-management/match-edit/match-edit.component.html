@@ -32,7 +32,7 @@
                     <div class="row">
                         <div class="col">
                             <mat-form-field class="fullWidth">
-                                <mat-select placeholder="{{match.home.teamName}} Score:" [(ngModel)]="homeScore">
+                                <mat-select placeholder="{{match.home.teamName}} Score:" [(ngModel)]="homeScore" disableOptionCentering>
                                     <mat-option [value]="0">0</mat-option>
                                     <mat-option [value]="1">1</mat-option>
                                     <mat-option [value]="2">2</mat-option>
@@ -49,7 +49,7 @@
                     <div class="row">
                         <div class="col">
                             <mat-form-field>
-                                <mat-select placeholder="{{match.away.teamName}} Score:" [(ngModel)]="awayScore">
+                                <mat-select placeholder="{{match.away.teamName}} Score:" [(ngModel)]="awayScore" disableOptionCentering>
                                     <mat-option [value]="0">0</mat-option>
                                     <mat-option [value]="1">1</mat-option>
                                     <mat-option [value]="2">2</mat-option>

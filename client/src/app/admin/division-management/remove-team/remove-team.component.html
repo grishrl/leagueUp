@@ -6,7 +6,7 @@
                     <div class="example-container">
                         <h5>Select division to modify:</h5>
                         <mat-form-field>
-                            <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="selected()">
+                            <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="selected()" disableOptionCentering>
                                 <mat-option *ngFor="let division of divisions; let i = index" [value]="division">{{division.displayName}}</mat-option>
                             </mat-select>
                         </mat-form-field>

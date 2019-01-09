@@ -4,14 +4,14 @@
             <div class="row" *ngIf="!this.provDiv; else provDiv">
                 <div class="col">
                     <mat-form-field>
-                        <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="calculateRounds()">
+                        <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="calculateRounds()" disableOptionCentering>
                             <mat-option *ngFor="let division of divisions; let i = index" [value]="division">{{division.displayName}}</mat-option>
                         </mat-select>
                     </mat-form-field>
                 </div>
                 <div class="col">
                     <mat-form-field>
-                        <mat-select placeholder="Round:" [(ngModel)]="selectedRound" (ngModelChange)="getMatches()">
+                        <mat-select placeholder="Round:" [(ngModel)]="selectedRound" (ngModelChange)="getMatches()" disableOptionCentering>
                             <mat-option *ngFor="let round of rounds; let i = index" [value]="round">{{round}}</mat-option>
                         </mat-select>
                     </mat-form-field>
@@ -22,7 +22,7 @@
                     <div>
                         <div class="col">
                             <mat-form-field>
-                                <mat-select placeholder="Round:" [(ngModel)]="selectedRound" (ngModelChange)="getMatches()">
+                                <mat-select placeholder="Round:" [(ngModel)]="selectedRound" (ngModelChange)="getMatches()" disableOptionCentering>
                                     <mat-option *ngFor="let round of rounds; let i = index" [value]="round">{{round}}</mat-option>
                                 </mat-select>
                             </mat-form-field>
