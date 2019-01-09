@@ -1,22 +1,11 @@
-import {Component,ChangeDetectionStrategy,ViewChild,TemplateRef, OnInit} from '@angular/core';
-import {
-  startOfDay,
-  endOfDay,
-  subDays,
-  addDays,
-  endOfMonth,
-  isSameDay,
-  isSameMonth,
-  addHours
-} from 'date-fns';
+import { Component,ChangeDetectionStrategy,ViewChild,TemplateRef, OnInit} from '@angular/core';
+import { startOfDay, endOfDay, subDays,addDays,endOfMonth, isSameDay, isSameMonth, addHours } from 'date-fns';
 import { Subject } from 'rxjs';
-import {
-  CalendarEvent,
-  CalendarEventAction,
-  CalendarEventTimesChangedEvent,
-  CalendarView
-} from 'angular-calendar';
+import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarView } from 'angular-calendar';
 import { ScheduleService } from '../services/schedule.service';
+import { EventModalComponent } from './event-modal/event-modal.component';
+import { MatDialog } from '@angular/material';
+import { Router } from '@angular/router';
 
 const colors: any = {
   red: {
@@ -33,6 +22,7 @@ const colors: any = {
   }
 };
 
+
 @Component({
   selector: 'app-calendar-view',
   templateUrl: './calendar-view.component.html',
@@ -40,19 +30,22 @@ const colors: any = {
 })
 export class CalendarViewComponent implements OnInit {
 
-  constructor(private matches: ScheduleService) { }
 
+
+  constructor(private matches: ScheduleService, public dialog: MatDialog, private router:Router) { }
+
+  _matches = [];
   ngOnInit(){
     this.matches.getAllMatchesWithStartTime().subscribe(
       res=>{
         let matches = res;
-
+        this._matches = res;
         matches.forEach(match => {
           let event: CalendarEvent = {
             'start': new Date(parseInt(match.scheduledTime.startTime)),
             'end': new Date(parseInt(match.scheduledTime.endTime)),
-            'title': match.home.teamName + ' vs ' + match.away.teamName
-            
+            'title': match.home.teamName + ' vs ' + match.away.teamName,
+            'meta':match.matchId
           };
 
           if(match.casterName!=null||match.casterName!=undefined){
@@ -102,46 +95,7 @@ export class CalendarViewComponent implements OnInit {
 
   refresh: Subject<any> = new Subject();
 
-  events: CalendarEvent[] = [
-    // {
-    //   start: subDays(startOfDay(new Date()), 1),
-    //   end: addDays(new Date(), 1),
-    //   title: 'A 3 day event',
-    //   color: colors.red,
-    //   actions: this.actions,
-    //   allDay: true,
-    //   resizable: {
-    //     beforeStart: true,
-    //     afterEnd: true
-    //   },
-    //   draggable: true
-    // },
-    // {
-    //   start: startOfDay(new Date()),
-    //   title: 'An event with no end date',
-    //   color: colors.yellow,
-    //   actions: this.actions
-    // },
-    // {
-    //   start: subDays(endOfMonth(new Date()), 3),
-    //   end: addDays(endOfMonth(new Date()), 3),
-    //   title: 'A long event that spans 2 months',
-    //   color: colors.blue,
-    //   allDay: true
-    // },
-    // {
-    //   start: addHours(startOfDay(new Date()), 2),
-    //   end: new Date(),
-    //   title: 'A draggable and resizable event',
-    //   color: colors.yellow,
-    //   actions: this.actions,
-    //   resizable: {
-    //     beforeStart: true,
-    //     afterEnd: true
-    //   },
-    //   draggable: true
-    // }
-  ];
+  events: CalendarEvent[] = [];
 
   activeDayIsOpen: boolean = true;
 
@@ -159,6 +113,18 @@ export class CalendarViewComponent implements OnInit {
     }
   }
 
+  openDialog(match): void {
+
+    const dialogRef = this.dialog.open(EventModalComponent, {
+      width:'700px',
+      data: match
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
+    });
+  }
+
   eventTimesChanged({
     event,
     newStart,
@@ -171,23 +137,33 @@ export class CalendarViewComponent implements OnInit {
   }
 
   handleEvent(action: string, event: CalendarEvent): void {
-    // this.modalData = { event, action };
-    // this.modal.open(this.modalContent, { size: 'lg' });
+    // console.log('hi, ', event);
+    // let passMatch;
+    // this._matches.forEach(match=>{
+    //   console.log('event.meta ', event.meta, ' match.matchId ', match.matchId)
+    //   if(event.meta == match.matchId){
+    //     passMatch = match;
+    //   }
+    // });
+    // this.openDialog(passMatch);
+
+    this.router.navigate(['event/',event.meta]);
+
   }
 
-  addEvent(): void {
-    this.events.push({
-      title: 'New event',
-      start: startOfDay(new Date()),
-      end: endOfDay(new Date()),
-      color: colors.red,
-      draggable: true,
-      resizable: {
-        beforeStart: true,
-        afterEnd: true
-      }
-    });
-    this.refresh.next();
-  }
+  // addEvent(): void {
+  //   this.events.push({
+  //     title: 'New event',
+  //     start: startOfDay(new Date()),
+  //     end: endOfDay(new Date()),
+  //     color: colors.red,
+  //     draggable: true,
+  //     resizable: {
+  //       beforeStart: true,
+  //       afterEnd: true
+  //     }
+  //   });
+  //   this.refresh.next();
+  // }
 
 }
