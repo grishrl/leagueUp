@@ -259,9 +259,7 @@ router.post('/update/match/time', passport.authenticate('jwt', {
 /*
 for getting a match specified by ID
 */
-router.post('/get/match', passport.authenticate('jwt', {
-    session: false
-}), util.appendResHeader, (req, res) => {
+router.post('/get/match', (req, res) => {
     const path = 'schedule/get/match';
     let season = req.body.season;
     let matchId = req.body.matchId;
