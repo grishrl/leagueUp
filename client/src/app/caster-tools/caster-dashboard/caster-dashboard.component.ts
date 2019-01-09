@@ -26,6 +26,7 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
   rounds=[];
   divisions = []
   filterTeam:string='';
+  scheduledOnly:boolean=false;
 
   
 
