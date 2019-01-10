@@ -1,6 +1,6 @@
 <div class="container">
     <div>
-        <div class="row forceFull">
+        <div class="row">
             <div class="col">
 
                 <div class="row">
@@ -44,6 +44,7 @@
                 <mat-paginator [length]="length" [pageIndex]="pageIndex" [pageSize]="pageSize" (page)="pageEventHandler($event)">
 
                 </mat-paginator>
+                <div *ngIf="displayArray.length==0" style="height: 650px"></div>
                 <div class="row mb-3 p-4" *ngFor="let match of displayArray; let ind = index" [ngClass]="{'bg-light':ind%2==0}">
                     <div class="col">
                         <div class="row">

@@ -28,10 +28,11 @@
                             </mat-form-field>
                         </div>
                     </div>
+                    <!-- <div class="fillUpDeadSpace" *ngIf="!selectedRound"></div> -->
                 </div>
             </ng-template>
             <!-- else noMatches -->
-            <div *ngIf="matches.length>0 ">
+            <div *ngIf="matches.length>0 else noMatch">
                 <div class="row">
                     <div class="col">
                         <h2>Matches</h2>

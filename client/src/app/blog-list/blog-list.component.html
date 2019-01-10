@@ -1,5 +1,5 @@
 <div class="container">
-    <div class="row bg-white">
+    <div class="row bg-white forceFull">
         <div class="col">
             <div class="row">
                 <div class="col"></div>
@@ -17,6 +17,7 @@
                 </div>
                 <div class="col"></div>
             </div>
+
             <div class="row m-t" *ngFor="let row of rows">
                 <div class="col" *ngFor="let item of row">
                     <mat-card class="blog-card finger" (click)="goToBlogPage(item)">

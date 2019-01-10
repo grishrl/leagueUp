@@ -6,19 +6,48 @@
 body,
 html {
     height: 100%;
-    margin: 0;
 }
 
-.mat-tab-body-wrapper {
-    flex-grow: 1;
+.appRoot {
+    height: 100%;
 }
+
+
+/* .mat-tab-body-wrapper {
+    flex-grow: 1;
+} */
 
 body {
     font-family: 'Roboto', sans-serif;
     background-image: url('/assets/testGutter.png');
 }
 
-.footer-padding {
+.forceFull {
+    min-height: 100vh;
+}
+
+
+/* 
+this class sets a div height of reasonable px length to give the illusion that the page is longer when 
+no content has loaded in, without this your footer flys around the page as contnet grows or shrinks
+ */
+
+.fillWhileLoading {
+    height: 700px;
+}
+
+
+/*
+this sets a height of the entire view height, used when the content will probably never fill the page so 
+that the footer rests at the bottom
+*/
+
+.fillUpDeadSpace {
+    height: 100vh;
+}
+
+
+/* .footer-padding {
     margin-top: 25px;
 }
 
@@ -30,8 +59,4 @@ body {
     background-color: white;
     height: 100%;
 }
-
-.forceFull {
-    height: 100%;
-    background-color: white;
-}
+*/
