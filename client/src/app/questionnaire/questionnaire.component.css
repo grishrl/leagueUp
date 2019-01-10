@@ -1,0 +1,23 @@
+.checkboxMargin {
+    margin-right: 20px;
+}
+
+.removeClass {
+    border-style: solid;
+    padding: 3px;
+    border-width: 2px;
+}
+
+.tdClass {
+    padding: 5px;
+}
+
+.vertCentButton {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.questionnaireWrapper {
+    border-style: solid;
+    padding: 25px;
+}

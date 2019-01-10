@@ -4,9 +4,9 @@
             <a [routerLink]="['/_admin/dashboard']">Back to Dashboard</a>
         </div>
     </div>
-    <div class="row fullHeight">
+    <div class="row forceFull">
         <div class="col">
-            <mat-tab-group class="fullHeight">
+            <mat-tab-group dynamicHeight class="fullHeight">
                 <mat-tab label="Add Teams To Division">
                     <ng-template matTabContent>
                         <app-add-team></app-add-team>

@@ -8,3 +8,11 @@
 .fullHeight {
     height: 100%;
 }
+
+#tab-group mat-tab-body {
+    flex-grow: 1;
+}
+
+.mat-tab-body-wrapper {
+    height: 100%;
+}

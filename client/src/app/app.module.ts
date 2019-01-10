@@ -57,7 +57,7 @@ import { DeleteConfrimModalComponent } from './modal/delete-confrim-modal/delete
 import { NoAccessComponent } from './no-access/no-access.component';
 import { SessionTimeoutComponent } from './session-timeout/session-timeout.component';
 import { TimesAvailableComponent } from './times-available/times-available.component';
-import { QuestionaireComponent } from './questionaire/questionaire.component';
+import { QuestionnaireComponent } from './questionnaire/questionnaire.component';
 import { LogsViewerComponent } from './admin/logs-viewer/logs-viewer.component';
 import { CalendarViewComponent } from './calendar-view/calendar-view.component';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
@@ -117,7 +117,7 @@ import { EventLargeComponent } from './calendar-view/event-large/event-large.com
     NoAccessComponent,
     SessionTimeoutComponent,
     TimesAvailableComponent,
-    QuestionaireComponent,
+    QuestionnaireComponent,
     LogsViewerComponent,
     CalendarViewComponent,
     EventModalComponent,

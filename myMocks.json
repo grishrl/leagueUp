@@ -81,7 +81,7 @@
 }
 
 
-//questionaire responses:
+//questionnaire responses:
 {
     "season": 6,
     "survey": [{
@@ -90,10 +90,10 @@
     }]
 }
 
-//questionaire data:
+//questionnaire data:
 
 {
-    "dataName": "questionaire",
+    "dataName": "questionnaire",
     "data": [
         "Question 1", "Question 2", "Question 3"
     ]

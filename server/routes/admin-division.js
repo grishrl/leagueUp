@@ -7,28 +7,30 @@ const Team = require("../models/team-models");
 const passport = require("passport");
 const levelRestrict = require("../configs/admin-leveling");
 
-//this api retrieves all teams that do not have a division assigned, 
+//this api retrieves all teams that do not have a division assigned, and have 
+//successuflly registered for the season
 router.get('/getTeamsUndivisioned', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.divisionLevel, util.appendResHeader, (req, res) => {
     const path = '/admin/getTeamsUndivisioned';
     Team.find({
-        $or: [
-            { divisionConcat: null },
-            {
+        $and: [{
+            $or: [{
+                divisionConcat: null
+            }, {
                 divisionConcat: {
                     $exists: false
                 }
-            },
-            {
+            }, {
                 "divisionDisplayName": null
-            },
-            {
+            }, {
                 "divisionDisplayName": {
                     $exists: false
                 }
-            }
-        ]
+            }]
+        }, {
+            "questionnaire.registered": true
+        }]
     }).then((results) => {
         if (results && results.length > 0) {
             res.status(200).send(util.returnMessaging(path, 'Found teams', false, results));

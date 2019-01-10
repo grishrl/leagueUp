@@ -4,7 +4,7 @@
 
             <div class="row mt-3">
                 <div class="col">
-                    <mat-form-field class="tp-FullWidth">
+                    <mat-form-field class="mat-FullWidth">
                         <input matInput placeholder="Team Name*" [formControl]="nameContorl" [(ngModel)]="returnedProfile.teamName">
                         <mat-error *ngIf="nameContorl.hasError('required')">
                             Team name is required
@@ -19,7 +19,7 @@
                 </div>
             </div>
 
-            <mat-form-field class="tp-FullWidth">
+            <mat-form-field class="mat-FullWidth">
                 <mat-select placeholder="Team Competitive Level" [(ngModel)]="returnedProfile.competitiveLevel" disableOptionCentering>
                     <mat-option *ngFor="let level of competitonLevel" [value]="level.val">
                         {{level.display}}
@@ -31,7 +31,7 @@
 
             <!-- <div class="row mt-2">
                     <div class="col"> -->
-            <mat-form-field class="tp-FullWidth">
+            <mat-form-field class="mat-FullWidth">
                 <mat-label>Describe the teams play history / style</mat-label>
                 <textarea matInput cdkTextareaAutosize [(ngModel)]="returnedProfile.descriptionOfTeam"></textarea>
             </mat-form-field>
@@ -55,7 +55,7 @@
 
             <div class="row mt-3">
                 <div class="col">
-                    <mat-form-field class="tp-FullWidth">
+                    <mat-form-field class="mat-FullWidth">
                         <mat-select placeholder="Timezone:*" [formControl]="timeZoneControl" [(ngModel)]="returnedProfile.timeZone">
                             <mat-option *ngFor="let zone of timezone.timezones" [value]="zone.value">
                                 {{zone.text}}

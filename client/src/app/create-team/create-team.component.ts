@@ -38,11 +38,11 @@ export class CreateTeamComponent implements OnInit {
 
   ngOnInit() {
     this.markFormGroupTouched(this.createTeamControlGroup);
-    this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+    this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
   }
 
   cancel() {
-    this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+    this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
   }
 
   receiveTimesValidity(event){

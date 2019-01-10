@@ -25,7 +25,7 @@ export class TeamProfileComponent implements OnInit {
   editOn: boolean = true;
   teamName: string;
   displayDivision: string = ""
-  returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+  returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
   filterUsers: any[] = []
   tempProfile
   message: string
@@ -129,7 +129,7 @@ export class TeamProfileComponent implements OnInit {
   ngOnInit() {
     this.displayMembersLeft = [];
     this.displayMembersRight = [];
-    this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+    this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     let getProfile: string;
     // console.log('typeof this.providedProfile: ', typeof this.providedProfile);
     // console.log('his.providedProfile: ', this.providedProfile);
@@ -194,6 +194,15 @@ export class TeamProfileComponent implements OnInit {
       
       this.ngOnInit();
     }
+  }
+
+  showRegisteredQuestionnaire(){
+    if (this.embedSource == 'admin'){
+      return true;
+    }else{
+      return !this.returnedProfile.questionnaire['registered'];
+    }
+   
   }
 
   embedSource:string='';

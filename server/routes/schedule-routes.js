@@ -303,7 +303,7 @@ router.post('/report/match', passport.authenticate('jwt', {
     if (util.returnBoolByPath(req, 'user.displayName')) {
         submitterUserName = req.user.displayName.split('#');
         submitterUserName = submitterUserName[0];
-        submitterTeamName = util.returnByPath(req.user, 'teamInfo.teamName');
+        submitterTeamName = req.user.teamName;
     }
 
     //log object

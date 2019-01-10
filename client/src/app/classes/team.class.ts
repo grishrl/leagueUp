@@ -16,13 +16,14 @@ export class Team {
   teamMMRAvg: number; //added to display
   teamMembers: [string]; //added to display
   pendingMembers: [string];
+  questionnaire:object;
   
 
 
   constructor(id: string, logo:string, teamName: string, lookingForMore: Boolean, availability:schedule,
     competitiveLevel: number, rolesNeeded: roles, descriptionOfTeam: string, timeZone: string,
     teamMembers: [string], pendingMembers: [string], captain: string, teamMMRAvg:number,
-    divisionDisplayName: string, divisionConcat:string) {
+    divisionDisplayName: string, divisionConcat: string, questionnaire:object) {
     if (id != null && id != undefined && id.length > 0) {
       this._id = id;
     } else {
@@ -129,6 +130,13 @@ export class Team {
       this.divisionConcat = divisionConcat;
     } else {
       this.divisionConcat = null;
+    }
+    if (questionnaire != null && questionnaire != undefined) {
+      this.questionnaire = questionnaire;
+    } else {
+      this.questionnaire = {
+        pickedMaps:[]
+      };
     }
   }
 }

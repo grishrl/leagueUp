@@ -51,12 +51,18 @@ that the footer rests at the bottom
     margin-top: 25px;
 }
 
-.finger {
-    cursor: pointer;
-}
+
 
 .container {
     background-color: white;
     height: 100%;
 }
 */
+
+.mat-FullWidth {
+    width: 100%;
+}
+
+.finger {
+    cursor: pointer;
+}

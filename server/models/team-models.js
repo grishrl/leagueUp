@@ -24,7 +24,7 @@ const teamSchema = new Schema({
     "rolesNeeded": Object,
     "descriptionOfTeam": String,
     "timeZone": String,
-    "questionaire": [Object],
+    "questionnaire": Object,
     "captain": String,
     "teamMMRAvg": Number, //added to display
     "teamMembers": [miniUser], //added to display

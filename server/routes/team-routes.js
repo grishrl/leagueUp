@@ -778,6 +778,41 @@ function deleteFile(path) {
     })
 }
 
+//post route
+//updates the team questionnaire related info
+router.post('/questionnaire/save', passport.authenticate('jwt', {
+    session: false
+}), confirmCaptain, (req, res) => {
+    const path = '/team/questionnaire/save';
+    let payload = req.body.questionnaire;
+    let teamName = req.body.teamName;
+    teamName = teamName.toLowerCase();
+
+    //construct log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = 'saving team questionnaire ';
+    logObj.target = teamName
+    logObj.logLevel = 'STD';
+
+    Team.findOne({ teamName_lower: teamName }).then(foundTeam => {
+        if (foundTeam) {
+            foundTeam.questionnaire = {};
+            foundTeam.questionnaire = payload;
+            foundTeam.save(saved => {
+                res.status(200).send(util.returnMessaging(path, 'team saved', false, saved, null, logObj));
+            }, err => {
+                res.status(500).send(util.returnMessaging(path, 'error saving team', err, null, null, logObj));
+            })
+        } else {
+            res.status(400).send(util.returnMessaging(path, 'team not found', null, foundTeam, null, logObj));
+        }
+
+    }, err => {
+        res.status(500).send(util.returnMessaging(path, 'error querying team', err, null, null, logObj));
+    })
+});
+
 //this confirms the calling user is the captain OR is themselves, for removing from team
 //while a captain can not remove themselves a user can remove themsevles
 function confirmCanRemove(req, res, next) {

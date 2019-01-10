@@ -10,7 +10,7 @@ import { Team } from '../../../classes/team.class';
 export class TeamQuickViewComponent implements OnInit {
   //component properties
   _teamName: string
-  disTeam = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+  disTeam = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
   //Input bindings
   @Input() set teamName(team){

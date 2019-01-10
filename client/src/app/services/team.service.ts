@@ -70,6 +70,16 @@ export class TeamService {
     return this.httpService.httpPost(url, team, true);
   }
 
+  //saves team questionnaire
+  saveTeamQuestionnaire(team, questionnaire) {
+    let url = '/team/questionnaire/save';
+    let payload = {
+      teamName: team,
+      questionnaire: questionnaire
+    };
+    return this.httpService.httpPost(url, payload, true);
+  }
+
   //removes user from team members list
   removeUser(user:string, team:string){
     let url = '/team/removeMember';

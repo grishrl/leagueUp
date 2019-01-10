@@ -3,9 +3,9 @@
         <div class="col">
             <div class="row">
                 <div class="col">
-                    <div class="example-container">
+                    <div>
                         <h5>Select division to modify:</h5>
-                        <mat-form-field>
+                        <mat-form-field class="mat-FullWidth">
                             <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="selected()" disableOptionCentering>
                                 <mat-option *ngFor="let division of divisions; let i = index" [value]="division">{{division.displayName}}</mat-option>
                             </mat-select>

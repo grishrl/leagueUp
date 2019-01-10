@@ -15,7 +15,7 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <mat-form-field>
+                        <mat-form-field class="mat-FullWidth">
                             <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="doFilterMatches(selectedDivision, selectedRound, filterTeam)" disableOptionCentering>
                                 <mat-option [value]="null"> </mat-option>
                                 <mat-option *ngFor="let division of divisions; let i = index" [value]="division.divisionConcat">{{division.displayName}}</mat-option>
@@ -23,7 +23,7 @@
                         </mat-form-field>
                     </div>
                     <div class="col">
-                        <mat-form-field>
+                        <mat-form-field class="mat-FullWidth">
                             <mat-select placeholder="Round:" [(ngModel)]="selectedRound" (ngModelChange)="doFilterMatches(selectedDivision, selectedRound, filterTeam)" disableOptionCentering>
                                 <mat-option [value]="null"> </mat-option>
                                 <mat-option *ngFor="let round of rounds" [value]="round">{{round}}</mat-option>
@@ -31,7 +31,7 @@
                         </mat-form-field>
                     </div>
                     <div class="col">
-                        <mat-form-field class="tp-FullWidth">
+                        <mat-form-field class="mat-FullWidth">
                             <input matInput placeholder="Team Name" [(ngModel)]="filterTeam" (ngModelChange)="doFilterMatches(selectedDivision, selectedRound, filterTeam)">
                         </mat-form-field>
                     </div>
