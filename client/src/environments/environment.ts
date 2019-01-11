@@ -12,8 +12,8 @@ export const environment = {
       jumbotron: '28BCNlBF6Msggwa2ECkokm'
     }
   },
-  s3bucketImages: 'test-ngs-image-storage',
-  s3bucketReplays: 'test-ngs-replay-storage'
+  s3bucketImages: 'frumpy-tiddly-winks',
+  s3bucketReplays: 'frumpy-tiddly-winks'
 };
 
 /*
