@@ -12,7 +12,6 @@
     margin-bottom: 30px;
 }
 
-
 .mat-card {
     background-color: #F26A2F;
     color: white;
@@ -21,13 +20,14 @@
 .m-t {
     margin-top: 10px;
 }
-.mat-card-image{
-  background-color: white;
+
+.mat-card-image {
+    background-color: white;
+}
 
 .anchor {
     color: #482262;
     text-decoration: underline;
     font-weight: bold;
     font-size: 16px;
-
 }
