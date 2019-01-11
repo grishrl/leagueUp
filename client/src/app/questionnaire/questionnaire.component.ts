@@ -1,6 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { TeamService } from '../services/team.service';
-import { utils } from 'protractor';
 import { merge } from 'lodash';
 import { UtilitiesService } from '../services/utilities.service';
 

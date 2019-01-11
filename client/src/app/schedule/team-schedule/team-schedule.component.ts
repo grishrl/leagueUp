@@ -5,7 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TeamService } from 'src/app/services/team.service';
 import { StandingsService } from 'src/app/services/standings.service';
-import { type } from 'os';
 
 @Component({
   selector: 'app-team-schedule',
