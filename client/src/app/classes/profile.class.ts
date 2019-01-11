@@ -1,6 +1,6 @@
 export class Profile {  //addition of stats for future plans
-  _id:String;
-  displayName: String;
+  _id:string;
+  displayName: string;
   teamId: string;
   teamName: string;
   isCaptain:Boolean;
@@ -11,17 +11,17 @@ export class Profile {  //addition of stats for future plans
   lookingForGroup: Boolean;
   availability: schedule; //form input added
   competitiveLevel: number; //form input added
-  descriptionOfPlay: String; //form input added
+  descriptionOfPlay: string; //form input added
   role: roles; //
   timeZone: string; //form input added
-  hotsLogsURL: String; //form input added
+  hotsLogsURL: string; //form input added
   averageMmr: number;  //user average mmr
   toonId:string;
   discordTag:string;
-  __v: String;//useless
+  __v: string;//useless
 
 
-  constructor (id: String, displayName: String, teamId:string, teamName:string, isCaptain:boolean,
+  constructor (id: string, displayName: string, teamId:string, teamName:string, isCaptain:boolean,
     hlRankMetal:string, hlRankDivision:number, lookingForGroup: Boolean, availability:schedule, 
     competitiveLevel:number, descriptionOfPlay:string, role:roles, timeZone:string, hotsLogsURL:string,
     averageMmr: number, toonId: string, discordTag:string){
@@ -119,7 +119,7 @@ export class Profile {  //addition of stats for future plans
     if (role != null && role != undefined) {
       this.role = role;
     } else {
-      this.role = { "tank": false, "assassin": false, "support": false, "offlane": false, "specialist": false };
+      this.role = { "tank": false, "meleeassassin": false, "rangedassassin": false, "support": false, "offlane": false, "flex": false };
     }
     if (timeZone != null && timeZone != undefined) {
       this.timeZone = timeZone;
@@ -168,8 +168,9 @@ export interface atset {
 
 export interface roles {
   tank: boolean,
-  assassin:boolean,
-  offlane:boolean,
-  support:boolean,
-  specialist:boolean
+  'meleeassassin': boolean,
+  'rangedassassin': boolean,
+  offlane: boolean,
+  support: boolean,
+  flex: boolean
 }

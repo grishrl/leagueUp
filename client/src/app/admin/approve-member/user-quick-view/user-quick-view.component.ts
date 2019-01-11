@@ -8,26 +8,21 @@ import { Profile } from '../../../classes/profile.class';
   styleUrls: ['./user-quick-view.component.css']
 })
 export class UserQuickViewComponent implements OnInit {
+  //component properties
   _user:string
+  player = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
+  //input bindings
   @Input() set userId(usr){
     if(usr != null && usr != undefined){
       this.player = usr;
-    }
-    
+    } 
   }
-
-  player = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
   constructor(private user: UserService) { }
 
   ngOnInit() {
-    // if(this._user!=undefined && this._user!=null){
-    //   this.user.getUser(this._user).subscribe( res=>{
-    //     this.player = res;
-    //   })
-    // }
- 
+
   }
 
 }

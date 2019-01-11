@@ -27,19 +27,13 @@ router.get('/bnet', passport.authenticate('bnet', {
 
 router.get('/bnet/redirect', function(req, res, next) {
     passport.authenticate('bnet', function(err, user, info) {
-        console.log('this is in place of the DONE / serializer');
         if (err) {
-            console.log("We have an error!");
-            console.log(err);
+            console.log('there was an error: ', err);
         }
         if (!user) {
             res.redirect('/');
         }
-        console.log('info ', info);
         if (user) {
-            console.log('this is the user ', user);
-            console.log('/bnet/redirect ');
-
             var encode = encodeURIComponent(JSON.stringify(user));
             res.redirect('/login/' + encode);
         }

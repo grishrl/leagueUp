@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { UtilitiesService } from './utilities.service';
 
 
 @Injectable({providedIn: 'root'})
 
 export class AuthService {
 
-  constructor(private router:Router, private http: HttpClient){
+  constructor(private router:Router, private http: HttpClient, private util:UtilitiesService){
    
   }
 
@@ -38,14 +39,14 @@ export class AuthService {
   //auth initializater
   createAuth(token){
     let decodedToken = this.helper.decodeToken(token);
-    console.log(decodedToken);
+    // console.log(decodedToken);
     localStorage.setItem('token', token);
     localStorage.setItem('userName', decodedToken.displayName);
     if (decodedToken.teamInfo){
-      if (decodedToken.teamInfo.hasOwnProperty('teamName')){
+      if (this.util.returnBoolByPath(decodedToken, 'teamInfo.teamName')){
         localStorage.setItem('teamName', decodedToken.teamInfo.teamName);
       }
-      if (decodedToken.teamInfo.hasOwnProperty('isCaptain')){
+      if (this.util.returnBoolByPath(decodedToken, 'teamInfo.isCaptain')){
         localStorage.setItem('captain', decodedToken.teamInfo.isCaptain.toString());
       }else{
         localStorage.setItem('captain', 'false');
@@ -142,7 +143,7 @@ export class AuthService {
   }
 
   //destroy all auth
-  destroyAuth(){
+  destroyAuth(route){
     // let url = 'http://localhost:3000/auth/logout';
     let url = '/auth/logout';
 
@@ -155,9 +156,10 @@ export class AuthService {
         localStorage.removeItem('captain');
         this.destroyAdmin();
         this.destroyCaster();
-        this.router.navigate(['/logout']);
+        this.router.navigate([route]);
       }
     );
 
   }
+
 }

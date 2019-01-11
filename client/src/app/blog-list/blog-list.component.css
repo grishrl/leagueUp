@@ -10,10 +10,8 @@
     padding-top: 60px;
 }
 
-.anchor {
-    color: blue;
-    text-decoration: underline;
-    cursor: pointer;
+.finger {
+  cursor: pointer;
 }
 
 .author-image {
@@ -28,4 +26,18 @@
 
 .example-container>* {
     width: 100%;
+}
+
+.mat-card{
+  background-color: #F26A2F;
+  color: white;
+}
+.mat-card-image{
+  background-color: white;
+}
+.anchor{
+  color: #482262;
+  text-decoration: underline;
+  font-weight: bold;
+  font-size: 16px;
 }

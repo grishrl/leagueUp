@@ -24,11 +24,12 @@ const teamSchema = new Schema({
     "rolesNeeded": Object,
     "descriptionOfTeam": String,
     "timeZone": String,
-    // "lfmDetails": lfmSchema,
+    "questionnaire": Object,
     "captain": String,
     "teamMMRAvg": Number, //added to display
     "teamMembers": [miniUser], //added to display
-    "pendingMembers": [miniUser]
+    "pendingMembers": [miniUser],
+    "lastTouched": Number
 });
 
 const Team = mongoose.model('team', teamSchema);

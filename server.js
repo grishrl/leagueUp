@@ -38,7 +38,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 
 //connect to mongo db
-mongoose.connect(process.env.mongoURI, () => {
+mongoose.connect(process.env.mongoURI, { useNewUrlParser: true }, () => {
     console.log('connected to mongodb');
 });
 
@@ -56,6 +56,9 @@ app.use('/admin', adminUser);
 app.use('/admin', adminMatch);
 app.use('/schedule', scheduleRoutes);
 app.use('/standings', standingRoutes);
+
+// const seeding = require('./server/routes/seeding-route');
+// app.use('/dev', seeding);
 
 
 

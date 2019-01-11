@@ -4,8 +4,14 @@
 
             <div class="row mt-3">
                 <div class="col">
-                    <mat-form-field class="tp-FullWidth">
+                    <mat-form-field class="mat-FullWidth">
                         <input matInput placeholder="Team Name*" [formControl]="nameContorl" [(ngModel)]="returnedProfile.teamName">
+                        <mat-error *ngIf="nameContorl.hasError('required')">
+                            Team name is required
+                        </mat-error>
+                        <mat-error *ngIf="nameContorl.hasError('invalidCharacters')">
+                            Special characters are not allowed in team names
+                        </mat-error>
                     </mat-form-field>
                     <mat-slide-toggle [(ngModel)]="returnedProfile.lookingForMore">
                         Looking for More.
@@ -13,8 +19,8 @@
                 </div>
             </div>
 
-            <mat-form-field class="tp-FullWidth">
-                <mat-select placeholder="Team Competitive Level" [(ngModel)]="returnedProfile.competitiveLevel">
+            <mat-form-field class="mat-FullWidth">
+                <mat-select placeholder="Team Competitive Level" [(ngModel)]="returnedProfile.competitiveLevel" disableOptionCentering>
                     <mat-option *ngFor="let level of competitonLevel" [value]="level.val">
                         {{level.display}}
                     </mat-option>
@@ -25,7 +31,7 @@
 
             <!-- <div class="row mt-2">
                     <div class="col"> -->
-            <mat-form-field class="tp-FullWidth">
+            <mat-form-field class="mat-FullWidth">
                 <mat-label>Describe the teams play history / style</mat-label>
                 <textarea matInput cdkTextareaAutosize [(ngModel)]="returnedProfile.descriptionOfTeam"></textarea>
             </mat-form-field>
@@ -37,133 +43,27 @@
                     <section>
                         <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.tank">Tank</mat-checkbox>
                         <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.offlane">Offlane</mat-checkbox>
-                        <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.assassin">Assassin</mat-checkbox>
+                        <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.meleeassassin">Melee Assassin</mat-checkbox>
+                        <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.rangedassassin">Ranged Assassin</mat-checkbox>
                         <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.support">Support</mat-checkbox>
-                        <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.specialist">Specialist</mat-checkbox>
+                        <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.flex">Flex</mat-checkbox>
                     </section>
                 </div>
             </div>
             <!-- Availability Schedule -->
+            <app-times-available [availObj]="returnedProfile.availability" (availValid)="receiveTimesValidity($event)"></app-times-available>
+
             <div class="row mt-3">
                 <div class="col">
-                    Times the team plays and practices: <span class="req-field">*At least one time is required to create team.</span>
-                </div>
-            </div>
-            <div [ngClass]="{'error-avail':errorAvail}">
-                <div class="row mt-3">
-                    <div class="col">
-                        <mat-checkbox [(ngModel)]="returnedProfile.availability.monday.available">Monday</mat-checkbox>
-                    </div>
-                    <div class="col">
-                        <mat-form-field>
-                            <input matInput type="time" [(ngModel)]="returnedProfile.availability.monday.startTime" placeholder="Start Time">
-                        </mat-form-field>
-                    </div>
-                    <div class="col">
-                        <mat-form-field>
-                            <input matInput [(ngModel)]="returnedProfile.availability.monday.endTime" type="time" placeholder="End Time">
-                        </mat-form-field>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <mat-checkbox class="" [(ngModel)]="returnedProfile.availability.tuesday.available">Tuesday</mat-checkbox>
-                    </div>
-                    <div class="col">
-                        <mat-form-field>
-                            <input matInput type="time" [(ngModel)]="returnedProfile.availability.tuesday.startTime" placeholder="Start Time">
-                        </mat-form-field>
-                    </div>
-                    <div class="col">
-                        <mat-form-field>
-                            <input matInput type="time" [(ngModel)]="returnedProfile.availability.tuesday.endTime" placeholder="End Time">
-                        </mat-form-field>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <mat-checkbox class="" [(ngModel)]="returnedProfile.availability.wednesday.available">Wednesday</mat-checkbox>
-                    </div>
-                    <div class="col">
-                        <mat-form-field>
-                            <input matInput type="time" [(ngModel)]="returnedProfile.availability.wednesday.startTime" placeholder="Start Time">
-                        </mat-form-field>
-                    </div>
-                    <div class="col">
-                        <mat-form-field>
-                            <input matInput type="time" [(ngModel)]="returnedProfile.availability.wednesday.endTime" placeholder="End Time">
-                        </mat-form-field>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <mat-checkbox class="" [(ngModel)]="returnedProfile.availability.thursday.available">Thursday</mat-checkbox>
-                    </div>
-                    <div class="col">
-                        <mat-form-field>
-                            <input matInput type="time" [(ngModel)]="returnedProfile.availability.thursday.startTime" placeholder="Start Time">
-                        </mat-form-field>
-                    </div>
-                    <div class="col">
-                        <mat-form-field>
-                            <input matInput type="time" [(ngModel)]="returnedProfile.availability.thursday.endTime" placeholder="End Time">
-                        </mat-form-field>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <mat-checkbox class="" [(ngModel)]="returnedProfile.availability.friday.available">Friday</mat-checkbox>
-                    </div>
-                    <div class="col">
-                        <mat-form-field>
-                            <input matInput type="time" [(ngModel)]="returnedProfile.availability.friday.startTime" placeholder="Start Time">
-                        </mat-form-field>
-                    </div>
-                    <div class="col">
-                        <mat-form-field>
-                            <input matInput type="time" [(ngModel)]="returnedProfile.availability.friday.endTime" placeholder="End Time">
-                        </mat-form-field>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <mat-checkbox class="" [(ngModel)]="returnedProfile.availability.saturday.available">Saturday</mat-checkbox>
-                    </div>
-                    <div class="col">
-                        <mat-form-field>
-                            <input matInput type="time" [(ngModel)]="returnedProfile.availability.saturday.startTime" placeholder="Start Time">
-                        </mat-form-field>
-                    </div>
-                    <div class="col">
-                        <mat-form-field>
-                            <input matInput type="time" [(ngModel)]="returnedProfile.availability.saturday.endTime" placeholder="End Time">
-                        </mat-form-field>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <mat-checkbox class="" [(ngModel)]="returnedProfile.availability.sunday.available">Sunday</mat-checkbox>
-                    </div>
-                    <div class="col">
-                        <mat-form-field>
-                            <input matInput type="time" [(ngModel)]="returnedProfile.availability.sunday.startTime" placeholder="Start Time">
-                        </mat-form-field>
-                    </div>
-                    <div class="col">
-                        <mat-form-field>
-                            <input matInput type="time" [(ngModel)]="returnedProfile.availability.sunday.endTime" placeholder="End Time">
-                        </mat-form-field>
-                    </div>
-                </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col">
-                    <mat-form-field class="tp-FullWidth">
+                    <mat-form-field class="mat-FullWidth">
                         <mat-select placeholder="Timezone:*" [formControl]="timeZoneControl" [(ngModel)]="returnedProfile.timeZone">
                             <mat-option *ngFor="let zone of timezone.timezones" [value]="zone.value">
                                 {{zone.text}}
                             </mat-option>
                         </mat-select>
+                        <mat-error *ngIf="timeZoneControl.hasError('required')">
+                            Timezone is required
+                        </mat-error>
                     </mat-form-field>
                 </div>
             </div>

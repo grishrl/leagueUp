@@ -28,7 +28,7 @@ var transporter = nodemailer.createTransport({
 
 router.post('/invite', passport.authenticate('jwt', {
     session: false
-}), (req, res) => {
+}), util.appendResHeader, (req, res) => {
     const path = '/outreach/invite';
     let stamp = Date.now();
     stamp = stamp.toString();
@@ -38,6 +38,16 @@ router.post('/invite', passport.authenticate('jwt', {
     var data = encrypt(stamp);
 
     let callback = process.env.outreachCallback;
+    let userEmail = req.body.userEmail.split('@');
+    userEmail = obfuscate(userEmail[0]);
+
+
+    //log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = 'email invite';
+    logObj.target = userEmail + "@protectedemail";
+    logObj.logLevel = 'SYS';
 
     var mailOptions = {
         from: 'Nexus Gaming Series',
@@ -50,15 +60,15 @@ router.post('/invite', passport.authenticate('jwt', {
     transporter.sendMail(mailOptions, function(err, info) {
         if (err) {
             console.log(err); //replace with static logs?
-            res.status(500).send(util.returnMessaging(path, 'We encountered an error, try again later or contact an admin.', err));
+            res.status(500).send(util.returnMessaging(path, 'We encountered an error, try again later or contact an admin.', err, null, null, logObj));
         } else {
             new Outreach({
                 key: data,
                 teamName: req.user.teamName
             }).save().then((saved) => {
-                res.status(200).send(util.returnMessaging(path, 'This user has been successfully invited, let them to know to be looking for an email from NGS!', false, saved));
+                res.status(200).send(util.returnMessaging(path, 'This user has been successfully invited, let them to know to be looking for an email from NGS!', false, saved, null, logObj));
             }, (err) => {
-                res.status(500).send(util.returnMessaging(path, 'We encountered an error, try again later or contact an admin.', err));
+                res.status(500).send(util.returnMessaging(path, 'We encountered an error, try again later or contact an admin.', err, null, null, logObj));
             })
         }
     })
@@ -67,15 +77,24 @@ router.post('/invite', passport.authenticate('jwt', {
 
 router.post('/inviteResponseComplete', passport.authenticate('jwt', {
     session: false
-}), (req, res) => {
+}), util.appendResHeader, (req, res) => {
     const path = '/outreach/inviteResponseComplete'
     let refToken = req.body.referral;
     let user = req.body.user;
+
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = 'email invite response';
+    logObj.target = user;
+    logObj.logLevel = 'STD';
+
     Outreach.findOneAndDelete({
         key: refToken
     }).then((deletedRef) => {
         if (!deletedRef) {
-            res.status(404).send(util.returnMessaging(path, "Reference not found in ref table."));
+            logObj.logLevel = "ERROR";
+            logObj.error = 'Reference not found in ref table.';
+            res.status(404).send(util.returnMessaging(path, "Reference not found in ref table.", null, null, null, logObj));
         } else {
             console.log('del', deletedRef); //replace with static log?
             let lower = deletedRef.teamName.toLowerCase();
@@ -94,21 +113,33 @@ router.post('/inviteResponseComplete', passport.authenticate('jwt', {
                 console.log(foundTeam);
                 foundTeam.save().then(
                     saved => {
-                        res.status(200).send(util.returnMessaging(path, "We added the user to pending members"));
+                        res.status(200).send(util.returnMessaging(path, "We added the user to pending members", false, null, null, logObj));
                     },
                     err => {
-                        res.status(500).send(util.returnMessaging(path, "We encountered an error completing the email response", err));
+                        res.status(500).send(util.returnMessaging(path, "We encountered an error completing the email response", err, null, null, logObj));
                     }
                 )
             }, (err) => {
-                res.status(500).send(util.returnMessaging(path, "We encountered an error completing the email response", err));
+                res.status(500).send(util.returnMessaging(path, "We encountered an error completing the email response", err, null, null, logObj));
             })
         }
 
     }, (err) => {
-        res.status(500).send(util.returnMessaging(path, "We encountered an error completing the email response", err));
+        res.status(500).send(util.returnMessaging(path, "We encountered an error completing the email response", err, null, null, logObj));
     })
 
 });
+
+function obfuscate(str) {
+    let ln = str.length;
+    let halfLn = str.length / 2;
+    str = str.substring(0, str.length / 2);
+
+    for (var i = halfLn; i < ln; i++) {
+        str += '*';
+    }
+
+    return str
+}
 
 module.exports = router;

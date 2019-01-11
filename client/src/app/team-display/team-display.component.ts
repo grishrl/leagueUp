@@ -26,6 +26,14 @@ export class TeamDisplayComponent implements OnInit {
     return this._teams;
   }
 
+  teamImage(img){
+    if(img == null || img == undefined){
+      return this.team.imageFQDN('defaultTeamLogo.png');
+    }else{
+      return this.team.imageFQDN(img);
+    }
+  }
+
   rows: Array<any> = [];
 
   constructor(private team:TeamService) { }
@@ -37,11 +45,15 @@ export class TeamDisplayComponent implements OnInit {
     this.rows = [];
     if (this._teams != undefined && this._teams.length > 0) {
       if (this._teams.length > this.perColumn) {
+        let temparr = [];
         for (var i = 0; i < this._teams.length; i++) {
-          let temparr = [];
-          if (i % this.perColumn == 0) {
+          if (i>0 && i % this.perColumn == 0) {
             this.rows.push(temparr);
             temparr = [];
+          }else if(i == this._teams.length-1){
+            if(temparr.length>0){
+              this.rows.push(temparr);
+            }
           }
           temparr.push(this._teams[i]);
         }

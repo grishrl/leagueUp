@@ -13,7 +13,7 @@ export class MembersDisplayComponent implements OnInit {
   @Input() set members(members){
     if(members != null && members != undefined && members.length){
       this._members = members;
-      this.createMembersDisplay()
+      // this.createMembersDisplay()
     }else{
       this._members = [];
     }
@@ -47,7 +47,7 @@ export class MembersDisplayComponent implements OnInit {
     }
   }
 
-  constructor(private user:UserService) { }
+  constructor(public user:UserService) { }
 
   ngOnInit() {
   }

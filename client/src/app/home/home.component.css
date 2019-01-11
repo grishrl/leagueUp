@@ -12,13 +12,10 @@
     margin-bottom: 30px;
 }
 
-.finger {
-    cursor: pointer;
-}
 
-.anchor {
-    color: blue;
-    text-decoration: underline;
+.mat-card {
+    background-color: #F26A2F;
+    color: white;
 }
 
 .m-t {
@@ -26,4 +23,11 @@
 }
 .mat-card-image{
   background-color: white;
+
+.anchor {
+    color: #482262;
+    text-decoration: underline;
+    font-weight: bold;
+    font-size: 16px;
+
 }

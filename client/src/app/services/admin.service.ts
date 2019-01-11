@@ -1,283 +1,209 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { HttpServiceService } from './http-service.service';
+import { Team } from '../classes/team.class';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminService {
 
-  constructor(private http:HttpClient) { }
+  constructor(private httpService: HttpServiceService) { }
 
-  getTeamsNotDivisioned(){
-    // let url = 'http://localhost:3000/admin/getTeamsUndivisioned';
-    let url = 'admin/getTeamsUndivisioned';
-
-    return this.http.get(url).pipe(
-      map( 
-        res=>{ 
-          return res['returnObject'];
-         }
-      )
-    )
+  //returns a list of all teams
+  getTeams(){
+    let url = 'admin/get/teams/all';
+    return this.httpService.httpGet(url,[]);
   }
 
-  removeMembers(team, member){
+  //returns a list of teams not assigned to division
+  getTeamsNotDivisioned(){
+    let url = 'admin/getTeamsUndivisioned';
+
+    return this.httpService.httpGet(url, []);
+  }
+
+  //admin function to remove memvers from team accepts team name and name of user to remove
+  //member can be an array of strings or string
+  removeMembers(team:string, member){
     let url = 'admin/team/removeMember';
     let payload = {
       teamName:team,
       removeUser:member
     }
-    return this.http.post(url, payload).pipe(
-      map(
-        res => {
-          return res['returnObject'];
-        }
-      )
-    )
+    return this.httpService.httpPost(url, payload, true);
   }
 
+  //refreshes specified teams MMR
   refreshTeamMMR(team){
     let url = 'admin/team/refreshMmr';
     let payload = {
       teamName:team
     }
-    return this.http.post(url, payload).pipe(
-      map(
-        res=>{
-          return res['returnObject'];
-        }
-      )
-    )
+    return this.httpService.httpPost(url, payload, true);
   }
 
 
+  //edits division, accepts the division object and division name: divisionConcat
   saveDivisionEdits(divname, divobj){
-  // let url = "http://localhost:3000/admin/upsertDivision";
   let url = "admin/upsertDivision";
-
   let payload = {
     "divObj": divobj,
     "divName":divname
   };
-  return this.http.post(url, payload).pipe(
-    map( res=>{
-      return res['returnObject'];
-    })
-  )
+    return this.httpService.httpPost(url, payload, true);
   }
 
+  //calculates the teams MMR based on the provided usersMmr and the team's name
   resultantMmr(userMmr, teamName){
     let url ='/admin/resultantmmr';
     let payload = {
       userMmr: userMmr,
       teamName: teamName
     }
-    return this.http.post(url, payload).pipe(
-      map(
-        res => {
-          return res['returnObject'];
-        }
-      )
-    )
+    return this.httpService.httpPost(url, payload, true);
   }
 
-  divisionTeam( teamArr, divisionName){
-    // let url ="http://localhost:3000/admin/divisionTeams";
+  //moves teams provided into the division provided
+  //divisionConcat, array of team names as string
+  divisionTeam(teamArr: string[], divisionName:string){
     let url = "admin/divisionTeams";
-
     let payload = {
       teamInfo:teamArr,
       divisionName:divisionName
     };
-    return this.http.post(url, payload).pipe(
-      map(
-        res=>{
-          return res['returnObject'];
-        }
-      )
-    )
+    return this.httpService.httpPost(url, payload, true);
   }
 
-  removeTeams(teamArr, divName){
-    // let url = 'http://localhost:3000/admin/removeTeams';
+  //removes teams provided from the division provided
+  //divisionConcat, array of string names to remove
+  removeTeams(teamArr:string[], divName:string){
     let url = 'admin/removeTeams';
     let payload = {
       "teams":teamArr,
       "divName":divName
     }
-    return this.http.post(url, payload).pipe(
-      map(
-        res=>{
-          return res['returnObject'];
-        }
-      )
-    )
+    return this.httpService.httpPost(url, payload, true);
   }
 
+  //returns list of all divisions
   getDivisionList(){
-    // let url = 'http://localhost:3000/admin/getDivisionInfo';
     let url = 'admin/getDivisionInfo';
 
-    return this.http.get(url).pipe(
+    return this.httpService.httpGet(url, []).pipe(
       map(res=>{
-        let divisionArr = res['returnObject'];
-        divisionArr.sort((a, b) => {
-          if (a.sorting < b.sorting) {
-            return -1;
-          }
-          if (a.sorting > b.sorting) {
-            return 1
-          }
-          return 0;
-        });
-        return divisionArr;
-      })
-    )
-  }
-
-  queuePost(answer){
-    // let url='http://localhost:3000/admin/approveMemberAdd';
-    let url = 'admin/approveMemberAdd';
-
-
-    return this.http.post(url, answer).pipe(
-      map( res =>{
-        return res['returnObject'];
-      }));
-  }
-
-  deleteUser(user){
-    // let url ='http://localhost:3000/admin/delete/user';
-    let url = 'admin/delete/user';
-
-    let payload = {displayName:user};
-    return this.http.post(url, payload).pipe(
-      map(
-        res=>{
-          return res;
+          let divisionArr = res;
+          divisionArr.sort((a, b) => {
+            if (a.sorting < b.sorting) {
+              return -1;
+            }
+            if (a.sorting > b.sorting) {
+              return 1
+            }
+            return 0;
+          });
+          return divisionArr;
         }
       )
     )
   }
 
-  deleteTeam(team){
-    // let url = 'http://localhost:3000/admin/delete/team';
-    let url = 'admin/delete/team';
+  //returns to the pending member queue the admins approval or declining of a team member add
+  queuePost(teamName:string, memberName:string, action:boolean){
+    let url = 'admin/approveMemberAdd';
+    let payload = {
+      teamName:teamName,
+      member:memberName,
+      approved:action
+    }
+    return this.httpService.httpPost(url, payload, true);
+  }
 
+  //deletes user from provided username
+  deleteUser(user:string){
+    let url = 'admin/delete/user';
+    let payload = {displayName:user};
+    return this.httpService.httpPost(url, payload, true);
+  }
+
+  //deletes provided team by teamName
+  deleteTeam(team){
+    let url = 'admin/delete/team';
     team = team.toLowerCase();
     let payload = { teamName : team};
-    return this.http.post(url, payload).pipe(
-      map(
-        res=>{
-          return res;
-        }
-      )
-    )
+    return this.httpService.httpPost(url, payload, true);
   }
 
-  saveTeam(teamName, teamObj){
-    // let url = 'http://localhost:3000/admin/teamSave';
+  //saves team name with provided teamName, and team Object
+  saveTeam(teamName:string, teamObj:Team){
      let url = 'admin/teamSave'
 
     let payload = {
       "teamName": teamName.toLowerCase(),
       "teamObj":teamObj
     }
-    return this.http.post(url, payload).pipe(
-      map( res => {
-        return res['returnObject'];
-      })
-    )
+    return this.httpService.httpPost(url, payload, true);
   }
 
-  changeCaptain(team, user){
-    // let url = 'http://localhost:3000/admin/reassignCaptain';
+  //changes captain of provided string to provided user
+  changeCaptain(team:string, user:string){
     let url = 'admin/reassignCaptain';
-
     let payload = { teamName: team, userName: user};
-    return this.http.post(url, payload).pipe(
-      map(
-        res=>{
-          return res['returnObject'];
-        }
-      )
-    )
+    return this.httpService.httpPost(url, payload, true);
   }
 
+  //creates division from provided division object
   createDivision(divObj){
     let url = 'admin/createDivision';
     let payload = {division:divObj};
-    return this.http.post(url, payload).pipe(
-      map(
-        res=>{
-          return res;
-        }
-      )
-    )
+    return this.httpService.httpPost(url, payload, true);
   }
 
-  deleteDivision(div){
+  //deletes division from provided division name divisionConcat
+  deleteDivision(div:string){
     let url = 'admin/deleteDivision';
     let payload = {division:div};
-    return this.http.post(url, payload).pipe(
-      map(
-        res=>{
-          return res;
-        }
-      )
-    )
+    return this.httpService.httpPost(url, payload, true);
   }
 
+  //posts updates made to match (accepts whole match object)
   matchUpdate(match){
     let url = 'admin/match/update';
     let payload = {
       match:match
     };
-    return this.http.post(url, payload).pipe(
-      map(
-        res=>{
-          return res;
-        }
-      )
-    );
+    return this.httpService.httpPost(url, payload, true);
   }
 
+  setScheduleDeadline(div, time, endWeek){
+    let url = 'admin/match/set/schedule/deadline';
+    let payload = {
+      division:div,
+      date:time,
+      endWeek:endWeek
+    };
+    return this.httpService.httpPost(url, payload, true);
+  }
+
+  //returns list of all users and the access level lists
   getUsersAcls(){
     let url = 'admin/user/get/usersacl/all';
-    return this.http.get(url).pipe(
-      map(
-        res=>{
-          return res['returnObject'];
-        }
-      )
-    )
+    return this.httpService.httpGet(url, []);
   }
+
+  //returns specified user and access level list
   getUserAcls(id) {
     let url = 'admin/user/get/usersacl';
     let payload = {
       id:id
     };
-    return this.http.post(url, payload).pipe(
-      map(
-        res => {
-          return res['returnObject'];
-        }
-      )
-    )
+    return this.httpService.httpPost(url, payload);
   }
 
+  //updates user ACL lists, accpets entire admin object
   upsertUserAcls( userACL ){
     let url ='admin/user/upsertRoles';
-    // let payload ={
-    //   acl:userACL
-    // };
-    return this.http.post(url, userACL).pipe(
-      map(
-        res=> {return res['returnObject'];}
-      )
-    )
+    return this.httpService.httpPost(url, userACL, true);
   }
 
 }

@@ -15,7 +15,7 @@ export class NavComponent implements OnInit {
   teamName: string
   divisions
 
-  constructor(public Auth:AuthService, private router: Router, private team:TeamService, private user:UserService, private divisionService: DivisionService) { }
+  constructor(public Auth:AuthService, private router: Router, public team:TeamService, public user:UserService, private divisionService: DivisionService) { }
 
   navGo(appRoute,path){
     if(path != null && path != undefined && path.length>0){

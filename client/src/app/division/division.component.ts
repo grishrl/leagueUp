@@ -55,8 +55,6 @@ export class DivisionComponent implements OnInit {
           });
         }
       }
-      
-
     }, (err)=>{
       var arr : Team[] = [];
       this.teams = arr; 

@@ -1,36 +1,39 @@
 <div class="container">
-    <div class="row">
-        <div class="col">
-            <h2>Admin dashboard</h2>
+    <div class="forceFull">
+        <div class="row">
+            <div class="col text-center">
+                <h2>Admin dashboard</h2>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <ul class="list-inline">
-                <li class="list-inline-item link-borders">
-                    <a [routerLink]="['/_admin/approveTeamQueue']">Add User To Team</a>
-                </li>
-                <li class="list-inline-item link-borders">
-                    <a [routerLink]="['/_admin/deleteUser']">Delete User</a>
-                </li>
-                <li class="list-inline-item link-borders">
-                    <a [routerLink]="['/_admin/divisionMgmt']">Division Management</a>
-                </li>
-                <li class="list-inline-item link-borders">
-                    <a [routerLink]="['/_admin/manageTeam']">Team Management</a>
-                </li>
-                <li class="list-inline-item">
-                    <a [routerLink]="['/_admin/userACLMgmt']">User ACL Management</a> </li>
-            </ul>
-            <!-- <h3>User Management</h3> -->
+        <div class="row">
+            <div class="col text-center">
+                <ul>
+                    <li class="mt-1">
+                        <a [routerLink]="['/_admin/approveTeamQueue']">Add User To Team</a>
+                    </li>
+                    <li class="mt-1">
+                        <a [routerLink]="['/_admin/deleteUser']">Delete User</a>
+                    </li>
+                    <li class="mt-1">
+                        <a [routerLink]="['/_admin/divisionMgmt']">Division Management</a>
+                    </li>
+                    <li class="mt-1">
+                        <a [routerLink]="['/_admin/manageTeam']">Team Management</a>
+                    </li>
+                    <li class="mt-1">
+                        <a [routerLink]="['/_admin/matchMgmt']">Match Management</a>
+                    </li>
+                    <li class="mt-1">
+                        <a [routerLink]="['/_admin/matchMgmt/weekDeadline']">Match Schedule Deadline Setter</a>
+                    </li>
+                    <li class="mt-1">
+                        <a [routerLink]="['/_admin/userACLMgmt']">User ACL Management</a>
+                    </li>
+                </ul>
+                <!-- <h3>User Management</h3> -->
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <router-outlet></router-outlet>
-        </div>
-    </div>
-    <!-- <div class="row">
+        <!-- <div class="row">
         <div class="col">
             <h3>Division Management</h3>
         </div>
@@ -45,4 +48,5 @@
             <h2>User ACL Management</h2>
         </div>
     </div> -->
+    </div>
 </div>

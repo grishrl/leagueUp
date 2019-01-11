@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { ScheduleService } from 'src/app/services/schedule.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { UtilitiesService } from 'src/app/services/utilities.service';
+import { TeamService } from 'src/app/services/team.service';
+import { StandingsService } from 'src/app/services/standings.service';
 
 @Component({
   selector: 'app-team-schedule',
@@ -9,39 +12,116 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./team-schedule.component.css']
 })
 export class TeamScheduleComponent implements OnInit {
-  recTeam
-  constructor(private Auth: AuthService, private route: ActivatedRoute, private scheduleService:ScheduleService) {
+  
+  //component properties
+  recTeam  //holds id received in the url route
+  noMatches: boolean; // set to true if there are no matches returned or false if there are, used for displaying certain messages
+  rounds: any //local variable to parse received team matches into
+  
+  constructor(private Auth: AuthService, private route: ActivatedRoute, private router: Router, private scheduleService:ScheduleService, private util:UtilitiesService, public team: TeamService, private standingsService:StandingsService) {
+    //get the ID from the route
     if (this.route.snapshot.params['id']) {
       this.recTeam = this.route.snapshot.params['id'];
     }
    }
 
-  rounds:any
+
+  scheduleMatch(id){
+    this.router.navigate(['schedule/scheduleMatch', id]);
+  }
+  todayDate
+
+  checkDate(match){
+   
+    let ret = false;
+    if (match['scheduleDeadline']){
+      let intDate = parseInt(match['scheduleDeadline']);
+      
+      if (this.todayDate > intDate){
+        ret = true;
+      }
+    }
+    return ret;
+  }
+
   ngOnInit() {
+    this.todayDate = new Date().getTime();
+    //get the team from the route, if it that is not present get it from the auth service
     let getTeam;
     if(this.recTeam){
       getTeam = this.recTeam;
     }else{
       getTeam = this.Auth.getTeam();
     }
+    
     //TODO: remove hard coded season 6!!!
     this.scheduleService.getTeamSchedules(6, getTeam).subscribe(
       res=>{
         let matches = res;
-        for(var i = 1; i<=matches.length; i++){
+        //set the nomatches state
+        if (matches.length == 0 ){
+          this.noMatches = true;
+        }else{
+          this.noMatches = false;
+        }
+
+        let div = matches[0].divisionConcat
+        this.standingsService.getStandings(div).subscribe(
+          res => {
+            let standings = res;
+            matches.forEach(match => {
+              standings.forEach(standing => {
+                if (match.home.teamName == standing.teamName) {
+                  match.home['losses'] = standing.losses;
+                  match.home['wins'] = standing.wins;
+                }
+                if (match.away.teamName == standing.teamName) {
+                  match.away['losses'] = standing.losses;
+                  match.away['wins'] = standing.wins;
+                }
+              });
+              if (match.scheduleDeadline){
+                match['friendlyDeadline'] = this.util.getDateFromMS(match.scheduleDeadline);
+                console.log('yyy ', this.util.getDateFromMS(match.scheduleDeadline))
+              }
+
+              if (match.scheduledTime) {
+                match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
+                match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
+                match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
+              }
+            })
+          },err=>{
+            console.log(err);
+          });
+
+        //build out the rounds object:
+        /*
+        rounds = { 
+          'roundNubmer':[
+                          {matchObject},
+                          {matchObject}
+                        ] 
+                      }
+        */
+       console.log(matches)
+        for(var i = 0; i<=matches.length; i++){
           if(this.rounds == null || this.rounds == undefined){
             this.rounds = {};
           }
+          let realRoundNumber = i+1;
           matches.forEach(match => {
-            if(match.round == i){
-              if (this.rounds[i.toString()] == null || this.rounds[i.toString()] == undefined){
-                this.rounds[i.toString()] = [];
+              if (this.rounds[realRoundNumber.toString()] == null || this.rounds[realRoundNumber.toString()] == undefined){
+                this.rounds[realRoundNumber.toString()] = [];
               }
-              this.rounds[i.toString()].push(match);
-            }
+              if(match.round == realRoundNumber){
+                this.rounds[realRoundNumber.toString()].push(match);
+              }
+              
           });
-          
         }
+
+        console.log('rounds ', this.rounds)
         this.rounds;
       },
       err=>{console.log(err)}
@@ -51,16 +131,18 @@ export class TeamScheduleComponent implements OnInit {
   //returns true if there is a scheduled time, and displays the scheduled time
   //returns false if there is not a scheduled time and displays the link to scheduling component
   showSchedule(match){
-      if (this.returnBoolByPath(match, 'scheduledTime.priorScheduled')) {
+      if (this.util.returnBoolByPath(match, 'scheduledTime.priorScheduled')) {
         return true;
       } else {
         return false;
       }
   }
 
+
+  //hides rows if the team has a bye week, no need for scheduling
   byeWeekHide(match){
     //if this is a bye week don't show
-    if (!this.returnBoolByPath(match, 'away.teamName') || !this.returnBoolByPath(match, 'home.teamName')) {
+    if (!this.util.returnBoolByPath(match, 'away.teamName') || !this.util.returnBoolByPath(match, 'home.teamName')) {
       return true;
     } else {
       return false;
@@ -91,39 +173,5 @@ export class TeamScheduleComponent implements OnInit {
     return dateTime;
   }
 
-  returnBoolByPath(obj, path): boolean {
-    //path is a string representing a dot notation object path;
-    //create an array of the string for easier manipulation
-    let pathArr = path.split('.');
-    //return value
-    let retVal = null;
-    //get the first element of the array for testing
-    let ele = pathArr[0];
-    //make sure the property exist on the object
-    if (obj.hasOwnProperty(ele)) {
-      if (typeof obj[ele] == 'boolean') {
-        retVal = true;
-      }
-      //property exists:
-      //property is an object, and the path is deeper, jump in!
-      else if (typeof obj[ele] == 'object' && pathArr.length > 1) {
-        //remove first element of array
-        pathArr.splice(0, 1);
-        //reconstruct the array back into a string, adding "." if there is more than 1 element
-        if (pathArr.length > 1) {
-          path = pathArr.join('.');
-        } else {
-          path = pathArr[0];
-        }
-        //recurse this function using the current place in the object, plus the rest of the path
-        retVal = this.returnBoolByPath(obj[ele], path);
-      } else if (typeof obj[ele] == 'object' && pathArr.length == 0) {
-        retVal = obj[ele];
-      } else {
-        retVal = obj[ele]
-      }
-    }
-    return !!retVal;
-  }
 
 }

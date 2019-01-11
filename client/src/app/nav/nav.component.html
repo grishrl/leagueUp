@@ -1,19 +1,22 @@
-<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top">
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark fixed-top">
     <div class="container">
-        <a class="navbar-brand" href="index.html">Home</a>
+        <a class="navbar-brand" [routerLink]="['/']">Home</a>
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" [routerLink]="['/blog','5fM1r95mrm4UkmuCAmgOyC']">Rules</a>
+                    <a class="nav-link" [routerLink]="['/blog','3BLsIya6ZiWQWka4IeUw2']">Rules</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle finger" id="divisionDropdown" role="button" data-toggle="dropdown" aria-expanded="false">Divisions</a>
                     <div class="dropdown-menu">
                         <a class="dropdown-item" *ngFor="let division of divisions" [routerLink]="['/division/',division.divisionConcat]">{{division.displayName}}</a>
                     </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" [routerLink]="['/calendar']">Calendar</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" [routerLink]="['/blog']">Blog</a>
@@ -26,7 +29,7 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle finger" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">{{Auth.getUser()}} </a>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item finger" (click)="navGo('/profile/',user.routeFriendlyUsername(userName))">Profile</a>
+                                <a class="dropdown-item finger" (click)="navGo('/profile/',user.routeFriendlyUsername(Auth.getUser()))">Profile</a>
                                 <div *ngIf="Auth.getTeam(); else noTeam">
                                     <a class="dropdown-item finger" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( Auth.getTeam() ) )">Team</a>
                                     <a class="dropdown-item finger" [routerLink]="['/schedule/teamSchedule']">Schedule</a>
@@ -38,12 +41,12 @@
                                 </div>
                                 <ng-template #noTeam>
                                     <a class="dropdown-item finger" [routerLink]="['/teamCreate']">Create Team</a>
-                                    <a class="dropdown-item finger" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( teamName ) )">Find Team</a>
+                                    <!-- TODO: implement a find team <a class="dropdown-item finger" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( teamName ) )">Find Team</a> -->
                                 </ng-template>
                                 <a *ngIf="Auth.getAdmin() && Auth.getAdmin().length>0" class="dropdown-item finger" (click)="navGo('/_admin/dashboard')">Admin Dashboard</a>
                                 <a *ngIf="Auth.getCaster()" class="dropdown-item finger" (click)="navGo('/_casterDashboard')">Caster Dashboard</a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item finger" (click)="Auth.destroyAuth()">Logout</a>
+                                <a class="dropdown-item finger" (click)="Auth.destroyAuth('/logout')">Logout</a>
                             </div>
                         </li>
                     </ng-template>

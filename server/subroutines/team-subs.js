@@ -3,6 +3,7 @@ const Team = require('../models/team-models');
 const User = require('../models/user-models');
 
 const numberOfTopMembersToUse = 4;
+const daysLastTouched = 5;
 
 //subroutine to update teams division
 function upsertTeamsDivision(teams, division) {
@@ -34,13 +35,63 @@ function upsertTeamDivision(team, division) {
     })
 }
 
+//update mmrs asynch
+async function updateTeamMmrAsynch(team) {
+    if (typeof team == 'string') {
+        team = team.toLowerCase();
+        team = {
+            teamName_lower: team
+        }
+    }
+    let retrievedTeam = await Team.findOne({
+        teamName_lower: team.teamName_lower
+    }).then((foundTeam) => {
+        if (foundTeam) {
+            return foundTeam;
+        } else {
+            return null;
+        }
+    }, (err) => {
+        console.log('updateMmr routine failed');
+        return null;
+    });
+    let members = [];
+    retrievedTeam.teamMembers.forEach(element => {
+        members.push(element.displayName);
+    });
+    let processMembersMMR;
+    if (members.length > 0) {
+        processMembersMMR = await topMemberMmr(members).then((processed) => {
+            if (processed) {
+                return processed;
+            } else {
+                return null;
+            }
+        }, err => {
+            console.log('error saving');
+            return null;
+        });
+    }
+    let updatedTeam;
+    if (processMembersMMR) {
+        retrievedTeam.teamMMRAvg = processMembersMMR;
+        updatedTeam = await retrievedTeam.save().then(saved => {
+            console.log('team mmr updated successfully');
+            return saved;
+        }, err => {
+            return null;
+        })
+    }
+    return updatedTeam;
+}
+
 //subroutine to update a teams average mmr, this will run when it is passed a team
 function updateTeamMmr(team) {
     if (typeof team == 'string') {
         team = team.toLowerCase();
         team = { teamName_lower: team }
     }
-    console.log('welcome to the sub ', team)
+
     Team.findOne({ teamName_lower: team.teamName_lower }).then((foundTeam) => {
         let members = [];
         foundTeam.teamMembers.forEach(element => {
@@ -246,5 +297,6 @@ module.exports = {
     scrubUserFromTeams: scrubUserFromTeams,
     upsertTeamsDivision: upsertTeamsDivision,
     resultantMMR: resultantMMR,
-    returnTeamMMR: topMemberMmr
+    returnTeamMMR: topMemberMmr,
+    updateTeamMmrAsynch: updateTeamMmrAsynch
 }

@@ -1,12 +1,3 @@
-.formContainer {
-    display: flex;
-    flex-direction: column;
-}
-
-.tp-FullWidth {
-    width: 100%;
-}
-
 .role-margin {
     margin: 0 10px;
 }
@@ -47,4 +38,8 @@
     color: red;
     font-size: .80em;
     font-weight: 600;
+}
+
+.whiteBg {
+    background-color: white;
 }

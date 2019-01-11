@@ -4,12 +4,18 @@
             <h3>Standings</h3>
         </div>
     </div>
-    <div class="row" *ngFor="let standing of standings">
+    <div class="row">
         <div class="col">
             Position
         </div>
         <div class="col">
             Team Name
+        </div>
+        <div class="col">
+            Points
+        </div>
+        <div class="col">
+            Dominations
         </div>
         <div class="col">
             Wins
@@ -18,18 +24,35 @@
             Losses
         </div>
     </div>
-    <div class="row" *ngFor="let standing of standings">
-        <div class="col">
-            {{standing.standing}}
-        </div>
-        <div class="col">
-            {{standing.teamName}}
-        </div>
-        <div class="col">
-            {{standing.wins}}
-        </div>
-        <div class="col">
-            {{standing.losses}}
+    <div *ngIf="standings.length>0 else noStandings">
+        <div class="row" *ngFor="let standing of standings">
+            <div class="col">
+                {{standing.standing}}
+            </div>
+            <div class="col">
+                {{standing.teamName}}
+            </div>
+            <div class="col">
+                {{standing.points}}
+            </div>
+            <div class="col">
+                {{standing.dominations}}
+            </div>
+            <div class="col">
+                {{standing.wins}}
+            </div>
+            <div class="col">
+                {{standing.losses}}
+            </div>
         </div>
     </div>
+
+    <ng-template #noStandings>
+        <div class="row mt-3">
+            <div class="col text-center">
+                <h5>There are currently no matches generated to calculate standings!</h5>
+                <h6> Check back later! </h6>
+            </div>
+        </div>
+    </ng-template>
 </div>

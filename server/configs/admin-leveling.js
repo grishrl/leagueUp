@@ -16,12 +16,16 @@ function casterLevel(req, res, next) {
     adminCheck('CASTER', req, res, next);
 }
 
-function matchLevel(req, res, nest) {
+function matchLevel(req, res, next) {
     adminCheck('MATCH', req, res, next);
 }
 
 function scheduleGenerator(req, res, next) {
     adminCheck('SCHEDULEGEN', req, res, next);
+}
+
+function userACL(req, res, next) {
+    adminCheck('ACL', req, res, next);
 }
 
 module.exports = {
@@ -30,5 +34,6 @@ module.exports = {
     divisionLevel: divisionLevel,
     casterLevel: casterLevel,
     matchLevel: matchLevel,
-    scheduleGenerator: scheduleGenerator
+    scheduleGenerator: scheduleGenerator,
+    userACL: userACL
 }

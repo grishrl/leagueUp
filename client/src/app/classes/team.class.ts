@@ -16,13 +16,14 @@ export class Team {
   teamMMRAvg: number; //added to display
   teamMembers: [string]; //added to display
   pendingMembers: [string];
+  questionnaire:object;
   
 
 
   constructor(id: string, logo:string, teamName: string, lookingForMore: Boolean, availability:schedule,
     competitiveLevel: number, rolesNeeded: roles, descriptionOfTeam: string, timeZone: string,
     teamMembers: [string], pendingMembers: [string], captain: string, teamMMRAvg:number,
-    divisionDisplayName: string, divisionConcat:string) {
+    divisionDisplayName: string, divisionConcat: string, questionnaire:object) {
     if (id != null && id != undefined && id.length > 0) {
       this._id = id;
     } else {
@@ -93,7 +94,7 @@ export class Team {
     if(rolesNeeded!=null&&rolesNeeded!=undefined){
       this.rolesNeeded = rolesNeeded;
     }else{
-      this.rolesNeeded = { "tank": false, "assassin": false, "support": false, "offlane": false, "specialist": false };
+      this.rolesNeeded = { "tank": false, "meleeassassin": false, "rangedassassin": false, "support": false, "offlane": false, "flex": false };
     }
     if(timeZone!=null&&timeZone!=undefined){
       this.timeZone=timeZone;
@@ -130,6 +131,13 @@ export class Team {
     } else {
       this.divisionConcat = null;
     }
+    if (questionnaire != null && questionnaire != undefined) {
+      this.questionnaire = questionnaire;
+    } else {
+      this.questionnaire = {
+        pickedMaps:[]
+      };
+    }
   }
 }
 
@@ -151,8 +159,9 @@ interface atset {
 
 interface roles {
   tank: boolean,
-  assassin: boolean,
+  'meleeassassin': boolean,
+  'rangedassassin':boolean,
   offlane: boolean,
   support: boolean,
-  specialist: boolean
+  flex: boolean
 }

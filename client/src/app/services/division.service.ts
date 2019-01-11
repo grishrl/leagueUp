@@ -1,26 +1,25 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { Team } from '../classes/team.class';
 import { map } from 'rxjs/operators';
+import { HttpServiceService } from './http-service.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DivisionService {
 
+  //returns and sorts all divisions
   getDivisionInfo(){
-    // let turl = 'http://localhost:3000/admin/getDivisionInfo';
     let turl = '/admin/getDivisionInfo';
-    return this.http.get(turl).pipe(
+    return this.httpService.httpGet(turl, []).pipe(
       map(
-        res=>{ 
-          let divisionArr =  res['returnObject'];
-          divisionArr.sort((a,b)=>{
-            if(a.sorting<b.sorting){
+        res => {
+          let divisionArr = res;
+          divisionArr.sort((a, b) => {
+            if (a.sorting < b.sorting) {
               return -1;
             }
-            if(a.sorting > b.sorting){
+            if (a.sorting > b.sorting) {
               return 1
             }
             return 0;
@@ -28,28 +27,27 @@ export class DivisionService {
           return divisionArr;
         }
       )
-    )
+    );
   }
 
-  getDivInfo(divisionName){
-    // let url = 'http://localhost:3000/admin/getDivInfo'
-    let url = 'admin/getDivInfo'
-
-    return this.http.get<any>(url + '?division=' + divisionName).pipe(
-      map((res) => {
-        return res.returnObject;
-      })); 
-  }
-  
+  //returns division information of provided division; divisionConcat
   getDivision(divisionName:string):Observable<any>{
-    let url = '/division/get'
-    return this.http.get<any>(url+'?division='+divisionName).pipe(
-        map((res)=>{
-          return res.returnObject;
-        }));
+    let url = '/division/get';
+    let parameters = [{ 'division': divisionName}];
+    return this.httpService.httpGet(url,parameters);
   }
 
-  constructor(private http: HttpClient) {
+  constructor( private httpService:HttpServiceService) {
 
    }
 }
+
+
+  // getDivInfo(divisionName:string){
+  //   let url = 'admin/getDivInfo'
+
+  //   return this.http.get<any>(url + '?division=' + divisionName).pipe(
+  //     map((res) => {
+  //       return res.returnObject;
+  //     })); 
+  // }

@@ -1,0 +1,106 @@
+<div class="container pt-4">
+    <div class="row">
+        <div class="col">
+            <div class="row" *ngIf="!this.provDiv; else provDiv">
+                <div class="col">
+                    <mat-form-field>
+                        <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="calculateRounds()" disableOptionCentering>
+                            <mat-option *ngFor="let division of divisions; let i = index" [value]="division">{{division.displayName}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-form-field>
+                        <mat-select placeholder="Round:" [(ngModel)]="selectedRound" (ngModelChange)="getMatches()" disableOptionCentering>
+                            <mat-option *ngFor="let round of rounds; let i = index" [value]="round">{{round}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <ng-template #provDiv>
+                <div class="row" *ngIf="rounds.length>0">
+                    <div>
+                        <div class="col">
+                            <mat-form-field>
+                                <mat-select placeholder="Round:" [(ngModel)]="selectedRound" (ngModelChange)="getMatches()" disableOptionCentering>
+                                    <mat-option *ngFor="let round of rounds; let i = index" [value]="round">{{round}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <!-- <div class="fillUpDeadSpace" *ngIf="!selectedRound"></div> -->
+                </div>
+            </ng-template>
+            <!-- else noMatches -->
+            <div *ngIf="matches.length>0 else noMatch">
+                <div class="row">
+                    <div class="col">
+                        <h2>Matches</h2>
+                    </div>
+                </div>
+                <div class="row mt-3" *ngFor="let match of matches">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="row">
+                                    <div class="col">
+                                        <img class="img-fluid" src="{{team.imageFQDN(match.home.logo)}}" width="150" alt="Team Logo">
+                                    </div>
+                                    <div class="col vertical-middle">
+                                        <div *ngIf="match.home.teamName">{{match.home.teamName}}</div>
+
+                                    </div>
+                                    <div class="col vertical-middle">
+                                        <span> {{match.home.wins}} - {{match.home.losses}} </span>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-2 vertical-middle">
+                                - VS -
+                            </div>
+                            <div class="col-5">
+                                <div class="row">
+                                    <div class="col vertical-middle">
+                                        <span> {{match.away.wins}} - {{match.away.losses}} </span>
+                                    </div>
+                                    <div class="col vertical-middle">
+                                        <div *ngIf="match.away.teamName; else bye">{{match.away.teamName}}</div>
+                                    </div>
+                                    <div class="col">
+                                        <img class="img-fluid" src="{{team.imageFQDN(match.away.logo)}}" width="150" alt="Team Logo">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+
+                            </div>
+                            <div class="col-7 text-center">
+                                Scheduled Time: <span *ngIf="match.scheduledTime else tbd">{{match.friendlyDate}} - {{match.friendlyTime}} {{match.suffix}}</span>
+                                <ng-template #tbd><span> TBD </span></ng-template>
+                            </div>
+                            <div class="col">
+
+                            </div>
+                        </div>
+                        <div class="row" *ngIf="match.casterName && match.casterUrl">
+                            <div class="col"></div>
+                            <div class="col-7 text-center">
+                                <span> Casted by:</span> {{match.casterName}} : <a href="{{util.prePendHttp(match.casterUrl)}}" target="_blank">{{match.casterUrl}}</a>
+                            </div>
+                            <div class="col"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #bye>
+    BYE
+</ng-template>
+<ng-template #noMatch>
+    <div>No matches currently for this round!</div>
+</ng-template>

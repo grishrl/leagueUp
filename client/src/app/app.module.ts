@@ -29,17 +29,15 @@ import { ApproveMemberComponent } from './admin/approve-member/approve-member.co
 import { UserQuickViewComponent } from './admin/approve-member/user-quick-view/user-quick-view.component';
 import { TeamQuickViewComponent } from './admin/approve-member/team-quick-view/team-quick-view.component';
 import { ApproveMemberViewComponent } from './admin/approve-member/approve-member-view/approve-member-view.component';
-import { DialogOverviewExampleDialog } from './profile-edit/profile-edit.component';
 import { DeleteMemberComponent } from './admin/delete-member/delete-member.component';
-import { DeleteTeamComponent } from './admin/delete-team/delete-team.component';
+import { ManageSelectTeamComponent } from './admin/manage-team/manage-select-team.component';
 import { TeamSearchComponent } from './team-search/team-search.component';
 import { ChangeCaptainModalComponent } from './modal/change-captain-modal/change-captain-modal.component';
-import { ChangeCaptainComponent } from './admin/change-captain/change-captain.component';
 import { DivisionManagementComponent } from './admin/division-management/division-management.component';
 import { AddTeamComponent } from './admin/division-management/add-team/add-team.component';
 import { DivisionPropsComponent } from './admin/division-management/division-props/division-props.component';
 import { RemoveTeamComponent } from './admin/division-management/remove-team/remove-team.component';
-import { SheduleViewComponent } from './schedule/shedule-view/shedule-view.component';
+import { ScheduleViewComponent } from './schedule/schedule-view/schedule-view.component';
 import { MatchScheduleComponent } from './schedule/match-schedule/match-schedule.component';
 import { TeamScheduleComponent } from './schedule/team-schedule/team-schedule.component';
 import { ReportingComponent } from './reporting/reporting.component';
@@ -53,6 +51,21 @@ import { MatchManagementComponent } from './admin/match-management/match-managem
 import { AdminAclManagementComponent } from './admin/admin-acl-management/admin-acl-management.component';
 import { UpdateRolesComponent } from './admin/admin-acl-management/update-roles/update-roles.component';
 import { StandingsViewComponent } from './standings-view/standings-view.component';
+import { SnackbarComponent } from './snackbar/snackbar.component';
+import { ManageTeamViewComponent } from './admin/manage-team/manage-team-view/manage-team-view.component';
+import { DeleteConfrimModalComponent } from './modal/delete-confrim-modal/delete-confrim-modal.component';
+import { NoAccessComponent } from './no-access/no-access.component';
+import { SessionTimeoutComponent } from './session-timeout/session-timeout.component';
+import { TimesAvailableComponent } from './times-available/times-available.component';
+import { QuestionnaireComponent } from './questionnaire/questionnaire.component';
+import { LogsViewerComponent } from './admin/logs-viewer/logs-viewer.component';
+import { CalendarViewComponent } from './calendar-view/calendar-view.component';
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { EventModalComponent } from './calendar-view/event-modal/event-modal.component';
+import { EventLargeComponent } from './calendar-view/event-large/event-large.component';
+import { SetDeadlineComponent } from './admin/match-management/set-deadline/set-deadline.component';
+ 
 
 @NgModule({
   declarations: [
@@ -78,17 +91,15 @@ import { StandingsViewComponent } from './standings-view/standings-view.componen
     UserQuickViewComponent,
     TeamQuickViewComponent,
     ApproveMemberViewComponent,
-    DialogOverviewExampleDialog,
     DeleteMemberComponent,
-    DeleteTeamComponent,
+    ManageSelectTeamComponent,
     TeamSearchComponent,
     ChangeCaptainModalComponent,
-    ChangeCaptainComponent,
     DivisionManagementComponent,
     AddTeamComponent,
     DivisionPropsComponent,
     RemoveTeamComponent,
-    SheduleViewComponent,
+    ScheduleViewComponent,
     MatchScheduleComponent,
     TeamScheduleComponent,
     ReportingComponent,
@@ -100,11 +111,24 @@ import { StandingsViewComponent } from './standings-view/standings-view.componen
     MatchEditComponent,
     AdminAclManagementComponent,
     UpdateRolesComponent,
-    StandingsViewComponent
+    StandingsViewComponent,
+    SnackbarComponent,
+    ManageTeamViewComponent,
+    DeleteConfrimModalComponent,
+    NoAccessComponent,
+    SessionTimeoutComponent,
+    TimesAvailableComponent,
+    QuestionnaireComponent,
+    LogsViewerComponent,
+    CalendarViewComponent,
+    EventModalComponent,
+    EventLargeComponent,
+    SetDeadlineComponent
   ],
   entryComponents:[
-    DialogOverviewExampleDialog,
-    ChangeCaptainModalComponent
+    DeleteConfrimModalComponent,
+    ChangeCaptainModalComponent,
+    EventModalComponent
   ],
   imports: [
     BrowserModule, 
@@ -115,7 +139,11 @@ import { StandingsViewComponent } from './standings-view/standings-view.componen
     FormsModule,
     ReactiveFormsModule,
     NgxCroppieModule,
-    ngfModule
+    ngfModule,
+    CalendarModule.forRoot({
+      provide: DateAdapter,
+      useFactory: adapterFactory
+    })
   ],
   providers: [
     {

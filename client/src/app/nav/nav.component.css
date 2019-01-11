@@ -1,3 +1,8 @@
-.finger {
-    cursor: pointer;
+.container {
+    background-color: #F26A2F;
+}
+
+.navbar {
+    background-color: #F26A2F;
+    color: white;
 }

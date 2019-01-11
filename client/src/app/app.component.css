@@ -1,4 +1,4 @@
-section {
+/* section {
     padding-top: 56px;
     height: 100%;
 }
@@ -7,4 +7,25 @@ section {
     box-sizing: border-box;
     display: block;
     height: 100%;
+} */
+
+.clearfooter {
+    height: 1px;
+    clear: both;
+}
+
+#footer {
+    height: 115px;
+    position: relative;
+}
+
+#content {
+    padding-top: 56px;
+    height: 100%;
+}
+
+#container {
+    min-height: 100%;
+    margin-bottom: -115px;
+    position: relative;
 }

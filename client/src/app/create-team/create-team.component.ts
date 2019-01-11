@@ -5,6 +5,7 @@ import { TimezoneService } from '../services/timezone.service';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
+import { UtilitiesService } from '../services/utilities.service';
 
 @Component({
   selector: 'app-create-team',
@@ -21,45 +22,31 @@ export class CreateTeamComponent implements OnInit {
     { val: 3, display: 'Medium'},
     { val: 5, display: 'High'}
   ]
+  availabilityValid:boolean
   
-  constructor(private team: TeamService, public timezone:TimezoneService, private auth: AuthService, private route:Router) { }
+  constructor(private team: TeamService, public timezone:TimezoneService, private auth: AuthService, private route:Router, private util:UtilitiesService) { }
+
   nameContorl = new FormControl();
   timeZoneControl = new FormControl();
 
-  errorAvail:boolean=false;
-  //check that the availability exists and that at least one day has been set to true and has time
-  checkAvailabilityDays(): boolean {
-    let ret = true;
-    let nodays= 0;
-    if (this.returnBoolByPath(this.returnedProfile,'availability')) {
-      //validate that we have start and end times for available days
-      for (let day in this.returnedProfile.availability) {
-        let checkDay = this.returnedProfile.availability[day];
-        if (checkDay.available) {
-          if (checkDay.startTime == null && checkDay.endTime == null) {
-             ret = false;
-          } else if (checkDay.startTime.length == 0 && checkDay.endTime.length == 0) {
-            ret = false;
-          }
-        }else{
-          nodays+=1;
-        }
-      }
-    } else {
-      ret = false;
-    }
-    if(nodays==7){
-      ret = false;
-    }
-    return ret;
-  }
+  createTeamControlGroup = new FormGroup({
+    nameControl: this.nameContorl,
+    timeZone: this.timeZoneControl
+  })
+
+  
 
   ngOnInit() {
-    this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+    this.markFormGroupTouched(this.createTeamControlGroup);
+    this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
   }
 
   cancel() {
-    this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+    this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+  }
+
+  receiveTimesValidity(event){
+    this.availabilityValid=event;
   }
 
   save() {
@@ -77,7 +64,7 @@ export class CreateTeamComponent implements OnInit {
             // go to the team profile page.
             this.route.navigate(['/teamProfile', this.team.routeFriendlyTeamName(res.teamName)]);
           }, err=>{
-            alert(err);
+            console.log(err);
           })
         }else{
           alert('required infomation not included');
@@ -86,33 +73,49 @@ export class CreateTeamComponent implements OnInit {
     });
   }
 
+  markFormGroupTouched(formGroup: FormGroup) {
+
+    if (formGroup.controls) {
+      const keys = Object.keys(formGroup.controls);
+      for (let i = 0; i < keys.length; i++) {
+        const control = formGroup.controls[keys[i]];
+
+        if (control instanceof FormControl) {
+          control.markAsTouched();
+        } else if (control instanceof FormGroup) {
+          this.markFormGroupTouched(control);
+        }
+      }
+    }
+  }
 
   validate() {
     let valid = true;
     //validate team name is there
-    if(!this.returnBoolByPath(this.returnedProfile, 'teamName')){
+    if(!this.util.returnBoolByPath(this.returnedProfile, 'teamName')){
       this.nameContorl.setErrors({required:true});
       valid = false;
     }else{
-      this.nameContorl.setErrors(null);
+      let regEx = new RegExp(/[^A-Z0-9\s]/ig);
+      if(regEx.test(this.returnedProfile.teamName)){
+        this.nameContorl.setErrors({invalidCharacters:true});
+      }else{
+        this.nameContorl.setErrors(null);
+      }
+      
     }
     //validate looking for team:
-    if (!this.returnBoolByPath(this.returnedProfile, 'lookingForMore')) {
+    if (!this.util.returnBoolByPath(this.returnedProfile, 'lookingForMore')) {
       valid = false;
     }
 
     //validate that there is at least 1 available day
-    if (this.checkAvailabilityDays()){
-      valid = true;
-      this.errorAvail = false;
-    }else{
+    if (!this.availabilityValid){
       valid = false;
-      this.errorAvail = true;
     }
 
-
     //ensure time zone
-    if (!this.returnBoolByPath(this.returnedProfile,'timeZone') ) {
+    if (!this.util.returnBoolByPath(this.returnedProfile,'timeZone') ) {
       this.timeZoneControl.setErrors({required:true});
       valid = false;
     }else{
@@ -120,41 +123,6 @@ export class CreateTeamComponent implements OnInit {
     }
 
     return valid;
-  }
-
-  returnBoolByPath(obj, path): boolean  {
-    //path is a string representing a dot notation object path;
-    //create an array of the string for easier manipulation
-    let pathArr = path.split('.');
-    //return value
-    let retVal = null;
-    //get the first element of the array for testing
-    let ele = pathArr[0];
-    //make sure the property exist on the object
-    if (obj.hasOwnProperty(ele)) {
-      if (typeof obj[ele] == 'boolean') {
-        retVal = true;
-      }
-      //property exists:
-      //property is an object, and the path is deeper, jump in!
-      else if (typeof obj[ele] == 'object' && pathArr.length > 1) {
-        //remove first element of array
-        pathArr.splice(0, 1);
-        //reconstruct the array back into a string, adding "." if there is more than 1 element
-        if (pathArr.length > 1) {
-          path = pathArr.join('.');
-        } else {
-          path = pathArr[0];
-        }
-        //recurse this function using the current place in the object, plus the rest of the path
-        retVal = this.returnBoolByPath(obj[ele], path);
-      } else if (typeof obj[ele] == 'object' && pathArr.length == 0) {
-        retVal = obj[ele];
-      } else {
-        retVal = obj[ele]
-      }
-    }
-    return !!retVal;
   }
 
 }

@@ -1,0 +1,12 @@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <a [routerLink]="['/_admin/manageTeam']">Back to Team Select</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <app-team-profile [source]="'admin'" [passedProfile]="recievedProfile"></app-team-profile>
+        </div>
+    </div>
+</div>

@@ -60,23 +60,49 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <div class="row finger p-2" [ngClass]="{'border border-info bg-info text-white': isSelected(team)}" (click)="teamSelected(team)" *ngFor="let team of undivisionTeams">
+                    <div class="row p-2" style="border-style: solid" [ngClass]="{'border border-info bg-info text-white': isSelected(team)}" *ngFor="let team of undivisionTeams">
                         <div class="col">
-                            {{team.teamName}}
+                            <div class="row">
+                                <div class="col">
+                                    <div><strong>Team Name</strong></div>
+                                    {{team.teamName}}
+                                </div>
+                                <div class="col-2">
+                                    <div><strong>Team MMR:</strong></div>
+                                    {{team.teamMMRAvg}}
+                                </div>
+                                <div class="col">
+                                    <a class="finger underline" (click)="teamSelected(team)">Click to <span *ngIf="isSelected(team) else select"> deselect </span>
+                                        <ng-template #select>select</ng-template> team
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div><strong>Preferred Coast</strong></div>
+                                    {{team.questionnaire.eastWest}}
+                                </div>
+                                <div class="col">
+                                    <div><strong><a target="_blank" [routerLink]="['/_admin/manageTeam/', teamService.routeFriendlyTeamName(team.teamName)]">Team Profile</a></strong></div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col">
-                            {{team.teamMMRAvg}}
-                        </div>
+
+
+
                     </div>
                 </div>
                 <div class="col">
-                    <div class="row finger p-2" [ngClass]="{'border border-warning bg-warning text-dark': isDivSelected(division)}" (click)="divSelected(division)" *ngFor="let division of divisions">
+                    <div class="row finger p-2" [ngClass]="{'border border-warning bg-warning text-dark': isDivSelected(division)}" *ngFor="let division of divisions">
                         <div class="col">
                             {{division.displayName}}
                         </div>
                         <div class="col">
                             <div>Max MMR: {{division.maxMMR}}</div>
-                            <div>Min MMR: {{division.maxMMR}}</div>
+                            <div>Min MMR: {{division.minMMR}}</div>
+                        </div>
+                        <div class="col">
+                            <a class="finger underline" (click)="divSelected(division)">Click to Select Division</a>
                         </div>
                     </div>
                 </div>

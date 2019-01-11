@@ -11,27 +11,38 @@ const UserSub = require('../subroutines/user-subs');
 const passport = require("passport");
 const levelRestrict = require("../configs/admin-leveling");
 
-
+//returns the lists of users who are awaiting admin attention to complete the team join process
 router.get('/pendingMemberQueue', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.teamLevel, (req, res) => {
+}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
     const path = '/admin/pendingMemberQueue';
     const query = Admin.PendingQueue.find();
     query.sort('-timestamp');
     query.limit(20);
     query.exec().then((reply) => {
+
         res.status(200).send(util.returnMessaging(path, 'Found queues', false, reply));
     }, (err) => {
         res.status(500).send(util.returnMessaging(path, 'Couldn\'t get the queues', err));
     })
 });
 
+//removes the supplied member from the supplied team
 router.post('/team/removeMember', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.teamLevel, (req, res) => {
+}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
     const path = '/admin/team/removeMember';
     let teamName = req.body.teamName;
     let payloadUser = req.body.removeUser;
+    teamName = teamName.toLowerCase();
+
+    //log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = 'remove user from team ';
+    logObj.target = teamName + ' : ' + payloadUser;
+    logObj.logLevel = 'ADMIN';
+
     Team.findOne({ teamName_lower: teamName }).then(
         (foundTeam) => {
             if (foundTeam) {
@@ -51,9 +62,9 @@ router.post('/team/removeMember', passport.authenticate('jwt', {
                     }
                 }
                 if (indiciesToRemove.length == 0) {
-                    res.status(400).send(
-                        util.returnMessaging(path, "User not found on team.", false, foundTeam)
-                    );
+                    logObj.logLevel = 'ERROR';
+                    logObj.error = 'User not found on team.';
+                    res.status(400).send(util.returnMessaging(path, "User not found on team.", false, foundTeam, null, logObj));
                 } else {
                     indiciesToRemove.forEach(function(index) {
                         usersRemoved = usersRemoved.concat(foundTeam.teamMembers.splice(index, 1));
@@ -62,34 +73,44 @@ router.post('/team/removeMember', passport.authenticate('jwt', {
                     foundTeam.save().then((savedTeam) => {
                         if (savedTeam) {
                             teamSub.updateTeamMmr(foundTeam);
-                            res.status(200).send(
-                                util.returnMessaging(path, "users removed from team", false, savedTeam)
-                            );
+                            res.status(200).send(util.returnMessaging(path, "Users removed from team", false, savedTeam, logObj));
                         } else {
-                            res.status(400).send(
-                                util.returnMessaging(path, "users not removed from team", false, savedTeam));
+                            logObj.logLevel = 'ERROR';
+                            logObj.error = 'Users were not removed from team';
+                            res.status(400).send(util.returnMessaging(path, "Users not removed from team", false, savedTeam, logObj));
                         }
                     }, (err) => {
-                        res.status(400).send(util.returnMessaging(path, "Unable to save team", err));
+                        res.status(400).send(util.returnMessaging(path, "Unable to save team", err, null, null, logObj));
                     });
                 }
             } else {
-                res.status(400).send(util.returnMessaging(path, 'Team not found!'));
+                logObj.logLevel = 'ERROR';
+                logObj.error = 'Team not found';
+                res.status(400).send(util.returnMessaging(path, 'Team not found!', false, null, null, logObj));
             }
         },
         (err) => {
-            res.status(500).send(util.returnMessaging(path, 'Error finding team!', err));
+            res.status(500).send(util.returnMessaging(path, 'Error finding team!', err, null, null, logObj));
         }
     )
 });
 
+
+//reassigns captain from the supplied team to the supplied teammember
 router.post('/reassignCaptain', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.teamLevel, (req, res) => {
+}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
     const path = '/admin/reassignCaptain';
 
     let team = req.body.teamName;
     let newCpt = req.body.userName;
+
+    //log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = 'reassign team captain ';
+    logObj.target = team + ' : ' + newCpt;
+    logObj.logLevel = 'ADMIN';
 
     Team.findOne({ teamName_lower: team }).then((foundTeam) => {
         if (foundTeam) {
@@ -109,29 +130,44 @@ router.post('/reassignCaptain', passport.authenticate('jwt', {
                     if (savedTeam) {
                         UserSub.toggleCaptain(oldCpt);
                         UserSub.toggleCaptain(savedTeam.captain);
-                        res.status(200).send(util.returnMessaging(path, 'Team captain changed', false, savedTeam));
+                        res.status(200).send(util.returnMessaging(path, 'Team captain changed', false, savedTeam, null, logObj));
                     } else {
-                        res.status(500).send(util.returnMessaging(path, 'Error saving team captain changes'));
+                        logObj.logLevel = 'ERROR';
+                        logObj.error = 'Error saving team';
+                        res.status(500).send(util.returnMessaging(path, 'Error saving team captain changes', null, null, null, logObj));
                     }
                 }, (err) => {
-                    res.status(500).send(util.returnMessaging(path, 'Error changing the team captian', err));
+                    res.status(500).send(util.returnMessaging(path, 'Error changing the team captian', err, null, null, logObj));
                 })
             } else {
-                res.status(400).send(util.returnMessaging(path, 'User was not found in team members'));
+                logObj.logLevel = 'ERROR';
+                logObj.error = 'User was not found in team members';
+                res.status(400).send(util.returnMessaging(path, 'User was not found in team members', null, null, null, logObj));
             }
         }
     }, (err) => {
-        res.status(500).send(util.returnMessaging(path, 'Error finding team!', err));
+        res.status(500).send(util.returnMessaging(path, 'Error finding team!', err, null, null, logObj));
     })
 });
 
+
+//approves a pending team member queue, removes the item from the queue and adds the member to the team
+//updates the members profile to now be part of the team
 router.post('/approveMemberAdd', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.teamLevel, (req, res) => {
+}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
+    const path = '/admin/approveMemberAdd';
     var teamName = req.body.teamName;
     var member = req.body.member;
     var approved = req.body.approved;
     teamName = teamName.toLowerCase();
+
+    //log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = 'pending team member approval';
+    logObj.target = teamName + ' : ' + member + ' - ' + approved;
+    logObj.logLevel = 'ADMIN';
 
     //find team matching the team in question
     Team.findOne({
@@ -179,92 +215,98 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
                             //save the team and the user
                             foundTeam.save().then((savedTeam) => {
                                     foundUser.save().then((savedUser) => {
-                                        res.status(200).send({
-                                            "message": "Team and User updated!",
-                                            "team": savedTeam,
-                                            "user": savedUser
-                                        });
+                                        res.status(200).send(util.returnMessaging(path, 'Team and User updated!', false, savedTeam, savedUser, logObj));
                                         teamSub.updateTeamMmr(savedTeam);
                                     }, (userSaveErr) => {
-                                        res.status(500).send({
-                                            "message": "Error saving user",
-                                            "err": userSaveErr
-                                        });
+                                        res.status(500).send(util.returnMessaging(path, "Error saving user", userSaveErr, null, null, logObj));
                                     })
                                 }, (teamSaveErr) => {
-                                    res.status(500).send({
-                                        "message": "Error saving team",
-                                        "err": teamSaveErr
-                                    });
+                                    res.status(500).send(util.returnMessaging(path, 'Error saving team', teamSaveErr, null, null, logObj));
                                 })
                                 //this should fire whether the user was approved or denied, clean this item from the queue
                             QueueSub.removePendingByTeamAndUser(foundTeam.teamName_lower, foundUser.displayName);
                         } else {
-                            res.status(500).send({
-                                "message": "User \'" + member + "\' was not found in pending members of team \'" + teamName + "\'"
-                            })
+                            logObj.logLevel = 'ERROR';
+                            logObj.error = 'User was not found in pending members of team';
+                            res.status(500).send(util.returnMessaging(path, "User \'" + member + "\' was not found in pending members of team \'" + teamName + "\'", false, null, null, logObj));
                         }
                     } else {
-                        res.status(500).send({
-                            "message": "The team " + teamName + " had no pending members!"
-                        })
+                        logObj.logLevel = 'ERROR';
+                        logObj.error = 'team had no pending members';
+                        res.status(500).send(util.returnMessaging(path, "The team " + teamName + " had no pending members!", null, null, null, logObj));
                     }
                 } else {
-                    res.status(500).send({
-                        "message": "This user was not found" + member + ""
-                    })
+                    logObj.logLevel = 'ERROR';
+                    logObj.error = 'This user was not found';
+                    res.status(500).send(util.returnMessaging(path, "This user was not found", false, null, null, logObj));
                 }
             }, (err) => {
-                res.status(500).send({
-                    "message": "Error finding user",
-                    "err": err
-                });
-            })
+                res.status(500).send(util.returnMessaging(path, 'Error finding user', err, null, null, logObj));
+            });
         } else {
-            res.status(500).send({
-                "message": "This team was not found" + teamName + ""
-            })
+            logObj.logLevel = 'ERROR';
+            logObj.error = 'This team was not found';
+            res.status(500).send(util.returnMessaging(path, 'Team not found', null, null, null, logObj))
         }
     }, (err) => {
-        res.status(500).send({
-            "message": "Error finding team",
-            "err": err
-        });
+        res.status(500).send(util.returnMessaging(path, 'Error finding team', err, null, null, logObj));
     })
 });
 
+
+//deletes the supplied team,
+//removes all team information from users profiles
 router.post('/delete/team', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.teamLevel, (req, res) => {
+}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
     const path = '/admin/delete/team';
     var team = req.body.teamName;
     team = team.toLowerCase();
+
+    //log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = 'team deletion';
+    logObj.target = team;
+    logObj.logLevel = 'ADMIN';
+
     Team.findOneAndDelete({ teamName_lower: team }).then((deleted) => {
         if (deleted) {
-            //TODO : need to remove this team from division if it was in one!!!!
             UserSub.clearUsersTeam(deleted.teamMembers);
-            res.status(200).send(util.returnMessaging(path, 'Team deleted', false, deleted));
+            DivSub.removeTeamFromDivision(deleted.teamName);
+            res.status(200).send(util.returnMessaging(path, 'Team deleted', false, deleted, null, logObj));
         }
     }, (err) => {
-        res.status(500).send(util.returnMessaging(path, 'Error deleting team', err));
+        res.status(500).send(util.returnMessaging(path, 'Error deleting team', err, null, null, logObj));
     })
 });
 
+//Saves a supplied team
 router.post('/teamSave', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.teamLevel, (req, res) => {
+}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
     const path = '/admin/teamSave';
     //this teamName passed in the body is considered a safe source of the orignal team name
     let team = req.body.teamName;
     let payload = req.body.teamObj;
     team = team.toLowerCase();
+
+    //log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = 'team edit';
+    logObj.target = team;
+    logObj.logLevel = 'ADMIN';
+
     //check if the team was renamed at the client
     if (team != payload.teamName_lower) {
         //team was renamed
         //double check the new name doesn't exist all ready
         Team.findOne({ teamName_lower: payload.teamName_lower }).then((foundTeam) => {
                 if (foundTeam) {
-                    res.status(400).send(util.returnMessaging(path, 'This team name was all ready taken, can not complete request!'));
+                    logObj.logLevel = 'ERROR';
+                    logObj.error = 'team name was taken';
+                    res.status(400).send(util.returnMessaging(path, 'This team name was all ready taken, can not complete request!', false, null, null, logObj));
                 } else {
                     //this might be a candidate for refactoring all the team saves into one single sub component - but not until I have a warm fuzzy about including teamName changes into the base sub, which I dont.
                     //team name was not modified; edit the properties we received.
@@ -306,8 +348,8 @@ router.post('/teamSave', passport.authenticate('jwt', {
 
                             originalTeam.save().then((savedTeam) => {
                                 var message = "";
-                                message += "Team updated!";
-                                res.status(200).send(util.returnMessaging(path, message, false, savedTeam));
+                                message += "Team updated";
+                                res.status(200).send(util.returnMessaging(path, message, false, savedTeam, null, logObj));
 
                                 //now we need subs to remove all instances of the old team name and replace it with
                                 //this new team name
@@ -317,17 +359,19 @@ router.post('/teamSave', passport.authenticate('jwt', {
                                 //matches ... not existing yet
                                 UserSub.upsertUsersTeamName(savedTeam.teamMembers, savedTeam.teamName);
                             }, (err) => {
-                                res.status(400).send(util.returnMessaging(path, 'Error saving team information', err));
+                                res.status(400).send(util.returnMessaging(path, 'Error saving team information', err, null, null, logObj));
                             });
                         } else {
-                            res.status(400).send(util.returnMessaging(path, "Team not found"));
+                            logObj.logLevel = 'ERROR';
+                            logObj.error = 'Team not found';
+                            res.status(400).send(util.returnMessaging(path, "Team not found", null, null, null, logObj));
                         }
                     }, (err) => {
-                        res.status(400).send(util.returnMessaging(path, 'Error finding team', err));
+                        res.status(400).send(util.returnMessaging(path, 'Error finding team', err, null, null, logObj));
                     })
                 }
             }, (err) => {
-                res.status(500).send(util.returnMessaging(path, 'Error querying teams!', err));
+                res.status(500).send(util.returnMessaging(path, 'Error querying teams!', err, null, null, logObj));
             })
             //delete old team???
             //save a new instance of the renamed team
@@ -370,23 +414,27 @@ router.post('/teamSave', passport.authenticate('jwt', {
                 foundTeam.save().then((savedTeam) => {
                     var message = "";
                     message += "Team updated!";
-                    res.status(200).send(util.returnMessaging(path, message, false, savedTeam));
+                    res.status(200).send(util.returnMessaging(path, message, false, savedTeam, null, logObj));
                 }, (err) => {
-                    res.status(400).send(util.returnMessaging(path, 'Error saving team information', err));
+                    res.status(400).send(util.returnMessaging(path, 'Error saving team information', err, null, null, logObj));
                 });
             } else {
-                res.status(400).send(util.returnMessaging(path, "Team not found"));
+                logObj.logLevel = 'ERROR';
+                logObj.error = 'Team not found';
+                res.status(400).send(util.returnMessaging(path, "Team not found", null, null, null, logObj));
             }
         }, (err) => {
-            res.status(400).send(util.returnMessaging(path, 'Error finding team', err));
+            res.status(400).send(util.returnMessaging(path, 'Error finding team', err, null, null, logObj));
         })
 
     }
 });
 
+
+//calculates the resultant MMR from a pending member add for suplied memebers MMR and supplied team
 router.post('/resultantmmr', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.teamLevel, (req, res) => {
+}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
     const path = '/admin/resultantmmr'
     let userMmr = req.body.userMmr;
     let teamName = req.body.teamName;
@@ -401,12 +449,12 @@ router.post('/resultantmmr', passport.authenticate('jwt', {
             });
             teamSub.resultantMMR(userMmr, members).then((processed) => {
                 if (processed) {
-                    res.status(200).send(util.returnMessaging(path, "Team mmr calculated.", false, { resultantMmr: processed }));
+                    res.status(200).send(util.returnMessaging(path, "Team MMR calculated.", false, { resultantMmr: processed }));
                 } else {
-                    res.status(400).send(util.returnMessaging(path, "Team mmr not calculated."));
+                    res.status(400).send(util.returnMessaging(path, "Team MMR not calculated."));
                 }
             }, (err) => {
-                res.status(400).send(util.returnMessaging(path, "Team mmr not calculated.", err));
+                res.status(400).send(util.returnMessaging(path, "Team MMR not calculated.", err));
             })
         } else {
             res.status(400).send(util.returnMessaging(path, "Team not found"));
@@ -417,9 +465,11 @@ router.post('/resultantmmr', passport.authenticate('jwt', {
 
 });
 
+
+//refreshes the MMR of a supplied team, in case the team mmr may need to be updated
 router.post('/team/refreshMmr', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.teamLevel, (req, res) => {
+}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
     const path = 'admin/team/refreshMmr';
     let teamName = req.body.teamName;
     teamName = teamName.toLowerCase();
@@ -457,7 +507,28 @@ router.post('/team/refreshMmr', passport.authenticate('jwt', {
             res.status(500).send(util.returnMessaging(path, 'Error finding team', err));
         }
     )
-})
+});
+
+
+//returns a list of all teams!
+router.get('/get/teams/all', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
+    const path = 'admin/get/teams/all';
+    Team.find().then(
+        (foundTeams) => {
+            if (foundTeams) {
+                res.status(200).send(util.returnMessaging(path, 'Found teams', false, foundTeams));
+            } else {
+                res.status(200).send(util.returnMessaging(path, 'No teams found', false));
+            }
+        },
+        (err) => {
+            res.status(500).send(util.returnMessaging(path, 'Error finding teams', err));
+        }
+    )
+
+});
 
 
 module.exports = router;

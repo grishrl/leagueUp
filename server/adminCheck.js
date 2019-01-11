@@ -6,7 +6,7 @@ function adminCheck(level, req, res, next) {
         if (userInfo.adminLevel && userInfo.adminLevel[level]) {
             next();
         } else {
-            res.status(401).send({
+            res.status(403).send({
                 "message": "Unauthorized for this action!"
             });
         }

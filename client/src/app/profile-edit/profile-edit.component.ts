@@ -1,5 +1,5 @@
-import { Component, OnInit, NgModule, Inject, Input} from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Component, OnInit, NgModule, Input} from '@angular/core';
+import { MatDialog } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { TimezoneService } from '../services/timezone.service';
 import { UserService } from '../services/user.service';
@@ -10,7 +10,8 @@ import { ReactiveFormsModule, FormControl, Validators, FormGroup } from '@angula
 import { merge } from 'lodash';
 import { HotsLogsService } from '../services/hots-logs.service';
 import { Router } from '@angular/router';
-import { map, catchError } from 'rxjs/operators';
+import { NotificationService } from '../services/notification.service';
+import { DeleteConfrimModalComponent } from '../modal/delete-confrim-modal/delete-confrim-modal.component'
 
 @NgModule({
   imports:[
@@ -25,7 +26,7 @@ import { map, catchError } from 'rxjs/operators';
 })
 export class ProfileEditComponent implements OnInit {
 
-  constructor(public timezone: TimezoneService, private user: UserService, public auth: AuthService, private router: Router, private route: ActivatedRoute, private hotsLogsService: HotsLogsService, public dialog: MatDialog) {
+  constructor(private notificationService:NotificationService, public timezone: TimezoneService, private user: UserService, public auth: AuthService, private router: Router, private route: ActivatedRoute, private hotsLogsService: HotsLogsService, public dialog: MatDialog) {
     this.displayName = user.realUserName(this.route.snapshot.params['id']);
   }
 
@@ -34,6 +35,10 @@ export class ProfileEditComponent implements OnInit {
   hotsLogsFormControl = new FormControl({value:'',disabled:true} ,[
     Validators.required,
     this.hotslogsUrlPatternValidator
+  ]);
+
+  discordTagFormControl = new FormControl({ value: '', disabled: true }, [
+    Validators.required
   ]);
 
   heroeLeagueDivisionControl = new FormControl({ value: '',disabled:true}, [
@@ -47,6 +52,8 @@ export class ProfileEditComponent implements OnInit {
   timezoneControl = new FormControl({ value: '', disabled: true }, [
     Validators.required
   ]);
+
+  timesAvailControl = new FormControl();
 
   hotslogsUrlPatternValidator(control: FormControl) {
   let hotslogsURL = control.value;
@@ -62,13 +69,16 @@ export class ProfileEditComponent implements OnInit {
 
   profileForm = new FormGroup({
     hotslogurl: this.hotsLogsFormControl,
+    discordTag: this.discordTagFormControl,
     hlDivision: this.heroeLeagueDivisionControl,
     hlRank: this.heroeLeagueRankControl,
-    timezone: this.timezoneControl
+    timezone: this.timezoneControl,
+    timeAvail:this.timesAvailControl
   })
 
   formControlledEnable(){
 this.hotsLogsFormControl.enable();
+this.discordTagFormControl.enable();
 this.heroeLeagueDivisionControl.enable();
 this.heroeLeagueRankControl.enable();
 this.timezoneControl.enable();
@@ -76,6 +86,7 @@ this.timezoneControl.enable();
 
   formControlledDisable(){
     this.hotsLogsFormControl.disable();
+    this.discordTagFormControl.disable();
     this.heroeLeagueDivisionControl.disable();
     this.heroeLeagueRankControl.disable();
     this.timezoneControl.disable();
@@ -93,7 +104,7 @@ this.timezoneControl.enable();
 
   openDialog(): void {
     
-    const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+    const dialogRef = this.dialog.open(DeleteConfrimModalComponent, {
       width: '300px',
       data: { confirm: this.confirm }
     });
@@ -102,8 +113,7 @@ this.timezoneControl.enable();
       if (result.toLowerCase()=='delete'){
         this.user.deleteUser().subscribe(
           res =>{
-          this.auth.destroyAuth();
-          this.router.navigate(['']);
+          this.auth.destroyAuth('/logout');
          },err=>{
             console.log(err);
           }
@@ -111,9 +121,6 @@ this.timezoneControl.enable();
       }
     });
   }
-
-  formControl = new FormControl('',
-  [Validators.required]);
 
   answers: object;
   selectedMedal: string;
@@ -144,9 +151,26 @@ this.timezoneControl.enable();
      }
    }
 
+  markFormGroupTouched(formGroup: FormGroup) {
+
+  if (formGroup.controls) {
+    const keys = Object.keys(formGroup.controls);
+    for (let i = 0; i < keys.length; i++) {
+      const control = formGroup.controls[keys[i]];
+
+      if (control instanceof FormControl) {
+        control.markAsTouched();
+      } else if (control instanceof FormGroup) {
+        this.markFormGroupTouched(control);
+      }
+    }
+  }
+}
+
    openEdit(){
      this.editOn=false;
      this.formControlledEnable();
+     this.markFormGroupTouched(this.profileForm);
      this.tempProfile = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
      merge(this.tempProfile, this.returnedProfile);
    }
@@ -160,13 +184,14 @@ this.timezoneControl.enable();
    save(){
      if(this.validate()){
        if (!this.isNullOrEmpty(this.returnedProfile.hotsLogsURL)){
+
          this.hotsLogsService.getMMR(this.returnedProfile.hotsLogsURL).subscribe(res => {
            if (res != 'error') {
              this.returnedProfile.averageMmr = res;
              this.user.saveUser(this.returnedProfile).subscribe((res) => {
                if (res) {
                  this.editOn = true;
-                 this.hotsLogsFormControl.disable()
+                 this.formControlledDisable();
                } else {
                  alert("error");
                }
@@ -188,7 +213,6 @@ this.timezoneControl.enable();
          });
        }
      }else{
-       //todo: do something?
        console.log('the data was invalid we cant save');
      }
    }
@@ -205,6 +229,16 @@ this.timezoneControl.enable();
       } )
   }
 
+  validAvailTimes:boolean=false;
+  recieveAvailTimeValidity(event){
+    this.validAvailTimes = event;
+    if(event){
+      this.timesAvailControl.setErrors(null);
+    }else{
+      this.timesAvailControl.setErrors({ invalid: true });
+    }
+  }  
+
   validate(){
     let valid = true;
     //validate the hotslogs URL
@@ -214,7 +248,6 @@ this.timezoneControl.enable();
     }
 
     //validate the hero leauge information
-    //TODO: Check that this is in the validation!
     if (this.isNullOrEmpty(this.returnedProfile.hlRankMetal) && this.isNullOrEmpty(this.returnedProfile.hlRankDivision)){
       valid = false;
     }
@@ -227,15 +260,11 @@ this.timezoneControl.enable();
     //will we require the comp level, play history, roles?
 
     //validate that we have start and end times for available days
-    for (let day in this.returnedProfile.availability){
-      let checkDay = this.returnedProfile.availability[day];
-      if (checkDay.available){
-        if (checkDay.startTime == null && checkDay.endTime == null){
-          return false;
-        }else if (checkDay.startTime.length == 0 && checkDay.endTime.length == 0){
-          return false;
-        }
-      }
+    if(!this.validAvailTimes){
+      valid=false;
+      this.timesAvailControl.setErrors({invalid:true});
+    }else{
+      this.timesAvailControl.setErrors(null);
     }
 
     //ensure time zone
@@ -272,27 +301,4 @@ this.timezoneControl.enable();
   ngOnDestroy(){
     this.profSub.unsubscribe();
   }
-}
-
-
-//!!!-------------------------------!!!
-//component for the modal!!!! 
-export interface DialogData {
-  confirm: string;
-}
-
-@Component({
-  selector: 'dialog-overview-example-dialog',
-  templateUrl: 'dialog-overview-example-dialog.html',
-})
-export class DialogOverviewExampleDialog {
-
-  constructor(
-    public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData) { }
-
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { DialogOverviewExampleDialog } from '../../profile-edit/profile-edit.component'; 
+import { MatDialog } from '@angular/material';
+import { DeleteConfrimModalComponent } from '../../modal/delete-confrim-modal/delete-confrim-modal.component'; 
 import { AdminService } from 'src/app/services/admin.service';
 
 @Component({
@@ -10,38 +10,36 @@ import { AdminService } from 'src/app/services/admin.service';
 })
 export class DeleteMemberComponent implements OnInit {
 
+  //component properties
+  recievedProfile
+  turnOnForm: boolean = false;
+  confirm: string
+
   constructor(public dialog: MatDialog, private admin:AdminService) { }
 
-  recievedProfile
-  turnOnForm:boolean=false;
-
+  //functon bound to the user search event, when user is returned turn on the view to see the selected user profile
   receiveUser(userRec){
     this.turnOnForm = false;
     if (userRec != null && userRec!=undefined){
-      // console.log(userRec);
       this.turnOnForm = true;
       this.recievedProfile = userRec;
     }
   }
 
-  confirm:string
+  //methods for opening the modal
   openDialog(): void {
 
-    const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+    const dialogRef = this.dialog.open(DeleteConfrimModalComponent, {
       width: '300px',
       data: { confirm: this.confirm }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      // console.log('The dialog was closed');
-
       if (result.toLowerCase() == 'delete') {
-        // console.log('delete this account!');
         this.admin.deleteUser(this.recievedProfile).subscribe(
           res => {
             this.turnOnForm = false;
             this.recievedProfile = null;
-            // console.log('deleted!');
           }, err => {
             console.log(err);
           }
@@ -55,19 +53,3 @@ export class DeleteMemberComponent implements OnInit {
   }
 
 }
-
-// @Component({
-//   selector: 'dialog-overview-example-dialog',
-//   templateUrl: '../../profile-edit/dialog-overview-example-dialog.html',
-// })
-// export class DialogOverviewExampleDialog {
-
-//   constructor(
-//     public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
-//     @Inject(MAT_DIALOG_DATA) public data: object) { }
-
-//   onNoClick(): void {
-//     this.dialogRef.close();
-//   }
-
-// }

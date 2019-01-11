@@ -2,11 +2,9 @@ const Team = require('../models/team-models');
 const Division = require('../models/division-models');
 const Scheduling = require('../models/schedule-models');
 const uniqid = require('uniqid');
-const swiss = require('swiss-pairing')({
-    maxPerRound: 2
-});
 const Match = require('../models/match-model');
 const util = require('../utils');
+const robin = require('roundrobin');
 
 
 /* Match report format required for the generator
@@ -47,14 +45,8 @@ async function generateSeason(season) {
             let participants = [];
             if (teams && teams.length > 0) {
                 teams.forEach(team => {
-                    let tempObj = {
-                        "id": team._id,
-                        "seed": team.teamMMRAvg,
-                        "dibanded": false,
-                        "droppedOut": false
-                    };
-                    participants.push(tempObj);
-                })
+                    participants.push(team._id.toString());
+                });
             }
             return participants;
         });
@@ -142,98 +134,42 @@ function generateRoundRobinSchedule(season) {
                 rounds = participants.length;
             }
             let roundSchedules = divisions[key].roundSchedules;
+            let roundRobin = robin(participants.length, participants);
             let matches = divisions[key].matches;
-            //loop through and create the required number of rounds
-            for (var j = 0; j < rounds; j++) {
-                let round = j + 1;
-                let schedule = swiss.getMatchups(round, participants, matches);
-                //once a round has been generated, add to the matches parameter, 
-                //this way we can ensure that no teams are rematched.
-                schedule.forEach(match => {
+
+            for (var j = 0; j < roundRobin.length; j++) {
+                let roundNum = j + 1;
+                let round = roundRobin[j];
+                round.forEach(match => {
                     let matchObj = {
-                        "round": round,
+                        'season': season,
+                        'divisionConcat': key,
+                        "matchId": uniqid(),
+                        "round": roundNum,
                         home: {
-                            id: match.home
+                            id: match[0]
                         },
                         away: {
-                            id: match.away
+                            id: match[1]
                         }
                     }
                     matches.push(matchObj);
                 });
-                //if a schedule was generated, add it to the round schedules
-                if (schedule.length > 0) {
-                    schedule.forEach(match => {
-                        match.matchId = uniqid();
-                    });
-                    //if round schedules didnt exist on the object, create it
-                    if (roundSchedules == undefined || roundSchedules == null) {
-                        divisions[key].roundSchedules = {};
-                        roundSchedules = divisions[key].roundSchedules;
-                    }
-                    round = round.toString();
-                    roundSchedules[round] = schedule;
-                }
             }
+            Match.insertMany(matches).then(res => {
+                console.log('matches inserted!');
+            }, err => {
+                console.log('error inserting matches');
+            });
         }
-        //save the schedule
+
         found.markModified('division');
         found.save().then((saved) => {
-            /*
-            
-            Now create the new table that is matches only!
-
-            */
-            let matchesToInsert = [];
-            let divisions = saved.division;
-            let divisionNames = Object.keys(divisions);
-            //get some data from our found object of
-            for (var i = 0; i < divisionNames.length; i++) {
-                let divisionName = divisionNames[i];
-                let roundSchedules = divisions[divisionName].roundSchedules;
-                if (roundSchedules != null || roundSchedules != undefined) {
-                    if (Object.entries(roundSchedules).length > 0) {
-                        let rounds = Object.keys(roundSchedules);
-                        rounds.forEach(round => {
-                            let matches = roundSchedules[round];
-                            matches.forEach(match => {
-                                // console.log('match ', match)
-                                let newMatch = Object.assign({}, match);
-                                newMatch.round = round;
-                                newMatch.home = {};
-                                if (match.home == null) {
-                                    newMatch.home.id = 'null';
-                                } else {
-                                    newMatch.home.id = match.home;
-                                }
-                                newMatch.away = {};
-                                if (match.away == null) {
-                                    newMatch.away.id = 'null';
-                                } else {
-                                    newMatch.away.id = match.away;
-                                }
-                                // newMatch.home.id = match.home;
-                                // newMatch.away.id = match.away;
-                                newMatch.season = season;
-                                newMatch.divisionConcat = divisionName;
-                                // console.log('newMatch ', newMatch);
-                                matchesToInsert.push(newMatch);
-                            });
-                        });
-                    }
-                }
-            }
-            if (matchesToInsert.length > 0) {
-                Match.insertMany(matchesToInsert).then(res => {
-                    // console.log('matches inserted!');
-                }, err => {
-                    // console.log('error inserting matches');
-                })
-            }
-            // console.log('fin  schedules');
+            console.log('season saved');
         }, (err) => {
-            // console.log('ERROR : ', err);
+            console.log('season save error!');
         })
+
     });
 }
 
@@ -249,3 +185,107 @@ module.exports = {
     generateRoundSchedules: generateRoundSchedules,
     generateRoundRobinSchedule: generateRoundRobinSchedule
 };
+
+
+// if (matches.length > 0) {
+//     Match.insertMany(matches).then(res => {
+//         // console.log('matches inserted!');
+//     }, err => {
+//         // console.log('error inserting matches');
+//     })
+// }
+
+// console.log(matches);
+//loop through and create the required number of rounds
+// for (var j = 0; j < rounds; j++) {
+//     let round = j + 1;
+//     let schedule = swiss.getMatchups(round, participants, matches);
+//     //once a round has been generated, add to the matches parameter, 
+//     //this way we can ensure that no teams are rematched.
+//     schedule.forEach(match => {
+//         let matchObj = {
+//             "round": round,
+//             home: {
+//                 id: match.home
+//             },
+//             away: {
+//                 id: match.away
+//             }
+//         }
+//         matches.push(matchObj);
+//     });
+//     //if a schedule was generated, add it to the round schedules
+//     if (schedule.length > 0) {
+//         schedule.forEach(match => {
+//             match.matchId = uniqid();
+//         });
+//         //if round schedules didnt exist on the object, create it
+//         if (roundSchedules == undefined || roundSchedules == null) {
+//             divisions[key].roundSchedules = {};
+//             roundSchedules = divisions[key].roundSchedules;
+//         }
+//         round = round.toString();
+//         roundSchedules[round] = schedule;
+//     }
+// }
+
+//save the schedule
+
+//save the schedule
+// found.markModified('division');
+// found.save().then((saved) => {
+//     /*
+
+//     Now create the new table that is matches only!
+
+//     */
+//     // let matchesToInsert = [];
+//     // let divisions = saved.division;
+//     // let divisionNames = Object.keys(divisions);
+//     // //get some data from our found object of
+//     // for (var i = 0; i < divisionNames.length; i++) {
+//     //     let divisionName = divisionNames[i];
+//     //     let roundSchedules = divisions[divisionName].roundSchedules;
+//     //     if (roundSchedules != null || roundSchedules != undefined) {
+//     //         if (Object.entries(roundSchedules).length > 0) {
+//     //             let rounds = Object.keys(roundSchedules);
+//     //             rounds.forEach(round => {
+//     //                 let matches = roundSchedules[round];
+//     //                 matches.forEach(match => {
+//     //                     // console.log('match ', match)
+//     //                     let newMatch = Object.assign({}, match);
+//     //                     newMatch.round = round;
+//     //                     newMatch.home = {};
+//     //                     if (match.home == null) {
+//     //                         newMatch.home.id = 'null';
+//     //                     } else {
+//     //                         newMatch.home.id = match.home;
+//     //                     }
+//     //                     newMatch.away = {};
+//     //                     if (match.away == null) {
+//     //                         newMatch.away.id = 'null';
+//     //                     } else {
+//     //                         newMatch.away.id = match.away;
+//     //                     }
+//     //                     // newMatch.home.id = match.home;
+//     //                     // newMatch.away.id = match.away;
+//     //                     newMatch.season = season;
+//     //                     newMatch.divisionConcat = divisionName;
+//     //                     // console.log('newMatch ', newMatch);
+//     //                     matchesToInsert.push(newMatch);
+//     //                 });
+//     //             });
+//     //         }
+//     //     }
+//     // }
+//     // if (matchesToInsert.length > 0) {
+//     //     Match.insertMany(matchesToInsert).then(res => {
+//     //         // console.log('matches inserted!');
+//     //     }, err => {
+//     //         // console.log('error inserting matches');
+//     //     })
+//     // }
+//     // console.log('fin  schedules');
+// }, (err) => {
+//     // console.log('ERROR : ', err);
+// })

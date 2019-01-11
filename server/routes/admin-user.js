@@ -9,11 +9,21 @@ const router = require('express').Router();
 
 router.post('/delete/user', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.userLevel, (req, res) => {
+}), levelRestrict.userLevel, util.appendResHeader, (req, res) => {
     const path = '/admin/delete/user';
     let user = req.body.displayName;
+
+    //log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = 'delete user';
+    logObj.target = user;
+    logObj.logLevel = 'ADMIN';
+
     if (user == req.user.displayName) {
-        res.status(400).send(util.returnMessaging(path, 'You can\t delete yourself'));
+        logObj.logLevel = 'ERROR';
+        logObj.error = 'Tried to delete theirselve';
+        res.status(400).send(util.returnMessaging(path, 'You can\t delete yourself', null, null, null, logObj));
     } else {
         User.findOne({
             displayName: user
@@ -22,26 +32,31 @@ router.post('/delete/user', passport.authenticate('jwt', {
                 //if user is a captain to not delete:
                 if (util.returnByPath(foundUser, 'isCaptain')) {
                     //if user is a capt, send error back
-                    res.status(400).send(util.returnMessaging(path, 'Cannot delete user that is captain', false, foundUser));
+                    logObj.logLevel = 'ERROR';
+                    logObj.error = 'Cannot delete user that is captain';
+                    res.status(400).send(util.returnMessaging(path, 'Cannot delete user that is captain', false, foundUser, null, null, logObj));
                 } else {
                     foundUser.remove().then((removed) => {
-                        res.status(200).send(util.returnMessaging(path, 'User removed'));
+                        res.status(200).send(util.returnMessaging(path, 'User removed', null, removed, null, logObj));
                         UserSub.scrubUser(removed.displayName);
                     }, (remErr) => {
-                        res.status(500).send(util.returnMessaging(path, 'Error removing user', remErr));
+                        res.status(500).send(util.returnMessaging(path, 'Error removing user', remErr, null, null, logObj));
                     });
                 }
             }
         }, (err) => {
-            res.status(500).send(util.returnMessaging(path, 'Error finding user', err));
+            res.status(500).send(util.returnMessaging(path, 'Error finding user', err, null, null, logObj));
         });
     }
 
 });
-//res.status(500).send(util.returnMessaging(path, 'Error getting users acl', err));
+
+
+
+//returns all users and acl lists
 router.get('/user/get/usersacl/all', passport.authenticate('jwt', {
     session: false
-}), (req, res) => {
+}), levelRestrict.userACL, util.appendResHeader, (req, res) => {
     const path = 'admin/user/get/usersacl/all';
     User.find({}).lean().then(
         users => {
@@ -82,9 +97,10 @@ router.get('/user/get/usersacl/all', passport.authenticate('jwt', {
     )
 });
 
+//returns specified users ACL
 router.post('/user/get/usersacl', passport.authenticate('jwt', {
     session: false
-}), (req, res) => {
+}), levelRestrict.userACL, util.appendResHeader, (req, res) => {
     let id = req.body.id;
     const path = 'admin/user/get/usersacl';
     User.findById(id).lean().then(
@@ -114,10 +130,20 @@ router.post('/user/get/usersacl', passport.authenticate('jwt', {
     )
 });
 
+//updates or creates user acl list
 router.post('/user/upsertRoles', passport.authenticate('jwt', {
     session: false
-}), (req, res) => {
+}), levelRestrict.userACL, util.appendResHeader, (req, res) => {
     const path = 'admin/user/upsertRoles';
+
+    //log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = ' updated users ACLs ';
+    logObj.target = req.body.admin;
+    logObj.logLevel = 'ADMIN';
+
+
     Admin.AdminLevel.findOne({
         adminId: req.body.adminId
     }).then((foundAdmin) => {
@@ -127,19 +153,19 @@ router.post('/user/upsertRoles', passport.authenticate('jwt', {
                 foundAdmin[prop] = req.body[prop];
             });
             foundAdmin.save().then((savedAdmin) => {
-                res.status(200).send(util.returnMessaging(path, 'Admin saved', false, savedAdmin));
+                res.status(200).send(util.returnMessaging(path, 'Admin saved', false, savedAdmin, null, logObj));
             }, (err) => {
-                res.status(500).send(util.returnMessaging(path, 'Error saving admin.', err));
+                res.status(500).send(util.returnMessaging(path, 'Error saving admin.', err, null, null, logObj));
             });
         } else {
             new Admin.AdminLevel(req.body).save().then((newAdmin) => {
-                res.status(200).send(util.returnMessaging(path, 'Admin Created', false, newAdmin));
+                res.status(200).send(util.returnMessaging(path, 'Admin Created', false, newAdmin, null, logObj));
             }, (err) => {
-                res.status(500).send(util.returnMessaging(path, 'Error creating admin', err));
+                res.status(500).send(util.returnMessaging(path, 'Error creating admin', err, null, null, logObj));
             })
         }
     }, (err) => {
-        res.status(500).send(util.returnMessaging(path, 'Error finding admin', err));
+        res.status(500).send(util.returnMessaging(path, 'Error finding admin', err, null, null, logObj));
     })
 });
 

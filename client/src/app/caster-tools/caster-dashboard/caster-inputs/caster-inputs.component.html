@@ -1,20 +1,26 @@
 <div class="row">
-    <div class="col">
-        <button (click)="hideForm = !hideForm"> Add Caster </button>
+    <div class="col text-center">
+        <button class="btn btn-info" (click)="hideForm = !hideForm"> Add Caster </button>
     </div>
 </div>
 <div [hidden]="hideForm" class="row">
     <div class="col">
-        <mat-form-field class="tp-FullWidth">
+        <mat-form-field class="mat-FullWidth">
             <input matInput [formControl]="casterNameControl" placeholder="Caster Name" [(ngModel)]="name">
+            <mat-error *ngIf="casterNameControl.hasError('required')">
+                Caster Name is required
+            </mat-error>
         </mat-form-field>
     </div>
     <div class="col">
-        <mat-form-field class="tp-FullWidth">
+        <mat-form-field class="mat-FullWidth">
             <input matInput [formControl]="casterUrlControl" placeholder="Caster URL" [(ngModel)]="URL">
+            <mat-error *ngIf="casterUrlControl.hasError('required')">
+                Caster URL is required
+            </mat-error>
         </mat-form-field>
     </div>
     <div class="col">
-        <button [disabled]="casterInputForm.invalid" (click)="saveCasterInfo(name, URL)">Submit</button>
+        <button class="btn btn-success" [disabled]="casterInputForm.invalid" (click)="saveCasterInfo(name, URL)">Submit</button>
     </div>
 </div>

@@ -79,3 +79,22 @@
         "team1", "team2", "team3", "team4"
     ]
 }
+
+
+//questionnaire responses:
+{
+    "season": 6,
+    "survey": [{
+        "question": "BLAH BLAH BLAH?",
+        "response": "BLAH!"
+    }]
+}
+
+//questionnaire data:
+
+{
+    "dataName": "questionnaire",
+    "data": [
+        "Question 1", "Question 2", "Question 3"
+    ]
+}

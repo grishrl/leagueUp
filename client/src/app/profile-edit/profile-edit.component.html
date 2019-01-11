@@ -1,248 +1,166 @@
 <!-- *ngIf="userProfile|async as resolvedUser; else loading" -->
 <div class="container">
-    <div class="row">
-        <div class="col">
-            <div class="row" *ngIf="auth.getUser() === returnedProfile.displayName">
-                <div class="col-8 offset-2">
-                    <div class="row mt-3">
-                        <div class="col-6">
-                            Welcome to your player profile!
-                        </div>
-                        <div class="col-6">
-                            <div *ngIf="editOn == true">
-                                <button type="button" (click)="openEdit()" class="btn btn-primary float-right">Edit</button>
+    <div class="bg-white">
+        <div class="row">
+            <div class="col">
+                <div class="row" *ngIf="auth.getUser() === returnedProfile.displayName">
+                    <div class="col-8 offset-2">
+                        <div class="row mt-3">
+                            <div class="col-6">
+                                Welcome to your player profile!
                             </div>
-                            <div class="row" *ngIf="!editOn">
-                                <div class="col">
-                                    <button type="button" (click)="openDialog()" class="btn btn-danger "><span class="icon-align"><i class="material-icons">delete_forever</i>Delete</span></button>
+                            <div class="col-6">
+                                <div *ngIf="editOn == true">
+                                    <button type="button" (click)="openEdit()" class="btn btn-primary float-right">Edit</button>
                                 </div>
-                                <div class="col">
-                                    <button type="button" [disabled]="!profileForm.valid" (click)="save()" class="btn btn-success "><span class="icon-align"><i class="material-icons">check</i>Save</span></button>
-                                </div>
-                                <div class="col">
-                                    <button type="button" (click)="cancel()" class="btn btn-danger"><span class="icon-align"><i class="material-icons">close</i>Cancel</span></button>
+                                <div class="row" *ngIf="!editOn">
+                                    <div class="col">
+                                        <button type="button" (click)="openDialog()" class="btn btn-danger "><span class="icon-align"><i class="material-icons">delete_forever</i>Delete</span></button>
+                                    </div>
+                                    <div class="col">
+                                        <button type="button" [disabled]="!profileForm.valid" (click)="save()" class="btn btn-success "><span class="icon-align"><i class="material-icons">check</i>Save</span></button>
+                                    </div>
+                                    <div class="col">
+                                        <button type="button" (click)="cancel()" class="btn btn-danger"><span class="icon-align"><i class="material-icons">close</i>Cancel</span></button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row mt-2">
-                <div class="col-md-12">
-                    <div class="example-container">
-                        <mat-form-field>
-                            <input matInput placeholder="Display Name" [(ngModel)]="returnedProfile.displayName" disabled="true">
-                        </mat-form-field>
-                        <mat-form-field>
-                            <input matInput placeholder="HOTS LOGS URL" [formControl]="hotsLogsFormControl" [(ngModel)]="returnedProfile.hotsLogsURL">
-                        </mat-form-field>
-                        <mat-form-field>
-                            <input matInput placeholder="Discord Tag" [(ngModel)]="returnedProfile.discordTag" disabled="true">
-                        </mat-form-field>
-                        <mat-form-field>
-                            <mat-select placeholder="Hero League Division" [formControl]="heroeLeagueDivisionControl" [(ngModel)]="returnedProfile.hlRankMetal">
-                                <mat-option *ngFor="let medal of hlMedals" [value]="medal">
-                                    {{medal}}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                        <div class="pe-full-width" *ngIf="returnedProfile.hlRankMetal != 'Master' && returnedProfile.hlRankMetal != 'Grand Master'">
-                            <mat-form-field class="pe-full-width">
-                                <mat-select placeholder="Hero League Rank" [formControl]="heroeLeagueRankControl" [(ngModel)]="returnedProfile.hlRankDivision">
-                                    <mat-option *ngFor="let rank of hlDivision" [value]="rank">
-                                        {{rank}}
+                <div class="row mt-2">
+                    <div class="col-md-12">
+                        <div class="example-container">
+                            <mat-form-field>
+                                <input matInput placeholder="Display Name" [(ngModel)]="returnedProfile.displayName" disabled="true">
+                            </mat-form-field>
+                            <mat-form-field>
+                                <input matInput placeholder="HOTS LOGS URL" [formControl]="hotsLogsFormControl" [(ngModel)]="returnedProfile.hotsLogsURL">
+                                <mat-error *ngIf="hotsLogsFormControl.hasError('required')">
+                                    HOTS Logs URL is required
+                                </mat-error>
+                                <mat-error *ngIf="hotsLogsFormControl.hasError('invalidurl')">
+                                    This doesn't match the pattern we're looking for: https://www.hotslogs.com/Player/Profile?PlayerID=######
+                                </mat-error>
+
+                            </mat-form-field>
+                            <mat-form-field>
+                                <input matInput placeholder="Discord Tag" [formControl]="discordTagFormControl" [(ngModel)]="returnedProfile.discordTag">
+                                <mat-error *ngIf="discordTagFormControl.hasError('required')">
+                                    Discord Tag is required.
+                                </mat-error>
+                            </mat-form-field>
+                            <mat-form-field>
+                                <mat-select placeholder="Hero League Division" [formControl]="heroeLeagueDivisionControl" [(ngModel)]="returnedProfile.hlRankMetal" disableOptionCentering>
+                                    <mat-option *ngFor="let medal of hlMedals" [value]="medal">
+                                        {{medal}}
                                     </mat-option>
+                                    <mat-error *ngIf="heroeLeagueDivisionControl.hasError('required')">
+                                        Hero League Division is required
+                                    </mat-error>
                                 </mat-select>
                             </mat-form-field>
-                        </div>
-
-                        <div class="pe-full-width" *ngIf="returnedProfile.hlRankMetal == 'Master' || returnedProfile.hlRankMetal == 'Grand Master'">
-                            <mat-form-field class="pe-full-width">
-                                <input matInput placeholder="Rank Number" [formControl]="heroeLeagueRankControl" [(ngModel)]="returnedProfile.hlRankDivision">
-                            </mat-form-field>
-                        </div>
-
-                        <div class="row">
-                            <div class="col">
-                                <mat-slide-toggle disabled="{{editOn}}" [(ngModel)]="returnedProfile.lookingForGroup">
-                                    Looking for team.
-                                </mat-slide-toggle>
-                            </div>
-                        </div>
-
-                        <mat-form-field class="mt-3">
-                            <mat-select placeholder="Competitive Level" disabled="{{editOn}}" [(ngModel)]="returnedProfile.competitiveLevel">
-                                <mat-option *ngFor="let level of competitonLevel" [value]="level">
-                                    {{level}}
-                                </mat-option>
-                            </mat-select>
-                            <mat-hint align="start"><strong>Generally how serious / competitively you're looking to play</strong>
-                            </mat-hint>
-                        </mat-form-field>
-
-                        <div class="row mt-3">
-                            <div class="col">
+                            <div class="pe-full-width" *ngIf="returnedProfile.hlRankMetal != 'Master' && returnedProfile.hlRankMetal != 'Grand Master'">
                                 <mat-form-field class="pe-full-width">
-                                    <mat-label>Describe your play history / style</mat-label>
-                                    <textarea matInput cdkTextareaAutosize disabled="{{editOn}}" [(ngModel)]="returnedProfile.descriptionOfPlay"></textarea>
+                                    <mat-select placeholder="Hero League Rank" [formControl]="heroeLeagueRankControl" [(ngModel)]="returnedProfile.hlRankDivision" disableOptionCentering>
+                                        <mat-option *ngFor="let rank of hlDivision" [value]="rank">
+                                            {{rank}}
+                                        </mat-option>
+                                        <mat-error *ngIf="heroeLeagueRankControl.hasError('required')">
+                                            Hero League Rank is required
+                                        </mat-error>
+                                    </mat-select>
                                 </mat-form-field>
                             </div>
-                        </div>
-                        <div class="row mt-3">
+
+                            <div class="pe-full-width" *ngIf="returnedProfile.hlRankMetal == 'Master' || returnedProfile.hlRankMetal == 'Grand Master'">
+                                <mat-form-field class="pe-full-width">
+                                    <input matInput placeholder="Rank Number" [formControl]="heroeLeagueRankControl" [(ngModel)]="returnedProfile.hlRankDivision">
+                                </mat-form-field>
+                                <mat-error *ngIf="heroeLeagueRankControl.hasError('required')">
+                                    Hero League Rank is required
+                                </mat-error>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <mat-slide-toggle disabled="{{editOn}}" [(ngModel)]="returnedProfile.lookingForGroup">
+                                        Looking for team.
+                                    </mat-slide-toggle>
+                                </div>
+                            </div>
+
+                            <mat-form-field class="mt-3">
+                                <mat-select placeholder="Competitive Level" disabled="{{editOn}}" [(ngModel)]="returnedProfile.competitiveLevel" disableOptionCentering>
+                                    <mat-option *ngFor="let level of competitonLevel" [value]="level">
+                                        {{level}}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-hint align="start"><strong>Generally how serious / competitively you're looking to play</strong>
+                                </mat-hint>
+                            </mat-form-field>
+
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <mat-form-field class="pe-full-width">
+                                        <mat-label>Describe your play history / style</mat-label>
+                                        <textarea matInput cdkTextareaAutosize disabled="{{editOn}}" [(ngModel)]="returnedProfile.descriptionOfPlay"></textarea>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                            <!-- <div class="row mt-3">
                             <div class="col">
                                 <mat-form-field class="pe-full-width">
                                     <input matInput placeholder="Enter your toon ID, we will use this tie your profile to submitted replays" [(ngModel)]="returnedProfile.toonId" disabled="{{editOn}}">
                                 </mat-form-field>
                             </div>
-                        </div>
-                        <div class="row mt-1">
-                            <div class="col">
-                                Roles:
-                                <section>
-                                    <mat-checkbox class="role-margin" disabled="{{editOn}}" [(ngModel)]="returnedProfile.role.tank">Tank</mat-checkbox>
-                                    <mat-checkbox class="role-margin" disabled="{{editOn}}" [(ngModel)]="returnedProfile.role.offlane">Offlane</mat-checkbox>
-                                    <mat-checkbox class="role-margin" disabled="{{editOn}}" [(ngModel)]="returnedProfile.role.assassin">Assassin</mat-checkbox>
-                                    <mat-checkbox class="role-margin" disabled="{{editOn}}" [(ngModel)]="returnedProfile.role.support">Support</mat-checkbox>
-                                    <mat-checkbox class="role-margin" disabled="{{editOn}}" [(ngModel)]="returnedProfile.role.specialist">Specialist</mat-checkbox>
-                                </section>
+                        </div> -->
+                            <div class="row mt-1">
+                                <div class="col">
+                                    Roles:
+                                    <section>
+                                        <mat-checkbox class="role-margin" disabled="{{editOn}}" [(ngModel)]="returnedProfile.role.tank">Tank</mat-checkbox>
+                                        <mat-checkbox class="role-margin" disabled="{{editOn}}" [(ngModel)]="returnedProfile.role.offlane">Offlane</mat-checkbox>
+                                        <mat-checkbox class="role-margin" disabled="{{editOn}}" [(ngModel)]="returnedProfile.role.meleeassassin">Melee Assassin</mat-checkbox>
+                                        <mat-checkbox class="role-margin" disabled="{{editOn}}" [(ngModel)]="returnedProfile.role.rangedassassin">Ranged Assassin</mat-checkbox>
+                                        <mat-checkbox class="role-margin" disabled="{{editOn}}" [(ngModel)]="returnedProfile.role.support">Support</mat-checkbox>
+                                        <mat-checkbox class="role-margin" disabled="{{editOn}}" [(ngModel)]="returnedProfile.role.flex">Flex</mat-checkbox>
+                                    </section>
+                                </div>
                             </div>
-                        </div>
-                        <!-- Availability Schedule -->
-                        <div class="row mt-3">
-                            <div class="col">
-                                Availability
-                            </div>
-                        </div>
-                        <!-- !editOn && !returnedProfile.availability.monday.available || editOn &&  -->
-                        <div class="row mt-3" [hidden]="hideDay(editOn,returnedProfile.availability.monday.available)">
-                            <div class="col">
-                                <mat-checkbox disabled="{{editOn}}" class="" [(ngModel)]="returnedProfile.availability.monday.available">Monday</mat-checkbox>
-                            </div>
-                            <div class="col">
-                                <mat-form-field>
-                                    <input matInput type="time" [(ngModel)]="returnedProfile.availability.monday.startTime" placeholder="Start Time" disabled="{{editOn}}">
-                                </mat-form-field>
-                            </div>
-                            <div class="col">
-                                <mat-form-field>
-                                    <input matInput type="time" placeholder="End Time" [(ngModel)]="returnedProfile.availability.monday.endTime" disabled="{{editOn}}">
-                                </mat-form-field>
-                            </div>
-                        </div>
-                        <div class="row" [hidden]="hideDay(editOn,returnedProfile.availability.tuesday.available)">
-                            <div class="col">
-                                <mat-checkbox class="" disabled="{{editOn}}" [(ngModel)]="returnedProfile.availability.tuesday.available">Tuesday</mat-checkbox>
-                            </div>
-                            <div class="col">
-                                <mat-form-field>
-                                    <input matInput type="time" [(ngModel)]="returnedProfile.availability.tuesday.startTime" placeholder="Start Time" disabled="{{editOn}}">
-                                </mat-form-field>
-                            </div>
-                            <div class="col">
-                                <mat-form-field>
-                                    <input matInput type="time" placeholder="End Time" [(ngModel)]="returnedProfile.availability.tuesday.endTime" disabled="{{editOn}}">
-                                </mat-form-field>
-                            </div>
-                        </div>
-                        <div class="row" [hidden]="hideDay(editOn,returnedProfile.availability.wednesday.available)">
-                            <div class="col">
-                                <mat-checkbox class="" disabled="{{editOn}}" [(ngModel)]="returnedProfile.availability.wednesday.available">Wednesday</mat-checkbox>
-                            </div>
-                            <div class="col">
-                                <mat-form-field>
-                                    <input matInput type="time" [(ngModel)]="returnedProfile.availability.wednesday.startTime" placeholder="Start Time" disabled="{{editOn}}">
-                                </mat-form-field>
-                            </div>
-                            <div class="col">
-                                <mat-form-field>
-                                    <input matInput type="time" placeholder="End Time" [(ngModel)]="returnedProfile.availability.wednesday.endTime" disabled="{{editOn}}">
-                                </mat-form-field>
-                            </div>
-                        </div>
-                        <div class="row" [hidden]="hideDay(editOn,returnedProfile.availability.thursday.available)">
-                            <div class="col">
-                                <mat-checkbox class="" disabled="{{editOn}}" [(ngModel)]="returnedProfile.availability.thursday.available">Thursday</mat-checkbox>
-                            </div>
-                            <div class="col">
-                                <mat-form-field>
-                                    <input matInput type="time" [(ngModel)]="returnedProfile.availability.thursday.startTime" placeholder="Start Time" disabled="{{editOn}}">
-                                </mat-form-field>
-                            </div>
-                            <div class="col">
-                                <mat-form-field>
-                                    <input matInput type="time" placeholder="End Time" [(ngModel)]="returnedProfile.availability.thursday.endTime" disabled="{{editOn}}">
-                                </mat-form-field>
-                            </div>
-                        </div>
-                        <div class="row" [hidden]="hideDay(editOn,returnedProfile.availability.friday.available)">
-                            <div class="col">
-                                <mat-checkbox class="" disabled="{{editOn}}" [(ngModel)]="returnedProfile.availability.friday.available">Friday</mat-checkbox>
-                            </div>
-                            <div class="col">
-                                <mat-form-field>
-                                    <input matInput type="time" [(ngModel)]="returnedProfile.availability.friday.startTime" placeholder="Start Time" disabled="{{editOn}}">
-                                </mat-form-field>
-                            </div>
-                            <div class="col">
-                                <mat-form-field>
-                                    <input matInput type="time" placeholder="End Time" [(ngModel)]="returnedProfile.availability.friday.endTime" disabled="{{editOn}}">
-                                </mat-form-field>
-                            </div>
-                        </div>
-                        <div class="row" [hidden]="hideDay(editOn,returnedProfile.availability.saturday.available)">
-                            <div class="col">
-                                <mat-checkbox class="" disabled="{{editOn}}" [(ngModel)]="returnedProfile.availability.saturday.available">Saturday</mat-checkbox>
-                            </div>
-                            <div class="col">
-                                <mat-form-field>
-                                    <input matInput type="time" [(ngModel)]="returnedProfile.availability.saturday.startTime" placeholder="Start Time" disabled="{{editOn}}">
-                                </mat-form-field>
-                            </div>
-                            <div class="col">
-                                <mat-form-field>
-                                    <input matInput type="time" placeholder="End Time" [(ngModel)]="returnedProfile.availability.saturday.endTime" disabled="{{editOn}}">
-                                </mat-form-field>
-                            </div>
-                        </div>
-                        <div class="row" [hidden]="hideDay(editOn,returnedProfile.availability.sunday.available)">
-                            <div class="col">
-                                <mat-checkbox class="" disabled="{{editOn}}" [(ngModel)]="returnedProfile.availability.sunday.available">Sunday</mat-checkbox>
-                            </div>
-                            <div class="col">
-                                <mat-form-field>
-                                    <input matInput type="time" [(ngModel)]="returnedProfile.availability.sunday.startTime" placeholder="Start Time" disabled="{{editOn}}">
-                                </mat-form-field>
-                            </div>
-                            <div class="col">
-                                <mat-form-field>
-                                    <input matInput type="time" [(ngModel)]="returnedProfile.availability.sunday.endTime" placeholder="End Time" disabled="{{editOn}}">
-                                </mat-form-field>
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col">
-                                <mat-form-field class="pe-full-width">
-                                    <mat-select placeholder="Timezone:" [formControl]="timezoneControl" [(ngModel)]="returnedProfile.timeZone">
-                                        <mat-option *ngFor="let zone of timezone.timezones" [value]="zone.value">
-                                            {{zone.text}}
-                                        </mat-option>
-                                    </mat-select>
-                                </mat-form-field>
+                            <!-- Availability Schedule -->
+
+                            <!-- !editOn && !returnedProfile.availability.monday.available || editOn &&  -->
+                            <app-times-available [customText]="'Availability'" [availObj]="returnedProfile.availability" (availValid)="recieveAvailTimeValidity($event)" [disabled]="editOn"></app-times-available>
+
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <mat-form-field class="pe-full-width">
+                                        <mat-select placeholder="Timezone:" [formControl]="timezoneControl" [(ngModel)]="returnedProfile.timeZone">
+                                            <mat-option *ngFor="let zone of timezone.timezones" [value]="zone.value">
+                                                {{zone.text}}
+                                            </mat-option>
+                                        </mat-select>
+                                        <mat-error *ngIf="timezoneControl.hasError('required')">
+                                            Timezone is required
+                                        </mat-error>
+                                    </mat-form-field>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
 
 
-        <ng-template #loading>
-            <div class="row">
-                <div class="col">
-                    <h3>Loading profile..</h3>
+            <ng-template #loading>
+                <div class="row">
+                    <div class="col">
+                        <h3>Loading profile..</h3>
+                    </div>
                 </div>
-            </div>
-        </ng-template>
+            </ng-template>
+        </div>
     </div>
 </div>

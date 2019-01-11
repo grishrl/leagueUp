@@ -1,6 +1,6 @@
 import { Component, OnInit, Input} from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { DialogOverviewExampleDialog } from '../profile-edit/profile-edit.component';
+import { DeleteConfrimModalComponent } from '../modal/delete-confrim-modal/delete-confrim-modal.component'
 import { ChangeCaptainModalComponent } from '../modal/change-captain-modal/change-captain-modal.component';
 import { TimezoneService } from '../services/timezone.service';
 import { TeamService } from '../services/team.service';
@@ -25,7 +25,7 @@ export class TeamProfileComponent implements OnInit {
   editOn: boolean = true;
   teamName: string;
   displayDivision: string = ""
-  returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+  returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
   filterUsers: any[] = []
   tempProfile
   message: string
@@ -84,7 +84,7 @@ export class TeamProfileComponent implements OnInit {
     if(this.componentEmbedded){
       this.admin.removeMembers(this.returnedProfile.teamName_lower, player).subscribe(
         (res) => {
-          console.log('user removed');
+          // console.log('user removed');
           this.ngOnInit();
         },
         (err) => {
@@ -129,14 +129,16 @@ export class TeamProfileComponent implements OnInit {
   ngOnInit() {
     this.displayMembersLeft = [];
     this.displayMembersRight = [];
-    this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+    this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     let getProfile: string;
-    console.log('typeof this.providedProfile: ', typeof this.providedProfile);
-    console.log('his.providedProfile: ', this.providedProfile);
+    // console.log('typeof this.providedProfile: ', typeof this.providedProfile);
+    // console.log('his.providedProfile: ', this.providedProfile);
     if (this.providedProfile != null && this.providedProfile != undefined) {
       if (typeof this.providedProfile == 'string') {
         getProfile = this.providedProfile;
+        this.orignalName = this.team.realTeamName(this.providedProfile);
         this.getTeamByString(getProfile);
+        
       } else {
         merge(this.returnedProfile, this.providedProfile);
         this.setUpTeamMemberFilter(this.returnedProfile);
@@ -156,7 +158,7 @@ export class TeamProfileComponent implements OnInit {
         this.filterUsers.push(element['displayName']);
       });
     }
-    console.log('teamProfile ',teamProfile);
+    // console.log('teamProfile ',teamProfile);
     if (teamProfile.pendingMembers && teamProfile.pendingMembers.length > 0) {
       teamProfile.pendingMembers.forEach(element => {
         this.filterUsers.push(element['displayName']);
@@ -171,9 +173,9 @@ export class TeamProfileComponent implements OnInit {
   
   // this model change method will be bound to the name change input, so we can update the lower case name along with the display name
   modelChange() {
-    console.log('model change');
-    console.log('this.returnedProfile.teamName ', this.returnedProfile.teamName);
-    console.log('this.returnedProfile.teamName_lower ', this.returnedProfile.teamName_lower);
+    // console.log('model change');
+    // console.log('this.returnedProfile.teamName ', this.returnedProfile.teamName);
+    // console.log('this.returnedProfile.teamName_lower ', this.returnedProfile.teamName_lower);
     if (this.returnedProfile.teamName != this.returnedProfile.teamName_lower) {
       this.returnedProfile.teamName_lower = this.returnedProfile.teamName.toLowerCase();
     }
@@ -194,10 +196,24 @@ export class TeamProfileComponent implements OnInit {
     }
   }
 
+  showRegisteredQuestionnaire(){
+    if (this.embedSource == 'admin'){
+      return true;
+    }else{
+      return !this.returnedProfile.questionnaire['registered'];
+    }
+   
+  }
+
   embedSource:string='';
   @Input() set source(_source){
     this.embedSource = _source;
   } 
+
+  validAvailableTimes:boolean
+  receiveValidTimes(event){
+    this.validAvailableTimes=event;
+  }
 
 
   //this method controls the opening of the change captain modal
@@ -243,16 +259,13 @@ export class TeamProfileComponent implements OnInit {
   }
 
   openAdminDeleteDialog():void{
-    const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+    const dialogRef = this.dialog.open(DeleteConfrimModalComponent, {
       width: '300px',
       data: { confirm: this.confirm }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-
-
       if (result.toLowerCase() == 'delete') {
-
         this.admin.deleteTeam(this.returnedProfile.teamName_lower).subscribe(
           res => {
             this.showMe = false;
@@ -268,16 +281,13 @@ export class TeamProfileComponent implements OnInit {
   confirm: string
   openDialog(): void {
 
-    const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+    const dialogRef = this.dialog.open(DeleteConfrimModalComponent, {
       width: '300px',
       data: { confirm: this.confirm }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-
       if (result.toLowerCase() == 'delete') {
-        console.log('delete this account!');
         this.team.deleteTeam(this.returnedProfile.teamName_lower).subscribe(
           res => {
             this.returnedProfile = null;
@@ -299,7 +309,7 @@ export class TeamProfileComponent implements OnInit {
       let cptRemoved = Object.assign({}, this.returnedProfile);
       delete cptRemoved.captain;
       this.admin.saveTeam(this.orignalName,this.returnedProfile).subscribe((res) => {
-        console.log('team was saved!');
+        // console.log('team was saved!');
         this.orignalName = res.teamName_lower;
         this.returnedProfile = res;
       }, (err) => {
@@ -349,12 +359,12 @@ export class TeamProfileComponent implements OnInit {
 
   //method for inviting users to join this team
   invite(user) {
-    console.log(user);
+    // console.log(user);
     if (this.returnedProfile.teamName && user) {
       this.team.addUser(user, this.returnedProfile.teamName_lower).subscribe(res => {
         this.message = res.message;
         this.filterUsers.push(user);
-        console.log(this.filterUsers);
+        // console.log(this.filterUsers);
       }, err => {
         this.message = err.error.message;
       });
@@ -417,12 +427,8 @@ export class TeamProfileComponent implements OnInit {
   validate() {
 
     let valid = true;
-    if (this.checkAvailabilityDays()){
-      valid = true;
-      this.errorAvail = false;
-    }else{
+    if (!this.validAvailableTimes){
       valid = false;
-      this.errorAvail = true;
     }
     
     //ensure time zone
@@ -434,32 +440,6 @@ export class TeamProfileComponent implements OnInit {
     }
     
     return valid;
-  }
-
-  checkAvailabilityDays(): boolean {
-    let ret = true;
-    let nodays = 0;
-    if (this.returnBoolByPath(this.returnedProfile, 'availability')) {
-      //validate that we have start and end times for available days
-      for (let day in this.returnedProfile.availability) {
-        let checkDay = this.returnedProfile.availability[day];
-        if (checkDay.available) {
-          if (checkDay.startTime == null && checkDay.endTime == null) {
-            ret = false;
-          } else if (checkDay.startTime.length == 0 && checkDay.endTime.length == 0) {
-            ret = false;
-          }
-        } else {
-          nodays += 1;
-        }
-      }
-    } else {
-      ret = false;
-    }
-    if (nodays == 7) {
-      ret = false;
-    }
-    return ret;
   }
 
   stratifyTeamMembers(){
@@ -486,49 +466,39 @@ export class TeamProfileComponent implements OnInit {
       merge(this.returnedProfile, res);
       this.setUpTeamMemberFilter(this.returnedProfile);
       this.stratifyTeamMembers()
-      console.log('team ', this.returnedProfile);
+      // console.log('team ', this.returnedProfile);
       // this.cleanUpDivision();
     });
   }
 
+  //method to determine if user is a member of a team but not captain
+  //shows button to leave team if so, and is not admin embedded
+  showLeaveTeam(playerName){
+    if(this.componentEmbedded){
+      return false;
+    }else{
+      if (this.returnedProfile.teamName == this.auth.getTeam() && this.returnedProfile.captain != this.auth.getUser() && playerName == this.auth.getUser()) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
+  leaveTeam(){
+    this.team.removeUser(this.auth.getUser(), this.returnedProfile.teamName_lower).subscribe(
+      (res) => {
+        console.log('team left');
+        this.ngOnInit();
+      },
+      (err) => {
+        console.log(err);
+      }
+    )
+  }
 
   imageFQDN(img){
     return this.team.imageFQDN(img);
-  }
-
-  returnBoolByPath(obj, path): boolean {
-    //path is a string representing a dot notation object path;
-    //create an array of the string for easier manipulation
-    let pathArr = path.split('.');
-    //return value
-    let retVal = null;
-    //get the first element of the array for testing
-    let ele = pathArr[0];
-    //make sure the property exist on the object
-    if (obj.hasOwnProperty(ele)) {
-      if (typeof obj[ele] == 'boolean') {
-        retVal = true;
-      }
-      //property exists:
-      //property is an object, and the path is deeper, jump in!
-      else if (typeof obj[ele] == 'object' && pathArr.length > 1) {
-        //remove first element of array
-        pathArr.splice(0, 1);
-        //reconstruct the array back into a string, adding "." if there is more than 1 element
-        if (pathArr.length > 1) {
-          path = pathArr.join('.');
-        } else {
-          path = pathArr[0];
-        }
-        //recurse this function using the current place in the object, plus the rest of the path
-        retVal = this.returnBoolByPath(obj[ele], path);
-      } else if (typeof obj[ele] == 'object' && pathArr.length == 0) {
-        retVal = obj[ele];
-      } else {
-        retVal = obj[ele]
-      }
-    }
-    return !!retVal;
   }
 
 }
