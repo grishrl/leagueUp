@@ -48,7 +48,13 @@ export class UtilitiesService {
     let day = this.dayOfWeekAsString(time.getDay());
     let date = time.getDate();
     let month = time.getMonth()+1;
-    return day + ' ' + month + '/'+date+'/'+year;
+    if( day == undefined || month == NaN || date == NaN || year == NaN ){
+      console.log('???')
+      return null;
+    }else{
+      return day + ' ' + month + '/' + date + '/' + year;
+    }
+    
   }
 
   getSuffixFromMS(msDate){

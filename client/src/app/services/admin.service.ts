@@ -175,6 +175,16 @@ export class AdminService {
     return this.httpService.httpPost(url, payload, true);
   }
 
+  setScheduleDeadline(div, time, endWeek){
+    let url = 'admin/match/set/schedule/deadline';
+    let payload = {
+      division:div,
+      date:time,
+      endWeek:endWeek
+    };
+    return this.httpService.httpPost(url, payload, true);
+  }
+
   //returns list of all users and the access level lists
   getUsersAcls(){
     let url = 'admin/user/get/usersacl/all';

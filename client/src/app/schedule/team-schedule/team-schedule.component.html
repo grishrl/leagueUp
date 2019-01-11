@@ -22,6 +22,13 @@
                             <div class="row mt-3" *ngFor="let match of round.value">
                                 <div class="col">
                                     <div class="row">
+                                        <div class="col text-center text-warning">
+                                            Scheduling Deadline:
+                                            <span *ngIf="match.friendlyDeadline else freeGame">{{match.friendlyDeadline}}</span>
+                                            <ng-template #freeGame> Open Game or No Deadline Set Yet </ng-template>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
                                         <div class="col-5">
                                             <div class="row">
                                                 <div class="col">
@@ -60,8 +67,15 @@
                                         </div>
                                         <div class="col-7 text-center">
                                             <span *ngIf="match.scheduledTime else tbd">Scheduled Time: {{match.friendlyDate}} - {{match.friendlyTime}} {{match.suffix}}</span>
+
                                             <ng-template #tbd>
-                                                <button class="btn btn-info" (click)="scheduleMatch(match.matchId)"> Schedule this match! </button>
+                                                <div class="p-1 text-danger" *ngIf="checkDate(match) else timeElapsed">
+                                                    This match was not scheduled before it's due date contact an admin!
+                                                </div>
+                                                <ng-template #timeElapsed> <button class="btn btn-info" (click)="scheduleMatch(match.matchId)">
+    Schedule this match! </button>
+                                                </ng-template>
+
                                             </ng-template>
                                         </div>
                                         <div class="col">

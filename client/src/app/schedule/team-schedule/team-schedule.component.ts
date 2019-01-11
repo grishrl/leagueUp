@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TeamService } from 'src/app/services/team.service';
 import { StandingsService } from 'src/app/services/standings.service';
+import { type } from 'os';
 
 @Component({
   selector: 'app-team-schedule',
@@ -29,8 +30,23 @@ export class TeamScheduleComponent implements OnInit {
   scheduleMatch(id){
     this.router.navigate(['schedule/scheduleMatch', id]);
   }
+  todayDate
+
+  checkDate(match){
+   
+    let ret = false;
+    if (match['scheduleDeadline']){
+      let intDate = parseInt(match['scheduleDeadline']);
+      
+      if (this.todayDate > intDate){
+        ret = true;
+      }
+    }
+    return ret;
+  }
 
   ngOnInit() {
+    this.todayDate = new Date().getTime();
     //get the team from the route, if it that is not present get it from the auth service
     let getTeam;
     if(this.recTeam){
@@ -65,6 +81,11 @@ export class TeamScheduleComponent implements OnInit {
                   match.away['wins'] = standing.wins;
                 }
               });
+              if (match.scheduleDeadline){
+                match['friendlyDeadline'] = this.util.getDateFromMS(match.scheduleDeadline);
+                console.log('yyy ', this.util.getDateFromMS(match.scheduleDeadline))
+              }
+
               if (match.scheduledTime) {
                 match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
                 match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);

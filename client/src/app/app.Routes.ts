@@ -31,6 +31,7 @@ import { NoAccessComponent } from "./no-access/no-access.component";
 import { SessionTimeoutComponent } from "./session-timeout/session-timeout.component";
 import { CalendarViewComponent } from "./calendar-view/calendar-view.component";
 import { EventLargeComponent } from "./calendar-view/event-large/event-large.component";
+import { SetDeadlineComponent } from "./admin/match-management/set-deadline/set-deadline.component";
 
 const APP_ROUTES: Routes = [
   { path: 'directory', component: DirectoryComponent},
@@ -51,7 +52,7 @@ const APP_ROUTES: Routes = [
   { path: '_admin/manageTeam/:id', component: ManageTeamViewComponent, canActivate: [AuthGuardService], data: { role: 'team' } },
   { path: '_admin/divisionMgmt', component: DivisionManagementComponent, canActivate: [AuthGuardService], data: { role: 'division' } },
   { path: '_admin/matchMgmt', component: MatchManagementComponent, canActivate: [AuthGuardService], data: { role: 'match' } },
-  { path: '_admin/matchMgmt/:id', component: MatchEditComponent, canActivate: [AuthGuardService], data: { role: 'match' } },
+  { path: '_admin/matchMgmt/match/:id', component: MatchEditComponent, canActivate: [AuthGuardService], data: { role: 'match' } },
   { path: '_admin/userACLMgmt', component: AdminAclManagementComponent, canActivate: [AuthGuardService], data: { role: 'acl' } },
   { path: '_admin/userACLMgmt/:id', component: UpdateRolesComponent, canActivate: [AuthGuardService], data: { role: 'acl' } },
   { path: 'schedule/scheduleMatch/:id', component:MatchScheduleComponent},
@@ -63,7 +64,8 @@ const APP_ROUTES: Routes = [
   { path: 'noAccess/:id', component:NoAccessComponent},
   { path: 'sessionTimeOut', component: SessionTimeoutComponent},
   { path: 'calendar' , component:CalendarViewComponent },
-  { path: 'event/:id' , component:EventLargeComponent}
+  { path: 'event/:id' , component:EventLargeComponent},
+  { path: '_admin/matchMgmt/weekDeadline', component: SetDeadlineComponent, canActivate: [AuthGuardService], data: { role: 'match' }}
 ]
 
 @NgModule({

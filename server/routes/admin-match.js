@@ -52,6 +52,95 @@ router.post('/match/update', passport.authenticate('jwt', {
         logInfo.error = 'Proper info not sent';
         res.status(400).send(util.returnMessaging(path, 'Proper info not sent', false, false, null, null, logInfo));
     }
-})
+});
+
+router.post('/match/set/schedule/deadline', passport.authenticate('jwt', { session: false }), levelRestrict.matchLevel, util.appendResHeader, (req, res) => {
+    const path = 'admin/match/set/schedule/deadline';
+    let div = req.body.division;
+    let date = req.body.date;
+    let endWeek = req.body.endWeek;
+
+    let logInfo = {};
+
+    logInfo.action = 'set schedule deadline ';
+    logInfo.admin = 'ADMIN';
+    logInfo.actor = req.user.displayName;
+    logInfo.target = div;
+
+    Match.find({ divisionConcat: div }).then((found) => {
+        if (found) {
+            let updateFound;
+            updateFoundAsync(endWeek, found, date).then(updated => {
+                let ok = true;
+                updated.forEach(updated => {
+                    if (updated == null) {
+                        ok = false;
+                    }
+                });
+                if (ok) {
+                    res.status(200).send(util.returnMessaging(path, 'Matches Updated', false, null, null, logInfo));
+                } else {
+                    logInfo.logLevel = 'ERROR';
+                    logInfo.error = 'Error updating matches';
+                    res.status(400).send(util.returnMessaging(path, 'Matches not updated', false, null, null, logInfo));
+                }
+            }, err => {
+                res.status(500).send(util.returnMessaging(path, 'Error getting matches', err, null, null, logInfo));
+            });
+
+
+        } else {
+            logInfo.logLevel = 'STD';
+            logInfo.error = 'Match not found';
+            res.status(400).send(util.returnMessaging(path, 'Match not found', false, null, null, logInfo));
+        }
+    }, (err) => {
+        res.status(500).send(util.returnMessaging(path, 'Error getting matches', err, null, null, logInfo));
+    })
+
+    // Match.find({
+    //     divisionConcat: div
+    // }).then((foundMatches) => {
+    //     if (foundMatches) {
+    //         for (var i = 1; i <= endWeek; i++) {
+    //             foundMatches.forEach(match => {
+    //                 if (match.round == i) {
+    //                     match.scheduleDeadline = date;
+    //                 }
+    //             });
+    //             date = date + (1000 * 60 * 60 * 24 * 7);
+    //         }
+    //         foundMatches.save().then(saved => {
+    //             res.status(400).send(util.returnMessaging(path, 'Matches saved', false, saved, null, logInfo));
+    //         }, err => {
+    //             res.status(500).send(util.returnMessaging(path, 'Error saving matches', err, null, null, logInfo));
+    //         });
+
+    //     } else {
+    //         logInfo.logLevel = 'STD';
+    //         logInfo.error = 'Match not found';
+    //         res.status(400).send(util.returnMessaging(path, 'Match not found', false, null, null, logInfo));
+    //     }
+    // }, (err) => {
+    //     res.status(500).send(util.returnMessaging(path, 'Error getting matches', err, null, null, logInfo));
+    // })
+
+});
 
 module.exports = router;
+
+async function updateFoundAsync(endWeek, found, date) {
+    let updateFound = [];
+    for (var i = 1; i <= endWeek; i++) {
+        for (var j = 0; j < found.length; j++) {
+            if (found[j].round == i) {
+                found[j].scheduleDeadline = date;
+                let update = await found[j].save().then(saved => { return saved; }, err => { return null; });
+                updateFound.push(update);
+            }
+
+        }
+        date += (1000 * 60 * 60 * 24 * 7);
+    }
+    return updateFound;
+}

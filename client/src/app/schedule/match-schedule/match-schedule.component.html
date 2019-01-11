@@ -1,23 +1,30 @@
-<div class="container pt-4">
+<div class="container pt-4 forceFull">
     <div class="row">
         <div class="col">
+            <div *ngIf="checkDate()" class="row">
+                <div class="col text-center text-danger">
 
+                    This match was not scheduled before it's schedule due date!
+                    <div> Please contact an admin</div>
+
+                </div>
+            </div>
 
             <div class="row" *ngIf="match">
                 <div class="col">
                     <div class="row">
                         <div class="col">
-                            Round {{match.round}}
+                            Week {{match.round}}
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col">
+                    <div class="row mt-2">
+                        <div class="col text-center">
                             <div *ngIf="match.home.teamName">{{match.home.teamName}}</div>
                         </div>
-                        <div class="col">
+                        <div class="col text-center">
                             - VS -
                         </div>
-                        <div class="col">
+                        <div class="col text-center">
                             <div *ngIf="match.away.teamName; else bye">{{match.away.teamName}}</div>
                         </div>
                     </div>
@@ -25,7 +32,7 @@
 
             </div>
 
-            <div class="row">
+            <div class="row mt-4">
                 <div class="col-6">
                     <mat-form-field class="mat-FullWidth">
                         <input matInput [matDatepicker]="picker" placeholder="Choose a date" [(ngModel)]="mydate">
@@ -59,9 +66,9 @@
 
                 </div>
             </div>
-            <div class="row">
-                <div class="col">
-                    <button type="button" class="btn btn-success" (click)="saveSched()">Save</button>
+            <div class="row mt-2">
+                <div class="col text-center">
+                    <button [disabled]="checkDate()" type="button" class="btn btn-success" (click)="saveSched()">Save</button>
                 </div>
             </div>
 

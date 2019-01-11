@@ -43,7 +43,8 @@ const matchSchema = new Schema({
     "casterUrl": String,
     "mapBans": Object,
     "other": Object,
-    "reported": Boolean
+    "reported": Boolean,
+    "scheduleDeadline": String
 }, { useNestedStrict: false });
 
 

@@ -52,6 +52,19 @@ export class MatchScheduleComponent implements OnInit {
 
   }
 
+  checkDate() {
+    let todayDate = new Date().getTime();
+    let ret = false;
+    if (this.match['scheduleDeadline']) {
+      let intDate = parseInt(this.match['scheduleDeadline']);
+
+      if (todayDate > intDate) {
+        ret = true;
+      }
+    }
+    return ret;
+  }
+
   //function from click to save schedule
   saveSched(){
     //calculate the millisecond date of the scheduled start of the match cause that's easy to save.
