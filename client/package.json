@@ -8,7 +8,7 @@
         "test": "ng test",
         "lint": "ng lint",
         "e2e": "ng e2e",
-        "postinstall": "echo process.env.ENVIR"
+        "postinstall": "echo $process.env.ENVIR"
     },
     "private": true,
     "dependencies": {
