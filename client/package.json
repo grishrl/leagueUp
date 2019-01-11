@@ -8,7 +8,7 @@
         "test": "ng test",
         "lint": "ng lint",
         "e2e": "ng e2e",
-        "postinstall": "echo get ENVIR"
+        "postinstall": "ng build --aot --prod --configuration=${environment}"
     },
     "private": true,
     "dependencies": {
