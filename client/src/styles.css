@@ -19,7 +19,7 @@ html {
 
 body {
     font-family: 'Roboto', sans-serif;
-    background-image: url('/assets/testGutter.png');
+    background: linear-gradient(to right, transparent, rgb(255, 255, 255) 30%, rgb(255, 255, 255) 70%, transparent), url('/assets/hexagonGutter.png');
 }
 
 .forceFull {
