@@ -50,14 +50,12 @@ export class QuestionnaireComponent implements OnInit {
   
 
   checkTeamMates(){
-    // if(this.passedTeam && this.passedTeam.teamMembers){
-    //   if (this.passedTeam.teamMembers.length >= 5) {
-    //     return true;
-    //   }
-    // }
-    
-    // return false;
-    return true;
+    if(this.passedTeam && this.passedTeam.teamMembers){
+      if (this.passedTeam.teamMembers.length >= 5) {
+        return true;
+      }
+    }
+    return false;
   }
 
 
