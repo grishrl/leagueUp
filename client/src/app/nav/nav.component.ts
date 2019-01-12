@@ -18,7 +18,7 @@ export class NavComponent implements OnInit {
 
   constructor(public Auth:AuthService, private router: Router, public team:TeamService, public user:UserService, private divisionService: DivisionService) { }
 
-  navGo(appRoute,path){
+  navGo(appRoute?,path?){
     if (!appRoute && !path){
       //hamburger
       this.navBarClass = toggleShow(this.navBarClass);
@@ -32,6 +32,12 @@ export class NavComponent implements OnInit {
       //nah
     }
   }
+
+  logout(){
+    this.navBarClass = removeShow(this.navBarClass);
+    this.Auth.destroyAuth('/logout');
+  }
+
   ngOnInit() {
     this.divisionService.getDivisionInfo().subscribe( res => {
       this.divisions = res;
