@@ -30,12 +30,10 @@ export class DivisionPropsComponent implements OnInit {
     Validators.required
   ]);
   maxMMRControl = new FormControl('', [
-    Validators.required,
-    Validators.pattern(/[0-9]/gm)
+    Validators.required
   ]);
   minMMRControl = new FormControl('', [
-    Validators.required,
-    Validators.pattern(/[0-9]/gm)
+    Validators.required
   ]);
 
   sortingControl = new FormControl('', [

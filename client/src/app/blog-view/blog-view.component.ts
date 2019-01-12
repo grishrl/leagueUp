@@ -27,6 +27,7 @@ export class BlogViewComponent implements OnInit {
     this.displayBlog = {
       'fields':
       {
+        'description':'',
         'body':'',
         'author': {
           'fields': {
