@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ScheduleService } from 'src/app/services/schedule.service';
+import { TeamService } from 'src/app/services/team.service';
 
 
 @Component({
@@ -16,12 +17,15 @@ export class MatchScheduleComponent implements OnInit {
   time: any //local prop that hold the selected time from user
   suffix: any //local prop for selected AM/PM suffix
   times: any[] = [];  //local array that is populated progromatticaly to give users a drop down of times on 15 min interval to select
-  match: any;  //local prop for holding the returned match
+  match: any = {
+    away:{},
+    home:{}
+  };  //local prop for holding the returned match
   homeScore: number //local prop for scores
   awayScore: number //local prop for scores
   amPm = ['PM', 'AM']; //local propery holds array for the am/pm dropdown
 
-  constructor(private route: ActivatedRoute, private scheduleService:ScheduleService, private router:Router) {
+  constructor(public team: TeamService, private route: ActivatedRoute, private scheduleService:ScheduleService, private router:Router) {
     //get the id provided in the URL route
     this.matchId = this.route.snapshot.params['id'];
    }
@@ -102,6 +106,25 @@ export class MatchScheduleComponent implements OnInit {
       }
     )
 
+  }
+
+  homeTeam
+  awayTeam
+  showSchedules = false;
+
+  getTeamSchedules(){
+    
+    this.team.getTeam(this.match.home.teamName).subscribe( homeTeam=>{
+      this.homeTeam = homeTeam
+      this.team.getTeam(this.match.away.teamName).subscribe(awayTeam=>{
+        this.awayTeam = awayTeam
+        this.showSchedules = true;
+      }, err=>{
+        console.log(err);
+      })
+    }, err=>{
+      console.log(err);
+    })
   }
 
 }

@@ -32,7 +32,7 @@
                     {{standing.standing}}
                 </div>
                 <div class="col-3">
-                    {{standing.teamName}}
+                    <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(standing.teamName)]">{{standing.teamName}}</a>
                 </div>
                 <div class="col">
                     {{standing.points}}
@@ -71,7 +71,7 @@
                         {{standing.standing}}
                     </td>
                     <td>
-                        {{standing.teamName}}
+                        <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(standing.teamName)]">{{standing.teamName}}</a>
                     </td>
                     <td>
                         {{standing.points}}

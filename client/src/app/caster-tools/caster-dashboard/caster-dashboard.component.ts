@@ -3,6 +3,7 @@ import { ScheduleService } from 'src/app/services/schedule.service';
 import { AdminService } from 'src/app/services/admin.service';
 
 import { PageEvent, MatPaginator } from '@angular/material';
+import { TeamService } from 'src/app/services/team.service';
 
 
 @Component({
@@ -14,7 +15,7 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor( private scheduleService:ScheduleService, private adminService : AdminService) {
+  constructor(public team:TeamService, private scheduleService:ScheduleService, private adminService : AdminService) {
 
    }
 

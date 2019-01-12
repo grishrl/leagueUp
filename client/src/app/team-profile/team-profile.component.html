@@ -156,10 +156,9 @@
                 <div class="row mt-3">
                     <div class="col">
                         <div class="row mt-3" *ngFor="let player of displayMembersLeft">
-                            <div class="col-7">
-                                <mat-form-field class="mat-FullWidth">
-                                    <input matInput placeholder="Player Name" value={{player.displayName}} disabled="true">
-                                </mat-form-field>
+                            <div class="col-7 verticalAlign">
+                                <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]">{{player.displayName}}</a>
+
                             </div>
                             <div *ngIf="showLeaveTeam(player.displayName)" class="col">
                                 <button class="btn btn-danger" (click)="removeMember(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)">
@@ -174,9 +173,7 @@
                     <div class="col">
                         <div class="row mt-3" *ngFor="let player of displayMembersRight">
                             <div class="col">
-                                <mat-form-field class="mat-FullWidth">
-                                    <input matInput placeholder="Player Name" value={{player.displayName}} disabled="true">
-                                </mat-form-field>
+                                <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]">{{player.displayName}}</a>
                             </div>
                             <div *ngIf="showLeaveTeam(player.displayName)" class="col">
                                 <button class="btn btn-danger" (click)="removeMember(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)">

@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { StandingsService } from '../services/standings.service';
+import { TeamService } from '../services/team.service';
 
 @Component({
   selector: 'app-standings-view',
@@ -8,7 +9,7 @@ import { StandingsService } from '../services/standings.service';
 })
 export class StandingsViewComponent implements OnInit {
 
-  constructor(private standingsService:StandingsService) { }
+  constructor(public team: TeamService,private standingsService:StandingsService) { }
 
   div:any;
   standings:any[]=[];

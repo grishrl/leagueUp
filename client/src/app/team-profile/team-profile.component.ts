@@ -69,7 +69,7 @@ export class TeamProfileComponent implements OnInit {
   }
 
   //constructor
-  constructor(private auth: AuthService, private user: UserService, public timezone: TimezoneService, private team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router: Router,
+  constructor(private auth: AuthService, public user: UserService, public timezone: TimezoneService, private team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router: Router,
     private admin:AdminService) {
     this.teamName = team.realTeamName(this.route.snapshot.params['id']);
   }
@@ -127,6 +127,8 @@ export class TeamProfileComponent implements OnInit {
 
   //init implementation
   ngOnInit() {
+    this.editOn = true;
+    this.formControlledDisable();
     this.displayMembersLeft = [];
     this.displayMembersRight = [];
     this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
@@ -229,8 +231,10 @@ export class TeamProfileComponent implements OnInit {
 
           this.team.changeCaptain(this.returnedProfile.teamName_lower,result).subscribe(
             (res)=>{
+              this.returnedProfile = res;
+              this.editOn = true;
+              this.formControlledDisable();
               this.auth.destroyCaptain();
-              this.ngOnInit();
             },
             (err)=>{
               console.log(err)

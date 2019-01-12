@@ -19,7 +19,7 @@ export class UserQuickViewComponent implements OnInit {
     } 
   }
 
-  constructor(private user: UserService) { }
+  constructor(public user: UserService) { }
 
   ngOnInit() {
 

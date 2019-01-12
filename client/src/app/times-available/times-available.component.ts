@@ -50,9 +50,6 @@ export class TimesAvailableComponent implements OnInit, DoCheck {
   errorReply: string = '';
   differ: any
 
-  hell(){
-    console.log(this.availability)
-  }
   constructor(private util: UtilitiesService) { 
    
   }

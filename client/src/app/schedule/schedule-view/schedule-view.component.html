@@ -49,7 +49,9 @@
                                             <img class="img-fluid" src="{{team.imageFQDN(match.home.logo)}}" width="150" alt="Team Logo">
                                         </div>
                                         <div class="col vertical-middle">
-                                            <div *ngIf="match.home.teamName">{{match.home.teamName}}</div>
+                                            <div *ngIf="match.home.teamName">
+                                                <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.home.teamName)]">{{match.home.teamName}}</a>
+                                            </div>
 
                                         </div>
                                         <div class="col vertical-middle">
@@ -67,7 +69,9 @@
                                             <span> {{match.away.wins}} - {{match.away.losses}} </span>
                                         </div>
                                         <div class="col vertical-middle">
-                                            <div *ngIf="match.away.teamName; else bye">{{match.away.teamName}}</div>
+                                            <div *ngIf="match.away.teamName; else bye">
+                                                <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.away.teamName)]">{{match.away.teamName}}</a>
+                                            </div>
                                         </div>
                                         <div class="col">
                                             <img class="img-fluid" src="{{team.imageFQDN(match.away.logo)}}" width="150" alt="Team Logo">
@@ -109,7 +113,7 @@
                                     <img class="img-fluid" src="{{team.imageFQDN(match.home.logo)}}" alt="Team Logo">
                                 </div>
                                 <div class="col">
-                                    {{match.home.teamName}}
+                                    <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.home.teamName)]">{{match.home.teamName}}</a>
                                 </div>
                             </div>
                             <div class="row">
@@ -127,7 +131,7 @@
                                     <img class="img-fluid" src="{{team.imageFQDN(match.away.logo)}}" alt="Team Logo">
                                 </div>
                                 <div class="col">
-                                    {{match.away.teamName}}
+                                    <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.away.teamName)]">{{match.away.teamName}}</a>
                                 </div>
                             </div>
                             <div class="row">

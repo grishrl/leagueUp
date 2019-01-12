@@ -685,7 +685,7 @@ router.post('/reassignCaptain', passport.authenticate('jwt', {
     let logObj = {};
     logObj.actor = req.user.displayName;
     logObj.action = 'reassign team capt ';
-    logObj.target = teamName + ': new capt: ' + newCapt + ' old capt: ' + req.user.displayName;
+    logObj.target = team + ': new capt: ' + newCapt + ' old capt: ' + req.user.displayName;
     logObj.logLevel = 'STD';
 
     Team.findOne({ teamName_lower: team }).then(
@@ -707,6 +707,7 @@ router.post('/reassignCaptain', passport.authenticate('jwt', {
                         (savedTeam) => {
                             if (savedTeam) {
                                 UserSub.toggleCaptain(oldCpt);
+                                console.log(savedTeam.captain)
                                 UserSub.toggleCaptain(savedTeam.captain);
                                 res.status(200).send(util.returnMessaging(path, 'Team captain changed', false, savedTeam, null, logObj));
                             } else {

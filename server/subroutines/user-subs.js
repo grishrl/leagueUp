@@ -68,21 +68,23 @@ function upsertUserTeamName(user, team) {
 
 
 function toggleCaptain(user) {
+    console.log(user);
     User.findOne({ displayName: user }).then((foundUser) => {
         //get the value in teamInfo, is captain, will be boolean if it's been set before
         let changed = false;
-        let isCap = util.returnByPath(foundUser, 'isCaptain');
+        let isCap = util.returnByPath(foundUser.toObject(), 'isCaptain');
         //if this is a boolean value, toggle it
         if (typeof isCap == 'boolean') {
             changed = true;
             foundUser.isCaptain = !foundUser.isCaptain;
         } else {
             //iF the iscaptain didnt exist would be false by default, turn it on
-            if (util.returnBoolByPath(foundUser.toObject(), 'isCaptain')) {
+            if (!util.returnBoolByPath(foundUser.toObject(), 'isCaptain')) {
                 changed = true;
                 foundUser.isCaptain = true;
             }
         }
+        console.log(user, ' changed: ', changed)
         if (changed) {
             foundUser.save().then((save) => {
                 console.log(save.displayName + ' user profile update cpttoggle');

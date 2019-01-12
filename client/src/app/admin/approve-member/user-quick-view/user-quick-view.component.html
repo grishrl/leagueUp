@@ -2,7 +2,7 @@
     <div class="col">
         <div class="row">
             <div class="col">
-                Name: {{player.displayName}}
+                Name: <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]">{{player.displayName}}</a>
             </div>
         </div>
         <div class="row">

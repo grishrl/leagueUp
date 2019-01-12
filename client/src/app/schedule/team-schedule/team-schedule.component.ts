@@ -17,7 +17,8 @@ export class TeamScheduleComponent implements OnInit {
   recTeam  //holds id received in the url route
   noMatches: boolean; // set to true if there are no matches returned or false if there are, used for displaying certain messages
   rounds: any //local variable to parse received team matches into
-  
+  roundsArray:any
+
   constructor(private Auth: AuthService, private route: ActivatedRoute, private router: Router, private scheduleService:ScheduleService, private util:UtilitiesService, public team: TeamService, private standingsService:StandingsService) {
     //get the ID from the route
     if (this.route.snapshot.params['id']) {
@@ -105,17 +106,19 @@ export class TeamScheduleComponent implements OnInit {
                       }
         */
        console.log(matches)
+       let roundsArray = [];
         for(var i = 0; i<=matches.length; i++){
           if(this.rounds == null || this.rounds == undefined){
             this.rounds = {};
           }
           let realRoundNumber = i+1;
+          roundsArray.push(realRoundNumber);
           matches.forEach(match => {
-              if (this.rounds[realRoundNumber.toString()] == null || this.rounds[realRoundNumber.toString()] == undefined){
-                this.rounds[realRoundNumber.toString()] = [];
+              if (this.rounds[realRoundNumber] == null || this.rounds[realRoundNumber] == undefined){
+                this.rounds[realRoundNumber] = [];
               }
               if(match.round == realRoundNumber){
-                this.rounds[realRoundNumber.toString()].push(match);
+                this.rounds[realRoundNumber].push(match);
               }
               
           });
@@ -123,6 +126,7 @@ export class TeamScheduleComponent implements OnInit {
 
         console.log('rounds ', this.rounds)
         this.rounds;
+        this.roundsArray = roundsArray;
       },
       err=>{console.log(err)}
     )

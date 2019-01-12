@@ -54,13 +54,15 @@
                         </div>
                         <div class="row">
                             <div class="col">
-                                {{match.home.teamName}}
+                                <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.home.teamName)]">{{match.home.teamName}}</a>
+
                             </div>
                             <div class="col">
                                 -VS-
                             </div>
                             <div class="col">
-                                {{match.away.teamName}}
+                                <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.away.teamName)]">{{match.away.teamName}}</a>
+
                             </div>
                         </div>
                         <div class="row mt-2">

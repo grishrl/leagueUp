@@ -2,6 +2,11 @@
     margin: 0 10px;
 }
 
+.verticalAlign {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
 .icon-align {
     display: inline-flex;
     vertical-align: middle;
