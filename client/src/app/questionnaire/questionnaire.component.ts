@@ -55,9 +55,7 @@ export class QuestionnaireComponent implements OnInit {
         return true;
       }
     }
-    
     return false;
-    // return true;
   }
 
 
