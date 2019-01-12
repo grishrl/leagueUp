@@ -19,14 +19,14 @@ html {
 
 body {
     font-family: 'Roboto', sans-serif;
-    background-image: url('/assets/testGutter.png');
+    background: linear-gradient(to right, transparent, rgb(69, 57, 82) 20%, rgb(69, 57, 82) 15% 80%, transparent), url('/assets/hexagonGutter.png');
 }
 
 .forceFull {
     min-height: 100vh;
 }
 
-
+/* rgb(114, 112, 112) */
 /* 
 this class sets a div height of reasonable px length to give the illusion that the page is longer when 
 no content has loaded in, without this your footer flys around the page as contnet grows or shrinks
