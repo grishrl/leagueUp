@@ -1,15 +1,53 @@
 <div class="container">
     <div class="row bg-white">
-        <div class="col">
-            <div class="row matchBoxPadder finger" [ngClass]="{'matchBox':show}" (click)="showHide()">
+        <div class="col" *ngIf="recMatch">
+            <div class="row matchBoxPadder" [ngClass]="{'matchBox':show}">
                 <div class="col">
-                    <div *ngIf="recMatch.home.teamName">{{recMatch.home.teamName}}</div>
-                </div>
-                <div class="col">
-                    - VS -
-                </div>
-                <div class="col">
-                    <div *ngIf="recMatch.away.teamName">{{recMatch.away.teamName}} <i *ngIf="!show" class="float-right material-icons">arrow_drop_down</i><i *ngIf="show" class="float-right material-icons">arrow_drop_up</i></div>
+                    <div class="row">
+                        <div class="col text-center">
+                            <span class="text-warning" *ngIf="!recMatch.reported">Not Reported</span> <span class="text-success" *ngIf="recMatch.reported">Reported</span>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col-4">
+                                    <img src="{{team.imageFQDN(recMatch.home.logo)}}" height="90" alt="Team Logo">
+                                </div>
+                                <div class="col vertical-middle">
+                                    <div *ngIf="recMatch.home.teamName">
+                                        <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(recMatch.home.teamName)]">{{recMatch.home.teamName}}</a>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-1 vertical-middle">
+                            - VS -
+                        </div>
+                        <div class="col">
+                            <div class="row">
+                                <!-- <div class="col-2 vertical-middle">
+                                    <span> {{recMatch.away.wins}} - {{recMatch.away.losses}} </span>
+                                </div> -->
+                                <div class="col vertical-middle">
+                                    <div *ngIf="recMatch.away.teamName">
+                                        <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(recMatch.away.teamName)]">{{recMatch.away.teamName}}</a>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <img src="{{team.imageFQDN(recMatch.away.logo)}}" height="90" alt="Team Logo">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col text-center">
+                            <button class="btn btn-info" (click)="showHide()"> <span *ngIf="!show">Open Reporting Deck</span> <span *ngIf="show">Close Reporting Deck</span>
+</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -55,14 +93,10 @@
 
                                     <div class="row m-t-5" *ngIf="game.value.homeBans.length<3">
                                         <div class=" col ">
-                                            <mat-select placeholder="Hero Banned " [(ngModel)]="game.value.tmp.leftSelect ">
+                                            <mat-select placeholder="Hero Banned " [(ngModel)]="game.value.tmp.leftSelect" (ngModelChange)="addBan(game.value.tmp.leftSelect, game.value.homeBans)">
                                                 <!-- heroes | keyvalue -->
                                                 <mat-option *ngFor="let hero of returnFilteredHeroes(game)" [value]="hero ">{{hero}}</mat-option>
                                             </mat-select>
-                                        </div>
-                                        <div class="col ">
-                                            <button [disabled]="!game.value.tmp.leftSelect || recMatch.reported" (click)="addBan(game.value.tmp.leftSelect, game.value.homeBans) "> Add Ban </button>
-
                                         </div>
                                     </div>
                                     <div class="m-t-10 banBox">
@@ -79,13 +113,10 @@
 
                                     <div class="row m-t-5 " *ngIf="game.value.awayBans.length<3 ">
                                         <div class="col ">
-                                            <mat-select placeholder="Hero Banned " [(ngModel)]="game.value.tmp.rightSelect ">
+                                            <mat-select placeholder="Hero Banned " [(ngModel)]="game.value.tmp.rightSelect" (ngModelChange)="addBan(game.value.tmp.rightSelect, game.value.awayBans)">
                                                 <!-- heroes | keyvalue -->
                                                 <mat-option *ngFor="let hero of returnFilteredHeroes(game)  " [value]="hero ">{{hero}}</mat-option>
                                             </mat-select>
-                                        </div>
-                                        <div class="col">
-                                            <button [disabled]="!game.value.tmp.rightSelect || recMatch.reported" (click)="addBan(game.value.tmp.rightSelect, game.value.awayBans) ">Add Ban </button>
                                         </div>
                                     </div>
                                     <div class="banBox m-t-10">

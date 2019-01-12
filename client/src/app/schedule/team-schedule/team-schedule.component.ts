@@ -53,6 +53,7 @@ export class TeamScheduleComponent implements OnInit {
       getTeam = this.recTeam;
     }else{
       getTeam = this.Auth.getTeam();
+      this.recTeam = getTeam;
     }
     
     //TODO: remove hard coded season 6!!!
@@ -149,6 +150,14 @@ export class TeamScheduleComponent implements OnInit {
     if (!this.util.returnBoolByPath(match, 'away.teamName') || !this.util.returnBoolByPath(match, 'home.teamName')) {
       return true;
     } else {
+      return false;
+    }
+  }
+
+  userCanSchedule(){
+    if(this.recTeam == this.Auth.getTeam() && this.Auth.getCaptain() != 'false'){
+      return true;
+    }else{
       return false;
     }
   }

@@ -17,6 +17,7 @@ export class ReportingComponent implements OnInit {
       this.recTeam = this.route.snapshot.params['id'];
     }
   }
+  roundsArray:any
   rounds:any
   noMatches: Boolean;
   ngOnInit() {
@@ -37,24 +38,28 @@ export class ReportingComponent implements OnInit {
         }else{
           this.noMatches = false;
         }
+        let roundsArray = [];
         for (var i = 0; i <= matches.length; i++) {
           if (this.rounds == null || this.rounds == undefined) {
             this.rounds = {};
           }
-          
+
           let realMatchNumber = i+1;
-          this.rounds[realMatchNumber.toString()]=[];
+          roundsArray.push(realMatchNumber);
+          this.rounds[realMatchNumber]=[];
           matches.forEach(match => {
             if (match.round == realMatchNumber) {
-              if (this.rounds[realMatchNumber.toString()] == null || this.rounds[realMatchNumber.toString()] == undefined) {
-                this.rounds[realMatchNumber.toString()] = [];
+              if (this.rounds[realMatchNumber] == null || this.rounds[realMatchNumber] == undefined) {
+                this.rounds[realMatchNumber] = [];
               }
-              this.rounds[realMatchNumber.toString()].push(match);
+              this.rounds[realMatchNumber].push(match);
             }
           });
 
         }
         this.rounds;
+        this.roundsArray = roundsArray;
+        console.log(this.roundsArray)
       },
       err => { console.log(err) }
     )

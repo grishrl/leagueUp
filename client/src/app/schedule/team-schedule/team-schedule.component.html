@@ -76,8 +76,8 @@
                                                 <div class="p-1 text-danger" *ngIf="checkDate(match) else timeElapsed">
                                                     This match was not scheduled before it's due date contact an admin!
                                                 </div>
-                                                <ng-template #timeElapsed> <button class="btn btn-info" (click)="scheduleMatch(match.matchId)">
-    Schedule this match! </button>
+                                                <ng-template #timeElapsed>
+                                                    <div *ngIf="userCanSchedule()"><button class="btn btn-info" (click)="scheduleMatch(match.matchId)"> Schedule this match! </button></div>
                                                 </ng-template>
 
                                             </ng-template>

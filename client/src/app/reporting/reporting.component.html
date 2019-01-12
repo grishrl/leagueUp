@@ -15,30 +15,33 @@
                 </div>
             </div>
             <ng-template #showMatches>
-                <div class="row">
-                    <div class="col">
-                        Home Team
-                    </div>
-                    <div class="col">
+                <div>
+                    <div class="row">
+                        <div class="col text-center">
+                            Home Team
+                        </div>
+                        <div class="col">
 
+                        </div>
+                        <div class="col text-center">
+                            Away Team
+                        </div>
                     </div>
-                    <div class="col">
-                        Away Team
-                    </div>
-                </div>
-                <div class="row mt-2" *ngFor="let round of rounds | keyvalue">
-                    <div class="col">
-                        <h4>Week: {{round.key}}</h4>
-                        <div *ngIf="round.value.length>0 else bye">
-                            <div class="row" *ngFor="let match of round.value">
-                                <div class="col">
-                                    <app-reporting-deck [match]="match"></app-reporting-deck>
+                    <div class="row mt-2" *ngFor="let round of roundsArray">
+                        <div class="col">
+                            <h4>Week: {{round}}</h4>
+                            <div *ngIf="rounds[round].length>0 else bye">
+                                <div class="row" *ngFor="let match of rounds[round]">
+                                    <div class="col">
+                                        <app-reporting-deck [match]="match"></app-reporting-deck>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
+                        </div>
                     </div>
                 </div>
+
             </ng-template>
         </div>
     </div>

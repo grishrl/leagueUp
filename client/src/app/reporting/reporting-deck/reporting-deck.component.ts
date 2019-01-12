@@ -1,9 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ngf } from 'angular-file';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { UtilitiesService } from 'src/app/services/utilities.service';
-import { element } from '@angular/core/src/render3/instructions';
+import { TeamService } from 'src/app/services/team.service';
+import {merge} from 'lodash';
 
 @Component({
   selector: 'app-reporting-deck',
@@ -13,11 +13,23 @@ import { element } from '@angular/core/src/render3/instructions';
 export class ReportingDeckComponent implements OnInit {
    
   hideButton:boolean=false;
-  recMatch
+  recMatch = {
+    away:{logo:null,teamName:''},
+    home: { logo: null, teamName: ''},
+    mapBans: {
+      away: '',
+      home: ''
+    },
+    other:{},
+    reported:false,
+    replays:{},
+    matchId:''
+  }
   @Input() set match(match){
     if(match!=null && match != undefined){
-      console.log(match);
-      this.recMatch = match;
+      
+      merge( this.recMatch, match);
+      
     }
     if(this.recMatch.other != null && this.recMatch.mapBans != undefined){
       this.games = this.recMatch.other;
@@ -32,7 +44,7 @@ export class ReportingDeckComponent implements OnInit {
       
     }
   }
-  constructor(private scheduleService: ScheduleService, private util: UtilitiesService) { }
+  constructor(private scheduleService: ScheduleService, private util: UtilitiesService, public team:TeamService) { }
     
   maps = {
   ControlPoints: 'Sky Temple',
@@ -73,7 +85,7 @@ removeBan(hero, arr){
         homeBans: [],
         awayBans: [],
         winner: '',
-        replay: '',
+        replay: null,
         tmp: {}
       };
     }
@@ -337,11 +349,12 @@ resetReplay(game){
         submittable = false;
         alert('Game ' + key + ' winner is not selected, can not submit.');
       }
-
+      
       if (game.replay == null && game.replay == undefined){
-        submittable=false;
-        alert( 'Game '+key+' replay is not attached, can not submit.' );
-      }
+          submittable = false;
+          alert('Game ' + key + ' replay is not attached, can not submit.');
+        }
+      
       report['replay'+key.toString()]=game.replay;
 
       let gamenum = key.toString();
