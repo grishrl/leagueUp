@@ -199,10 +199,11 @@ export class TeamProfileComponent implements OnInit {
   showRegisteredQuestionnaire(){
     if (this.embedSource == 'admin'){
       return true;
-    }else{
+    } else if (this.auth.getUser() == this.returnedProfile.captain) {
       return !this.returnedProfile.questionnaire['registered'];
+    }else{
+      return false;
     }
-   
   }
 
   embedSource:string='';
@@ -477,7 +478,7 @@ export class TeamProfileComponent implements OnInit {
     if(this.componentEmbedded){
       return false;
     }else{
-      if (this.returnedProfile.teamName == this.auth.getTeam() && this.returnedProfile.captain != this.auth.getUser() && playerName == this.auth.getUser()) {
+      if (this.returnedProfile.captain != this.auth.getUser() && playerName == this.auth.getUser()) {
         return true;
       } else {
         return false;

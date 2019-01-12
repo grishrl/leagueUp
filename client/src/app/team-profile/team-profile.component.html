@@ -238,7 +238,7 @@
                     </div>
                 </div>
 
-                <div class="row" *ngIf="showRegisteredQuestionnaire else registered">
+                <div class="row" *ngIf="showRegisteredQuestionnaire() else registered">
                     <div class="col">
                         <app-questionnaire [team]="returnedProfile"></app-questionnaire>
 
@@ -249,5 +249,8 @@
     </div>
 </div>
 <ng-template #registered>
-    <div class="text-center text-success p-5"> Thanks for registering for NGS Season 6! Good Luck and We'll see you in the Nexus</div>
+    <div *ngIf="auth.getUser()==returnedProfile.captain">
+        <div class="text-center text-success p-5"> Thanks for registering for NGS Season 6! Good Luck and We'll see you in the Nexus</div>
+    </div>
+
 </ng-template>
