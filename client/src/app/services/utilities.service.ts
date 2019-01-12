@@ -9,8 +9,12 @@ export class UtilitiesService {
   constructor() { }
 
   prePendHttp(link){
-    if(link.indexOf('http://www.')==-1 || link.indexOf('https://wwww.')==-1){
-      return 'http://www.'+link;
+    if(link!= undefined&& link!=null){
+      if (link.indexOf('http://www.') == -1 || link.indexOf('https://wwww.') == -1) {
+        return 'http://www.' + link;
+      } else {
+        return link;
+      }
     }else{
       return link;
     }
