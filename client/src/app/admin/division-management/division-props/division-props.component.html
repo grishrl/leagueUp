@@ -41,7 +41,7 @@
                                 <input matInput placeholder="Division Concat (System Reference)" [(ngModel)]="editDivision.divisionConcat" disabled="true">
                             </mat-form-field>
                             <mat-form-field>
-                                <input matInput placeholder="Sorting" [(ngModel)]="editDivision.sorting">
+                                <input matInput placeholder="Sorting" [formControl]="sortingControl" [(ngModel)]="editDivision.sorting">
                             </mat-form-field>
                             <mat-form-field>
                                 <input matInput placeholder="Max MMR" [formControl]="maxMMRControl" [(ngModel)]="editDivision.maxMMR">

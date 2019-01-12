@@ -1,6 +1,8 @@
 const Outreach = require('../models/outreach-model');
 const util = require('../utils');
 
+//TODO: add to logging
+
 function updateOutreachTeamname(oldteamName, newteamName) {
     Outreach.find({ teamName: oldteamName }).then((foundOutreach) => {
         if (foundOutreach && foundOutreach.length > 0) {

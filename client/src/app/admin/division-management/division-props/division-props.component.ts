@@ -30,17 +30,25 @@ export class DivisionPropsComponent implements OnInit {
     Validators.required
   ]);
   maxMMRControl = new FormControl('', [
-    Validators.required
+    Validators.required,
+    Validators.pattern(/[0-9]/gm)
   ]);
   minMMRControl = new FormControl('', [
-    Validators.required
+    Validators.required,
+    Validators.pattern(/[0-9]/gm)
   ]);
+
+  sortingControl = new FormControl('', [
+    Validators.required,
+    Validators.pattern(/[0-9]/gm)
+  ])
 
   divisionForm = new FormGroup({
     displayName: this.displayNameControl,
     divName: this.divisionNameControl,
     maxMMR: this.maxMMRControl,
-    minMMR: this.minMMRControl
+    minMMR: this.minMMRControl,
+    sorting: this.sortingControl
   })
 
   //creates a new concatinated system id from provided inputs

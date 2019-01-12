@@ -121,6 +121,7 @@ router.post('/delete', passport.authenticate('jwt', {
     }).then((deletedTeam) => {
         if (deletedTeam) {
             UserSub.clearUsersTeam(deletedTeam.teamMembers);
+            updateTeamMatches(deletedTeam);
             res.status(200).send(util.returnMessaging(path, 'Team has been deleted', false, false, null, logObj));
         } else {
             logObj.logLevel = 'ERROR';
@@ -343,7 +344,7 @@ router.post('/addMember', passport.authenticate('jwt', {
                     displayName: payloadMemberToAdd
                 }).then((foundUser) => {
                     if (foundUser) {
-                        if (!util.returnBoolByPath(foundTeam, 'pendingMembers')) {
+                        if (!util.returnBoolByPath(foundTeam.toObject(), 'pendingMembers')) {
                             foundTeam.pendingMembers = [];
                         }
 
