@@ -96,7 +96,6 @@ removeBan(hero, arr){
       this.showAdd=false;
     }
 
-    console.log(this.games);
   }
 
   returnFilteredHeroes(game){
@@ -317,10 +316,6 @@ resetReplay(game){
     return disable;
   }
 
-  parseFile(replays){
-    console.log(replays);
-  }
-
   show:boolean=false;
 
   showHide(){
@@ -337,7 +332,7 @@ resetReplay(game){
       awayTeamScore:0
     };
     let otherData = {};
-    console.log(this.games);
+
     let keys = Object.keys(this.games);
     keys.forEach(key => {
       let game = this.games[key];
@@ -381,11 +376,10 @@ resetReplay(game){
     report['otherDetails']=JSON.stringify(otherData);
     report['mapBans']=JSON.stringify(this.mapBans);
 
-    console.log('report ', report);
 
     if(submittable){
       this.scheduleService.reportMatch(report).subscribe( res=>{
-        console.log(res);
+
         this.recMatch.reported = true;
         this.showReport = false;
       })

@@ -28,7 +28,6 @@ export class ResponseInterceptor implements HttpInterceptor {
             },
             (err)=>{
               if(err.status==401){
-                console.log('we have a 401 here!!!')
                 this.auth.destroyAuth('/sessionTimeOut')
                 // this.router.navigateByUrl['/sessionTimeOut'];
               }else{

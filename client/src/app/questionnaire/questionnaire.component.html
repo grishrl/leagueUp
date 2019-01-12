@@ -118,13 +118,10 @@
         <div class="row" *ngIf="pickedMaps.length<9">
             <div class="col">
                 <mat-form-field class="mat-FullWidth">
-                    <mat-select placeholder="Select a map:" [(ngModel)]="selectedMap" disableOptionCentering>
+                    <mat-select placeholder="Select a map:" [(ngModel)]="selectedMap" disableOptionCentering (ngModelChange)="addMap(selectedMap)">
                         <mat-option *ngFor="let map of filterMaps()" [value]="map">{{map}}</mat-option>
                     </mat-select>
                 </mat-form-field>
-            </div>
-            <div class="col">
-                <button class="btn btn-primary" (click)="addMap(selectedMap)">Select Map</button>
             </div>
         </div>
         <div class="row">

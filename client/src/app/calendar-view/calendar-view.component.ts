@@ -137,33 +137,10 @@ export class CalendarViewComponent implements OnInit {
   }
 
   handleEvent(action: string, event: CalendarEvent): void {
-    // console.log('hi, ', event);
-    // let passMatch;
-    // this._matches.forEach(match=>{
-    //   console.log('event.meta ', event.meta, ' match.matchId ', match.matchId)
-    //   if(event.meta == match.matchId){
-    //     passMatch = match;
-    //   }
-    // });
-    // this.openDialog(passMatch);
 
     this.router.navigate(['event/',event.meta]);
 
   }
 
-  // addEvent(): void {
-  //   this.events.push({
-  //     title: 'New event',
-  //     start: startOfDay(new Date()),
-  //     end: endOfDay(new Date()),
-  //     color: colors.red,
-  //     draggable: true,
-  //     resizable: {
-  //       beforeStart: true,
-  //       afterEnd: true
-  //     }
-  //   });
-  //   this.refresh.next();
-  // }
 
 }

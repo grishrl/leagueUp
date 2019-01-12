@@ -37,7 +37,7 @@ export class SetDeadlineComponent implements OnInit {
   }
 
   createDeadline(){
-    console.log(this.friendlyDate);
+    
 
     this.friendlyDate.setHours(23);
     this.friendlyDate.setMinutes(59);

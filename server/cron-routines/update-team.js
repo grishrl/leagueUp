@@ -3,6 +3,7 @@ const teamSub = require('../subroutines/team-subs');
 const User = require('../models/user-models');
 const Division = require('../models/division-models');
 const mongoose = require('mongoose')
+const logger = require('../subroutines/sys-logging-subs');
 
 /*
 check teams who have not been touched or have not been touched in 5 days
@@ -11,6 +12,12 @@ make sure that the users in this team are marked as a member (we will use the te
 check the teams division, if it is not in that division, remove the marker from the team (we will use the divisions list as a trusted source)
 */
 async function updateTeamsNotTouched() {
+
+    // logObj = {};
+    // logObj.logLevel = 'SYSTEM';
+    // logObj.location = 'Update teams not touched CRON';
+    // logObj.target = 'teams touched older than ' + process.env.daysToRefreshTeams + ' days ';
+
     //connect to mongo db
     mongoose.connect(process.env.mongoURI, () => {
         console.log('connected to mongodb');
@@ -43,7 +50,8 @@ async function updateTeamsNotTouched() {
             }
         },
         (err) => {
-            console.log("There was an error in the query", err);
+            // logObj.error = err;
+            // logger(logObj)
             return null;
         }
     );
@@ -55,12 +63,12 @@ async function updateTeamsNotTouched() {
         // teams.forEach(team => {
         for (var i = 0; i < teams.length; i++) {
             let team = teams[i];
-            console.log(team);
+
             //update the team mmr
             let mmrUpdate = await teamSub.updateTeamMmrAsynch(team);
 
             if (mmrUpdate) {
-                console.log('mmr updated')
+                // console.log('mmr updated')
             }
 
             let teamMembers = [];
@@ -76,7 +84,7 @@ async function updateTeamsNotTouched() {
                 }
             );
             if (usersTeamNameUpdate) {
-                console.log(' updated users profile to belong to team ');
+                // console.log(' updated users profile to belong to team ');
             }
 
             //check to make sure the prop exists
@@ -100,7 +108,7 @@ async function updateTeamsNotTouched() {
                     }
                 );
                 if (usersPendingFlag) {
-                    console.log(' updated users profiles to pending team ');
+                    // console.log(' updated users profiles to pending team ');
                 }
             }
 
@@ -132,7 +140,7 @@ async function updateTeamsNotTouched() {
                 }
             );
             if (saved == null) {
-                console.log('Team wasn\'t saved');
+                // console.log('Team wasn\'t saved');
             } else {
                 batch.push(saved);
             }

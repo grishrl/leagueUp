@@ -59,7 +59,6 @@ router.post('/invite', passport.authenticate('jwt', {
 
     transporter.sendMail(mailOptions, function(err, info) {
         if (err) {
-            console.log(err); //replace with static logs?
             res.status(500).send(util.returnMessaging(path, 'We encountered an error, try again later or contact an admin.', err, null, null, logObj));
         } else {
             new Outreach({
@@ -96,7 +95,6 @@ router.post('/inviteResponseComplete', passport.authenticate('jwt', {
             logObj.error = 'Reference not found in ref table.';
             res.status(404).send(util.returnMessaging(path, "Reference not found in ref table.", null, null, null, logObj));
         } else {
-            console.log('del', deletedRef); //replace with static log?
             let lower = deletedRef.teamName.toLowerCase();
             Team.findOne({
                 teamName_lower: lower
@@ -110,7 +108,6 @@ router.post('/inviteResponseComplete', passport.authenticate('jwt', {
                 }
                 UserSubs.togglePendingTeam(user);
                 QueueSub.addToPendingTeamMemberQueue(foundTeam.teamName_lower, user);
-                console.log(foundTeam);
                 foundTeam.save().then(
                     saved => {
                         res.status(200).send(util.returnMessaging(path, "We added the user to pending members", false, null, null, logObj));

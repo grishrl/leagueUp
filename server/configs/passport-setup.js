@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 const UserSub = require('../subroutines/user-subs');
 // const keys = require('./keys');
 const User = require('../models/user-models');
+const logger = require('../subroutines/sys-logging-subs');
 
 
 
@@ -49,15 +50,25 @@ passport.use(new BnetStrategy({
     var id = profile.id.toString()
     User.findOne({ bNetId: id }).then((prof) => {
 
+        logObj = {};
+        logObj.logLevel = 'SYSTEM';
+        // logObj.target = prof.displayName;
+        logObj.timeStamp = new Date().getTime();
+        logObj.location = ' authentication '
 
-        //TODO: IMPLEMENT A CHECK TO MAKE SURE THE USERS DISPLAY NAME HAS NOT CHANGED!!
+        //check if an existing users battle tag has changed
         //IF IT HAS, UPDATE IT!!!
         if (prof) {
             if (prof.displayName != profile.battletag) {
+                logObj.target = prof.displayName;
                 UserSub.updateUserName(prof._id, profile.battletag).then(
                     (updatedUser) => {
+                        logObj.action = ' an existing user changed their battletag attempted to clean up '
+                        logger(logObj)
                         returnUserToClient(updatedUser, done);
                     }, (err) => {
+                        logObj.action = ' an existing user changed their battletag attempted to clean up '
+                        logObj.error = ' an error occured in the process '
                         returnUserToClient(null, done);
                     })
             } else {
@@ -72,7 +83,9 @@ passport.use(new BnetStrategy({
                 displayName: profile.battletag,
                 bNetId: id
             }).save().then((newUser) => {
-                // console.log('created new user: ' + newUser); -- TODO: replace this with a logger
+                logObj.action = ' new user was created ';
+                logObj.target = newUser.displayName;
+                logger(logObj);
                 returnUserToClient(newUser, done);
             });
         }

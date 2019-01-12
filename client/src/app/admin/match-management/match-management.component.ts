@@ -61,13 +61,13 @@ export class MatchManagementComponent implements OnInit, AfterViewInit {
   pageIndex: number;
 
   pageEventHandler(pageEvent: PageEvent) {
-    console.log(pageEvent);
+    
     let i = pageEvent.pageIndex * this.pageSize;
     let endSlice = i + this.pageSize
     if (endSlice > this.filterMatches.length) {
       endSlice = this.filterMatches.length;
     }
-    console.log('index start ', i, ' endSlice ', endSlice);
+    
     this.displayArray = [];
     this.displayArray = this.filterMatches.slice(i, endSlice)
 
@@ -84,7 +84,7 @@ export class MatchManagementComponent implements OnInit, AfterViewInit {
   */
  //filters the matches based on selected criteria
   doFilterMatches(div, round, team) {
-    // console.log('div ', div, ' round ', round, ' team ', team);
+    
     this.filterMatches = this.originalMatches.filter(match => {
       let home, away;
       if(!match.away.teamName){

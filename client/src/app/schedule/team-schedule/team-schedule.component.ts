@@ -84,7 +84,6 @@ export class TeamScheduleComponent implements OnInit {
               });
               if (match.scheduleDeadline){
                 match['friendlyDeadline'] = this.util.getDateFromMS(match.scheduleDeadline);
-                console.log('yyy ', this.util.getDateFromMS(match.scheduleDeadline))
               }
 
               if (match.scheduledTime) {
@@ -106,7 +105,7 @@ export class TeamScheduleComponent implements OnInit {
                         ] 
                       }
         */
-       console.log(matches)
+
        let roundsArray = [];
         for(var i = 0; i<=matches.length; i++){
           if(this.rounds == null || this.rounds == undefined){
@@ -125,7 +124,7 @@ export class TeamScheduleComponent implements OnInit {
           });
         }
 
-        console.log('rounds ', this.rounds)
+
         this.rounds;
         this.roundsArray = roundsArray;
       },

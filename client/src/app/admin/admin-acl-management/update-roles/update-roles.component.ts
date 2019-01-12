@@ -37,7 +37,7 @@ export class UpdateRolesComponent implements OnInit {
       (res)=>{
 
         res = this.aclSerive.removeUnwantedProps(res);
-        console.log('res ', res);
+        
         if (res.adminRights != null || res.adminRights != undefined){
           let key = Object.keys(res.adminRights);
           key.forEach(element => {
@@ -49,9 +49,7 @@ export class UpdateRolesComponent implements OnInit {
           });
         }else{
           res.adminRights = {};
-          // this.rights.forEach((statRight) => {
-          //     console.log(statRight);
-          //   });
+
         }
         
 

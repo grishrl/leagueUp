@@ -277,7 +277,6 @@ router.post('/create', passport.authenticate('jwt', {
                             logger(sysObj);
                         });
                     }, (err) => {
-                        console.log(err);
                         res.status(500).send(util.returnMessaging(path, "Error creating new team", err, null, null, logObj));
                     });
                 }
@@ -707,7 +706,6 @@ router.post('/reassignCaptain', passport.authenticate('jwt', {
                         (savedTeam) => {
                             if (savedTeam) {
                                 UserSub.toggleCaptain(oldCpt);
-                                console.log(savedTeam.captain)
                                 UserSub.toggleCaptain(savedTeam.captain);
                                 res.status(200).send(util.returnMessaging(path, 'Team captain changed', false, savedTeam, null, logObj));
                             } else {
