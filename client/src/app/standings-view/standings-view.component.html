@@ -1,51 +1,87 @@
 <div class="container">
+
     <div class="row">
         <div class="col">
             <h3>Standings</h3>
         </div>
     </div>
-    <div class="row">
-        <div class="col">
-            Position
+    <div class="d-none d-sm-none d-md-block">
+        <div class="row">
+            <div class="col-1">
+                Position
+            </div>
+            <div class="col-3">
+                Team Name
+            </div>
+            <div class="col">
+                Points
+            </div>
+            <div class="col">
+                Dominations
+            </div>
+            <div class="col">
+                Wins
+            </div>
+            <div class="col">
+                Losses
+            </div>
         </div>
-        <div class="col">
-            Team Name
-        </div>
-        <div class="col">
-            Points
-        </div>
-        <div class="col">
-            Dominations
-        </div>
-        <div class="col">
-            Wins
-        </div>
-        <div class="col">
-            Losses
+        <div *ngIf="standings.length>0 else noStandings">
+            <div class="row" *ngFor="let standing of standings">
+                <div class="col-1">
+                    {{standing.standing}}
+                </div>
+                <div class="col-3">
+                    {{standing.teamName}}
+                </div>
+                <div class="col">
+                    {{standing.points}}
+                </div>
+                <div class="col">
+                    {{standing.dominations}}
+                </div>
+                <div class="col">
+                    {{standing.wins}}
+                </div>
+                <div class="col">
+                    {{standing.losses}}
+                </div>
+            </div>
         </div>
     </div>
-    <div *ngIf="standings.length>0 else noStandings">
-        <div class="row" *ngFor="let standing of standings">
-            <div class="col">
-                {{standing.standing}}
-            </div>
-            <div class="col">
-                {{standing.teamName}}
-            </div>
-            <div class="col">
-                {{standing.points}}
-            </div>
-            <div class="col">
-                {{standing.dominations}}
-            </div>
-            <div class="col">
-                {{standing.wins}}
-            </div>
-            <div class="col">
-                {{standing.losses}}
-            </div>
-        </div>
+
+    <div class="d-block d-sm-none" *ngIf="standings.length>0 else noStandings">
+        <table class="table table-responsive">
+            <thead>
+                <tr>
+                    <td>
+                        Position
+                    </td>
+                    <td>
+                        Team Name
+                    </td>
+                    <td>
+                        Points
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let standing of standings">
+                    <td>
+                        {{standing.standing}}
+                    </td>
+                    <td>
+                        {{standing.teamName}}
+                    </td>
+                    <td>
+                        {{standing.points}}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
+
+
 
     <ng-template #noStandings>
         <div class="row mt-3">
