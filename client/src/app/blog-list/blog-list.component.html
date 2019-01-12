@@ -19,7 +19,7 @@
             </div>
 
             <div class="row m-t" *ngFor="let row of rows">
-                <div class="col" *ngFor="let item of row">
+                <div class="col-xs-12 col-md-4 mt-1" *ngFor="let item of row">
                     <mat-card class="blog-card finger" (click)="goToBlogPage(item)">
                         <mat-card-header>
                             <img mat-card-avatar src="{{item.fields.author.fields.image.fields.file.url}}" class="author-image">
