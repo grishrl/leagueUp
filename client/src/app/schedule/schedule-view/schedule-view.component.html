@@ -28,7 +28,7 @@
                             </mat-form-field>
                         </div>
                     </div>
-                    <!-- <div class="fillUpDeadSpace" *ngIf="!selectedRound"></div> -->
+
                 </div>
             </ng-template>
             <!-- else noMatches -->
@@ -38,8 +38,9 @@
                         <h2>Matches</h2>
                     </div>
                 </div>
+                <app-match-view *ngFor="let match of matches" [passMatch]="match"></app-match-view>
                 <!-- this block is only visible on large screens -->
-                <div class="d-none d-sm-none d-md-block">
+                <!-- <div class="d-none d-sm-none d-md-block">
                     <div class="row mt-3" *ngFor="let match of matches">
                         <div class="col">
                             <div class="row">
@@ -84,8 +85,7 @@
 
                                 </div>
                                 <div class="col-7 text-center">
-                                    Scheduled Time: <span *ngIf="match.scheduledTime else tbd">{{match.friendlyDate}} - {{match.friendlyTime}}
-          {{match.suffix}}</span>
+                                    Scheduled Time: <span *ngIf="match.scheduledTime else tbd">{{match.friendlyDate}} - {{match.friendlyTime}} {{match.suffix}}</span>
                                     <ng-template #tbd><span> TBD </span></ng-template>
                                 </div>
                                 <div class="col">
@@ -101,11 +101,11 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <!-- End large screen block -->
 
                 <!-- this block is only visible on small screens -->
-                <div class="d-block d-sm-none">
+                <!-- <div class="d-block d-sm-none">
                     <div class="row mt-4 p-3" *ngFor="let match of matches">
                         <div class="col">
                             <div class="row">
@@ -141,8 +141,7 @@
                             </div>
                             <div class="row">
                                 <div class="col text-center">
-                                    Scheduled Time: <span *ngIf="match.scheduledTime else tbd">{{match.friendlyDate}} - {{match.friendlyTime}}
-  {{match.suffix}}</span>
+                                    Scheduled Time: <span *ngIf="match.scheduledTime else tbd">{{match.friendlyDate}} - {{match.friendlyTime}} {{match.suffix}}</span>
                                     <ng-template #tbd><span> TBD </span></ng-template>
                                 </div>
                             </div>
@@ -153,14 +152,14 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
 </div>
-<ng-template #bye>
+<!-- <ng-template #bye>
     BYE
-</ng-template>
+</ng-template> -->
 <ng-template #noMatch>
     <div>No matches currently for this round!</div>
 </ng-template>

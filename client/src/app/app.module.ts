@@ -65,6 +65,7 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { EventModalComponent } from './calendar-view/event-modal/event-modal.component';
 import { EventLargeComponent } from './calendar-view/event-large/event-large.component';
 import { SetDeadlineComponent } from './admin/match-management/set-deadline/set-deadline.component';
+import { MatchViewComponent } from './match-view/match-view.component';
  
 
 @NgModule({
@@ -123,7 +124,8 @@ import { SetDeadlineComponent } from './admin/match-management/set-deadline/set-
     CalendarViewComponent,
     EventModalComponent,
     EventLargeComponent,
-    SetDeadlineComponent
+    SetDeadlineComponent,
+    MatchViewComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

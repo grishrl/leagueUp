@@ -13,6 +13,8 @@ Work on client flow > particularly in regards to scheduling screens, what is the
 
 >>> remove all hard codings of season 6 with something... else MEDIUM PRIO
 
+>>>time available, create an ALL DAY check and/or a populate same time
+
 team
 > player names links, if possible.
 > show pending members?

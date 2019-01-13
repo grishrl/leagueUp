@@ -6,3 +6,9 @@
     background-color: #F26A2F;
     color: white;
 }
+
+.ngsImg {
+    background-color: white;
+    padding: 3px;
+    height: 40px;
+}
