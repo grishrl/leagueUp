@@ -1,50 +1,56 @@
 <div class="container">
 
-    <div class="row">
-        <div class="col">
+    <div class="row mt-4">
+        <div class="col text-center">
             <h3>Standings</h3>
         </div>
     </div>
     <div class="d-none d-sm-none d-md-block">
-        <div class="row">
-            <div class="col-1">
+        <div class="row mt-3">
+            <div class="col-1 text-center">
                 Position
             </div>
-            <div class="col-3">
+            <div class="col-3 text-center">
                 Team Name
             </div>
-            <div class="col">
+            <div class="col text-center">
                 Points
             </div>
-            <div class="col">
+            <div class="col text-center">
                 Dominations
             </div>
-            <div class="col">
-                Wins
+            <div class="col-1 text-center">
+                Map Wins
             </div>
-            <div class="col">
-                Losses
+            <div class="col text-center">
+                Map Losses
+            </div>
+            <div class="col text-center">
+                Matches Played
             </div>
         </div>
         <div *ngIf="standings.length>0 else noStandings">
-            <div class="row" *ngFor="let standing of standings">
-                <div class="col-1">
+            <div class="row mt-2" *ngFor="let standing of standings">
+                <div class="col-1 text-center">
                     {{standing.standing}}
                 </div>
-                <div class="col-3">
+                <div class="col-3 text-center">
                     <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(standing.teamName)]">{{standing.teamName}}</a>
                 </div>
-                <div class="col">
+                <div class="col text-center">
                     {{standing.points}}
                 </div>
-                <div class="col">
+                <div class="col text-center">
                     {{standing.dominations}}
                 </div>
-                <div class="col">
+                <div class="col-1 text-center">
                     {{standing.wins}}
                 </div>
-                <div class="col">
+                <div class="col text-center">
                     {{standing.losses}}
+                </div>
+                <div class="col text-center">
+                    {{standing.matchesPlayed}}
                 </div>
             </div>
         </div>

@@ -34,19 +34,26 @@ async function calulateStandings(division) {
             standing['losses'] = 0;
             standing['dominations'] = 0;
             standing['id'] = team;
+            standing['matchesPlayed'] = 0;
             matchesForDivision.forEach(match => {
                 if (match.away.id == team) {
                     standing['teamName'] = match.away.teamName;
                     let score = match.away.score
                     let dominator = match.away.dominator;
-                    if (score) {
+                    if (match.reported) {
+                        standing['matchesPlayed'] += 1;
+                    }
+                    if (score != undefined && score != null) {
                         if (score == 2) {
                             standing['wins'] += 2;
                             standing['points'] += 2;
+                            if (!dominator) {
+                                standing['losses'] += 1;
+                            }
                         } else if (score == 1) {
-                            standing['wins'] += 1;
-                            standing['losses'] += 1;
                             standing['points'] += 1;
+                            standing['wins'] += 1;
+                            standing['losses'] += 2;
                         } else {
                             standing['losses'] += 2;
                         }
@@ -59,16 +66,21 @@ async function calulateStandings(division) {
                     standing['teamName'] = match.home.teamName;
                     let score = match.home.score
                     let dominator = match.home.dominator;
-                    if (score) {
+                    if (match.reported) {
+                        standing['matchesPlayed'] += 1;
+                    }
+                    if (score != undefined && score != null) {
                         if (score == 2) {
                             standing['points'] += 2;
                             standing['wins'] += 2;
+                            if (!dominator) {
+                                standing['losses'] += 1;
+                            }
                         } else if (score == 1) {
                             standing['points'] += 1;
                             standing['wins'] += 1;
-                            standing['losses'] += 1;
+                            standing['losses'] += 2;
                         } else {
-                            standing['points'] += 1;
                             standing['losses'] += 2;
                         }
                         if (dominator) {
