@@ -95,50 +95,65 @@
                 <div *ngIf="!componentEmbedded">
 
                     <!-- add team member -->
+
                     <div class="row mt-3" *ngIf="!editOn">
                         <div class="col">
-                            <h3>Invite users to your team!</h3>
-                            <mat-accordion>
-                                <mat-expansion-panel>
-                                    <mat-expansion-panel-header>
-                                        <mat-panel-title>
-                                            Existing User:
-                                        </mat-panel-title>
-                                        <mat-panel-description>
-                                            Search if user is a member of NGS all ready.
-                                        </mat-panel-description>
-                                    </mat-expansion-panel-header>
+                            <div *ngIf="checkRosterSize() else sizeLimit">
+                                <h3>Invite users to your team!</h3>
+                                <mat-accordion>
+                                    <mat-expansion-panel>
+                                        <mat-expansion-panel-header>
+                                            <mat-panel-title>
+                                                Existing User:
+                                            </mat-panel-title>
+                                            <mat-panel-description>
+                                                Search if user is a member of NGS all ready.
+                                            </mat-panel-description>
+                                        </mat-expansion-panel-header>
 
-                                    <app-user-search [filterUser]="filterUsers" [type]="'unteamed'" [buttonText]="'Invite User'" (userSelected)="invite($event)"></app-user-search>
+                                        <app-user-search [filterUser]="filterUsers" [type]="'unteamed'" [buttonText]="'Invite User'" (userSelected)="invite($event)"></app-user-search>
 
-                                </mat-expansion-panel>
+                                    </mat-expansion-panel>
 
-                                <mat-expansion-panel>
-                                    <mat-expansion-panel-header>
-                                        <mat-panel-title>
-                                            New User:
-                                        </mat-panel-title>
-                                        <mat-panel-description>
-                                            Invite a user to join NGS!
-                                        </mat-panel-description>
-                                    </mat-expansion-panel-header>
-                                    <div class="row">
-                                        <div class="col-7">
-                                            <mat-form-field class="mat-FullWidth">
-                                                <input matInput [formControl]="emailControl" [(ngModel)]="emailAddress" placeholder="Enter users email to send them an invite to NGS!">
-                                            </mat-form-field>
+                                    <mat-expansion-panel>
+                                        <mat-expansion-panel-header>
+                                            <mat-panel-title>
+                                                New User:
+                                            </mat-panel-title>
+                                            <mat-panel-description>
+                                                Invite a user to join NGS!
+                                            </mat-panel-description>
+                                        </mat-expansion-panel-header>
+                                        <div class="row">
+                                            <div class="col-7">
+                                                <mat-form-field class="mat-FullWidth">
+                                                    <input matInput [formControl]="emailControl" [(ngModel)]="emailAddress" placeholder="Enter users email to send them an invite to NGS!">
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="col">
+                                                <button type="button" [disabled]="emailControl.invalid" (click)="inviteEmail()">Invite!</button>
+                                            </div>
                                         </div>
-                                        <div class="col">
-                                            <button type="button" [disabled]="emailControl.invalid" (click)="inviteEmail()">Invite!</button>
-                                        </div>
-                                    </div>
 
 
 
-                                </mat-expansion-panel>
-                            </mat-accordion>
+                                    </mat-expansion-panel>
+                                </mat-accordion>
+
+                            </div>
                         </div>
+                        <ng-template #sizeLimit>
+                            <div class="text-center">
+                                <div> You have reached the team size limit! 9 Members </div>
+                                <div> {{returnedProfile.teamMembers.length}} members on roster </div>
+                                <div> {{returnedProfile.pendingMembers.length}} members pending roster add </div>
+                            </div>
+                        </ng-template>
+
                     </div>
+
+
+
                     <div class="row mt-3">
                         <div class="col">
                             <span class="p-3 text-success">{{message}}</span>

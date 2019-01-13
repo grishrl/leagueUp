@@ -132,7 +132,7 @@ this.timezoneControl.enable();
   profSub: Subscription;
   tempProfile: Profile;
 
-  hlMedals = ['Grand Master','Master','Diamond','Platinum','Gold','Silver','Bronze'];
+  hlMedals = ['Grand Master','Master','Diamond','Platinum','Gold','Silver','Bronze','Unranked'];
   hlDivision = [1,2,3,4,5];
   competitonLevel = [
     'Low','Medium','High'
@@ -237,7 +237,15 @@ this.timezoneControl.enable();
     }else{
       this.timesAvailControl.setErrors({ invalid: true });
     }
-  }  
+  } 
+  
+  modifyForm(metal){
+    if(metal == 'Unranked'){
+      this.heroeLeagueRankControl.setErrors(null);
+    }else{
+      this.heroeLeagueRankControl.setErrors({required:true});
+    }
+  }
 
   validate(){
     let valid = true;
@@ -248,7 +256,10 @@ this.timezoneControl.enable();
     }
 
     //validate the hero leauge information
-    if (this.isNullOrEmpty(this.returnedProfile.hlRankMetal) && this.isNullOrEmpty(this.returnedProfile.hlRankDivision)){
+    if (this.returnedProfile.hlRankMetal == 'Unranked'){
+      valid = true;
+      
+    }else if (this.isNullOrEmpty(this.returnedProfile.hlRankMetal) && this.isNullOrEmpty(this.returnedProfile.hlRankDivision)){
       valid = false;
     }
 

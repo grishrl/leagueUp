@@ -154,6 +154,21 @@ export class TeamProfileComponent implements OnInit {
     }
   }
 
+  checkRosterSize()
+  {
+    let mem = 0;
+    if (this.returnedProfile.teamMembers && this.returnedProfile.teamMembers.length > 0) {
+      mem += this.returnedProfile.teamMembers.length;
+    }else{
+      mem+=0;
+    }
+    if (this.returnedProfile.pendingMembers && this.returnedProfile.pendingMembers.length > 0) {
+      mem += this.returnedProfile.pendingMembers.length;
+    }else{
+      mem+=0;
+    }
+    return mem < 9;
+  }
   setUpTeamMemberFilter(teamProfile){
     if (teamProfile.teamMembers && teamProfile.teamMembers.length > 0) {
       teamProfile.teamMembers.forEach(element => {
@@ -368,6 +383,12 @@ export class TeamProfileComponent implements OnInit {
     if (this.returnedProfile.teamName && user) {
       this.team.addUser(user, this.returnedProfile.teamName_lower).subscribe(res => {
         this.message = res.message;
+        if (this.returnedProfile.pendingMembers == null){
+          this.returnedProfile.pendingMembers = [{ "displayName": user }];
+        }else{
+          this.returnedProfile.pendingMembers.push({ "displayName": user });
+        }
+        
         this.filterUsers.push(user);
         // console.log(this.filterUsers);
       }, err => {

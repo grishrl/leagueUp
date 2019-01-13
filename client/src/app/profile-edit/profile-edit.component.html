@@ -51,7 +51,7 @@
                                 </mat-error>
                             </mat-form-field>
                             <mat-form-field>
-                                <mat-select placeholder="Hero League Division" [formControl]="heroeLeagueDivisionControl" [(ngModel)]="returnedProfile.hlRankMetal" disableOptionCentering>
+                                <mat-select placeholder="Hero League Division" [formControl]="heroeLeagueDivisionControl" [(ngModel)]="returnedProfile.hlRankMetal" (ngModelChange)="modifyForm(returnedProfile.hlRankMetal)" disableOptionCentering>
                                     <mat-option *ngFor="let medal of hlMedals" [value]="medal">
                                         {{medal}}
                                     </mat-option>
@@ -60,26 +60,30 @@
                                     </mat-error>
                                 </mat-select>
                             </mat-form-field>
-                            <div class="pe-full-width" *ngIf="returnedProfile.hlRankMetal != 'Master' && returnedProfile.hlRankMetal != 'Grand Master'">
-                                <mat-form-field class="pe-full-width">
-                                    <mat-select placeholder="Hero League Rank" [formControl]="heroeLeagueRankControl" [(ngModel)]="returnedProfile.hlRankDivision" disableOptionCentering>
-                                        <mat-option *ngFor="let rank of hlDivision" [value]="rank">
-                                            {{rank}}
-                                        </mat-option>
-                                        <mat-error *ngIf="heroeLeagueRankControl.hasError('required')">
-                                            Hero League Rank is required
-                                        </mat-error>
-                                    </mat-select>
-                                </mat-form-field>
-                            </div>
 
-                            <div class="pe-full-width" *ngIf="returnedProfile.hlRankMetal == 'Master' || returnedProfile.hlRankMetal == 'Grand Master'">
-                                <mat-form-field class="pe-full-width">
-                                    <input matInput placeholder="Rank Number" [formControl]="heroeLeagueRankControl" [(ngModel)]="returnedProfile.hlRankDivision">
-                                </mat-form-field>
-                                <mat-error *ngIf="heroeLeagueRankControl.hasError('required')">
-                                    Hero League Rank is required
-                                </mat-error>
+
+
+                            <div *ngIf="returnedProfile.hlRankMetal != 'Unranked'">
+                                <div class="pe-full-width" *ngIf="returnedProfile.hlRankMetal != 'Master' && returnedProfile.hlRankMetal != 'Grand Master'">
+                                    <mat-form-field class="pe-full-width">
+                                        <mat-select placeholder="Hero League Rank" [formControl]="heroeLeagueRankControl" [(ngModel)]="returnedProfile.hlRankDivision" disableOptionCentering>
+                                            <mat-option *ngFor="let rank of hlDivision" [value]="rank">
+                                                {{rank}}
+                                            </mat-option>
+                                            <mat-error *ngIf="heroeLeagueRankControl.hasError('required')">
+                                                Hero League Rank is required
+                                            </mat-error>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                                <div class="pe-full-width" *ngIf="returnedProfile.hlRankMetal == 'Master' || returnedProfile.hlRankMetal == 'Grand Master'">
+                                    <mat-form-field class="pe-full-width">
+                                        <input matInput placeholder="Rank Number" [formControl]="heroeLeagueRankControl" [(ngModel)]="returnedProfile.hlRankDivision">
+                                    </mat-form-field>
+                                    <mat-error *ngIf="heroeLeagueRankControl.hasError('required')">
+                                        Hero League Rank is required
+                                    </mat-error>
+                                </div>
                             </div>
 
                             <div class="row">

@@ -14,15 +14,15 @@ export class Team {
   timeZone: string;
   captain: string;
   teamMMRAvg: number; //added to display
-  teamMembers: [string]; //added to display
-  pendingMembers: [string];
+  teamMembers: [{displayName:string}]; //added to display
+  pendingMembers: [{displayName:string}];
   questionnaire:object;
   
 
 
   constructor(id: string, logo:string, teamName: string, lookingForMore: Boolean, availability:schedule,
     competitiveLevel: number, rolesNeeded: roles, descriptionOfTeam: string, timeZone: string,
-    teamMembers: [string], pendingMembers: [string], captain: string, teamMMRAvg:number,
+    teamMembers: [{ displayName: string }], pendingMembers: [{ displayName: string }], captain: string, teamMMRAvg:number,
     divisionDisplayName: string, divisionConcat: string, questionnaire:object) {
     if (id != null && id != undefined && id.length > 0) {
       this._id = id;
