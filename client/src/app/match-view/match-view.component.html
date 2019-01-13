@@ -101,8 +101,7 @@
             </div>
             <div class="row">
                 <div class="col text-center">
-                    Scheduled Time: <span *ngIf="match.scheduledTime else tbd">{{match.friendlyDate}} - {{match.friendlyTime}}
-            {{match.suffix}}</span>
+                    Scheduled Time: <span *ngIf="match.scheduledTime else tbd">{{match.friendlyDate}} - {{match.friendlyTime}} {{match.suffix}}</span>
                     <ng-template #tbd><span> TBD </span></ng-template>
                 </div>
             </div>

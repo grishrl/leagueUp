@@ -10,8 +10,24 @@ import { UtilitiesService } from '../services/utilities.service';
 export class MatchViewComponent implements OnInit {
 
   match = {
-    home:{},
-    away:{}
+    home:{
+      teamName:'',
+      logo:'',
+      wins:null,
+      losses:null
+    },
+    away: {
+      teamName: '',
+      logo: '',
+      wins: null,
+      losses: null
+    },
+    scheduledTime:{
+      startTime:null,
+      endTime:null
+    },
+    casterName:'',
+    casterUrl:''
   }
   @Input() set passMatch(_match){
     if(_match != undefined && _match != null){
