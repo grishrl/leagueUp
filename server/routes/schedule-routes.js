@@ -29,9 +29,7 @@ const s3replayBucket = new AWS.S3({
  * return matches that fit the criterea
  * 
  */
-router.post('/get/matches', passport.authenticate('jwt', {
-    session: false
-}), util.appendResHeader, (req, res) => {
+router.post('/get/matches', (req, res) => {
     const path = 'schedule/get/matches';
     let season = req.body.season;
     let division = req.body.division;
