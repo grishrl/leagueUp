@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { AdminService } from 'src/app/services/admin.service';
 import { MatPaginator, PageEvent } from '@angular/material';
+import { UtilitiesService } from 'src/app/services/utilities.service';
 
 @Component({
   selector: 'app-match-management',
@@ -22,7 +23,7 @@ export class MatchManagementComponent implements OnInit, AfterViewInit {
   rounds = [];
   divisions = []
 
-  constructor(private scheduleService: ScheduleService, private adminService: AdminService) { }
+  constructor(private scheduleService: ScheduleService, private adminService: AdminService, public util: UtilitiesService) { }
 
   ngAfterViewInit() {
     this.paginator.pageIndex = 0;

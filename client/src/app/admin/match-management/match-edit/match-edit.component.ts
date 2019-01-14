@@ -71,16 +71,13 @@ export class MatchEditComponent implements OnInit {
 
   saveMatch(match){
     let submittable = true;
-    if(this.homeScore == 1 && this.awayScore == 2 || this.awayScore == 1 && this.homeScore ==2){
-      //ok
-    } else if (this.homeScore == 0 && this.awayScore == 2 || this.awayScore == 0 && this.homeScore == 2){
-      //ok
-    }else if(this.homeScore + this.awayScore > 3){
-      submittable = false;
-      alert('these scores are not allowed');
-    }else{
-      submittable = false;
-      alert('these scores are not allowed');
+
+    if (this.homeScore != undefined && this.homeScore != null){
+      match.home.score = this.homeScore;
+    }
+    
+    if (this.awayScore != undefined && this.awayScore != null) {
+      match.away.score = this.awayScore;
     }
 
     if(this.friendlyDate && this.friendlyTime){
@@ -104,10 +101,6 @@ export class MatchEditComponent implements OnInit {
       let endDate = msDate + 5400000;
       match.scheduledTime.startTime = msDate;
       match.scheduledTime.endDate = endDate;
-    } else if (this.friendlyDate && !this.friendlyTime){
-      alert('You have entered a date but no time!');
-    } else if (!this.friendlyDate && this.friendlyTime) {
-      alert('You have entered a time but no date!');
     }
 
     if(submittable){
