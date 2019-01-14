@@ -104,4 +104,19 @@ router.post('/user/market', (req, res) => {
 
 });
 
+router.post('/team/market', (req, res) => {
+    const path = '/search/team/market';
+
+    let payload = req.body;
+
+    User.find(payload).then(
+        (found) => {
+            res.status(200).send(util.returnMessaging(path, "Found these users", null, found));
+        }, (err) => {
+            res.status(500).send(util.returnMessaging(path, "Error finding users", err));
+        }
+    );
+
+});
+
 module.exports = router;
