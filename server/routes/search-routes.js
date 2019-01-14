@@ -89,4 +89,19 @@ router.post('/team', passport.authenticate('jwt', {
     });
 });
 
+router.post('/user/market', (req, res) => {
+    const path = '/search/user/market';
+
+    let payload = req.body;
+
+    User.find(payload).then(
+        (found) => {
+            res.status(200).send(util.returnMessaging(path, "Found these users", null, found));
+        }, (err) => {
+            res.status(500).send(util.returnMessaging(path, "Error finding users", err));
+        }
+    );
+
+});
+
 module.exports = router;
