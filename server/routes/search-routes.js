@@ -38,7 +38,9 @@ router.post('/user/unteamed', passport.authenticate('jwt', {
             {
                 $or: [
                     { teamName: null },
-                    { teamName: undefined }
+                    { teamName: undefined },
+                    { teamId: null },
+                    { teamId: undefined }
                 ]
             },
             {

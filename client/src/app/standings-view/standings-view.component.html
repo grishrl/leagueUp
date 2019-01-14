@@ -5,6 +5,7 @@
             <h3>Standings</h3>
         </div>
     </div>
+    <!-- this view is available on larger screens -->
     <div class="d-none d-sm-none d-md-block">
         <div class="row mt-3">
             <div class="col-1 text-center">
@@ -56,6 +57,7 @@
         </div>
     </div>
 
+    <!-- this view is available only on smaller screens -->
     <div class="d-block d-sm-none" *ngIf="standings.length>0 else noStandings">
         <table class="table table-responsive">
             <thead>
