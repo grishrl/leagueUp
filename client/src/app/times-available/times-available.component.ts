@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, DoCheck, OnChanges, SimpleChange, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, DoCheck } from '@angular/core';
 import { UtilitiesService } from '../services/utilities.service';
 
 @Component({
@@ -8,7 +8,27 @@ import { UtilitiesService } from '../services/utilities.service';
 })
 export class TimesAvailableComponent implements OnInit, DoCheck {
   
-  
+
+  daySelected:any = {
+    "monday":'',
+    "tuesday":'',
+    "wednesday":'',
+    "thursday":'',
+    "friday":'',
+    "saturday":'',
+    "sunday":''
+  }
+  allDay:any = {
+    "monday": '',
+    "tuesday": '',
+    "wednesday": '',
+    "thursday": '',
+    "friday": '',
+    "saturday": '',
+    "sunday": ''
+  }
+
+  show:boolean = false;
   availability = {
     "monday": {
       "available": false,
@@ -46,6 +66,19 @@ export class TimesAvailableComponent implements OnInit, DoCheck {
       "endTime": null
     }
   };
+
+  days=[
+    "monday",
+    "tuesday",
+    "wednesday", 
+    "thursday",
+    "friday", 
+    "saturday", 
+    "sunday"
+  ]
+
+  populatedDays = [];
+
   errorAvail: boolean = false;
   errorReply: string = '';
   differ: any
@@ -55,12 +88,36 @@ export class TimesAvailableComponent implements OnInit, DoCheck {
   }
 
   ngOnInit() {
+
   }
 
- 
+  toggleAllDay(day, allDay){
+    if(allDay){
+      this.availability[day] = {
+        available: true,
+        startTime: '00:00',
+        endTime: '23:45',
+        allDay: true
+      }
+    }else{
+      this.availability[day] = {
+        available: false,
+        startTime: null,
+        endTime: null
+      }  
+    }
+    
+    console.log(day)
+  }
+
+  fillFrom(targetDay, sourceDay) {
+    this.availability[targetDay] = Object.assign({},this.availability[sourceDay]);
+    this.recalculateCopyDays();
+  }
+
   @Input() set availObj(_obj){
     if(typeof _obj == 'object' && _obj != null && _obj != undefined){
-      this.availability = Object.assign({},_obj);
+      this.availability = _obj;
     }
   }
 
@@ -75,7 +132,22 @@ export class TimesAvailableComponent implements OnInit, DoCheck {
   @Input() set disabled(_editOn) {
     if (typeof _editOn == 'boolean' && _editOn != null && _editOn != undefined) {
       this.editOn = _editOn;
+
+      this.recalculateCopyDays();
     }
+  }
+
+  recalculateCopyDays() {
+    this.populatedDays = [];
+    let keys = Object.keys(this.availability);
+    keys.forEach(element => {
+      if (this.availability[element].available) {        
+        let firstChar = element.charAt(0);
+        firstChar = firstChar.toUpperCase();
+        let prettyName = firstChar + element.substring(1, element.length);
+        this.populatedDays.push({ 'key': prettyName, 'value': element });
+      }
+    });
   }
 
   ngDoCheck() {
@@ -100,7 +172,9 @@ export class TimesAvailableComponent implements OnInit, DoCheck {
       //validate that we have start and end times for available days
       for (let day in this.availability) {
         let checkDay = this.availability[day];
+
         if (checkDay.available) {
+
           if (checkDay.startTime == null || checkDay.startTime.length == 0) {
             this.errorReply = day.substring(0, 1).toUpperCase() + day.substring(1, day.length) + " start time required!";
             ret = false;
@@ -111,6 +185,8 @@ export class TimesAvailableComponent implements OnInit, DoCheck {
           } else if (false) {
             ret = false;
           } else {
+            // console.log('checkDay.startTime ', checkDay.startTime);
+            // console.log('checkDay.endTime ', checkDay.endTime);
             let endTimeStrArr = checkDay.endTime.split(':');
             let endTime = new Date();
             endTime.setMinutes(endTimeStrArr[1]);
