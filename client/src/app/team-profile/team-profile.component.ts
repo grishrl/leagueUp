@@ -12,6 +12,7 @@ import { UserService } from '../services/user.service';
 import { AdminService } from '../services/admin.service';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { Profile } from '../classes/profile.class';
+import { UtilitiesService } from '../services/utilities.service';
 
 
 @Component({
@@ -70,7 +71,7 @@ export class TeamProfileComponent implements OnInit {
 
   //constructor
   constructor(private auth: AuthService, public user: UserService, public timezone: TimezoneService, private team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router: Router,
-    private admin:AdminService) {
+    private admin:AdminService, private util:UtilitiesService) {
     this.teamName = team.realTeamName(this.route.snapshot.params['id']);
   }
 
@@ -361,8 +362,19 @@ export class TeamProfileComponent implements OnInit {
     if (this.validate()) {
       this.editOn = true;
       this.formControlledDisable();
+
+      let keys = Object.keys(this.returnedProfile.availability);
+      keys.forEach(element => {
+        let obj = this.returnedProfile.availability[element];
+        if (obj.available) {
+          obj['startTimeNumber'] = this.util.convertToMil(obj.startTime);
+          obj['endTimeNumber'] = this.util.convertToMil(obj.endTime);
+        }
+      });
+
       let cptRemoved = Object.assign({}, this.returnedProfile);
       delete cptRemoved.captain;
+
       this.team.saveTeam(cptRemoved).subscribe((res) => {
         this.editOn = true;
         this.formControlledDisable();

@@ -10,8 +10,8 @@ import { ReactiveFormsModule, FormControl, Validators, FormGroup } from '@angula
 import { merge } from 'lodash';
 import { HotsLogsService } from '../services/hots-logs.service';
 import { Router } from '@angular/router';
-import { NotificationService } from '../services/notification.service';
 import { DeleteConfrimModalComponent } from '../modal/delete-confrim-modal/delete-confrim-modal.component'
+import { UtilitiesService } from '../services/utilities.service';
 
 @NgModule({
   imports:[
@@ -26,7 +26,8 @@ import { DeleteConfrimModalComponent } from '../modal/delete-confrim-modal/delet
 })
 export class ProfileEditComponent implements OnInit {
 
-  constructor(private notificationService:NotificationService, public timezone: TimezoneService, private user: UserService, public auth: AuthService, private router: Router, private route: ActivatedRoute, private hotsLogsService: HotsLogsService, public dialog: MatDialog) {
+  constructor(public timezone: TimezoneService, private user: UserService, public auth: AuthService, private router: Router, private route: ActivatedRoute, 
+    private hotsLogsService: HotsLogsService, public dialog: MatDialog, private util:UtilitiesService) {
     this.displayName = user.realUserName(this.route.snapshot.params['id']);
   }
 
@@ -183,6 +184,16 @@ this.timezoneControl.enable();
 
    save(){
      if(this.validate()){
+
+       let keys = Object.keys(this.returnedProfile.availability);
+       keys.forEach(element => {
+         let obj = this.returnedProfile.availability[element];
+         if (obj.available) {
+           obj['startTimeNumber'] = this.util.convertToMil(obj.startTime);
+           obj['endTimeNumber'] = this.util.convertToMil(obj.endTime);
+         }
+       });
+
        if (!this.isNullOrEmpty(this.returnedProfile.hotsLogsURL)){
 
          this.hotsLogsService.getMMR(this.returnedProfile.hotsLogsURL).subscribe(res => {

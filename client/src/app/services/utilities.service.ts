@@ -88,6 +88,30 @@ export class UtilitiesService {
     }
   }
 
+  convertToMil(time) {
+    if(typeof time === 'string'){
+      let colonSplit = time.split(':');
+      return parseInt(colonSplit[0]) * 100 + parseInt(colonSplit[1]);
+    }else{
+      return null;
+    }
+  }
+
+  zeroGMT(time, timezone) {
+    let localTime = time;
+    if (typeof localTime === 'string') {
+      localTime = this.convertToMil(localTime);
+    }
+    let correct = localTime - (timezone * 100);
+    if (correct > 2400) {
+     return 2400;
+   } else if (correct < 0) {
+      return 0;
+    } else {
+      return correct;
+    }
+}
+
   returnBoolByPath(obj, path): boolean {
     //path is a string representing a dot notation object path;
     //create an array of the string for easier manipulation

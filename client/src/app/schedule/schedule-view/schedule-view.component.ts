@@ -78,21 +78,23 @@ export class ScheduleViewComponent implements OnInit {
           res => {
             this.standings = res;
             this.matches.forEach(match => {
-          this.standings.forEach(standing=>{
-            if (match.home.teamName == standing.teamName){
-              match.home['losses']=standing.losses;
-              match.home['wins']=standing.wins;
+            this.standings.forEach(standing=>{
+              if (match.home.teamName == standing.teamName){
+                match.home['losses']=standing.losses;
+                match.home['wins']=standing.wins;
+              }
+              if(match.away.teamName == standing.teamName){
+                match.away['losses'] = standing.losses;
+                match.away['wins'] = standing.wins;
+              }
+            });
+            if(match.scheduledTime){
+              if (match.scheduledTime.startTime != null || match.scheduledTime.startTime != undefined){
+                match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
+                match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
+                match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
+              }             
             }
-            if(match.away.teamName == standing.teamName){
-              match.away['losses'] = standing.losses;
-              match.away['wins'] = standing.wins;
-            }
-          });
-          if(match.scheduledTime){
-            match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
-            match['friendlyTime']=this.util.getTimeFromMS(match.scheduledTime.startTime);
-            match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
-          }
           },
           err => {
             console.log(err);
