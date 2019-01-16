@@ -14,6 +14,7 @@ const divisionRoutes = require('./server/routes/division-routes');
 const outreachRoutes = require('./server/routes/outreach-routes');
 const scheduleRoutes = require('./server/routes/schedule-routes');
 const standingRoutes = require('./server/routes/standing-routes');
+const messageRoutes = require('./server/routes/message-routes');
 const path = require('path');
 const passportSetup = require('./server/configs/passport-setup');
 const mongoose = require('mongoose');
@@ -56,6 +57,7 @@ app.use('/admin', adminUser);
 app.use('/admin', adminMatch);
 app.use('/schedule', scheduleRoutes);
 app.use('/standings', standingRoutes);
+app.use('/messageCenter', messageRoutes);
 
 // const seeding = require('./server/routes/seeding-route');
 // app.use('/dev', seeding);

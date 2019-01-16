@@ -66,6 +66,7 @@ router.post('/user/unteamed', passport.authenticate('jwt', {
     })
 });
 
+
 router.post('/team', passport.authenticate('jwt', {
     session: false
 }), (req, res) => {
@@ -89,6 +90,108 @@ router.post('/team', passport.authenticate('jwt', {
     });
 });
 
+/*
+user query
+{
+    $and:{
+        {
+            $or:[
+                {
+                    "teamId":null
+                },{
+                    "teamId":{$exists:false}
+                }
+            ]
+        },
+        {
+            $or: [{
+                "teamName": null
+            }, {
+                "teamName": {
+                    $exists: false
+                }
+            }]
+        },
+        {
+            $or: [
+                {
+                    "pendingTeam": null
+                }, 
+                {
+                    "pendingTeam": {
+                        $exists: false
+                    }
+                },
+                {
+                "pendingTeam":false
+                }
+            ]
+        },
+        {
+            "lookingForGroup":true
+        },
+        {
+            $or:[
+                {
+                    "hlRankMetal":metal
+                },
+                {
+                    "hlRankMetal": metal
+                }
+            ]
+        },
+        {
+            $or: [{
+                    "hlRankDivision": {$gte:num}
+                },
+                {
+                    "hlRankDivision": metal
+                }
+            ]
+        },
+        {
+            "competitiveLevel":level
+        },
+        {
+            $or: [{
+                    "rolesNeeded.tank": true
+                },
+                {
+                    "rolesNeeded.meleeassassin": true
+                },
+                {
+                    "rolesNeeded.rangedassassin": true
+                },
+                {
+                    "rolesNeeded.support": true
+                },
+                {
+                    "rolesNeeded.offlane": true
+                },
+                {
+                    "rolesNeeded.flex: true"
+                }
+            ]
+
+        },
+        {
+            $or:[
+                {
+                    "averageMmr":{$gte:lowerNum}
+                },
+                {
+                    "averageMmr":{$lte:upperNum}
+                }
+            ]
+        },
+        {
+            "timeZone":timezone
+        }
+
+    }
+}
+*/
+
 router.post('/user/market', (req, res) => {
     const path = '/search/user/market';
 
@@ -104,6 +207,88 @@ router.post('/user/market', (req, res) => {
 
 });
 
+
+/*
+
+        "tank": true,
+        "meleeassassin": true,
+        "rangedassassin": true,
+        "support": false,
+        "offlane": false,
+        "flex": true
+
+team query
+{
+    $and: [
+        {
+            $or: [{
+                    "divisionConcat": "divisionName"
+                },
+                {
+                    "divisionConcat": "divisionName"
+                }
+            ]
+
+        },
+        {
+            $and:[
+                {
+                    teamMMRAvg:{
+                        $gte:LowerNumber
+                    }
+                },
+                {
+                    teamMMRAvg: {
+                        $lte: UpperNumber
+                    }
+                }
+            ]
+        },
+        {
+            "lookingForMore":true
+        },
+        {
+            "competitiveLevel":0,2,3
+        },
+        {
+            $or:[
+                {
+                    "rolesNeeded.tank":true
+                },
+                {
+                    "rolesNeeded.meleeassassin": true
+                },
+                {
+                    "rolesNeeded.rangedassassin": true
+                },
+                {
+                    "rolesNeeded.support": true
+                }, 
+                {
+                    "rolesNeeded.offlane": true
+                }, 
+                {
+                    "rolesNeeded.flex: true"
+                }
+            ]
+
+        },
+        {
+            "availability.monday.startTimeNumber": {
+                $gte: 2000
+            }
+        }, 
+        {
+            "availability.monday.endTimeNumber": {
+                $lte: 2400
+            }
+        },
+        {
+            "timeZone": "-6"
+        }
+    ]
+}
+*/
 router.post('/team/market', (req, res) => {
     const path = '/search/team/market';
 

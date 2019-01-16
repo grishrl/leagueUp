@@ -32,6 +32,7 @@ import { SessionTimeoutComponent } from "./session-timeout/session-timeout.compo
 import { CalendarViewComponent } from "./calendar-view/calendar-view.component";
 import { EventLargeComponent } from "./calendar-view/event-large/event-large.component";
 import { SetDeadlineComponent } from "./admin/match-management/set-deadline/set-deadline.component";
+import { UserMessageCenterComponent } from "./messageCenter/user-message-center/user-message-center.component";
 
 const APP_ROUTES: Routes = [
   { path: 'directory', component: DirectoryComponent},
@@ -65,7 +66,8 @@ const APP_ROUTES: Routes = [
   { path: 'sessionTimeOut', component: SessionTimeoutComponent},
   { path: 'calendar' , component:CalendarViewComponent },
   { path: 'event/:id' , component:EventLargeComponent},
-  { path: '_admin/matchMgmt/weekDeadline', component: SetDeadlineComponent, canActivate: [AuthGuardService], data: { role: 'match' }}
+  { path: '_admin/matchMgmt/weekDeadline', component: SetDeadlineComponent, canActivate: [AuthGuardService], data: { role: 'match' }},
+  { path: 'messageCenter', component:UserMessageCenterComponent}
 ]
 
 @NgModule({

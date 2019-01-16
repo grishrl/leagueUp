@@ -1,0 +1,62 @@
+<div class="container forceFull">
+    <div class="row">
+        <div class="col">
+
+            <div class="row">
+                <div class="col">
+                    <h3>User Message Center</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="list-group">
+                        <div class="list-group-item" *ngFor="let message of messages">
+                            <div class="row ">
+                                <div class="col-10 finger" (click)="selectMessage(message)">
+                                    <div class="row">
+                                        <div class="col">Sender: {{message.sender}}</div>
+                                        <div class="col">Time: {{message.timeStamp}}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            Subject: {{message.subject}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div><span class="icon-align finger" (click)="deleteMessage(message)"><i class="material-icons">delete_forever</i>Delete</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="height:200px"></div>
+            <div class="row" *ngIf="selectedMessage">
+                <div class="col">
+                    <div class="row">
+                        <div class="col">
+                            Sender: {{selectedMessage.sender}}
+                        </div>
+                        <div class="col">
+                            Time: {{selectedMessage.timeStamp}}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            Sender: {{selectedMessage.subject}}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            Body: {{selectedMessage.content}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>

@@ -39,17 +39,21 @@ export class AuthService {
   //auth initializater
   createAuth(token){
     let decodedToken = this.helper.decodeToken(token);
-    // console.log(decodedToken);
-    localStorage.setItem('token', token);
-    localStorage.setItem('userName', decodedToken.displayName);
+
+    this.setToken(token);
+    this.setUser(decodedToken.displayName);
+    // localStorage.setItem('userName', decodedToken.displayName);
     if (decodedToken.teamInfo){
+      if (this.util.returnBoolByPath(decodedToken, 'teamInfo.teamId')) {
+        this.setTeamId(decodedToken.teamInfo.teamId);
+      }
       if (this.util.returnBoolByPath(decodedToken, 'teamInfo.teamName')){
-        localStorage.setItem('teamName', decodedToken.teamInfo.teamName);
+        this.setTeam(decodedToken.teamInfo.teamName)
       }
       if (this.util.returnBoolByPath(decodedToken, 'teamInfo.isCaptain')){
-        localStorage.setItem('captain', decodedToken.teamInfo.isCaptain.toString());
+        this.setCaptain(decodedToken.teamInfo.isCaptain.toString());
       }else{
-        localStorage.setItem('captain', 'false');
+        this.setCaptain('false');
       }
     }
     //TODO: do something with the new admin bits passed to local
@@ -61,15 +65,39 @@ export class AuthService {
           if(keys[0]!='CASTER'){
             adminString += keys[0].toLowerCase()
           }else{
-            localStorage.setItem('caster', 'true');
+            this.setCaster('true');
           }
         }
-        
       });
       if(adminString.length>0){
-        localStorage.setItem('admin', adminString);
+        this.setAdmin(adminString);
       }
     }
+    if(decodedToken.id){
+      this.setUserId(decodedToken.id);
+    }
+  }
+
+  //USER ID
+  setUserId(id){
+    localStorage.setItem('userId', id.toString());
+  }
+  getUserId(){
+    return localStorage.getItem('userId');
+  }
+  destroyId(){
+    localStorage.removeItem('userId');
+  }
+
+  //team id
+  setTeamId(id) {
+    localStorage.setItem('teamId', id.toString());
+  }
+  getTeamId() {
+    return localStorage.getItem('teamId');
+  }
+  destroyTeamId() {
+    localStorage.removeItem('teamId');
   }
 
   //caster methods
@@ -150,12 +178,14 @@ export class AuthService {
 
     this.http.get(url).subscribe(
       res => {
-        localStorage.removeItem('userName');
-        localStorage.removeItem('token');
-        localStorage.removeItem('teamName');
-        localStorage.removeItem('captain');
+        this.destroyUser();
+        this.destroyToken()
+        this.destroyTeam();
+        this.destroyCaptain();
         this.destroyAdmin();
         this.destroyCaster();
+        this.destroyId();
+        this.destroyTeamId();
         this.router.navigate([route]);
       }
     );

@@ -37,6 +37,14 @@
                             <a class="nav-link dropdown-toggle finger" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">{{Auth.getUser()}} </a>
                             <div class="dropdown-menu">
                                 <a class="dropdown-item finger" (click)="navGo('/profile/',user.routeFriendlyUsername(Auth.getUser()))">Profile</a>
+                                <!-- message center -->
+                                <a class="dropdown-item finger" (click)="navGo('/messageCenter')">
+                                    <div>
+                                        <span>Message Center</span>
+                                        <span class="badge badge-pill badge-success ml-1" *ngIf="userMessages>0">{{userMessages}}</span>
+                                    </div>
+                                </a>
+
                                 <div *ngIf="Auth.getTeam(); else noTeam">
                                     <a class="dropdown-item finger" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( Auth.getTeam() ) )">Team</a>
                                     <!-- [routerLink]="['/schedule/teamSchedule']" -->

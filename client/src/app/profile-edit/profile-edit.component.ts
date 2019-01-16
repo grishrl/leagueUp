@@ -31,6 +31,7 @@ export class ProfileEditComponent implements OnInit {
     this.displayName = user.realUserName(this.route.snapshot.params['id']);
   }
 
+  showInvite = false;
   editOn = true;
 
   hotsLogsFormControl = new FormControl({value:'',disabled:true} ,[
@@ -98,6 +99,20 @@ this.timezoneControl.enable();
     if(profile!=null&&profile!=undefined){
       this.providedProfile = profile;
       this.ngOnInit();
+    }
+  }
+
+  showInviteToTeamButton(){
+    if ((this.returnedProfile.teamId == null || this.returnedProfile.teamId == undefined)
+      &&  (this.returnedProfile.teamName == null || this.returnedProfile.teamName == undefined )
+      && (this.returnedProfile['pendingTeam'] == null || this.returnedProfile['pendingTeam'] == undefined || this.returnedProfile['pendingTeam'] == false)) {
+      if (this.auth.getCaptain() === 'true'){
+        this.showInvite = true;
+      }else{
+        this.showInvite = false;
+      }
+    }else{
+      this.showInvite = false;
     }
   }
 
@@ -228,7 +243,7 @@ this.timezoneControl.enable();
      }
    }
 
-  ngOnInit() {    
+  ngOnInit() {   
     let getProfile:string;
     if(this.providedProfile){
       getProfile = this.providedProfile;
@@ -237,6 +252,7 @@ this.timezoneControl.enable();
     }
     this.profSub = this.user.getUser(getProfile).subscribe((res) => { 
       merge(this.returnedProfile, res);
+      this.showInviteToTeamButton() 
       } )
   }
 
