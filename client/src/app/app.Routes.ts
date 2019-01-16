@@ -33,6 +33,7 @@ import { CalendarViewComponent } from "./calendar-view/calendar-view.component";
 import { EventLargeComponent } from "./calendar-view/event-large/event-large.component";
 import { SetDeadlineComponent } from "./admin/match-management/set-deadline/set-deadline.component";
 import { UserMessageCenterComponent } from "./messageCenter/user-message-center/user-message-center.component";
+import { TeamMarketComponent } from "./marketplace/team-market/team-market.component";
 
 const APP_ROUTES: Routes = [
   { path: 'directory', component: DirectoryComponent},
@@ -67,7 +68,8 @@ const APP_ROUTES: Routes = [
   { path: 'calendar' , component:CalendarViewComponent },
   { path: 'event/:id' , component:EventLargeComponent},
   { path: '_admin/matchMgmt/weekDeadline', component: SetDeadlineComponent, canActivate: [AuthGuardService], data: { role: 'match' }},
-  { path: 'messageCenter', component:UserMessageCenterComponent}
+  { path: 'messageCenter', component:UserMessageCenterComponent},
+  { path: 'findTeams', component:TeamMarketComponent}
 ]
 
 @NgModule({

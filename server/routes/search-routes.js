@@ -289,19 +289,200 @@ team query
     ]
 }
 */
-router.post('/team/market', (req, res) => {
+router.post('/team/market', passport.authenticate('jwt', {
+    session: false
+}), (req, res) => {
     const path = '/search/team/market';
 
-    let payload = req.body;
-
-    User.find(payload).then(
+    let payload = req.body.searchObj;
+    let formedSearchObject = createSearchObject(payload, req.user);
+    console.log(formedSearchObject)
+        // res.status(200).send(util.returnMessaging(path, "Testing", null, formedSearchObject));
+    Team.find(formedSearchObject).then(
         (found) => {
-            res.status(200).send(util.returnMessaging(path, "Found these users", null, found));
+            res.status(200).send(util.returnMessaging(path, "Found these teams", null, found));
         }, (err) => {
-            res.status(500).send(util.returnMessaging(path, "Error finding users", err));
+            res.status(500).send(util.returnMessaging(path, "Error finding teams", err));
         }
     );
 
 });
 
+//get teams total number
+router.get('/teams/total', (req, res) => {
+    const path = '/search/teams/total';
+    let teamNum = Team.estimatedDocumentCount();
+    teamNum.exec().then(
+        ret => {
+            res.status(200).send(util.returnMessaging(path, 'Teams count', null, ret));
+        }, err => {
+            res.status(500).send(util.returnMessaging(path, "Error finding teams", err));
+        }
+    )
+
+});
+
+//paginate teams
+router.post('/team/paginate', passport.authenticate('jwt', {
+    session: false
+}), (req, res) => {
+    const path = '/search/team/paginate';
+    let page = req.body.page;
+    let perPage = 10;
+    let query = Team.find().skip(page * perPage).limit(perPage);
+    query.exec().then(
+        found => {
+            res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, found));
+        }, err => {
+            res.status(500).send(util.returnMessaging(path, "Error finding teams", err));
+        }
+    )
+});
+
 module.exports = router;
+
+function createSearchObject(obj, reqUser) {
+    let returnObj = {};
+    let keys = Object.keys(obj);
+    if (keys.length > 0) {
+
+        returnObj = {
+            $and: []
+        }
+
+        // add divisions to the query object
+        if (util.returnBoolByPath(obj, 'divisions')) {
+            let divs = { $or: [] };
+            obj['divisions'].forEach(div => {
+                divs['$or'].push({
+                    divisionConcat: div.value
+                });
+            })
+            returnObj['$and'].push(divs);
+        }
+
+
+        // Add MMRs to the query object
+        if (util.returnBoolByPath(obj, 'lowerMMR') || util.returnBoolByPath(obj, 'upperMMR')) {
+            let mmr = { $and: [] };
+            let add = false;
+            if (util.returnBoolByPath(obj, 'lowerMMR')) {
+                mmr['$and'].push({
+                    teamMMRAvg: {
+                        $gte: obj.lowerMMR
+                    }
+                });
+                add = true;
+            }
+            if (util.returnBoolByPath(obj, 'upperMMR')) {
+                mmr['$and'].push({
+                    teamMMRAvg: {
+                        $lte: obj.upperMMR
+                    }
+                });
+                add = true;
+            }
+            if (add) {
+                returnObj['$and'].push(mmr);
+            }
+        }
+
+        // add competitive level to the query object
+        if (util.returnBoolByPath(obj, 'competitiveLevel')) {
+            returnObj['$and'].push({ competitiveLevel: obj.competitiveLevel });
+        }
+
+        //add roles to the query object
+        if (util.returnBoolByPath(obj, 'rolesNeeded')) {
+            let roles = { $or: [] };
+            let keys = Object.keys(obj.rolesNeeded);
+            keys.forEach(key => {
+                let searchKey = 'rolesNeeded';
+                let value = obj.rolesNeeded[key];
+                searchKey = searchKey + '.' + key;
+                let tO = {}
+                tO[searchKey] = value;
+                roles['$or'].push(tO);
+            });
+            returnObj['$and'].push(roles);
+        }
+
+        //add times available and timezone to the query object.
+        if (util.returnBoolByPath(obj, 'getProfileTime') || util.returnBoolByPath(obj, 'getProfileTimezone') || util.returnBoolByPath(obj, 'timezone') || util.returnBoolByPath(obj, 'times')) {
+            let user = {};
+            //user can use their saved profile
+            if ((util.returnBoolByPath(obj, 'getProfileTime') && obj.getProfileTime) || (util.returnBoolByPath(obj, 'getProfileTimezone') && obj.getProfileTimezone)) {
+                user = reqUser;
+            } else { //or user can provide a seperate time to search
+                user.availability = obj.times
+                if (util.returnBoolByPath(obj, 'timezone')) {
+                    user.timeZone = obj.timezone;
+                } else {
+                    user.timeZone = reqUser.timeZone;
+                }
+            }
+            console.log(user);
+            if (util.returnBoolByPath(user, 'availability')) {
+                let keys = Object.keys(user.availability);
+                keys.forEach(key => {
+                    let unit = user.availability[key];
+                    if (unit.available) {
+                        if (util.returnBoolByPath(unit, 'startTime')) {
+                            let searchKey = 'availability.' + key + '.startTime';
+                            let searchValue = '$gte: ' + zeroGMT(unit.startTime, user.timeZone);
+                            let tO = {};
+                            tO[searchKey] = searchValue;
+                            returnObj['$and'].push(tO);
+                        }
+                        if (util.returnBoolByPath(unit, 'endTime')) {
+                            let searchKey = 'availability.' + key + '.endTime';
+                            let searchValue = '$lte: ' + zeroGMT(unit.endTime, user.timeZone);
+                            let tO = {};
+                            tO[searchKey] = searchValue;
+                            returnObj['$and'].push(tO);
+                        }
+                    }
+                });
+            } else {
+                //user had no profile times....
+            }
+
+
+            returnObj['$and'].push({ 'timeZone': user.timeZone });
+
+        }
+
+
+    }
+    return returnObj;
+}
+
+
+function convertToMil(time) {
+    if (typeof time === 'string') {
+        let colonSplit = time.split(':');
+        return parseInt(colonSplit[0]) * 100 + parseInt(colonSplit[1]);
+    } else {
+        return null;
+    }
+}
+
+function zeroGMT(time, timezone) {
+
+    let localTime = time;
+    if (typeof localTime === 'string') {
+        localTime = convertToMil(localTime);
+    }
+    timezone = parseInt(timezone);
+    let correct = localTime - (timezone * 100);
+
+    return correct;
+}
+
+async function getUserProfile(id) {
+    let user = await User.findById(id).then(
+        res => { return res; },
+        err => { return null; }
+    )
+    return user;
+}

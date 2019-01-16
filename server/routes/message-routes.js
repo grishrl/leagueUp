@@ -19,9 +19,7 @@ router.post('/get/message', passport.authenticate('jwt', {
     )
 });
 
-router.post('/get/message/numbers', passport.authenticate('jwt', {
-    session: false
-}), util.appendResHeader, (req, res) => {
+router.post('/get/message/numbers', (req, res) => {
     const path = '/messageCenter/get/message/numbers';
     let payload = req.body.recipient;
     Message.find({

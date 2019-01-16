@@ -367,8 +367,8 @@ export class TeamProfileComponent implements OnInit {
       keys.forEach(element => {
         let obj = this.returnedProfile.availability[element];
         if (obj.available) {
-          obj['startTimeNumber'] = this.util.convertToMil(obj.startTime);
-          obj['endTimeNumber'] = this.util.convertToMil(obj.endTime);
+          obj['startTimeNumber'] = this.util.zeroGMT(obj.startTime, this.returnedProfile.timeZone);
+          obj['endTimeNumber'] = this.util.zeroGMT(obj.endTime, this.returnedProfile.timeZone);
         }
       });
 
@@ -419,6 +419,20 @@ export class TeamProfileComponent implements OnInit {
         isteamcpt = this.auth.getUser() === this.returnedProfile.captain;
       }
       return isteamcpt;
+    }
+  }
+
+  requestToJoin(){
+    //TODO: request to join team
+  }
+
+  showRequestToJoin(){
+    if(!this.showEditDialog()){
+      if (this.auth.getTeam() != null && this.auth.getTeam() != undefined ){
+        return false;
+      }else{
+        return true;
+      }
     }
   }
 

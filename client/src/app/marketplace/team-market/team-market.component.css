@@ -1,0 +1,21 @@
+.role-margin {
+    margin: 0 10px;
+}
+
+.oddRow {
+    background-color: #e0e0eb
+}
+
+.rowBorder {
+    border-style: solid;
+    border-width: 1px;
+    border-color: lightgrey;
+}
+
+.titles {
+    font-weight: bold
+}
+
+.showlink {
+    text-decoration: underline;
+}
