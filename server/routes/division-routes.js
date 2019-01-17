@@ -16,5 +16,16 @@ router.get('/get', (req, res) => {
     });
 });
 
+router.get('/get/all', (req, res) => {
+    const path = '/division/get/all';
+    Division.find({
+        public: true
+    }).then((foundDiv) => {
+        res.status(200).send(util.returnMessaging(path, 'Return division info', false, foundDiv));
+    }, (err) => {
+        res.status(500).send(util.returnMessaging(path, 'Error finding division', err));
+    });
+});
+
 
 module.exports = router;

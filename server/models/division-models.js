@@ -10,7 +10,8 @@ const divisionInfoSchema = new Schema({
     "maxMMR": Number,
     "minMMR": Number,
     "teams": [String],
-    "lastTouched": String
+    "lastTouched": String,
+    "public": Boolean
 });
 
 
