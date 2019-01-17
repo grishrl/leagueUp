@@ -51,9 +51,9 @@ export class UserMessageCenterComponent implements OnInit {
   actionRequest(act, msg){
     if(act){
       this.request.approveTeamRequest(msg.request.target, msg.request.requester).subscribe( (res)=>{
-        console.log(res);
+        console.log('res ',res);
       }, (err)=>{ 
-        console.log(err);
+        console.log('err ',err);
       })
     }else{
 

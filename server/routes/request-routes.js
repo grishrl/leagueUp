@@ -97,7 +97,8 @@ router.post('/team/join/response', passport.authenticate('jwt', {
 
     var payloadTeamName = req.body.teamName;
     var payloadMemberToAdd = req.body.addMember;
-    // var messageId = 
+    var messageId = req.body.messageId;
+    var approval = req.body.approval;
     payloadTeamName = payloadTeamName.toLowerCase();
 
     //log object
@@ -107,102 +108,112 @@ router.post('/team/join/response', passport.authenticate('jwt', {
     logObj.target = payloadTeamName + ' ' + payloadMemberToAdd;
     logObj.logLevel = 'STD';
 
-    //grab the team
-    Team.findOne({
-        teamName_lower: payloadTeamName
-    }).then((foundTeam) => {
-        if (foundTeam) {
-            var cont = true;
-            let pendingMembers = util.returnByPath(foundTeam, 'pendingMembers')
-            if (pendingMembers && cont) {
-                pendingMembers.forEach(function(member) {
-                    if (member.displayName == payloadMemberToAdd) {
-                        cont = false;
-                        logObj.error = 'User was all ready pending team member';
-                        res.status(403).send(
-                            util.returnMessaging(path, "User " + payloadMemberToAdd + " exists in pending members currently", false, null, null, logObj)
-                        );
-                    }
-                });
-            }
-            let currentMembers = util.returnByPath(foundTeam, 'teamMembers');
-            if (currentMembers && cont) { //current members
-                currentMembers.forEach(function(member) {
-                    if (member.displayName == payloadMemberToAdd) {
-                        cont = false;
-                        logObj.error = 'User was all ready team member';
-                        res.status(403).send(
-                            util.returnMessaging(path, "User " + payloadMemberToAdd + " exists in members currently", false, null, null, logObj)
-                        );
-                    }
-                });
-            }
-            if (cont) {
-                User.findOne({
-                    displayName: payloadMemberToAdd
-                }).then((foundUser) => {
-                    if (foundUser) {
-                        //double check that the user has not been added to another team in the mean time
-                        if (foundUser.pendingTeam || !util.isNullorUndefined(foundUser.teamName) || !util.isNullorUndefined(foundUser.teamId)) {
-                            logObj.logLevel = "ERROR";
-                            logObj.error = 'User was all ready on a team or pending team'
-                            res.status(400).send(util.returnMessaging(path, "User was all ready on a team or pending team", false, foundUser, null, logObj))
-                        } else {
-                            if (!util.returnBoolByPath(foundTeam.toObject(), 'pendingMembers')) {
-                                foundTeam.pendingMembers = [];
+    //if the approval was true IE accepted, 
+    //join this user into the pending members, 
+    //set their pending member, 
+    //and send them a confirmation
+    //delete any outstanding messages from the user
+    if (approval) {
+        //grab the team
+        Team.findOne({
+            teamName_lower: payloadTeamName
+        }).then((foundTeam) => {
+            if (foundTeam) {
+                var cont = true;
+                let pendingMembers = util.returnByPath(foundTeam, 'pendingMembers')
+                if (pendingMembers && cont) {
+                    pendingMembers.forEach(function(member) {
+                        if (member.displayName == payloadMemberToAdd) {
+                            cont = false;
+                            logObj.error = 'User was all ready pending team member';
+                            res.status(403).send(
+                                util.returnMessaging(path, "User " + payloadMemberToAdd + " exists in pending members currently", false, null, null, logObj)
+                            );
+                        }
+                    });
+                }
+                let currentMembers = util.returnByPath(foundTeam, 'teamMembers');
+                if (currentMembers && cont) { //current members
+                    currentMembers.forEach(function(member) {
+                        if (member.displayName == payloadMemberToAdd) {
+                            cont = false;
+                            logObj.error = 'User was all ready team member';
+                            res.status(403).send(
+                                util.returnMessaging(path, "User " + payloadMemberToAdd + " exists in members currently", false, null, null, logObj)
+                            );
+                        }
+                    });
+                }
+                if (cont) {
+                    User.findOne({
+                        displayName: payloadMemberToAdd
+                    }).then((foundUser) => {
+                        if (foundUser) {
+                            //double check that the user has not been added to another team in the mean time
+                            if (foundUser.pendingTeam || !util.isNullorUndefined(foundUser.teamName) || !util.isNullorUndefined(foundUser.teamId)) {
+                                logObj.logLevel = "ERROR";
+                                logObj.error = 'User was all ready on a team or pending team'
+                                res.status(400).send(util.returnMessaging(path, "User was all ready on a team or pending team", false, foundUser, null, logObj))
+                            } else {
+                                if (!util.returnBoolByPath(foundTeam.toObject(), 'pendingMembers')) {
+                                    foundTeam.pendingMembers = [];
+                                }
+
+                                foundTeam.pendingMembers.push({
+                                    "displayName": foundUser.displayName
+                                });
+
+                                foundTeam.save().then((saveOK) => {
+
+                                    res.status(200).send(util.returnMessaging(path, "User added to pending members", false, saveOK, null, logObj));
+                                    deleteOutstandingRequests(foundUser._id);
+                                    UserSub.togglePendingTeam(foundUser.displayName);
+                                    QueueSub.addToPendingTeamMemberQueue(foundTeam.teamName_lower, foundUser.displayName);
+
+                                    let msg = {};
+                                    msg.sender = req.user._id;
+                                    msg.recipient = foundUser._id;
+                                    msg.subject = 'Team join request';
+                                    msg.content = req.user.displayName + ' accepted your request to join the team!  The request has been added to the approval queue for the admins.';
+                                    msg.notSeen = true;
+                                    msg.timeStamp = new Date().getTime();
+
+                                    new Message(msg).save().then(
+                                        (newmsg) => {
+                                            //log or nah?
+                                        }, (err) => {
+                                            //log or nah?
+                                        }
+                                    )
+
+                                }, (teamSaveErr) => {
+                                    logObj.logLevel = 'ERROR';
+                                    res.status(500).send(
+                                        util.returnMessaging(path, "error adding user to team", teamSaveErr, null, null, logObj)
+                                    );
+                                });
                             }
 
-                            foundTeam.pendingMembers.push({
-                                "displayName": foundUser.displayName
-                            });
-
-                            foundTeam.save().then((saveOK) => {
-
-                                res.status(200).send(util.returnMessaging(path, "User added to pending members", false, saveOK, null, logObj));
-                                deleteOutstandingRequests(foundUser._id);
-                                UserSub.togglePendingTeam(foundUser.displayName);
-                                QueueSub.addToPendingTeamMemberQueue(foundTeam.teamName_lower, foundUser.displayName);
-
-                                let msg = {};
-                                msg.sender = req.user._id;
-                                msg.recipient = foundUser._id;
-                                msg.subject = 'Team join request';
-                                msg.content = req.user.displayName + ' accepted your request to join the team!  The request has been added to the approval queue for the admins.';
-                                msg.notSeen = true;
-                                msg.timeStamp = new Date().getTime();
-
-                                new Message(msg).save().then(
-                                    (newmsg) => {
-                                        //log or nah?
-                                    }, (err) => {
-                                        //log or nah?
-                                    }
-                                )
-
-                            }, (teamSaveErr) => {
-                                logObj.logLevel = 'ERROR';
-                                res.status(500).send(
-                                    util.returnMessaging(path, "error adding user to team", teamSaveErr, null, null, logObj)
-                                );
-                            });
                         }
+                    }, (err) => {
+                        res.status(500).send(
+                            util.returnMessaging(path, "error finding user", err, null, null, logObj)
+                        );
+                    })
+                }
 
-                    }
-                }, (err) => {
-                    res.status(500).send(
-                        util.returnMessaging(path, "error finding user", err, null, null, logObj)
-                    );
-                })
+            } else {
+                logObj.logLevel = 'ERROR';
+                logObj.error = 'team was not found'
+                res.status(500).send(
+                    util.returnMessaging(path, "team was not found!", false, null, null, logObj)
+                );
             }
+        });
+    } else {
 
-        } else {
-            logObj.logLevel = 'ERROR';
-            logObj.error = 'team was not found'
-            res.status(500).send(
-                util.returnMessaging(path, "team was not found!", false, null, null, logObj)
-            );
-        }
-    });
+    }
+
 
 
 
