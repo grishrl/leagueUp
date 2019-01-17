@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { MessagesService } from 'src/app/services/messages.service';
 import { NotificationService } from 'src/app/services/notification.service';
+import { UserService } from 'src/app/services/user.service';
+import { RequestService } from 'src/app/services/request.service';
 
 @Component({
   selector: 'app-user-message-center',
@@ -10,7 +12,7 @@ import { NotificationService } from 'src/app/services/notification.service';
 })
 export class UserMessageCenterComponent implements OnInit {
 
-  constructor(private auth:AuthService, private messageCenter:MessagesService, private notificationService:NotificationService) { }
+  constructor(public user:UserService, private request:RequestService, private auth:AuthService, private messageCenter:MessagesService, private notificationService:NotificationService) { }
 
   messages:any = [];
   selectedMessage;
@@ -44,6 +46,19 @@ export class UserMessageCenterComponent implements OnInit {
     },err=>{
       console.log(err);
     })
+  }
+
+  actionRequest(act, msg){
+    if(act){
+      this.request.approveTeamRequest(msg.request.target, msg.request.requester).subscribe( (res)=>{
+        console.log(res);
+      }, (err)=>{ 
+        console.log(err);
+      })
+    }else{
+
+    }
+
   }
 
   ngOnInit() {

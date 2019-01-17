@@ -4,6 +4,9 @@ import { TimezoneService } from 'src/app/services/timezone.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TeamService } from 'src/app/services/team.service';
 import { PageEvent } from '@angular/material';
+import { AuthService } from 'src/app/services/auth.service';
+import { RequestService } from 'src/app/services/request.service';
+import { Team } from 'src/app/classes/team.class';
 
 
 @Component({
@@ -175,7 +178,8 @@ export class TeamMarketComponent implements OnInit {
     return divs;
   }
 
-  constructor(private adminService: AdminService, public timezone: TimezoneService, private util:UtilitiesService, public _team:TeamService) { }
+  constructor(private adminService: AdminService, private auth:AuthService, public timezone: TimezoneService, private util:UtilitiesService, public _team:TeamService, 
+    private request:RequestService) { }
 
   filterName: string = '';
   displayArray = [];
@@ -205,6 +209,26 @@ export class TeamMarketComponent implements OnInit {
     }
 
 
+  }
+
+   showRequestToJoin(){
+    
+      if (this.auth.getTeam() != null && this.auth.getTeam() != undefined ){
+        return false;
+      }else{
+        return true;
+      }
+    
+  }
+
+  requestToJoin(team){
+    let teamName = team.teamName_lower;
+    this.request.joinTeamRequest(teamName).subscribe(
+      res=>{
+        console.log(res);
+      },
+      err=>{console.log(err)}
+    )
   }
 
   ngOnInit() {

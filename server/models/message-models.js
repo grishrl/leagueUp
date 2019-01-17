@@ -7,7 +7,8 @@ const messageSchema = new Schema({
     "content": String,
     "subject": String,
     "timeStamp": Number,
-    "notSeen": Boolean
+    "notSeen": Boolean,
+    "request": Object
 });
 
 const Message = mongoose.model('message', messageSchema);

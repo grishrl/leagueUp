@@ -44,14 +44,36 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            Sender: {{selectedMessage.subject}}
+                            Subject: {{selectedMessage.subject}}
                         </div>
                     </div>
                     <div class="row">
                         <div class="col">
-                            Body: {{selectedMessage.content}}
+                            Content: {{selectedMessage.content}}
                         </div>
                     </div>
+                    <!-- action -->
+                    <div *ngIf="selectedMessage.request">
+                        <div class="row">
+                            <div class="col">
+                                <span>This message requires your attention! Please see below:</span>
+                                <div>You can review this users profile and Accept or Decline this request.</div>
+                                <div>If you approve the user will be added to the pending member queue and an admin will review the team join.</div>
+                                <div>If you decline this request nothing further will occur.</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <span *ngIf="selectedMessage.request.instance=='team'"> View User Profile <a [routerLink]="['/profile/', user.routeFriendlyUsername(selectedMessage.request.requester)]">{{selectedMessage.request.requester}}</a></span>
+                                <span *ngIf="selectedMessage.request.instance=='user'"> View Team Profile <a [routerLink]="[]">{{selectedMessage.request.requester}}</a></span>
+                            </div>
+                            <div class="col">
+                                <button (click)="actionRequest(true, selectedMessage)" class="btn btn-success">Accept</button>
+                                <button (click)="actionRequest(false, selectedMessage)" class="btn btn-danger">Decline</button>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 

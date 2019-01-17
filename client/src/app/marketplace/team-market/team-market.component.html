@@ -188,6 +188,9 @@
                                 <div class="col text-center">
                                     <a [routerLink]="['/teamProfile/',_team.routeFriendlyTeamName(team.teamName)]">View Team Profile</a>
                                 </div>
+                                <div class="col text-center" *ngIf="showRequestToJoin() ">
+                                    <button class="btn btn-success" (click)="requestToJoin(team)">Request to Join Team</button>
+                                </div>
                             </div>
                         </div>
                     </div>
