@@ -1,9 +1,9 @@
-<div class="container">
+<div class="container forceFull">
     <div class="row">
         <div class="col">
             <div class="row">
                 <div class="col">
-                    <div class="example-container">
+                    <div class="example-container mt-3">
                         <h5>Select division to modify:</h5>
                         <mat-form-field>
                             <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="selected(selectedDivision)" disableOptionCentering>
@@ -19,7 +19,7 @@
             </div>
 
             <div *ngIf="editDivision">
-                <div class="row">
+                <div class="row pb-2">
                     <div class="col">
                         <div class="example-container">
                             <mat-form-field>
@@ -42,6 +42,9 @@
                             </mat-form-field>
                             <mat-form-field>
                                 <input matInput placeholder="Sorting" [formControl]="sortingControl" [(ngModel)]="editDivision.sorting">
+                                <mat-error *ngIf="sortingControl.hasError('required')">
+                                    Sort order is required
+                                </mat-error>
                             </mat-form-field>
                             <mat-form-field>
                                 <input matInput placeholder="Max MMR" [formControl]="maxMMRControl" [(ngModel)]="editDivision.maxMMR">
@@ -55,6 +58,9 @@
                                     Min MMR is required
                                 </mat-error>
                             </mat-form-field>
+
+                            <mat-checkbox [(ngModel)]="editDivision.public">Visible to Public</mat-checkbox>
+
                         </div>
                     </div>
                 </div>

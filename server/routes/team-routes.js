@@ -160,7 +160,7 @@ router.post('/delete', passport.authenticate('jwt', {
     }).then((deletedTeam) => {
         if (deletedTeam) {
             UserSub.clearUsersTeam(deletedTeam.teamMembers);
-            updateTeamMatches(deletedTeam);
+            TeamSub.updateTeamMatches(deletedTeam);
             res.status(200).send(util.returnMessaging(path, 'Team has been deleted', false, false, null, logObj));
         } else {
             logObj.logLevel = 'ERROR';

@@ -328,7 +328,8 @@ module.exports = {
     upsertTeamsDivision: upsertTeamsDivision,
     resultantMMR: resultantMMR,
     returnTeamMMR: topMemberMmr,
-    updateTeamMmrAsynch: updateTeamMmrAsynch
+    updateTeamMmrAsynch: updateTeamMmrAsynch,
+    updateTeamMatches: updateTeamMatches
 }
 
 async function addTeamNamesToMatch(team, found) {

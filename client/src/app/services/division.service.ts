@@ -10,7 +10,7 @@ export class DivisionService {
 
   //returns and sorts all divisions
   getDivisionInfo(){
-    let turl = '/admin/getDivisionInfo';
+    let turl = '/division/get/all';
     return this.httpService.httpGet(turl, []).pipe(
       map(
         res => {

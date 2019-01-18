@@ -47,6 +47,9 @@ export class DropDownTimeComponent implements OnInit {
         this._suffix='AM';
       }
       this._time = hours.toString()+':'+time[1];
+    }else{
+      this._suffix = null;
+      this._time = null;
     }
   }
 
