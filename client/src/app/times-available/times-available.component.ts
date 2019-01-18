@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, DoCheck } from '@angular/core';
 import { UtilitiesService } from '../services/utilities.service';
+import { findIndex } from 'lodash';
 
 @Component({
   selector: 'app-times-available',
@@ -125,6 +126,7 @@ export class TimesAvailableComponent implements OnInit, DoCheck {
     if(typeof _obj == 'object' && _obj != null && _obj != undefined){
       this.availability = _obj;
       console.log(this.availability)
+      this.recalculateCopyDays();
     }
   }
 
@@ -139,26 +141,35 @@ export class TimesAvailableComponent implements OnInit, DoCheck {
   @Input() set disabled(_editOn) {
     if (typeof _editOn == 'boolean' && _editOn != null && _editOn != undefined) {
       this.editOn = _editOn;
-
       this.recalculateCopyDays();
     }
   }
 
   recalculateCopyDays() {
-    this.populatedDays = [];
+    // this.populatedDays = [];
     let keys = Object.keys(this.availability);
     keys.forEach(element => {
-      if (this.availability[element].available) {        
+      let ind = findIndex(this.populatedDays, function (o) {
+        return o.value == element;
+      });
+      if (this.availability[element].available && this.availability[element].startTime && this.availability[element].endTime) {        
         let firstChar = element.charAt(0);
         firstChar = firstChar.toUpperCase();
         let prettyName = firstChar + element.substring(1, element.length);
-        this.populatedDays.push({ 'key': prettyName, 'value': element });
+        if(ind==-1){
+          this.populatedDays.push({ 'key': prettyName, 'value': element });
+        }
+      }else{
+        if(ind!=-1){
+          this.populatedDays.splice(ind, 1);
+        }
       }
     });
   }
 
   ngDoCheck() {
    this.checkAvailabilityDays();
+   this.recalculateCopyDays();
   }
 
   @Output() availValid = new EventEmitter();
