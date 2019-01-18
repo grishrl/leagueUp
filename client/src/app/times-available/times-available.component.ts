@@ -33,37 +33,44 @@ export class TimesAvailableComponent implements OnInit, DoCheck {
     "monday": {
       "available": false,
       "startTime": null,
-      "endTime": null
+      "endTime": null,
+      "allDay":false
     },
     "tuesday": {
       "available": false,
       "startTime": null,
-      "endTime": null
+      "endTime": null,
+      "allDay": false
     },
     "wednesday": {
       "available": false,
       "startTime": null,
-      "endTime": null
+      "endTime": null,
+      "allDay": false
     }
     , "thursday": {
       "available": false,
       "startTime": null,
-      "endTime": null
+      "endTime": null,
+      "allDay": false
     }
     , "friday": {
       "available": false,
       "startTime": null,
-      "endTime": null
+      "endTime": null,
+      "allDay": false
     }
     , "saturday": {
       "available": false,
       "startTime": null,
-      "endTime": null
+      "endTime": null,
+      "allDay": false
     }
     , "sunday": {
       "available": false,
       "startTime": null,
-      "endTime": null
+      "endTime": null,
+      "allDay": false
     }
   };
 
@@ -103,11 +110,10 @@ export class TimesAvailableComponent implements OnInit, DoCheck {
       this.availability[day] = {
         available: false,
         startTime: null,
-        endTime: null
+        endTime: null,
+        allDay:false
       }  
     }
-    
-    console.log(day)
   }
 
   fillFrom(targetDay, sourceDay) {
@@ -118,6 +124,7 @@ export class TimesAvailableComponent implements OnInit, DoCheck {
   @Input() set availObj(_obj){
     if(typeof _obj == 'object' && _obj != null && _obj != undefined){
       this.availability = _obj;
+      console.log(this.availability)
     }
   }
 
