@@ -125,7 +125,7 @@ export class TimesAvailableComponent implements OnInit, DoCheck {
   @Input() set availObj(_obj){
     if(typeof _obj == 'object' && _obj != null && _obj != undefined){
       this.availability = _obj;
-      console.log(this.availability)
+      // console.log(this.availability)
       this.recalculateCopyDays();
     }
   }
@@ -177,11 +177,6 @@ export class TimesAvailableComponent implements OnInit, DoCheck {
   emitValid(){
     this.availValid.emit('?');
   }
-
-  modelChange(){
-    console.log('model is changing!')
-  }
-
 
   //check that the availability exists and that at least one day has been set to true and has time
   checkAvailabilityDays(): void {
