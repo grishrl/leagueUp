@@ -135,8 +135,11 @@ this.timezoneControl.enable();
 
   hlMedals = ['Grand Master','Master','Diamond','Platinum','Gold','Silver','Bronze','Unranked'];
   hlDivision = [1,2,3,4,5];
+
   competitonLevel = [
-    'Low','Medium','High'
+    { val: 1, display: 'Low' },
+    { val: 3, display: 'Medium' },
+    { val: 5, display: 'High' }
   ]
   
 
