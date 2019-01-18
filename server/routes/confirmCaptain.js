@@ -4,7 +4,7 @@ const Team = require("../models/team-models");
 function confirmCaptain(req, res, next) {
     const path = 'captianCheck';
     var callingUser = req.user;
-    var payloadTeamName = req.body.teamName;
+    var payloadTeamName = req.body.teamName ? req.body.teamName : req.user.teamName;
     //log object
     let logObj = {};
     logObj.actor = req.user.displayName;

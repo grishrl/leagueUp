@@ -145,6 +145,11 @@ export class TeamService {
     return imgFQDN;
   }
 
+  checkCanInvite(){
+    let url = '/team/check/status';
+    return this.httpService.httpGet(url, []);
+  }
+
 
 
   //returns a route friendly URL name for a team, removing any spaces

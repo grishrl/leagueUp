@@ -184,8 +184,9 @@
                                 <div class="col text-center">
                                     <a [routerLink]="['/profile/',_userService.routeFriendlyUsername(player.displayName)]">View User Profile</a>
                                 </div>
-                                <div class="col text-center" *ngIf="showInviteToJoin() ">
-                                    <button class="btn btn-success" (click)="requestToJoin(player)">Request to Join Team</button>
+                                <div class="col text-center" *ngIf="showInviteButton else teamFull">
+                                    <button class="btn btn-success" (click)="requestToJoin(player)">Invite to Team</button>
+                                    <ng-template #teamFull> <span>Your team has exceeded the roster limit from current team members and pending member adds.</span> </ng-template>
                                 </div>
                             </div>
                         </div>

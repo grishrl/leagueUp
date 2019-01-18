@@ -87,6 +87,8 @@ export class UserMarketplaceComponent implements OnInit {
     "timezone": null
   }
 
+  showInviteButton = false;
+
   filterName: string = '';
   displayArray = [];
   length: number;
@@ -124,6 +126,8 @@ export class UserMarketplaceComponent implements OnInit {
     this.getNextPage(0, true);
   }
 
+  teamInfo;
+
   ngOnInit() {
     //gets division list
     this.divisionService.getDivisionInfo().subscribe((res) => {
@@ -131,6 +135,19 @@ export class UserMarketplaceComponent implements OnInit {
     }, (err) => {
       console.log(err);
     });
+    // this._team.checkCanInvite().subscribe(
+    //   res => {
+    //     this.showInviteButton = res;
+    //   },
+    //   err => {
+    //     console.log(err);
+    //   }
+    // )
+    this._team.getTeam(this.auth.getTeam()).subscribe((res)=>{
+      this.teamInfo = res;
+    },(err)=>{  
+      console.log(err);
+    })
     this.getAllUsers();
     this.getNextPage(0,false);
   }
@@ -163,15 +180,16 @@ export class UserMarketplaceComponent implements OnInit {
     })
   }
 
-  cachedResponse;
-  showInviteToJoin(){
-    if (this.cachedResponse != null || this.cachedResponse != undefined){
-      
-    }else{
-      return this.cachedResponse;
-    }
-
+  requestToJoin(player){
+    this.request.inviteToTeamRequest(this.auth.getTeam(), player.displayName).subscribe(
+      (res)=>{
+        //filter by pending invites?
+      },err=>{
+        console.log(err);
+      }
+    )
   }
+
 
   selected(div) {
     this.searchParameters.divisions.push(div);

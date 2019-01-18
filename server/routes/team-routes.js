@@ -77,8 +77,12 @@ router.get('/get', (req, res) => {
 //asynch check to see if captain can still invite users to join team
 router.get('/check/status', passport.authenticate('jwt', {
     session: false
-}), checkCaptain, (req, res) => {
+}), confirmCaptain, (req, res) => {
     const path = '/team/check/status';
+
+    var user = req.query.user;
+
+    user = decodeURIComponent(user);
 
     let team = req.user.teamName;
     team = team.toLowerCase();
@@ -94,12 +98,14 @@ router.get('/check/status', passport.authenticate('jwt', {
                     roster += foundTeam.teamMembers.length;
                 }
                 if (foundTeam.pendingMembers) {
-                    roster += pendingMembers.length;
+                    roster += foundTeam.pendingMembers.length;
                 }
                 if (roster >= 9) {
                     belowRosterSize = false;
-                }
-                res.status(200).send(util.returnMessaging(path, "Team found", false, belowRosterSize));
+                } else if (
+                    team.invitedUsers.indexOf(user);
+                )
+                    res.status(200).send(util.returnMessaging(path, "Team found", false, belowRosterSize));
             } else {
                 res.status(200).send(util.returnMessaging(path, "Team not found", false, false));
             }

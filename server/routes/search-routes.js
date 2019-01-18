@@ -308,15 +308,66 @@ router.post('/team/market', passport.authenticate('jwt', {
 
 });
 
+const userUnteamed = {
+    $and: [{
+            $or: [{
+                    "teamId": null
+                },
+                {
+                    "teamId": {
+                        $exists: false
+                    }
+                },
+            ]
+        },
+        {
+            $or: [{
+                    "teamName": null
+                },
+                {
+                    "teamName": {
+                        $exists: false
+                    }
+                }
+            ]
+        },
+        {
+            $or: [{
+                    "pendingTeam": null
+                },
+                {
+                    "pendingTeam": {
+                        $exists: false
+                    }
+                },
+                {
+                    "pendingTeam": false
+                }
+            ]
+        },
+        {
+            "lookingForGroup": true
+        }
+    ]
+};
+
+
 //get users total number
 router.get('/users/total', (req, res) => {
     const path = '/search/users/total';
-    let userNum = User.estimatedDocumentCount({
-        lookingForGroup: true
-    });
+    let userNum = User.find(userUnteamed);
     userNum.exec().then(
         ret => {
-            res.status(200).send(util.returnMessaging(path, 'Users count', null, ret));
+            filterInvitedUsers(req, ret).then(
+                parsed => {
+                    res.status(200).send(util.returnMessaging(path, "User Count", false, parsed.length));
+                },
+                err => {
+                    res.status(200).send(util.returnMessaging(path, "User Count", false, ret.length));
+                }
+            )
+
+
         }, err => {
             res.status(500).send(util.returnMessaging(path, "Error finding users", err));
         }
@@ -331,12 +382,18 @@ router.post('/user/paginate', passport.authenticate('jwt', {
     const path = '/search/user/paginate';
     let page = req.body.page;
     let perPage = 10;
-    let query = User.find({
-        lookingForGroup: true
-    }).skip(page * perPage).limit(perPage);
+    let query = User.find(userUnteamed).skip(page * perPage).limit(perPage);
     query.exec().then(
         found => {
-            res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, found));
+            filterInvitedUsers(req, found).then(
+                parsed => {
+                    res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, parsed));
+                },
+                err => {
+                    res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, found));
+                }
+            )
+
         }, err => {
             res.status(500).send(util.returnMessaging(path, "Error finding teams", err));
         }
@@ -377,6 +434,33 @@ router.post('/team/paginate', passport.authenticate('jwt', {
 });
 
 module.exports = router;
+
+async function filterInvitedUsers(req, ret) {
+    let teamName = req.user.teamName ? req.user.teamName.toLowerCase() : null;
+    if (teamName) {
+        let findTeam = await Team.find({
+            teamName_lower: teamName
+        }).then(team => {
+            if (team) {
+                //filter invited users out
+                ret = ret.filter(retUser => {
+                    let flt = true;
+                    team.invitedUsers.forEach(invitedUser => {
+                        if (retUser.displayName == invitedUser) {
+                            flt = false;
+                        }
+                    });
+                });
+                return ret;
+            } else {
+                //do nothing team not found
+            }
+        });
+    } else {
+        //do nothing team not found
+    }
+    return ret;
+}
 
 function createSearchObject(obj, reqUser) {
     let returnObj = {};
