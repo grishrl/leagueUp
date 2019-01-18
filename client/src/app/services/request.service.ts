@@ -14,11 +14,33 @@ export class RequestService {
     return this.httpService.httpPost(url, payload, true);
   }
 
-  approveTeamRequest(team,user){
+  approveTeamRequest(team,user, act, id){
     let url ='/request/team/join/response';
     let payload = {
       teamName:team,
-      addMember:user
+      addMember:user,
+      approval:act,
+      messageId:id
+    }
+    return this.httpService.httpPost(url, payload, true);
+  }
+
+  inviteToTeamRequest(teamname, username){
+    let url = '/request/user/join';
+    let payload = {
+      teamName:teamname,
+      userName:username
+    }
+    return this.httpService.httpPost(url, payload, true);
+  }
+
+  acceptTeamInvite(team, user, act, id){
+    let url = '/request/user/join/response';
+    let payload = {
+      teamName: team,
+      addMember: user,
+      approval: act,
+      messageId: id
     }
     return this.httpService.httpPost(url, payload, true);
   }

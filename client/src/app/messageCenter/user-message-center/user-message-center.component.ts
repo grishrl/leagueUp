@@ -4,6 +4,8 @@ import { MessagesService } from 'src/app/services/messages.service';
 import { NotificationService } from 'src/app/services/notification.service';
 import { UserService } from 'src/app/services/user.service';
 import { RequestService } from 'src/app/services/request.service';
+import { TeamService } from 'src/app/services/team.service';
+import { UtilitiesService } from 'src/app/services/utilities.service';
 
 @Component({
   selector: 'app-user-message-center',
@@ -12,7 +14,7 @@ import { RequestService } from 'src/app/services/request.service';
 })
 export class UserMessageCenterComponent implements OnInit {
 
-  constructor(public user:UserService, private request:RequestService, private auth:AuthService, private messageCenter:MessagesService, private notificationService:NotificationService) { }
+  constructor(public util:UtilitiesService, public user:UserService, public team:TeamService, private request:RequestService, private auth:AuthService, private messageCenter:MessagesService, private notificationService:NotificationService) { }
 
   messages:any = [];
   selectedMessage;
@@ -40,7 +42,7 @@ export class UserMessageCenterComponent implements OnInit {
       if(ind>-1){
         this.messages.splice(ind, 1);
         if (this.selectedMessage._id == message._id){
-          this.selectMessage = null;
+          this.selectedMessage = null;
         }
       }
     },err=>{
@@ -49,19 +51,27 @@ export class UserMessageCenterComponent implements OnInit {
   }
 
   actionRequest(act, msg){
-    if(act){
-      this.request.approveTeamRequest(msg.request.target, msg.request.requester).subscribe( (res)=>{
-        console.log('res ',res);
-      }, (err)=>{ 
-        console.log('err ',err);
+    if (this.selectedMessage.request.instance == 'team'){
+      this.request.approveTeamRequest(msg.request.target, msg.request.requester, act, msg._id).subscribe((res) => {
+        this.ngOnInit();
+      }, (err) => {
+        this.ngOnInit();
+        console.log('err ', err);
       })
-    }else{
-
+    } else if (this.selectedMessage.request.instance == 'user'){
+      this.request.acceptTeamInvite(msg.request.target, msg.request.requester, act, msg._id).subscribe((res) => {
+        this.ngOnInit();
+      }, (err) => {
+        this.ngOnInit();
+        console.log('err ', err);
+      });
     }
 
   }
 
   ngOnInit() {
+    this.messages = [];
+    this.selectedMessage = null;
     this.messageCenter.getMessages(this.auth.getUserId()).subscribe(
       res=>{
         this.messages = res;

@@ -13,6 +13,7 @@ import { AdminService } from '../services/admin.service';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { Profile } from '../classes/profile.class';
 import { UtilitiesService } from '../services/utilities.service';
+import { RequestService } from '../services/request.service';
 
 
 @Component({
@@ -71,7 +72,7 @@ export class TeamProfileComponent implements OnInit {
 
   //constructor
   constructor(private auth: AuthService, public user: UserService, public timezone: TimezoneService, private team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router: Router,
-    private admin:AdminService, private util:UtilitiesService) {
+    private admin:AdminService, private util:UtilitiesService, private requestService:RequestService) {
     this.teamName = team.realTeamName(this.route.snapshot.params['id']);
   }
 
@@ -174,6 +175,11 @@ export class TeamProfileComponent implements OnInit {
     if (teamProfile.teamMembers && teamProfile.teamMembers.length > 0) {
       teamProfile.teamMembers.forEach(element => {
         this.filterUsers.push(element['displayName']);
+      });
+    }
+    if (teamProfile.invitedUsers && teamProfile.invitedUsers.length > 0) {
+      teamProfile.invitedUsers.forEach(element => {
+        this.filterUsers.push(element);
       });
     }
     // console.log('teamProfile ',teamProfile);
@@ -393,19 +399,28 @@ export class TeamProfileComponent implements OnInit {
   invite(user) {
     // console.log(user);
     if (this.returnedProfile.teamName && user) {
-      this.team.addUser(user, this.returnedProfile.teamName_lower).subscribe(res => {
-        this.message = res.message;
-        if (this.returnedProfile.pendingMembers == null){
-          this.returnedProfile.pendingMembers = [{ "displayName": user }];
-        }else{
-          this.returnedProfile.pendingMembers.push({ "displayName": user });
+      this.requestService.inviteToTeamRequest(this.returnedProfile.teamName, user).subscribe(
+        res=>{
+          // this.message = res.message;
+          this.filterUsers.push(user);
+        },
+        err=>{
+          // this.message = err.error.mssage;
         }
+      )
+      // this.team.addUser(user, this.returnedProfile.teamName_lower).subscribe(res => {
+      //   this.message = res.message;
+      //   if (this.returnedProfile.pendingMembers == null){
+      //     this.returnedProfile.pendingMembers = [{ "displayName": user }];
+      //   }else{
+      //     this.returnedProfile.pendingMembers.push({ "displayName": user });
+      //   }
         
-        this.filterUsers.push(user);
-        // console.log(this.filterUsers);
-      }, err => {
-        this.message = err.error.message;
-      });
+      //   this.filterUsers.push(user);
+      //   // console.log(this.filterUsers);
+      // }, err => {
+      //   this.message = err.error.message;
+      // });
     }
   }
 

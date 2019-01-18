@@ -11,7 +11,14 @@ router.post('/get/message', passport.authenticate('jwt', {
     let payload = req.body.recipient;
     Message.find({ recipient: payload }).then(
         foundMessage => {
-            res.status(200).send(util.returnMessaging(path, 'Found messages', null, foundMessage));
+            appendUserNames(foundMessage).then(
+                processedMessages => {
+                    res.status(200).send(util.returnMessaging(path, 'Found messages', null, processedMessages));
+                }, err => {
+                    res.status(500).send(util.returnMessaging(path, 'Error processing messages', err));
+                }
+            )
+
         },
         err => {
             res.status(500).send(util.returnMessaging(path, 'Error finding messages', err));
@@ -89,3 +96,36 @@ router.post('/delete/message', passport.authenticate('jwt', {
 });
 
 module.exports = router;
+
+
+async function appendUserNames(msgs) {
+    let userids = [];
+    msgs.forEach(msg => {
+        if (userids.indexOf(msg.recipient) === -1) {
+            userids.push(msg.recipient);
+        }
+        if (userids.indexOf(msg.sender) === -1) {
+            userids.push(msg.sender);
+        }
+    });
+    let users = await User.find({ _id: { $in: userids } }).then(
+        found => {
+            return found;
+        }, err => {
+            return null;
+        }
+    )
+    if (users) {
+        msgs.forEach(msg => {
+            users.forEach(user => {
+                if (user._id == msg.recipient) {
+                    msg.recipient = user.displayName;
+                }
+                if (user._id == msg.sender) {
+                    msg.sender = user.displayName
+                }
+            })
+        });
+    }
+    return msgs;
+}
