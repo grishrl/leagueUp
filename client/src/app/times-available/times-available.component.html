@@ -1,6 +1,6 @@
 <div class="row mt-3">
     <div class="col">
-        {{displayText}} <span class="req-field">*At least one time is required.</span>
+        {{displayText}}
         <div class="row" *ngIf="!editOn && errorReply.length>0">
             <div class="col req-field">
                 {{errorReply}}
@@ -80,7 +80,8 @@
         <div class="col-4">
             <mat-checkbox [(ngModel)]="availability.monday.available" (ngModelChange)="recalculateCopyDays()" [disabled]="editOn">Monday</mat-checkbox>
             <div class="ml-4" *ngIf="!editOn">
-                <mat-checkbox class="" [(ngModel)]="allDay.monday" (ngModelChange)="toggleAllDay('monday',allDay.monday)">All Day</mat-checkbox>
+                <mat-checkbox class="" [(ngModel)]="availability.monday.allDay" (ngModelChange)="toggleAllDay('monday',availability.monday.allDay)">All Day
+                </mat-checkbox>
                 <div>
                     <mat-form-field>
                         <mat-select placeholder="Fill from" [(ngModel)]="daySelected.monday" (ngModelChange)="fillFrom('monday',daySelected.monday)" disableOptionCentering>
@@ -114,7 +115,8 @@
         <div class="col-4">
             <mat-checkbox class="" [(ngModel)]="availability.tuesday.available" (ngModelChange)="recalculateCopyDays()" [disabled]="editOn">Tuesday</mat-checkbox>
             <div class="ml-4" *ngIf="!editOn">
-                <mat-checkbox [(ngModel)]="allDay.tuesday" (ngModelChange)="toggleAllDay('tuesday',allDay.tuesday)">All Day</mat-checkbox>
+                <mat-checkbox [(ngModel)]="availability.tuesday.allDay" (ngModelChange)="toggleAllDay('tuesday',availability.tuesday.allDay)">All Day
+                </mat-checkbox>
                 <div>
                     <mat-form-field>
                         <mat-select placeholder="Fill from" [(ngModel)]="daySelected.tuesday" (ngModelChange)="fillFrom('tuesday',daySelected.tuesday)" disableOptionCentering>
@@ -150,7 +152,8 @@
         <div class="col-4">
             <mat-checkbox class="" [(ngModel)]="availability.wednesday.available" (ngModelChange)="recalculateCopyDays()" [disabled]="editOn">Wednesday</mat-checkbox>
             <div class="ml-4" *ngIf="!editOn">
-                <mat-checkbox [(ngModel)]="allDay.wednesday" (ngModelChange)="toggleAllDay('wednesday',allDay.wednesday)">All Day</mat-checkbox>
+                <mat-checkbox [(ngModel)]="availability.wednesday.allDay" (ngModelChange)="toggleAllDay('wednesday',availability.wednesday.allDay)">All Day
+                </mat-checkbox>
                 <div>
                     <mat-form-field>
                         <mat-select placeholder="Fill from" [(ngModel)]="daySelected.wednesday" (ngModelChange)="fillFrom('wednesday',daySelected.wednesday)" disableOptionCentering>
@@ -184,7 +187,8 @@
         <div class="col-4">
             <mat-checkbox class="" [(ngModel)]="availability.thursday.available" (ngModelChange)="recalculateCopyDays()" [disabled]="editOn">Thursday</mat-checkbox>
             <div class="ml-4" *ngIf="!editOn">
-                <mat-checkbox [(ngModel)]="allDay.thursday" (ngModelChange)="toggleAllDay('thursday',allDay.thursday)">All Day</mat-checkbox>
+                <mat-checkbox [(ngModel)]="availability.thursday.allDay" (ngModelChange)="toggleAllDay('thursday',availability.thursday.allDay)">All Day
+                </mat-checkbox>
                 <div>
                     <mat-form-field>
                         <mat-select placeholder="Fill from" [(ngModel)]="daySelected.thursday" (ngModelChange)="fillFrom('thursday',daySelected.thursday)" disableOptionCentering>
@@ -218,7 +222,8 @@
         <div class="col-4">
             <mat-checkbox class="" [(ngModel)]="availability.friday.available" (ngModelChange)="recalculateCopyDays()" [disabled]="editOn">Friday</mat-checkbox>
             <div class="ml-4" *ngIf="!editOn">
-                <mat-checkbox [(ngModel)]="allDay.friday" (ngModelChange)="toggleAllDay('friday',allDay.friday)">All Day</mat-checkbox>
+                <mat-checkbox [(ngModel)]="availability.friday.allDay" (ngModelChange)="toggleAllDay('friday',availability.friday.allDay)">All Day
+                </mat-checkbox>
                 <div>
                     <mat-form-field>
                         <mat-select placeholder="Fill from" [(ngModel)]="daySelected.friday" (ngModelChange)="fillFrom('friday',daySelected.friday)" disableOptionCentering>
@@ -252,7 +257,8 @@
         <div class="col-4">
             <mat-checkbox class="" [(ngModel)]="availability.saturday.available" (ngModelChange)="recalculateCopyDays()" [disabled]="editOn">Saturday</mat-checkbox>
             <div class="ml-4" *ngIf="!editOn">
-                <mat-checkbox [(ngModel)]="allDay.saturday" (ngModelChange)="toggleAllDay('saturday',allDay.saturday)">All Day</mat-checkbox>
+                <mat-checkbox [(ngModel)]="availability.saturday.allDay" (ngModelChange)="toggleAllDay('saturday',availability.saturday.allDay)">All Day
+                </mat-checkbox>
                 <div>
                     <mat-form-field>
                         <mat-select placeholder="Fill from" [(ngModel)]="daySelected.saturday" (ngModelChange)="fillFrom('saturday',daySelected.saturday)" disableOptionCentering>
@@ -285,7 +291,8 @@
         <div class="col-4">
             <mat-checkbox class="" [(ngModel)]="availability.sunday.available" (ngModelChange)="recalculateCopyDays()" [disabled]="editOn">Sunday</mat-checkbox>
             <div class="ml-4" *ngIf="!editOn">
-                <mat-checkbox [(ngModel)]="allDay.sunday" (ngModelChange)="toggleAllDay('sunday',allDay.sunday)">All Day</mat-checkbox>
+                <mat-checkbox [(ngModel)]="availability.saturday.allDay" (ngModelChange)="toggleAllDay('sunday',availability.saturday.allDay)">All Day
+                </mat-checkbox>
                 <div>
                     <mat-form-field>
                         <mat-select placeholder="Fill from" [(ngModel)]="daySelected.sunday" (ngModelChange)="fillFrom('sunday',daySelected.sunday)" disableOptionCentering>

@@ -1,5 +1,6 @@
 .blog-card {
     max-width: 300px;
+    height: 100%
 }
 
 .m-t {
@@ -11,7 +12,7 @@
 }
 
 .finger {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .author-image {
@@ -28,16 +29,18 @@
     width: 100%;
 }
 
-.mat-card{
-  background-color: #F26A2F;
-  color: white;
+.mat-card {
+    background-color: #F26A2F;
+    color: white;
 }
-.mat-card-image{
-  background-color: white;
+
+.mat-card-image {
+    background-color: white;
 }
-.anchor{
-  color: #482262;
-  text-decoration: underline;
-  font-weight: bold;
-  font-size: 16px;
+
+.anchor {
+    color: #482262;
+    text-decoration: underline;
+    font-weight: bold;
+    font-size: 16px;
 }

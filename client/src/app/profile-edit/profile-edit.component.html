@@ -15,13 +15,13 @@
                                 </div>
                                 <div class="row" *ngIf="!editOn">
                                     <div class="col">
-                                        <button type="button" (click)="openDialog()" class="btn btn-danger "><span class="icon-align"><i class="material-icons">delete_forever</i>Delete</span></button>
+                                        <button type="button" (click)="openDialog()" class="mt-1 btn btn-danger "><span class="icon-align"><i class="material-icons">delete_forever</i>Delete</span></button>
                                     </div>
                                     <div class="col">
-                                        <button type="button" [disabled]="!profileForm.valid" (click)="save()" class="btn btn-success "><span class="icon-align"><i class="material-icons">check</i>Save</span></button>
+                                        <button type="button" [disabled]="!profileForm.valid" (click)="save()" class="mt-1 btn btn-success "><span class="icon-align"><i class="material-icons">check</i>Save</span></button>
                                     </div>
                                     <div class="col">
-                                        <button type="button" (click)="cancel()" class="btn btn-danger"><span class="icon-align"><i class="material-icons">close</i>Cancel</span></button>
+                                        <button type="button" (click)="cancel()" class="mt-1 btn btn-danger"><span class="icon-align"><i class="material-icons">close</i>Cancel</span></button>
                                     </div>
                                 </div>
                             </div>
@@ -34,7 +34,7 @@
                             <mat-form-field>
                                 <input matInput placeholder="Display Name" [(ngModel)]="returnedProfile.displayName" disabled="true">
                             </mat-form-field>
-                            <mat-form-field>
+                            <mat-form-field class="mt-3">
                                 <input matInput placeholder="HOTS LOGS URL" [formControl]="hotsLogsFormControl" [(ngModel)]="returnedProfile.hotsLogsURL">
                                 <mat-error *ngIf="hotsLogsFormControl.hasError('required')">
                                     HOTS Logs URL is required
@@ -42,15 +42,17 @@
                                 <mat-error *ngIf="hotsLogsFormControl.hasError('invalidurl')">
                                     This doesn't match the pattern we're looking for: https://www.hotslogs.com/Player/Profile?PlayerID=######
                                 </mat-error>
-
                             </mat-form-field>
-                            <mat-form-field>
+                            <mat-form-field class="mt-3">
                                 <input matInput placeholder="Discord Tag" [formControl]="discordTagFormControl" [(ngModel)]="returnedProfile.discordTag">
                                 <mat-error *ngIf="discordTagFormControl.hasError('required')">
                                     Discord Tag is required.
                                 </mat-error>
+                                <mat-error *ngIf="discordTagFormControl.hasError('invalidTag')">
+                                    Discord Tag pattern not recognized.
+                                </mat-error>
                             </mat-form-field>
-                            <mat-form-field>
+                            <mat-form-field class="mt-3">
                                 <mat-select placeholder="Hero League Division" [formControl]="heroeLeagueDivisionControl" [(ngModel)]="returnedProfile.hlRankMetal" (ngModelChange)="modifyForm(returnedProfile.hlRankMetal)" disableOptionCentering>
                                     <mat-option *ngFor="let medal of hlMedals" [value]="medal">
                                         {{medal}}
@@ -78,7 +80,7 @@
                                 </div>
                                 <div class="pe-full-width" *ngIf="returnedProfile.hlRankMetal == 'Master' || returnedProfile.hlRankMetal == 'Grand Master'">
                                     <mat-form-field class="pe-full-width">
-                                        <input matInput placeholder="Rank Number" [formControl]="heroeLeagueRankControl" [(ngModel)]="returnedProfile.hlRankDivision">
+                                        <input matInput type="number" placeholder="Rank Number" [formControl]="heroeLeagueRankControl" [(ngModel)]="returnedProfile.hlRankDivision">
                                     </mat-form-field>
                                     <mat-error *ngIf="heroeLeagueRankControl.hasError('required')">
                                         Hero League Rank is required
