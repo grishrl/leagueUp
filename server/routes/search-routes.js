@@ -308,10 +308,47 @@ router.post('/team/market', passport.authenticate('jwt', {
 
 });
 
+//get users total number
+router.get('/users/total', (req, res) => {
+    const path = '/search/users/total';
+    let userNum = User.estimatedDocumentCount({
+        lookingForGroup: true
+    });
+    userNum.exec().then(
+        ret => {
+            res.status(200).send(util.returnMessaging(path, 'Users count', null, ret));
+        }, err => {
+            res.status(500).send(util.returnMessaging(path, "Error finding users", err));
+        }
+    )
+
+});
+
+//paginate users
+router.post('/user/paginate', passport.authenticate('jwt', {
+    session: false
+}), (req, res) => {
+    const path = '/search/user/paginate';
+    let page = req.body.page;
+    let perPage = 10;
+    let query = User.find({
+        lookingForGroup: true
+    }).skip(page * perPage).limit(perPage);
+    query.exec().then(
+        found => {
+            res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, found));
+        }, err => {
+            res.status(500).send(util.returnMessaging(path, "Error finding teams", err));
+        }
+    )
+});
+
 //get teams total number
 router.get('/teams/total', (req, res) => {
     const path = '/search/teams/total';
-    let teamNum = Team.estimatedDocumentCount();
+    let teamNum = Team.estimatedDocumentCount({
+        lookingForMore: true
+    });
     teamNum.exec().then(
         ret => {
             res.status(200).send(util.returnMessaging(path, 'Teams count', null, ret));
@@ -329,7 +366,7 @@ router.post('/team/paginate', passport.authenticate('jwt', {
     const path = '/search/team/paginate';
     let page = req.body.page;
     let perPage = 10;
-    let query = Team.find().skip(page * perPage).limit(perPage);
+    let query = Team.find({ lookingForMore: true }).skip(page * perPage).limit(perPage);
     query.exec().then(
         found => {
             res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, found));

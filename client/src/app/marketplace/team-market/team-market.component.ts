@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { AdminService } from 'src/app/services/admin.service';
 import { TimezoneService } from 'src/app/services/timezone.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TeamService } from 'src/app/services/team.service';
@@ -7,6 +6,7 @@ import { PageEvent } from '@angular/material';
 import { AuthService } from 'src/app/services/auth.service';
 import { RequestService } from 'src/app/services/request.service';
 import { Team } from 'src/app/classes/team.class';
+import { DivisionService } from 'src/app/services/division.service';
 
 
 @Component({
@@ -178,7 +178,7 @@ export class TeamMarketComponent implements OnInit {
     return divs;
   }
 
-  constructor(private adminService: AdminService, private auth:AuthService, public timezone: TimezoneService, private util:UtilitiesService, public _team:TeamService, 
+  constructor(private divisionService: DivisionService, private auth:AuthService, public timezone: TimezoneService, private util:UtilitiesService, public _team:TeamService, 
     private request:RequestService) { }
 
   filterName: string = '';
@@ -233,7 +233,7 @@ export class TeamMarketComponent implements OnInit {
 
   ngOnInit() {
     //gets division list
-    this.adminService.getDivisionList().subscribe((res) => {
+    this.divisionService.getDivisionInfo().subscribe((res) => {
       this.divisions = res;
     }, (err) => {
       console.log(err);

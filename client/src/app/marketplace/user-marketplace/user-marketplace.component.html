@@ -4,7 +4,7 @@
 
             <div class="row">
                 <div class="col text-center">
-                    <h4>Find A Team</h4>
+                    <h4>Find A Player</h4>
                 </div>
             </div>
 
@@ -152,43 +152,40 @@
                     <mat-paginator [length]="length" [pageSize]="pageSize" (page)="pageEventHandler($event)">
 
                     </mat-paginator>
-                    <div class="row mt-2 p-3 rowBorder" *ngFor="let team of displayArray; let ind = index" [ngClass]="{oddRow : ind%2!=0}">
-                        <div class="col">
+                    <div class="row mt-2 p-3 rowBorder" *ngFor="let player of displayArray; let ind = index" [ngClass]="{oddRow : ind%2!=0}">
+                        <!-- <div class="col">
                             <div class="row">
                                 <div class="col">
                                     <img class="img-fluid" src="{{_team.imageFQDN(team.logo)}}">
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-10">
+                        </div> -->
+                        <div class="col">
                             <div class="row">
                                 <div class="col">
-                                    <span class="titles">Team Name:</span> {{team.teamName}}
+                                    <span class="titles">Player Name:</span> {{player.displayName}}
                                 </div>
                                 <div class="col">
-                                    <span class="titles">Divison: </span> <i *ngIf="!team.divisionDisplayName">(not assigned)</i>
-                                    <span *ngIf="team.divisionDisplayName">{{team.divisionDisplayName}}</span>
-                                </div>
-                                <div class="col">
-                                    <span class="titles">Captain:</span> {{team.captain}}
+                                    <span class="titles">HL Ranking:</span> {{player.hlRankMetal}}
+                                    <div>
+                                        <span class="titles">HL Division: </span>{{player.hlRankDivision}}
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <span class="titles">Members:</span> {{team.teamMembers.length}}
+                                    <span class="titles">MMR:</span> {{player.averageMmr}}
                                 </div>
                                 <div class="col">
-                                    <span class="titles">MMR:</span> {{team.teamMMRAvg}}
-                                </div>
-                                <div class="col">
+                                    <span class="titles">Hots Logs:</span><a href="{{player.hotsLogsURL}}" target="_blank">HOTS LOGS LINK</a>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col text-center">
-                                    <a [routerLink]="['/teamProfile/',_team.routeFriendlyTeamName(team.teamName)]">View Team Profile</a>
+                                    <a [routerLink]="['/profile/',_userService.routeFriendlyUsername(player.displayName)]">View User Profile</a>
                                 </div>
-                                <div class="col text-center" *ngIf="showRequestToJoin() ">
-                                    <button class="btn btn-success" (click)="requestToJoin(team)">Request to Join Team</button>
+                                <div class="col text-center" *ngIf="showInviteToJoin() ">
+                                    <button class="btn btn-success" (click)="requestToJoin(player)">Request to Join Team</button>
                                 </div>
                             </div>
                         </div>

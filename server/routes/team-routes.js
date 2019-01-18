@@ -73,6 +73,43 @@ router.get('/get', (req, res) => {
 });
 
 //get
+//
+//asynch check to see if captain can still invite users to join team
+router.get('/check/status', passport.authenticate('jwt', {
+    session: false
+}), checkCaptain, (req, res) => {
+    const path = '/team/check/status';
+
+    let team = req.user.teamName;
+    team = team.toLowerCase();
+
+    Team.findOne({
+        teamName_lower: team
+    }).lean().then(
+        (foundTeam) => {
+            if (foundTeam) {
+                let belowRosterSize = true;
+                let roster = 0;
+                if (foundTeam.teamMembers) {
+                    roster += foundTeam.teamMembers.length;
+                }
+                if (foundTeam.pendingMembers) {
+                    roster += pendingMembers.length;
+                }
+                if (roster >= 9) {
+                    belowRosterSize = false;
+                }
+                res.status(200).send(util.returnMessaging(path, "Team found", false, belowRosterSize));
+            } else {
+                res.status(200).send(util.returnMessaging(path, "Team not found", false, false));
+            }
+        }, (err) => {
+            res.status(500).send(util.returnMessaging(path, "Error querying teams.", err));
+        }
+    );
+});
+
+//post
 // path: /team/get
 // URI query param - team
 // finds team of passed team name

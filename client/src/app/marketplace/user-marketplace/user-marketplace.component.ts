@@ -1,4 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { PageEvent } from '@angular/material';
+import { AuthService } from 'src/app/services/auth.service';
+import { TimezoneService } from 'src/app/services/timezone.service';
+import { UtilitiesService } from 'src/app/services/utilities.service';
+import { TeamService } from 'src/app/services/team.service';
+import { RequestService } from 'src/app/services/request.service';
+import { DivisionService } from 'src/app/services/division.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-user-marketplace',
@@ -7,7 +15,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class UserMarketplaceComponent implements OnInit {
 
-  constructor() { }
+  constructor(private divisionService: DivisionService, private auth: AuthService, public _userService:UserService, public timezone: TimezoneService, private util: UtilitiesService, public _team: TeamService,
+    private request: RequestService) { }
 
   availability = {
     "monday": {
@@ -48,6 +57,7 @@ export class UserMarketplaceComponent implements OnInit {
   };
 
   localResults = [];
+  divisions = [];
   hasSearched = false;
   hlDivision = [1, 2, 3, 4, 5];
   competitonLevel = [
@@ -57,6 +67,7 @@ export class UserMarketplaceComponent implements OnInit {
   ]
   hlMedals = ['Grand Master', 'Master', 'Diamond', 'Platinum', 'Gold', 'Silver', 'Bronze', 'Unranked'];
   selectedDivision
+  showSearch = false;
   searchParameters = {
     "divisions": [],
     "lowerMMR": null,
@@ -76,9 +87,91 @@ export class UserMarketplaceComponent implements OnInit {
     "timezone": null
   }
 
-  ngOnInit() {
+  filterName: string = '';
+  displayArray = [];
+  length: number;
+  pageSize: number = 10;
+  filteredArray: any = [];
+
+  pageEvent: PageEvent
+
+  pageEventHandler(pageEvent: PageEvent) {
+    let i = pageEvent.pageIndex;
+    if (this.localResults.length > 0) {
+
+      i = i * this.pageSize;
+      let endSlice = i + this.pageSize
+      if (endSlice > this.localResults.length) {
+        endSlice = this.localResults.length;
+      }
+      this.displayArray = [];
+      this.displayArray = this.localResults.slice(i, endSlice)
+    } else {
+      this._team.getTeamsOfPageNum(i, true).subscribe(res => {
+        this.displayArray = res;
+      }, err => {
+        console.log(err);
+      })
+    }
+
+
   }
 
+  clear() {
+    this.showSearch = !this.showSearch;
+    this.hasSearched = false;
+    this.localResults = [];
+    this.getNextPage(0, true);
+  }
+
+  ngOnInit() {
+    //gets division list
+    this.divisionService.getDivisionInfo().subscribe((res) => {
+      this.divisions = res;
+    }, (err) => {
+      console.log(err);
+    });
+    this.getAllUsers();
+    this.getNextPage(0,false);
+  }
+
+  getAllUsers() {
+    this._userService.getUsersNumber().subscribe(
+      res => {
+        this.length = res;
+      },
+      err => {
+        console.log(err)
+      }
+    )
+  }
+
+  getNextPage(page, showMsg) {
+    this._userService.getUsersOfPageNum(page, showMsg).subscribe(
+      res => {
+        this.displayArray = res;
+      }, err => {
+        console.log(err);
+      }
+    )
+  }
+
+  resetRoles() {
+    let keys = Object.keys(this.searchParameters.rolesNeeded);
+    keys.forEach(key => {
+      this.searchParameters.rolesNeeded[key] = false;
+    })
+  }
+
+  cachedResponse;
+  showInviteToJoin(){
+    if (this.cachedResponse != null || this.cachedResponse != undefined){
+      
+    }else{
+      return this.cachedResponse;
+    }
+
+  }
 
   selected(div) {
     this.searchParameters.divisions.push(div);
