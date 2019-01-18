@@ -3,6 +3,7 @@
         <div class="row">
             <div class="col">
                 <h3>Season 6 Registration / Questionnaire</h3>
+                <span>* Denotes required field</span>
             </div>
             <div class="col">
                 <button [disabled]="responses.registered" (click)="save()" class="btn btn-success">Save Questionnaire</button>
@@ -22,7 +23,7 @@
         </div>
         <div class="row mt-3">
             <div class="col">
-                <h5>Did you or anyone on your team play in NGS last season?</h5>
+                <h5>Did you or anyone on your team play in NGS last season?*</h5>
             </div>
         </div>
         <div class="row">
@@ -39,7 +40,7 @@
         <div *ngIf="responses.lastSeason == 'yes'">
             <div class="row mt-3">
                 <div class="col">
-                    <h5>If so, what team name did you play under?</h5>
+                    <h5>If so, what team name did you play under?*</h5>
                 </div>
             </div>
             <div class="row">
@@ -51,7 +52,7 @@
             </div>
             <div class="row mt-3">
                 <div class="col">
-                    <h5>What Div did you play in?</h5>
+                    <h5>What Div did you play in?*</h5>
                 </div>
             </div>
             <div class="row">
@@ -63,7 +64,7 @@
             </div>
             <div class="row mt-3">
                 <div class="col">
-                    <h5>How many returning players do you have? Based on Season 5 NGS divisions, what level were they?</h5>
+                    <h5>How many returning players do you have? Based on Season 5 NGS divisions, what level were they?*</h5>
                 </div>
             </div>
             <div class="row">
@@ -83,7 +84,7 @@
 
         <div class="row mt-3">
             <div class="col">
-                <h5>Has your team played in any other competitions? At what level?</h5>
+                <h5>Has your team played in any other competitions? At what level?*</h5>
             </div>
         </div>
         <div class="row">
@@ -97,7 +98,7 @@
         <div *ngIf="responses.lastSeason == 'no'">
             <div class="row mt-3">
                 <div class="col">
-                    <h5>If you didn’t play in NGS last season, what do you feel the overall playing skill of your team is? (Bronze, Silver, Gold, Plat…...) </h5>
+                    <h5>If you didn’t play in NGS last season, what do you feel the overall playing skill of your team is? (Bronze, Silver, Gold, Plat…...)* </h5>
                 </div>
             </div>
             <div class="row">
@@ -109,42 +110,9 @@
             </div>
         </div>
 
-
         <div class="row mt-3">
             <div class="col">
-                <h5>Pick 9 maps for the NGS player 6 map pool.</h5>
-            </div>
-        </div>
-        <div class="row" *ngIf="pickedMaps.length<9">
-            <div class="col">
-                <mat-form-field class="mat-FullWidth">
-                    <mat-select placeholder="Select a map:" [(ngModel)]="selectedMap" disableOptionCentering (ngModelChange)="addMap(selectedMap)">
-                        <mat-option *ngFor="let map of filterMaps()" [value]="map">{{map}}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <h5>Selected Maps:</h5>
-                <br>
-                <div> </div>
-                <table>
-                    <tr *ngFor="let map of pickedMaps">
-                        <td class="tdClass">
-                            {{map}}
-                        </td>
-                        <td class="tdClass">
-                            <span class="finger removeClass bg-danger" (click)="remove(map)"> X </span>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-
-        <div class="row mt-3">
-            <div class="col">
-                <h5>What coastal division do you prefer? East, West, Either</h5>
+                <h5>What coastal division do you prefer? East, West, Either*</h5>
             </div>
         </div>
         <div class="row">
@@ -162,6 +130,38 @@
                 <mat-radio-group [(ngModel)]='responses.eastWest'>
                     <mat-radio-button class="example-margin" value="either">Either</mat-radio-button>
                 </mat-radio-group>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <h5>Pick 9 maps for the NGS player 6 map pool.*</h5>
+            </div>
+        </div>
+        <div class="row" *ngIf="pickedMaps.length<9">
+            <div class="col">
+                <mat-form-field class="mat-FullWidth">
+                    <mat-select placeholder="Select a map:" [(ngModel)]="selectedMap" disableOptionCentering (ngModelChange)="addMap(selectedMap)">
+                        <mat-option *ngFor="let map of filterMaps()" [value]="map">{{map}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h5>Selected Maps: {{pickedMaps.length}} of 9</h5>
+                <br>
+                <div> </div>
+                <table>
+                    <tr *ngFor="let map of pickedMaps">
+                        <td class="tdClass">
+                            {{map}}
+                        </td>
+                        <td class="tdClass">
+                            <span class="finger removeClass bg-danger" (click)="remove(map)"> X </span>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
 
