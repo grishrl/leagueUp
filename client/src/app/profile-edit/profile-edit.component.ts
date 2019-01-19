@@ -59,16 +59,20 @@ export class ProfileEditComponent implements OnInit {
 
   discordPatternValidator(control: FormControl){
     let discordTag = control.value;
-    if(discordTag.indexOf('#')<=0){
-      return {invalidTag:true}
-    }else{
-      let tagArr = discordTag.split('#');
-      let regex = new RegExp(/(\d{4})/);
-      if (tagArr[1].length == 4 && regex.test(tagArr[1])){
-        return null;
-      }else{
-        return { invalidTag: true } 
+    if (discordTag){
+      if (discordTag && discordTag.indexOf('#') <= 0) {
+        return { invalidTag: true }
+      } else {
+        let tagArr = discordTag.split('#');
+        let regex = new RegExp(/(\d{4})/);
+        if (tagArr[1].length == 4 && regex.test(tagArr[1])) {
+          return null;
+        } else {
+          return { invalidTag: true }
+        }
       }
+    }else{
+
     }
   }
 
@@ -93,13 +97,13 @@ export class ProfileEditComponent implements OnInit {
     timeAvail:this.timesAvailControl
   })
 
-  formControlledEnable(){
-this.hotsLogsFormControl.enable();
-this.discordTagFormControl.enable();
-this.heroeLeagueDivisionControl.enable();
-this.heroeLeagueRankControl.enable();
-this.timezoneControl.enable();
-  }
+formControlledEnable(){
+  this.hotsLogsFormControl.enable();
+  this.discordTagFormControl.enable();
+  this.heroeLeagueDivisionControl.enable();
+  this.heroeLeagueRankControl.enable();
+  this.timezoneControl.enable();
+}
 
   formControlledDisable(){
     this.hotsLogsFormControl.disable();
