@@ -273,7 +273,7 @@ this.timezoneControl.enable();
     if(metal == 'Unranked'){
       this.heroeLeagueRankControl.setErrors(null);
     }else{
-      this.heroeLeagueRankControl.setErrors({required:true});
+      
     }
   }
 
