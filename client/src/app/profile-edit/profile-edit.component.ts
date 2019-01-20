@@ -1,6 +1,6 @@
 import { Component, OnInit, NgModule, Input} from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, NavigationEnd } from '@angular/router';
 import { TimezoneService } from '../services/timezone.service';
 import { UserService } from '../services/user.service';
 import { AuthService } from '../services/auth.service';
@@ -26,9 +26,20 @@ import { UtilitiesService } from '../services/utilities.service';
 })
 export class ProfileEditComponent implements OnInit {
 
+  navigationSubscription
+
   constructor(public timezone: TimezoneService, private user: UserService, public auth: AuthService, private router: Router, private route: ActivatedRoute, 
     private hotsLogsService: HotsLogsService, public dialog: MatDialog, private util:UtilitiesService) {
-    this.displayName = user.realUserName(this.route.snapshot.params['id']);
+
+    this.navigationSubscription = this.router.events.subscribe((e: any) => {
+
+      // If it is a NavigationEnd event re-initalise the component
+      if (e instanceof NavigationEnd) {
+        this.displayName = user.realUserName(this.route.snapshot.params['id']);
+        this.ngOnInit();
+      }
+    });
+    
   }
 
   editOn = true;
