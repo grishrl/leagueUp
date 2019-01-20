@@ -17,7 +17,7 @@
                         <div class="carousel-caption d-none d-md-block">
 
                             <h3>{{jumboSlide.fields.title}}</h3>
-                            <p>{{jumboSlide.fields.description}}</p>
+                            <p [innerHTML]="md.convertMarkdown(jumboSlide.fields.description)"></p>
                         </div>
                     </div>
 
@@ -46,7 +46,7 @@
                     </mat-card-header>
                     <img mat-card-image src="{{item.fields.heroImage.fields.file.url}}?w=400&h=300&fit=scale" alt="{{item.fields.heroImage.fields.description}}">
                     <mat-card-content>
-                        <div>{{item.fields.description}}</div>
+                        <div [innerHTML]="md.convertMarkdown(item.fields.description)"></div>
                     </mat-card-content>
                 </mat-card>
             </div>

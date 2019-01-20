@@ -1,6 +1,6 @@
 import { Component, OnInit, NgModule, Input} from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, NavigationEnd } from '@angular/router';
 import { TimezoneService } from '../services/timezone.service';
 import { UserService } from '../services/user.service';
 import { AuthService } from '../services/auth.service';
@@ -26,9 +26,20 @@ import { UtilitiesService } from '../services/utilities.service';
 })
 export class ProfileEditComponent implements OnInit {
 
+  navigationSubscription
+
   constructor(public timezone: TimezoneService, private user: UserService, public auth: AuthService, private router: Router, private route: ActivatedRoute, 
     private hotsLogsService: HotsLogsService, public dialog: MatDialog, private util:UtilitiesService) {
-    this.displayName = user.realUserName(this.route.snapshot.params['id']);
+
+    this.navigationSubscription = this.router.events.subscribe((e: any) => {
+
+      // If it is a NavigationEnd event re-initalise the component
+      if (e instanceof NavigationEnd) {
+        this.displayName = user.realUserName(this.route.snapshot.params['id']);
+        this.ngOnInit();
+      }
+    });
+    
   }
 
   editOn = true;
@@ -39,7 +50,8 @@ export class ProfileEditComponent implements OnInit {
   ]);
 
   discordTagFormControl = new FormControl({ value: '', disabled: true }, [
-    Validators.required
+    Validators.required,
+    this.discordPatternValidator
   ]);
 
   heroeLeagueDivisionControl = new FormControl({ value: '',disabled:true}, [
@@ -55,6 +67,25 @@ export class ProfileEditComponent implements OnInit {
   ]);
 
   timesAvailControl = new FormControl();
+
+  discordPatternValidator(control: FormControl){
+    let discordTag = control.value;
+    if (discordTag){
+      if (discordTag && discordTag.indexOf('#') <= 0) {
+        return { invalidTag: true }
+      } else {
+        let tagArr = discordTag.split('#');
+        let regex = new RegExp(/(\d{4})/);
+        if (tagArr[1].length == 4 && regex.test(tagArr[1])) {
+          return null;
+        } else {
+          return { invalidTag: true }
+        }
+      }
+    }else{
+
+    }
+  }
 
   hotslogsUrlPatternValidator(control: FormControl) {
   let hotslogsURL = control.value;
@@ -77,13 +108,13 @@ export class ProfileEditComponent implements OnInit {
     timeAvail:this.timesAvailControl
   })
 
-  formControlledEnable(){
-this.hotsLogsFormControl.enable();
-this.discordTagFormControl.enable();
-this.heroeLeagueDivisionControl.enable();
-this.heroeLeagueRankControl.enable();
-this.timezoneControl.enable();
-  }
+formControlledEnable(){
+  this.hotsLogsFormControl.enable();
+  this.discordTagFormControl.enable();
+  this.heroeLeagueDivisionControl.enable();
+  this.heroeLeagueRankControl.enable();
+  this.timezoneControl.enable();
+}
 
   formControlledDisable(){
     this.hotsLogsFormControl.disable();
@@ -135,8 +166,11 @@ this.timezoneControl.enable();
 
   hlMedals = ['Grand Master','Master','Diamond','Platinum','Gold','Silver','Bronze','Unranked'];
   hlDivision = [1,2,3,4,5];
+
   competitonLevel = [
-    'Low','Medium','High'
+    { val: 1, display: 'Low' },
+    { val: 3, display: 'Medium' },
+    { val: 5, display: 'High' }
   ]
   
 
@@ -254,7 +288,7 @@ this.timezoneControl.enable();
     if(metal == 'Unranked'){
       this.heroeLeagueRankControl.setErrors(null);
     }else{
-      this.heroeLeagueRankControl.setErrors({required:true});
+      
     }
   }
 

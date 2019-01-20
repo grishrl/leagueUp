@@ -64,7 +64,7 @@ export class QuestionnaireComponent implements OnInit {
       this.responses['pickedMaps'] = this.pickedMaps;
       this.responses['registered']=true;
       this.teamService.saveTeamQuestionnaire(this.passedTeam.teamName_lower, this.responses).subscribe(res => {
-        console.log(res);
+        // console.log(res);
       }, err => {
         console.log(err);
       })
@@ -117,7 +117,7 @@ export class QuestionnaireComponent implements OnInit {
   save(){
     this.responses['pickedMaps']=this.pickedMaps;
     this.teamService.saveTeamQuestionnaire(this.passedTeam.teamName_lower,this.responses).subscribe(res=>{
-      console.log(res);
+      // console.log(res);
     },err=>{
       console.log(err);
     })

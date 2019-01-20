@@ -1,7 +1,20 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
+            <div class="row mt-3 mb-3">
 
+                <div class="col text-center">
+                    <button type="button" [disabled]="!validate()" (click)="save()" class="btn btn-success ">Save</button>
+                </div>
+                <div class="col text-center">
+                    <button type="button" (click)="cancel()" class="btn btn-warning">Reset Form</button>
+                </div>
+                <div class="col text-center">
+                    <a class="btn btn-danger" [routerLink]="['/']">Cancel</a>
+                </div>
+
+
+            </div>
             <div class="row mt-3">
                 <div class="col">
                     <mat-form-field class="mat-FullWidth">
@@ -67,18 +80,6 @@
                     </mat-form-field>
                 </div>
             </div>
-            <div class="row mt-3 mb-3">
-
-                <div class="col">
-                    <button type="button" [disabled]="!validate()" (click)="save()" class="btn btn-success ">Save</button>
-                </div>
-                <div class="col">
-                    <button type="button" (click)="cancel()" class="btn btn-danger">Cancel</button>
-                </div>
-
-
-            </div>
-
         </div>
     </div>
 </div>

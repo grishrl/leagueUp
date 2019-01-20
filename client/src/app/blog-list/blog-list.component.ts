@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ContentfulService } from '../services/contentful.service';
 import { Entry } from 'contentful';
+import { MarkdownParserService } from '../services/markdown-parser.service';
 
 @Component({
   selector: 'app-blog-list',
@@ -12,7 +13,7 @@ import { Entry } from 'contentful';
 export class BlogListComponent implements OnInit {
   perColumn: number = 3;
   blogs: Entry<any>[]=[];
-  constructor( private router:Router, private contentfulService:ContentfulService) { }
+  constructor(private router: Router, private contentfulService: ContentfulService, public md: MarkdownParserService) { }
   rows: any []=[];
   categories:any[]
   ngOnInit() {

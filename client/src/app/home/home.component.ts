@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {  Router } from '@angular/router';
 import { ContentfulService } from '../services/contentful.service';
 import { environment } from '../../environments/environment';
+import { MarkdownParserService } from '../services/markdown-parser.service';
 
 @Component({
   selector: 'app-home',
@@ -10,7 +11,7 @@ import { environment } from '../../environments/environment';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(private contentfulService:ContentfulService, private router: Router) {
+  constructor(private contentfulService: ContentfulService, private router: Router, public md: MarkdownParserService) {
 
    }
   perColumn:number = 3;

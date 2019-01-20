@@ -59,7 +59,7 @@ export class ReportingComponent implements OnInit {
         }
         this.rounds;
         this.roundsArray = roundsArray;
-        console.log(this.roundsArray)
+        // console.log(this.roundsArray)
       },
       err => { console.log(err) }
     )
