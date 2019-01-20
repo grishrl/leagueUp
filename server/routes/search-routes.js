@@ -351,28 +351,191 @@ const userUnteamed = {
     ]
 };
 
+/*
+{
+    $and: [{
+            "displayName": {
+                $not: {
+                    $in: ["DrCjelli#1596"]
+                }
+            }
+        },
+        {
+            $or: [{
+                    "teamId": null
+                },
+                {
+                    "teamId": {
+                        $exists: false
+                    }
+                },
+            ]
+        },
+        {
+            $or: [{
+                    "teamName": null
+                },
+                {
+                    "teamName": {
+                        $exists: false
+                    }
+                }
+            ]
+        },
+        {
+            $or: [{
+                    "pendingTeam": null
+                },
+                {
+                    "pendingTeam": {
+                        $exists: false
+                    }
+                },
+                {
+                    "pendingTeam": false
+                }
+            ]
+        }
+    ]
+}
 
-//get users total number
-router.get('/users/total', (req, res) => {
+*/
+
+const userUnteamedFilterInvited = {
+    $and: [{
+            $or: [{
+                    "teamId": null
+                },
+                {
+                    "teamId": {
+                        $exists: false
+                    }
+                },
+            ]
+        },
+        {
+            $or: [{
+                    "teamName": null
+                },
+                {
+                    "teamName": {
+                        $exists: false
+                    }
+                }
+            ]
+        },
+        {
+            $or: [{
+                    "pendingTeam": null
+                },
+                {
+                    "pendingTeam": {
+                        $exists: false
+                    }
+                },
+                {
+                    "pendingTeam": false
+                }
+            ]
+        }
+    ]
+};
+
+//get users total number this returns all unteamed users
+router.get('/users/filtered/total', passport.authenticate('jwt', {
+    session: false
+}), (req, res) => {
+    const path = '/search/users/filtered/total';
+    let teamName = req.user.teamName;
+    teamName = teamName.toLowerCase();
+    let myFilterObj = Object.assign({}, userUnteamedFilterInvited)
+    Team.findOne({ teamName_lower: teamName }).then(
+        foundTeam => {
+            if (foundTeam) {
+                if (foundTeam.invitedUsers.length > 0) {
+                    myFilterObj.$and.push({
+                        "displayName": {
+                            $not: {
+                                $in: foundTeam.invitedUsers
+                            }
+                        }
+                    })
+                    console.log('filter obj ', JSON.stringify(myFilterObj));
+
+                    let userNum = User.countDocuments(myFilterObj);
+                    userNum.exec().then(
+                        ret => {
+                            res.status(200).send(util.returnMessaging(path, 'Found users', null, ret));
+                        },
+                        err => {
+                            res.status(500).send(util.returnMessaging(path, 'Error finding users', err));
+                        }
+                    )
+                }
+            } else {
+                res.status(200).send(util.returnMessaging(path, 'Found users', null, ret));
+            }
+        }, err => {
+            res.status(500).send(util.returnMessaging(path, 'Error finding users', err));
+        }
+    )
+});
+
+//paginate users
+router.post('/user/filtered/paginate', passport.authenticate('jwt', {
+    session: false
+}), (req, res) => {
+    const path = '/search/user/filtered/paginate';
+    let page = req.body.page;
+    let perPage = 10;
+    let teamName = req.user.teamName;
+    let myFilterObj = Object.assign({}, userUnteamedFilterInvited)
+    teamName = teamName.toLowerCase();
+    Team.findOne({
+        teamName_lower: teamName
+    }).then(
+        foundTeam => {
+            if (foundTeam) {
+                if (foundTeam.invitedUsers.length > 0) {
+                    myFilterObj.$and.push({
+                        "displayName": {
+                            $not: {
+                                $in: foundTeam.invitedUsers
+                            }
+                        }
+                    });
+                }
+                let query = User.find(myFilterObj).skip(page * perPage).limit(perPage);
+                query.exec().then(
+                    found => {
+                        res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, found));
+                    }, err => {
+                        res.status(500).send(util.returnMessaging(path, "Error finding teams", err));
+                    }
+                )
+            } else {
+
+            }
+        }, err => {
+
+        }
+    );
+
+
+});
+
+//get users total number this returns all unteamed users
+router.get('/users/all/total', (req, res) => {
     const path = '/search/users/total';
-    let userNum = User.find(userUnteamed);
+    let userNum = User.estimatedDocumentCount(userUnteamed);
     userNum.exec().then(
         ret => {
-            filterInvitedUsers(req, ret).then(
-                parsed => {
-                    res.status(200).send(util.returnMessaging(path, "User Count", false, parsed.length));
-                },
-                err => {
-                    res.status(200).send(util.returnMessaging(path, "User Count", false, ret.length));
-                }
-            )
-
+            res.status(200).send(util.returnMessaging(path, 'Found users', null, ret))
 
         }, err => {
             res.status(500).send(util.returnMessaging(path, "Error finding users", err));
         }
-    )
-
+    );
 });
 
 //paginate users
@@ -385,14 +548,15 @@ router.post('/user/paginate', passport.authenticate('jwt', {
     let query = User.find(userUnteamed).skip(page * perPage).limit(perPage);
     query.exec().then(
         found => {
-            filterInvitedUsers(req, found).then(
-                parsed => {
-                    res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, parsed));
-                },
-                err => {
-                    res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, found));
-                }
-            )
+            res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, found));
+            // filterInvitedUsers(req, found).then(
+            //     parsed => {
+            //         res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, parsed));
+            //     },
+            //     err => {
+            //         res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, found));
+            //     }
+            // )
 
         }, err => {
             res.status(500).send(util.returnMessaging(path, "Error finding teams", err));

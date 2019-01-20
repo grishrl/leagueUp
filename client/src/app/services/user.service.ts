@@ -80,6 +80,20 @@ export class UserService {
     return this.httpService.httpPost(url, payload, msg);
   }
 
+  //this allows us to filter out users who are invited to the team, for a captain... so that the invited users don't show in the list
+  getFilteredUsersNumber(){
+    let url = '/search/users/filtered/total';
+    return this.httpService.httpGet(url, []);
+  }
+  //gets the filtered users
+  getFilteredUsersOfPageNum(page, msg?){
+    let url = '/search/user/filtered/paginate';
+    let payload = {
+      page: page
+    };
+    return this.httpService.httpPost(url, payload, msg);
+  }
+
   //captures and sends created user and the invite token they used when logging in;
   //this clears the pending outreach in queue
   outreachResponse(token, user):Observable<any>{

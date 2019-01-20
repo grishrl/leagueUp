@@ -87,7 +87,7 @@ export class UserMarketplaceComponent implements OnInit {
     "timezone": null
   }
 
-  showInviteButton = false;
+  // showInviteButton = false;
 
   filterName: string = '';
   displayArray = [];
@@ -109,11 +109,7 @@ export class UserMarketplaceComponent implements OnInit {
       this.displayArray = [];
       this.displayArray = this.localResults.slice(i, endSlice)
     } else {
-      this._team.getTeamsOfPageNum(i, true).subscribe(res => {
-        this.displayArray = res;
-      }, err => {
-        console.log(err);
-      })
+      this.getNextPage(this.getFiltered, i, true);
     }
 
 
@@ -123,10 +119,12 @@ export class UserMarketplaceComponent implements OnInit {
     this.showSearch = !this.showSearch;
     this.hasSearched = false;
     this.localResults = [];
-    this.getNextPage(0, true);
+    this.getNextPage(this.getFiltered, 0, true);
   }
 
   teamInfo;
+
+  getFiltered = false;
 
   ngOnInit() {
     //gets division list
@@ -135,42 +133,83 @@ export class UserMarketplaceComponent implements OnInit {
     }, (err) => {
       console.log(err);
     });
-    // this._team.checkCanInvite().subscribe(
-    //   res => {
-    //     this.showInviteButton = res;
-    //   },
-    //   err => {
-    //     console.log(err);
-    //   }
-    // )
-    this._team.getTeam(this.auth.getTeam()).subscribe((res)=>{
+
+    this._team.getTeam(this.auth.getTeam()).subscribe( res =>{
       this.teamInfo = res;
-    },(err)=>{  
+    }, err=>{
       console.log(err);
     })
-    this.getAllUsers();
-    this.getNextPage(0,false);
+
+    this.getFiltered = this.auth.getCaptain() == 'true';
+
+    this.getAllUsers(this.getFiltered);
+    this.getNextPage(this.getFiltered, 0, false);
   }
 
-  getAllUsers() {
-    this._userService.getUsersNumber().subscribe(
-      res => {
-        this.length = res;
-      },
-      err => {
-        console.log(err)
-      }
-    )
+  getAllUsers(filter) {
+    console.log('filter ', filter)
+    if(filter){
+      this._userService.getFilteredUsersNumber().subscribe(
+        res=>{
+          this.length = res;
+        },
+        err=>{
+          console.log();
+        }
+      )
+    }else{
+      this._userService.getUsersNumber().subscribe(
+        res => {
+          this.length = res;
+        },
+        err => {
+          console.log(err)
+        }
+      )
+    }
+
   }
 
-  getNextPage(page, showMsg) {
-    this._userService.getUsersOfPageNum(page, showMsg).subscribe(
-      res => {
-        this.displayArray = res;
-      }, err => {
-        console.log(err);
+  rosterFull(){
+    let roster = 0;
+    if (this.teamInfo) {
+      if (this.teamInfo.teamMembers) {
+        roster += this.teamInfo.teamMembers.length;
+        if (this.teamInfo.pendingMembers) {
+          roster += this.teamInfo.pendingMembers.length;
+        }
       }
-    )
+    }
+      return roster >= 9;
+  }
+
+  showInviteButton(player){
+    if (this.teamInfo.invitedUsers && this.teamInfo.invitedUsers.indexOf(player.displayName) > -1) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  getNextPage(filter, page, showMsg) {
+    console.log('filter ',filter)
+    if(filter){
+      this._userService.getFilteredUsersOfPageNum(page, showMsg).subscribe(
+        res=>{
+          this.displayArray = res;
+        },err=>{
+          console.log(err);
+        }
+      )
+    }else{
+      this._userService.getUsersOfPageNum(page, showMsg).subscribe(
+        res => {
+          this.displayArray = res;
+        }, err => {
+          console.log(err);
+        }
+      )
+    }
   }
 
   resetRoles() {
@@ -183,6 +222,7 @@ export class UserMarketplaceComponent implements OnInit {
   requestToJoin(player){
     this.request.inviteToTeamRequest(this.auth.getTeam(), player.displayName).subscribe(
       (res)=>{
+        this.teamInfo.invitedUsers.push(player.displayName);
         //filter by pending invites?
       },err=>{
         console.log(err);
