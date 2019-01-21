@@ -1,0 +1,33 @@
+<div class="container">
+    <div class="row bg-white forceFull">
+        <div class="col">
+            <!-- Page Heading/Breadcrumbs -->
+            <h1 class="mt-4 mb-3">{{displayBlog.fields.title}}
+                <small>by<i>{{displayBlog.fields.author.fields.name}}</i></small>
+            </h1>
+
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a [routerLink]="['/blog']">Blog Home</a>
+                </li>
+                <li class="breadcrumb-item active">{{displayBlog.fields.title}}</li>
+            </ol>
+
+            <div class="row">
+                <!-- Post Content Column -->
+                <div class="col">
+                    <!-- Preview Image -->
+                    <div class="text-center"><img class="img-fluid rounded" src="{{displayBlog.fields.heroImage.fields.file.url}}?w=900&h=300" alt=""></div>
+                    <hr>
+                    <!-- Date/Time -->
+                    <p class="date">Posted on {{displayBlog.fields.publishDate | date}}</p>
+                    <hr>
+                    <!-- Post Content -->
+                    <div [innerHTML]="md.convertMarkdown(displayBlog.fields.description)"></div>
+                    <div [innerHTML]="md.convertMarkdown(displayBlog.fields.body)"></div>
+                    <hr>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
