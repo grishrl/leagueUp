@@ -31,7 +31,7 @@ export class HotsLogsService {
               }
              }
            });
-           return Math.round(totalMMR/inc);
+           return {avgMMR:Math.round(totalMMR/inc),PlayerID:res['PlayerID']};
          }else{
            if( res.hasOwnProperty('Message') ){
              if(res['Message'].indexOf('invalid') > -1){
@@ -41,6 +41,11 @@ export class HotsLogsService {
          }
        })
      )
+   }
+
+   returnProfileLink(playerID){
+     let url = 'https://www.hotslogs.com/Player/Profile?PlayerID=';
+     return url += playerID;
    }
 
    getMMRdisplayName(displayName){

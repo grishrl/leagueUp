@@ -19,6 +19,7 @@ const userSchema = new Schema({
     "role": Object, //form input added
     "timeZone": String, //form input added
     "hotsLogsURL": String, //form input added
+    "hotsLogsPlayerID": String,
     "averageMmr": Number,
     "pendingTeam": Boolean,
     "toonHandle": String, //used for tieng profile to replays submitted

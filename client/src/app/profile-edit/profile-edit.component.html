@@ -34,6 +34,11 @@
                             <mat-form-field>
                                 <input matInput placeholder="Display Name" [(ngModel)]="returnedProfile.displayName" disabled="true">
                             </mat-form-field>
+                            <div class="row" *ngIf="editOn">
+                                <div class="col">
+                                    <a href="{{hotsLogsService.returnProfileLink(returnedProfile.hotsLogsPlayerID)}}" target="_blank">HOTS LOGS Url</a>
+                                </div>
+                            </div>
                             <mat-form-field *ngIf="hotsLogsUrlReq" class="mt-3">
                                 <input matInput placeholder="HOTS LOGS URL" [formControl]="hotsLogsFormControl" [(ngModel)]="returnedProfile.hotsLogsURL">
                                 <mat-error *ngIf="hotsLogsFormControl.hasError('required')">

@@ -29,7 +29,7 @@ export class ProfileEditComponent implements OnInit {
   navigationSubscription
 
   constructor(public timezone: TimezoneService, private user: UserService, public auth: AuthService, private router: Router, private route: ActivatedRoute, 
-    private hotsLogsService: HotsLogsService, public dialog: MatDialog, private util:UtilitiesService) {
+    public hotsLogsService: HotsLogsService, public dialog: MatDialog, private util:UtilitiesService) {
 
     this.navigationSubscription = this.router.events.subscribe((e: any) => {
 
@@ -256,7 +256,8 @@ formControlledEnable(){
 
          this.hotsLogsService.getMMR(this.returnedProfile.hotsLogsURL).subscribe(res => {
            if (res != 'error') {
-             this.returnedProfile.averageMmr = res;
+             this.returnedProfile.averageMmr = res.avgMMR;
+             this.returnedProfile['hotsLogsPlayerID'] = res.PlayerID;
              this.user.saveUser(this.returnedProfile).subscribe((res) => {
                if (res) {
                  this.editOn = true;

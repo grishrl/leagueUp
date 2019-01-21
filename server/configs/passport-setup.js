@@ -48,6 +48,7 @@ passport.use(new BnetStrategy({
     callbackURL: process.env.bNetRedirect,
     region: "us"
 }, function(accessToken, refreshToken, profile, done) {
+
     var id = profile.id.toString()
     User.findOne({ bNetId: id }).then((prof) => {
 
@@ -84,6 +85,7 @@ passport.use(new BnetStrategy({
             request(reqURL + btag, { json: true }, (err, res, body) => {
                 if (err) { console.log(err) };
                 if (body.hasOwnProperty('LeaderboardRankings')) {
+
                     var inc = 0
                     var totalMMR = 0;
                     var avgMMR = 0;
@@ -103,10 +105,14 @@ passport.use(new BnetStrategy({
                         }
                     }
                 }
+
                 var id = profile.id.toString();
                 let userObj = {
                     displayName: profile.battletag,
                     bNetId: id
+                }
+                if (body.hasOwnProperty('PlayerID')) {
+                    userObj.hotsLogsPlayerID = body['PlayerID'];
                 }
                 if (avgMMR > 0) {
                     userObj.averageMmr = avgMMR;
