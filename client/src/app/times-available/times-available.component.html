@@ -291,7 +291,7 @@
         <div class="col-4">
             <mat-checkbox class="" [(ngModel)]="availability.sunday.available" (ngModelChange)="recalculateCopyDays()" [disabled]="editOn">Sunday</mat-checkbox>
             <div class="ml-4" *ngIf="!editOn">
-                <mat-checkbox [(ngModel)]="availability.saturday.allDay" (ngModelChange)="toggleAllDay('sunday',availability.saturday.allDay)">All Day
+                <mat-checkbox [(ngModel)]="availability.sunday.allDay" (ngModelChange)="toggleAllDay('sunday',availability.sunday.allDay)">All Day
                 </mat-checkbox>
                 <div>
                     <mat-form-field>
