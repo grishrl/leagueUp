@@ -32,11 +32,13 @@ import { SessionTimeoutComponent } from "./session-timeout/session-timeout.compo
 import { CalendarViewComponent } from "./calendar-view/calendar-view.component";
 import { EventLargeComponent } from "./calendar-view/event-large/event-large.component";
 import { SetDeadlineComponent } from "./admin/match-management/set-deadline/set-deadline.component";
+import { RulesComponent } from "./rules/rules.component";
 
 const APP_ROUTES: Routes = [
   { path: 'directory', component: DirectoryComponent},
   { path:'', component: HomeComponent},
   { path: 'login', component: LoginComponent },
+  { path: 'rules', component: RulesComponent },
   { path: 'logout', component: LogoutComponent },
   { path: 'login/:token', component: LoginComponent},
   { path: 'profile/:id', component: ProfileEditComponent},

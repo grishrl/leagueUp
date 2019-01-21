@@ -67,6 +67,7 @@ import { EventLargeComponent } from './calendar-view/event-large/event-large.com
 import { SetDeadlineComponent } from './admin/match-management/set-deadline/set-deadline.component';
 import { MatchViewComponent } from './match-view/match-view.component';
 import { DropDownTimeComponent } from './times-available/drop-down-time/drop-down-time.component';
+import { RulesComponent } from './rules/rules.component';
  
 
 @NgModule({
@@ -127,7 +128,8 @@ import { DropDownTimeComponent } from './times-available/drop-down-time/drop-dow
     EventLargeComponent,
     SetDeadlineComponent,
     MatchViewComponent,
-    DropDownTimeComponent
+    DropDownTimeComponent,
+    RulesComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
