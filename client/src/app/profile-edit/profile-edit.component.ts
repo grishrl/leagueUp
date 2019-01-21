@@ -100,7 +100,6 @@ export class ProfileEditComponent implements OnInit {
   }
 
   profileForm = new FormGroup({
-    hotslogurl: this.hotsLogsFormControl,
     discordTag: this.discordTagFormControl,
     hlDivision: this.heroeLeagueDivisionControl,
     hlRank: this.heroeLeagueRankControl,
@@ -216,6 +215,8 @@ formControlledEnable(){
      this.formControlledDisable();
    }
 
+   hotsLogsUrlReq = false;
+
    save(){
      if(this.validate()){
 
@@ -228,7 +229,30 @@ formControlledEnable(){
          }
        });
 
-       if (!this.isNullOrEmpty(this.returnedProfile.hotsLogsURL)){
+       if(!this.hotsLogsUrlReq){
+         this.hotsLogsService.getMMRdisplayName(this.user.routeFriendlyUsername(this.returnedProfile.displayName)).subscribe(
+           res => {
+
+             if (res != 'error') {
+               this.returnedProfile.averageMmr = res;
+               this.user.saveUser(this.returnedProfile).subscribe((res) => {
+                 if (res) {
+                   this.editOn = true;
+                   this.formControlledDisable();
+                 } else {
+                   alert("error");
+                 }
+               });
+             } else {
+               alert('We could not validate your hots logs, please recheck the URL!');
+               this.hotsLogsUrlReq = true;
+               this.cancel();
+             }
+           }
+         )
+       }
+
+       if (this.hotsLogsUrlReq){
 
          this.hotsLogsService.getMMR(this.returnedProfile.hotsLogsURL).subscribe(res => {
            if (res != 'error') {
@@ -295,8 +319,8 @@ formControlledEnable(){
   validate(){
     let valid = true;
     //validate the hotslogs URL
-    if (this.isNullOrEmpty(this.returnedProfile.hotsLogsURL) ||
-      this.returnedProfile.hotsLogsURL.indexOf('https://www.hotslogs.com/Player/Profile?PlayerID=') == -1){
+    if (this.hotsLogsUrlReq && (this.isNullOrEmpty(this.returnedProfile.hotsLogsURL) ||
+      this.returnedProfile.hotsLogsURL.indexOf('https://www.hotslogs.com/Player/Profile?PlayerID=') == -1)){
       valid = false;
     }
 

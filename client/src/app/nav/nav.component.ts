@@ -18,19 +18,24 @@ export class NavComponent implements OnInit {
 
   constructor(public Auth:AuthService, private router: Router, public team:TeamService, public user:UserService, private divisionService: DivisionService) { }
 
-  navGo(appRoute?,path?){
-    if (!appRoute && !path){
-      //hamburger
-      this.navBarClass = toggleShow(this.navBarClass);
-    }
-    else if(path != null && path != undefined && path.length>0){
-      this.router.navigateByUrl(appRoute+path);
+  navGo(toggleOrRemove?){
+    if(toggleOrRemove == 'remove'){
       this.navBarClass = removeShow(this.navBarClass);
     }else{
-      this.router.navigateByUrl(appRoute);
-      this.navBarClass = removeShow(this.navBarClass);
-      //nah
+      this.navBarClass = toggleShow(this.navBarClass);
     }
+    // if (!appRoute && !path){
+    //   //hamburger
+    //   this.navBarClass = toggleShow(this.navBarClass);
+    // }
+    // else if(path != null && path != undefined && path.length>0){
+    //   this.router.navigateByUrl(appRoute+path);
+    //   this.navBarClass = removeShow(this.navBarClass);
+    // }else{
+    //   this.router.navigateByUrl(appRoute);
+    //   this.navBarClass = removeShow(this.navBarClass);
+    //   //nah
+    // }
   }
 
   logout(){

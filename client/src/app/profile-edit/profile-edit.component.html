@@ -34,7 +34,7 @@
                             <mat-form-field>
                                 <input matInput placeholder="Display Name" [(ngModel)]="returnedProfile.displayName" disabled="true">
                             </mat-form-field>
-                            <mat-form-field class="mt-3">
+                            <mat-form-field *ngIf="hotsLogsUrlReq" class="mt-3">
                                 <input matInput placeholder="HOTS LOGS URL" [formControl]="hotsLogsFormControl" [(ngModel)]="returnedProfile.hotsLogsURL">
                                 <mat-error *ngIf="hotsLogsFormControl.hasError('required')">
                                     HOTS Logs URL is required
@@ -80,7 +80,7 @@
                                 </div>
                                 <div class="pe-full-width" *ngIf="returnedProfile.hlRankMetal == 'Master' || returnedProfile.hlRankMetal == 'Grand Master'">
                                     <mat-form-field class="pe-full-width">
-                                        <input matInput type="number" placeholder="Rank Number" [formControl]="heroeLeagueRankControl" [(ngModel)]="returnedProfile.hlRankDivision">
+                                        <input matInput type="number" placeholder="Hero League Rank" [formControl]="heroeLeagueRankControl" [(ngModel)]="returnedProfile.hlRankDivision">
                                     </mat-form-field>
                                     <mat-error *ngIf="heroeLeagueRankControl.hasError('required')">
                                         Hero League Rank is required

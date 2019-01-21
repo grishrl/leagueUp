@@ -43,6 +43,34 @@ export class HotsLogsService {
      )
    }
 
+   getMMRdisplayName(displayName){
+     let url = 'https://api.hotslogs.com/Public/Players/1/';
+     url += displayName;
+     return this.http.get(url).pipe(
+       map(res => {
+         if (res.hasOwnProperty('LeaderboardRankings')) {
+           var inc = 0
+           var totalMMR = 0;
+           res['LeaderboardRankings'].forEach(element => {
+             if (element['GameMode'] != 'QuickMatch') {
+               if (element['CurrentMMR'] > 0) {
+                 inc += 1;
+                 totalMMR += element.CurrentMMR;
+               }
+             }
+           });
+           return Math.round(totalMMR / inc);
+         } else {
+           if (res.hasOwnProperty('Message')) {
+             if (res['Message'].indexOf('invalid') > -1) {
+               return 'error';
+             }
+           }
+         }
+       })
+     )
+   }
+
    validCheck(url):Observable<any>{
      let playerId = '';
      if (url.indexOf('https://www.hotslogs.com/Player/Profile?PlayerID=') > -1) {
