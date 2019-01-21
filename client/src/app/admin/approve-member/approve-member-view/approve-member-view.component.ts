@@ -42,18 +42,19 @@ export class ApproveMemberViewComponent implements OnInit {
     if(this._info.teamName && this._info.userName){
       this.user.getUser(this._info.userName).subscribe( res =>{
         this.player = res;
+        this.team.getTeam(this._info.teamName).subscribe(resT => {
+          this.viewTeam = resT;
+          this.admin.resultantMmr(this.player.averageMmr, this.viewTeam.teamName_lower).subscribe(
+            resmmr => {
+              this.resultantMmr = resmmr.resultantMmr;
+            },
+            err => {
+              console.log(err);
+            }
+          )
+        })
       });
-      this.team.getTeam(this._info.teamName).subscribe(resT=>{
-        this.viewTeam = resT;
-        this.admin.resultantMmr(this.player.averageMmr, this.viewTeam.teamName_lower).subscribe(
-          resmmr=>{
-            this.resultantMmr = resmmr.resultantMmr;
-          },
-          err=>{
-            console.log(err);
-          }
-        )
-      })
+
     }
 
   }

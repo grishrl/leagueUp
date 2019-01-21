@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ContentfulService } from '../services/contentful.service';
 import { ActivatedRoute } from '@angular/router';
 import { MarkdownParserService } from '../services/markdown-parser.service';
@@ -8,7 +8,8 @@ import { merge } from 'lodash';
 @Component({
   selector: 'app-blog-view',
   templateUrl: './blog-view.component.html',
-  styleUrls: ['./blog-view.component.css']
+  styleUrls: ['./blog-view.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class BlogViewComponent implements OnInit {
 
