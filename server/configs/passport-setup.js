@@ -82,38 +82,47 @@ passport.use(new BnetStrategy({
         } else {
             let btag = routeFriendlyUsername(profile.battletag);
             let reqURL = 'https://api.hotslogs.com/Public/Players/1/';
+            var id = profile.id.toString();
+
+            let userObj = {
+                displayName: profile.battletag,
+                bNetId: id
+            }
             request(reqURL + btag, { json: true }, (err, res, body) => {
                 if (err) { console.log(err) };
-                if (body.hasOwnProperty('LeaderboardRankings')) {
 
-                    var inc = 0
-                    var totalMMR = 0;
-                    var avgMMR = 0;
-                    body['LeaderboardRankings'].forEach(element => {
-                        if (element['GameMode'] != 'QuickMatch') {
-                            if (element['CurrentMMR'] > 0) {
-                                inc += 1;
-                                totalMMR += element.CurrentMMR;
+
+
+                if (body) {
+                    if (body.hasOwnProperty('LeaderboardRankings')) {
+
+                        if (body.hasOwnProperty('PlayerID')) {
+                            userObj.hotsLogsPlayerID = body['PlayerID'];
+                        }
+
+                        var inc = 0
+                        var totalMMR = 0;
+                        var avgMMR = 0;
+                        body['LeaderboardRankings'].forEach(element => {
+                            if (element['GameMode'] != 'QuickMatch') {
+                                if (element['CurrentMMR'] > 0) {
+                                    inc += 1;
+                                    totalMMR += element.CurrentMMR;
+                                }
+                            }
+                        });
+                        avgMMR = Math.round(totalMMR / inc);
+
+                    } else {
+                        if (body.hasOwnProperty('Message')) {
+                            if (res['Message'].indexOf('invalid') > -1) {
+                                return 'error';
                             }
                         }
-                    });
-                    avgMMR = Math.round(totalMMR / inc);
-                } else {
-                    if (body.hasOwnProperty('Message')) {
-                        if (res['Message'].indexOf('invalid') > -1) {
-                            return 'error';
-                        }
                     }
+
                 }
 
-                var id = profile.id.toString();
-                let userObj = {
-                    displayName: profile.battletag,
-                    bNetId: id
-                }
-                if (body.hasOwnProperty('PlayerID')) {
-                    userObj.hotsLogsPlayerID = body['PlayerID'];
-                }
                 if (avgMMR > 0) {
                     userObj.averageMmr = avgMMR;
                 }
