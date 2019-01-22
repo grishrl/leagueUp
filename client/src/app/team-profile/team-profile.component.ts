@@ -392,21 +392,45 @@ export class TeamProfileComponent implements OnInit {
   //method for inviting users to join this team
   invite(user) {
     // console.log(user);
+
     if (this.returnedProfile.teamName && user) {
-      this.team.addUser(user, this.returnedProfile.teamName_lower).subscribe(res => {
-        this.message = res.message;
-        if (this.returnedProfile.pendingMembers == null){
-          this.returnedProfile.pendingMembers = [{ "displayName": user }];
-        }else{
-          this.returnedProfile.pendingMembers.push({ "displayName": user });
+      if (this.checkUserInPending(user)) {
+        this.message = "User is all ready invited to your team!";
+      }else{
+        this.team.addUser(user, this.returnedProfile.teamName_lower).subscribe(res => {
+          this.message = res.message;
+          if (this.returnedProfile.pendingMembers == null) {
+            this.returnedProfile.pendingMembers = [{ "displayName": user }];
+          } else {
+            this.returnedProfile.pendingMembers.push({ "displayName": user });
+          }
+
+          this.filterUsers.push(user);
+          // console.log(this.filterUsers);
+        }, err => {
+          this.message = err.error.message;
+        });
+      }
+
+    }
+  }
+
+  checkUserInPending(user){
+    let returnValue = false;
+    if (this.returnedProfile.pendingMembers){
+      this.returnedProfile.pendingMembers.forEach(pendingMember => {
+        if (pendingMember.displayName == user) {
+          returnValue = true;
         }
-        
-        this.filterUsers.push(user);
-        // console.log(this.filterUsers);
-      }, err => {
-        this.message = err.error.message;
+      });
+    }else if(this.returnedProfile['invitedUsers']){
+      this.returnedProfile['invitedUsers'].forEach(invited=>{
+        if(invited == user){
+          returnValue = true;
+        }
       });
     }
+    return returnValue;
   }
 
   //method takes in the factors at hand to show the captain edit options or the admin edit options

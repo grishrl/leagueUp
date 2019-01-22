@@ -1,6 +1,6 @@
 {
     "name": "ngsMeanCore",
-    "version": "1.0.4",
+    "version": "1.0.6",
     "description": "Large package encompassing several capabilities for e-sports leagues",
     "main": "server.js",
     "scripts": {
@@ -32,6 +32,7 @@
         "passport-google-oauth20": "^1.0.0",
         "passport-jwt": "^4.0.0",
         "pino-pretty": "^2.5.0",
+        "request": "^2.88.0",
         "roundrobin": "^1.0.3",
         "uniqid": "^5.0.3"
     },

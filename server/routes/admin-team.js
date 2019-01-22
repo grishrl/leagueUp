@@ -209,8 +209,8 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
                                 if (foundUser.teamName || foundUser.teamId) {
                                     foundUser.teamName = null;
                                     foundUser.teamId = null;
-                                    foundUser.pendingTeam = false;
                                 }
+                                foundUser.pendingTeam = false;
                             }
                             //save the team and the user
                             foundTeam.save().then((savedTeam) => {

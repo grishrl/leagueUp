@@ -31,7 +31,7 @@ export class HotsLogsService {
               }
              }
            });
-           return Math.round(totalMMR/inc);
+           return {avgMMR:Math.round(totalMMR/inc),PlayerID:res['PlayerID']};
          }else{
            if( res.hasOwnProperty('Message') ){
              if(res['Message'].indexOf('invalid') > -1){
@@ -42,6 +42,43 @@ export class HotsLogsService {
        })
      )
    }
+
+
+
+
+   getMMRdisplayName(displayName){
+     let url = 'https://api.hotslogs.com/Public/Players/1/';
+     url += displayName;
+     return this.http.get(url).pipe(
+       map(res => {
+         if (res.hasOwnProperty('LeaderboardRankings')) {
+           var inc = 0
+           var totalMMR = 0;
+           res['LeaderboardRankings'].forEach(element => {
+             if (element['GameMode'] != 'QuickMatch') {
+               if (element['CurrentMMR'] > 0) {
+                 inc += 1;
+                 totalMMR += element.CurrentMMR;
+               }
+             }
+           });
+           return { avgMMR: Math.round(totalMMR / inc), PlayerID: res['PlayerID'] };
+         } else {
+           if (res.hasOwnProperty('Message')) {
+             if (res['Message'].indexOf('invalid') > -1) {
+               return 'error';
+             }
+           }
+         }
+       })
+     )
+   }
+
+
+  returnProfileLink(playerID) {
+    let url = 'https://www.hotslogs.com/Player/Profile?PlayerID=';
+    return url += playerID;
+  }
 
    validCheck(url):Observable<any>{
      let playerId = '';
