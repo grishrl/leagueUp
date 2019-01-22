@@ -234,7 +234,8 @@ formControlledEnable(){
            res => {
 
              if (res != 'error') {
-               this.returnedProfile.averageMmr = res;
+               this.returnedProfile.averageMmr = res.avgMMR;
+               this.returnedProfile['hotsLogsPlayerID'] = res.PlayerID;
                this.user.saveUser(this.returnedProfile).subscribe((res) => {
                  if (res) {
                    this.editOn = true;
