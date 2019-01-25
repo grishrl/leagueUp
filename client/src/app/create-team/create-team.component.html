@@ -22,9 +22,6 @@
                         <mat-error *ngIf="nameContorl.hasError('required')">
                             Team name is required
                         </mat-error>
-                        <mat-error *ngIf="nameContorl.hasError('invalidCharacters')">
-                            Special characters are not allowed in team names
-                        </mat-error>
                     </mat-form-field>
                     <mat-slide-toggle [(ngModel)]="returnedProfile.lookingForMore">
                         Looking for More.
