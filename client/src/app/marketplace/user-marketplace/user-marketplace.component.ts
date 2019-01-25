@@ -115,6 +115,53 @@ export class UserMarketplaceComponent implements OnInit {
 
   }
 
+  search(){
+    let postObj = {};
+
+    let keys = Object.keys(this.searchParameters);
+    keys.forEach(key => {
+      if (key != 'divisions' && key != 'customTime' && key != 'rolesNeeded' && key != 'customAvail' && key != 'customtimeZone'
+        && key != 'timezone' && this.searchParameters[key] != null) {
+        postObj[key] = this.searchParameters[key];
+      } else if (key == 'divisions' && this.searchParameters[key].length > 0) {
+        postObj[key] = this.searchParameters[key];
+      } else if (this.searchParameters[key] != null && key == 'customTime') {
+        if (this.searchParameters[key] == 'profile') {
+          postObj['getProfileTime'] = true;
+        }
+        let cleanTime = this.customTimeValidator(this.searchParameters['customAvail'])
+        if (cleanTime != null) {
+          postObj['times'] = cleanTime;
+        }
+      } else if (this.searchParameters[key] != null && key == 'rolesNeeded') {
+        let roles = this.searchParameters[key];
+        let roleKeys = Object.keys(this.searchParameters[key]);
+        roleKeys.forEach(role => {
+          if (roles[role]) {
+            if (postObj['rolesNeeded'] == null || postObj['rolesNeeded'] == undefined) {
+              postObj['rolesNeeded'] = {};
+            }
+            postObj['rolesNeeded'][role] = roles[role];
+          }
+        });
+      } else if (this.searchParameters[key] != null && key == 'timezone') {
+        if (this.searchParameters[key] == 'profile') {
+          postObj['getProfileTimezone'] = true;
+        } else {
+          postObj['timezone'] = this.searchParameters['customtimeZone'];
+        }
+      }
+    });
+    this._team.searchTeams(postObj).subscribe(res => {
+      this.localResults = res;
+      this.displayArray = res.slice(0, 10);
+      this.length = res.length;
+      this.hasSearched = true;
+    }, err => {
+      console.log(err);
+    })
+  }
+
   clear() {
     this.showSearch = !this.showSearch;
     this.hasSearched = false;
@@ -233,6 +280,29 @@ export class UserMarketplaceComponent implements OnInit {
 
   selected(div) {
     this.searchParameters.divisions.push(div);
+  }
+
+  customTimeValidator(customTime) {
+    let days = Object.keys(customTime);
+    let retObj = {};
+    days.forEach(day => {
+      if (customTime[day].available) {
+        if ((customTime[day].startTime != null || customTime[day].startTime != undefined) &&
+          (customTime[day].endTime != null || customTime[day].endTime != undefined)) {
+          retObj[day] = customTime[day];
+        }
+      }
+    });
+    let retkeys = Object.keys(retObj);
+    // retkeys.forEach(key => {
+    //   retObj[key]["startTimeNum"] = this.util.zeroGMT(retObj[key])
+    // });
+    if (retkeys.length > 0) {
+      return retObj;
+    } else {
+      return null;
+    }
+
   }
 
 }

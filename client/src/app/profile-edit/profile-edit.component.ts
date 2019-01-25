@@ -1,6 +1,6 @@
 import { Component, OnInit, NgModule, Input} from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, NavigationEnd } from '@angular/router';
 import { TimezoneService } from '../services/timezone.service';
 import { UserService } from '../services/user.service';
 import { AuthService } from '../services/auth.service';
@@ -26,9 +26,20 @@ import { UtilitiesService } from '../services/utilities.service';
 })
 export class ProfileEditComponent implements OnInit {
 
+  navigationSubscription
+
   constructor(public timezone: TimezoneService, private user: UserService, public auth: AuthService, private router: Router, private route: ActivatedRoute, 
-    private hotsLogsService: HotsLogsService, public dialog: MatDialog, private util:UtilitiesService) {
-    this.displayName = user.realUserName(this.route.snapshot.params['id']);
+    public hotsLogsService: HotsLogsService, public dialog: MatDialog, private util:UtilitiesService) {
+
+    this.navigationSubscription = this.router.events.subscribe((e: any) => {
+
+      // If it is a NavigationEnd event re-initalise the component
+      if (e instanceof NavigationEnd) {
+        this.displayName = user.realUserName(this.route.snapshot.params['id']);
+        this.ngOnInit();
+      }
+    });
+    
   }
 
   showInvite = false;
@@ -60,16 +71,20 @@ export class ProfileEditComponent implements OnInit {
 
   discordPatternValidator(control: FormControl){
     let discordTag = control.value;
-    if(discordTag.indexOf('#')<=0){
-      return {invalidTag:true}
-    }else{
-      let tagArr = discordTag.split('#');
-      let regex = new RegExp(/(\d{4})/);
-      if (tagArr[1].length == 4 && regex.test(tagArr[1])){
-        return null;
-      }else{
-        return { invalidTag: true } 
+    if (discordTag){
+      if (discordTag && discordTag.indexOf('#') <= 0) {
+        return { invalidTag: true }
+      } else {
+        let tagArr = discordTag.split('#');
+        let regex = new RegExp(/(\d{4})/);
+        if (tagArr[1].length == 4 && regex.test(tagArr[1])) {
+          return null;
+        } else {
+          return { invalidTag: true }
+        }
       }
+    }else{
+
     }
   }
 
@@ -86,7 +101,6 @@ export class ProfileEditComponent implements OnInit {
   }
 
   profileForm = new FormGroup({
-    hotslogurl: this.hotsLogsFormControl,
     discordTag: this.discordTagFormControl,
     hlDivision: this.heroeLeagueDivisionControl,
     hlRank: this.heroeLeagueRankControl,
@@ -94,13 +108,13 @@ export class ProfileEditComponent implements OnInit {
     timeAvail:this.timesAvailControl
   })
 
-  formControlledEnable(){
-this.hotsLogsFormControl.enable();
-this.discordTagFormControl.enable();
-this.heroeLeagueDivisionControl.enable();
-this.heroeLeagueRankControl.enable();
-this.timezoneControl.enable();
-  }
+formControlledEnable(){
+  this.hotsLogsFormControl.enable();
+  this.discordTagFormControl.enable();
+  this.heroeLeagueDivisionControl.enable();
+  this.heroeLeagueRankControl.enable();
+  this.timezoneControl.enable();
+}
 
   formControlledDisable(){
     this.hotsLogsFormControl.disable();
@@ -216,6 +230,8 @@ this.timezoneControl.enable();
      this.formControlledDisable();
    }
 
+   hotsLogsUrlReq = false;
+
    save(){
      if(this.validate()){
 
@@ -228,11 +244,36 @@ this.timezoneControl.enable();
          }
        });
 
-       if (!this.isNullOrEmpty(this.returnedProfile.hotsLogsURL)){
+       if(!this.hotsLogsUrlReq){
+         this.hotsLogsService.getMMRdisplayName(this.user.routeFriendlyUsername(this.returnedProfile.displayName)).subscribe(
+           res => {
+
+             if (res != 'error') {
+               this.returnedProfile.averageMmr = res.avgMMR;
+               this.returnedProfile['hotsLogsPlayerID'] = res.PlayerID;
+               this.user.saveUser(this.returnedProfile).subscribe((res) => {
+                 if (res) {
+                   this.editOn = true;
+                   this.formControlledDisable();
+                 } else {
+                   alert("error");
+                 }
+               });
+             } else {
+               alert('We could not validate your hots logs, please recheck the URL!');
+               this.hotsLogsUrlReq = true;
+               this.cancel();
+             }
+           }
+         )
+       }
+
+       if (this.hotsLogsUrlReq){
 
          this.hotsLogsService.getMMR(this.returnedProfile.hotsLogsURL).subscribe(res => {
            if (res != 'error') {
-             this.returnedProfile.averageMmr = res;
+             this.returnedProfile.averageMmr = res.avgMMR;
+             this.returnedProfile['hotsLogsPlayerID'] = res.PlayerID;
              this.user.saveUser(this.returnedProfile).subscribe((res) => {
                if (res) {
                  this.editOn = true;
@@ -289,15 +330,15 @@ this.timezoneControl.enable();
     if(metal == 'Unranked'){
       this.heroeLeagueRankControl.setErrors(null);
     }else{
-      this.heroeLeagueRankControl.setErrors({required:true});
+      
     }
   }
 
   validate(){
     let valid = true;
     //validate the hotslogs URL
-    if (this.isNullOrEmpty(this.returnedProfile.hotsLogsURL) ||
-      this.returnedProfile.hotsLogsURL.indexOf('https://www.hotslogs.com/Player/Profile?PlayerID=') == -1){
+    if (this.hotsLogsUrlReq && (this.isNullOrEmpty(this.returnedProfile.hotsLogsURL) ||
+      this.returnedProfile.hotsLogsURL.indexOf('https://www.hotslogs.com/Player/Profile?PlayerID=') == -1)){
       valid = false;
     }
 

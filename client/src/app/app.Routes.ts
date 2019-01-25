@@ -33,6 +33,7 @@ import { CalendarViewComponent } from "./calendar-view/calendar-view.component";
 import { EventLargeComponent } from "./calendar-view/event-large/event-large.component";
 import { SetDeadlineComponent } from "./admin/match-management/set-deadline/set-deadline.component";
 import { UserMessageCenterComponent } from "./messageCenter/user-message-center/user-message-center.component";
+import { RulesComponent } from "./rules/rules.component";
 import { TeamMarketComponent } from "./marketplace/team-market/team-market.component";
 import { UserMarketplaceComponent } from "./marketplace/user-marketplace/user-marketplace.component";
 
@@ -40,6 +41,7 @@ const APP_ROUTES: Routes = [
   { path: 'directory', component: DirectoryComponent},
   { path:'', component: HomeComponent},
   { path: 'login', component: LoginComponent },
+  { path: 'rules', component: RulesComponent },
   { path: 'logout', component: LogoutComponent },
   { path: 'login/:token', component: LoginComponent},
   { path: 'profile/:id', component: ProfileEditComponent},

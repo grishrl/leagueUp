@@ -143,7 +143,7 @@
 
             <div class="row" *ngIf="hasSearched && localResults.length==0">
                 <div class="col">
-                    <h3>We did not find any teams that matched your criteria.</h3>
+                    <h3>We did not find any users that matched your criteria.</h3>
                 </div>
             </div>
             <!-- results go here -->
@@ -152,7 +152,7 @@
                     <div class="row mt-4">
                         <div class="col">
                             <h4 *ngIf="!showSearch">Showing All Teams:</h4>
-                            <h4 *ngIf="showSearch && localResults.length>0;">Showing Teams That Meet Your Criteria</h4>
+                            <h4 *ngIf="showSearch && localResults.length>0;">Showing Users That Meet Your Criteria</h4>
                         </div>
                     </div>
                     <mat-paginator [length]="length" [pageSize]="pageSize" (page)="pageEventHandler($event)">

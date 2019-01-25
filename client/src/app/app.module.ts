@@ -68,6 +68,7 @@ import { SetDeadlineComponent } from './admin/match-management/set-deadline/set-
 import { MatchViewComponent } from './match-view/match-view.component';
 import { DropDownTimeComponent } from './times-available/drop-down-time/drop-down-time.component';
 import { UserMessageCenterComponent } from './messageCenter/user-message-center/user-message-center.component';
+import { RulesComponent } from './rules/rules.component';
 import { TeamMessageCenterComponent } from './messageCenter/team-message-center/team-message-center.component';
 import { TeamMarketComponent } from './marketplace/team-market/team-market.component';
 import { UserMarketplaceComponent } from './marketplace/user-marketplace/user-marketplace.component';
@@ -133,6 +134,7 @@ import { UserMarketplaceComponent } from './marketplace/user-marketplace/user-ma
     MatchViewComponent,
     DropDownTimeComponent,
     UserMessageCenterComponent,
+    RulesComponent,
     TeamMessageCenterComponent,
     TeamMarketComponent,
     UserMarketplaceComponent

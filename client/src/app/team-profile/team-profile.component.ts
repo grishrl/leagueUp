@@ -74,6 +74,7 @@ export class TeamProfileComponent implements OnInit {
   constructor(private auth: AuthService, public user: UserService, public timezone: TimezoneService, private team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router: Router,
     private admin:AdminService, private util:UtilitiesService, private requestService:RequestService) {
     this.teamName = team.realTeamName(this.route.snapshot.params['id']);
+    console.log(this.teamName)
   }
 
   //methods
@@ -398,16 +399,19 @@ export class TeamProfileComponent implements OnInit {
   //method for inviting users to join this team
   invite(user) {
     // console.log(user);
+
     if (this.returnedProfile.teamName && user) {
-      this.requestService.inviteToTeamRequest(this.returnedProfile.teamName, user).subscribe(
-        res=>{
-          // this.message = res.message;
-          this.filterUsers.push(user);
-        },
-        err=>{
-          // this.message = err.error.mssage;
-        }
-      )
+      if (this.checkUserInPending(user)) {
+        this.message = "User is all ready invited to your team!";
+      }else{
+        this.team.addUser(user, this.returnedProfile.teamName_lower).subscribe(res => {
+          this.message = res.message;
+          if (this.returnedProfile.pendingMembers == null) {
+            this.returnedProfile.pendingMembers = [{ "displayName": user }];
+          } else {
+            this.returnedProfile.pendingMembers.push({ "displayName": user });
+          }
+      
       // this.team.addUser(user, this.returnedProfile.teamName_lower).subscribe(res => {
       //   this.message = res.message;
       //   if (this.returnedProfile.pendingMembers == null){
@@ -415,13 +419,33 @@ export class TeamProfileComponent implements OnInit {
       //   }else{
       //     this.returnedProfile.pendingMembers.push({ "displayName": user });
       //   }
-        
-      //   this.filterUsers.push(user);
-      //   // console.log(this.filterUsers);
-      // }, err => {
-      //   this.message = err.error.message;
-      // });
+
+          this.filterUsers.push(user);
+          // console.log(this.filterUsers);
+        }, err => {
+          this.message = err.error.message;
+        });
+      }
+
     }
+  }
+
+  checkUserInPending(user){
+    let returnValue = false;
+    if (this.returnedProfile.pendingMembers){
+      this.returnedProfile.pendingMembers.forEach(pendingMember => {
+        if (pendingMember.displayName == user) {
+          returnValue = true;
+        }
+      });
+    }else if(this.returnedProfile['invitedUsers']){
+      this.returnedProfile['invitedUsers'].forEach(invited=>{
+        if(invited == user){
+          returnValue = true;
+        }
+      });
+    }
+    return returnValue;
   }
 
   //method takes in the factors at hand to show the captain edit options or the admin edit options

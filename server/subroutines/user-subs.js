@@ -102,7 +102,7 @@ function togglePendingTeam(user) {
     User.findOne({
         displayName: user
     }).then((foundUser) => {
-        console.log('foundUser ', foundUser);
+        // console.log('foundUser ', foundUser);
         //get the value in teamInfo, is captain, will be boolean if it's been set before
         let changed = false;
         let pendingTeam = foundUser.pendingTeam;

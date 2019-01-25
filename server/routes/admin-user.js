@@ -6,6 +6,7 @@ const UserSub = require('../subroutines/user-subs');
 const TeamSub = require('../subroutines/team-subs');
 const util = require('../utils');
 const router = require('express').Router();
+const request = require('request');
 
 router.post('/delete/user', passport.authenticate('jwt', {
     session: false
@@ -51,7 +52,75 @@ router.post('/delete/user', passport.authenticate('jwt', {
 
 });
 
+router.get('/user/update', (req, res) => {
+    User.find().then(
+        found => {
+            let ammountUpdated = 0;
+            found.forEach(user => {
+                let btag = routeFriendlyUsername(user.displayName);
+                let reqURL = 'https://api.hotslogs.com/Public/Players/1/';
+                request(reqURL + btag, {
+                    json: true
+                }, (err, res, body) => {
+                    if (err) {
+                        console.log(err)
+                    };
+                    var inc = 0
+                    var totalMMR = 0;
+                    var avgMMR = 0;
+                    var playerid = null;
+                    if (body) {
+                        if (body.hasOwnProperty('LeaderboardRankings')) {
 
+
+                            body['LeaderboardRankings'].forEach(element => {
+                                if (element['GameMode'] != 'QuickMatch') {
+                                    if (element['CurrentMMR'] > 0) {
+                                        inc += 1;
+                                        totalMMR += element.CurrentMMR;
+                                    }
+                                }
+                            });
+                            avgMMR = Math.round(totalMMR / inc);
+                        } else {
+                            if (body.hasOwnProperty('Message')) {
+                                if (res['Message'].indexOf('invalid') > -1) {
+                                    return 'error';
+                                }
+                            }
+                        }
+                        if (body.hasOwnProperty('PlayerID')) {
+                            playerid = body['PlayerID'];
+                        }
+                    }
+
+                    if (avgMMR > 0) {
+                        user.averageMmr = avgMMR;
+                    }
+                    if (playerid) {
+                        user.hotsLogsPlayerID = playerid;
+                    }
+                    user.save().then(
+                        save => {
+                            ammountUpdated += 1;
+                        }
+                    );
+                })
+            });
+        },
+        err => {
+            console.log(err);
+        }
+    )
+})
+
+function routeFriendlyUsername(username) {
+    if (username != null && username != undefined) {
+        return username.replace('#', '_');
+    } else {
+        return '';
+    }
+}
 
 //returns all users and acl lists
 router.get('/user/get/usersacl/all', passport.authenticate('jwt', {
