@@ -11,6 +11,8 @@ export class SpecialCharactersService {
 
     { "char": "(", "replace": "-open-parentheses-" },
     { "char": ")", "replace": "-close-parentheses-" },
+    { "char":"{", "replace":"-open-curl-bracket-" },
+    { "char": "}", "replace": "-close-curl-bracket-" },
     { "char": ";", "replace": "-semicolon-" },
     { "char": "=", "replace": "-equals-" },
     { "char": "+", "replace": "-plus-" },
@@ -23,7 +25,8 @@ export class SpecialCharactersService {
     { "char": "^", "replace": "-caret-" },
     { "char": "`", "replace": "-backtick-" },
     { "char": "\\", "replace": "-backslash-" },
-    {"char":" ", "replace":"_"}
+    {"char":" ", "replace":"_"},
+    { "char": "|", "replace": "-pipe-" },
 
   ]
 

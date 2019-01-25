@@ -17,12 +17,15 @@ function updateTeamNameDivision(oldteamName, newteamName) {
 
     Division.findOne({ 'teams': oldteamName }).then((foundDiv) => {
         if (foundDiv) {
-            foundDiv.teams.forEach(team => {
+            let foundIndex = -1;
+            foundDiv.teams.forEach((team, index) => {
                 if (team == oldteamName) {
-                    team = newteamName;
+                    foundIndex = index;
                 }
             });
-            foundDiv.save((savedDiv) => {
+            foundDiv.teams[foundIndex] = newteamName;
+            foundDiv.markModified('teams');
+            foundDiv.save().then((savedDiv) => {
                 logger(logObj);
             }, (err) => {
                 logObj.logLevel = 'ERROR';

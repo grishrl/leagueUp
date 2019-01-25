@@ -95,7 +95,17 @@ export class CreateTeamComponent implements OnInit {
     if(!this.util.returnBoolByPath(this.returnedProfile, 'teamName')){
       this.nameContorl.setErrors({required:true});
       valid = false;
+    }else{
+      let regEx = new RegExp(/[%_]/gm);
+      if (regEx.test(this.returnedProfile.teamName)) {
+        valid = false;
+        this.nameContorl.setErrors({ invalidCharacters: true });
+      } else {
+        this.nameContorl.setErrors(null);
+      }
+
     }
+
     //validate looking for team:
     if (!this.util.returnBoolByPath(this.returnedProfile, 'lookingForMore')) {
       valid = false;
