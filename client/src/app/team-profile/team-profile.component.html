@@ -65,7 +65,7 @@
                                     <button type="button" (click)="adminRefreshMMR()" class="mt-1 btn btn-info">Update Team MMR</button>
                                 </div>
                                 <div class="col">
-                                    <button type="button" (click)="adminSave()" class="mt-1 btn btn-success ">Save</button>
+                                    <button type="button" [disabled]="!validate()" (click)="adminSave()" class="mt-1 btn btn-success ">Save</button>
                                 </div>
                             </div>
                         </div>
@@ -88,7 +88,13 @@
                     </div>
                     <div class="col-sm-12 col-md-7">
                         <mat-form-field class="mat-FullWidth">
-                            <input matInput placeholder="Team Name" [(ngModel)]="returnedProfile.teamName" (ngModelChange)="modelChange()" [disabled]="!componentEmbedded">
+                            <input matInput placeholder="Team Name" [formControl]="nameControl" [(ngModel)]="returnedProfile.teamName" (ngModelChange)="modelChange()">
+                            <mat-error *ngIf="nameControl.hasError('invalidCharacters')">
+                                Invalid character entered
+                            </mat-error>
+                            <mat-error *ngIf="nameControl.hasError('required')">
+                                Team name is required
+                            </mat-error>
                         </mat-form-field>
                         <mat-form-field class="mat-FullWidth">
                             <input matInput placeholder="Team Division" [(ngModel)]="returnedProfile.divisionDisplayName" disabled="true">
