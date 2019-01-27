@@ -45,8 +45,12 @@ export class TeamProfileComponent implements OnInit {
 
   //form controls
   timezoneControl = new FormControl({ value: '', disabled: true }, [
-    Validators.required
+    // Validators.required
   ]);
+
+  teamControlGroup = new FormGroup({
+    timeZone: this.timezoneControl
+  })
 
   emailControl = new FormControl({ value: '' }, [
     Validators.email,
@@ -145,6 +149,7 @@ export class TeamProfileComponent implements OnInit {
     this.formControlledDisable();
     this.displayMembersLeft = [];
     this.displayMembersRight = [];
+    this.util.markFormGroupTouched(this.teamControlGroup)
     if(this.componentEmbedded && this.embedSource == 'admin'){
       this.editOn = false;
       this.adminFormControlledEnable();
@@ -246,8 +251,10 @@ export class TeamProfileComponent implements OnInit {
   } 
 
   validAvailableTimes:boolean
+  validAvailDays:number=0;
   receiveValidTimes(event){
-    this.validAvailableTimes=event;
+    this.validAvailableTimes=event.valid;
+    this.validAvailDays = event.numdays
   }
 
 
@@ -380,14 +387,15 @@ export class TeamProfileComponent implements OnInit {
       this.editOn = true;
       this.formControlledDisable();
 
-      let keys = Object.keys(this.returnedProfile.availability);
-      keys.forEach(element => {
-        let obj = this.returnedProfile.availability[element];
-        if (obj.available) {
-          obj['startTimeNumber'] = this.util.convertToMil(obj.startTime);
-          obj['endTimeNumber'] = this.util.convertToMil(obj.endTime);
-        }
-      });
+      this.util.updateAvailabilityToNum(this.returnedProfile);
+      // let keys = Object.keys(this.returnedProfile.availability);
+      // keys.forEach(element => {
+      //   let obj = this.returnedProfile.availability[element];
+      //   if (obj.available) {
+      //     obj['startTimeNumber'] = this.util.convertToMil(obj.startTime);
+      //     obj['endTimeNumber'] = this.util.convertToMil(obj.endTime);
+      //   }
+      // });
 
       let cptRemoved = Object.assign({}, this.returnedProfile);
       delete cptRemoved.captain;
@@ -526,7 +534,7 @@ export class TeamProfileComponent implements OnInit {
 
     }
     //ensure time zone
-    if (this.isNullOrEmpty(this.returnedProfile.timeZone)) {
+    if (this.validAvailDays>0 && this.isNullOrEmpty(this.returnedProfile.timeZone)) {
       valid = false;
       this.timezoneControl.setErrors({required:true});
     }else{

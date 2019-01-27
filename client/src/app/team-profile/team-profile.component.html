@@ -8,7 +8,8 @@
                         <div class="col-8 offset-2">
                             <div class="row mt-3">
                                 <div class="col-6">
-                                    Welcome to your team profile!
+                                    <p>Welcome to your team profile!</p>
+                                    <p>The more info you complete in your profile the more information players will have to find you!</p>
                                 </div>
                                 <div class="col-6">
                                     <div *ngIf="editOn == true">
@@ -256,7 +257,7 @@
                     </div>
                 </div>
 
-                <div class="row" *ngIf="showRegisteredQuestionnaire() else registered">
+                <div class="row mt-3" *ngIf="showRegisteredQuestionnaire() else registered">
                     <div class="col">
                         <app-questionnaire [team]="returnedProfile"></app-questionnaire>
 
