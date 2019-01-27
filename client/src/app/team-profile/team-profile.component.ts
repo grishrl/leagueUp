@@ -45,13 +45,19 @@ export class TeamProfileComponent implements OnInit {
 
   //form controls
   timezoneControl = new FormControl({ value: '', disabled: true }, [
-    Validators.required
+    // Validators.required
   ]);
+
+  teamControlGroup = new FormGroup({
+    timeZone: this.timezoneControl
+  })
 
   emailControl = new FormControl({ value: '' }, [
     Validators.email,
     Validators.required
   ]);
+
+  nameControl = new FormControl({ value:''});
 
   emailAddress: string;
   inviteEmail() {
@@ -122,9 +128,20 @@ export class TeamProfileComponent implements OnInit {
     this.timezoneControl.enable();
   }
 
+  adminFormControlledEnable(){
+    this.formControlledEnable();
+    this.nameControl.enable();
+  }
+
   formControlledDisable() {
     this.timezoneControl.disable();
+    this.nameControl.disable();
   }
+
+  // adminFomControlledDislable(){
+  //   this.formControlledDisable();
+  //   this.nameControl.disable();
+  // }
 
   //init implementation
   ngOnInit() {
@@ -132,6 +149,11 @@ export class TeamProfileComponent implements OnInit {
     this.formControlledDisable();
     this.displayMembersLeft = [];
     this.displayMembersRight = [];
+    this.util.markFormGroupTouched(this.teamControlGroup)
+    if(this.componentEmbedded && this.embedSource == 'admin'){
+      this.editOn = false;
+      this.adminFormControlledEnable();
+    }
     this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     let getProfile: string;
     // console.log('typeof this.providedProfile: ', typeof this.providedProfile);
@@ -191,12 +213,12 @@ export class TeamProfileComponent implements OnInit {
   
   // this model change method will be bound to the name change input, so we can update the lower case name along with the display name
   modelChange() {
-    // console.log('model change');
-    // console.log('this.returnedProfile.teamName ', this.returnedProfile.teamName);
-    // console.log('this.returnedProfile.teamName_lower ', this.returnedProfile.teamName_lower);
-    if (this.returnedProfile.teamName != this.returnedProfile.teamName_lower) {
-      this.returnedProfile.teamName_lower = this.returnedProfile.teamName.toLowerCase();
+    if (this.returnedProfile.teamName != undefined && this.returnedProfile.teamName != null){
+      if (this.returnedProfile.teamName != this.returnedProfile.teamName_lower) {
+        this.returnedProfile.teamName_lower = this.returnedProfile.teamName.toLowerCase();
+      }
     }
+
   }
 
   //provided profile holds anything bound to the component when it's embedded
@@ -208,7 +230,6 @@ export class TeamProfileComponent implements OnInit {
       //if we received a profile; the component is embedded:
       this.componentEmbedded = true;
       this.editOn = false;
-      this.formControlledEnable();
       
       this.ngOnInit();
     }
@@ -230,8 +251,10 @@ export class TeamProfileComponent implements OnInit {
   } 
 
   validAvailableTimes:boolean
+  validAvailDays:number=0;
   receiveValidTimes(event){
-    this.validAvailableTimes=event;
+    this.validAvailableTimes=event.valid;
+    this.validAvailDays = event.numdays
   }
 
 
@@ -339,6 +362,7 @@ export class TeamProfileComponent implements OnInit {
       });
     } else {
       //activate validator errors
+      alert('the data was invalid');
       console.log('the data was invalid')
     }
   }
@@ -363,14 +387,15 @@ export class TeamProfileComponent implements OnInit {
       this.editOn = true;
       this.formControlledDisable();
 
-      let keys = Object.keys(this.returnedProfile.availability);
-      keys.forEach(element => {
-        let obj = this.returnedProfile.availability[element];
-        if (obj.available) {
-          obj['startTimeNumber'] = this.util.convertToMil(obj.startTime);
-          obj['endTimeNumber'] = this.util.convertToMil(obj.endTime);
-        }
-      });
+      this.util.updateAvailabilityToNum(this.returnedProfile);
+      // let keys = Object.keys(this.returnedProfile.availability);
+      // keys.forEach(element => {
+      //   let obj = this.returnedProfile.availability[element];
+      //   if (obj.available) {
+      //     obj['startTimeNumber'] = this.util.convertToMil(obj.startTime);
+      //     obj['endTimeNumber'] = this.util.convertToMil(obj.endTime);
+      //   }
+      // });
 
       let cptRemoved = Object.assign({}, this.returnedProfile);
       delete cptRemoved.captain;
@@ -384,6 +409,7 @@ export class TeamProfileComponent implements OnInit {
       });
     } else {
       //activate validator errors
+      alert('the data was invalid');
       console.log('the data was invalid')
     }
 
@@ -492,15 +518,28 @@ export class TeamProfileComponent implements OnInit {
     if (!this.validAvailableTimes){
       valid = false;
     }
-    
+
+    //validate team name is there
+    if (!this.util.returnBoolByPath(this.returnedProfile, 'teamName')) {
+      this.nameControl.setErrors({ required: true });
+      valid = false;
+    } else {
+      let regEx = new RegExp(/[%_]/gm);
+      if (regEx.test(this.returnedProfile.teamName)) {
+        valid = false;
+        this.nameControl.setErrors({ invalidCharacters: true });
+      } else {
+        this.nameControl.setErrors(null);
+      }
+
+    }
     //ensure time zone
-    if (this.isNullOrEmpty(this.returnedProfile.timeZone)) {
+    if (this.validAvailDays>0 && this.isNullOrEmpty(this.returnedProfile.timeZone)) {
       valid = false;
       this.timezoneControl.setErrors({required:true});
     }else{
       this.timezoneControl.setErrors(null);
     }
-    
     return valid;
   }
 

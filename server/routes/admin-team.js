@@ -289,7 +289,7 @@ router.post('/teamSave', passport.authenticate('jwt', {
     //this teamName passed in the body is considered a safe source of the orignal team name
     let team = req.body.teamName;
     let payload = req.body.teamObj;
-    team = team.toLowerCase();
+    let teamLower = team.toLowerCase();
 
     //log object
     let logObj = {};
@@ -299,7 +299,7 @@ router.post('/teamSave', passport.authenticate('jwt', {
     logObj.logLevel = 'ADMIN';
 
     //check if the team was renamed at the client
-    if (team != payload.teamName_lower) {
+    if (teamLower != payload.teamName_lower) {
         //team was renamed
         //double check the new name doesn't exist all ready
         Team.findOne({ teamName_lower: payload.teamName_lower }).then((foundTeam) => {
@@ -311,7 +311,7 @@ router.post('/teamSave', passport.authenticate('jwt', {
                     //this might be a candidate for refactoring all the team saves into one single sub component - but not until I have a warm fuzzy about including teamName changes into the base sub, which I dont.
                     //team name was not modified; edit the properties we received.
                     Team.findOne({
-                        teamName_lower: team
+                        teamName_lower: teamLower
                     }).then((originalTeam) => {
                         if (originalTeam) {
 

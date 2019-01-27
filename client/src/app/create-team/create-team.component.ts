@@ -23,6 +23,7 @@ export class CreateTeamComponent implements OnInit {
     { val: 5, display: 'High'}
   ]
   availabilityValid:boolean
+  availabilityDays:number=0;
   
   constructor(private team: TeamService, public timezone:TimezoneService, private auth: AuthService, private route:Router, private util:UtilitiesService) { }
 
@@ -46,7 +47,8 @@ export class CreateTeamComponent implements OnInit {
   }
 
   receiveTimesValidity(event){
-    this.availabilityValid=event;
+    this.availabilityValid=event.valid;
+    this.availabilityDays = event.numdays;
   }
 
   save() {
@@ -57,6 +59,7 @@ export class CreateTeamComponent implements OnInit {
         this.nameContorl.setErrors({taken:true});
       }else{
         if (this.validate()) {
+          this.util.updateAvailabilityToNum(this.returnedProfile);
           this.returnedProfile.teamName_lower = checkName;
           this.team.createTeam(this.returnedProfile).subscribe( res =>{
             this.auth.setCaptain('true');
@@ -96,14 +99,16 @@ export class CreateTeamComponent implements OnInit {
       this.nameContorl.setErrors({required:true});
       valid = false;
     }else{
-      let regEx = new RegExp(/[^A-Z0-9\s]/ig);
-      if(regEx.test(this.returnedProfile.teamName)){
-        this.nameContorl.setErrors({invalidCharacters:true});
-      }else{
+      let regEx = new RegExp(/[%_]/gm);
+      if (regEx.test(this.returnedProfile.teamName)) {
+        valid = false;
+        this.nameContorl.setErrors({ invalidCharacters: true });
+      } else {
         this.nameContorl.setErrors(null);
       }
-      
+
     }
+
     //validate looking for team:
     if (!this.util.returnBoolByPath(this.returnedProfile, 'lookingForMore')) {
       valid = false;
@@ -115,7 +120,7 @@ export class CreateTeamComponent implements OnInit {
     }
 
     //ensure time zone
-    if (!this.util.returnBoolByPath(this.returnedProfile,'timeZone') ) {
+    if (this.availabilityDays > 0 && !this.util.returnBoolByPath(this.returnedProfile,'timeZone') ) {
       this.timeZoneControl.setErrors({required:true});
       valid = false;
     }else{

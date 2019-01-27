@@ -178,12 +178,12 @@ router.post('/create', passport.authenticate('jwt', {
             message.nameError = "Null team name not allowed!";
         }
         //time zone should be in here.. although not sure if that's even necessary for a minimal creation
-        if (!util.returnBoolByPath(recievedTeam, 'timeZone')) {
-            status = 400;
-            message = {
-                "message": "Must have a timezone!"
-            };
-        }
+        // if (!util.returnBoolByPath(recievedTeam, 'timeZone')) {
+        //     status = 400;
+        //     message = {
+        //         "message": "Must have a timezone!"
+        //     };
+        // }
 
         if (recievedTeam.hasOwnProperty('_id')) {
             delete recievedTeam._id;

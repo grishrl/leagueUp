@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { HttpServiceService } from './http-service.service';
 import { Team } from '../classes/team.class';
+import { SpecialCharactersService } from './special-characters.service';
 
 @Injectable({
   providedIn: 'root'
@@ -123,10 +124,15 @@ export class TeamService {
 
   //returns a route friendly URL name for a team, removing any spaces
   routeFriendlyTeamName(teamname):string{
-    var pattern = ' ';
-    var re = new RegExp(pattern, "g");
     if(teamname!=null&&teamname!=undefined){
-      return teamname.replace(re, '_');
+      let strArr = [];
+      for(let i = 0; i<teamname.length; i++){
+        strArr.push( teamname.charAt(i) );
+      }
+      strArr.forEach((char, index)=>{
+        strArr[index] = this.charServ.replace(char);
+      });
+      return strArr.join('');
     }else{
       return '';
     }
@@ -134,15 +140,20 @@ export class TeamService {
 
   //returns team name re formatted with spaces
   realTeamName(teamname):string{
-    var pattern = '_';
-    var re = new RegExp(pattern, "g");
+    // var pattern = '_';
+    // var re = new RegExp(pattern, "g");
+    // if (teamname != null && teamname != undefined) {
+    //   return teamname.replace(re, ' ');
+    // }else{
+    //   return '';
+    // }
     if (teamname != null && teamname != undefined) {
-      return teamname.replace(re, ' ');
-    }else{
+      return this.charServ.reverse(teamname)
+    } else {
       return '';
     }
     
   }
 
-  constructor(private httpService: HttpServiceService) { }
+  constructor(private httpService: HttpServiceService, private charServ: SpecialCharactersService) { }
 }

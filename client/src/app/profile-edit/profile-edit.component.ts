@@ -45,7 +45,7 @@ export class ProfileEditComponent implements OnInit {
   editOn = true;
 
   hotsLogsFormControl = new FormControl({value:'',disabled:true} ,[
-    Validators.required,
+    // Validators.required,
     this.hotslogsUrlPatternValidator
   ]);
 
@@ -55,15 +55,15 @@ export class ProfileEditComponent implements OnInit {
   ]);
 
   heroeLeagueDivisionControl = new FormControl({ value: '',disabled:true}, [
-    Validators.required
+    // Validators.required
   ]);
 
   heroeLeagueRankControl = new FormControl({ value: '', disabled: true }, [
-    Validators.required
+    // Validators.required
   ]);
 
   timezoneControl = new FormControl({ value: '', disabled: true }, [
-    Validators.required
+    // Validators.required
   ]);
 
   timesAvailControl = new FormControl();
@@ -220,14 +220,15 @@ formControlledEnable(){
    save(){
      if(this.validate()){
 
-       let keys = Object.keys(this.returnedProfile.availability);
-       keys.forEach(element => {
-         let obj = this.returnedProfile.availability[element];
-         if (obj.available) {
-           obj['startTimeNumber'] = this.util.convertToMil(obj.startTime);
-           obj['endTimeNumber'] = this.util.convertToMil(obj.endTime);
-         }
-       });
+      this.util.updateAvailabilityToNum(this.returnedProfile);
+      //  let keys = Object.keys(this.returnedProfile.availability);
+      //  keys.forEach(element => {
+      //    let obj = this.returnedProfile.availability[element];
+      //    if (obj.available) {
+      //      obj['startTimeNumber'] = this.util.convertToMil(obj.startTime);
+      //      obj['endTimeNumber'] = this.util.convertToMil(obj.endTime);
+      //    }
+      //  });
 
        if(!this.hotsLogsUrlReq){
          this.hotsLogsService.getMMRdisplayName(this.user.routeFriendlyUsername(this.returnedProfile.displayName)).subscribe(
@@ -288,6 +289,14 @@ formControlledEnable(){
      }
    }
 
+  timezoneUpdate(){
+    console.log(this.returnedProfile.timeZone);
+    if (this.returnedProfile.timeZone != null || this.returnedProfile.timeZone!=undefined){
+      console.log('asdf');
+      this.timezoneControl.setErrors(null);
+    }
+  }
+
   ngOnInit() {    
     let getProfile:string;
     if(this.providedProfile){
@@ -301,12 +310,19 @@ formControlledEnable(){
   }
 
   validAvailTimes:boolean=false;
+  vaildAvailDays:number=0;
   recieveAvailTimeValidity(event){
-    this.validAvailTimes = event;
-    if(event){
+    this.validAvailTimes = event.valid;
+    this.vaildAvailDays = event.numdays
+    if(event.valid){
       this.timesAvailControl.setErrors(null);
     }else{
       this.timesAvailControl.setErrors({ invalid: true });
+    }
+    if (event.numdays > 0 && this.isNullOrEmpty(this.returnedProfile.timeZone)) {
+      this.timezoneControl.setErrors({ required: true });
+    } else {
+      this.timezoneControl.setErrors(null);
     }
   } 
   
@@ -327,17 +343,17 @@ formControlledEnable(){
     }
 
     //validate the hero leauge information
-    if (this.returnedProfile.hlRankMetal == 'Unranked'){
-      valid = true;
+    // if (this.returnedProfile.hlRankMetal == 'Unranked'){
+    //   valid = true;
       
-    }else if (this.isNullOrEmpty(this.returnedProfile.hlRankMetal) && this.isNullOrEmpty(this.returnedProfile.hlRankDivision)){
-      valid = false;
-    }
+    // }else if (this.isNullOrEmpty(this.returnedProfile.hlRankMetal) && this.isNullOrEmpty(this.returnedProfile.hlRankDivision)){
+    //   valid = false;
+    // }
 
     //validate looking for team:
-    if (this.isNullOrEmpty(this.returnedProfile.lookingForGroup)) {
-      valid = false;
-    }
+    // if (this.isNullOrEmpty(this.returnedProfile.lookingForGroup)) {
+    //   valid = false;
+    // }
 
     //will we require the comp level, play history, roles?
 
@@ -350,10 +366,11 @@ formControlledEnable(){
     }
 
     //ensure time zone
-    if (this.isNullOrEmpty(this.returnedProfile.timeZone)) {
-      valid = false;
+    if (this.vaildAvailDays>0 && this.isNullOrEmpty(this.returnedProfile.timeZone)) {
+      this.timezoneControl.setErrors({ required: true });
+    } else {
+      this.timezoneControl.setErrors(null);
     }
-
     return valid;
   }
 
