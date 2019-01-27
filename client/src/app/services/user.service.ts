@@ -60,6 +60,14 @@ export class UserService {
     return this.httpService.httpPost(url, user, true);
   }
 
+  userMarketSearch(searchObj){
+    let url = '/search/user/market';
+    let payload = {
+      searchObj:searchObj
+    };
+    return this.httpService.httpPost(url, payload);
+  }
+
   //deletes the user
   deleteUser(){
     let url = "user/delete";

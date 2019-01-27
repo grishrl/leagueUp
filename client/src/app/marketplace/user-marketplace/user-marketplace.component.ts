@@ -127,7 +127,7 @@ export class UserMarketplaceComponent implements OnInit {
         postObj[key] = this.searchParameters[key];
       } else if (this.searchParameters[key] != null && key == 'customTime') {
         if (this.searchParameters[key] == 'profile') {
-          postObj['getProfileTime'] = true;
+          postObj['times'] = this.customTimeValidator(this.teamInfo.availability);
         }
         let cleanTime = this.customTimeValidator(this.searchParameters['customAvail'])
         if (cleanTime != null) {
@@ -152,14 +152,16 @@ export class UserMarketplaceComponent implements OnInit {
         }
       }
     });
-    this._team.searchTeams(postObj).subscribe(res => {
+    console.log(postObj);
+    this._userService.userMarketSearch(postObj).subscribe( res =>{
       this.localResults = res;
       this.displayArray = res.slice(0, 10);
       this.length = res.length;
       this.hasSearched = true;
-    }, err => {
+     }, err=>{
       console.log(err);
     })
+
   }
 
   clear() {
@@ -181,11 +183,14 @@ export class UserMarketplaceComponent implements OnInit {
       console.log(err);
     });
 
-    this._team.getTeam(this.auth.getTeam()).subscribe( res =>{
-      this.teamInfo = res;
-    }, err=>{
-      console.log(err);
-    })
+    if (this.auth.getTeam()){
+      this._team.getTeam(this.auth.getTeam()).subscribe(res => {
+        this.teamInfo = res;
+      }, err => {
+        console.log(err);
+      })
+    }
+
 
     this.getFiltered = this.auth.getCaptain() == 'true';
 
@@ -231,10 +236,16 @@ export class UserMarketplaceComponent implements OnInit {
   }
 
   showInviteButton(player){
-    if (this.teamInfo.invitedUsers && this.teamInfo.invitedUsers.indexOf(player.displayName) > -1) {
-      return false;
-    } else {
-      return true;
+    if(this.teamInfo){
+      if (this.teamInfo.invitedUsers ){
+        return 'notinvited';
+      }else if (this.teamInfo.invitedUsers.indexOf(player.displayName) > -1) {
+        return 'notinvited';
+      } else {
+        return 'invited';
+      }
+    }else{
+      return 'noteam';
     }
   }
 
@@ -275,6 +286,23 @@ export class UserMarketplaceComponent implements OnInit {
         console.log(err);
       }
     )
+  }
+
+  filterSelected() {
+    let divs = [];
+
+    this.hlMedals.forEach(element => {
+      let push = true;
+      this.searchParameters.divisions.forEach(selDiv => {
+        if (element == selDiv) {
+          push = false;
+        }
+      });
+      if (push) {
+        divs.push(element)
+      }
+    });
+    return divs;
   }
 
 

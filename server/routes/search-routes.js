@@ -195,9 +195,11 @@ user query
 router.post('/user/market', (req, res) => {
     const path = '/search/user/market';
 
-    let payload = req.body;
+    let payload = req.body.searchObj;
+    let formedSearchObject = createUserSearchObject(payload, req.user);
 
-    User.find(payload).then(
+    // res.status(200).send(util.returnMessaging(path, "formed search object", null, formedSearchObject))
+    User.find(formedSearchObject).then(
         (found) => {
             res.status(200).send(util.returnMessaging(path, "Found these users", null, found));
         }, (err) => {
@@ -295,9 +297,8 @@ router.post('/team/market', passport.authenticate('jwt', {
     const path = '/search/team/market';
 
     let payload = req.body.searchObj;
-    let formedSearchObject = createSearchObject(payload, req.user);
-    console.log(formedSearchObject)
-        // res.status(200).send(util.returnMessaging(path, "Testing", null, formedSearchObject));
+    let formedSearchObject = createTeamSearchObject(payload, req.user);
+    // res.status(200).send(util.returnMessaging(path, "Testing", null, formedSearchObject));
     Team.find(formedSearchObject).then(
         (found) => {
             res.status(200).send(util.returnMessaging(path, "Found these teams", null, found));
@@ -437,6 +438,9 @@ const userUnteamedFilterInvited = {
                     "pendingTeam": false
                 }
             ]
+        },
+        {
+            lookingForGroup: true
         }
     ]
 };
@@ -460,8 +464,17 @@ router.get('/users/filtered/total', passport.authenticate('jwt', {
                             }
                         }
                     })
-                    console.log('filter obj ', JSON.stringify(myFilterObj));
 
+                    let userNum = User.countDocuments(myFilterObj);
+                    userNum.exec().then(
+                        ret => {
+                            res.status(200).send(util.returnMessaging(path, 'Found users', null, ret));
+                        },
+                        err => {
+                            res.status(500).send(util.returnMessaging(path, 'Error finding users', err));
+                        }
+                    )
+                } else {
                     let userNum = User.countDocuments(myFilterObj);
                     userNum.exec().then(
                         ret => {
@@ -626,7 +639,7 @@ async function filterInvitedUsers(req, ret) {
     return ret;
 }
 
-function createSearchObject(obj, reqUser) {
+function createUserSearchObject(obj, reqUser) {
     let returnObj = {};
     let keys = Object.keys(obj);
     if (keys.length > 0) {
@@ -634,6 +647,134 @@ function createSearchObject(obj, reqUser) {
         returnObj = {
             $and: []
         }
+
+        returnObj.$and.push({
+            lookingForGroup: true
+        })
+
+        // add divisions to the query object
+        if (util.returnBoolByPath(obj, 'divisions')) {
+            let divs = {
+                $or: []
+            };
+            obj['divisions'].forEach(div => {
+                divs['$or'].push({
+                    hlRankMetal: div
+                });
+            })
+            returnObj['$and'].push(divs);
+        }
+
+
+        // Add MMRs to the query object
+        if (util.returnBoolByPath(obj, 'lowerMMR') || util.returnBoolByPath(obj, 'upperMMR')) {
+            let mmr = {
+                $and: []
+            };
+            let add = false;
+            if (util.returnBoolByPath(obj, 'lowerMMR')) {
+                mmr['$and'].push({
+                    averageMmr: {
+                        $gte: obj.lowerMMR
+                    }
+                });
+                add = true;
+            }
+            if (util.returnBoolByPath(obj, 'upperMMR')) {
+                mmr['$and'].push({
+                    averageMmr: {
+                        $lte: obj.upperMMR
+                    }
+                });
+                add = true;
+            }
+            if (add) {
+                returnObj['$and'].push(mmr);
+            }
+        }
+
+        // add competitive level to the query object
+        if (util.returnBoolByPath(obj, 'competitiveLevel')) {
+            returnObj['$and'].push({
+                competitiveLevel: obj.competitiveLevel
+            });
+        }
+
+        //add roles to the query object
+        if (util.returnBoolByPath(obj, 'rolesNeeded')) {
+            let roles = {
+                $or: []
+            };
+            let keys = Object.keys(obj.rolesNeeded);
+            keys.forEach(key => {
+                let searchKey = 'role';
+                let value = obj.rolesNeeded[key];
+                searchKey = searchKey + '.' + key;
+                let tO = {}
+                tO[searchKey] = value;
+                roles['$or'].push(tO);
+            });
+            returnObj['$and'].push(roles);
+        }
+
+        //add times available and timezone to the query object.
+        if (util.returnBoolByPath(obj, 'timezone') || util.returnBoolByPath(obj, 'times')) {
+            let user = {};
+
+            user.availability = obj.times
+            if (util.returnBoolByPath(obj, 'timezone')) {
+                user.timeZone = obj.timezone;
+            } else {
+                user.timeZone = reqUser.timeZone;
+            }
+
+            if (util.returnBoolByPath(user, 'availability')) {
+                let keys = Object.keys(user.availability);
+                keys.forEach(key => {
+                    let unit = user.availability[key];
+                    if (unit.available) {
+                        if (util.returnBoolByPath(unit, 'startTime')) {
+                            let searchKey = 'availability.' + key + '.startTime';
+                            let searchValue = '$gte: ' + zeroGMT(unit.startTime, user.timeZone);
+                            let tO = {};
+                            tO[searchKey] = searchValue;
+                            returnObj['$and'].push(tO);
+                        }
+                        if (util.returnBoolByPath(unit, 'endTime')) {
+                            let searchKey = 'availability.' + key + '.endTime';
+                            let searchValue = '$lte: ' + zeroGMT(unit.endTime, user.timeZone);
+                            let tO = {};
+                            tO[searchKey] = searchValue;
+                            returnObj['$and'].push(tO);
+                        }
+                    }
+                });
+            } else {
+                //user had no profile times....
+            }
+
+
+            returnObj['$and'].push({
+                'timeZone': user.timeZone
+            });
+
+        }
+
+
+    }
+    return returnObj;
+}
+
+function createTeamSearchObject(obj, reqUser) {
+    let returnObj = {};
+    let keys = Object.keys(obj);
+    if (keys.length > 0) {
+
+        returnObj = {
+            $and: []
+        }
+
+        returnObj.$and.push({ lookingForMore: true })
 
         // add divisions to the query object
         if (util.returnBoolByPath(obj, 'divisions')) {
@@ -706,7 +847,6 @@ function createSearchObject(obj, reqUser) {
                     user.timeZone = reqUser.timeZone;
                 }
             }
-            console.log(user);
             if (util.returnBoolByPath(user, 'availability')) {
                 let keys = Object.keys(user.availability);
                 keys.forEach(key => {
