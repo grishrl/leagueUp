@@ -50,7 +50,8 @@
                                     <!-- [routerLink]="['/schedule/teamSchedule']" -->
                                     <a class="dropdown-item finger" [routerLink]="['/schedule/teamSchedule']" (click)="navGo('/schedule/teamSchedule')">Schedule</a>
                                     <div *ngIf="Auth.getCaptain() && Auth.getCaptain() != 'false'">
-                                        <!--TODO: implement Find players <a class="dropdown-item" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( Auth.getTeam() ) )">Find Players</a> -->
+
+                                        <a class="dropdown-item" [routerLink]="['/findPlayers']" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( Auth.getTeam() ) )">Find Players</a>
                                         <a class="dropdown-item finger" [routerLink]="['/reporting',team.routeFriendlyTeamName( Auth.getTeam() )]" (click)="navGo('/reporting/',team.routeFriendlyTeamName( Auth.getTeam() ) )">Reporting</a>
                                     </div>
 
@@ -59,7 +60,8 @@
                                     <!-- [routerLink]="['/teamCreate']" -->
                                     <a class="dropdown-item finger" [routerLink]="['/teamCreate']" (click)="navGo('/teamCreate')">Create
   Team</a>
-                                    <!-- TODO: implement a find team <a class="dropdown-item finger" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( teamName ) )">Find Team</a> -->
+
+                                    <a class="dropdown-item finger" [routerLink]="['/findTeams']" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( teamName ) )">Find Team</a>
                                 </ng-template>
                                 <a *ngIf="Auth.getAdmin() && Auth.getAdmin().length>0" class="dropdown-item finger" [routerLink]="['/_admin/dashboard']" (click)="navGo('/_admin/dashboard')">Admin Dashboard</a>
                                 <a *ngIf="Auth.getCaster()" class="dropdown-item finger" data-toggle="collapse" [routerLink]="['/_casterDashboard']" (click)="navGo('/_casterDashboard')">Caster

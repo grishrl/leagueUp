@@ -187,6 +187,13 @@ formControlledEnable(){
     { val: 5, display: 'High' }
   ]
   
+  hideLookingForGroup(){
+    if(this.auth.getTeam()){
+      return false;
+    }else{
+      return true;
+    }
+  }
 
    hideDay(editSwitch, dayAvailabilty): boolean {
      if (!editSwitch){
@@ -305,9 +312,7 @@ formControlledEnable(){
    }
 
   timezoneUpdate(){
-    console.log(this.returnedProfile.timeZone);
     if (this.returnedProfile.timeZone != null || this.returnedProfile.timeZone!=undefined){
-      console.log('asdf');
       this.timezoneControl.setErrors(null);
     }
   }

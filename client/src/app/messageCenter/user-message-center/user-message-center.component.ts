@@ -59,7 +59,7 @@ export class UserMessageCenterComponent implements OnInit {
         console.log('err ', err);
       })
     } else if (this.selectedMessage.request.instance == 'user'){
-      this.request.acceptTeamInvite(msg.request.target, msg.request.requester, act, msg._id).subscribe((res) => {
+      this.request.acceptTeamInvite(msg.request.requester, msg.request.target, act, msg._id).subscribe((res) => {
         this.ngOnInit();
       }, (err) => {
         this.ngOnInit();

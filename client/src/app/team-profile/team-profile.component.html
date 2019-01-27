@@ -103,7 +103,7 @@
                         <mat-form-field class="mat-FullWidth">
                             <input matInput placeholder="Team MMR Average" [(ngModel)]="returnedProfile.teamMMRAvg" disabled="true">
                         </mat-form-field>
-                        <mat-slide-toggle [disabled]="editOn" [(ngModel)]="returnedProfile.lookingForMore">
+                        <mat-slide-toggle *ngIf="checkRosterSize()" [disabled]="editOn" [(ngModel)]="returnedProfile.lookingForMore">
                             Looking for More.
                         </mat-slide-toggle>
                     </div>

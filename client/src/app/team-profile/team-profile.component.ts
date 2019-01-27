@@ -404,6 +404,10 @@ export class TeamProfileComponent implements OnInit {
       //   }
       // });
 
+      if (!this.checkRosterSize()){
+        this.returnedProfile.lookingForMore = false;
+      }
+
       let cptRemoved = Object.assign({}, this.returnedProfile);
       delete cptRemoved.captain;
 

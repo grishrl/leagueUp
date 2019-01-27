@@ -199,7 +199,6 @@ export class UserMarketplaceComponent implements OnInit {
   }
 
   getAllUsers(filter) {
-    console.log('filter ', filter)
     if(filter){
       this._userService.getFilteredUsersNumber().subscribe(
         res=>{
@@ -235,22 +234,22 @@ export class UserMarketplaceComponent implements OnInit {
       return roster >= 9;
   }
 
-  showInviteButton(player){
-    if(this.teamInfo){
-      if (this.teamInfo.invitedUsers ){
-        return 'notinvited';
-      }else if (this.teamInfo.invitedUsers.indexOf(player.displayName) > -1) {
-        return 'notinvited';
-      } else {
-        return 'invited';
-      }
-    }else{
-      return 'noteam';
-    }
-  }
+  // showInviteButton(player){
+  //   console.log(this.teamInfo)
+  //   if(this.teamInfo){
+  //     if (this.teamInfo.invitedUsers){
+  //       return 'notinvited';
+  //     }else if (this.teamInfo.invitedUsers.indexOf(player.displayName) > -1) {
+  //       return 'notinvited';
+  //     } else {
+  //       return 'invited';
+  //     }
+  //   }else{
+  //     return 'noteam';
+  //   }
+  // }
 
   getNextPage(filter, page, showMsg) {
-    console.log('filter ',filter)
     if(filter){
       this._userService.getFilteredUsersOfPageNum(page, showMsg).subscribe(
         res=>{
@@ -277,16 +276,17 @@ export class UserMarketplaceComponent implements OnInit {
     })
   }
 
-  requestToJoin(player){
-    this.request.inviteToTeamRequest(this.auth.getTeam(), player.displayName).subscribe(
-      (res)=>{
-        this.teamInfo.invitedUsers.push(player.displayName);
-        //filter by pending invites?
-      },err=>{
-        console.log(err);
-      }
-    )
-  }
+  // requestToJoin(player){
+  //   this.request.inviteToTeamRequest(this.auth.getTeam(), player.displayName).subscribe(
+  //     (res)=>{
+  //       this.teamInfo.invitedUsers.push(player.displayName);
+  //       this.showInviteButton(player);
+  //       //filter by pending invites?
+  //     },err=>{
+  //       console.log(err);
+  //     }
+  //   )
+  // }
 
   filterSelected() {
     let divs = [];

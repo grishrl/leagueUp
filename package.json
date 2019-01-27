@@ -25,6 +25,7 @@
         "hots-parser": "^6.41.2",
         "image-data-uri": "^2.0.0",
         "jsonwebtoken": "^8.4.0",
+        "lodash": "^4.17.11",
         "mongoose": "^5.4.0",
         "nodemailer": "^4.7.0",
         "passport": "^0.4.0",

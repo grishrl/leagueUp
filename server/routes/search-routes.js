@@ -3,6 +3,7 @@ const router = require('express').Router();
 const User = require('../models/user-models');
 const Team = require('../models/team-models');
 const passport = require("passport");
+const lodash = require('lodash');
 
 router.post('/user', passport.authenticate('jwt', {
     session: false
@@ -89,6 +90,240 @@ router.post('/team', passport.authenticate('jwt', {
         res.status(500).send(util.returnMessaging(path, "Error finding teams", err));
     });
 });
+
+router.post('/user/market', (req, res) => {
+    const path = '/search/user/market';
+
+    let payload = req.body.searchObj;
+    let formedSearchObject = createUserSearchObject(payload, req.user);
+
+    // res.status(200).send(util.returnMessaging(path, "formed search object", null, formedSearchObject))
+    User.find(formedSearchObject).then(
+        (found) => {
+            res.status(200).send(util.returnMessaging(path, "Found these users", null, found));
+        }, (err) => {
+            res.status(500).send(util.returnMessaging(path, "Error finding users", err));
+        }
+    );
+
+});
+
+
+
+router.post('/team/market', passport.authenticate('jwt', {
+    session: false
+}), (req, res) => {
+    const path = '/search/team/market';
+
+    let payload = req.body.searchObj;
+    let formedSearchObject = createTeamSearchObject(payload, req.user);
+    // res.status(200).send(util.returnMessaging(path, "Testing", null, formedSearchObject));
+    Team.find(formedSearchObject).then(
+        (found) => {
+            res.status(200).send(util.returnMessaging(path, "Found these teams", null, found));
+        }, (err) => {
+            res.status(500).send(util.returnMessaging(path, "Error finding teams", err));
+        }
+    );
+
+});
+
+
+//get users total number this returns all unteamed users
+router.get('/users/filtered/total', passport.authenticate('jwt', {
+    session: false
+}), (req, res) => {
+    const path = '/search/users/filtered/total';
+    let teamName = req.user.teamName;
+    teamName = teamName.toLowerCase();
+    //userUnteamedFilterInvited
+    let myFilterObj = userUnteamed();
+    Team.findOne({ teamName_lower: teamName }).then(
+        foundTeam => {
+            if (foundTeam) {
+                if (foundTeam.invitedUsers.length > 0) {
+                    myFilterObj.$and.push({
+                        "displayName": {
+                            $not: {
+                                $in: foundTeam.invitedUsers
+                            }
+                        }
+                    })
+
+                    let userNum = User.countDocuments(myFilterObj);
+                    userNum.exec().then(
+                        ret => {
+                            res.status(200).send(util.returnMessaging(path, 'Found users', null, ret));
+                        },
+                        err => {
+                            res.status(500).send(util.returnMessaging(path, 'Error finding users', err));
+                        }
+                    )
+                } else {
+                    let userNum = User.countDocuments(myFilterObj);
+                    userNum.exec().then(
+                        ret => {
+                            res.status(200).send(util.returnMessaging(path, 'Found users', null, ret));
+                        },
+                        err => {
+                            res.status(500).send(util.returnMessaging(path, 'Error finding users', err));
+                        }
+                    )
+                }
+            } else {
+                res.status(200).send(util.returnMessaging(path, 'Found users', null, ret));
+            }
+        }, err => {
+            res.status(500).send(util.returnMessaging(path, 'Error finding users', err));
+        }
+    )
+});
+
+//paginate users
+router.post('/user/filtered/paginate', passport.authenticate('jwt', {
+    session: false
+}), (req, res) => {
+    const path = '/search/user/filtered/paginate';
+    let page = req.body.page;
+    let perPage = 10;
+    let teamName = req.user.teamName;
+    //userUnteamedFilterInvited
+    let myFilterObj = userUnteamed();
+    teamName = teamName.toLowerCase();
+    Team.findOne({
+        teamName_lower: teamName
+    }).then(
+        foundTeam => {
+            if (foundTeam) {
+                if (foundTeam.invitedUsers.length > 0) {
+                    myFilterObj.$and.push({
+                        "displayName": {
+                            $not: {
+                                $in: foundTeam.invitedUsers
+                            }
+                        }
+                    });
+                }
+                let query = User.find(myFilterObj).skip(page * perPage).limit(perPage);
+                query.exec().then(
+                    found => {
+                        res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, found));
+                    }, err => {
+                        res.status(500).send(util.returnMessaging(path, "Error finding teams", err));
+                    }
+                )
+            } else {
+
+            }
+        }, err => {
+
+        }
+    );
+
+
+});
+
+//get users total number this returns all unteamed users
+router.get('/users/all/total', (req, res) => {
+    const path = '/search/users/total';
+    let userNum = User.estimatedDocumentCount(userUnteamed());
+    userNum.exec().then(
+        ret => {
+            res.status(200).send(util.returnMessaging(path, 'Found users', null, ret))
+
+        }, err => {
+            res.status(500).send(util.returnMessaging(path, "Error finding users", err));
+        }
+    );
+});
+
+//paginate users
+router.post('/user/paginate', passport.authenticate('jwt', {
+    session: false
+}), (req, res) => {
+    const path = '/search/user/paginate';
+    let page = req.body.page;
+    let perPage = 10;
+    let query = User.find(userUnteamed()).skip(page * perPage).limit(perPage);
+    query.exec().then(
+        found => {
+            res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, found));
+            // filterInvitedUsers(req, found).then(
+            //     parsed => {
+            //         res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, parsed));
+            //     },
+            //     err => {
+            //         res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, found));
+            //     }
+            // )
+
+        }, err => {
+            res.status(500).send(util.returnMessaging(path, "Error finding teams", err));
+        }
+    )
+});
+
+//get teams total number
+router.get('/teams/total', (req, res) => {
+    const path = '/search/teams/total';
+    let teamNum = Team.countDocuments({
+        lookingForMore: true
+    });
+    teamNum.exec().then(
+        ret => {
+            res.status(200).send(util.returnMessaging(path, 'Teams count', null, ret));
+        }, err => {
+            res.status(500).send(util.returnMessaging(path, "Error finding teams", err));
+        }
+    )
+
+});
+
+//paginate teams
+router.post('/team/paginate', passport.authenticate('jwt', {
+    session: false
+}), (req, res) => {
+    const path = '/search/team/paginate';
+    let page = req.body.page;
+    let perPage = 10;
+    let query = Team.find({ lookingForMore: true }).skip(page * perPage).limit(perPage);
+    query.exec().then(
+        found => {
+            res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, found));
+        }, err => {
+            res.status(500).send(util.returnMessaging(path, "Error finding teams", err));
+        }
+    )
+});
+
+module.exports = router;
+
+async function filterInvitedUsers(req, ret) {
+    let teamName = req.user.teamName ? req.user.teamName.toLowerCase() : null;
+    if (teamName) {
+        let findTeam = await Team.find({
+            teamName_lower: teamName
+        }).then(team => {
+            if (team) {
+                //filter invited users out
+                ret = ret.filter(retUser => {
+                    let flt = true;
+                    team.invitedUsers.forEach(invitedUser => {
+                        if (retUser.displayName == invitedUser) {
+                            flt = false;
+                        }
+                    });
+                });
+                return ret;
+            } else {
+                //do nothing team not found
+            }
+        });
+    } else {
+        //do nothing team not found
+    }
+    return ret;
+}
 
 /*
 user query
@@ -192,465 +427,54 @@ user query
 }
 */
 
-router.post('/user/market', (req, res) => {
-    const path = '/search/user/market';
-
-    let payload = req.body.searchObj;
-    let formedSearchObject = createUserSearchObject(payload, req.user);
-
-    // res.status(200).send(util.returnMessaging(path, "formed search object", null, formedSearchObject))
-    User.find(formedSearchObject).then(
-        (found) => {
-            res.status(200).send(util.returnMessaging(path, "Found these users", null, found));
-        }, (err) => {
-            res.status(500).send(util.returnMessaging(path, "Error finding users", err));
-        }
-    );
-
-});
-
-
-/*
-
-        "tank": true,
-        "meleeassassin": true,
-        "rangedassassin": true,
-        "support": false,
-        "offlane": false,
-        "flex": true
-
-team query
-{
-    $and: [
-        {
-            $or: [{
-                    "divisionConcat": "divisionName"
-                },
-                {
-                    "divisionConcat": "divisionName"
-                }
-            ]
-
-        },
-        {
-            $and:[
-                {
-                    teamMMRAvg:{
-                        $gte:LowerNumber
-                    }
-                },
-                {
-                    teamMMRAvg: {
-                        $lte: UpperNumber
-                    }
-                }
-            ]
-        },
-        {
-            "lookingForMore":true
-        },
-        {
-            "competitiveLevel":0,2,3
-        },
-        {
-            $or:[
-                {
-                    "rolesNeeded.tank":true
-                },
-                {
-                    "rolesNeeded.meleeassassin": true
-                },
-                {
-                    "rolesNeeded.rangedassassin": true
-                },
-                {
-                    "rolesNeeded.support": true
-                }, 
-                {
-                    "rolesNeeded.offlane": true
-                }, 
-                {
-                    "rolesNeeded.flex: true"
-                }
-            ]
-
-        },
-        {
-            "availability.monday.startTimeNumber": {
-                $gte: 2000
-            }
-        }, 
-        {
-            "availability.monday.endTimeNumber": {
-                $lte: 2400
-            }
-        },
-        {
-            "timeZone": "-6"
-        }
-    ]
-}
-*/
-router.post('/team/market', passport.authenticate('jwt', {
-    session: false
-}), (req, res) => {
-    const path = '/search/team/market';
-
-    let payload = req.body.searchObj;
-    let formedSearchObject = createTeamSearchObject(payload, req.user);
-    // res.status(200).send(util.returnMessaging(path, "Testing", null, formedSearchObject));
-    Team.find(formedSearchObject).then(
-        (found) => {
-            res.status(200).send(util.returnMessaging(path, "Found these teams", null, found));
-        }, (err) => {
-            res.status(500).send(util.returnMessaging(path, "Error finding teams", err));
-        }
-    );
-
-});
-
-const userUnteamed = {
-    $and: [{
-            $or: [{
-                    "teamId": null
-                },
-                {
-                    "teamId": {
-                        $exists: false
-                    }
-                },
-            ]
-        },
-        {
-            $or: [{
-                    "teamName": null
-                },
-                {
-                    "teamName": {
-                        $exists: false
-                    }
-                }
-            ]
-        },
-        {
-            $or: [{
-                    "pendingTeam": null
-                },
-                {
-                    "pendingTeam": {
-                        $exists: false
-                    }
-                },
-                {
-                    "pendingTeam": false
-                }
-            ]
-        },
-        {
-            "lookingForGroup": true
-        }
-    ]
-};
-
-/*
-{
-    $and: [{
-            "displayName": {
-                $not: {
-                    $in: ["DrCjelli#1596"]
-                }
-            }
-        },
-        {
-            $or: [{
-                    "teamId": null
-                },
-                {
-                    "teamId": {
-                        $exists: false
-                    }
-                },
-            ]
-        },
-        {
-            $or: [{
-                    "teamName": null
-                },
-                {
-                    "teamName": {
-                        $exists: false
-                    }
-                }
-            ]
-        },
-        {
-            $or: [{
-                    "pendingTeam": null
-                },
-                {
-                    "pendingTeam": {
-                        $exists: false
-                    }
-                },
-                {
-                    "pendingTeam": false
-                }
-            ]
-        }
-    ]
-}
-
-*/
-
-const userUnteamedFilterInvited = {
-    $and: [{
-            $or: [{
-                    "teamId": null
-                },
-                {
-                    "teamId": {
-                        $exists: false
-                    }
-                },
-            ]
-        },
-        {
-            $or: [{
-                    "teamName": null
-                },
-                {
-                    "teamName": {
-                        $exists: false
-                    }
-                }
-            ]
-        },
-        {
-            $or: [{
-                    "pendingTeam": null
-                },
-                {
-                    "pendingTeam": {
-                        $exists: false
-                    }
-                },
-                {
-                    "pendingTeam": false
-                }
-            ]
-        },
-        {
-            lookingForGroup: true
-        }
-    ]
-};
-
-//get users total number this returns all unteamed users
-router.get('/users/filtered/total', passport.authenticate('jwt', {
-    session: false
-}), (req, res) => {
-    const path = '/search/users/filtered/total';
-    let teamName = req.user.teamName;
-    teamName = teamName.toLowerCase();
-    let myFilterObj = Object.assign({}, userUnteamedFilterInvited)
-    Team.findOne({ teamName_lower: teamName }).then(
-        foundTeam => {
-            if (foundTeam) {
-                if (foundTeam.invitedUsers.length > 0) {
-                    myFilterObj.$and.push({
-                        "displayName": {
-                            $not: {
-                                $in: foundTeam.invitedUsers
-                            }
-                        }
-                    })
-
-                    let userNum = User.countDocuments(myFilterObj);
-                    userNum.exec().then(
-                        ret => {
-                            res.status(200).send(util.returnMessaging(path, 'Found users', null, ret));
-                        },
-                        err => {
-                            res.status(500).send(util.returnMessaging(path, 'Error finding users', err));
-                        }
-                    )
-                } else {
-                    let userNum = User.countDocuments(myFilterObj);
-                    userNum.exec().then(
-                        ret => {
-                            res.status(200).send(util.returnMessaging(path, 'Found users', null, ret));
-                        },
-                        err => {
-                            res.status(500).send(util.returnMessaging(path, 'Error finding users', err));
-                        }
-                    )
-                }
-            } else {
-                res.status(200).send(util.returnMessaging(path, 'Found users', null, ret));
-            }
-        }, err => {
-            res.status(500).send(util.returnMessaging(path, 'Error finding users', err));
-        }
-    )
-});
-
-//paginate users
-router.post('/user/filtered/paginate', passport.authenticate('jwt', {
-    session: false
-}), (req, res) => {
-    const path = '/search/user/filtered/paginate';
-    let page = req.body.page;
-    let perPage = 10;
-    let teamName = req.user.teamName;
-    let myFilterObj = Object.assign({}, userUnteamedFilterInvited)
-    teamName = teamName.toLowerCase();
-    Team.findOne({
-        teamName_lower: teamName
-    }).then(
-        foundTeam => {
-            if (foundTeam) {
-                if (foundTeam.invitedUsers.length > 0) {
-                    myFilterObj.$and.push({
-                        "displayName": {
-                            $not: {
-                                $in: foundTeam.invitedUsers
-                            }
-                        }
-                    });
-                }
-                let query = User.find(myFilterObj).skip(page * perPage).limit(perPage);
-                query.exec().then(
-                    found => {
-                        res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, found));
-                    }, err => {
-                        res.status(500).send(util.returnMessaging(path, "Error finding teams", err));
-                    }
-                )
-            } else {
-
-            }
-        }, err => {
-
-        }
-    );
-
-
-});
-
-//get users total number this returns all unteamed users
-router.get('/users/all/total', (req, res) => {
-    const path = '/search/users/total';
-    let userNum = User.estimatedDocumentCount(userUnteamed);
-    userNum.exec().then(
-        ret => {
-            res.status(200).send(util.returnMessaging(path, 'Found users', null, ret))
-
-        }, err => {
-            res.status(500).send(util.returnMessaging(path, "Error finding users", err));
-        }
-    );
-});
-
-//paginate users
-router.post('/user/paginate', passport.authenticate('jwt', {
-    session: false
-}), (req, res) => {
-    const path = '/search/user/paginate';
-    let page = req.body.page;
-    let perPage = 10;
-    let query = User.find(userUnteamed).skip(page * perPage).limit(perPage);
-    query.exec().then(
-        found => {
-            res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, found));
-            // filterInvitedUsers(req, found).then(
-            //     parsed => {
-            //         res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, parsed));
-            //     },
-            //     err => {
-            //         res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, found));
-            //     }
-            // )
-
-        }, err => {
-            res.status(500).send(util.returnMessaging(path, "Error finding teams", err));
-        }
-    )
-});
-
-//get teams total number
-router.get('/teams/total', (req, res) => {
-    const path = '/search/teams/total';
-    let teamNum = Team.estimatedDocumentCount({
-        lookingForMore: true
-    });
-    teamNum.exec().then(
-        ret => {
-            res.status(200).send(util.returnMessaging(path, 'Teams count', null, ret));
-        }, err => {
-            res.status(500).send(util.returnMessaging(path, "Error finding teams", err));
-        }
-    )
-
-});
-
-//paginate teams
-router.post('/team/paginate', passport.authenticate('jwt', {
-    session: false
-}), (req, res) => {
-    const path = '/search/team/paginate';
-    let page = req.body.page;
-    let perPage = 10;
-    let query = Team.find({ lookingForMore: true }).skip(page * perPage).limit(perPage);
-    query.exec().then(
-        found => {
-            res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, found));
-        }, err => {
-            res.status(500).send(util.returnMessaging(path, "Error finding teams", err));
-        }
-    )
-});
-
-module.exports = router;
-
-async function filterInvitedUsers(req, ret) {
-    let teamName = req.user.teamName ? req.user.teamName.toLowerCase() : null;
-    if (teamName) {
-        let findTeam = await Team.find({
-            teamName_lower: teamName
-        }).then(team => {
-            if (team) {
-                //filter invited users out
-                ret = ret.filter(retUser => {
-                    let flt = true;
-                    team.invitedUsers.forEach(invitedUser => {
-                        if (retUser.displayName == invitedUser) {
-                            flt = false;
-                        }
-                    });
-                });
-                return ret;
-            } else {
-                //do nothing team not found
-            }
-        });
-    } else {
-        //do nothing team not found
-    }
-    return ret;
-}
-
 function createUserSearchObject(obj, reqUser) {
     let returnObj = {};
     let keys = Object.keys(obj);
     if (keys.length > 0) {
 
+        //staticly set that the user shall not be on another team and shall be lookingforgroup!
         returnObj = {
-            $and: []
+            $and: [{
+                    $or: [{
+                            "teamId": null
+                        },
+                        {
+                            "teamId": {
+                                $exists: false
+                            }
+                        },
+                    ]
+                },
+                {
+                    $or: [{
+                            "teamName": null
+                        },
+                        {
+                            "teamName": {
+                                $exists: false
+                            }
+                        }
+                    ]
+                },
+                {
+                    $or: [{
+                            "pendingTeam": null
+                        },
+                        {
+                            "pendingTeam": {
+                                $exists: false
+                            }
+                        },
+                        {
+                            "pendingTeam": false
+                        }
+                    ]
+                },
+                {
+                    lookingForGroup: true
+                }
+            ]
         }
-
-        returnObj.$and.push({
-            lookingForGroup: true
-        })
 
         // add divisions to the query object
         if (util.returnBoolByPath(obj, 'divisions')) {
@@ -764,6 +588,88 @@ function createUserSearchObject(obj, reqUser) {
     }
     return returnObj;
 }
+
+/*
+
+        "tank": true,
+        "meleeassassin": true,
+        "rangedassassin": true,
+        "support": false,
+        "offlane": false,
+        "flex": true
+
+team query
+{
+    $and: [
+        {
+            $or: [{
+                    "divisionConcat": "divisionName"
+                },
+                {
+                    "divisionConcat": "divisionName"
+                }
+            ]
+
+        },
+        {
+            $and:[
+                {
+                    teamMMRAvg:{
+                        $gte:LowerNumber
+                    }
+                },
+                {
+                    teamMMRAvg: {
+                        $lte: UpperNumber
+                    }
+                }
+            ]
+        },
+        {
+            "lookingForMore":true
+        },
+        {
+            "competitiveLevel":0,2,3
+        },
+        {
+            $or:[
+                {
+                    "rolesNeeded.tank":true
+                },
+                {
+                    "rolesNeeded.meleeassassin": true
+                },
+                {
+                    "rolesNeeded.rangedassassin": true
+                },
+                {
+                    "rolesNeeded.support": true
+                }, 
+                {
+                    "rolesNeeded.offlane": true
+                }, 
+                {
+                    "rolesNeeded.flex: true"
+                }
+            ]
+
+        },
+        {
+            "availability.monday.startTimeNumber": {
+                $gte: 2000
+            }
+        }, 
+        {
+            "availability.monday.endTimeNumber": {
+                $lte: 2400
+            }
+        },
+        {
+            "timeZone": "-6"
+        }
+    ]
+}
+*/
 
 function createTeamSearchObject(obj, reqUser) {
     let returnObj = {};
@@ -910,4 +816,49 @@ async function getUserProfile(id) {
         err => { return null; }
     )
     return user;
+}
+
+function userUnteamed() {
+    return {
+        $and: [{
+                $or: [{
+                        "teamId": null
+                    },
+                    {
+                        "teamId": {
+                            $exists: false
+                        }
+                    },
+                ]
+            },
+            {
+                $or: [{
+                        "teamName": null
+                    },
+                    {
+                        "teamName": {
+                            $exists: false
+                        }
+                    }
+                ]
+            },
+            {
+                $or: [{
+                        "pendingTeam": null
+                    },
+                    {
+                        "pendingTeam": {
+                            $exists: false
+                        }
+                    },
+                    {
+                        "pendingTeam": false
+                    }
+                ]
+            },
+            {
+                "lookingForGroup": true
+            }
+        ]
+    };
 }

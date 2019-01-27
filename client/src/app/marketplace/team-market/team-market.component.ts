@@ -225,7 +225,7 @@ export class TeamMarketComponent implements OnInit {
     let teamName = team.teamName_lower;
     this.request.joinTeamRequest(teamName).subscribe(
       res=>{
-        console.log(res);
+        // console.log(res);
       },
       err=>{console.log(err)}
     )

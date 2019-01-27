@@ -21,7 +21,6 @@ export class HttpServiceService {
                 if (showNotification) {
                   this.notificationService.subj_notification.next(res['message']);
                 }
-                console.log('httpPostService', res);
                 return res['returnObject'];
               }
             ),

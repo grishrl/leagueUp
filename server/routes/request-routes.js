@@ -456,10 +456,13 @@ router.post('/user/join/response', passport.authenticate('jwt', {
             teamName_lower: payloadTeamName
         }).then(
             team => {
-                if (team.invitedUsers) {
-                    team.invitedUsers.splice(team.invitedUsers.indexOf(payloadMemberToAdd), 1);
+                if (team) {
+                    if (team.invitedUsers) {
+                        team.invitedUsers.splice(team.invitedUsers.indexOf(payloadMemberToAdd), 1);
+                    }
+                    team.markModified('invitedUsers')
+                    team.save().then();
                 }
-                team.save().exec();
             },
             err => {
                 console.log(err);
@@ -467,7 +470,7 @@ router.post('/user/join/response', passport.authenticate('jwt', {
         )
         Message.findByIdAndDelete(messageId).then(
             msgDel => {
-                logObj.action = 'Team request denied by cpt';
+                logObj.action = 'Invite declined by player';
                 res.status(200).send(util.returnMessaging(path, "Team invite declined!", false, msgDel, null, logObj));
             },
             err => {

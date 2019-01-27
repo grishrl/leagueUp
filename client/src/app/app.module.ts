@@ -72,6 +72,7 @@ import { RulesComponent } from './rules/rules.component';
 import { TeamMessageCenterComponent } from './messageCenter/team-message-center/team-message-center.component';
 import { TeamMarketComponent } from './marketplace/team-market/team-market.component';
 import { UserMarketplaceComponent } from './marketplace/user-marketplace/user-marketplace.component';
+import { UserDeckComponent } from './marketplace/user-marketplace/user-deck/user-deck.component';
  
 
 @NgModule({
@@ -137,7 +138,8 @@ import { UserMarketplaceComponent } from './marketplace/user-marketplace/user-ma
     RulesComponent,
     TeamMessageCenterComponent,
     TeamMarketComponent,
-    UserMarketplaceComponent
+    UserMarketplaceComponent,
+    UserDeckComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
