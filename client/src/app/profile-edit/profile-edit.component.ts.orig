@@ -304,6 +304,9 @@ formControlledEnable(){
      }
    }
 
+<<<<<<< HEAD
+  ngOnInit() {   
+=======
   timezoneUpdate(){
     console.log(this.returnedProfile.timeZone);
     if (this.returnedProfile.timeZone != null || this.returnedProfile.timeZone!=undefined){
@@ -312,7 +315,8 @@ formControlledEnable(){
     }
   }
 
-  ngOnInit() {   
+  ngOnInit() {    
+>>>>>>> development
     let getProfile:string;
     if(this.providedProfile){
       getProfile = this.providedProfile;

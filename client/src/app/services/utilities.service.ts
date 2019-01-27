@@ -88,6 +88,18 @@ export class UtilitiesService {
     }
   }
 
+  updateAvailabilityToNum(obj){
+    let keys = Object.keys(obj.availability);
+    keys.forEach(element => {
+      let day = obj.availability[element];
+      if (day.available) {
+        day['startTimeNumber'] = this.convertToMil(day.startTime);
+        day['endTimeNumber'] = this.convertToMil(day.endTime);
+      }
+    });
+  }
+
+
   convertToMil(time) {
     if(typeof time === 'string'){
       let colonSplit = time.split(':');

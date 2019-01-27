@@ -394,6 +394,16 @@ export class TeamProfileComponent implements OnInit {
       this.editOn = true;
       this.formControlledDisable();
 
+<<<<<<< HEAD
+      let keys = Object.keys(this.returnedProfile.availability);
+      keys.forEach(element => {
+        let obj = this.returnedProfile.availability[element];
+        if (obj.available) {
+          obj['startTimeNumber'] = this.util.zeroGMT(obj.startTime, this.returnedProfile.timeZone);
+          obj['endTimeNumber'] = this.util.zeroGMT(obj.endTime, this.returnedProfile.timeZone);
+        }
+      });
+=======
       this.util.updateAvailabilityToNum(this.returnedProfile);
       // let keys = Object.keys(this.returnedProfile.availability);
       // keys.forEach(element => {
@@ -403,6 +413,7 @@ export class TeamProfileComponent implements OnInit {
       //     obj['endTimeNumber'] = this.util.convertToMil(obj.endTime);
       //   }
       // });
+>>>>>>> development
 
       let cptRemoved = Object.assign({}, this.returnedProfile);
       delete cptRemoved.captain;

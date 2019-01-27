@@ -218,14 +218,14 @@ export class TimesAvailableComponent implements OnInit, DoCheck {
         }
       }
     if (nodays == 7) {
-      ret = false;
-      this.errorReply = 'Must include at least 1 day of availability';
+      // ret = false;
+      // this.errorReply = 'Must include at least 1 day of availability';
     }
     if (ret) {
       this.errorReply = '';
     }
     this.errorAvail = !ret;
-    this.availValid.emit(ret);
+    this.availValid.emit({valid:ret,numdays:7-nodays});
   }
 
 }
