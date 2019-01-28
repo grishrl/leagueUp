@@ -193,12 +193,12 @@
 
                             </div>
                             <div *ngIf="showLeaveTeam(player.displayName)" class="col">
-                                <button class="btn btn-danger" (click)="removeMember(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)">
+                                <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)">
                                 Leave Team 
                             </button>
                             </div>
                             <div *ngIf="!editOn" class="col">
-                                <button class="btn btn-danger" (click)="removeMember(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)"> X </button>
+                                <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)"> X </button>
                             </div>
                         </div>
                     </div>
@@ -208,12 +208,12 @@
                                 <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]">{{player.displayName}}</a>
                             </div>
                             <div *ngIf="showLeaveTeam(player.displayName)" class="col">
-                                <button class="btn btn-danger" (click)="removeMember(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)">
+                                <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)">
                                 Leave Team 
                             </button>
                             </div>
                             <div *ngIf="!editOn" class="col">
-                                <button class="btn btn-danger" (click)="removeMember(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)"> X </button>
+                                <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)"> X </button>
                             </div>
                         </div>
                     </div>

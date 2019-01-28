@@ -34,14 +34,25 @@
                     </li>
                     <ng-template #loggedIn>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle finger" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">{{Auth.getUser()}} </a>
+
+
+                            <div class="nav-link dropdown-toggle finger" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
+                                <span>{{Auth.getUser()}}</span>
+                                <span *ngIf="userMessages>0" class="myFaStack fa" style="line-height:inherit;">
+                                <i class="far fa-envelope fa-stack-1x"></i>
+                                <span class="fa-stack-1x">!</span>
+                                </span>
+                                <!-- <i *ngIf="userMessages>0" class="material-icons">email</i><span>{{userMessages}}</span> -->
+                                <!-- <span style="position: relative; left: -20px; color: black; top: -5px;" *ngIf="userMessages>0">{{userMessages}}</span> -->
+                            </div>
+
                             <div class="dropdown-menu">
                                 <a class="dropdown-item finger" [routerLink]="['/profile/',user.routeFriendlyUsername(Auth.getUser())]" (click)="navGo('/profile/',user.routeFriendlyUsername(Auth.getUser()))">Profile</a>
                                 <!-- message center -->
                                 <a class="dropdown-item finger" [routerLink]="['/messageCenter']" (click)="navGo('/messageCenter')">
                                     <div>
                                         <span>Message Center</span>
-                                        <span class="badge badge-pill badge-success ml-1" *ngIf="userMessages>0">{{userMessages}}</span>
+                                        <span class="badge badge-pill ml-1 badge-success" *ngIf="userMessages>0"> {{userMessages}} </span>
                                     </div>
                                 </a>
 

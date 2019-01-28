@@ -19,3 +19,11 @@
 .showlink {
     text-decoration: underline;
 }
+
+.mat-threeQuarter {
+    width: 75%;
+}
+
+.pill-shadow {
+    box-shadow: 1px 1px #6f6363;
+}

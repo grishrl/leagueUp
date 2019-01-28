@@ -3,13 +3,15 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { UtilitiesService } from './utilities.service';
+import { Socket } from 'ngx-socket-io';
+import { NotificationService } from './notification.service';
 
 
 @Injectable({providedIn: 'root'})
 
 export class AuthService {
 
-  constructor(private router:Router, private http: HttpClient, private util:UtilitiesService){
+  constructor(private router:Router, private http: HttpClient, private util:UtilitiesService, private socket:Socket, private notificationService:NotificationService){
    
   }
 
@@ -76,6 +78,11 @@ export class AuthService {
     if(decodedToken.id){
       this.setUserId(decodedToken.id);
     }
+
+    if (this.getUserId()) {
+      this.socket.emit('storeClientInfo', { userId: this.getUserId() });
+    }
+    this.notificationService.updateLogin.next('next');
   }
 
   //USER ID

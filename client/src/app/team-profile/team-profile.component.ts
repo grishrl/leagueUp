@@ -14,6 +14,7 @@ import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { Profile } from '../classes/profile.class';
 import { UtilitiesService } from '../services/utilities.service';
 import { RequestService } from '../services/request.service';
+import { ConfirmRemoveMemberComponent } from '../modal/confirm-remove-member/confirm-remove-member.component';
 
 
 @Component({
@@ -89,7 +90,27 @@ export class TeamProfileComponent implements OnInit {
     return player==this.returnedProfile.captain;
   }
 
+
+  openConfirmRemove(player): void {
+      const openConfirmRemove = this.dialog.open(ConfirmRemoveMemberComponent, {
+        width: '450px',
+        data: { player:player }
+      });
+
+      openConfirmRemove.afterClosed().subscribe(result => {
+        if (result != undefined && result != null) {
+          if(result == 'confirm'){
+            this.removeMember(player)
+          }
+
+        }
+      });
+    }
+  
+
   removeMember(player){
+ 
+    //TODO: ADD A CONFIRM HERE
     if(this.componentEmbedded){
       this.admin.removeMembers(this.returnedProfile.teamName_lower, player).subscribe(
         (res) => {
@@ -103,7 +124,12 @@ export class TeamProfileComponent implements OnInit {
     }else{
       this.team.removeUser(player, this.returnedProfile.teamName_lower).subscribe(
         (res) => {
-          console.log('user removed');
+          
+          //if the user left the group, destroy their team local info so they can carry on
+          if(this.auth.getUser()==player){
+            this.auth.destroyTeam();
+            this.auth.destroyTeamId();
+          }
           this.ngOnInit();
         },
         (err) => {
@@ -263,7 +289,6 @@ export class TeamProfileComponent implements OnInit {
     this.validAvailableTimes=event.valid;
     this.validAvailDays = event.numdays
   }
-
 
   //this method controls the opening of the change captain modal
   openCaptainChangeDialog():void{

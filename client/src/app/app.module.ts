@@ -69,11 +69,13 @@ import { MatchViewComponent } from './match-view/match-view.component';
 import { DropDownTimeComponent } from './times-available/drop-down-time/drop-down-time.component';
 import { UserMessageCenterComponent } from './messageCenter/user-message-center/user-message-center.component';
 import { RulesComponent } from './rules/rules.component';
-import { TeamMessageCenterComponent } from './messageCenter/team-message-center/team-message-center.component';
 import { TeamMarketComponent } from './marketplace/team-market/team-market.component';
 import { UserMarketplaceComponent } from './marketplace/user-marketplace/user-marketplace.component';
 import { UserDeckComponent } from './marketplace/user-marketplace/user-deck/user-deck.component';
- 
+ import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+import { ConfirmRemoveMemberComponent } from './modal/confirm-remove-member/confirm-remove-member.component';
+
+ const config: SocketIoConfig = { url: 'http://localhost:5000', options:{} }
 
 @NgModule({
   declarations: [
@@ -136,14 +138,15 @@ import { UserDeckComponent } from './marketplace/user-marketplace/user-deck/user
     DropDownTimeComponent,
     UserMessageCenterComponent,
     RulesComponent,
-    TeamMessageCenterComponent,
     TeamMarketComponent,
     UserMarketplaceComponent,
-    UserDeckComponent
+    UserDeckComponent,
+    ConfirmRemoveMemberComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
     ChangeCaptainModalComponent,
+    ConfirmRemoveMemberComponent,
     EventModalComponent
   ],
   imports: [
@@ -159,7 +162,8 @@ import { UserDeckComponent } from './marketplace/user-marketplace/user-deck/user
     CalendarModule.forRoot({
       provide: DateAdapter,
       useFactory: adapterFactory
-    })
+    }),
+    SocketIoModule.forRoot(config)
   ],
   providers: [
     {

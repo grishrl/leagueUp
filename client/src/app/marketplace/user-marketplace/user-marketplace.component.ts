@@ -169,6 +169,7 @@ export class UserMarketplaceComponent implements OnInit {
     this.hasSearched = false;
     this.localResults = [];
     this.getNextPage(this.getFiltered, 0, true);
+    this.getAllUsers(this.getFiltered);
   }
 
   teamInfo;

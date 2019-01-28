@@ -6,6 +6,7 @@ import { UserService } from 'src/app/services/user.service';
 import { RequestService } from 'src/app/services/request.service';
 import { TeamService } from 'src/app/services/team.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
+import { Socket } from 'ngx-socket-io';
 
 @Component({
   selector: 'app-user-message-center',
@@ -14,7 +15,17 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 })
 export class UserMessageCenterComponent implements OnInit {
 
-  constructor(public util:UtilitiesService, public user:UserService, public team:TeamService, private request:RequestService, private auth:AuthService, private messageCenter:MessagesService, private notificationService:NotificationService) { }
+  constructor(public util:UtilitiesService, public user:UserService, public team:TeamService, private request:RequestService, private auth:AuthService, private messageCenter:MessagesService, 
+    private notificationService:NotificationService, private socket:Socket) {
+    this.socket.fromEvent('newMessage').subscribe(
+      res => {
+        this.ngOnInit();
+      },
+      err => {
+        console.log(err);
+      }
+    )
+   }
 
   messages:any = [];
   selectedMessage;
@@ -24,7 +35,6 @@ export class UserMessageCenterComponent implements OnInit {
     this.messageCenter.markRead(message._id).subscribe(
       res=>{
         this.notificationService.updateMessages.next('Msg center updated');
-        console.log('back from the message center ', res);
       },err=>{
         console.log(err);
       }
@@ -32,38 +42,41 @@ export class UserMessageCenterComponent implements OnInit {
   }
 
   deleteMessage(message){
-    this.messageCenter.deleteMessage(message._id).subscribe(res=>{
-      let ind = -1;
-      this.messages.forEach((element, index) => {
-        if(element._id==message._id){
-          ind = index;
+    if (this.util.returnBoolByPath(message,'request')){
+      this.actionRequest(false, message);
+    }else{
+      this.messageCenter.deleteMessage(message._id).subscribe(res => {
+        let ind = -1;
+        this.messages.forEach((element, index) => {
+          if (element._id == message._id) {
+            ind = index;
+          }
+        });
+        if (ind > -1) {
+          this.messages.splice(ind, 1);
+          if (this.selectedMessage._id == message._id) {
+            this.selectedMessage = null;
+          }
         }
-      });
-      if(ind>-1){
-        this.messages.splice(ind, 1);
-        if (this.selectedMessage._id == message._id){
-          this.selectedMessage = null;
-        }
-      }
-    },err=>{
-      console.log(err);
-    })
+      }, err => {
+        console.log(err);
+      })
+    }
+
   }
 
   actionRequest(act, msg){
-    if (this.selectedMessage.request.instance == 'team'){
+    if (msg.request.instance == 'team'){
       this.request.approveTeamRequest(msg.request.target, msg.request.requester, act, msg._id).subscribe((res) => {
         this.ngOnInit();
       }, (err) => {
         this.ngOnInit();
-        console.log('err ', err);
       })
-    } else if (this.selectedMessage.request.instance == 'user'){
+    } else if (msg.request.instance == 'user'){
       this.request.acceptTeamInvite(msg.request.requester, msg.request.target, act, msg._id).subscribe((res) => {
         this.ngOnInit();
       }, (err) => {
         this.ngOnInit();
-        console.log('err ', err);
       });
     }
 
@@ -75,7 +88,6 @@ export class UserMessageCenterComponent implements OnInit {
     this.messageCenter.getMessages(this.auth.getUserId()).subscribe(
       res=>{
         this.messages = res;
-        // console.log(res);
       },
       err=>{
         console.log(err);

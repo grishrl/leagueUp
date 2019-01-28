@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col">
 
-            <div class="row">
+            <div class="row mt-2">
                 <div class="col text-center">
                     <h4>Find A Player</h4>
                 </div>
@@ -15,38 +15,39 @@
             </div>
             <div *ngIf="showSearch">
                 <div class="row">
-                    <div>Search by In-Game Ranking: <span class="ml-5 finger badge badge-pill badge-light" (click)=" searchParameters.divisions = []; selectedDivision=null;">Reset</span></div>
-                    <mat-form-field>
-                        <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="selected(selectedDivision)" disableOptionCentering>
-                            <mat-option *ngFor="let division of filterSelected()" [value]="division">{{division}}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-                <div class="col">
-                    <div>Selected Divisions</div>
-                    <div *ngFor="let div of searchParameters.divisions">{{div}}</div>
-                </div>
-                <div class="col">
-                    <div>Search by Player Average MMR <span class="ml-5 finger badge badge-pill badge-light" (click)="resetMMRS()">Reset</span></div>
-                    <div class="row">
-                        <div class="col">
-                            <mat-form-field>
-                                <input matInput type="number" placeholder="Lower MMR" [(ngModel)]="searchParameters.lowerMMR">
-                            </mat-form-field>
-                        </div>
+                    <div class="col">
+                        <div>Search by In-Game Ranking: <span class="ml-5 finger badge badge-pill pill-shadow badge-light" (click)=" searchParameters.divisions = []; selectedDivision=null;">Reset</span></div>
+                        <mat-form-field>
+                            <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="selected(selectedDivision)" disableOptionCentering>
+                                <mat-option *ngFor="let division of filterSelected()" [value]="division">{{division}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
                     </div>
-                    <div class="row">
-                        <div class="col">
-                            <mat-form-field>
-                                <input matInput type="number" placeholder="Upper MMR" [(ngModel)]="searchParameters.upperMMR">
-                            </mat-form-field>
-                        </div>
+                    <div class="col">
+                        <div style="border-bottom-style: solid; border-bottom-width: 1px;">Selected Divisions:</div>
+                        <div *ngFor="let div of searchParameters.divisions; let ind=index" [ngClass]="{oddRow : ind%2!=0}">{{div}}</div>
                     </div>
                 </div>
-
                 <div class="row">
                     <div class="col">
-                        <div>Player Competitive Level <span class="ml-5 finger badge badge-pill badge-light" (click)=" searchParameters.competitiveLevel = null">Reset</span>
+                        <div>Search by Player Average MMR <span class="ml-5 finger badge badge-pill pill-shadow badge-light" (click)="resetMMRS()">Reset</span></div>
+                        <div class="row">
+                            <div class="col text-center">
+                                <mat-form-field>
+                                    <input matInput type="number" placeholder="Lower MMR" [(ngModel)]="searchParameters.lowerMMR">
+                                </mat-form-field>
+                            </div>
+                            <div class="col text-center">
+                                <mat-form-field>
+                                    <input matInput type="number" placeholder="Upper MMR" [(ngModel)]="searchParameters.upperMMR">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div>Player Competitive Level <span class="ml-5 finger badge badge-pill pill-shadow badge-light" (click)=" searchParameters.competitiveLevel = null">Reset</span>
                         </div>
                         <mat-form-field class="mat-FullWidth">
                             <mat-select placeholder="Player Competitive Level" [(ngModel)]="searchParameters.competitiveLevel">
@@ -60,10 +61,10 @@
                     </div>
                 </div>
 
-                <div class="row mt-3">
+                <div class="row mt-4">
                     <div class="col">
-                        <div>Players who play these roles: <span class="ml-5 finger badge badge-pill badge-light" (click)="resetRoles()">Reset</span></div>
-                        <section>
+                        <div class="">Players who play these roles: <span class="ml-5 finger badge badge-pill pill-shadow badge-light" (click)="resetRoles()">Reset</span></div>
+                        <section class="mt-2">
                             <mat-checkbox class="role-margin" [(ngModel)]="searchParameters.rolesNeeded.tank">Tank</mat-checkbox>
                             <mat-checkbox class="role-margin" [(ngModel)]="searchParameters.rolesNeeded.offlane">Offlane</mat-checkbox>
                             <mat-checkbox class="role-margin" [(ngModel)]="searchParameters.rolesNeeded.meleeassassin">Melee Assassin</mat-checkbox>
@@ -87,7 +88,7 @@
                     </div>
                     <div class="col">
                         <div class="col">
-                            <span class="finger badge badge-pill badge-light" (click)="searchParameters.customTime=null">Reset</span>
+                            <span class="finger badge badge-pill pill-shadow badge-light" (click)="searchParameters.customTime=null">Reset</span>
                         </div>
                     </div>
                 </div>
@@ -108,7 +109,7 @@
                         </mat-radio-group>
                     </div>
                     <div class="col">
-                        <span class="finger badge badge-pill badge-light" (click)="searchParameters.timezone=null">Reset</span>
+                        <span class="finger badge badge-pill pill-shadow badge-light" (click)="searchParameters.timezone=null">Reset</span>
                     </div>
                 </div>
                 <div class="row" *ngIf="searchParameters.timezone == 'custom'">

@@ -16,6 +16,78 @@ const AWS = require('aws-sdk');
 const sysModels = require('../models/system-models');
 const logger = require('../subroutines/sys-logging-subs');
 const Message = require('../models/message-models');
+const socketIo = require('../../serverConf')['socketIo'];
+
+var clients = [];
+socketIo.on('connection', function(client) {
+
+    client.on('storeClientInfo', function(data) {
+        console.log(data.userId, clients);
+        console.log(indexOfUser(clients, data.userId));
+        if (indexOfUser(clients, data.userId) == -1) {
+            let clientInfo = {};
+            clientInfo.userId = data.userId;
+            clientInfo.clientId = client.id;
+            clients.push(clientInfo);
+            console.log('new client connected ', clientInfo);
+        }
+
+
+    });
+
+    client.on('disconnect', function() {
+        console.log('client disconnecting..');
+        if (indexOfClient(clients, client.id) > -1) {
+
+            console.log('removed client ', clients.splice(indexOfClient(clients, client.id), 1));
+        }
+    });
+
+});
+
+function indexOfClient(clients, client) {
+    let ind = -1;
+    clients.forEach((clientIt, index) => {
+        if (clientIt.clientId == client) {
+            ind = index;
+        }
+    });
+    return ind;
+}
+
+function indexOfUser(clients, user) {
+    let ind = -1;
+    clients.forEach((clientIt, index) => {
+        if (clientIt.userId == user) {
+            ind = index;
+        }
+    });
+    return ind;
+}
+
+function dispatchMessage(recepient) {
+    console.log(clients);
+    if (clients.length > 0) {
+        let dispatchToId = null;
+        clients.forEach((clientIt) => {
+            if (clientIt.userId == recepient) {
+                dispatchToId = clientIt.clientId;
+            }
+        });
+        if (dispatchToId) {
+            let namespace = null;
+            let ns = socketIo.of(namespace || "/");
+            let socket = ns.connected[dispatchToId] // assuming you have  id of the socket
+            if (socket) {
+                let message = 'this client has a new message!';
+                socket.emit("newMessage", message);
+            } else {
+                console.log("Socket not connected, sending through push notification");
+            }
+        }
+
+    }
+}
 
 router.post('/team/join', passport.authenticate('jwt', {
     session: false
@@ -58,6 +130,7 @@ router.post('/team/join', passport.authenticate('jwt', {
 
                             new Message(msg).save().then(
                                 (newmsg) => {
+                                    dispatchMessage(msg.recipient)
                                     res.status(200).send(util.returnMessaging(path, 'Message sent', null, null, null, logObj))
                                 }, (err) => {
                                     res.status(500).send(util.returnMessaging(path, 'There was an error sending request', err, null, null, logObj));
@@ -180,7 +253,8 @@ router.post('/team/join/response', passport.authenticate('jwt', {
 
                                     new Message(msg).save().then(
                                         (newmsg) => {
-                                            //log or nah?
+                                            dispatchMessage(msg.recipient)
+                                                //log or nah?
                                         }, (err) => {
                                             //log or nah?
                                         }
@@ -280,6 +354,7 @@ router.post('/user/join', passport.authenticate('jwt', {
                             msg.timeStamp = new Date().getTime();
                             new Message(msg).save().then(
                                 (newmsg) => {
+                                    dispatchMessage(msg.recipient);
                                     res.status(200).send(util.returnMessaging(path, 'Invite sent, this user must accept the invite!', null, null, null, logObj));
                                     if (foundTeam.invitedUsers) {
                                         foundTeam.invitedUsers.push(payloadUserName);
@@ -398,7 +473,7 @@ router.post('/user/join/response', passport.authenticate('jwt', {
 
                                 foundTeam.save().then((saveOK) => {
 
-                                    res.status(200).send(util.returnMessaging(path, "User added to pending members", false, saveOK, null, logObj));
+                                    res.status(200).send(util.returnMessaging(path, "Team invite accepted!", false, saveOK, null, logObj));
                                     deleteOutstandingRequests(foundUser._id);
                                     UserSub.togglePendingTeam(foundUser.displayName);
                                     QueueSub.addToPendingTeamMemberQueue(foundTeam.teamName_lower, foundUser.displayName);
@@ -406,7 +481,7 @@ router.post('/user/join/response', passport.authenticate('jwt', {
                                     getCptId(foundTeam.captain).then(
                                         cpt => {
                                             let msg = {};
-                                            msg.sender = req.foundUser._id;
+                                            msg.sender = foundUser._id;
                                             msg.recipient = cpt._id;
                                             msg.subject = 'Team invite response';
                                             msg.content = req.user.displayName + ' accepted your request to join the team!  The request has been added to the approval queue for the admins.';
@@ -415,11 +490,20 @@ router.post('/user/join/response', passport.authenticate('jwt', {
 
                                             new Message(msg).save().then(
                                                 (newmsg) => {
+                                                    dispatchMessage(msg.recipient);
                                                     //log or nah?
                                                 }, (err) => {
                                                     //log or nah?
                                                 }
                                             )
+                                        },
+                                        err => {
+
+                                        }
+                                    );
+                                    Message.findByIdAndDelete(messageId).then(
+                                        msgDel => {
+
                                         },
                                         err => {
 

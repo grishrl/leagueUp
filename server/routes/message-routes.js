@@ -4,6 +4,20 @@ const User = require('../models/user-models');
 const Message = require('../models/message-models');
 const passport = require("passport");
 
+// setInterval(function() {
+//     if (clients.length > 0 && clients[0].clientId) {
+//         let namespace = null;
+//         let ns = socketIo.of(namespace || "/");
+//         let socket = ns.connected[clients[0].clientId] // assuming you have  id of the socket
+//         if (socket) {
+//             console.log("Socket Connected, sent through socket");
+//             socket.emit("event", clients);
+//         } else {
+//             console.log("Socket not connected, sending through push notification");
+//         }
+//     }
+// }, 5000);
+
 router.post('/get/message', passport.authenticate('jwt', {
     session: false
 }), util.appendResHeader, (req, res) => {
