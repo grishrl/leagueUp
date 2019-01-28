@@ -22,27 +22,20 @@ var clients = [];
 socketIo.on('connection', function(client) {
 
     client.on('storeClientInfo', function(data) {
-        console.log(data.userId, clients);
-        console.log(indexOfUser(clients, data.userId));
         if (indexOfUser(clients, data.userId) == -1) {
             let clientInfo = {};
             clientInfo.userId = data.userId;
             clientInfo.clientId = client.id;
             clients.push(clientInfo);
-            console.log('new client connected ', clientInfo);
         }
-
-
     });
 
     client.on('disconnect', function() {
         console.log('client disconnecting..');
         if (indexOfClient(clients, client.id) > -1) {
-
-            console.log('removed client ', clients.splice(indexOfClient(clients, client.id), 1));
+            clients.splice(indexOfClient(clients, client.id), 1)
         }
     });
-
 });
 
 function indexOfClient(clients, client) {
@@ -81,8 +74,6 @@ function dispatchMessage(recepient) {
             if (socket) {
                 let message = 'this client has a new message!';
                 socket.emit("newMessage", message);
-            } else {
-                console.log("Socket not connected, sending through push notification");
             }
         }
 
