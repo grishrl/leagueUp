@@ -23,6 +23,23 @@ export class AdminService {
     return this.httpService.httpGet(url, []);
   }
 
+  generateSeason(seas){
+    let url = 'schedule/generate/schedules';
+    let payload = {
+      season:seas
+    }
+    return this.httpService.httpPost(url, payload, true);
+  }
+
+  validateSeason(seas) {
+    let url = 'schedule/check/valid';
+    let payload = {
+      season: seas
+    }
+    return this.httpService.httpPost(url, payload, true);
+  }
+
+
   //admin function to remove memvers from team accepts team name and name of user to remove
   //member can be an array of strings or string
   removeMembers(team:string, member){

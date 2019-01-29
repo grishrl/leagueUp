@@ -74,6 +74,7 @@ import { UserMarketplaceComponent } from './marketplace/user-marketplace/user-ma
 import { UserDeckComponent } from './marketplace/user-marketplace/user-deck/user-deck.component';
  import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { ConfirmRemoveMemberComponent } from './modal/confirm-remove-member/confirm-remove-member.component';
+import { GenerateSeasonComponent } from './admin/match-management/generate-season/generate-season.component';
 
  const config: SocketIoConfig = { url: 'http://localhost:5000', options:{} }
 
@@ -141,7 +142,8 @@ import { ConfirmRemoveMemberComponent } from './modal/confirm-remove-member/conf
     TeamMarketComponent,
     UserMarketplaceComponent,
     UserDeckComponent,
-    ConfirmRemoveMemberComponent
+    ConfirmRemoveMemberComponent,
+    GenerateSeasonComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

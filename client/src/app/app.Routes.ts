@@ -36,6 +36,7 @@ import { UserMessageCenterComponent } from "./messageCenter/user-message-center/
 import { RulesComponent } from "./rules/rules.component";
 import { TeamMarketComponent } from "./marketplace/team-market/team-market.component";
 import { UserMarketplaceComponent } from "./marketplace/user-marketplace/user-marketplace.component";
+import { GenerateSeasonComponent } from "./admin/match-management/generate-season/generate-season.component";
 
 const APP_ROUTES: Routes = [
   { path: 'directory', component: DirectoryComponent},
@@ -60,6 +61,7 @@ const APP_ROUTES: Routes = [
   { path: '_admin/matchMgmt/match/:id', component: MatchEditComponent, canActivate: [AuthGuardService], data: { role: 'match' } },
   { path: '_admin/userACLMgmt', component: AdminAclManagementComponent, canActivate: [AuthGuardService], data: { role: 'acl' } },
   { path: '_admin/userACLMgmt/:id', component: UpdateRolesComponent, canActivate: [AuthGuardService], data: { role: 'acl' } },
+  { path: '_admin/scheduleGenerator', component: GenerateSeasonComponent, canActivate: [AuthGuardService], data: { role: 'schedulegen' } },
   { path: 'schedule/scheduleMatch/:id', component:MatchScheduleComponent},
   { path: 'schedule/teamSchedule', component: TeamScheduleComponent },
   { path: 'schedule/teamSchedule/:id', component:TeamScheduleComponent}, //accepts team name as url parameter
