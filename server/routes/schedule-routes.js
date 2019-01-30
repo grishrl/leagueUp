@@ -671,13 +671,11 @@ router.post('/generate/tournament', passport.authenticate('jwt', {
                     if (process) {
                         res.status(200).send(util.returnMessaging(path, 'Tournament generated', false, process, null, logObj));
                     } else {
-                        console.log('else ? ', process)
                         logObj.logLevel = 'ERROR';
                         logObj.error = 'Error occured in schedule generator, got null Tournament'
                         res.status(500).send(util.returnMessaging(path, 'Error 3 occured in Tournament generator', false, process, null, logObj));
                     }
                 }, (err) => {
-                    console.log('you done messed up sparky')
                     res.status(500).send(util.returnMessaging(path, 'Error 2 occured in Tournament generator', err, null, null, logObj));
                 })
             }

@@ -1,7 +1,6 @@
 const socketIo = require('./socket-io-config');
 
 function dispatchMessage(recepient) {
-    console.log(socketIo.clients);
     if (socketIo.clients.length > 0) {
         let dispatchToId = null;
         socketIo.clients.forEach((clientIt) => {

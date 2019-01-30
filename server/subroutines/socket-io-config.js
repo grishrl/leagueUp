@@ -3,7 +3,6 @@ const socketIo = require('../../serverConf')['socketIo'];
 var clients = [];
 
 socketIo.on('connection', function(client) {
-    console.log('client connected ');
     client.on('storeClientInfo', function(data) {
         if (indexOfUser(clients, data.userId) == -1) {
             let clientInfo = {};
