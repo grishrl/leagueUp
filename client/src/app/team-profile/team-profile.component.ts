@@ -36,6 +36,8 @@ export class TeamProfileComponent implements OnInit {
   errorAvail:boolean = false;
   displayMembersLeft: any[] = [];
   displayMembersRight: any[] = [];
+  displayPendingMembersLeft: any[] = [];
+  displayPendingMembersRight: any[] = [];
 
   hlMedals = ['Grand Master', 'Master', 'Diamond', 'Platinum', 'Gold', 'Silver', 'Bronze'];
   hlDivision = [1, 2, 3, 4, 5];
@@ -177,6 +179,8 @@ export class TeamProfileComponent implements OnInit {
     this.formControlledDisable();
     this.displayMembersLeft = [];
     this.displayMembersRight = [];
+    this.displayPendingMembersLeft = [];
+    this.displayPendingMembersRight = [];
     this.util.markFormGroupTouched(this.teamControlGroup)
     if(this.componentEmbedded && this.embedSource == 'admin'){
       this.editOn = false;
@@ -616,6 +620,20 @@ export class TeamProfileComponent implements OnInit {
     }else{
       this.displayMembersLeft = this.returnedProfile.teamMembers;
       this.displayMembersRight = [];
+    }
+    //PENDING MEMBERS
+    if (this.returnedProfile.pendingMembers.length > 3) {
+      let half = Math.round(this.returnedProfile.pendingMembers.length / 2);
+      for (var i = 0; i < half; i++) {
+        this.displayPendingMembersLeft.push(this.returnedProfile.pendingMembers[i]);
+      }
+
+      for (var j = half; j < this.returnedProfile.pendingMembers.length; j++) {
+        this.displayPendingMembersRight.push(this.returnedProfile.pendingMembers[j]);
+      }
+    } else {
+      this.displayPendingMembersLeft = this.returnedProfile.pendingMembers;
+      this.displayPendingMembersRight = [];
     }
   }
 
