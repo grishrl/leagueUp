@@ -31,6 +31,17 @@ export class AdminService {
     return this.httpService.httpPost(url, payload, true);
   }
 
+  generateTournament(teams, season, name, division){
+    let url = '/schedule/generate/tournament';
+    let payload = {
+      teams:teams,
+      season:season,
+      tournamentName:name,
+      division:division
+    };
+    return this.httpService.httpPost(url, payload, true);
+  }
+
   validateSeason(seas) {
     let url = 'schedule/check/valid';
     let payload = {

@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { AdminService } from 'src/app/services/admin.service';
 import { StandingsService } from 'src/app/services/standings.service';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { MatPaginator, PageEvent } from '@angular/material';
 
 @Component({
   selector: 'app-tournament-generator',
@@ -12,28 +13,104 @@ export class TournamentGeneratorComponent implements OnInit {
 
   divisions: any = [];
   selectedDivision: any = null;
-  constructor(private adminService:AdminService, private standingsService:StandingsService) { }
+  division
+  constructor(private adminService:AdminService, private standingsService:StandingsService, private admin:AdminService) { }
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   selected(div) {
+    this.tournamentSeed = [];
+    this.standings = [];
+    this.showAll=false;
+    this.division = div.divisionConcat;
     console.log(div);
     this.getStandings(div.divisionConcat);
   }
 
+  name:string;
+  season:string;
+  fetching=false;
+
   standings:any=[];
+  filterName: string = '';
+  displayArray = [];
+  length: number;
+  pageSize: number = 10;
+  filteredArray: any = [];
 
   getStandings(div) {
+    this.fetching = true;
     this.standingsService.getStandings(div).subscribe(
       (res) => {
+        this.fetching = false;
         this.standings = res;
       },
       (err) => {
+        this.fetching = false;
         console.log(err);
       }
     )
   }
+  showAll=false;
+  allTeams = [];
+  revealAllTeams(){
+    this.tournamentSeed = [];
+    this.standings = [];
+    this.fetching = true;
+    this.admin.getTeams().subscribe(
+      (res) => {
+        this.fetching = false;
+        this.allTeams = res;
+        this.filteredArray = this.allTeams;
+        this.length = this.filteredArray.length;
+        this.displayArray = this.allTeams.slice(0, 10);
+      },
+      (err) => {
+        this.fetching = false;
+        console.log(err);
+      }
+    )
+    this.showAll=!this.showAll;
+  }
+
+  selectedFromList(team){
+    this.tournamentSeed.push(team);
+  }
+
+  pageEventHandler(pageEvent: PageEvent) {
+    let i = pageEvent.pageIndex * this.pageSize;
+    let endSlice = i + this.pageSize
+    if (endSlice > this.filteredArray.length) {
+      endSlice = this.filteredArray.length;
+    }
+    this.displayArray = [];
+    this.displayArray = this.filteredArray.slice(i, endSlice)
+
+  } 
+
+  disableGenerate(){
+    let disable = true;
+    if(this.tournamentSeed.length>3){
+      if(this.showAll && this.name!=null||this.name!=undefined){
+        disable = false;
+      } else {
+        if(this.season){
+          disable = false;
+        }
+      }
+    }
+    return disable;
+  }
 
   generateBrackets(){
-    console.log(this.tournamentSeed);
+    this.adminService.generateTournament(this.tournamentSeed, this.season, this.name, this.division).subscribe(
+      res=>{
+
+      },
+      err=>{
+        console.log(err);
+      }
+    )
   }
 
   ngOnInit() {
@@ -41,13 +118,33 @@ export class TournamentGeneratorComponent implements OnInit {
       this.divisions = res;
     }, (err) => {
       console.log(err);
-    })
+    });
+    this.showAll =false;
+    this.season = null;
+    this.division=null;
+    this.name = null;
+    this.tournamentSeed = [];
+    this.standings = [];
   }
 
 
   tournamentSeed = [
 
   ];
+
+  teamInd(arr, team) {
+    let ind = -1;
+    arr.forEach((element, index) => {
+      if (team.teamName == element.teamName) {
+        ind = index;
+      }
+    });
+    return ind;
+  }
+
+  remove(item){
+    this.tournamentSeed.splice(this.teamInd(this.tournamentSeed, item), 1);
+  }
 
   drop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {

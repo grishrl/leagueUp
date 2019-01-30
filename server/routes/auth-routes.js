@@ -32,5 +32,12 @@ router.get('/bnet/redirect', function(req, res, next) {
     })(req, res, next);
 });
 
+router.get('/heartbeat', passport.authenticate('jwt', {
+    session: false
+}), (req, res) => {
+    const path = '/auth/heartbeat';
+    res.status(200).send(util.returnMessaging(path, 'Token Good', false, { 'message': 'OK' }));
+})
+
 
 module.exports = router;

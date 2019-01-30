@@ -10,6 +10,7 @@ const QueueSub = require('../subroutines/queue-subs');
 const UserSub = require('../subroutines/user-subs');
 const passport = require("passport");
 const levelRestrict = require("../configs/admin-leveling");
+const messageSub = require('../subroutines/message-subs');
 
 //returns the lists of users who are awaiting admin attention to complete the team join process
 router.get('/pendingMemberQueue', passport.authenticate('jwt', {
@@ -169,6 +170,18 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
     logObj.target = teamName + ' : ' + member + ' - ' + approved;
     logObj.logLevel = 'ADMIN';
 
+    let msg = {};
+    msg.sender = req.user._id;
+    msg.subject = 'Team Join Approval';
+    msg.timeStamp = new Date().getTime()
+    if (approved) {
+        msg.content = 'Your team join has been approved!';
+    } else {
+        msg.content = 'Your team join has been denied!';
+    }
+
+    msg.notSeen = true;
+
     //find team matching the team in question
     Team.findOne({
         teamName_lower: teamName
@@ -179,9 +192,12 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
             User.findOne({
                 displayName: member
             }).then((foundUser) => {
+
                 //we found the user
                 if (foundUser) {
+                    msg.recipient = foundUser._id.toString();
                     var foundTeamObject = foundTeam.toObject();
+
                     //double check that the user is in the pending members
                     if (foundTeamObject.hasOwnProperty('pendingMembers') && foundTeamObject.pendingMembers.length > 0) {
 
@@ -236,6 +252,7 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
                         logObj.error = 'team had no pending members';
                         res.status(500).send(util.returnMessaging(path, "The team " + teamName + " had no pending members!", null, null, null, logObj));
                     }
+                    messageSub(msg);
                 } else {
                     logObj.logLevel = 'ERROR';
                     logObj.error = 'This user was not found';
@@ -252,6 +269,7 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
     }, (err) => {
         res.status(500).send(util.returnMessaging(path, 'Error finding team', err, null, null, logObj));
     })
+
 });
 
 

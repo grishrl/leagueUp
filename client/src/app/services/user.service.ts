@@ -31,6 +31,11 @@ export class UserService {
 
   }
 
+  heartbeat(){
+    let url = '/auth/heartbeat';
+    return this.httpService.httpGet(url,[]);
+  }
+
   //searchs for users
   userSearch(id, type?):Observable<any>{
 
