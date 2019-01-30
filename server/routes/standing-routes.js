@@ -9,7 +9,8 @@ const passport = require("passport");
 router.post('/get/division', (req, res) => {
     const path = 'standings/get/division'
     let division = req.body.division;
-    Standings.calulateStandings(division).then(
+    let season = req.body.season;
+    Standings.calulateStandings(division, season).then(
         (processed) => {
             res.status(200).send(util.returnMessaging(path, 'Calculated Standings', false, processed));
         },

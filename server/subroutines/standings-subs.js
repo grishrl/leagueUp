@@ -2,9 +2,15 @@ const Match = require('../models/match-model');
 const util = require('../utils');
 const Team = require('../models/team-models');
 
-async function calulateStandings(division) {
+async function calulateStandings(division, season) {
     let teams;
-    let matchesForDivision = await Match.find({ divisionConcat: division }).lean().then(
+    let matchesForDivision = await Match.find({
+        $and: [{
+            divisionConcat: division
+        }, {
+            season: season
+        }]
+    }).lean().then(
         (matches) => {
             if (matches) {
                 teams = findTeamIds(matches);

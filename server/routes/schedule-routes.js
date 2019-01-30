@@ -609,7 +609,87 @@ router.post('/check/valid',
                 res.status(500).send(util.returnMessaging(path, 'Query Error', false, null, null, null));
             }
         )
+    });
+
+router.post('/generate/tournament', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.scheduleGenerator, util.appendResHeader, (req, res) => {
+
+    const path = '/schedule/generate/tournament';
+
+    let checkObj = {
+        $and: [{
+            type: 'tournament'
+        }]
+    }
+    let target = '';
+    let season;
+    if (req.body.season) {
+        season = req.body.season;
+        target += 'season: ' + season;
+        checkObj.$and.push({ season: season });
+    }
+    let division;
+    if (req.body.division) {
+        division = division;
+        target += ' division: ' + division;
+        checkObj.$and.push({ division: divison });
+    }
+
+    let tournamnetName;
+    if (req.body.tournamnetName) {
+        tournamnetName = req.body.tournamnetName;
+        target += ' tournamnetName: ' + tournamnetName;
+        checkObj.$and.push({ name: tournamnetName });
+    }
+
+    let teams = req.body.teams;
+    let teamids = [];
+    teams.forEach(team => {
+        if (teamids.indexOf(team.id) == -1) {
+            teamids.push(team.id);
+        }
     })
+    checkObj.$and.push({
+        participants: teamids
+    });
+    //log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = ' generated tournament ';
+    logObj.logLevel = 'STD';
+    logObj.target = target;
+
+
+
+    Scheduling.findOne(checkObj).then(
+        found => {
+            if (found) {
+                res.status(500).send(util.returnMessaging(path, 'Tournament previously generated', false, null, null, logObj));
+            } else {
+                scheduleGenerator.generateTournament(teams, season, division, tournamnetName).then((process) => {
+                    if (process) {
+                        res.status(200).send(util.returnMessaging(path, 'Tournament generated', false, process, null, logObj));
+                    } else {
+                        console.log('else ? ', process)
+                        logObj.logLevel = 'ERROR';
+                        logObj.error = 'Error occured in schedule generator, got null Tournament'
+                        res.status(500).send(util.returnMessaging(path, 'Error 3 occured in Tournament generator', false, process, null, logObj));
+                    }
+                }, (err) => {
+                    console.log('you done messed up sparky')
+                    res.status(500).send(util.returnMessaging(path, 'Error 2 occured in Tournament generator', err, null, null, logObj));
+                })
+            }
+        },
+        err => {
+            res.status(500).send(util.returnMessaging(path, 'Error 1 occured in Tournament generator', err, null, null, logObj));
+        }
+
+    )
+
+
+});
 
 module.exports = router;
 

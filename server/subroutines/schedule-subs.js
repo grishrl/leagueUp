@@ -1,10 +1,14 @@
-const Team = require('../models/team-models');
+const TeamModel = require('../models/team-models');
 const Division = require('../models/division-models');
 const Scheduling = require('../models/schedule-models');
 const uniqid = require('uniqid');
 const Match = require('../models/match-model');
 const util = require('../utils');
 const robin = require('roundrobin');
+const {
+    Team,
+    Tournament
+} = require('../bracketzadateam/bracketzada.min');
 
 
 /* Match report format required for the generator
@@ -37,7 +41,7 @@ async function generateSeason(season) {
             lowerTeam.push(iterTeam.toLowerCase());
         });
         // console.log('lowerTeam ', lowerTeam)
-        let participants = await Team.find({
+        let participants = await TeamModel.find({
             teamName_lower: {
                 $in: lowerTeam
             }
@@ -91,7 +95,7 @@ async function generateSeason(season) {
             lowerTeam.push(iterTeam.toLowerCase());
         });
         // console.log('lowerTeam ', lowerTeam)
-        let participants = await Team.find({
+        let participants = await TeamModel.find({
             teamName_lower: {
                 $in: lowerTeam
             }
@@ -227,6 +231,127 @@ function generateRoundRobinSchedule(season) {
     });
 }
 
+
+//generate tournament schedules
+//todo
+async function generateTournament(teams, season, division, name) {
+    let _teams = [];
+    let teamIds = [];
+
+
+    console.log(teams, season, division, name);
+
+
+
+    teams.forEach(team => {
+        if (teamIds.indexOf(team.id)) {
+            teamIds.push(team.id);
+        }
+        _teams.push(
+            new Team(team.id, team.teamName)
+        );
+    });
+
+
+    let expTeamLength = Math.pow(2, Math.ceil(Math.log2(_teams.length)));
+
+    while (_teams.length < expTeamLength) {
+        _teams.push(
+            new Team(000, 'BYE')
+        )
+    }
+
+    let seeded = [];
+    do {
+        let topSeed = _teams.splice(0, 1);
+        let bottomSeed = _teams.splice(_teams.length - 1, _teams.length);
+
+        seeded = seeded.concat([topSeed[0], bottomSeed[0]]);
+
+    }
+    while (_teams.length > 0);
+
+    seeded = splitSeeded(seeded);
+
+    let tournament = new Tournament(seeded, name);
+    let brackets = tournament.generateBrackets();
+
+    brackets.forEach(bracket => {
+        bracket['type'] = 'tournament';
+        if (division) {
+            bracket['divisionConcat'] = division;
+        }
+        if (season) {
+            bracket['season'] = season;
+        }
+        if (name) {
+            bracket['name'] = name;
+        }
+        let parent = bracket.id;
+        if (bracket.idChildren.length > 0) {
+            bracket.idChildren.forEach(id => {
+                brackets.forEach(subBrack => {
+                    if (id == subBrack.id) {
+                        subBrack.parentId = parent;
+                    }
+                })
+            })
+        }
+    });
+
+    let matchIDsArray = [];
+    brackets.forEach(bracket => {
+        let newId = uniqid();
+        let id = bracket.id;
+        bracket['matchId'] = newId;
+        matchIDsArray.push(newId);
+        delete bracket.id;
+        brackets.forEach(subBrack => {
+            if (subBrack.parentId == id) {
+                subBrack.parentId = newId;
+            }
+            let ind = subBrack.idChildren.indexOf(id);
+            if (ind > -1) {
+                subBrack.idChildren[ind] = newId;
+            }
+        });
+        if (hasBye(bracket)) {
+            promoteFromBye(bracket, brackets);
+        }
+    });
+
+    console.log('hello, ', JSON.stringify(brackets));
+
+    let matches = await Match.insertMany(brackets).then(res => {
+        console.log('matches inserted!');
+        return res;
+    }, err => {
+        console.log('error inserting matches');
+        return err;
+    });
+
+    let schedObj = {
+        'type': 'tournament',
+        'name': name,
+        'division': division,
+        'season': season,
+        'participants': teamIds,
+        'matches': matchIDsArray
+    }
+    let schedule = await new Scheduling(
+        schedObj
+    ).save().then((saved) => {
+        // console.log('fin', JSON.stringify(saved));
+        return saved;
+    }, (err) => {
+        // console.log(err);
+        return err;
+    });
+
+    return { 'matches': matches, 'schedule': schedule };
+
+}
+
 /*
 Need to generate 3 rounds ahead of time, then add those to the matches - no score reported
 So that we can generate further schedules without having rematches occur.
@@ -237,9 +362,56 @@ So that we can generate further schedules without having rematches occur.
 module.exports = {
     generateSeason: generateSeason,
     generateRoundSchedules: generateRoundSchedules,
-    generateRoundRobinSchedule: generateRoundRobinSchedule
+    generateRoundRobinSchedule: generateRoundRobinSchedule,
+    generateTournament: generateTournament
 };
 
+function hasBye(match) {
+    return util.returnByPath(match, 'away.teamName') === 'BYE' || util.returnByPath(match, 'home.teamName') === 'BYE'
+}
+
+function promoteFromBye(match, matches) {
+    let team;
+    if (util.returnByPath(match, 'away.teamName') !== 'BYE') {
+        team = util.returnByPath(match, 'away');
+    }
+    if (util.returnByPath(match, 'home.teamName') !== 'BYE') {
+        team = util.returnByPath(match, 'home');
+    }
+
+    if (team != null || team != undefined) {
+        let parent = match.parentId;
+
+        matches.forEach(matchIt => {
+            if (matchIt.matchId == parent) {
+                if (!util.returnBoolByPath(matchIt, 'away')) {
+                    matchIt['away'] = team;
+                } else {
+                    matchIt['home'] = team;
+                }
+
+            }
+        })
+
+    }
+
+}
+
+function splitSeeded(arr) {
+    var topHalf = [];
+    var bottomHalf = [];
+    for (var i = 0; i < arr.length; i = i + 4) {
+        topHalf.push(arr[i]);
+        topHalf.push(arr[i + 1]);
+    }
+    for (var i = 2; i < arr.length; i = i + 4) {
+        bottomHalf.push(arr[i]);
+        bottomHalf.push(arr[i + 1]);
+    }
+    arr = [];
+    arr = topHalf.concat(bottomHalf);
+    return arr;
+}
 
 // if (matches.length > 0) {
 //     Match.insertMany(matches).then(res => {

@@ -75,6 +75,8 @@ import { UserDeckComponent } from './marketplace/user-marketplace/user-deck/user
  import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { ConfirmRemoveMemberComponent } from './modal/confirm-remove-member/confirm-remove-member.component';
 import { GenerateSeasonComponent } from './admin/match-management/generate-season/generate-season.component';
+import { TournamentGeneratorComponent } from './admin/match-management/tournament-generator/tournament-generator.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
  const config: SocketIoConfig = { url: 'http://localhost:5000', options:{} }
 
@@ -143,7 +145,8 @@ import { GenerateSeasonComponent } from './admin/match-management/generate-seaso
     UserMarketplaceComponent,
     UserDeckComponent,
     ConfirmRemoveMemberComponent,
-    GenerateSeasonComponent
+    GenerateSeasonComponent,
+    TournamentGeneratorComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
@@ -165,7 +168,8 @@ import { GenerateSeasonComponent } from './admin/match-management/generate-seaso
       provide: DateAdapter,
       useFactory: adapterFactory
     }),
-    SocketIoModule.forRoot(config)
+    SocketIoModule.forRoot(config),
+    DragDropModule
   ],
   providers: [
     {

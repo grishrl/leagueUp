@@ -12,7 +12,8 @@ export class StandingsService {
   getStandings(div:string){
     let url = 'standings/get/division';
     let payload = {
-      division:div
+      division:div,
+      season:6
     };
     return this.httpService.httpPost(url, payload);
   }
