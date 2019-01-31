@@ -176,6 +176,7 @@ function returnUserToClient(prof, done) {
     tokenObject.teamInfo = {};
     tokenObject.teamInfo.teamName = prof.teamName;
     tokenObject.teamInfo.isCaptain = prof.isCaptain;
+    tokenObject.teamInfo.teamId = prof.teamId;
     tokenObject.id = prof._id;
     tokenObject.displayName = prof.displayName;
     Admin.AdminLevel.findOne({

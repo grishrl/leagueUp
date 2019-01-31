@@ -10,6 +10,7 @@ const uniqid = require('uniqid');
 const levelRestrict = require("../configs/admin-leveling");
 const scheduleGenerator = require('../subroutines/schedule-subs');
 const logger = require('../subroutines/sys-logging-subs');
+const Scheduling = require('../models/schedule-models');
 
 AWS.config.update({
     accessKeyId: process.env.S3accessKeyId,
@@ -586,6 +587,29 @@ router.post('/generate/schedules', passport.authenticate('jwt', {
 
 
 });
+
+router.post('/check/valid',
+    passport.authenticate('jwt', {
+        session: false
+    }), levelRestrict.scheduleGenerator, util.appendResHeader, (req, res) => {
+        const path = 'schedule/check/valid';
+
+        let season = req.body.season;
+
+        Scheduling.findOne({ season: season }).then(
+            found => {
+                if (found) {
+                    res.status(200).send(util.returnMessaging(path, 'Schedules found', false, { "valid": false }));
+
+                } else {
+                    res.status(200).send(util.returnMessaging(path, 'Schedules empty', false, { "valid": true }));
+                }
+            },
+            err => {
+                res.status(500).send(util.returnMessaging(path, 'Query Error', false, null, null, null));
+            }
+        )
+    })
 
 module.exports = router;
 

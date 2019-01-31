@@ -1,6 +1,6 @@
 {
     "name": "ngsMeanCore",
-    "version": "1.0.8",
+    "version": "1.1.2",
     "description": "Large package encompassing several capabilities for e-sports leagues",
     "main": "server.js",
     "scripts": {
@@ -25,6 +25,7 @@
         "hots-parser": "^6.41.2",
         "image-data-uri": "^2.0.0",
         "jsonwebtoken": "^8.4.0",
+        "lodash": "^4.17.11",
         "mongoose": "^5.4.0",
         "nodemailer": "^4.7.0",
         "passport": "^0.4.0",
@@ -34,6 +35,7 @@
         "pino-pretty": "^2.5.0",
         "request": "^2.88.0",
         "roundrobin": "^1.0.3",
+        "socket.io": "^2.2.0",
         "uniqid": "^5.0.3"
     },
     "devDependencies": {

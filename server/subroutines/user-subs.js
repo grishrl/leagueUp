@@ -110,9 +110,11 @@ function togglePendingTeam(user) {
         if (typeof pendingTeam == 'boolean') {
             changed = true;
             foundUser.pendingTeam = !foundUser.pendingTeam;
+            foundUser.lookingForGroup = false;
         } else if (pendingTeam == null || pendingTeam == undefined) {
             changed = true;
             foundUser.pendingTeam = true;
+            foundUser.lookingForGroup = false;
         }
         console.log(changed);
         if (changed) {

@@ -13,6 +13,8 @@ import { AdminService } from '../services/admin.service';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { Profile } from '../classes/profile.class';
 import { UtilitiesService } from '../services/utilities.service';
+import { RequestService } from '../services/request.service';
+import { ConfirmRemoveMemberComponent } from '../modal/confirm-remove-member/confirm-remove-member.component';
 
 
 @Component({
@@ -77,8 +79,9 @@ export class TeamProfileComponent implements OnInit {
 
   //constructor
   constructor(private auth: AuthService, public user: UserService, public timezone: TimezoneService, private team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router: Router,
-    private admin:AdminService, private util:UtilitiesService) {
+    private admin:AdminService, private util:UtilitiesService, private requestService:RequestService) {
     this.teamName = team.realTeamName(this.route.snapshot.params['id']);
+    console.log(this.teamName)
   }
 
   //methods
@@ -87,7 +90,27 @@ export class TeamProfileComponent implements OnInit {
     return player==this.returnedProfile.captain;
   }
 
+
+  openConfirmRemove(player): void {
+      const openConfirmRemove = this.dialog.open(ConfirmRemoveMemberComponent, {
+        width: '450px',
+        data: { player:player }
+      });
+
+      openConfirmRemove.afterClosed().subscribe(result => {
+        if (result != undefined && result != null) {
+          if(result == 'confirm'){
+            this.removeMember(player)
+          }
+
+        }
+      });
+    }
+  
+
   removeMember(player){
+ 
+    //TODO: ADD A CONFIRM HERE
     if(this.componentEmbedded){
       this.admin.removeMembers(this.returnedProfile.teamName_lower, player).subscribe(
         (res) => {
@@ -101,7 +124,12 @@ export class TeamProfileComponent implements OnInit {
     }else{
       this.team.removeUser(player, this.returnedProfile.teamName_lower).subscribe(
         (res) => {
-          console.log('user removed');
+          
+          //if the user left the group, destroy their team local info so they can carry on
+          if(this.auth.getUser()==player){
+            this.auth.destroyTeam();
+            this.auth.destroyTeamId();
+          }
           this.ngOnInit();
         },
         (err) => {
@@ -198,6 +226,11 @@ export class TeamProfileComponent implements OnInit {
         this.filterUsers.push(element['displayName']);
       });
     }
+    if (teamProfile.invitedUsers && teamProfile.invitedUsers.length > 0) {
+      teamProfile.invitedUsers.forEach(element => {
+        this.filterUsers.push(element);
+      });
+    }
     // console.log('teamProfile ',teamProfile);
     if (teamProfile.pendingMembers && teamProfile.pendingMembers.length > 0) {
       teamProfile.pendingMembers.forEach(element => {
@@ -256,7 +289,6 @@ export class TeamProfileComponent implements OnInit {
     this.validAvailableTimes=event.valid;
     this.validAvailDays = event.numdays
   }
-
 
   //this method controls the opening of the change captain modal
   openCaptainChangeDialog():void{
@@ -397,6 +429,10 @@ export class TeamProfileComponent implements OnInit {
       //   }
       // });
 
+      if (!this.checkRosterSize()){
+        this.returnedProfile.lookingForMore = false;
+      }
+
       let cptRemoved = Object.assign({}, this.returnedProfile);
       delete cptRemoved.captain;
 
@@ -430,6 +466,14 @@ export class TeamProfileComponent implements OnInit {
           } else {
             this.returnedProfile.pendingMembers.push({ "displayName": user });
           }
+      
+      // this.team.addUser(user, this.returnedProfile.teamName_lower).subscribe(res => {
+      //   this.message = res.message;
+      //   if (this.returnedProfile.pendingMembers == null){
+      //     this.returnedProfile.pendingMembers = [{ "displayName": user }];
+      //   }else{
+      //     this.returnedProfile.pendingMembers.push({ "displayName": user });
+      //   }
 
           this.filterUsers.push(user);
           // console.log(this.filterUsers);
@@ -471,6 +515,20 @@ export class TeamProfileComponent implements OnInit {
       return isteamcpt;
     }
   }
+
+  // requestToJoin(){
+  //   //TODO: request to join team
+  // }
+
+  // showRequestToJoin(){
+  //   if(!this.showEditDialog()){
+  //     if (this.auth.getTeam() != null && this.auth.getTeam() != undefined ){
+  //       return false;
+  //     }else{
+  //       return true;
+  //     }
+  //   }
+  // }
 
 
   //method hides or shows days based on whether the team is available or not, and shows all in edit mode.

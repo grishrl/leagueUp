@@ -42,6 +42,7 @@ export class ProfileEditComponent implements OnInit {
     
   }
 
+  showInvite = false;
   editOn = true;
 
   hotsLogsFormControl = new FormControl({value:'',disabled:true} ,[
@@ -131,6 +132,20 @@ formControlledEnable(){
     }
   }
 
+  showInviteToTeamButton(){
+    if ((this.returnedProfile.teamId == null || this.returnedProfile.teamId == undefined)
+      &&  (this.returnedProfile.teamName == null || this.returnedProfile.teamName == undefined )
+      && (this.returnedProfile['pendingTeam'] == null || this.returnedProfile['pendingTeam'] == undefined || this.returnedProfile['pendingTeam'] == false)) {
+      if (this.auth.getCaptain() === 'true'){
+        this.showInvite = true;
+      }else{
+        this.showInvite = false;
+      }
+    }else{
+      this.showInvite = false;
+    }
+  }
+
   confirm: string
 
   openDialog(): void {
@@ -172,6 +187,13 @@ formControlledEnable(){
     { val: 5, display: 'High' }
   ]
   
+  hideLookingForGroup(){
+    if(this.auth.getTeam()){
+      return false;
+    }else{
+      return true;
+    }
+  }
 
    hideDay(editSwitch, dayAvailabilty): boolean {
      if (!editSwitch){
@@ -290,14 +312,12 @@ formControlledEnable(){
    }
 
   timezoneUpdate(){
-    console.log(this.returnedProfile.timeZone);
     if (this.returnedProfile.timeZone != null || this.returnedProfile.timeZone!=undefined){
-      console.log('asdf');
       this.timezoneControl.setErrors(null);
     }
   }
 
-  ngOnInit() {    
+  ngOnInit() {   
     let getProfile:string;
     if(this.providedProfile){
       getProfile = this.providedProfile;
@@ -306,6 +326,7 @@ formControlledEnable(){
     }
     this.profSub = this.user.getUser(getProfile).subscribe((res) => { 
       merge(this.returnedProfile, res);
+      this.showInviteToTeamButton() 
       } )
   }
 

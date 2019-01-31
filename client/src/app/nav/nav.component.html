@@ -34,15 +34,35 @@
                     </li>
                     <ng-template #loggedIn>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle finger" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">{{Auth.getUser()}} </a>
+
+
+                            <div class="nav-link dropdown-toggle finger" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
+                                <span>{{Auth.getUser()}}</span>
+                                <span *ngIf="userMessages>0" class="myFaStack fa" style="line-height:inherit;">
+                                <i class="far fa-envelope fa-stack-1x"></i>
+                                <span class="fa-stack-1x">!</span>
+                                </span>
+                                <!-- <i *ngIf="userMessages>0" class="material-icons">email</i><span>{{userMessages}}</span> -->
+                                <!-- <span style="position: relative; left: -20px; color: black; top: -5px;" *ngIf="userMessages>0">{{userMessages}}</span> -->
+                            </div>
+
                             <div class="dropdown-menu">
                                 <a class="dropdown-item finger" [routerLink]="['/profile/',user.routeFriendlyUsername(Auth.getUser())]" (click)="navGo('/profile/',user.routeFriendlyUsername(Auth.getUser()))">Profile</a>
+                                <!-- message center -->
+                                <a class="dropdown-item finger" [routerLink]="['/messageCenter']" (click)="navGo('/messageCenter')">
+                                    <div>
+                                        <span>Message Center</span>
+                                        <span class="badge badge-pill ml-1 badge-success" *ngIf="userMessages>0"> {{userMessages}} </span>
+                                    </div>
+                                </a>
+
                                 <div *ngIf="Auth.getTeam(); else noTeam">
                                     <a class="dropdown-item finger" [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(Auth.getTeam())]" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( Auth.getTeam() ) )">Team</a>
                                     <!-- [routerLink]="['/schedule/teamSchedule']" -->
                                     <a class="dropdown-item finger" [routerLink]="['/schedule/teamSchedule']" (click)="navGo('/schedule/teamSchedule')">Schedule</a>
                                     <div *ngIf="Auth.getCaptain() && Auth.getCaptain() != 'false'">
-                                        <!--TODO: implement Find players <a class="dropdown-item" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( Auth.getTeam() ) )">Find Players</a> -->
+
+                                        <a class="dropdown-item" [routerLink]="['/findPlayers']" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( Auth.getTeam() ) )">Find Players</a>
                                         <a class="dropdown-item finger" [routerLink]="['/reporting',team.routeFriendlyTeamName( Auth.getTeam() )]" (click)="navGo('/reporting/',team.routeFriendlyTeamName( Auth.getTeam() ) )">Reporting</a>
                                     </div>
 
@@ -51,7 +71,8 @@
                                     <!-- [routerLink]="['/teamCreate']" -->
                                     <a class="dropdown-item finger" [routerLink]="['/teamCreate']" (click)="navGo('/teamCreate')">Create
   Team</a>
-                                    <!-- TODO: implement a find team <a class="dropdown-item finger" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( teamName ) )">Find Team</a> -->
+
+                                    <a class="dropdown-item finger" [routerLink]="['/findTeams']" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( teamName ) )">Find Team</a>
                                 </ng-template>
                                 <a *ngIf="Auth.getAdmin() && Auth.getAdmin().length>0" class="dropdown-item finger" [routerLink]="['/_admin/dashboard']" (click)="navGo('/_admin/dashboard')">Admin Dashboard</a>
                                 <a *ngIf="Auth.getCaster()" class="dropdown-item finger" data-toggle="collapse" [routerLink]="['/_casterDashboard']" (click)="navGo('/_casterDashboard')">Caster

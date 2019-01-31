@@ -1,6 +1,6 @@
 {
     "name": "ngsMeanCore",
-    "version": "1.0.13",
+    "version": "1.1.2",
     "scripts": {
         "ng": "ng",
         "start": "ng serve",
@@ -45,6 +45,7 @@
         "lodash": "^4.17.11",
         "marked": "^0.5.1",
         "ngx-croppie": "^1.1.0",
+        "ngx-socket-io": "^2.1.1",
         "popper.js": "^1.14.4",
         "rxjs": "~6.2.0",
         "typescript": "~2.9.2",

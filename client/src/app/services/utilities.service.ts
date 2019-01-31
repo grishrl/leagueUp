@@ -114,14 +114,9 @@ export class UtilitiesService {
     if (typeof localTime === 'string') {
       localTime = this.convertToMil(localTime);
     }
+    timezone = parseInt(timezone);
     let correct = localTime - (timezone * 100);
-    if (correct > 2400) {
-     return 2400;
-   } else if (correct < 0) {
-      return 0;
-    } else {
-      return correct;
-    }
+    return correct;
 }
 
   returnBoolByPath(obj, path): boolean {

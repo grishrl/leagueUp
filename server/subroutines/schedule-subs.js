@@ -73,6 +73,60 @@ async function generateSeason(season) {
     return sched;
 }
 
+//this function will user orgenerates the framework for scheduling for the season.  
+//it will generate the schedules for each division as provided.
+//after this is ran, division changes should not be performed!!!!!!!
+
+async function generateSeason(season) {
+    let divObj = {};
+    let getDivision = await Division.find().then((res) => {
+        return res;
+    });
+    for (var i = 0; i < getDivision.length; i++) {
+        let thisDiv = getDivision[i];
+        // console.log('thisDiv ', thisDiv)
+        divObj[thisDiv.divisionConcat] = {};
+        let lowerTeam = [];
+        thisDiv.teams.forEach(iterTeam => {
+            lowerTeam.push(iterTeam.toLowerCase());
+        });
+        // console.log('lowerTeam ', lowerTeam)
+        let participants = await Team.find({
+            teamName_lower: {
+                $in: lowerTeam
+            }
+        }).then((teams) => {
+            let participants = [];
+            if (teams && teams.length > 0) {
+                teams.forEach(team => {
+                    participants.push(team._id.toString());
+                });
+            }
+            return participants;
+        });
+        divObj[thisDiv.divisionConcat]['participants'] = participants;
+        divObj[thisDiv.divisionConcat]['matches'] = [];
+        divObj[thisDiv.divisionConcat]['roundSchedules'] = {};
+    }
+
+    // console.log('this is divObj before creating new schedule obj: ', divObj);
+    let schedObj = {
+            "season": season,
+            "division": divObj
+        }
+        // console.log('this is divObj before creating new schedule obj: ', schedObj);
+    let sched = await new Scheduling(
+        schedObj
+    ).save().then((saved) => {
+        // console.log('fin', JSON.stringify(saved));
+        return true;
+    }, (err) => {
+        // console.log(err);
+        return false;
+    });
+    return sched;
+}
+
 //this method generates a particular round of a tournament with the swiss system
 //NOTE - the matches must be reported, regardless of outcome in order for the swiss
 //to properly generate a schedule!

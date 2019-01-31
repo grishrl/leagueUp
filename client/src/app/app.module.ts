@@ -67,8 +67,16 @@ import { EventLargeComponent } from './calendar-view/event-large/event-large.com
 import { SetDeadlineComponent } from './admin/match-management/set-deadline/set-deadline.component';
 import { MatchViewComponent } from './match-view/match-view.component';
 import { DropDownTimeComponent } from './times-available/drop-down-time/drop-down-time.component';
+import { UserMessageCenterComponent } from './messageCenter/user-message-center/user-message-center.component';
 import { RulesComponent } from './rules/rules.component';
- 
+import { TeamMarketComponent } from './marketplace/team-market/team-market.component';
+import { UserMarketplaceComponent } from './marketplace/user-marketplace/user-marketplace.component';
+import { UserDeckComponent } from './marketplace/user-marketplace/user-deck/user-deck.component';
+ import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+import { ConfirmRemoveMemberComponent } from './modal/confirm-remove-member/confirm-remove-member.component';
+import { GenerateSeasonComponent } from './admin/match-management/generate-season/generate-season.component';
+
+ const config: SocketIoConfig = { url: 'http://localhost:5000', options:{} }
 
 @NgModule({
   declarations: [
@@ -129,11 +137,18 @@ import { RulesComponent } from './rules/rules.component';
     SetDeadlineComponent,
     MatchViewComponent,
     DropDownTimeComponent,
-    RulesComponent
+    UserMessageCenterComponent,
+    RulesComponent,
+    TeamMarketComponent,
+    UserMarketplaceComponent,
+    UserDeckComponent,
+    ConfirmRemoveMemberComponent,
+    GenerateSeasonComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
     ChangeCaptainModalComponent,
+    ConfirmRemoveMemberComponent,
     EventModalComponent
   ],
   imports: [
@@ -149,7 +164,8 @@ import { RulesComponent } from './rules/rules.component';
     CalendarModule.forRoot({
       provide: DateAdapter,
       useFactory: adapterFactory
-    })
+    }),
+    SocketIoModule.forRoot(config)
   ],
   providers: [
     {

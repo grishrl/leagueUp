@@ -202,6 +202,7 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
                                 foundUser.teamName = teamName;
                                 foundUser.teamId = foundTeam._id
                                 foundUser.pendingTeam = false;
+                                foundUser.lookingForGroup = false;
                             } else {
                                 //remove the member from the pending members
                                 foundTeam.pendingMembers.splice(index, 1);

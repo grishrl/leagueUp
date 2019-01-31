@@ -1,3 +1,5 @@
+const { confirmCaptain } = require("./confirmCaptain");
+
 const util = require('../utils');
 const router = require('express').Router();
 const User = require("../models/user-models");
@@ -71,6 +73,49 @@ router.get('/get', (req, res) => {
 });
 
 //get
+//
+//asynch check to see if captain can still invite users to join team
+// router.get('/check/status', passport.authenticate('jwt', {
+//     session: false
+// }), confirmCaptain, (req, res) => {
+//     const path = '/team/check/status';
+
+//     var user = req.query.user;
+
+//     user = decodeURIComponent(user);
+
+//     let team = req.user.teamName;
+//     team = team.toLowerCase();
+
+//     Team.findOne({
+//         teamName_lower: team
+//     }).lean().then(
+//         (foundTeam) => {
+//             if (foundTeam) {
+//                 let belowRosterSize = true;
+//                 let roster = 0;
+//                 if (foundTeam.teamMembers) {
+//                     roster += foundTeam.teamMembers.length;
+//                 }
+//                 if (foundTeam.pendingMembers) {
+//                     roster += foundTeam.pendingMembers.length;
+//                 }
+//                 if (roster >= 9) {
+//                     belowRosterSize = false;
+//                 } else if (
+//                     team.invitedUsers.indexOf(user);
+//                 )
+//                     res.status(200).send(util.returnMessaging(path, "Team found", false, belowRosterSize));
+//             } else {
+//                 res.status(200).send(util.returnMessaging(path, "Team not found", false, false));
+//             }
+//         }, (err) => {
+//             res.status(500).send(util.returnMessaging(path, "Error querying teams.", err));
+//         }
+//     );
+// });
+
+//post
 // path: /team/get
 // URI query param - team
 // finds team of passed team name
@@ -728,6 +773,7 @@ router.post('/reassignCaptain', passport.authenticate('jwt', {
         }
     )
 });
+
 //system
 router.post('/get/sys/dat', passport.authenticate('jwt', {
     session: false
@@ -861,45 +907,6 @@ function confirmCanRemove(req, res, next) {
         next();
     }
 
-}
-
-//this confirms that the calling user is a captain of the team
-function confirmCaptain(req, res, next) {
-    const path = 'captianCheck';
-    var callingUser = req.user;
-    var payloadTeamName = req.body.teamName;
-
-    //log object
-    let logObj = {};
-    logObj.actor = req.user.displayName;
-    logObj.action = ' validate captain ';
-    logObj.logLevel = 'STD';
-    logObj.target = payloadTeamName;
-
-    let lower = payloadTeamName.toLowerCase();
-    Team.findOne({
-        teamName_lower: lower
-    }).then((foundTeam) => {
-        if (foundTeam) {
-            if (foundTeam.captain == callingUser.displayName) {
-                req.team = foundTeam;
-                next();
-            } else {
-                logObj.logLevel = 'ERROR';
-                logObj.error = 'Not authorized to change team'
-                res.status(403).send(
-                    util.returnMessaging(path, "User not authorized to change team.", false, null, null, logObj));
-            }
-        } else {
-            logObj.logLevel = 'ERROR';
-            logObj.error = 'Team was not found'
-            res.status(400).send(util.returnMessaging(path, "Team not found.", false, null, null, logObj));
-        }
-    }, (err) => {
-        res.status(500).send(
-            util.returnMessaging(path, "Error finding team", err, null, null, logObj)
-        );
-    });
 }
 
 module.exports = router;

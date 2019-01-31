@@ -104,9 +104,33 @@ export class TeamService {
     return this.httpService.httpPost(url, postData, true);
   }
 
+  //uploads team logo
   logoUpload(imgInput){
     let url = 'team/uploadLogo';
     return this.httpService.httpPost(url, imgInput, true);
+  }
+
+  //search for teams off certain criteria
+  searchTeams(searchObj){
+    let url = '/search/team/market';
+    let payload = {
+      searchObj:searchObj
+    }
+    return this.httpService.httpPost(url, payload, true);
+  }
+
+  //returns total number of teams
+  getTeamNumber() {
+    let url = '/search/teams/total';
+    return this.httpService.httpGet(url, []);
+  }
+
+  getTeamsOfPageNum(page, msg?){
+    let url = '/search/team/paginate';
+    let payload = {
+      page:page
+    };
+    return this.httpService.httpPost(url, payload, msg);
   }
 
 
@@ -121,6 +145,13 @@ export class TeamService {
     
     return imgFQDN;
   }
+
+  checkCanInvite(){
+    let url = '/team/check/status';
+    return this.httpService.httpGet(url, []);
+  }
+
+
 
   //returns a route friendly URL name for a team, removing any spaces
   routeFriendlyTeamName(teamname):string{

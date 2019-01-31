@@ -29,6 +29,14 @@
                         </div>
                     </div>
                 </div>
+                <div class="row" *ngIf="showInvite">
+                    <div class="col">
+                        This player is eligible for an invite!
+                    </div>
+                    <div>
+                        <button class="btn btn-success"> Invite to team </button>
+                    </div>
+                </div>
                 <div class="row mt-2">
                     <div class="col-md-12">
                         <div class="example-container">
@@ -94,7 +102,7 @@
                                 </div>
                             </div>
 
-                            <div class="row">
+                            <div class="row" *ngIf="hideLookingForGroup()">
                                 <div class="col">
                                     <mat-slide-toggle disabled="{{editOn}}" [(ngModel)]="returnedProfile.lookingForGroup">
                                         Looking for team.
