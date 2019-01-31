@@ -11,6 +11,10 @@ const levelRestrict = require("../configs/admin-leveling");
 const scheduleGenerator = require('../subroutines/schedule-subs');
 const logger = require('../subroutines/sys-logging-subs');
 const Scheduling = require('../models/schedule-models');
+const fs = require('fs');
+const n_util = require('util');
+
+fs.readFileAsync = n_util.promisify(fs.readFile);
 
 AWS.config.update({
     accessKeyId: process.env.S3accessKeyId,
@@ -55,6 +59,30 @@ router.post('/get/matches', (req, res) => {
     }, (err) => {
         res.status(500).send(util.returnMessaging(path, 'Error finding matches', err));
     });
+});
+
+router.post('/get/reported/matches', passport.authenticate('jwt', {
+    session: false
+}), (req, res) => {
+
+    const path = 'schedule/get/reported/matches';
+    let season = req.body.season;
+
+
+    Match.find({
+        season: season,
+        reported: true
+    }).then(
+        found => {
+            if (found) {
+                res.status(200).send(util.returnMessaging(path, 'Found these matches', null, found));
+            } else {
+                res.status(200).send(util.returnMessaging(path, 'No Matches Found', null, found));
+            }
+        }, err => {
+            res.status(500).send(util.returnMessaging(path, 'Error getting matches', err));
+        }
+    )
 });
 
 /**
@@ -303,6 +331,7 @@ router.post('/report/match', passport.authenticate('jwt', {
         submitterUserName = req.user.displayName.split('#');
         submitterUserName = submitterUserName[0];
         submitterTeamName = req.user.teamName;
+        submitterTeamId = req.user.teamId;
     }
 
     //log object
@@ -387,15 +416,10 @@ router.post('/report/match', passport.authenticate('jwt', {
                                 parsed.push(parsedReplay)
                             });
 
-
-                            // let match = fields;
-
                             if (foundMatch.away.teamName == submitterTeamName) {
-                                submitterTeamId = foundMatch.away.id;
                                 otherTeamName = foundMatch.home.teamName;
                                 otherTeamId = foundMatch.home.id;
                             } else {
-                                submitterTeamId = foundMatch.home.id;
                                 otherTeamName = foundMatch.away.teamName;
                                 otherTeamId = foundMatch.away.id;
                             }
@@ -447,32 +471,47 @@ router.post('/report/match', passport.authenticate('jwt', {
                                 foundMatch.replays[(i + 1).toString()].url = replayfilenames[i].fileName;
                                 foundMatch.replays[(i + 1).toString()].data = replayfilenames[i].id;
 
-                                var data = {
-                                    Key: replayfilenames[i].fileName,
-                                    Body: files[fileKeys[i]].path
-                                };
-                                s3replayBucket.putObject(data, function(err, data) {
-                                    if (err) {
-                                        //log object
-                                        let sysLog = {};
-                                        sysLog.actor = 'SYS';
-                                        sysLog.action = ' upload replay ';
-                                        sysLog.logLevel = 'ERROR';
-                                        sysLog.target = data.key
-                                        sysLog.timeStamp = new Date().getTime();
-                                        sysLog.error = err;
-                                        logger(sysLog);
-                                    } else {
-                                        //log object
-                                        let sysLog = {};
-                                        sysLog.actor = 'SYS';
-                                        sysLog.action = ' upload replay ';
-                                        sysLog.logLevel = 'SYSTEM';
-                                        sysLog.target = data.key
-                                        sysLog.timeStamp = new Date().getTime();
-                                        logger(sysLog);
+                                // let buffer = fs.readFileSync(files[fileKeys[i]].path);
+
+                                let fileName = replayfilenames[i].fileName + '.stormReplay';
+
+                                fs.readFileAsync(files[fileKeys[i]].path).then(
+                                    buffer => {
+                                        var data = {
+                                            Key: fileName,
+                                            Body: buffer
+                                        };
+                                        s3replayBucket.putObject(data, function(err, data) {
+                                            if (err) {
+                                                console.log(err);
+                                                //log object
+                                                let sysLog = {};
+                                                sysLog.actor = 'SYS';
+                                                sysLog.action = ' upload replay ';
+                                                sysLog.logLevel = 'ERROR';
+                                                sysLog.target = data.Key
+                                                sysLog.timeStamp = new Date().getTime();
+                                                sysLog.error = err;
+                                                logger(sysLog);
+                                            } else {
+                                                //log object
+                                                let sysLog = {};
+                                                sysLog.actor = 'SYS';
+                                                sysLog.action = ' upload replay ';
+                                                sysLog.logLevel = 'SYSTEM';
+                                                sysLog.target = data.Key
+                                                sysLog.timeStamp = new Date().getTime();
+                                                logger(sysLog);
+                                            }
+                                        });
+                                    },
+                                    err => {
+                                        console.log('error ', err);
                                     }
-                                });
+                                )
+
+
+
                             }
 
                             ParsedReplay.collection.insertMany(parsed).then(

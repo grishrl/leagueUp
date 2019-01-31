@@ -23,7 +23,7 @@
         "express": "^4.16.4",
         "express-https-redirect": "^1.0.0",
         "formidable": "^1.2.1",
-        "hots-parser": "^6.41.2",
+        "hots-parser": "^7.42.1",
         "image-data-uri": "^2.0.0",
         "jsonwebtoken": "^8.4.0",
         "lodash": "^4.17.11",

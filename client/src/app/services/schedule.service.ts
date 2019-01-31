@@ -79,6 +79,14 @@ export class ScheduleService {
     return this.httpService.httpPost(url, payload, true);
   }
 
+  getReportedMatches(){
+    let url = 'schedule/get/reported/matches';
+    let payload = {
+      season:6
+    };
+    return this.httpService.httpPost(url, payload, true);
+  }
+
   //accepts an object that contains elements for reporting the match outcome:
   /*
     {

@@ -77,6 +77,8 @@ import { ConfirmRemoveMemberComponent } from './modal/confirm-remove-member/conf
 import { GenerateSeasonComponent } from './admin/match-management/generate-season/generate-season.component';
 import { TournamentGeneratorComponent } from './admin/match-management/tournament-generator/tournament-generator.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { TournamentViewComponent } from './tournament-view/tournament-view.component';
+import { ReplayBrowserComponent } from './replay-browser/replay-browser.component';
 
  const config: SocketIoConfig = { url: 'http://localhost:5000', options:{} }
 
@@ -146,7 +148,9 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     UserDeckComponent,
     ConfirmRemoveMemberComponent,
     GenerateSeasonComponent,
-    TournamentGeneratorComponent
+    TournamentGeneratorComponent,
+    TournamentViewComponent,
+    ReplayBrowserComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

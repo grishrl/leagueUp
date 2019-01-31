@@ -1,0 +1,85 @@
+<div class="row forceFull">
+    <div class="col">
+
+        <div class="row">
+            <div class="col">
+                Replay Browser
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                Filtering:
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col">
+                <mat-paginator [length]="length" [pageSize]="pageSize" (page)="pageEventHandler($event)">
+
+                </mat-paginator>
+                <div class="row mt-2 p-3 rowBorder" *ngFor="let match of displayArray; let ind = index" [ngClass]="{oddRow : ind%2!=0}">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col text-center">
+                                Match Info
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col text-center">
+                                <span class="titles">Team Names:</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col text-center">
+                                <span class="titles">{{match.home.teamName}}</span>
+                            </div>
+                            <div class="col text-center">
+                                <span class="titles">{{match.away.teamName}}</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col text-center">
+                                Scores:
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col text-center">
+                                <span class="titles">{{match.home.score}}</span>
+                            </div>
+                            <div class="col text-center">
+                                <span class="titles">{{match.away.score}}</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col text-center">
+                                Map Bans:
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col text-center">
+                                <span class="titles">{{match.mapBans.home}}</span>
+                            </div>
+                            <div class="col text-center">
+                                <span class="titles">{{match.mapBans.away}}</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col text-center">
+                                Replays:
+                            </div>
+                        </div>
+                        <div class="row" *ngFor="let replay of match.replays | keyvalue">
+                            <div class="col text-center">
+                                <a href="{{replayFQDN(replay.value.url)}}"> Replay {{replay.key}}</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

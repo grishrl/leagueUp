@@ -169,7 +169,12 @@
                             <button class="btn btn-primary" (click)="addGame() ">Add Game</button>
                         </div>
                         <div class="col" *ngIf="showReport">
-                            <button class="btn btn-success" (click)="report() ">Report Match!</button>
+                            <button [disabled]="uploading" class="btn btn-success" (click)="report() ">Report Match!</button>
+                            <div *ngIf="uploading" class="row">
+                                <div class="col text-center">
+                                    <span>Uploading ... <i class="fas fa-sync fa-spin" style="font-size:24px"></i></span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 

@@ -25,6 +25,9 @@ export class ReportingDeckComponent implements OnInit {
     replays:{},
     matchId:''
   }
+
+  uploading = false;
+
   @Input() set match(match){
     if(match!=null && match != undefined){
       
@@ -378,10 +381,15 @@ resetReplay(game){
 
 
     if(submittable){
+      this.uploading=true;
       this.scheduleService.reportMatch(report).subscribe( res=>{
-
+        this.uploading=false;
         this.recMatch.reported = true;
         this.showReport = false;
+      },
+      err=>{
+        this.uploading = false
+        console.log(err);
       })
     }  
 
