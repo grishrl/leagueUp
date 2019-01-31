@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col">
 
-            <div class="row">
+            <div class="row mt-3">
                 <div class="col text-center">
                     <h4>Find A Team</h4>
                 </div>
@@ -10,7 +10,8 @@
 
             <div class="row" *ngIf="!showSearch">
                 <div class="col">
-                    <span class="finger showlink" (click)="showSearch = !showSearch">Show search criteria</span>
+                    <span class="finger showlink badge badge-light badge-pill border border-dark" (click)="showSearch = !showSearch">Show
+  search criteria</span>
                 </div>
             </div>
             <div *ngIf="showSearch">
@@ -108,7 +109,7 @@
                     </div>
                 </div>
                 <div class="row" *ngIf="searchParameters.timezone == 'custom'">
-                    <div class="col">
+                    <div class="col text-center">
                         <mat-form-field class="mat-threeQuarter">
                             <mat-select placeholder="Timezone:" [(ngModel)]="searchParameters.customtimeZone">
                                 <mat-option *ngFor="let zone of timezone.timezones" [value]="zone.value">
@@ -131,8 +132,8 @@
 
 
 
-            <div class="row" *ngIf="hasSearched && localResults.length==0">
-                <div class="col">
+            <div class="row mt-3" *ngIf="hasSearched && localResults.length==0">
+                <div class="col text-center">
                     <h3>We did not find any teams that matched your criteria.</h3>
                 </div>
             </div>
@@ -140,7 +141,7 @@
             <div class="row" *ngIf="displayArray.length>0">
                 <div class="col">
                     <div class="row mt-4">
-                        <div class="col">
+                        <div class="col text-center">
                             <h4 *ngIf="!showSearch">Showing All Teams Looking For More:</h4>
                             <h4 *ngIf="showSearch && localResults.length>0;">Showing Teams That Meet Your Criteria</h4>
                         </div>
