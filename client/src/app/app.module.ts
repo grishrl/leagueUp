@@ -75,8 +75,10 @@ import { UserDeckComponent } from './marketplace/user-marketplace/user-deck/user
  import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { ConfirmRemoveMemberComponent } from './modal/confirm-remove-member/confirm-remove-member.component';
 import { GenerateSeasonComponent } from './admin/match-management/generate-season/generate-season.component';
+import { environment } from '../environments/environment'
 
- const config: SocketIoConfig = { url: 'http://localhost:5000', options:{} }
+
+const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
 @NgModule({
   declarations: [
