@@ -6,6 +6,7 @@ import { TimezoneService } from 'src/app/services/timezone.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TeamService } from 'src/app/services/team.service';
 import { RequestService } from 'src/app/services/request.service';
+import { HotsLogsService } from 'src/app/services/hots-logs.service';
 
 @Component({
   selector: 'app-user-deck',
@@ -28,7 +29,7 @@ export class UserDeckComponent implements OnInit {
     }
   }
 
-  constructor(private divisionService: DivisionService, private auth: AuthService, public _userService: UserService, public timezone: TimezoneService, private util: UtilitiesService, public _team: TeamService,
+  constructor(public hotslogsservice: HotsLogsService, private divisionService: DivisionService, private auth: AuthService, public _userService: UserService, public timezone: TimezoneService, private util: UtilitiesService, public _team: TeamService,
     private request: RequestService) { }
 
   ngOnInit() {

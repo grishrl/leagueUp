@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import * as $ from 'jquery/dist/jquery.min.js';
+
+declare var bracket: any;
 
 @Component({
   selector: 'app-tournament-view',
@@ -10,6 +13,11 @@ export class TournamentViewComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+
+  }
+
+  ngAfterViewInit(){
+
   }
 
 }

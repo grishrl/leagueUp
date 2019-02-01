@@ -39,6 +39,7 @@ import { UserMarketplaceComponent } from "./marketplace/user-marketplace/user-ma
 import { GenerateSeasonComponent } from "./admin/match-management/generate-season/generate-season.component";
 import { TournamentGeneratorComponent } from "./admin/match-management/tournament-generator/tournament-generator.component";
 import { ReplayBrowserComponent } from "./replay-browser/replay-browser.component";
+import { TournamentViewComponent } from "./tournament-view/tournament-view.component";
 
 const APP_ROUTES: Routes = [
   { path: 'directory', component: DirectoryComponent},
@@ -79,7 +80,8 @@ const APP_ROUTES: Routes = [
   { path: 'messageCenter', component:UserMessageCenterComponent},
   { path: 'findTeams', component:TeamMarketComponent},
   { path: 'findPlayers', component:UserMarketplaceComponent},
-  { path: 'replayBrowser', component:ReplayBrowserComponent}
+  { path: 'replayBrowser', component:ReplayBrowserComponent},
+  { path: 'tournament', component:TournamentViewComponent }
 ]
 
 @NgModule({

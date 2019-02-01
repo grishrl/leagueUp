@@ -77,7 +77,7 @@
             <div class="col" *ngIf="!showAll">
                 <div class="example-container">
                     <h2>Teams</h2>
-                    <div cdkDropList #todoList="cdkDropList" [cdkDropListData]="standings" [cdkDropListConnectedTo]="[doneList]" class="example-list" (cdkDropListDropped)="drop($event)">
+                    <div cdkDropList #standings="cdkDropList" [cdkDropListData]="standings" [cdkDropListConnectedTo]="[doneList]" class="example-list" (cdkDropListDropped)="drop($event)">
                         <div class="example-box" *ngFor="let standing of standings" cdkDrag>
                             No. {{standing.standing}} - {{standing.teamName}}</div>
                     </div>
@@ -87,7 +87,7 @@
                 <div class="example-container">
                     <h2>Tournament Seeding</h2>
 
-                    <div cdkDropList #doneList="cdkDropList" [cdkDropListData]="tournamentSeed" [cdkDropListConnectedTo]="[todoList]" class="example-list" (cdkDropListDropped)="drop($event)">
+                    <div cdkDropList #doneList="cdkDropList" [cdkDropListData]="tournamentSeed" [cdkDropListConnectedTo]="[standings]" class="example-list" (cdkDropListDropped)="drop($event)">
                         <div class="example-box" *ngFor="let item of tournamentSeed" cdkDrag>
                             <span *ngIf="item.standing">No. {{item.standing}} - </span>
                             <span>{{item.teamName}}</span>

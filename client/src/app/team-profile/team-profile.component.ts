@@ -462,14 +462,30 @@ export class TeamProfileComponent implements OnInit {
     if (this.returnedProfile.teamName && user) {
       if (this.checkUserInPending(user)) {
         this.message = "User is all ready invited to your team!";
-      }else{
-        this.team.addUser(user, this.returnedProfile.teamName_lower).subscribe(res => {
+      }else{  
+
+        this.requestService.inviteToTeamRequest(this.returnedProfile.teamName_lower, user).subscribe(res => {
           this.message = res.message;
           if (this.returnedProfile.pendingMembers == null) {
             this.returnedProfile.pendingMembers = [{ "displayName": user }];
           } else {
             this.returnedProfile.pendingMembers.push({ "displayName": user });
           }
+        },
+        err=>{
+          
+            this.message = err.error.message;
+          
+        }
+        );
+
+        // this.team.addUser(user, this.returnedProfile.teamName_lower).subscribe(res => {
+        //   this.message = res.message;
+        //   if (this.returnedProfile.pendingMembers == null) {
+        //     this.returnedProfile.pendingMembers = [{ "displayName": user }];
+        //   } else {
+        //     this.returnedProfile.pendingMembers.push({ "displayName": user });
+        //   }
       
       // this.team.addUser(user, this.returnedProfile.teamName_lower).subscribe(res => {
       //   this.message = res.message;
@@ -479,11 +495,11 @@ export class TeamProfileComponent implements OnInit {
       //     this.returnedProfile.pendingMembers.push({ "displayName": user });
       //   }
 
-          this.filterUsers.push(user);
-          // console.log(this.filterUsers);
-        }, err => {
-          this.message = err.error.message;
-        });
+        //   this.filterUsers.push(user);
+        //   // console.log(this.filterUsers);
+        // }, err => {
+        //   this.message = err.error.message;
+        // });
       }
 
     }
