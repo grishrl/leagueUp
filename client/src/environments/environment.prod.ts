@@ -10,5 +10,5 @@ export const environment = {
   },
   s3bucketImages:'ngs-image-storage',
   s3bucketReplays:'ngs-replay-storage',
-  socketURL: 'https://nexusgamingseries.org'
+  socketURL: 'https://www.nexusgamingseries.org'
 };
