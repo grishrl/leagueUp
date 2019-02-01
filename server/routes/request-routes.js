@@ -31,7 +31,7 @@ socketIo.on('connection', function(client) {
     });
 
     client.on('disconnect', function() {
-        console.log('client disconnecting..');
+
         if (indexOfClient(clients, client.id) > -1) {
             clients.splice(indexOfClient(clients, client.id), 1)
         }
@@ -59,7 +59,7 @@ function indexOfUser(clients, user) {
 }
 
 function dispatchMessage(recepient) {
-    console.log(clients);
+
     if (clients.length > 0) {
         let dispatchToId = null;
         clients.forEach((clientIt) => {
