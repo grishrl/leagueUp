@@ -463,22 +463,23 @@ export class TeamProfileComponent implements OnInit {
       if (this.checkUserInPending(user)) {
         this.message = "User is all ready invited to your team!";
       }else{  
-
-        this.requestService.inviteToTeamRequest(this.returnedProfile.teamName_lower, user).subscribe(res => {
-          this.message = res.message;
-          if (this.returnedProfile.pendingMembers == null) {
-            this.returnedProfile.pendingMembers = [{ "displayName": user }];
-          } else {
-            this.returnedProfile.pendingMembers.push({ "displayName": user });
-          }
-        },
-        err=>{
+        this.requestService.inviteToTeamRequest(this.returnedProfile.teamName_lower, user).subscribe(
+          res=>{
+            if (this.returnedProfile['invitedUsers'] == null) {
+              this.returnedProfile['invitedUsers'] = [ user ];
+            } else {
+              this.returnedProfile['invitedUsers'].push(user);
+            }
+          },
+          err=>{
           
             this.message = err.error.message;
           
         }
         );
 
+          }
+        )
         // this.team.addUser(user, this.returnedProfile.teamName_lower).subscribe(res => {
         //   this.message = res.message;
         //   if (this.returnedProfile.pendingMembers == null) {

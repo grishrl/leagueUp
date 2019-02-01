@@ -75,13 +75,14 @@ import { UserDeckComponent } from './marketplace/user-marketplace/user-deck/user
  import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { ConfirmRemoveMemberComponent } from './modal/confirm-remove-member/confirm-remove-member.component';
 import { GenerateSeasonComponent } from './admin/match-management/generate-season/generate-season.component';
-import { TournamentGeneratorComponent } from './admin/match-management/tournament-generator/tournament-generator.component';
+import { environment } from '../environments/environment'
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { TournamentViewComponent } from './tournament-view/tournament-view.component';
 import { ReplayBrowserComponent } from './replay-browser/replay-browser.component';
 import { DivisionSelectorComponent } from './division-selector/division-selector.component';
 
- const config: SocketIoConfig = { url: 'http://localhost:5000', options:{} }
+
+const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
 @NgModule({
   declarations: [

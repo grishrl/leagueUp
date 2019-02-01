@@ -29,7 +29,7 @@ export class UserDeckComponent implements OnInit {
     }
   }
 
-  constructor(public hotslogsservice: HotsLogsService, private divisionService: DivisionService, private auth: AuthService, public _userService: UserService, public timezone: TimezoneService, private util: UtilitiesService, public _team: TeamService,
+  constructor(public hotsLogsService:HotsLogsService, private divisionService: DivisionService, private auth: AuthService, public _userService: UserService, public timezone: TimezoneService, private util: UtilitiesService, public _team: TeamService,
     private request: RequestService) { }
 
   ngOnInit() {
