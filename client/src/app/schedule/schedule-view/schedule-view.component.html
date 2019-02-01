@@ -4,7 +4,7 @@
             <div class="row" *ngIf="!this.provDiv; else provDiv">
                 <div class="col">
 
-                    <app-division-selector [displaytext]="'off'" (selectedDiv)="calculateRounds($event)"></app-division-selector>
+                    <app-division-selector (selectedDiv)="calculateRounds($event)"></app-division-selector>
 
                 </div>
                 <div class="col">

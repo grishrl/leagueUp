@@ -33,15 +33,7 @@ export class DivisionSelectorComponent implements OnInit {
     }
 
   }
-  displayText = 'Select Division'
-  @Input() set displaytext(_txt){
-    console.log('_txt ',_txt)
-    if (_txt == 'off'){
-      this.displayText = '';
-    } else if (_txt != undefined){
-      this.displayText = _txt;
-    }
-  }
+
 
   adminLoad=false;
   @Input() set admin(_admin){

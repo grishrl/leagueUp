@@ -26,6 +26,18 @@ const replaySchema = new Schema({
     "2": {
         "url": String,
         "data": String
+    },
+    "3": {
+        "url": String,
+        "data": String
+    },
+    "4": {
+        "url": String,
+        "data": String
+    },
+    "5": {
+        "url": String,
+        "data": String
     }
 }, { strict: false });
 

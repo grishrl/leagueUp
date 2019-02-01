@@ -8,6 +8,29 @@ export class UtilitiesService {
 
   constructor() { }
 
+  isNullOrEmpty(dat): boolean {
+    if (dat == null || dat == undefined) {
+      return true;
+    }
+    if (Array.isArray(dat)) {
+      if (dat.length == 0) {
+        return true;
+      }
+    } else if (typeof dat == 'object') {
+      let noe = false;
+      for (let key in dat) {
+        if (this.isNullOrEmpty(dat[key])) {
+          noe = true;
+        }
+      }
+      return noe;
+    } else if (typeof dat == "string") {
+      return dat.length == 0;
+    } else {
+      return false;
+    }
+  }
+
   prePendHttp(link){
     if(link!= undefined&& link!=null){
       if (link.indexOf('http://www.') == -1 || link.indexOf('https://wwww.') == -1) {

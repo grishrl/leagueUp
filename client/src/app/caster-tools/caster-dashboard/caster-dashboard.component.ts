@@ -1,7 +1,5 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { ScheduleService } from 'src/app/services/schedule.service';
-import { AdminService } from 'src/app/services/admin.service';
-
 import { PageEvent, MatPaginator } from '@angular/material';
 import { TeamService } from 'src/app/services/team.service';
 
@@ -15,7 +13,7 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(public team:TeamService, private scheduleService:ScheduleService, private adminService : AdminService) {
+  constructor(public team:TeamService, private scheduleService:ScheduleService) {
 
    }
 
@@ -25,7 +23,7 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
   originalMatches:any
   filterMatches:any
   rounds=[];
-  divisions = []
+  
   filterTeam:string='';
   scheduledOnly:boolean=false;
 
@@ -56,8 +54,6 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
   } 
 
   ngOnInit() {
-    this.adminService.getDivisionList().subscribe((res) => {
-      this.divisions = res;
       this.scheduleService.getAllMatches().subscribe(
         (sched) => {
           this.originalMatches = sched;
@@ -76,9 +72,6 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
           this.displayArray = this.filterMatches.slice(0, 10);
         }
       )
-    }, (err) => {
-      console.log(err);
-    });
   }
 
   /*
@@ -92,7 +85,9 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
  */
   //filters the matches based on selected criteria
   doFilterMatches(div, round, team) {
-    
+    if(div){
+      div = div.divisionConcat
+    }
     this.filterMatches = this.originalMatches.filter(match => {
       let home, away;
       if (!match.away.teamName) {

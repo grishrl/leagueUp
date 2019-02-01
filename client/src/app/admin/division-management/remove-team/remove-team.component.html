@@ -3,7 +3,12 @@
         <div class="col">
             <div class="row">
                 <div class="col">
-                    <app-division-selector [displaytext]="'Select division to modify:'" (selectedDiv)="selected($event)" [admin]="true"></app-division-selector>
+                    <div class="row">
+                        <div class="col">
+                            <h4>Select division to modify:</h4>
+                        </div>
+                    </div>
+                    <app-division-selector (selectedDiv)="selected($event)" [admin]="true"></app-division-selector>
                 </div>
             </div>
             <div class="row" *ngIf="selectedDiv">

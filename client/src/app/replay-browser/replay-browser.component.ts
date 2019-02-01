@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ScheduleService } from '../services/schedule.service';
 import { PageEvent } from '@angular/material';
 import { environment } from 'src/environments/environment';
+import { UtilitiesService } from '../services/utilities.service';
 
 @Component({
   selector: 'app-replay-browser',
@@ -10,7 +11,7 @@ import { environment } from 'src/environments/environment';
 })
 export class ReplayBrowserComponent implements OnInit {
 
-  constructor(private scheduleService:ScheduleService) { }
+  constructor(private scheduleService:ScheduleService, private util:UtilitiesService) { }
 
   matches= [];
   filterName: string = '';
@@ -30,10 +31,65 @@ export class ReplayBrowserComponent implements OnInit {
 
   } 
 
-  _selectedDiv;
+  selectedDiv;
   selectedDivision(div){
-    this._selectedDiv=div;
-    console.log(div);
+    this.selectedDiv=div;
+    this.filterReplays();
+  }
+
+  team
+  filterTeam(team){
+    this.team = team;
+    this.filterReplays();
+  }
+
+  filterReplays(){
+    
+    if (this.util.isNullOrEmpty(this.selectedDiv) && this.util.isNullOrEmpty(this.team)){
+      this.filteredArray = this.matches;
+    }else{
+      if(!this.util.isNullOrEmpty(this.selectedDiv)&&this.util.isNullOrEmpty(this.team)){
+        
+        this.filteredArray = this.matches.filter(unit => {
+          return this.testDivision(unit, this.selectedDiv);
+        });
+      } else if (this.util.isNullOrEmpty(this.selectedDiv) && !this.util.isNullOrEmpty(this.team)){
+        
+        this.filteredArray = this.matches.filter( unit => {
+          
+          return this.testName(unit, this.team);
+        })
+      } else if (!this.util.isNullOrEmpty(this.selectedDiv) && !this.util.isNullOrEmpty(this.team)){
+        
+        this.filteredArray = this.matches.filter(unit => {
+          return this.testName(unit, this.team) && this.testDivision(unit, this.selectedDiv);
+        }); 
+      }
+    }
+    this.displayArray = this.filteredArray.slice(0,10);
+    this.length = this.filteredArray.length;
+  }
+
+  private testName(unit, team) {
+    let bool = false;
+    
+    let awayName = this.util.returnBoolByPath(unit, 'away.teamName') ? unit.away.teamName : '';
+    let homeName = this.util.returnBoolByPath(unit, 'home.teamName') ? unit.home.teamName : '';
+      awayName = awayName.toLowerCase();
+      homeName = homeName.toLowerCase();
+      let flt = team.toLowerCase();
+      if (awayName.indexOf(flt) > -1 || homeName.indexOf(flt) > -1) {
+        bool = true;
+      }
+      else {
+        bool = false;
+      }
+
+    return bool;
+  }
+
+  private testDivision(unit, flt) {
+    return unit.divisionConcat == flt.divisionConcat;
   }
 
   ngOnInit() {
