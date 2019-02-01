@@ -17,13 +17,6 @@ export class ScheduleViewComponent implements OnInit {
   standings:any[]=[];
 
   ngOnInit() {
-    if (this.provDiv == undefined && this.provDiv == null) {
-      this.divisionService.getDivisionInfo().subscribe((res) => {
-        this.divisions = res;
-      }, (err) => {
-        console.log(err);
-      })
-    }
   }
 
   provDiv
@@ -31,7 +24,7 @@ export class ScheduleViewComponent implements OnInit {
   @Input() set division(div){
     if(div!=undefined && div != null){
       this.provDiv = div;
-      this.calculateRounds();
+      this.calculateRounds(this.provDiv);
     }
   }
 
@@ -39,7 +32,8 @@ export class ScheduleViewComponent implements OnInit {
   selectedDivision:any
   rounds: number[] = [];
   
-  calculateRounds() {
+  calculateRounds(div) {
+    this.provDiv = this.provDiv ? this.provDiv : div;
     let roundNumber = 0;
     if (this.provDiv != undefined && this.provDiv != null && this.provDiv.teams != undefined && this.provDiv.teams != null) {
       if(this.provDiv % 2 == 0){

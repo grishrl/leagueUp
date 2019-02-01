@@ -23,7 +23,6 @@ export class TournamentGeneratorComponent implements OnInit {
     this.standings = [];
     this.showAll=false;
     this.division = div.divisionConcat;
-    console.log(div);
     this.getStandings(div.divisionConcat);
   }
 

@@ -30,6 +30,12 @@ export class ReplayBrowserComponent implements OnInit {
 
   } 
 
+  _selectedDiv;
+  selectedDivision(div){
+    this._selectedDiv=div;
+    console.log(div);
+  }
+
   ngOnInit() {
       this.scheduleService.getReportedMatches().subscribe(
         res=>{

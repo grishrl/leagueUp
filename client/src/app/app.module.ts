@@ -79,6 +79,7 @@ import { TournamentGeneratorComponent } from './admin/match-management/tournamen
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { TournamentViewComponent } from './tournament-view/tournament-view.component';
 import { ReplayBrowserComponent } from './replay-browser/replay-browser.component';
+import { DivisionSelectorComponent } from './division-selector/division-selector.component';
 
  const config: SocketIoConfig = { url: 'http://localhost:5000', options:{} }
 
@@ -150,7 +151,8 @@ import { ReplayBrowserComponent } from './replay-browser/replay-browser.componen
     GenerateSeasonComponent,
     TournamentGeneratorComponent,
     TournamentViewComponent,
-    ReplayBrowserComponent
+    ReplayBrowserComponent,
+    DivisionSelectorComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

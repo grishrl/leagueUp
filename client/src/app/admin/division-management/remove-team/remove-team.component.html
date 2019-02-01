@@ -3,14 +3,7 @@
         <div class="col">
             <div class="row">
                 <div class="col">
-                    <div>
-                        <h5>Select division to modify:</h5>
-                        <mat-form-field class="mat-FullWidth">
-                            <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="selected()" disableOptionCentering>
-                                <mat-option *ngFor="let division of divisions; let i = index" [value]="division">{{division.displayName}}</mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </div>
+                    <app-division-selector [displaytext]="'Select division to modify:'" (selectedDiv)="selected($event)" [admin]="true"></app-division-selector>
                 </div>
             </div>
             <div class="row" *ngIf="selectedDiv">

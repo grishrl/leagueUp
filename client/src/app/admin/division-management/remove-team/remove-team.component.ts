@@ -19,17 +19,11 @@ export class RemoveTeamComponent implements OnInit {
   selectedTeams: any = [];
 
   ngOnInit() {
-    //grab division list for display
-    this.adminService.getDivisionList().subscribe((res) => {
-      this.divisions = res;
-    }, (err) => {
-      console.log(err);
-    })
   }
 
   //Assings the local property selectedDiv to a copy of the division chose.
-  selected(){
-    this.selectedDiv = Object.assign({},this.selectedDivision);
+  selected(div){
+    this.selectedDiv = Object.assign({}, div);
   }
 
   
