@@ -2,20 +2,20 @@
     <div class="row">
         <div class="col">
 
-            <div class="row">
-                <div class="col">
+            <div class="row mt-3">
+                <div class="col text-center">
                     <h3>User Message Center</h3>
                 </div>
             </div>
-            <div class="row">
+            <div class="row mt-3">
                 <div class="col" *ngIf="messages.length>0 else noMessages">
                     <div class="list-group">
-                        <div class="list-group-item" *ngFor="let message of messages">
-                            <div class="row ">
+                        <div class="list-group-item" *ngFor="let message of messages" [ngClass]="{'border bg-secondary text-white': isSelected(message)}">
+                            <div class="row">
                                 <div class="col-10 finger" (click)="selectMessage(message)">
                                     <div class="row">
                                         <div class="col">Sender: {{message.sender}}</div>
-                                        <div class="col">Time: {{util.getDateFromMS(message.timeStamp)}} {{util.getTimeFromMS(message.timeStamp)}}{{util.getSuffixFromMS(message.timeStamp)}}
+                                        <div class="col">Time: {{util.getDateFromMS(message.timeStamp)}} {{util.getTimeFromMS(message.timeStamp)}} {{util.getSuffixFromMS(message.timeStamp)}}
                                         </div>
                                     </div>
                                     <div class="row">
@@ -40,14 +40,14 @@
             </div>
             <div style="height:100px"></div>
 
-            <div class="row" *ngIf="selectedMessage">
+            <div class="row border border-secondary p-4" *ngIf="selectedMessage">
                 <div class="col">
                     <div class="row mt-1">
                         <div class="col">
                             Sender: {{selectedMessage.sender}}
                         </div>
                         <div class="col">
-                            Time: {{util.getDateFromMS(selectedMessage.timeStamp)}} {{util.getTimeFromMS(selectedMessage.timeStamp)}}{{util.getSuffixFromMS(selectedMessage.timeStam)}}
+                            Time: {{util.getDateFromMS(selectedMessage.timeStamp)}} {{util.getTimeFromMS(selectedMessage.timeStamp)}} {{util.getSuffixFromMS(selectedMessage.timeStamp)}}
                         </div>
                     </div>
                     <div class="row mt-2">

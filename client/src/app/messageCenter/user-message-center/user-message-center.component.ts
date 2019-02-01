@@ -30,6 +30,15 @@ export class UserMessageCenterComponent implements OnInit {
   messages:any = [];
   selectedMessage;
 
+  isSelected(message){
+    if(this.selectedMessage && message){
+      return this.selectedMessage._id == message._id
+    }else{
+      return false;
+    }
+
+  }
+
   selectMessage(message){
     this.selectedMessage = message;
     this.messageCenter.markRead(message._id).subscribe(
