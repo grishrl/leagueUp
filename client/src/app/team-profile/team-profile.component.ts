@@ -472,35 +472,9 @@ export class TeamProfileComponent implements OnInit {
             }
           },
           err=>{
-          
             this.message = err.error.message;
-          
         }
         );
-
-          }
-        )
-        // this.team.addUser(user, this.returnedProfile.teamName_lower).subscribe(res => {
-        //   this.message = res.message;
-        //   if (this.returnedProfile.pendingMembers == null) {
-        //     this.returnedProfile.pendingMembers = [{ "displayName": user }];
-        //   } else {
-        //     this.returnedProfile.pendingMembers.push({ "displayName": user });
-        //   }
-      
-      // this.team.addUser(user, this.returnedProfile.teamName_lower).subscribe(res => {
-      //   this.message = res.message;
-      //   if (this.returnedProfile.pendingMembers == null){
-      //     this.returnedProfile.pendingMembers = [{ "displayName": user }];
-      //   }else{
-      //     this.returnedProfile.pendingMembers.push({ "displayName": user });
-      //   }
-
-        //   this.filterUsers.push(user);
-        //   // console.log(this.filterUsers);
-        // }, err => {
-        //   this.message = err.error.message;
-        // });
       }
 
     }

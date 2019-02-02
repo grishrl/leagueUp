@@ -74,6 +74,7 @@ import { UserMarketplaceComponent } from './marketplace/user-marketplace/user-ma
 import { UserDeckComponent } from './marketplace/user-marketplace/user-deck/user-deck.component';
  import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { ConfirmRemoveMemberComponent } from './modal/confirm-remove-member/confirm-remove-member.component';
+import { TournamentGeneratorComponent } from './admin/match-management/tournament-generator/tournament-generator.component';
 import { GenerateSeasonComponent } from './admin/match-management/generate-season/generate-season.component';
 import { environment } from '../environments/environment'
 import { DragDropModule } from '@angular/cdk/drag-drop';
