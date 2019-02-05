@@ -668,25 +668,34 @@ router.post('/generate/tournament', passport.authenticate('jwt', {
         target += 'season: ' + season;
         checkObj.$and.push({ season: season });
     }
+
     let division;
+
     if (req.body.division) {
-        division = division;
+        // console.log('req.body.division ', req.body.division)
+        division = req.body.division;
         target += ' division: ' + division;
-        checkObj.$and.push({ division: divison });
+        // console.log('division ', division)
+        checkObj.$and.push({
+            "division": division
+        });
     }
 
-    let tournamnetName;
-    if (req.body.tournamnetName) {
-        tournamnetName = req.body.tournamnetName;
-        target += ' tournamnetName: ' + tournamnetName;
-        checkObj.$and.push({ name: tournamnetName });
+    let tournamentName;
+    if (req.body.tournamentName) {
+        tournamentName = req.body.tournamentName;
+        target += ' tournamentName: ' + tournamentName;
+        checkObj.$and.push({
+            name: tournamentName
+        });
     }
 
     let teams = req.body.teams;
     let teamids = [];
     teams.forEach(team => {
-        if (teamids.indexOf(team.id) == -1) {
-            teamids.push(team.id);
+        let teamid = team._id ? team._id : team.id;
+        if (teamids.indexOf(teamid) == -1) {
+            teamids.push(teamid);
         }
     })
     checkObj.$and.push({
@@ -699,14 +708,14 @@ router.post('/generate/tournament', passport.authenticate('jwt', {
     logObj.logLevel = 'STD';
     logObj.target = target;
 
-
+    // console.log(checkObj)
 
     Scheduling.findOne(checkObj).then(
         found => {
             if (found) {
                 res.status(500).send(util.returnMessaging(path, 'Tournament previously generated', false, null, null, logObj));
             } else {
-                scheduleGenerator.generateTournament(teams, season, division, tournamnetName).then((process) => {
+                scheduleGenerator.generateTournament(teams, season, division, tournamentName).then((process) => {
                     if (process) {
                         res.status(200).send(util.returnMessaging(path, 'Tournament generated', false, process, null, logObj));
                     } else {
@@ -728,6 +737,98 @@ router.post('/generate/tournament', passport.authenticate('jwt', {
 
 });
 
+// router.post('/fetch/tournament', (req, res) => {
+//     const path = '/schedule/fetch/tournament';
+//     res.status(200).send(util.returnMessaging(path, 'Zig Zag', false, { 'hey': 'hello' }));
+// })
+
+router.post('/fetch/tournament', passport.authenticate('jwt', {
+    session: false
+}), (req, res) => {
+
+    const path = '/schedule/fetch/tournament';
+
+    let checkObj = {
+        $and: [{
+            type: 'tournament'
+        }]
+    }
+
+    let season;
+    if (req.body.season) {
+        season = req.body.season;
+        checkObj.$and.push({
+            season: season
+        });
+    }
+
+    let division;
+    if (req.body.division) {
+        // console.log('req.body.division ', req.body.division)
+        division = req.body.division;
+        // console.log('division ', division)
+        checkObj.$and.push({
+            "division": division
+        });
+    }
+
+    let tournamentName;
+    if (req.body.tournamentName) {
+        tournamentName = req.body.tournamentName;
+        checkObj.$and.push({
+            name: tournamentName
+        });
+    }
+
+    // console.log(checkObj);
+    // res.status(200).send(path, 'received this', false, { "hey": "hello" });
+
+    Scheduling.findOne(checkObj).then(
+        found => {
+            if (found) {
+                found = found.toObject();
+                // console.log('found ', found);
+                // console.log('found.matches ', found['matches']);
+                Match.find({
+                    matchId: {
+                        $in: found.matches
+                    }
+                }).lean().then(
+                    matches => {
+                        if (matches) {
+                            let teams = findTeamIds(matches);
+                            addTeamNamesToMatch(teams, matches).then((processed) => {
+                                res.status(200).send(util.returnMessaging(path, 'Found tournament info', false, {
+                                    tournInfo: found,
+                                    tournMatches: processed
+                                }));
+                            }, err => {
+                                res.status(500).send(util.returnMessaging(path, 'Error occured querying tournament matches', err));
+                            })
+                        } else {
+                            //mathces not found
+                            res.status(500).send(util.returnMessaging(path, 'Error occured querying tournament matches', err));
+                        }
+                    },
+                    err => {
+                        //matches query error
+                        res.status(500).send(util.returnMessaging(path, 'Error occured querying tournament matches', err));
+                    }
+                )
+            } else {
+                //match not found
+            }
+
+        },
+        err => {
+            //query error
+            res.status(500).send(util.returnMessaging(path, 'Error occured querying tournament', err));
+        }
+    )
+
+
+});
+
 module.exports = router;
 
 function findTeamIds(found) {
@@ -736,8 +837,9 @@ function findTeamIds(found) {
     if (!Array.isArray(found)) {
         found = [found];
     }
-
     found.forEach(match => {
+        // console.log(' match ', JSON.stringify(match));
+        // console.log("util.returnBoolByPath(match, 'home.id') ", util.returnBoolByPath(match, 'home.id'), " util.returnBoolByPath(match, 'away.id') ", util.returnBoolByPath(match, 'away.id'))
         if (util.returnBoolByPath(match, 'home.id')) {
             if (match.home.id != 'null' && teams.indexOf(match.home.id.toString()) == -1) {
                 teams.push(match.home.id.toString());
@@ -749,6 +851,7 @@ function findTeamIds(found) {
             }
         }
     });
+    // console.log(' teams  : ', JSON.stringify(teams));
     return teams;
 }
 
@@ -757,8 +860,10 @@ async function addTeamNamesToMatch(teams, found) {
     if (!Array.isArray(found)) {
         found = [found];
     }
+
     return Team.find({ _id: { $in: teams } }).then((foundTeams) => {
         if (foundTeams) {
+
             foundTeams.forEach(team => {
                 let teamid = team._id.toString();
                 found.forEach(match => {
@@ -788,4 +893,4 @@ async function addTeamNamesToMatch(teams, found) {
     }, (err) => {
         return err;
     });
-}
+};

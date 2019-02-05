@@ -4,11 +4,16 @@ const Team = require('../models/team-models');
 
 async function calulateStandings(division, season) {
     let teams;
+    console.log('division, season ', division, season)
     let matchesForDivision = await Match.find({
         $and: [{
             divisionConcat: division
         }, {
             season: season
+        }, {
+            type: {
+                $ne: 'tournament'
+            }
         }]
     }).lean().then(
         (matches) => {
@@ -32,6 +37,7 @@ async function calulateStandings(division, season) {
     );
 
     let standings = [];
+    console.log('matchesfordivision ', matchesForDivision);
     if (matchesForDivision != false) {
         teams.forEach(team => {
             let standing = {};

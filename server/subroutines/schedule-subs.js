@@ -239,16 +239,17 @@ async function generateTournament(teams, season, division, name) {
     let teamIds = [];
 
 
-    console.log(teams, season, division, name);
+    // console.log(teams, season, division, name);
 
 
 
     teams.forEach(team => {
-        if (teamIds.indexOf(team.id)) {
-            teamIds.push(team.id);
+        let teamid = team._id ? team._id : team.id
+        if (teamIds.indexOf(teamid)) {
+            teamIds.push(teamid);
         }
         _teams.push(
-            new Team(team.id, team.teamName)
+            new Team(teamid, team.teamName, team.logo)
         );
     });
 
@@ -257,9 +258,11 @@ async function generateTournament(teams, season, division, name) {
 
     while (_teams.length < expTeamLength) {
         _teams.push(
-            new Team(000, 'BYE')
+            new Team(null, 'BYE')
         )
     }
+
+    // console.log('_teams ', JSON.stringify(_teams));
 
     let seeded = [];
     do {
@@ -320,7 +323,6 @@ async function generateTournament(teams, season, division, name) {
         }
     });
 
-    console.log('hello, ', JSON.stringify(brackets));
 
     let matches = await Match.insertMany(brackets).then(res => {
         console.log('matches inserted!');

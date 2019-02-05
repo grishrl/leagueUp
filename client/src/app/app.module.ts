@@ -81,6 +81,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { TournamentViewComponent } from './tournament-view/tournament-view.component';
 import { ReplayBrowserComponent } from './replay-browser/replay-browser.component';
 import { DivisionSelectorComponent } from './division-selector/division-selector.component';
+import { DragScrollModule } from 'ngx-drag-scroll';
 
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
@@ -177,7 +178,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
       useFactory: adapterFactory
     }),
     SocketIoModule.forRoot(config),
-    DragDropModule
+    DragDropModule,
+    DragScrollModule
   ],
   providers: [
     {

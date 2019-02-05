@@ -87,6 +87,24 @@ export class ScheduleService {
     return this.httpService.httpPost(url, payload, true);
   }
 
+  //get tournament
+  getTournamentGames(name, season, division){
+    let url = '/schedule/fetch/tournament';
+    let payload = {
+
+    }
+    if(name){
+      payload['tournamentName']=name;
+    }
+    if (season) {
+      payload['season'] = season;
+    }
+    if (division) {
+      payload['division'] = division;
+    }
+    return this.httpService.httpPost(url, payload);
+  }
+
   //accepts an object that contains elements for reporting the match outcome:
   /*
     {

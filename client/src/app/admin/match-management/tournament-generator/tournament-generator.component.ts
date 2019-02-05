@@ -19,11 +19,18 @@ export class TournamentGeneratorComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   selected(div) {
-    this.tournamentSeed = [];
-    this.standings = [];
-    this.showAll=false;
-    this.division = div.divisionConcat;
-    this.getStandings(div.divisionConcat);
+    if(div!=undefined){
+      this.tournamentSeed = [];
+      this.standings = [];
+      this.showAll = false;
+      this.division = div.divisionConcat;
+      this.getStandings(div.divisionConcat);
+    }else{
+      this.tournamentSeed = [];
+      this.standings = [];
+      this.showAll = false;
+    }
+
   }
 
   name:string;
@@ -42,6 +49,7 @@ export class TournamentGeneratorComponent implements OnInit {
     this.standingsService.getStandings(div).subscribe(
       (res) => {
         this.fetching = false;
+        console.log(res);
         this.standings = res;
       },
       (err) => {
@@ -104,7 +112,7 @@ export class TournamentGeneratorComponent implements OnInit {
   generateBrackets(){
     this.adminService.generateTournament(this.tournamentSeed, this.season, this.name, this.division).subscribe(
       res=>{
-
+        this.ngOnInit();
       },
       err=>{
         console.log(err);
@@ -113,6 +121,7 @@ export class TournamentGeneratorComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.standings = [];
     this.adminService.getDivisionList().subscribe((res) => {
       this.divisions = res;
     }, (err) => {
@@ -123,7 +132,7 @@ export class TournamentGeneratorComponent implements OnInit {
     this.division=null;
     this.name = null;
     this.tournamentSeed = [];
-    this.standings = [];
+    
   }
 
 
