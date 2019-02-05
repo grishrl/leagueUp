@@ -38,16 +38,18 @@ export class UpdateRolesComponent implements OnInit {
 
         res = this.aclSerive.removeUnwantedProps(res);
         
-        if (res.adminRights != null || res.adminRights != undefined){
+        if (res.adminRights != null || res.adminRights != undefined) {
           let key = Object.keys(res.adminRights);
           key.forEach(element => {
             this.rights.forEach((statRight) => {
+
               if (element == statRight.key) {
-                statRight.value = true;
+                statRight.value = res.adminRights[element];
               }
+
             });
           });
-        }else{
+        } else {
           res.adminRights = {};
 
         }
@@ -66,11 +68,12 @@ export class UpdateRolesComponent implements OnInit {
   updateUserRights(){
     let resultantACL = {};
     this.rights.forEach(right=>{
-      if(right.value){
+
         resultantACL[right.key]=right.value;
-      }
+      
     });
     resultantACL['adminId'] = this.user['_id'];
+    console.log('resultantACL ',resultantACL)
     this.adminService.upsertUserAcls(resultantACL).subscribe(res=>{
       this.router.navigate(['/_admin/userACLMgmt']);
     },err=>{
