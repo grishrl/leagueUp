@@ -11,7 +11,11 @@ export class TeamTournamentsComponent implements OnInit {
 
   constructor(private auth:AuthService, private team: TeamService) { }
   
-  selectedTournament = {};
+  selectedTournament = {
+    'season':undefined,
+    'division':undefined,
+    'name':undefined
+  };
   involvedTournaments = [];
   matches = [];
   _team;
