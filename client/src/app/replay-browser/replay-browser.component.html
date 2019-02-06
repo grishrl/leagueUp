@@ -38,6 +38,14 @@
                         </div>
                         <div class="row">
                             <div class="col text-center">
+                                <span *ngIf="match.type && match.type == 'tournament' else seasonal"> Tournament Match </span>
+                                <ng-template #seasonal>
+                                    Regular Season Match
+                                </ng-template>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col text-center">
                                 <span class="titles">Team Names:</span>
                             </div>
                         </div>

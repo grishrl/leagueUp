@@ -537,6 +537,43 @@ router.post('/report/match', passport.authenticate('jwt', {
                                 }
                             )
 
+                            //if this match was a tournmanet match then we need to promote the winner to the parent match
+                            if (foundMatch.type == 'tournament') {
+                                let winner = {};
+                                if (foundMatch.home.score > foundMatch.away.score) {
+                                    winner['id'] = foundMatch.home.id;
+                                    winner['teamName'] = foundMatch.home.teamName;
+                                } else {
+                                    winner['id'] = foundMatch.away.id;
+                                    winner['teamName'] = foundMatch.away.teamName;
+                                }
+                                Match.findOne({ matchId: foundMatch.parentId }).then(
+                                    found => {
+                                        if (found) {
+                                            let foundObj = found.toObject();
+                                            if (util.returnBoolByPath(foundObj, 'away')) {
+                                                found.home = winner;
+                                            } else {
+                                                found.away = winner;
+                                            }
+                                            found.save().then(
+                                                saved => {
+                                                    console.log(saved);
+                                                },
+                                                err => {
+                                                    console.log(err);
+                                                }
+                                            )
+                                        } else {
+                                            console.log('the parent match was not found');
+                                        }
+                                    },
+                                    err => {
+                                        console.log(err)
+                                    }
+                                )
+                            }
+
 
                         } else {
                             logObj.logLevel = 'ERROR';
@@ -818,9 +855,7 @@ router.post('/fetch/team/tournament', passport.authenticate('jwt', {
 
 });
 
-router.post('/fetch/tournament', passport.authenticate('jwt', {
-    session: false
-}), (req, res) => {
+router.post('/fetch/tournament', (req, res) => {
 
     const path = '/schedule/fetch/tournament';
 
@@ -892,6 +927,7 @@ router.post('/fetch/tournament', passport.authenticate('jwt', {
                     }
                 )
             } else {
+                res.status(200).send(util.returnMessaging(path, 'No tournament info found', false, found));
                 //match not found
             }
 

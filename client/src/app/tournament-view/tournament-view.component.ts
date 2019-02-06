@@ -22,46 +22,39 @@ export class TournamentViewComponent implements OnInit {
 
    _division;
    @Input() set division(_division){
-     if(!this.util.isNullOrEmpty(_division)){
-       this._division = _division;
-     }
+     this._division = _division;
+    //  if(!this.util.isNullOrEmpty(_division)){
+    //    this._division = _division;
+    //    this.ngOnInit();
+    //  }
    }
 
    _season;
    @Input() set season(_season){
-     if(!this.util.isNullOrEmpty(_season)){
-       this._season = _season;
-     }
+     this._season=_season;
+    //  if(!this.util.isNullOrEmpty(_season)){
+    //    this._season = _season;
+    //    this.ngOnInit();
+    //  }
    }
 
    _name;
    @Input() set name(_name){
-     if(!this.util.isNullOrEmpty(_name)){
-       this._name = _name;
-       this.ngOnInit();
-     }
+     this._name= _name;
+    //  if(!this.util.isNullOrEmpty(_name)){
+    //    this._name = _name;
+    //    this.ngOnInit();
+    //  }else{
+    //    this._name=
+    //  }
    }
    
   
   matches: any = [];
-  tournamentObject:any={
-    'championship':{},
-    'semiFinalLeft':{},
-    'semiFinalRight':{},
-    'quarterFinal1':{},
-    'quarterFinal2':{},
-    'quarterFinal3':{},
-    'quarterFinal4':{},
-    "ro16_1":{},
-    "ro16_2":{},
-    "ro16_3":{},
-    "ro16_4":{},
-    "ro16_5":{},
-    "ro16_6":{},
-    "ro16_7":{},
-    "ro16_8":{}
-  }
+  tournamentObject:any;
   ngOnInit() {
+    this.matches = [];
+    this.tournamentObject = this.returnMatchObject();
     this.getTournamentBrackets();
   }
 
@@ -86,7 +79,16 @@ export class TournamentViewComponent implements OnInit {
   }
 
   winner(obj, pos){
-    return false;
+    if(this.util.returnBoolByPath(obj, 'home.score') &&  this.util.returnBoolByPath(obj, 'away.score')){
+      if (obj.home.score > obj.away.score) {
+        return pos == 'home';
+      } else {
+        return pos == 'away';
+      }
+    }else{
+      return false;
+    }
+
   }
 
   championship:any;
@@ -143,6 +145,26 @@ export class TournamentViewComponent implements OnInit {
 
   ngAfterViewInit(){
 
+  }
+
+  returnMatchObject(){
+    return {
+      'championship': {},
+      'semiFinalLeft': {},
+      'semiFinalRight': {},
+      'quarterFinal1': {},
+      'quarterFinal2': {},
+      'quarterFinal3': {},
+      'quarterFinal4': {},
+      "ro16_1": {},
+      "ro16_2": {},
+      "ro16_3": {},
+      "ro16_4": {},
+      "ro16_5": {},
+      "ro16_6": {},
+      "ro16_7": {},
+      "ro16_8": {}
+    }
   }
 
 }
