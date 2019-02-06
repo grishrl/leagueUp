@@ -38,7 +38,7 @@ import { AddTeamComponent } from './admin/division-management/add-team/add-team.
 import { DivisionPropsComponent } from './admin/division-management/division-props/division-props.component';
 import { RemoveTeamComponent } from './admin/division-management/remove-team/remove-team.component';
 import { ScheduleViewComponent } from './schedule/schedule-view/schedule-view.component';
-import { MatchScheduleComponent } from './schedule/match-schedule/match-schedule.component';
+import { MatchSchedulerComponent } from './schedule/match-scheduler/match-scheduler.component';
 import { TeamScheduleComponent } from './schedule/team-schedule/team-schedule.component';
 import { ReportingComponent } from './reporting/reporting.component';
 import { ReportingDeckComponent } from './reporting/reporting-deck/reporting-deck.component';
@@ -82,6 +82,10 @@ import { TournamentViewComponent } from './tournament-view/tournament-view.compo
 import { ReplayBrowserComponent } from './replay-browser/replay-browser.component';
 import { DivisionSelectorComponent } from './division-selector/division-selector.component';
 import { DragScrollModule } from 'ngx-drag-scroll';
+import { TeamScheduleComboComponent } from './schedule/team-schedule-combo/team-schedule-combo.component';
+import { TeamTournamentsComponent } from './schedule/team-tournaments/team-tournaments.component';
+import { MatchScheduleComponent } from './match-schedule/match-schedule.component';
+import { TournamentReportingComponent } from './reporting/tournament-reporting/tournament-reporting.component';
 
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
@@ -119,7 +123,7 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     DivisionPropsComponent,
     RemoveTeamComponent,
     ScheduleViewComponent,
-    MatchScheduleComponent,
+    MatchSchedulerComponent,
     TeamScheduleComponent,
     ReportingComponent,
     ReportingDeckComponent,
@@ -155,7 +159,11 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     TournamentGeneratorComponent,
     TournamentViewComponent,
     ReplayBrowserComponent,
-    DivisionSelectorComponent
+    DivisionSelectorComponent,
+    TeamScheduleComboComponent,
+    TeamTournamentsComponent,
+    MatchScheduleComponent,
+    TournamentReportingComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

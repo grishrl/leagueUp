@@ -737,10 +737,88 @@ router.post('/generate/tournament', passport.authenticate('jwt', {
 
 });
 
-// router.post('/fetch/tournament', (req, res) => {
-//     const path = '/schedule/fetch/tournament';
-//     res.status(200).send(util.returnMessaging(path, 'Zig Zag', false, { 'hey': 'hello' }));
-// })
+router.post('/fetch/team/tournament/matches', passport.authenticate('jwt', {
+    session: false
+}), (req, res) => {
+
+    const path = '/schedule/fetch/team/tournament/matches';
+
+    let team = req.body.teamId;
+
+    let queryObj = {
+        $and: [{
+                $or: [{
+                        "home.id": team
+                    },
+                    {
+                        "away.id": team
+                    }
+                ]
+            },
+            {
+                "type": "tournament"
+            }
+        ]
+    };
+
+    if (req.body.season) {
+        queryObj.$and.push({ season: req.body.season });
+    }
+    if (req.body.division) {
+        queryObj.$and.push({
+            divisionConcat: req.body.division
+        });
+    }
+    if (req.body.name) {
+        queryObj.$and.push({
+            divisionConcat: req.body.name
+        });
+    }
+
+    Match.find(queryObj).lean().then(
+        (found) => {
+            let teams = findTeamIds(found);
+            addTeamNamesToMatch(teams, found).then(
+                processed => {
+                    res.status(200).send(util.returnMessaging(path, 'Found tournament info', false, processed));
+                },
+                err => {
+                    res.status(500).send(util.returnMessaging(path, 'Error occured querying schedules', err));
+                }
+            )
+
+        },
+        (err) => {
+            res.status(500).send(util.returnMessaging(path, 'Error occured querying schedules', err));
+        }
+    )
+
+});
+
+
+
+router.post('/fetch/team/tournament', passport.authenticate('jwt', {
+    session: false
+}), (req, res) => {
+
+    const path = '/schedule/fetch/team/tournament';
+
+    let team = req.body.teamId;
+
+    console.log(team);
+
+    Scheduling.find({
+        participants: team
+    }).then(
+        (found) => {
+            res.status(200).send(util.returnMessaging(path, 'Found tournament info', false, found));
+        },
+        (err) => {
+            res.status(500).send(util.returnMessaging(path, 'Error occured querying schedules', err));
+        },
+    )
+
+});
 
 router.post('/fetch/tournament', passport.authenticate('jwt', {
     session: false

@@ -11,6 +11,9 @@ import { MatPaginator, PageEvent } from '@angular/material';
 })
 export class TournamentGeneratorComponent implements OnInit {
 
+  selectFromList:AnalyserNode;
+  selectedList:any;
+
   divisions: any = [];
   selectedDivision: any = null;
   division
@@ -119,6 +122,8 @@ export class TournamentGeneratorComponent implements OnInit {
       }
     )
   }
+
+  
 
   ngOnInit() {
     this.standings = [];

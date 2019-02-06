@@ -47,7 +47,7 @@ export class RemoveTeamComponent implements OnInit {
     }
   }
 
-  //calls the admin service to remove the selected teams from the selected divison
+  //calls the admin service to remove the selected teams from the selected division
   removeTeams(){
     this.adminService.removeTeams(this.selectedTeams, this.selectedDiv.divisionConcat).subscribe( (res)=>{
       this.selectedDiv = null;

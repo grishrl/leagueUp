@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ScheduleService } from '../services/schedule.service';
 import { TeamService } from '../services/team.service';
+import { UtilitiesService } from '../services/utilities.service';
 
 @Component({
   selector: 'app-tournament-view',
@@ -10,11 +11,37 @@ import { TeamService } from '../services/team.service';
 export class TournamentViewComponent implements OnInit {
   // _iScroll:iScroll;
   _bracket;
-  constructor(private scheduleService:ScheduleService, public _team:TeamService) {
+
+  noBracket=true;
+
+  constructor(private scheduleService:ScheduleService, public _team:TeamService, private util: UtilitiesService) {
     
    }
    x:any;
    y:any;
+
+   _division;
+   @Input() set division(_division){
+     if(!this.util.isNullOrEmpty(_division)){
+       this._division = _division;
+     }
+   }
+
+   _season;
+   @Input() set season(_season){
+     if(!this.util.isNullOrEmpty(_season)){
+       this._season = _season;
+     }
+   }
+
+   _name;
+   @Input() set name(_name){
+     if(!this.util.isNullOrEmpty(_name)){
+       this._name = _name;
+       this.ngOnInit();
+     }
+   }
+   
   
   matches: any = [];
   tournamentObject:any={
@@ -35,17 +62,27 @@ export class TournamentViewComponent implements OnInit {
     "ro16_8":{}
   }
   ngOnInit() {
+    this.getTournamentBrackets();
+  }
 
-    this.scheduleService.getTournamentGames('six man tournament', 1, null).subscribe(
-      res=>{
-        console.log(res);
+  ngOnChanges(){
+    this.getTournamentBrackets();
+  }
+
+  private getTournamentBrackets() {
+    console.log(this._name, this._season, this._division);
+    if (this.util.isNullOrEmpty(this._name) && this.util.isNullOrEmpty(this._season) && this.util.isNullOrEmpty(this._division)) {
+      console.warn('Tournament view must be provided input');
+      this.noBracket = false;
+    } else {
+      this.scheduleService.getTournamentGames(this._name, this._season, this._division).subscribe(res => {
+        this.noBracket = true;
         this.matches = res['tournMatches'];
         this.tournamentObject = this.arrangeMatches();
-      },
-      err=>{
-        console.log('jkl; ',err);
-      }
-    )
+      }, err => {
+        this.noBracket = false;
+      });
+    }
   }
 
   winner(obj, pos){
@@ -103,31 +140,6 @@ export class TournamentViewComponent implements OnInit {
     });
     return retMatch;
   }
-  
-  // test(e){
-  //   if(e.pointerType=='mouse'){
-
-  //   }else{
-  //     console.log(e);
-  //     if (this.x + e.deltaX < -430) {
-  //       //do nothing
-  //     } else if (this.x + e.deltaX > 450) {
-  //       //do nothing
-  //     } else {
-  //       this.x = this.x + e.deltaX;
-  //     }
-
-  //     if (this.y + e.deltaY < -120) {
-  //       this.y = -120;
-  //     } else if (this.y + e.deltaY > 300){
-  //       this.y = 300
-  //     } else {
-  //       this.y = this.y + e.deltaY
-  //     }
-  //   } 
-
-  //   // elem.style.transform = "translateX(" + e.deltaX + "px)";
-  // }
 
   ngAfterViewInit(){
 

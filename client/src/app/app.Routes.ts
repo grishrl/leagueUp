@@ -16,7 +16,7 @@ import { DeleteMemberComponent } from "./admin/delete-member/delete-member.compo
 import { ManageSelectTeamComponent } from "./admin/manage-team/manage-select-team.component";
 import { DivisionManagementComponent } from "./admin/division-management/division-management.component";
 import { ScheduleViewComponent } from "./schedule/schedule-view/schedule-view.component";
-import { MatchScheduleComponent } from "./schedule/match-schedule/match-schedule.component";
+import { MatchSchedulerComponent } from "./schedule/match-scheduler/match-scheduler.component";
 import { TeamScheduleComponent } from "./schedule/team-schedule/team-schedule.component";
 import { ReportingComponent } from "./reporting/reporting.component";
 import { DashboardComponent } from "./admin/dashboard/dashboard.component";
@@ -40,6 +40,7 @@ import { GenerateSeasonComponent } from "./admin/match-management/generate-seaso
 import { TournamentGeneratorComponent } from "./admin/match-management/tournament-generator/tournament-generator.component";
 import { ReplayBrowserComponent } from "./replay-browser/replay-browser.component";
 import { TournamentViewComponent } from "./tournament-view/tournament-view.component";
+import { TeamScheduleComboComponent } from "./schedule/team-schedule-combo/team-schedule-combo.component"
 
 const APP_ROUTES: Routes = [
   { path: 'directory', component: DirectoryComponent},
@@ -66,8 +67,8 @@ const APP_ROUTES: Routes = [
   { path: '_admin/userACLMgmt/:id', component: UpdateRolesComponent, canActivate: [AuthGuardService], data: { role: 'acl' } },
   { path: '_admin/scheduleGenerator', component: GenerateSeasonComponent, canActivate: [AuthGuardService], data: { role: 'schedulegen' } },
   { path: '_admin/tournamentGenerator', component: TournamentGeneratorComponent, canActivate: [AuthGuardService], data: { role: 'schedulegen' } },
-  { path: 'schedule/scheduleMatch/:id', component:MatchScheduleComponent},
-  { path: 'schedule/teamSchedule', component: TeamScheduleComponent },
+  { path: 'schedule/scheduleMatch/:id', component:MatchSchedulerComponent},
+  { path: 'schedule/teamSchedule', component: TeamScheduleComboComponent },
   { path: 'schedule/teamSchedule/:id', component:TeamScheduleComponent}, //accepts team name as url parameter
   { path: 'reporting/:id', component:ReportingComponent}, //accepts team name as url parameter
   { path: '_admin/dashboard', component: DashboardComponent, canActivate: [AuthGuardService]},
@@ -90,11 +91,3 @@ const APP_ROUTES: Routes = [
 })
 
 export class AppRoutingModule{}
-/*
-, children: [
-      { path: 'approveTeamQueue', component: ApproveMemberComponent },
-      { path: 'deleteUser', component: DeleteMemberComponent },
-      { path: 'manageTeam', component: DeleteTeamComponent },
-      { path: 'divisionMgmt', component: DivisionManagementComponent }
-    ]
-*/

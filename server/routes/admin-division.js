@@ -268,7 +268,7 @@ router.post('/deleteDivision', passport.authenticate('jwt', {
 
             } else {
                 logObj.logLevel = 'ERROR';
-                logObj.error = 'Divison not found'
+                logObj.error = 'Division not found'
                 res.status(400).send(util.returnMessaging(path, 'Division not found', false, null, null, logObj));
             }
         },

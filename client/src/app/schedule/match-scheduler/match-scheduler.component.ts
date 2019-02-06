@@ -5,11 +5,11 @@ import { TeamService } from 'src/app/services/team.service';
 
 
 @Component({
-  selector: 'app-match-schedule',
-  templateUrl: './match-schedule.component.html',
-  styleUrls: ['./match-schedule.component.css']
+  selector: 'app-match-scheduler',
+  templateUrl: './match-scheduler.component.html',
+  styleUrls: ['./match-scheduler.component.css']
 })
-export class MatchScheduleComponent implements OnInit {
+export class MatchSchedulerComponent implements OnInit {
 
   //component properties
   matchId //local prop to hold match Id recieved from route
