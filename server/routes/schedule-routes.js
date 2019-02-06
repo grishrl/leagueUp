@@ -805,8 +805,6 @@ router.post('/fetch/team/tournament', passport.authenticate('jwt', {
 
     let team = req.body.teamId;
 
-    console.log(team);
-
     Scheduling.find({
         participants: team
     }).then(
