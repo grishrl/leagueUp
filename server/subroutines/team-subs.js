@@ -2,9 +2,45 @@ const util = require('../utils');
 const Team = require('../models/team-models');
 const User = require('../models/user-models');
 const Match = require('../models/match-model');
+const request = require('request');
+const logger = require('./sys-logging-subs');
+const axios = require('axios');
+
+function routeFriendlyUsername(username) {
+    if (username != null && username != undefined) {
+        return username.replace('#', '_');
+    } else {
+        return '';
+    }
+}
+
+let reqURL = 'https://api.hotslogs.com/Public/Players/1/';
+async function hotslogs(url, btag) {
+    let val = 0;
+    try {
+        console.log(url + btag);
+        const response = await axios.get(url + routeFriendlyUsername(btag));
+        let data = response.data;
+        var inc = 0
+        var totalMMR = 0;
+        var avgMMR = 0;
+        data['LeaderboardRankings'].forEach(element => {
+            if (element['GameMode'] != 'QuickMatch') {
+                if (element['CurrentMMR'] > 0) {
+                    inc += 1;
+                    totalMMR += element.CurrentMMR;
+                }
+            }
+        });
+        avgMMR = Math.round(totalMMR / inc);
+        val = avgMMR;
+    } catch (error) {
+        val = null;
+    }
+    return val;
+};
 
 const numberOfTopMembersToUse = 4;
-const daysLastTouched = 5;
 
 //subroutine to update teams division
 function upsertTeamsDivision(teams, division) {
@@ -38,12 +74,21 @@ function upsertTeamDivision(team, division) {
 
 //update mmrs asynch
 async function updateTeamMmrAsynch(team) {
+    let logObj = {};
+    logObj.actor = 'SYSTEM; Update Team MMR';
+    logObj.action = ' updating team and player mmr ';
+    logObj.target = '';
+    logObj.timeStamp = new Date().getTime();
+    logObj.logLevel = 'STD';
+
     if (typeof team == 'string') {
         team = team.toLowerCase();
         team = {
             teamName_lower: team
         }
     }
+    logObj.target += team.teamName_lower + ' ';
+    //grab the specified team
     let retrievedTeam = await Team.findOne({
         teamName_lower: team.teamName_lower
     }).then((foundTeam) => {
@@ -56,12 +101,40 @@ async function updateTeamMmrAsynch(team) {
         console.log('updateMmr routine failed');
         return null;
     });
+
+    //grab all the members of the team
     let members = [];
     retrievedTeam.teamMembers.forEach(element => {
         members.push(element.displayName);
     });
+    //
     let processMembersMMR;
     if (members.length > 0) {
+        //loop through the members of each team
+        for (var i = 0; i < members.length; i++) {
+            //grab a specific member
+            let member = members[i];
+
+
+            //call out to the hots log API grab the most updated users MMR
+            let mmr = await hotslogs(reqURL, member);
+
+            let player = await User.findOne({ displayName: member }).then(
+                found => { return found; },
+                err => { return null; }
+            )
+            logObj.target += member + ' ';
+            let savedPlayer;
+            if (player) {
+                player.averageMmr = mmr;
+                savedPlayer = await player.save().then(
+                    saved => { return saved; },
+                    err => { return null; }
+                )
+            }
+
+
+        }
         processMembersMMR = await topMemberMmr(members).then((processed) => {
             if (processed) {
                 return processed;
@@ -69,7 +142,8 @@ async function updateTeamMmrAsynch(team) {
                 return null;
             }
         }, err => {
-            console.log('error saving');
+            logObj.level = 'ERROR';
+            logObj.error = err;
             return null;
         });
     }
@@ -77,12 +151,14 @@ async function updateTeamMmrAsynch(team) {
     if (processMembersMMR) {
         retrievedTeam.teamMMRAvg = processMembersMMR;
         updatedTeam = await retrievedTeam.save().then(saved => {
-            console.log('team mmr updated successfully');
             return saved;
         }, err => {
+            logObj.level = 'ERROR';
+            logObj.error = err;
             return null;
         })
     }
+    logger(logObj);
     return updatedTeam;
 }
 

@@ -41,7 +41,7 @@ async function updateTeamsNotTouched() {
                 }
             }
         ]
-    }).then(
+    }).limit(20).then(
         (foundTeams) => {
             if (foundTeams) {
                 return foundTeams

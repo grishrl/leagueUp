@@ -5,7 +5,9 @@ const Schema = mongoose.Schema;
 const replayScheam = new Schema({
     "match": Object,
     "players": Object,
-    "status": Number
+    "status": Number,
+    "fullyAssociated": Boolean,
+    "systemId": String
 }, {
     strict: false,
     useNestedStrict: false

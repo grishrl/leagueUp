@@ -7,14 +7,14 @@ const logger = require('../subroutines/sys-logging-subs');
 const summarizePlayerData = require('../summarizeData/summarize-player-data');
 const summarizeTeamData = require('../summarizeData/summarize-team-data');
 
-// asscoatieUsers().then(
-//     processed => {
-//         console.log('completed ok');
-//     },
-//     err => {
-//         console.log('completed err');
-//     }
-// )
+asscoatieUsers().then(
+    processed => {
+        console.log('completed ok');
+    },
+    err => {
+        console.log('completed err');
+    }
+)
 
 function getToonHandle(obj, name) {
     let handle = null;
@@ -146,17 +146,25 @@ async function asscoatieUsers() {
                     }
                 }
             }
-
+            console.log('associatedCount ', associatedCount)
             if (associatedCount == 12) {
-                replay.fullyAssociated = true;
-                replay.save().then(
-                    saved => {
-                        console.log('replay saved');
-                    },
-                    err => {
-                        console.log('err');
-                    }
+                let replayToSave = await Replay.findById(replay._id).then(
+                    found => { return found; },
+                    err => { return null; }
                 )
+                if (replayToSave) {
+                    replayToSave.fullyAssociated = true;
+                    replayToSave.markModified('fullyAssociated');
+                    replayToSave.save().then(
+                        saved => {
+                            console.log('replay saved');
+                        },
+                        err => {
+                            console.log('err');
+                        }
+                    )
+                }
+
             }
 
         }
@@ -271,14 +279,14 @@ async function tabulateUserStats() {
 
 }
 
-tabulateTeamStats().then(
-    processed => {
-        console.log('completed ok');
-    },
-    err => {
-        console.log('completed err');
-    }
-)
+// tabulateTeamStats().then(
+//     processed => {
+//         console.log('completed ok');
+//     },
+//     err => {
+//         console.log('completed err');
+//     }
+// )
 
 //this will run through teams and tabulate stats
 async function tabulateTeamStats() {

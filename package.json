@@ -18,6 +18,7 @@
         "@uirouter/angularjs": "^1.0.20",
         "angular": "^1.7.5",
         "aws-sdk": "^2.382.0",
+        "axios": "^0.18.0",
         "body-parser": "^1.18.3",
         "bracketzada": "^0.1.2",
         "express": "^4.16.4",
