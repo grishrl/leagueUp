@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const Teamjobs = require('./server/cron-routines/update-team');
 const logger = require('./server/subroutines/sys-logging-subs');
 
