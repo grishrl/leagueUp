@@ -47,7 +47,7 @@ async function updateTeamsNotTouched(days) {
         }
     );
 
-    console.log('teams ', teams);
+    // console.log('teams ', teams);
     //this batch will be returned
     let batch = [];
     if (teams) {
