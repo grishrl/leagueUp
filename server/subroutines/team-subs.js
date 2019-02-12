@@ -18,7 +18,7 @@ let reqURL = 'https://api.hotslogs.com/Public/Players/1/';
 async function hotslogs(url, btag) {
     let val = 0;
     try {
-        console.log(url + btag);
+        // console.log(url + btag);
         const response = await axios.get(url + routeFriendlyUsername(btag));
         let data = response.data;
         var inc = 0

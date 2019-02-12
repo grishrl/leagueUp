@@ -3,11 +3,21 @@ const System = require('./server/models/system-models');
 const mongoose = require('mongoose')
 
 let tokenObject = {};
+// set this ID to the _id that the API key will be tied to
 tokenObject.id = "5c62f9d8a55a147ce08c9674";
 
-var token = jwt.sign(tokenObject, process.env.jwtToken, {
-    expiresIn: '7d'
-});
+//set this to false to create a std JWToken for API calls, or true for an API key :)
+var api = true;
+
+if (api) {
+    var token = jwt.sign(tokenObject, process.env.apiKey);
+} else {
+    var token = jwt.sign(tokenObject, process.env.jwtToken, {
+        expiresIn: '7d'
+    });
+}
+
+
 
 console.log('token ', token);
 
@@ -22,8 +32,10 @@ new System.system({
 }).save().then(
     saved => {
         console.log('saved ', ' token ', token);
+        process.exit(0);
     },
     err => {
         console.log('not saved ', ' token ', token);
+        process.exit(0);
     }
 );

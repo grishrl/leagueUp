@@ -18,13 +18,13 @@ router.post('/update/teams', (req, res) => {
     logObj.logLevel = 'STD';
     logObj.target = 'teams not update within 5 days';
 
-    var daysOld = req.body.daysOld;
-    var apiKey = req.body.apiKey;
+
+    var daysOld = req.body.daysOld || req.query.daysOld;
+    var apiKey = req.body.apiKey || req.query.apiKey;
 
     if (!daysOld) {
         daysOld = 5;
     }
-
     checkApiKey(apiKey).then(
         validate => {
             if (validate) {
@@ -55,7 +55,9 @@ async function checkApiKey(key) {
         'dataName': 'apiKey',
         'value': key
     }).then(
-        found => { return !!found; },
+        found => {
+            return !!found;
+        },
         err => { return false; }
     )
 }
