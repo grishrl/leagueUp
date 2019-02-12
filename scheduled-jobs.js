@@ -7,7 +7,7 @@ logObj.action = ' update team MMR cron runner; updating';
 logObj.timeStamp = new Date().getTime();
 logObj.logLevel = 'STD';
 logObj.target = 'teams not update within 5 days';
-
+console.log('starting the job! ')
 Teamjobs.updateTeamsNotTouched(5).then(reply => {
     logObj.action += reply.length;
     logger(logObj);
