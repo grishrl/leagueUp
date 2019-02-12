@@ -28,6 +28,7 @@ const scheduleRoutes = require('./server/routes/schedule-routes');
 const standingRoutes = require('./server/routes/standing-routes');
 const messageRoutes = require('./server/routes/message-routes');
 const requestRoutes = require('./server/routes/request-routes');
+const utilityRoutes = require('./server/routes/utility-routes');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const passport = require('passport');
@@ -68,6 +69,7 @@ app.use('/schedule', scheduleRoutes);
 app.use('/standings', standingRoutes);
 app.use('/messageCenter', messageRoutes);
 app.use('/request', requestRoutes);
+app.use('/utility', utilityRoutes);
 
 // const seeding = require('./server/routes/seeding-route');
 // app.use('/dev', seeding);

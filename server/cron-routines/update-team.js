@@ -11,20 +11,11 @@ update this teams MMR
 make sure that the users in this team are marked as a member (we will use the teams list of members as a trusted source)
 check the teams division, if it is not in that division, remove the marker from the team (we will use the divisions list as a trusted source)
 */
-async function updateTeamsNotTouched() {
+async function updateTeamsNotTouched(days) {
 
-    // logObj = {};
-    // logObj.logLevel = 'SYSTEM';
-    // logObj.location = 'Update teams not touched CRON';
-    // logObj.target = 'teams touched older than ' + process.env.daysToRefreshTeams + ' days ';
-
-    //connect to mongo db
-    mongoose.connect(process.env.mongoURI, () => {
-        console.log('connected to mongodb');
-    });
     //generate the timestamp to compare to
     let date = new Date().getTime();
-    let pastDate = 1000 * 60 * 60 * 24 * process.env.daysToRefreshTeams;
+    let pastDate = 1000 * 60 * 60 * 24 * days;
     let pastDue = date - pastDate
 
     //grab teams who fit the criterias
@@ -66,11 +57,11 @@ async function updateTeamsNotTouched() {
             let team = teams[i];
 
             //update the team mmr
-            console.log('team to update ', team);
+            // console.log('team to update ', team);
             let mmrUpdate = await teamSub.updateTeamMmrAsynch(team);
 
             if (mmrUpdate) {
-                console.log(team, ' mmr updated')
+                // console.log(team, ' mmr updated')
             }
 
             let teamMembers = [];
