@@ -56,6 +56,7 @@ async function updateTeamsNotTouched() {
         }
     );
 
+    console.log('teams ', teams);
     //this batch will be returned
     let batch = [];
     if (teams) {
@@ -65,10 +66,11 @@ async function updateTeamsNotTouched() {
             let team = teams[i];
 
             //update the team mmr
+            console.log('team to update ', team);
             let mmrUpdate = await teamSub.updateTeamMmrAsynch(team);
 
             if (mmrUpdate) {
-                // console.log('mmr updated')
+                console.log(team, ' mmr updated')
             }
 
             let teamMembers = [];
