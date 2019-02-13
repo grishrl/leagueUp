@@ -2,8 +2,6 @@ const Team = require('../models/team-models');
 const teamSub = require('../subroutines/team-subs');
 const User = require('../models/user-models');
 const Division = require('../models/division-models');
-const mongoose = require('mongoose')
-const logger = require('../subroutines/sys-logging-subs');
 
 /*
 check teams who have not been touched or have not been touched in 5 days
@@ -11,7 +9,7 @@ update this teams MMR
 make sure that the users in this team are marked as a member (we will use the teams list of members as a trusted source)
 check the teams division, if it is not in that division, remove the marker from the team (we will use the divisions list as a trusted source)
 */
-async function updateTeamsNotTouched(days) {
+async function updateTeamsNotTouched(days, limit) {
 
     //generate the timestamp to compare to
     let date = new Date().getTime();
@@ -21,10 +19,10 @@ async function updateTeamsNotTouched(days) {
     //grab teams who fit the criterias
     let teams = await Team.find({
         $or: [{
-                lastTouched: null
+                lastTouched: { $exists: false }
             },
             {
-                lastTouched: undefined
+                lastTouched: null
             },
             {
                 lastTouched: {
@@ -32,7 +30,7 @@ async function updateTeamsNotTouched(days) {
                 }
             }
         ]
-    }).limit(20).then(
+    }).limit(limit).then(
         (foundTeams) => {
             if (foundTeams) {
                 return foundTeams
@@ -46,7 +44,6 @@ async function updateTeamsNotTouched(days) {
             return null;
         }
     );
-
     // console.log('teams ', teams);
     //this batch will be returned
     let batch = [];
@@ -122,11 +119,12 @@ async function updateTeamsNotTouched(days) {
                 }
             }
 
-            team.lastTouched = date;
-
+            team['lastTouched'] = date;
+            team.markModified('lastTouched');
             let saved = await team.save().then(
                 (sav) => {
                     return sav;
+
                 },
                 (err) => {
                     return null;

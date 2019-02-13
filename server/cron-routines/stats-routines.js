@@ -1,20 +1,10 @@
 const Replay = require('../models/replay-parsed-models');
-const mongoose = require('mongoose');
 const User = require('../models/user-models');
 const Team = require('../models/team-models');
 const Stats = require('../models/stats-model');
 const logger = require('../subroutines/sys-logging-subs');
 const summarizePlayerData = require('../summarizeData/summarize-player-data');
 const summarizeTeamData = require('../summarizeData/summarize-team-data');
-
-asscoatieUsers().then(
-    processed => {
-        console.log('completed ok');
-    },
-    err => {
-        console.log('completed err');
-    }
-)
 
 function getToonHandle(obj, name) {
     let handle = null;
@@ -28,12 +18,7 @@ function getToonHandle(obj, name) {
 }
 
 //this will filter through the replay files and associate any player and toon handle togeher
-async function asscoatieUsers() {
-    //TODO: implement
-    //connect to mongo db
-    mongoose.connect(process.env.mongoURI, () => {
-        console.log('connected to mongodb');
-    });
+async function asscoatieReplays() {
 
     let logObj = {};
 
@@ -100,17 +85,17 @@ async function asscoatieUsers() {
                     if (!thisUser.toonHandle) {
                         thisUser.toonHandle = getToonHandle(playerTagsAndToonHandle, thisUser.displayName);
                     }
-                    console.log('replay.systemId ', replayObj.systemId);
+                    // console.log('replay.systemId ', replayObj.systemId);
                     if (thisUser.replays.indexOf(replayObj.systemId) == -1) {
                         thisUser.replays.push(replayObj.systemId);
                         thisUser.parseStats = true;
                         associatedCount += 1;
                         thisUser.save().then(
                             saved => {
-                                console.log('saved user!')
+                                // console.log('saved user!')
                             },
                             err => {
-                                console.log('err!');
+                                // console.log('err!');
                             })
                     } else {
                         associatedCount += 1;
@@ -135,10 +120,10 @@ async function asscoatieUsers() {
                         associatedCount += 1;
                         team.save().then(
                             saved => {
-                                console.log('team saved!');
+                                // console.log('team saved!');
                             },
                             err => {
-                                console.log('err');
+                                // console.log('err');
                             }
                         )
                     } else {
@@ -146,7 +131,7 @@ async function asscoatieUsers() {
                     }
                 }
             }
-            console.log('associatedCount ', associatedCount)
+            // console.log('associatedCount ', associatedCount)
             if (associatedCount == 12) {
                 let replayToSave = await Replay.findById(replay._id).then(
                     found => { return found; },
@@ -157,10 +142,10 @@ async function asscoatieUsers() {
                     replayToSave.markModified('fullyAssociated');
                     replayToSave.save().then(
                         saved => {
-                            console.log('replay saved');
+                            // console.log('replay saved');
                         },
                         err => {
-                            console.log('err');
+                            // console.log('err');
                         }
                     )
                 }
@@ -173,22 +158,9 @@ async function asscoatieUsers() {
     }
 }
 
-// tabulateUserStats().then(
-//     processed => {
-//         console.log('completed ok');
-//     },
-//     err => {
-//         console.log('completed err');
-//     }
-// )
-
 //this will run through players with toon handles and tabulate their stats from replays
 async function tabulateUserStats() {
 
-    //connect to mongo db
-    mongoose.connect(process.env.mongoURI, () => {
-        console.log('connected to mongodb');
-    });
 
     //grab users who have been marked for tabulation
     let players = await User.find({ parseStats: true }).then(
@@ -279,22 +251,11 @@ async function tabulateUserStats() {
 
 }
 
-// tabulateTeamStats().then(
-//     processed => {
-//         console.log('completed ok');
-//     },
-//     err => {
-//         console.log('completed err');
-//     }
-// )
 
 //this will run through teams and tabulate stats
 async function tabulateTeamStats() {
     //TODO: implement
     //connect to mongo db
-    mongoose.connect(process.env.mongoURI, () => {
-        console.log('connected to mongodb');
-    });
 
     let teams = await Team.find({ parseStats: true }).then(
         found => { return found; },
@@ -371,9 +332,9 @@ async function tabulateTeamStats() {
                 }
 
                 if (statResult) {
-                    console.log('stats saved');
+                    // console.log('stats saved');
                 } else {
-                    console.log('stats not saved');
+                    // console.log('stats not saved');
                 }
 
                 let saveTeam = thisTeam.save().then(
@@ -392,5 +353,7 @@ async function tabulateTeamStats() {
 }
 
 module.exports = {
-    asscoatieUsers: asscoatieUsers
+    asscoatieReplays: asscoatieReplays,
+    tabulateUserStats: tabulateUserStats,
+    tabulateTeamStats: tabulateTeamStats
 }
