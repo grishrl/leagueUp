@@ -10,6 +10,12 @@ export class AdminService {
 
   constructor(private httpService: HttpServiceService) { }
 
+  //uploads team logo
+  imageUpload(imgInput) {
+    let url = '/utility/image/upload';
+    return this.httpService.httpPost(url, imgInput, true);
+  }
+
   //returns a list of all teams
   getTeams(){
     let url = 'admin/get/teams/all';

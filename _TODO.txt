@@ -1,3 +1,5 @@
+admins need a way to change players hotslogs ID
+
 
 TO DO 
 1) SET UP NGS AWS S3 BUCKETS

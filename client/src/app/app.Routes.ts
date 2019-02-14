@@ -40,7 +40,9 @@ import { GenerateSeasonComponent } from "./admin/match-management/generate-seaso
 import { TournamentGeneratorComponent } from "./admin/match-management/tournament-generator/tournament-generator.component";
 import { ReplayBrowserComponent } from "./replay-browser/replay-browser.component";
 import { TournamentViewComponent } from "./tournament-view/tournament-view.component";
-import { TeamScheduleComboComponent } from "./schedule/team-schedule-combo/team-schedule-combo.component"
+import { TeamScheduleComboComponent } from "./schedule/team-schedule-combo/team-schedule-combo.component";
+import { EventCreateComponent } from './admin/events/event-create/event-create.component';
+import { EventListComponent } from './admin/events/event-list/event-list.component';
 
 const APP_ROUTES: Routes = [
   { path: 'directory', component: DirectoryComponent},
@@ -67,6 +69,8 @@ const APP_ROUTES: Routes = [
   { path: '_admin/userACLMgmt/:id', component: UpdateRolesComponent, canActivate: [AuthGuardService], data: { role: 'acl' } },
   { path: '_admin/scheduleGenerator', component: GenerateSeasonComponent, canActivate: [AuthGuardService], data: { role: 'schedulegen' } },
   { path: '_admin/tournamentGenerator', component: TournamentGeneratorComponent, canActivate: [AuthGuardService], data: { role: 'schedulegen' } },
+  { path: '_admin/eventList', component: EventListComponent, canActivate: [AuthGuardService], data: { role: 'event' }},
+  { path: '_admin/eventMgmt/:id', component: EventCreateComponent, canActivate: [AuthGuardService], data: { role: 'event' } },
   { path: 'schedule/scheduleMatch/:id', component:MatchSchedulerComponent},
   { path: 'schedule/teamSchedule', component: TeamScheduleComboComponent },
   { path: 'schedule/teamSchedule/:id', component:TeamScheduleComponent}, //accepts team name as url parameter
@@ -77,6 +81,7 @@ const APP_ROUTES: Routes = [
   { path: 'sessionTimeOut', component: SessionTimeoutComponent},
   { path: 'calendar' , component:CalendarViewComponent },
   { path: 'event/:id' , component:EventLargeComponent},
+  { path: 'event', component: EventLargeComponent },
   { path: '_admin/matchMgmt/weekDeadline', component: SetDeadlineComponent, canActivate: [AuthGuardService], data: { role: 'match' }},
   { path: 'messageCenter', component:UserMessageCenterComponent},
   { path: 'findTeams', component:TeamMarketComponent},

@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { TeamService } from 'src/app/services/team.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { StandingsService } from 'src/app/services/standings.service';
+import { EventsService } from 'src/app/services/events.service';
 
 @Component({
   selector: 'app-event-large',
@@ -13,46 +14,64 @@ import { StandingsService } from 'src/app/services/standings.service';
 export class EventLargeComponent implements OnInit {
 
   id:string;
-  constructor(private router: ActivatedRoute, private scheduleService:ScheduleService, public team:TeamService, public util:UtilitiesService, private standingsService:StandingsService) {
+  constructor(private EventService : EventsService,  private router: ActivatedRoute, private scheduleService:ScheduleService, public team:TeamService, public util:UtilitiesService, private standingsService:StandingsService, private route: Router) {
     if(this.router.snapshot.params['id']){
       this.id = this.router.snapshot.params['id'];
     }
   }
 
   match 
+  event
   ngOnInit() {
-    this.scheduleService.getMatchInfo(6, this.id).subscribe(
-      res=>{
-        this.match = res;
-        let match = res;
-        let div = this.match.divisionConcat
-        this.standingsService.getStandings(div).subscribe(
+    let eventInfo = this.EventService.getLocalEvent();
+    if(eventInfo['type']){
+      if (eventInfo['type'] == 'match'){
+        this.scheduleService.getMatchInfo(6, eventInfo['id']).subscribe(
           res => {
-            let standings = res;
-              standings.forEach(standing => {
-                if (match.home.teamName == standing.teamName) {
-                  match.home['losses'] = standing.losses;
-                  match.home['wins'] = standing.wins;
+            this.match = res;
+            let match = res;
+            let div = this.match.divisionConcat
+            this.standingsService.getStandings(div).subscribe(
+              res => {
+                let standings = res;
+                standings.forEach(standing => {
+                  if (match.home.teamName == standing.teamName) {
+                    match.home['losses'] = standing.losses;
+                    match.home['wins'] = standing.wins;
+                  }
+                  if (match.away.teamName == standing.teamName) {
+                    match.away['losses'] = standing.losses;
+                    match.away['wins'] = standing.wins;
+                  }
+                });
+                if (match.scheduledTime) {
+                  match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
+                  match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
+                  match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
                 }
-                if (match.away.teamName == standing.teamName) {
-                  match.away['losses'] = standing.losses;
-                  match.away['wins'] = standing.wins;
-                }
+
+              }, err => {
+                console.log(err);
               });
-              if (match.scheduledTime) {
-                match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
-                match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
-                match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
-              }
-            
-          }, err => {
+          },
+          err => {
             console.log(err);
-          });
-      },
-      err=>{
-        console.log(err);
+          }
+        )
+      } else if (eventInfo['type'] == 'event'){
+        this.EventService.getEventById(eventInfo['id']).subscribe(
+          res=>{
+            this.event = res;
+          },
+          err=>{
+            console.log(err);
+          }
+        )
       }
-    )
+    }else{
+      this.route.navigate(['calendar']);
+    }
+    
   }
 
 }

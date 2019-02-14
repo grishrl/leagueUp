@@ -86,6 +86,10 @@ import { TeamScheduleComboComponent } from './schedule/team-schedule-combo/team-
 import { TeamTournamentsComponent } from './schedule/team-tournaments/team-tournaments.component';
 import { MatchScheduleComponent } from './match-schedule/match-schedule.component';
 import { TournamentReportingComponent } from './reporting/tournament-reporting/tournament-reporting.component';
+import { EventDisplayComponent } from './events/event-display/event-display.component';
+import { EventCreateComponent } from './admin/events/event-create/event-create.component';
+import { EventListComponent } from './admin/events/event-list/event-list.component';
+import { GeneralImageUploadComponent } from './general-image-upload/general-image-upload.component';
 
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
@@ -163,7 +167,11 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     TeamScheduleComboComponent,
     TeamTournamentsComponent,
     MatchScheduleComponent,
-    TournamentReportingComponent
+    TournamentReportingComponent,
+    EventDisplayComponent,
+    EventCreateComponent,
+    EventListComponent,
+    GeneralImageUploadComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

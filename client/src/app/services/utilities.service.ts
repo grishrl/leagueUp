@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
+import { environment } from '../../environments/environment'
 
 @Injectable({
   providedIn: 'root'
@@ -175,5 +176,16 @@ export class UtilitiesService {
       }
     }
     return !!retVal;
+  }
+
+  generalImageFQDN(img) {
+    let imgFQDN = 'https://s3.amazonaws.com/' + environment.s3bucketGeneralImage + '/'
+    if (img) {
+      imgFQDN += img;
+    } else {
+
+    }
+
+    return imgFQDN;
   }
 }

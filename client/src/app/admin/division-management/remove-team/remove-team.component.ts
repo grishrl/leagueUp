@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { indexOf } from 'lodash';
 import { AdminService } from 'src/app/services/admin.service';
-import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-remove-team',
@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 })
 export class RemoveTeamComponent implements OnInit {
 
-  constructor(private adminService:AdminService, private router: Router) { }
+  constructor(private adminService:AdminService) { }
 
   //component properties
   divisions:any = [];

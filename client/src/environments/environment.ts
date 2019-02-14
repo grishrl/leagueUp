@@ -14,6 +14,7 @@ export const environment = {
   },
   s3bucketImages: 'dev-ngs-image-storage',
   s3bucketReplays: 'dev-ngs-replay-storage',
+  s3bucketGeneralImage: 'dev-ngs-general-image',
   socketURL:'https://dev-ngs.herokuapp.com'
 };
 

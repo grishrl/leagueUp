@@ -6,6 +6,7 @@ import { ScheduleService } from '../services/schedule.service';
 import { EventModalComponent } from './event-modal/event-modal.component';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
+import { EventsService } from '../services/events.service';
 
 const colors: any = {
   red: {
@@ -32,7 +33,7 @@ export class CalendarViewComponent implements OnInit {
 
 
 
-  constructor(private matches: ScheduleService, public dialog: MatDialog, private router:Router) { }
+  constructor(private matches: ScheduleService, public dialog: MatDialog, private router:Router, private eventService:EventsService) { }
 
   _matches = [];
   ngOnInit(){
@@ -45,7 +46,7 @@ export class CalendarViewComponent implements OnInit {
             'start': new Date(parseInt(match.scheduledTime.startTime)),
             'end': new Date(parseInt(match.scheduledTime.endTime)),
             'title': match.home.teamName + ' vs ' + match.away.teamName,
-            'meta':match.matchId
+            'meta':{ id: match.matchId, 'type':'match'}
           };
 
           if(match.casterName!=null||match.casterName!=undefined){
@@ -54,7 +55,29 @@ export class CalendarViewComponent implements OnInit {
           event['color']=colors.red;
           this.events.push(event);
         });
-        this.refresh.next();
+
+        this.eventService.getAll().subscribe(
+          reply=>{
+
+            reply.forEach(rep=>{
+              let event: CalendarEvent = {
+                'start': new Date(parseInt(rep.eventDate)),
+                'title': rep.eventName,
+                'meta': { id: rep.uuid, 'type': 'event' }
+              };
+
+              event['color'] = colors.red;
+              this.events.push(event);
+
+            })
+            this.refresh.next();
+          },
+          err=>{
+            console.log(err);
+          }
+        )
+
+        
       },
       err=>{
         console.log(err);
@@ -138,7 +161,9 @@ export class CalendarViewComponent implements OnInit {
 
   handleEvent(action: string, event: CalendarEvent): void {
 
-    this.router.navigate(['event/',event.meta]);
+    this.eventService.setLocalEvent(event.meta);
+    this.router.navigate(['event/']);
+    
 
   }
 

@@ -10,7 +10,8 @@ const adminSchema = new Schema({
     "CASTER": Boolean,
     "MATCH": Boolean,
     "ACL": Boolean,
-    "SCHEDULEGEN": Boolean
+    "SCHEDULEGEN": Boolean,
+    "EVENTS": Boolean
         //more as needed
 });
 
