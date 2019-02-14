@@ -22,10 +22,10 @@ export class EventsService {
     this.localEvent = {};
   }
   
-  upsertMatch(orig, upsert){
+  upsertEvent(orig, upsert){
     let url = '/events/upsert';
     let payload = {
-      "orig_event":orig,
+      "org_event":orig,
       "event":upsert
     };
     return this.httpService.httpPost(url, payload, true);

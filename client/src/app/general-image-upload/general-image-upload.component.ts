@@ -52,10 +52,29 @@ export class GeneralImageUploadComponent implements OnInit {
     }
   }
 
+  widthPx;
+  heightPx;
+
+  @Input() set width(w){
+    if(this.util.isNullOrEmpty(w)){
+      this.widthPx = '350';
+    }else{
+      this.widthPx = w;
+    }
+  }
+
+  @Input() set height(h){
+    if(this.util.isNullOrEmpty(h)){
+      this.heightPx= '230';
+    }else{
+      this.heightPx = h;
+    }
+  }
+
   editClicked: boolean = true;
 
-  widthPx = '350';
-  heightPx = '230';
+  
+  
   imageUrl = '';
   currentImage: string;
   croppieImage: string;

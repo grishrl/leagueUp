@@ -1,0 +1,9 @@
+.oddRow {
+    background-color: #e0e0eb
+}
+
+.rowBorder {
+    border-style: solid;
+    border-width: 1px;
+    border-color: lightgrey;
+}

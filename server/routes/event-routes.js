@@ -15,7 +15,8 @@ router.post('/upsert', passport.authenticate('jwt', {
     let orig = req.body.org_event;
     let event = req.body.event;
 
-    if (util.isNullOrEmpty(orig)) {
+    let keys = Object.keys(orig);
+    if (keys.length == 0) {
         event.uuid = uniqid();
         orig = event;
     }
@@ -29,7 +30,6 @@ router.post('/upsert', passport.authenticate('jwt', {
 
     Event.findOneAndUpdate(orig, event, { upsert: true, overwrite: false, new: true }).then(
         reply => {
-            console.log('reply ', reply);
             res.status(200).send(util.returnMessaging(path, "Event updated", false, reply, null, logObj));
         },
         err => {

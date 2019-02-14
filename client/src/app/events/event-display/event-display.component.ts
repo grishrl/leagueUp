@@ -12,17 +12,24 @@ export class EventDisplayComponent implements OnInit {
   constructor(private eventService:EventsService, private util: UtilitiesService) { }
 
   _eventID;
-  _event = this.getBlankEvent();
+  _event;
 
   @Input() set eventId(_id){
     this._eventID = _id;
   }
 
+  _showImage = true;
+  @Input() set showImage(show){
+    if(!this.util.isNullOrEmpty(show)){
+      this._showImage = show;
+    }
+  }
+
   @Input() set event(_event){
-    if(this.util.isNullOrEmpty(_event)){
-      this._event = this.getBlankEvent();
+    if(_event){
+      this._event=_event;
     }else{
-      this._event = _event;
+      this._event = this.getBlankEvent();
     }
   }
 
@@ -37,6 +44,7 @@ export class EventDisplayComponent implements OnInit {
         }
       )
     }
+    console.log( 'ngoninit ', this._event);
   }
 
   returnDate(){
@@ -50,7 +58,9 @@ export class EventDisplayComponent implements OnInit {
   }
 
   imgUrl(){
-    return this.util.generalImageFQDN(this._event.eventImage);
+    if (this._event.eventImage){
+      return this.util.generalImageFQDN(this._event.eventImage);
+    }
   }
 
   eventUrl(){
