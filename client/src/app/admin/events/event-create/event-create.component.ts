@@ -118,6 +118,8 @@ export class EventCreateComponent implements OnInit {
         this.eventService.upsertEvent(this.eventOrig, this.event).subscribe(
           res => {
             //saved
+            console.log(res);
+            this.event['_id']=res['_id'];
           },
           err => {
             console.log(err)
@@ -128,6 +130,7 @@ export class EventCreateComponent implements OnInit {
         this.eventService.upsertEvent(this.eventOrig, this.event).subscribe(
           res => {
             //saved
+            this.event['_id'] = res['_id'];
           },
           err => {
             console.log(err)

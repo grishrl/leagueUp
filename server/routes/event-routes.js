@@ -148,4 +148,32 @@ router.post('/get/all', (req, res) => {
 
 });
 
+//delete
+router.post('/delete', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.events, util.appendResHeader, (req, res) => {
+    const path = '/events/delete';
+    let id = req.body.id;
+    //log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = 'delete event';
+    logObj.target = id;
+    logObj.logLevel = 'STD';
+    Event.findByIdAndDelete(id).then(
+        deleted => {
+            if (deleted) {
+                res.status(200).send(util.returnMessaging(path, "Event deleted", false, deleted, null, logObj));
+            } else {
+                logObj.logLevel = 'ERROR';
+                logObj.error = 'Event not found';
+                res.status(500).send(util.returnMessaging(path, "Error deleting; event not found", null, deleted, null, logObj));
+            }
+        },
+        err => {
+            res.status(500).send(util.returnMessaging(path, "Error deleting event", err));
+        }
+    )
+})
+
 module.exports = router;

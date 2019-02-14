@@ -44,7 +44,6 @@ export class EventDisplayComponent implements OnInit {
         }
       )
     }
-    console.log( 'ngoninit ', this._event);
   }
 
   returnDate(){

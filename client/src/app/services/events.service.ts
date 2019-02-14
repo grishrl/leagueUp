@@ -21,6 +21,14 @@ export class EventsService {
   destroyLocalEvent(){
     this.localEvent = {};
   }
+
+  deleteEvent(id){
+    let url = '/events/delete';
+    let payload = {
+      id:id
+    };
+    return this.httpService.httpPost(url, payload, true);
+  }
   
   upsertEvent(orig, upsert){
     let url = '/events/upsert';

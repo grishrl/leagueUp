@@ -7,3 +7,12 @@
     border-width: 1px;
     border-color: lightgrey;
 }
+
+.trashCan {
+    margin-top: 50px;
+    display: inline-block;
+}
+
+.dirClass {
+    display: inline-block;
+}

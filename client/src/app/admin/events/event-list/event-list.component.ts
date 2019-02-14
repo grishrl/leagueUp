@@ -24,6 +24,27 @@ export class EventListComponent implements OnInit {
     
   }
 
+  delete(event){
+    this.eventService.deleteEvent(event._id).subscribe(
+      res=>{
+        
+        let index = -1;
+        this.events.forEach((event,ind)=>{
+          if(event._id == event._id){
+            index = ind;
+          }
+        });
+        
+        if(index>-1){
+          this.events.splice(index, 1);
+        }
+      },
+      err=>{
+        console.log(err);
+      }
+    )
+  }
+
   openEvent(){
     //todo
   }
