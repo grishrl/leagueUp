@@ -15,7 +15,7 @@ Request a copy of the .env file for the node server
 
 at the top directory level of the project from CLI; run heroku local
 
-inside the client directory run ng build --watch
+inside the client directory run ng build --watch --configuration=local
 
 Connect to localhost:5000
 
@@ -40,6 +40,6 @@ Request a copy of the .env file for the node server
 
 at the top level of the project from CLI; run heroku local
 
-inside the client directory run ng build --watch
+inside the client directory run ng build --watch --configuration=local
 
 Connect to localhost:5000
