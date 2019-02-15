@@ -1,12 +1,13 @@
-admins need a way to change players hotslogs ID
+admins need a more robust user admin tool
+ -need to be able to manage user points hotslogsID, pendingteam, teamid, teamname for sure
+admins need a more robust team admin tool
+-need to be able to manage invitedusers, pending users, users, 
 
+users
+-need smarter MMR update tools, user can update their hotslogsid/url
 
-TO DO 
-1) SET UP NGS AWS S3 BUCKETS
-2) SET UP HEROKU INSTANCES FOR 
-  2)A:  NODE APP
-  2)B:  MONGO DATABASE
-3) SET UP NGS BLIZZARD API KEY FOR OUATH
+teams
+-need manual MMR update tool
 
 
 
@@ -17,15 +18,6 @@ Work on client flow > particularly in regards to scheduling screens, what is the
 
 >>>time available, create an ALL DAY check and/or a populate same time
 
-team
-> player names links, if possible.
-> show pending members?
-
-user
->Looking for team (marketplace)
-
-MARKETPLACE:
->looking for users (market place)
 
 > Server, 
 >need some persistnet logging to keep up with background notices > in progress

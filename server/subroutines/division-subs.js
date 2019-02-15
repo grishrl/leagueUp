@@ -15,15 +15,17 @@ function updateTeamNameDivision(oldteamName, newteamName) {
     logObj.logLevel = 'STD';
     logObj.timeStamp = new Date().getTime();
 
+    //get division that the team belongs to
     Division.findOne({ 'teams': oldteamName }).then((foundDiv) => {
         if (foundDiv) {
-            let foundIndex = -1;
-            foundDiv.teams.forEach((team, index) => {
-                if (team == oldteamName) {
-                    foundIndex = index;
-                }
-            });
+            logObj.target = foundDiv.divisionConcat;
+
+            //get the index of the old team name in array
+            let foundIndex = foundDiv.teams.indexOf(oldteamName);
+
+            //replace the old team name with the new
             foundDiv.teams[foundIndex] = newteamName;
+            //save the division
             foundDiv.markModified('teams');
             foundDiv.save().then((savedDiv) => {
                 logger(logObj);
@@ -35,11 +37,12 @@ function updateTeamNameDivision(oldteamName, newteamName) {
         }
     }, (err) => {
         logObj.logLevel = 'ERROR';
-        logObj.error = 'Error finding div'
+        logObj.error = 'Error finding division'
         logger(logObj);
     })
 }
 
+//removes team from division
 function removeTeamFromDivision(team) {
     //log object
     let logObj = {};
@@ -49,14 +52,18 @@ function removeTeamFromDivision(team) {
     logObj.logLevel = 'STD';
     logObj.timeStamp = new Date().getTime();
 
+    //find division the team belongs to
     Division.findOne({
         teams: team
     }).then(
         (foundDiv) => {
             if (foundDiv) {
-                let ind = foundDiv.teams.indexOf(team);
                 logObj.target += ' ' + foundDiv.displayName;
+                //get index of the team in the array
+                let ind = foundDiv.teams.indexOf(team);
+                //remove team from array
                 foundDiv.teams.splice(ind, 1);
+                //save the div
                 foundDiv.save().then(saved => {
                     logger(logObj);
                 }, err => {
@@ -78,8 +85,6 @@ function removeTeamFromDivision(team) {
         }
     )
 }
-
-
 
 module.exports = {
     updateTeamNameDivision: updateTeamNameDivision,
