@@ -2,10 +2,11 @@ const util = require('../utils');
 const Team = require('../models/team-models');
 const User = require('../models/user-models');
 const Match = require('../models/match-model');
-const request = require('request');
 const logger = require('./sys-logging-subs');
 const axios = require('axios');
 
+//helper function to return compatible user name for hotslogs
+//replaces the # in a battle tag with _
 function routeFriendlyUsername(username) {
     if (username != null && username != undefined) {
         return username.replace('#', '_');
@@ -15,6 +16,7 @@ function routeFriendlyUsername(username) {
 }
 
 let reqURL = 'https://api.hotslogs.com/Public/Players/1/';
+//method to get back user mmr from hotslogs using their mmr
 async function hotslogs(url, btag) {
     let val = 0;
     try {
@@ -40,39 +42,62 @@ async function hotslogs(url, btag) {
     return val;
 };
 
+//how many members of team we will use to calculate avg-mmr
 const numberOfTopMembersToUse = 4;
 
 //subroutine to update teams division
+// teams: array of teams,
+//division: object division object
+
 function upsertTeamsDivision(teams, division) {
     teams.forEach(team => {
         upsertTeamDivision(team, division);
     });
 }
 
+//update teams division info with that of the provided division
+//team: object or string
+//division : object, division obhect
 function upsertTeamDivision(team, division) {
+    let logObj = {};
+    logObj.actor = 'SYSTEM; Update Team Divison';
+    logObj.action = ' updating team division ';
+
+    logObj.timeStamp = new Date().getTime();
+    logObj.logLevel = 'STD';
     let fteam;
     if (typeof team == 'object') {
         fteam = team.teamName_lower.toLowerCase();
     } else {
         fteam = team.toLowerCase();
     }
-
+    logObj.target = fteam;
+    //grab team
     Team.findOne({ teamName_lower: fteam }).then((foundTeam) => {
         if (foundTeam) {
+            //assign or replace its division with the provided
             foundTeam.divisionDisplayName = division.displayName;
             foundTeam.divisionConcat = division.divisionConcat;
             foundTeam.save((success) => {
-                console.log('team division updated');
+                logger(logObj);
+                // console.log('team division updated');
             }, (err) => {
-                console.log('team saving error');
+                logObj.logLevel = 'ERROR';
+                logObj.error = err;
+                logger(logObj);
+                // console.log('team saving error');
             })
         }
     }, (err) => {
-        console.log('found team error')
+        logObj.logLevel = 'ERROR';
+        logObj.error = err;
+        logger(logObj)
+            // console.log('found team error')
     })
 }
 
 //update mmrs asynch
+//team:string or team object, 
 async function updateTeamMmrAsynch(team) {
     let logObj = {};
     logObj.actor = 'SYSTEM; Update Team MMR';
@@ -119,12 +144,15 @@ async function updateTeamMmrAsynch(team) {
             //call out to the hots log API grab the most updated users MMR
             let mmr = await hotslogs(reqURL, member);
 
+            //grab the player from db
             let player = await User.findOne({ displayName: member }).then(
                 found => { return found; },
                 err => { return null; }
             )
+
             logObj.target += member + ' ';
             let savedPlayer;
+            //save the players updated MMR
             if (player) {
                 player.averageMmr = mmr;
                 savedPlayer = await player.save().then(
@@ -135,6 +163,8 @@ async function updateTeamMmrAsynch(team) {
 
 
         }
+
+        //get the MMR of the top members of the team
         processMembersMMR = await topMemberMmr(members).then((processed) => {
             if (processed) {
                 return processed;
@@ -147,6 +177,7 @@ async function updateTeamMmrAsynch(team) {
             return null;
         });
     }
+    //save the teams new MMR back to the database if it was calculated
     let updatedTeam;
     if (processMembersMMR) {
         retrievedTeam.teamMMRAvg = processMembersMMR;
@@ -163,6 +194,7 @@ async function updateTeamMmrAsynch(team) {
 }
 
 //subroutine to update a teams average mmr, this will run when it is passed a team
+//this uses currently saved figures in the database to calculate the teams MMR, does not call external for data
 function updateTeamMmr(team) {
     if (typeof team == 'string') {
         team = team.toLowerCase();
@@ -191,17 +223,22 @@ function updateTeamMmr(team) {
     });
 }
 
+//calculates the mmr of the highest mmr members of the team
+//members: string array
+//returns average mmrs or Null
 async function topMemberMmr(members) {
+    //fetch all users from the dB
     let usersMmr = await User.find({ displayName: { $in: members } }).lean().then((users) => {
 
         if (users && users.length > 0) {
             let mmrArr = [];
+            //get all users mmrs
             users.forEach(user => {
                 if (util.returnBoolByPath(user, 'averageMmr')) {
                     mmrArr.push(user.averageMmr);
                 }
             });
-
+            //sort mmrs
             if (mmrArr.length > 1) {
                 mmrArr.sort((a, b) => {
                     if (a > b) {
@@ -210,6 +247,7 @@ async function topMemberMmr(members) {
                         return 1;
                     }
                 });
+                //calculate average of the top N mmrs
                 let total = 0;
                 let membersUsed = 0;
                 if (mmrArr.length >= numberOfTopMembersToUse) {
@@ -226,6 +264,7 @@ async function topMemberMmr(members) {
                 if (!isNaN(average)) {
                     average = Math.round(average);
                 }
+
                 return average;
             } else {
                 return mmrArr[0];
@@ -234,11 +273,15 @@ async function topMemberMmr(members) {
     }, (err) => {
         return null
     });
+    // return the average
     return usersMmr;
 }
 
 //this is used to calculate MMRS on the fly for admin to apporve a team add
+//userMmrToadd: string or number of the average mmr of a player who is being added to a team
+//members:string array of the current members of a team
 async function resultantMMR(userMmrToAdd, members) {
+    //get the members from the db
     let usersMmr = await User.find({
         displayName: {
             $in: members
@@ -246,11 +289,13 @@ async function resultantMMR(userMmrToAdd, members) {
     }).lean().then((users) => {
         if (users && users.length > 0) {
             let mmrArr = [];
+            //get all the users MMR
             users.forEach(user => {
                 if (util.returnBoolByPath(user, 'averageMmr')) {
                     mmrArr.push(user.averageMmr);
                 }
             });
+            //add the mmr of the player to add
             mmrArr.push(userMmrToAdd);
             if (mmrArr.length > 1) {
                 mmrArr.sort((a, b) => {
@@ -283,12 +328,19 @@ async function resultantMMR(userMmrToAdd, members) {
     }, (err) => {
         return null
     });
+    //return the avg
     return usersMmr;
 }
 
+
+//removes user from team
+//team:string - teamname;
+//user: string - battletag
 function removeUser(team, user) {
     team = team.toLowerCase();
+    //grab team from the db
     Team.findOne({ teamName_lower: team }).then((foundTeam) => {
+        //get the index of the user from the members array
         let index;
         for (var i = 0; i < foundTeam.teamMembers; i++) {
             let element = foundTeam.teamMembers[i];
@@ -296,6 +348,7 @@ function removeUser(team, user) {
                 index = i;
             }
         }
+        //remove the user from the members array and save the team.
         if (index && index > -1) {
             foundTeam.teamMembers.splice(index, 1);
             foundTeam.save().then((saved) => {
@@ -311,19 +364,24 @@ function removeUser(team, user) {
     })
 }
 
+//removes any instances of a username from any teams
+//username: string - battletag
 function scrubUserFromTeams(username) {
 
+    //find teams that have the user in the pending members
     Team.find({
         'pendingMembers.displayName': username
     }).exec().then(
         (foundTeams) => {
             console.log('pendingMembers Scrub a ', foundTeams);
             if (foundTeams && foundTeams.length > 0) {
+                //iterate through the teams the user was foudn in
                 console.log('pendingMembers Scrub b')
                 foundTeams.forEach(element => {
-                    console
+
                     let save = false;
                     let pendingMembers = util.returnByPath(element.toObject(), 'pendingMembers');
+                    //find the index of the user and remove them
                     if (pendingMembers.length > 0) {
                         for (var i = 0; i < pendingMembers.length; i++) {
                             if (pendingMembers[i].displayName == username) {
@@ -332,6 +390,7 @@ function scrubUserFromTeams(username) {
                             }
                         }
                     }
+                    //save the team
                     if (save) {
                         console.log('pendingMembers Scrub save')
                         element.save();
@@ -340,6 +399,8 @@ function scrubUserFromTeams(username) {
             }
         }
     );
+
+    //find all teams where the user is a team member
     Team.find({
         'teamMembers.displayName': username
     }).exec().then(
@@ -347,10 +408,12 @@ function scrubUserFromTeams(username) {
             console.log('teamMembers Scrub a ', foundTeams);
             if (foundTeams && foundTeams.length > 0) {
                 console.log('teamMembers Scrub b')
+                    //iterate through the teams
                 foundTeams.forEach(element => {
                     let save = false;
                     let members = util.returnByPath(element.toObject(), 'teamMembers');
                     if (members.length > 0) {
+                        //find the index of the user and remove it
                         for (var i = 0; i < members.length; i++) {
                             if (members[i].displayName == username) {
                                 element.teamMembers.splice(i, 1);
@@ -358,6 +421,7 @@ function scrubUserFromTeams(username) {
                             }
                         }
                     }
+                    //save the team
                     if (save) {
                         console.log('teamMembers Scrub saving')
                         element.save();
@@ -368,8 +432,11 @@ function scrubUserFromTeams(username) {
     );
 };
 
-function updateTeamMatches(team) {
 
+//will find all the matches that  team is associated to and will update the team name that is in the 
+//match object
+function updateTeamMatches(team) {
+    //find all matches that has the team in the away or home 
     Match.find({
         $or: [{
             'away.id': team._id
@@ -378,7 +445,7 @@ function updateTeamMatches(team) {
         }]
     }).then((found) => {
         if (found) {
-
+            //add the team name to the matches that were found
             addTeamNamesToMatch(team, found).then(
                 res => {
                     console.log('matches modified')
@@ -408,12 +475,15 @@ module.exports = {
     updateTeamMatches: updateTeamMatches
 }
 
+
+//helper function to update team names in matches after a team name change
 async function addTeamNamesToMatch(team, found) {
     //typechecking
     if (!Array.isArray(found)) {
         found = [found];
     }
     let teamid = team._id.toString();
+    //loop through all the found matches
     found.forEach(match => {
         let homeid, awayid;
         if (util.returnBoolByPath(match, 'home.id')) {
@@ -422,6 +492,8 @@ async function addTeamNamesToMatch(team, found) {
         if (util.returnBoolByPath(match, 'away.id')) {
             awayid = match.away.id.toString();
         }
+        //if the provided team id matches the homeid them update the home team info, if it 
+        //equals the away team id update the away team info
         if (teamid == homeid) {
             match.home['teamName'] = team.teamName;
             match.home['logo'] = team.logo;

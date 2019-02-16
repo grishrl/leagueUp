@@ -2,6 +2,7 @@ admins need a more robust user admin tool
  -need to be able to manage user points hotslogsID, pendingteam, teamid, teamname for sure
 admins need a more robust team admin tool
 -need to be able to manage invitedusers, pending users, users, 
+admins need a log browser
 
 users
 -need smarter MMR update tools, user can update their hotslogsid/url

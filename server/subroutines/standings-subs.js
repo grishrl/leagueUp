@@ -2,9 +2,13 @@ const Match = require('../models/match-model');
 const util = require('../utils');
 const Team = require('../models/team-models');
 
+
+//takes the provided division and season and calcuates the current standings of the teams
+//division:string division concat name, season:string or number, season number to check the standings of
 async function calulateStandings(division, season) {
     let teams;
 
+    //grab all amtches that match the season and division and are not tournament matches
     let matchesForDivision = await Match.find({
         $and: [{
             divisionConcat: division
@@ -18,7 +22,9 @@ async function calulateStandings(division, season) {
     }).lean().then(
         (matches) => {
             if (matches) {
+                //grab all the team information associated with each team
                 teams = findTeamIds(matches);
+                //add names and logos to matches
                 return addTeamNamesToMatch(teams, matches).then(
                     (processed) => {
                         return processed;
@@ -38,6 +44,7 @@ async function calulateStandings(division, season) {
 
     let standings = [];
 
+    //calcualte the standings of the teams
     if (matchesForDivision != false) {
         teams.forEach(team => {
             let standing = {};
@@ -118,6 +125,7 @@ async function calulateStandings(division, season) {
     return standings;
 }
 
+//this loops through an array of matches from the db and adds the teams ids to an array
 function findTeamIds(found) {
     let teams = [];
     //type checking make sure we have array
@@ -140,6 +148,8 @@ function findTeamIds(found) {
     return teams;
 }
 
+//this takes an array of ids and grabs all the team info for them, adds it to the 
+// home/away object of the match so they are available on the client
 async function addTeamNamesToMatch(teams, found) {
     //typechecking
     if (!Array.isArray(found)) {
