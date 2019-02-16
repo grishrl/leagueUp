@@ -3,6 +3,7 @@ const User = require('../models/user-models');
 const TeamSubs = require('./team-subs');
 const Team = require('../models/team-models');
 const QueueSubs = require('./queue-subs');
+const logger = require('./sys-logging-subs');
 
 //sub to handle complete removal of user from data locations:
 //pendingqueue, teams - pending members and members.
@@ -19,34 +20,55 @@ function clearUsersTeam(usersRemoved) {
     });
 }
 
-
+//accept user: object
+// remove all team info from the provided user object
 function clearUserTeam(user) {
+    let logObj = {};
+    logObj.actor = 'SYSTEM; clearUserTeam ';
+    logObj.action = ' remove all team info from user ';
+    logObj.target = user.displayName;
+    logObj.timeStamp = new Date().getTime();
+    logObj.logLevel = 'STD';
+    //get the user from the db associated with this user
     User.findOne({
         displayName: user.displayName
     }).then((foundUser) => {
+        //update the fetched users info
         if (foundUser) {
             foundUser.teamId = null;
             foundUser.teamName = null;
             foundUser.isCaptain = null;
             foundUser.save().then((savedUser) => {
-                console.log('need some persistent logging');
+                logger(logObj);
+                // console.log('need some persistent logging');
             }, (err) => {
-                console.log('need some persistent logging');
+                logObj.logLevel = 'ERROR';
+                logObj.error = err;
+                logger(logObj);
+                // console.log('need some persistent logging');
             });
         } else {
-            console.log('need some persistent logging');
+            logObj.logLevel = 'ERROR';
+            logObj.error = 'user not found';
+            logger(logObj);
+            // console.log('need some persistent logging');
         }
     }, (err) => {
-        console.log('need some persistent logging');
+        logObj.logLevel = 'ERROR';
+        logObj.error = err;
+        logger(logObj);
+        // console.log('need some persistent logging');
     });
 }
 
+//update an array of users team info
 function upsertUsersTeamName(users, team) {
     users.forEach(function(user) {
         upsertUserTeamName(user, team);
     });
 }
 
+//update a users team info
 function upsertUserTeamName(user, team) {
     User.findOne({
         displayName: user.displayName
