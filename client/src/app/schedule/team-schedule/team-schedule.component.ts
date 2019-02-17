@@ -107,17 +107,19 @@ export class TeamScheduleComponent implements OnInit {
         */
 
        let roundsArray = [];
+        console.log('matches ', matches, 'matches.length ', matches.length)
         for(var i = 0; i<=matches.length; i++){
           if(this.rounds == null || this.rounds == undefined){
             this.rounds = {};
           }
-          let realRoundNumber = i+1;
-          roundsArray.push(realRoundNumber);
+
           matches.forEach(match => {
+            let realRoundNumber = i + 1;
               if (this.rounds[realRoundNumber] == null || this.rounds[realRoundNumber] == undefined){
                 this.rounds[realRoundNumber] = [];
               }
               if(match.round == realRoundNumber){
+                roundsArray.push(realRoundNumber);
                 this.rounds[realRoundNumber].push(match);
               }
               

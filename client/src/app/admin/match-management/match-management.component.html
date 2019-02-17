@@ -48,13 +48,19 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col text-center">
-                                {{match.home.teamName}}
+                                <span *ngIf="match.home && match.home.teamName else noTeam">
+                                    {{match.home.teamName}}
+                                </span>
+
                             </div>
                             <div class="col text-center">
                                 -VS-
                             </div>
                             <div class="col text-center">
-                                {{match.away.teamName}}
+                                <span *ngIf="match.away && match.away.teamName else noTeam">
+                                  {{match.away.teamName}}
+                                </span>
+
                             </div>
                         </div>
                         <div class="row mt-3">
@@ -77,6 +83,11 @@
                     <div class="col">
                         <a [routerLink]="['match/',match.matchId]" class="btn btn-primary">Manage</a>
                     </div>
+                    <ng-template #noTeam>
+                        <span *ngIf="match.type=='tournament'">
+                            Tournament : Team TBD
+                        </span>
+                    </ng-template>
                 </div>
             </div>
         </div>
