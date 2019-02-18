@@ -444,7 +444,7 @@ router.post('/report/match', passport.authenticate('jwt', {
                                 }
                                 let composeFilename = 'ngs_' + timeStamp + submitterTeamName + '_vs_' + otherTeamName + '_' + element.match.map;
                                 composeFilename = composeFilename.replace(/[^A-Z0-9\-]+/ig, "_");
-                                tieBack.fileName = composeFilename;
+                                tieBack.fileName = composeFilename + '.stormReplay';
                                 replayfilenames.push(tieBack);
                                 element.match['ngsMatchId'] = foundMatch.matchId;
                                 element.match.filename = composeFilename;
@@ -476,7 +476,7 @@ router.post('/report/match', passport.authenticate('jwt', {
 
                                 // let buffer = fs.readFileSync(files[fileKeys[i]].path);
 
-                                let fileName = replayfilenames[i].fileName + '.stormReplay';
+                                let fileName = replayfilenames[i].fileName;
 
                                 fs.readFileAsync(files[fileKeys[i]].path).then(
                                     buffer => {
