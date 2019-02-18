@@ -5,7 +5,7 @@ admins need a more robust team admin tool
 admins need a log browser
 -admin needs to be able to change team logo
 
-
+--team profiles need to be hidden until the divisions are set to live
 
 --tournament brackets display dates
 --clickable to show more match information
