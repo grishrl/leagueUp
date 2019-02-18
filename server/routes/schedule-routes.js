@@ -171,6 +171,9 @@ router.post('/get/matches/team', passport.authenticate('jwt', {
                     },
                     {
                         season: season
+                    },
+                    {
+                        type: { $ne: "tournament" }
                     }
                 ]
             }).lean().then((foundMatches) => {

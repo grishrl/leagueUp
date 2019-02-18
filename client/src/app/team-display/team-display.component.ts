@@ -17,6 +17,7 @@ export class TeamDisplayComponent implements OnInit {
       this._teams = teams;
       this.createMyDisplay();
     }else{
+      
       this._teams = [];
       this.rows = [];
     }
@@ -42,20 +43,33 @@ export class TeamDisplayComponent implements OnInit {
     if(!this.perColumn){
       this.perColumn = 3;
     }
+    // let tTeams = this._teams;
     this.rows = [];
+    // do{
+    //   let rowArray = [];
+    //   for(var i = 0; i<3; i++){
+    //     if(tTeams[i]){
+    //       rowArray.push(tTeams[i]);
+    //     }
+    //   }
+    //   this.rows.push(rowArray);
+    // }while(tTeams.length>0)
     if (this._teams != undefined && this._teams.length > 0) {
       if (this._teams.length > this.perColumn) {
         let temparr = [];
         for (var i = 0; i < this._teams.length; i++) {
+          console.log('i ',i, 'temparr', temparr);
           if (i>0 && i % this.perColumn == 0) {
             this.rows.push(temparr);
             temparr = [];
-          }else if(i == this._teams.length-1){
+          }
+          temparr.push(this._teams[i]);
+          //if this is the last element add the row to the display
+          if(i == ((this._teams.length-1))){
             if(temparr.length>0){
               this.rows.push(temparr);
             }
           }
-          temparr.push(this._teams[i]);
         }
       } else {
         this.rows.push(this._teams);
@@ -63,6 +77,7 @@ export class TeamDisplayComponent implements OnInit {
     } else {
       this.rows = [];
     }
+    console.log(this.rows);
   }
 
   ngOnInit() {

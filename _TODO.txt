@@ -3,6 +3,7 @@ admins need a more robust user admin tool
 admins need a more robust team admin tool
 -need to be able to manage invitedusers, pending users, users, 
 admins need a log browser
+-admin needs to be able to change team logo
 
 
 

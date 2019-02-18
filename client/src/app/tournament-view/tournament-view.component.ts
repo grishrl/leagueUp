@@ -70,8 +70,10 @@ export class TournamentViewComponent implements OnInit {
     } else {
       this.scheduleService.getTournamentGames(this._name, this._season, this._division).subscribe(res => {
         this.noBracket = true;
-        this.matches = res['tournMatches'];
-        this.tournamentObject = this.arrangeMatches();
+        if (res['tournMatches']){
+          this.matches = res['tournMatches'];
+          this.tournamentObject = this.arrangeMatches();
+        }
       }, err => {
         this.noBracket = false;
       });

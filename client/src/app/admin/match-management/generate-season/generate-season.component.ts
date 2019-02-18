@@ -54,6 +54,7 @@ export class GenerateSeasonComponent implements OnInit {
               res=>{
                 console.log(res);
                 alert("Schedules for season "+this.seasonNumber+" were generated");
+                this.validated = false;
               },
               err=>{
                 alert("Something went wrong generating the schedules!");
