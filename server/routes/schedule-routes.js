@@ -412,11 +412,17 @@ router.post('/report/match', passport.authenticate('jwt', {
 
                             //parse the replays
                             fileKeys.forEach(fileKey => {
-                                let parsedReplay = parser.processReplay(files[fileKey].path, {
-                                    useAttributeName: true,
-                                    overrideVerifiedBuild: true
-                                });
-                                parsed.push(parsedReplay)
+                                try {
+                                    let parsedReplay = parser.processReplay(files[fileKey].path, {
+                                        useAttributeName: true,
+                                        overrideVerifiedBuild: true
+                                    });
+                                    parsed.push(parsedReplay)
+                                } catch (error) {
+                                    parsed.push({ match: { map: 'UNKNOWN-PARSE-ERROR' } })
+                                    console.log(error);
+                                }
+
                             });
 
                             if (foundMatch.away.teamName == submitterTeamName) {
