@@ -23,11 +23,7 @@
                     <button type="button" class="btn btn-outline-secondary" (click)="close()">OK</button>
                 </div>
             </ng-template> -->
-            <div class="row mt-4">
-                <div class="col">
-                    Eventually we will have a table of colors for divs / games casted etc.
-                </div>
-            </div>
+
             <div class="row text-center mt-3">
                 <div class="col-md-4">
                     <div class="btn-group">
@@ -69,8 +65,31 @@
                 </mwl-calendar-day-view>
             </div>
 
-            <br><br><br>
+            <br><br>
+            <div class="row">
+                <div class="col">
+                    <h4>Event Key</h4>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-3">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Color</th>
+                                <th scope="col">Division / Event</th>
 
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of key|keyvalue:sortOrder">
+                                <td [style.background-color]="item.value.primary"></td>
+                                <td>{{item.value.name}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             <!-- <h3>
                 Events List
                 <div class="clearfix"></div>
