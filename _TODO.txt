@@ -1,19 +1,16 @@
+
+
 admins need a more robust user admin tool
  -need to be able to manage user points hotslogsID, pendingteam, teamid, teamname for sure
+
 admins need a more robust team admin tool
--need to be able to manage invitedusers, pending users, users, 
-admins need a log browser
+-need to be able to manage invited users, pending users, users, 
 -admin needs to be able to change team logo
 
---team profiles need to be hidden until the divisions are set to live
+admins need a log browser
 
---tournament brackets display dates
---clickable to show more match information
---calendar show special tournment marker
+--team profiles need division to be hidden until the divisions are set to live
 
---when an admin manages a schedule the end time is not properly update
-
---match management is erroring out when getting undefined in the properties of the matches
 
 users
 -need smarter MMR update tools, user can update their hotslogsid/url
@@ -21,15 +18,13 @@ users
 teams
 -need manual MMR update tool
 
-
-
-Work on client flow > particularly in regards to scheduling screens, what is the flow? think it through
-***!!!returnboolbypath is not working on any document returned from mongo investigate further!!!***
+--tournament brackets display dates
+--clickable to show more match information
+--calendar show special tournment marker
 
 >>> remove all hard codings of season 6 with something... else MEDIUM PRIO
 
->>>time available, create an ALL DAY check and/or a populate same time
-
+***!!!returnboolbypath is not working on any document returned from mongo investigate further!!!***
 
 > Server, 
 >need some persistnet logging to keep up with background notices > in progress

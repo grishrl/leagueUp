@@ -43,22 +43,11 @@ export class TeamDisplayComponent implements OnInit {
     if(!this.perColumn){
       this.perColumn = 3;
     }
-    // let tTeams = this._teams;
     this.rows = [];
-    // do{
-    //   let rowArray = [];
-    //   for(var i = 0; i<3; i++){
-    //     if(tTeams[i]){
-    //       rowArray.push(tTeams[i]);
-    //     }
-    //   }
-    //   this.rows.push(rowArray);
-    // }while(tTeams.length>0)
     if (this._teams != undefined && this._teams.length > 0) {
       if (this._teams.length > this.perColumn) {
         let temparr = [];
         for (var i = 0; i < this._teams.length; i++) {
-          console.log('i ',i, 'temparr', temparr);
           if (i>0 && i % this.perColumn == 0) {
             this.rows.push(temparr);
             temparr = [];
@@ -77,7 +66,6 @@ export class TeamDisplayComponent implements OnInit {
     } else {
       this.rows = [];
     }
-    console.log(this.rows);
   }
 
   ngOnInit() {

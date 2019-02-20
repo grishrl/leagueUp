@@ -718,10 +718,8 @@ router.post('/generate/tournament', passport.authenticate('jwt', {
     let division;
 
     if (req.body.division) {
-        // console.log('req.body.division ', req.body.division)
         division = req.body.division;
         target += ' division: ' + division;
-        // console.log('division ', division)
         checkObj.$and.push({
             "division": division
         });
@@ -753,8 +751,6 @@ router.post('/generate/tournament', passport.authenticate('jwt', {
     logObj.action = ' generated tournament ';
     logObj.logLevel = 'STD';
     logObj.target = target;
-
-    // console.log(checkObj)
 
     Scheduling.findOne(checkObj).then(
         found => {
@@ -884,9 +880,9 @@ router.post('/fetch/tournament', (req, res) => {
 
     let division;
     if (req.body.division) {
-        // console.log('req.body.division ', req.body.division)
+
         division = req.body.division;
-        // console.log('division ', division)
+
         checkObj.$and.push({
             "division": division
         });
@@ -900,15 +896,13 @@ router.post('/fetch/tournament', (req, res) => {
         });
     }
 
-    // console.log(checkObj);
     // res.status(200).send(path, 'received this', false, { "hey": "hello" });
+
 
     Scheduling.findOne(checkObj).then(
         found => {
             if (found) {
                 found = found.toObject();
-                // console.log('found ', found);
-                // console.log('found.matches ', found['matches']);
                 Match.find({
                     matchId: {
                         $in: found.matches
@@ -959,8 +953,7 @@ function findTeamIds(found) {
         found = [found];
     }
     found.forEach(match => {
-        // console.log(' match ', JSON.stringify(match));
-        // console.log("util.returnBoolByPath(match, 'home.id') ", util.returnBoolByPath(match, 'home.id'), " util.returnBoolByPath(match, 'away.id') ", util.returnBoolByPath(match, 'away.id'))
+
         if (util.returnBoolByPath(match, 'home.id')) {
             if (match.home.id != 'null' && teams.indexOf(match.home.id.toString()) == -1) {
                 teams.push(match.home.id.toString());
@@ -972,7 +965,7 @@ function findTeamIds(found) {
             }
         }
     });
-    // console.log(' teams  : ', JSON.stringify(teams));
+
     return teams;
 }
 
