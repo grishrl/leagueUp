@@ -15,16 +15,13 @@ export class SetDeadlineComponent implements OnInit {
   constructor( private admin:AdminService) { }
 
   ngOnInit() {
-    this.divisions = [];
-    this.admin.getDivisionList().subscribe(res => {
-      this.divisions = res;
-    }, (err) => {
-      console.log(err);
-    })
+
   }
 
   selected(selectedDivision){
+    console.log('selectedDivision ', selectedDivision)
     let number;
+    this.weeks = [];
     this.selectedDivision = selectedDivision;
     if(selectedDivision.teams % 2 == 0){
       number = selectedDivision.teams.length-1;

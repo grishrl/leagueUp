@@ -15,70 +15,9 @@ const imageDataURI = require('image-data-uri');
 const AWS = require('aws-sdk');
 const sysModels = require('../models/system-models');
 const logger = require('../subroutines/sys-logging-subs');
+const messageSub = require('../subroutines/message-subs');
 const Message = require('../models/message-models');
-const socketIo = require('../../serverConf')['socketIo'];
 
-var clients = [];
-socketIo.on('connection', function(client) {
-
-    client.on('storeClientInfo', function(data) {
-        if (indexOfUser(clients, data.userId) == -1) {
-            let clientInfo = {};
-            clientInfo.userId = data.userId;
-            clientInfo.clientId = client.id;
-            clients.push(clientInfo);
-        }
-    });
-
-    client.on('disconnect', function() {
-
-        if (indexOfClient(clients, client.id) > -1) {
-            clients.splice(indexOfClient(clients, client.id), 1)
-        }
-    });
-});
-
-function indexOfClient(clients, client) {
-    let ind = -1;
-    clients.forEach((clientIt, index) => {
-        if (clientIt.clientId == client) {
-            ind = index;
-        }
-    });
-    return ind;
-}
-
-function indexOfUser(clients, user) {
-    let ind = -1;
-    clients.forEach((clientIt, index) => {
-        if (clientIt.userId == user) {
-            ind = index;
-        }
-    });
-    return ind;
-}
-
-function dispatchMessage(recepient) {
-
-    if (clients.length > 0) {
-        let dispatchToId = null;
-        clients.forEach((clientIt) => {
-            if (clientIt.userId == recepient) {
-                dispatchToId = clientIt.clientId;
-            }
-        });
-        if (dispatchToId) {
-            let namespace = null;
-            let ns = socketIo.of(namespace || "/");
-            let socket = ns.connected[dispatchToId] // assuming you have  id of the socket
-            if (socket) {
-                let message = 'this client has a new message!';
-                socket.emit("newMessage", message);
-            }
-        }
-
-    }
-}
 
 router.post('/team/join', passport.authenticate('jwt', {
     session: false
@@ -119,14 +58,17 @@ router.post('/team/join', passport.authenticate('jwt', {
                             }
                             msg.timeStamp = new Date().getTime();
 
-                            new Message(msg).save().then(
-                                (newmsg) => {
-                                    dispatchMessage(msg.recipient)
-                                    res.status(200).send(util.returnMessaging(path, 'Message sent', null, null, null, logObj))
-                                }, (err) => {
-                                    res.status(500).send(util.returnMessaging(path, 'There was an error sending request', err, null, null, logObj));
-                                }
-                            )
+                            messageSub(msg);
+                            res.status(200).send(util.returnMessaging(path, 'Message sent', null, null, null, logObj));
+
+                            // new Message(msg).save().then(
+                            //     (newmsg) => {
+                            //         dispatchMessage(msg.recipient)
+
+                            //     }, (err) => {
+                            //         res.status(500).send(util.returnMessaging(path, 'There was an error sending request', err, null, null, logObj));
+                            //     }
+                            // )
 
                         } else {
                             logObj.logLevel = 'ERROR';
@@ -242,14 +184,15 @@ router.post('/team/join/response', passport.authenticate('jwt', {
                                     msg.notSeen = true;
                                     msg.timeStamp = new Date().getTime();
 
-                                    new Message(msg).save().then(
-                                        (newmsg) => {
-                                            dispatchMessage(msg.recipient)
-                                                //log or nah?
-                                        }, (err) => {
-                                            //log or nah?
-                                        }
-                                    )
+                                    messageSub(msg);
+                                    // new Message(msg).save().then(
+                                    //     (newmsg) => {
+                                    //         dispatchMessage(msg.recipient)
+                                    //             //log or nah?
+                                    //     }, (err) => {
+                                    //         //log or nah?
+                                    //     }
+                                    // )
 
                                 }, (teamSaveErr) => {
                                     logObj.logLevel = 'ERROR';
@@ -343,28 +286,30 @@ router.post('/user/join', passport.authenticate('jwt', {
                                 requester: payloadyTeamName
                             }
                             msg.timeStamp = new Date().getTime();
-                            new Message(msg).save().then(
-                                (newmsg) => {
-                                    dispatchMessage(msg.recipient);
-                                    res.status(200).send(util.returnMessaging(path, 'Invite sent, this user must accept the invite!', null, null, null, logObj));
-                                    if (foundTeam.invitedUsers) {
-                                        foundTeam.invitedUsers.push(payloadUserName);
-                                    } else {
-                                        foundTeam.invitedUsers = [payloadUserName];
-                                    }
-                                    foundTeam.save().then(
-                                        saved => {
-                                            console.log('team saved')
-                                        },
-                                        err => {
-                                            console.log('error saving team')
-                                        }
-                                    )
 
-                                }, (err) => {
-                                    res.status(500).send(util.returnMessaging(path, 'There was an error sending request', err, null, null, logObj));
-                                }
-                            )
+                            messageSub(msg);
+                            res.status(200).send(util.returnMessaging(path, 'Invite sent, this user must accept the invite!', null, null, null, logObj));
+                            if (foundTeam.invitedUsers) {
+                                foundTeam.invitedUsers.push(payloadUserName);
+                            } else {
+                                foundTeam.invitedUsers = [payloadUserName];
+                            }
+                            foundTeam.save().then(
+                                    saved => {
+                                        console.log('team saved')
+                                    },
+                                    err => {
+                                        console.log('error saving team')
+                                    }
+                                )
+                                // new Message(msg).save().then(
+                                //     (newmsg) => {
+
+
+                            //     }, (err) => {
+                            //         res.status(500).send(util.returnMessaging(path, 'There was an error sending request', err, null, null, logObj));
+                            //     }
+                            // )
 
                         } else {
                             logObj.logLevel = 'ERROR';
@@ -479,14 +424,15 @@ router.post('/user/join/response', passport.authenticate('jwt', {
                                             msg.notSeen = true;
                                             msg.timeStamp = new Date().getTime();
 
-                                            new Message(msg).save().then(
-                                                (newmsg) => {
-                                                    dispatchMessage(msg.recipient);
-                                                    //log or nah?
-                                                }, (err) => {
-                                                    //log or nah?
-                                                }
-                                            )
+                                            messageSub(msg);
+                                            // new Message(msg).save().then(
+                                            //     (newmsg) => {
+                                            //         dispatchMessage(msg.recipient);
+                                            //         //log or nah?
+                                            //     }, (err) => {
+                                            //         //log or nah?
+                                            //     }
+                                            // )
                                         },
                                         err => {
 

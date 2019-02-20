@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { indexOf } from 'lodash';
 import { AdminService } from 'src/app/services/admin.service';
-import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-remove-team',
@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 })
 export class RemoveTeamComponent implements OnInit {
 
-  constructor(private adminService:AdminService, private router: Router) { }
+  constructor(private adminService:AdminService) { }
 
   //component properties
   divisions:any = [];
@@ -19,17 +19,11 @@ export class RemoveTeamComponent implements OnInit {
   selectedTeams: any = [];
 
   ngOnInit() {
-    //grab division list for display
-    this.adminService.getDivisionList().subscribe((res) => {
-      this.divisions = res;
-    }, (err) => {
-      console.log(err);
-    })
   }
 
   //Assings the local property selectedDiv to a copy of the division chose.
-  selected(){
-    this.selectedDiv = Object.assign({},this.selectedDivision);
+  selected(div){
+    this.selectedDiv = Object.assign({}, div);
   }
 
   
@@ -53,7 +47,7 @@ export class RemoveTeamComponent implements OnInit {
     }
   }
 
-  //calls the admin service to remove the selected teams from the selected divison
+  //calls the admin service to remove the selected teams from the selected division
   removeTeams(){
     this.adminService.removeTeams(this.selectedTeams, this.selectedDiv.divisionConcat).subscribe( (res)=>{
       this.selectedDiv = null;

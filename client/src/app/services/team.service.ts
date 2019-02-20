@@ -133,6 +133,26 @@ export class TeamService {
     return this.httpService.httpPost(url, payload, msg);
   }
 
+  getTournaments(teamId){
+    let url = '/schedule/fetch/team/tournament';
+    let payload = {
+      teamId:teamId
+    };
+    return this.httpService.httpPost(url, payload);
+  }
+
+  getTournamentMatches(teamId, name, season, division){
+    let url = '/schedule/fetch/team/tournament/matches';
+    let payload = {
+      teamId:teamId,
+      name:name,
+      season:season,
+      division:division
+    }
+    return this.httpService.httpPost(url, payload);
+  }
+  
+
 
   //retuns a formatted string that includes the requisite info to retrieve an image from s3 bucket
   imageFQDN(img) {

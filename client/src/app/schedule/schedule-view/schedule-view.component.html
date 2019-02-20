@@ -3,11 +3,9 @@
         <div class="col">
             <div class="row" *ngIf="!this.provDiv; else provDiv">
                 <div class="col">
-                    <mat-form-field>
-                        <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="calculateRounds()" disableOptionCentering>
-                            <mat-option *ngFor="let division of divisions; let i = index" [value]="division">{{division.displayName}}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
+
+                    <app-division-selector (selectedDiv)="calculateRounds($event)"></app-division-selector>
+
                 </div>
                 <div class="col">
                     <mat-form-field>

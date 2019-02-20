@@ -28,6 +28,8 @@ const scheduleRoutes = require('./server/routes/schedule-routes');
 const standingRoutes = require('./server/routes/standing-routes');
 const messageRoutes = require('./server/routes/message-routes');
 const requestRoutes = require('./server/routes/request-routes');
+const utilityRoutes = require('./server/routes/utility-routes');
+const eventRoutes = require('./server/routes/event-routes');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const passport = require('passport');
@@ -68,6 +70,8 @@ app.use('/schedule', scheduleRoutes);
 app.use('/standings', standingRoutes);
 app.use('/messageCenter', messageRoutes);
 app.use('/request', requestRoutes);
+app.use('/utility', utilityRoutes);
+app.use('/events', eventRoutes);
 
 // const seeding = require('./server/routes/seeding-route');
 // app.use('/dev', seeding);
@@ -80,45 +84,3 @@ app.use('/', express.static(path.join(__dirname, './client/dist/client/')));
 app.get('*', function(req, res) {
     res.sendFile(path.join(__dirname, './client/dist/client/index.html'));
 });
-
-//listen for request on port 3000, and as a callback function have the port listened on logged
-
-// let server = app.listen(port, hostname, () => {
-//     console.log(`Server ${hostname} running at on ${port}/`);
-// });
-
-// app.use('/', express.static(path.join(__dirname, './client/dist/client/')));
-
-// app.get('*', function(req, res) {
-//     res.sendFile(path.join(__dirname, './client/dist/client/index.html'));
-// });
-
-
-// global.socketIo = io(server);
-// socketIo.on('connection', client => {
-
-//     client.on('storeClientInfo', function(data) {
-//         let clientInfo = {};
-//         clientInfo.userId = data.userId;
-//         clientInfo.clientId = client.id;
-//         clients.push(clientInfo);
-//     });
-
-// });
-
-// setInterval(function() {
-//     if (clients.length > 0 && clients[0].clientId) {
-//         let namespace = null;
-//         let ns = socketIo.of(namespace || "/");
-//         let socket = ns.connected[clients[0].clientId] // assuming you have  id of the socket
-//         if (socket) {
-//             console.log("Socket Connected, sent through socket");
-//             socket.emit("event", clients);
-//         } else {
-//             console.log("Socket not connected, sending through push notification");
-//         }
-//     }
-// }, 5000);
-
-// let teamsub = require('./server/subroutines/team-subs');
-// teamsub.updateTeamMmr({ 'teamName_lower': 'wraithling test team' });

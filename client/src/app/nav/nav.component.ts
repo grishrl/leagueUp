@@ -22,6 +22,13 @@ export class NavComponent implements OnInit {
 
   constructor(public Auth:AuthService, private socket:Socket, private router: Router, public team:TeamService, public user:UserService, private divisionService: DivisionService, private messages:MessagesService,
     private notificationService:NotificationService) {
+      if(this.Auth.isAuthenticated()){
+        this.user.heartbeat().subscribe(res=>{
+
+        },err=>{
+
+        });
+      }
       this.notificationService.updateLogin.subscribe(
         res=>{
           this.ngOnInit();
@@ -96,7 +103,6 @@ export class NavComponent implements OnInit {
     this.notificationService.updateMessages.subscribe(
       message=>{
         this.messages.getMessageNumbers(this.Auth.getUserId()).subscribe((res) => {
-          console.log('res from notification services ', res);
           if(res){
             this.userMessages = res;
           }else{

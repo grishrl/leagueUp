@@ -30,7 +30,9 @@ const teamSchema = new Schema({
     "teamMMRAvg": Number, //added to display
     "teamMembers": [miniUser], //added to display
     "pendingMembers": [miniUser],
-    "lastTouched": Number
+    "lastTouched": Number,
+    "replays": [String],
+    "parseStats": Boolean
 });
 
 const Team = mongoose.model('team', teamSchema);

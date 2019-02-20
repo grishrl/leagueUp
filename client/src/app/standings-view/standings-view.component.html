@@ -58,36 +58,39 @@
     </div>
 
     <!-- this view is available only on smaller screens -->
-    <div class="d-block d-sm-none" *ngIf="standings.length>0 else noStandings">
-        <table class="table table-responsive">
-            <thead>
-                <tr>
-                    <td>
-                        Position
-                    </td>
-                    <td>
-                        Team Name
-                    </td>
-                    <td>
-                        Points
-                    </td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let standing of standings">
-                    <td>
-                        {{standing.standing}}
-                    </td>
-                    <td>
-                        <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(standing.teamName)]">{{standing.teamName}}</a>
-                    </td>
-                    <td>
-                        {{standing.points}}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="d-block d-sm-none">
+        <div *ngIf="standings.length>0 else noStandings">
+            <table class="table table-responsive">
+                <thead>
+                    <tr>
+                        <td>
+                            Position
+                        </td>
+                        <td>
+                            Team Name
+                        </td>
+                        <td>
+                            Points
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let standing of standings">
+                        <td>
+                            {{standing.standing}}
+                        </td>
+                        <td>
+                            <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(standing.teamName)]">{{standing.teamName}}</a>
+                        </td>
+                        <td>
+                            {{standing.points}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
+
 
 
 

@@ -15,12 +15,13 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <mat-form-field class="mat-FullWidth">
+                        <!-- <mat-form-field class="mat-FullWidth">
                             <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="doFilterMatches(selectedDivision, selectedRound, filterTeam)" disableOptionCentering>
                                 <mat-option [value]="null"> </mat-option>
                                 <mat-option *ngFor="let division of divisions; let i = index" [value]="division.divisionConcat">{{division.displayName}}</mat-option>
                             </mat-select>
-                        </mat-form-field>
+                        </mat-form-field> -->
+                        <app-division-selector (selectedDiv)="doFilterMatches($event, selectedRound, filterTeam)"></app-division-selector>
                     </div>
                     <div class="col">
                         <mat-form-field class="mat-FullWidth">
@@ -40,6 +41,9 @@
                     <div class="col">
                         <mat-checkbox [(ngModel)]="scheduledOnly" (ngModelChange)="filterScheduled(scheduledOnly)">Only Scheduled Matches.</mat-checkbox>
                     </div>
+                    <div class="col">
+                        <mat-checkbox [(ngModel)]="tournamentOnly" (ngModelChange)="filterTournament(tournamentOnly)">Tournament Matches.</mat-checkbox>
+                    </div>
                 </div>
                 <mat-paginator [length]="length" [pageIndex]="pageIndex" [pageSize]="pageSize" (page)="pageEventHandler($event)">
 
@@ -54,14 +58,15 @@
                         </div>
                         <div class="row">
                             <div class="col">
-                                <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.home.teamName)]">{{match.home.teamName}}</a>
+                                <span *ngIf="match.home else tbd"><a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.home.teamName)]">{{match.home.teamName}}</a></span>
 
                             </div>
                             <div class="col">
                                 -VS-
                             </div>
                             <div class="col">
-                                <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.away.teamName)]">{{match.away.teamName}}</a>
+                                <span *ngIf="match.away else tbd"><a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.away.teamName)]">{{match.away.teamName}}</a></span>
+
 
                             </div>
                         </div>
@@ -70,6 +75,12 @@
                                 Scheduled Time: <span *ngIf="match.scheduledTime !=undefined && match.scheduledTime !=null else notScheduled">{{displayTime(match.scheduledTime.startTime)}}</span>
                                 <ng-template #notScheduled>
                                     <span>Not Yet Scheduled</span>
+                                </ng-template>
+                            </div>
+                            <div class="col">
+                                <span *ngIf="match.type && match.type=='tournament' else seasonal">Tournament Match</span>
+                                <ng-template #seasonal>
+                                    <span>Regular Season Game</span>
                                 </ng-template>
                             </div>
                         </div>
@@ -90,3 +101,6 @@
         </div>
     </div>
 </div>
+<ng-template #tbd>
+    <span> TBD </span>
+</ng-template>

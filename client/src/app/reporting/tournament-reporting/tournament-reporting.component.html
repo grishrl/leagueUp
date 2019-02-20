@@ -1,0 +1,39 @@
+<div class="row forceFull">
+    <div class="col">
+        <div class="row mt-2">
+            <div class="col">
+                The team is involved in these tournaments:
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field>
+                    <mat-select placeholder="Tournament:" [(ngModel)]="selectedTournament" disableOptionCentering (ngModelChange)="selected()">
+                        <mat-option *ngFor="let tourn of involvedTournaments" [value]="tourn"> {{tourn.name}}
+                            <span *ngIf="tourn.division">Divisional Season:</span> <span *ngIf="tourn.season"> {{tourn.season}}</span>
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <app-tournament-view [season]="selectedTournament.season" [name]="selectedTournament.name" [division]="selectedTournament.division"></app-tournament-view>
+
+        <div class="row mt-4" *ngIf="matches.length>0">
+            <div class="col">
+                <div class="row">
+                    <div class="col text-center">
+                        <h3>Your Matches:</h3>
+                    </div>
+                </div>
+                <div class="row" *ngFor="let match of matches">
+                    <div class="col">
+                        <!-- <app-match-schedule [match]="match" [team]="_team"></app-match-schedule> -->
+                        <!-- <app-match-view [passMatch]="match"></app-match-view> -->
+                        <app-reporting-deck [match]="match"></app-reporting-deck>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

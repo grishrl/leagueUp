@@ -28,7 +28,7 @@
                         </mat-card-header>
                         <img mat-card-image src="{{item.fields.heroImage.fields.file.url}}?w=450&h=300&fit=scale" alt="{{item.fields.heroImage.fields.description}}">
                         <mat-card-content>
-                            <div [innerHTML]="md.convertMarkdown(item.fields.description)"></div>
+                            <div *ngIf="item.fields.description" [innerHTML]="md.convertMarkdown(item.fields.description)"></div>
                         </mat-card-content>
                     </mat-card>
                 </div>

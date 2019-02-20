@@ -164,12 +164,19 @@
                             </div>
                         </div>
                     </div>
+                    <div *ngIf="uploading" class="row mt-3">
+                        <div class="col  text-center">
+                            <span class="border p-3">Uploading ... <i class="fas fa-sync fa-spin" style="font-size:24px"></i></span>
+                        </div>
+                    </div>
                     <div class="row m-t-20">
+
                         <div class="col" *ngIf="showAdd && !recMatch.reported">
                             <button class="btn btn-primary" (click)="addGame() ">Add Game</button>
                         </div>
+
                         <div class="col" *ngIf="showReport">
-                            <button class="btn btn-success" (click)="report() ">Report Match!</button>
+                            <button [disabled]="uploading" class="btn btn-success" (click)="report() ">Report Match!</button>
                         </div>
                     </div>
 

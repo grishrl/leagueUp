@@ -16,7 +16,7 @@ import { DeleteMemberComponent } from "./admin/delete-member/delete-member.compo
 import { ManageSelectTeamComponent } from "./admin/manage-team/manage-select-team.component";
 import { DivisionManagementComponent } from "./admin/division-management/division-management.component";
 import { ScheduleViewComponent } from "./schedule/schedule-view/schedule-view.component";
-import { MatchScheduleComponent } from "./schedule/match-schedule/match-schedule.component";
+import { MatchSchedulerComponent } from "./schedule/match-scheduler/match-scheduler.component";
 import { TeamScheduleComponent } from "./schedule/team-schedule/team-schedule.component";
 import { ReportingComponent } from "./reporting/reporting.component";
 import { DashboardComponent } from "./admin/dashboard/dashboard.component";
@@ -37,6 +37,12 @@ import { RulesComponent } from "./rules/rules.component";
 import { TeamMarketComponent } from "./marketplace/team-market/team-market.component";
 import { UserMarketplaceComponent } from "./marketplace/user-marketplace/user-marketplace.component";
 import { GenerateSeasonComponent } from "./admin/match-management/generate-season/generate-season.component";
+import { TournamentGeneratorComponent } from "./admin/match-management/tournament-generator/tournament-generator.component";
+import { ReplayBrowserComponent } from "./replay-browser/replay-browser.component";
+import { TournamentViewComponent } from "./tournament-view/tournament-view.component";
+import { TeamScheduleComboComponent } from "./schedule/team-schedule-combo/team-schedule-combo.component";
+import { EventCreateComponent } from './admin/events/event-create/event-create.component';
+import { EventListComponent } from './admin/events/event-list/event-list.component';
 
 const APP_ROUTES: Routes = [
   { path: 'directory', component: DirectoryComponent},
@@ -62,8 +68,11 @@ const APP_ROUTES: Routes = [
   { path: '_admin/userACLMgmt', component: AdminAclManagementComponent, canActivate: [AuthGuardService], data: { role: 'acl' } },
   { path: '_admin/userACLMgmt/:id', component: UpdateRolesComponent, canActivate: [AuthGuardService], data: { role: 'acl' } },
   { path: '_admin/scheduleGenerator', component: GenerateSeasonComponent, canActivate: [AuthGuardService], data: { role: 'schedulegen' } },
-  { path: 'schedule/scheduleMatch/:id', component:MatchScheduleComponent},
-  { path: 'schedule/teamSchedule', component: TeamScheduleComponent },
+  { path: '_admin/tournamentGenerator', component: TournamentGeneratorComponent, canActivate: [AuthGuardService], data: { role: 'schedulegen' } },
+  { path: '_admin/eventList', component: EventListComponent, canActivate: [AuthGuardService], data: { role: 'event' }},
+  { path: '_admin/eventMgmt/:id', component: EventCreateComponent, canActivate: [AuthGuardService], data: { role: 'event' } },
+  { path: 'schedule/scheduleMatch/:id', component:MatchSchedulerComponent},
+  { path: 'schedule/teamSchedule', component: TeamScheduleComboComponent },
   { path: 'schedule/teamSchedule/:id', component:TeamScheduleComponent}, //accepts team name as url parameter
   { path: 'reporting/:id', component:ReportingComponent}, //accepts team name as url parameter
   { path: '_admin/dashboard', component: DashboardComponent, canActivate: [AuthGuardService]},
@@ -72,10 +81,13 @@ const APP_ROUTES: Routes = [
   { path: 'sessionTimeOut', component: SessionTimeoutComponent},
   { path: 'calendar' , component:CalendarViewComponent },
   { path: 'event/:id' , component:EventLargeComponent},
+  { path: 'event', component: EventLargeComponent },
   { path: '_admin/matchMgmt/weekDeadline', component: SetDeadlineComponent, canActivate: [AuthGuardService], data: { role: 'match' }},
   { path: 'messageCenter', component:UserMessageCenterComponent},
   { path: 'findTeams', component:TeamMarketComponent},
-  { path: 'findPlayers', component:UserMarketplaceComponent}
+  { path: 'findPlayers', component:UserMarketplaceComponent},
+  { path: 'replayBrowser', component:ReplayBrowserComponent},
+  { path: 'tournament', component:TournamentViewComponent }
 ]
 
 @NgModule({
@@ -84,11 +96,3 @@ const APP_ROUTES: Routes = [
 })
 
 export class AppRoutingModule{}
-/*
-, children: [
-      { path: 'approveTeamQueue', component: ApproveMemberComponent },
-      { path: 'deleteUser', component: DeleteMemberComponent },
-      { path: 'manageTeam', component: DeleteTeamComponent },
-      { path: 'divisionMgmt', component: DivisionManagementComponent }
-    ]
-*/

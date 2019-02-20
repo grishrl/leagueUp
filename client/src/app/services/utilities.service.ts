@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
+import { environment } from '../../environments/environment'
 
 @Injectable({
   providedIn: 'root'
@@ -7,6 +8,29 @@ import { FormGroup, FormControl } from '@angular/forms';
 export class UtilitiesService {
 
   constructor() { }
+
+  isNullOrEmpty(dat): boolean {
+    if (dat == null || dat == undefined) {
+      return true;
+    }
+    if (Array.isArray(dat)) {
+      if (dat.length == 0) {
+        return true;
+      }
+    } else if (typeof dat == 'object') {
+      let noe = false;
+      for (let key in dat) {
+        if (this.isNullOrEmpty(dat[key])) {
+          noe = true;
+        }
+      }
+      return noe;
+    } else if (typeof dat == "string") {
+      return dat.length == 0;
+    } else {
+      return false;
+    }
+  }
 
   prePendHttp(link){
     if(link!= undefined&& link!=null){
@@ -152,5 +176,16 @@ export class UtilitiesService {
       }
     }
     return !!retVal;
+  }
+
+  generalImageFQDN(img) {
+    let imgFQDN = 'https://s3.amazonaws.com/' + environment.s3bucketGeneralImage + '/'
+    if (img) {
+      imgFQDN += img;
+    } else {
+
+    }
+
+    return imgFQDN;
   }
 }

@@ -6,18 +6,10 @@
     </div>
     <div class="row mt-3">
         <div class="col">
-            Select Divison:
+            Select Division:
         </div>
     </div>
-    <div class="row">
-        <div class="col">
-            <mat-form-field>
-                <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="selected(selectedDivision)" disableOptionCentering>
-                    <mat-option *ngFor="let division of divisions; let i = index" [value]="division">{{division.displayName}}</mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
-    </div>
+    <app-division-selector (selectedDiv)="selected($event)" [admin]="true"></app-division-selector>
     <div class="row">
         <div class="col">
             Select week to require a deadline through:

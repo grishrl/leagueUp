@@ -17,6 +17,7 @@ export class TeamDisplayComponent implements OnInit {
       this._teams = teams;
       this.createMyDisplay();
     }else{
+      
       this._teams = [];
       this.rows = [];
     }
@@ -50,12 +51,14 @@ export class TeamDisplayComponent implements OnInit {
           if (i>0 && i % this.perColumn == 0) {
             this.rows.push(temparr);
             temparr = [];
-          }else if(i == this._teams.length-1){
+          }
+          temparr.push(this._teams[i]);
+          //if this is the last element add the row to the display
+          if(i == ((this._teams.length-1))){
             if(temparr.length>0){
               this.rows.push(temparr);
             }
           }
-          temparr.push(this._teams[i]);
         }
       } else {
         this.rows.push(this._teams);

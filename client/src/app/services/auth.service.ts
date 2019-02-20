@@ -27,7 +27,6 @@ export class AuthService {
   }
 
   setReferral(token){
-    
      localStorage.setItem('referral', token);
   }
   getReferral(){

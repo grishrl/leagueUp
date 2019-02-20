@@ -26,6 +26,18 @@ const replaySchema = new Schema({
     "2": {
         "url": String,
         "data": String
+    },
+    "3": {
+        "url": String,
+        "data": String
+    },
+    "4": {
+        "url": String,
+        "data": String
+    },
+    "5": {
+        "url": String,
+        "data": String
     }
 }, { strict: false });
 
@@ -40,6 +52,10 @@ const matchSchema = new Schema({
     "scheduledTime": scheduleSubSchema,
     "replays": replaySchema,
     "casterName": String,
+    "type": String,
+    "name": String,
+    "parentId": String,
+    "idChildren": [String],
     "casterUrl": String,
     "mapBans": Object,
     "other": Object,

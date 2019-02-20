@@ -1,29 +1,30 @@
 
-TO DO 
-1) SET UP NGS AWS S3 BUCKETS
-2) SET UP HEROKU INSTANCES FOR 
-  2)A:  NODE APP
-  2)B:  MONGO DATABASE
-3) SET UP NGS BLIZZARD API KEY FOR OUATH
+
+admins need a more robust user admin tool
+ -need to be able to manage user points hotslogsID, pendingteam, teamid, teamname for sure
+
+admins need a more robust team admin tool
+-need to be able to manage invited users, pending users, users, 
+-admin needs to be able to change team logo
+
+admins need a log browser
+
+--team profiles need division to be hidden until the divisions are set to live
 
 
+users
+-need smarter MMR update tools, user can update their hotslogsid/url
 
-Work on client flow > particularly in regards to scheduling screens, what is the flow? think it through
-***!!!returnboolbypath is not working on any document returned from mongo investigate further!!!***
+teams
+-need manual MMR update tool
+
+--tournament brackets display dates
+--clickable to show more match information
+--calendar show special tournment marker
 
 >>> remove all hard codings of season 6 with something... else MEDIUM PRIO
 
->>>time available, create an ALL DAY check and/or a populate same time
-
-team
-> player names links, if possible.
-> show pending members?
-
-user
->Looking for team (marketplace)
-
-MARKETPLACE:
->looking for users (market place)
+***!!!returnboolbypath is not working on any document returned from mongo investigate further!!!***
 
 > Server, 
 >need some persistnet logging to keep up with background notices > in progress

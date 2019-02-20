@@ -100,7 +100,7 @@ export class MatchEditComponent implements OnInit {
       let msDate = setDate.getTime();
       let endDate = msDate + 5400000;
       match.scheduledTime.startTime = msDate;
-      match.scheduledTime.endDate = endDate;
+      match.scheduledTime.endTime = endDate;
     }
 
     if(submittable){

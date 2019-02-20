@@ -10,6 +10,12 @@ export class AdminService {
 
   constructor(private httpService: HttpServiceService) { }
 
+  //uploads team logo
+  imageUpload(imgInput) {
+    let url = '/utility/image/upload';
+    return this.httpService.httpPost(url, imgInput, true);
+  }
+
   //returns a list of all teams
   getTeams(){
     let url = 'admin/get/teams/all';
@@ -28,6 +34,17 @@ export class AdminService {
     let payload = {
       season:seas
     }
+    return this.httpService.httpPost(url, payload, true);
+  }
+
+  generateTournament(teams, season, name, division){
+    let url = '/schedule/generate/tournament';
+    let payload = {
+      teams:teams,
+      season:season,
+      tournamentName:name,
+      division:division
+    };
     return this.httpService.httpPost(url, payload, true);
   }
 

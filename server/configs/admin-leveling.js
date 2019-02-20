@@ -28,6 +28,10 @@ function userACL(req, res, next) {
     adminCheck('ACL', req, res, next);
 }
 
+function events(req, res, next) {
+    adminCheck('EVENTS', req, res, next);
+}
+
 module.exports = {
     teamLevel: teamLevel,
     userLevel: userLevel,
@@ -35,5 +39,6 @@ module.exports = {
     casterLevel: casterLevel,
     matchLevel: matchLevel,
     scheduleGenerator: scheduleGenerator,
-    userACL: userACL
+    userACL: userACL,
+    events: events
 }

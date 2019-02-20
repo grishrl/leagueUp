@@ -1,9 +1,8 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { ScheduleService } from 'src/app/services/schedule.service';
-import { AdminService } from 'src/app/services/admin.service';
-
 import { PageEvent, MatPaginator } from '@angular/material';
 import { TeamService } from 'src/app/services/team.service';
+import { UtilitiesService } from 'src/app/services/utilities.service';
 
 
 @Component({
@@ -15,7 +14,7 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(public team:TeamService, private scheduleService:ScheduleService, private adminService : AdminService) {
+  constructor(public team:TeamService, private scheduleService:ScheduleService, private util:UtilitiesService) {
 
    }
 
@@ -25,7 +24,7 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
   originalMatches:any
   filterMatches:any
   rounds=[];
-  divisions = []
+  
   filterTeam:string='';
   scheduledOnly:boolean=false;
 
@@ -36,6 +35,7 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
   pageSize: number = 10;
   filteredArray: any = [];
   pageIndex:number;
+  tournamentOnly:false;
 
 
   ngAfterViewInit(){
@@ -56,8 +56,6 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
   } 
 
   ngOnInit() {
-    this.adminService.getDivisionList().subscribe((res) => {
-      this.divisions = res;
       this.scheduleService.getAllMatches().subscribe(
         (sched) => {
           this.originalMatches = sched;
@@ -76,9 +74,6 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
           this.displayArray = this.filterMatches.slice(0, 10);
         }
       )
-    }, (err) => {
-      console.log(err);
-    });
   }
 
   /*
@@ -92,15 +87,17 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
  */
   //filters the matches based on selected criteria
   doFilterMatches(div, round, team) {
-    
+    if(div){
+      div = div.divisionConcat
+    }
     this.filterMatches = this.originalMatches.filter(match => {
       let home, away;
-      if (!match.away.teamName) {
+      if (!this.util.returnBoolByPath(match, 'away.teamName')){
         away = '';
       } else {
         away = match.away.teamName.toLowerCase();
       }
-      if (!match.home.teamName) {
+      if (!this.util.returnBoolByPath(match, 'home.teamName')) {
         home = '';
       } else {
         home = match.home.teamName.toLowerCase();
@@ -148,6 +145,29 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
     this.length=this.filterMatches.length;
     this.displayArray = this.filterMatches.slice(0,this.pageSize>this.length? this.length:this.pageSize);
     this.paginator.firstPage();
+  }
+
+  filterTournament(filter){
+    if (filter) {
+      this.filterMatches = this.originalMatches.filter((match) => {
+        let pass = false;
+        if (match.type && match.type == 'tournament') {
+          pass = true;
+          // if (match.scheduledTime.startTime != undefined || match.scheduledTime.startTime != null) {
+          //   pass = true;
+          // }
+        }
+        return pass;
+      });
+      this.length = this.filterMatches.length;
+      this.displayArray = this.filterMatches.slice(0, this.pageSize > this.length ? this.length : this.pageSize);
+      this.paginator.pageIndex = 0;
+    } else {
+      this.filterMatches = this.originalMatches;
+      this.length = this.filterMatches.length;
+      this.displayArray = this.filterMatches.slice(0, this.pageSize > this.length ? this.length : this.pageSize);
+      this.paginator.pageIndex = 0;
+    }
   }
 
   filterScheduled(filter){

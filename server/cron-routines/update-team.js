@@ -2,8 +2,6 @@ const Team = require('../models/team-models');
 const teamSub = require('../subroutines/team-subs');
 const User = require('../models/user-models');
 const Division = require('../models/division-models');
-const mongoose = require('mongoose')
-const logger = require('../subroutines/sys-logging-subs');
 
 /*
 check teams who have not been touched or have not been touched in 5 days
@@ -11,29 +9,20 @@ update this teams MMR
 make sure that the users in this team are marked as a member (we will use the teams list of members as a trusted source)
 check the teams division, if it is not in that division, remove the marker from the team (we will use the divisions list as a trusted source)
 */
-async function updateTeamsNotTouched() {
+async function updateTeamsNotTouched(days, limit) {
 
-    // logObj = {};
-    // logObj.logLevel = 'SYSTEM';
-    // logObj.location = 'Update teams not touched CRON';
-    // logObj.target = 'teams touched older than ' + process.env.daysToRefreshTeams + ' days ';
-
-    //connect to mongo db
-    mongoose.connect(process.env.mongoURI, () => {
-        console.log('connected to mongodb');
-    });
     //generate the timestamp to compare to
     let date = new Date().getTime();
-    let pastDate = 1000 * 60 * 60 * 24 * process.env.daysToRefreshTeams;
+    let pastDate = 1000 * 60 * 60 * 24 * days;
     let pastDue = date - pastDate
 
     //grab teams who fit the criterias
     let teams = await Team.find({
         $or: [{
-                lastTouched: null
+                lastTouched: { $exists: false }
             },
             {
-                lastTouched: undefined
+                lastTouched: null
             },
             {
                 lastTouched: {
@@ -41,7 +30,7 @@ async function updateTeamsNotTouched() {
                 }
             }
         ]
-    }).then(
+    }).limit(limit).then(
         (foundTeams) => {
             if (foundTeams) {
                 return foundTeams
@@ -55,7 +44,7 @@ async function updateTeamsNotTouched() {
             return null;
         }
     );
-
+    // console.log('teams ', teams);
     //this batch will be returned
     let batch = [];
     if (teams) {
@@ -65,10 +54,11 @@ async function updateTeamsNotTouched() {
             let team = teams[i];
 
             //update the team mmr
+            // console.log('team to update ', team);
             let mmrUpdate = await teamSub.updateTeamMmrAsynch(team);
 
             if (mmrUpdate) {
-                // console.log('mmr updated')
+                // console.log(team, ' mmr updated')
             }
 
             let teamMembers = [];
@@ -129,11 +119,12 @@ async function updateTeamsNotTouched() {
                 }
             }
 
-            team.lastTouched = date;
-
+            team['lastTouched'] = date;
+            team.markModified('lastTouched');
             let saved = await team.save().then(
                 (sav) => {
                     return sav;
+
                 },
                 (err) => {
                     return null;

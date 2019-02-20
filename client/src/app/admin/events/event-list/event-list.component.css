@@ -1,0 +1,18 @@
+.oddRow {
+    background-color: #e0e0eb
+}
+
+.rowBorder {
+    border-style: solid;
+    border-width: 1px;
+    border-color: lightgrey;
+}
+
+.trashCan {
+    margin-top: 50px;
+    display: inline-block;
+}
+
+.dirClass {
+    display: inline-block;
+}

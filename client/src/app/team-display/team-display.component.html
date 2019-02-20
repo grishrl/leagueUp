@@ -2,8 +2,8 @@
     <div class="row mt-3" *ngFor="let row of rows">
         <div class="col-xs-12 col-md-12 col-lg-4 mt-2" *ngFor="let item of row">
             <mat-card class="example-card">
-                <mat-card-header>
-                    <div mat-card-avatar class="example-header-image"></div>
+                <mat-card-header class="largeName text-center">
+                    <!-- <div mat-card-avatar class="example-header-image"></div> -->
                     <mat-card-title><a [routerLink]="['/teamProfile/', team.routeFriendlyTeamName(item.teamName)]">{{item.teamName}}</a></mat-card-title>
                 </mat-card-header>
                 <img mat-card-image src="{{teamImage(item.logo)}}" alt="team logo">

@@ -74,6 +74,7 @@
 
                                     <a class="dropdown-item finger" [routerLink]="['/findTeams']" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( teamName ) )">Find Team</a>
                                 </ng-template>
+                                <a class="dropdown-item finger" [routerLink]="['/replayBrowser']" (click)="navGo()">Replay Browser</a>
                                 <a *ngIf="Auth.getAdmin() && Auth.getAdmin().length>0" class="dropdown-item finger" [routerLink]="['/_admin/dashboard']" (click)="navGo('/_admin/dashboard')">Admin Dashboard</a>
                                 <a *ngIf="Auth.getCaster()" class="dropdown-item finger" data-toggle="collapse" [routerLink]="['/_casterDashboard']" (click)="navGo('/_casterDashboard')">Caster
   Dashboard</a>

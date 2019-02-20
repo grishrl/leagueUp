@@ -219,6 +219,52 @@
                     </div>
                 </div>
 
+                <div *ngIf="showEditDialog()">
+                    <div class="row mt-3">
+                        <div class="col">
+                            <h2>Pending Members:</h2>
+                        </div>
+                    </div>
+                    <!-- team members list -->
+                    <div class="row mt-3">
+                        <div class="col">
+                            <div class="row mt-3" *ngFor="let player of displayPendingMembersLeft">
+                                <div class="col-7 verticalAlign">
+                                    <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]">{{player.displayName}}</a>
+
+                                </div>
+                                <!-- <div *ngIf="showLeaveTeam(player.displayName)" class="col">
+                                    <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)">
+          Leave Team
+        </button>
+                                </div>
+                                <div *ngIf="!editOn" class="col">
+                                    <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)">
+          X </button>
+                                </div> -->
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row mt-3" *ngFor="let player of displayPendingMembersRight">
+                                <div class="col">
+                                    <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]">{{player.displayName}}</a>
+                                </div>
+                                <!-- <div *ngIf="showLeaveTeam(player.displayName)" class="col">
+                                    <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)">
+          Leave Team
+        </button>
+                                </div>
+                                <div *ngIf="!editOn" class="col">
+                                    <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)">
+          X </button>
+                                </div> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
                 <div class="row mt-3">
                     <div class="col">
                         <mat-form-field class="mat-FullWidth">
@@ -270,7 +316,6 @@
                 <!-- <div class="row mt-3" *ngIf="showRegisteredQuestionnaire() else registered">
                     <div class="col">
                         <app-questionnaire [team]="returnedProfile"></app-questionnaire>
-                    </div>
                 </div> -->
             </div>
         </div>

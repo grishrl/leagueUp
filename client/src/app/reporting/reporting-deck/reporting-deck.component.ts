@@ -25,6 +25,9 @@ export class ReportingDeckComponent implements OnInit {
     replays:{},
     matchId:''
   }
+
+  uploading = false;
+
   @Input() set match(match){
     if(match!=null && match != undefined){
       
@@ -49,16 +52,16 @@ export class ReportingDeckComponent implements OnInit {
   maps = {
   ControlPoints: 'Sky Temple',
   TowersOfDoom: 'Towers of Doom',
-  HauntedMines: 'Haunted Mines',
+  // HauntedMines: 'Haunted Mines',
   BattlefieldOfEternity: 'Battlefield of Eternity',
-  BlackheartsBay: "Blackheart's Bay",
+  // BlackheartsBay: "Blackheart's Bay",
   CursedHollow: 'Cursed Hollow',
   DragonShire: 'Dragon Shire',
-  HauntedWoods: 'Garden of Terror',
+  // HauntedWoods: 'Garden of Terror',
   Shrines: 'Infernal Shrines',
   Crypts: 'Tomb of the Spider Queen',
   Volskaya: 'Volskaya Foundry',
-  'Warhead Junction': 'Warhead Junction',   // blizz why
+  // 'Warhead Junction': 'Warhead Junction',   // blizz why
   BraxisHoldout: 'Braxis Holdout',
   Hanamura: 'Hanamura',
   AlteracPass: 'Alterac Pass'
@@ -378,10 +381,15 @@ resetReplay(game){
 
 
     if(submittable){
+      this.uploading=true;
       this.scheduleService.reportMatch(report).subscribe( res=>{
-
+        this.uploading=false;
         this.recMatch.reported = true;
         this.showReport = false;
+      },
+      err=>{
+        this.uploading = false
+        console.log(err);
       })
     }  
 

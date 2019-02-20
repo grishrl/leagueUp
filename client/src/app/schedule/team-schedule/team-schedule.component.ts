@@ -71,6 +71,7 @@ export class TeamScheduleComponent implements OnInit {
         this.standingsService.getStandings(div).subscribe(
           res => {
             let standings = res;
+            console.log('standings ', standings)
             matches.forEach(match => {
               standings.forEach(standing => {
                 if (match.home.teamName == standing.teamName) {
@@ -105,24 +106,49 @@ export class TeamScheduleComponent implements OnInit {
                         ] 
                       }
         */
-
+        console.log('matches ', matches)
        let roundsArray = [];
-        for(var i = 0; i<=matches.length; i++){
-          if(this.rounds == null || this.rounds == undefined){
-            this.rounds = {};
-          }
-          let realRoundNumber = i+1;
-          roundsArray.push(realRoundNumber);
-          matches.forEach(match => {
-              if (this.rounds[realRoundNumber] == null || this.rounds[realRoundNumber] == undefined){
+       if(matches.length % 2 == 0){
+        console.log('matches ', matches, 'matches.length ', matches.length)
+         for (var i = 0; i <= matches.length; i++) {
+           if (this.rounds == null || this.rounds == undefined) {
+             this.rounds = {};
+           }
+
+           let realRoundNumber = i + 1;
+           roundsArray.push(realRoundNumber);
+           matches.forEach(match => {
+            let realRoundNumber = i + 1;
+             if (this.rounds[realRoundNumber] == null || this.rounds[realRoundNumber] == undefined) {
+               this.rounds[realRoundNumber] = [];
+             }
+             if (match.round == realRoundNumber) {
+                roundsArray.push(realRoundNumber);
+               this.rounds[realRoundNumber].push(match);
+             }
+
+           });
+         }
+       }
+        if (matches.length % 2 != 0) {
+          for (var i = 0; i < matches.length; i++) {
+            if (this.rounds == null || this.rounds == undefined) {
+              this.rounds = {};
+            }
+            let realRoundNumber = i + 1;
+            roundsArray.push(realRoundNumber);
+            matches.forEach(match => {
+              if (this.rounds[realRoundNumber] == null || this.rounds[realRoundNumber] == undefined) {
                 this.rounds[realRoundNumber] = [];
               }
-              if(match.round == realRoundNumber){
+              if (match.round == realRoundNumber) {
                 this.rounds[realRoundNumber].push(match);
               }
-              
-          });
+
+            });
+          }
         }
+
 
 
         this.rounds;
