@@ -41,3 +41,15 @@
     max-width: 300px;
     height: 100%
 }
+
+.carouselBackground {
+    background: rgba(99, 0, 189, 0.6);
+}
+
+.carousel-control-prev {
+    opacity: 1;
+}
+
+.carousel-control-next {
+    opacity: 1;
+}
