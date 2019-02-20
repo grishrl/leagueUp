@@ -13,7 +13,7 @@
                 </ol>
                 <div class="carousel-inner" role="listbox">
                     <!-- Slide One - Set the background image for this slide in the line below -->
-                    <div (click)="goToBlogPage(jumboSlide)" *ngFor="let jumboSlide of jumboTron let i = index" class="carousel-item finger" [ngClass]="{'active':i==0}" [style.background-image]="'url('+jumboSlide.fields.heroImage.fields.file.url+'?w=1920&h=1080&fit=scale)'">
+                    <div (click)="goToBlogPage(jumboSlide)" *ngFor="let jumboSlide of jumboTron let i = index" class="carousel-item finger" [ngClass]="{'active':i==0}" [style.background-image]="'url('+jumboSlide.fields.heroImage.fields.file.url+')'">
                         <div class="carousel-caption d-none d-md-block badge-pill carouselBackground">
 
                             <h3>{{jumboSlide.fields.title}}</h3>
