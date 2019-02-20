@@ -9,17 +9,50 @@ import { Router } from '@angular/router';
 import { EventsService } from '../services/events.service';
 
 const colors: any = {
-  red: {
-    primary: '#ad2121',
-    secondary: '#FAE3E3'
+  heroic: {  //navy
+    primary: '#001f3f',
+    name: 'Heroic Division',
+    sortOder:1
   },
-  blue: {
-    primary: '#1e90ff',
-    secondary: '#D1E8FF'
+  a: { //red
+    primary: '#FF4136',
+    name: 'Division A',
+    sortOder: 2
   },
-  yellow: {
-    primary: '#e3bc08',
-    secondary: '#FDF1BA'
+  'b-east':{ //teal
+    primary:'#39CCCC',
+    name: 'Division B East',
+    sortOder: 3
+  },
+  'b-west': { //aqua
+    primary: '#7FDBFF',
+    name: 'Division B West',
+    sortOder: 4
+  },
+  'c-east': { //silver
+    primary: '#AAAAAA',
+    name: 'Division C East',
+    sortOder: 5
+  },
+  'c-west':{ //grey
+    primary: '#DDDDDD',
+    name: 'Division C West',
+    sortOder: 6
+  },
+  'd-east': { //green
+    primary: '#2ECC40',
+    name: 'Division D East',
+    sortOder: 7
+  },
+  'd-west': { //lime
+    primary: '#01FF70',
+    name: 'Division D West',
+    sortOder: 8
+  },
+  'event':{ //orange
+    primary:'#FF851B',
+    name: 'NGS Event',
+    sortOder: 9
   }
 };
 
@@ -31,7 +64,11 @@ const colors: any = {
 })
 export class CalendarViewComponent implements OnInit {
 
+  sortOrder = (a,b)=>{
+    return a.value.sortOrder > b.value.sortOrder ? 1 : 0;
+  }
 
+  key = colors;
 
   constructor(private matches: ScheduleService, public dialog: MatDialog, private router:Router, private eventService:EventsService) { }
 
@@ -52,7 +89,9 @@ export class CalendarViewComponent implements OnInit {
           if(match.casterName!=null||match.casterName!=undefined){
             event['title']+=' Casted! '
           }
-          event['color']=colors.red;
+
+          event['color']=colors[match.divisionConcat];
+          
           this.events.push(event);
         });
 
@@ -66,7 +105,7 @@ export class CalendarViewComponent implements OnInit {
                 'meta': { id: rep.uuid, 'type': 'event' }
               };
 
-              event['color'] = colors.red;
+              event['color'] = colors.event;
               this.events.push(event);
 
             })
