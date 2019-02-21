@@ -29,13 +29,13 @@ const colors: any = {
     name: 'Division B West',
     sortOder: 4
   },
-  'c-east': { //silver
-    primary: '#AAAAAA',
+  'c-east': { //fuchsia
+    primary: '#F012BE',
     name: 'Division C East',
     sortOder: 5
   },
-  'c-west':{ //grey
-    primary: '#DDDDDD',
+  'c-west':{ //PURPLE
+    primary: '#B10DC9',
     name: 'Division C West',
     sortOder: 6
   },
