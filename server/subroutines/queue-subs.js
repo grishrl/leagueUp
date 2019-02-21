@@ -39,22 +39,28 @@ function cleanUpPendingQueueTeamnameUsername(teamname, username) {
     logObj.timeStamp = new Date().getTime();
     teamname = teamname.toLowerCase();
     //find the queue item of specified team/user combo
-    Admin.PendingQueue.find({ teamName_lower: teamname, userName: username }).then((toDelete) => {
+    Admin.PendingQueue.find({ teamName: teamname, userName: username }).then((toDelete) => {
         if (toDelete && toDelete.length > 0) {
             //iterate through each element
             toDelete.forEach(ele => {
                 //remove the element
-                logObj.target = ele;
-                ele.remove();
-                logger(logObj);
-                // console.log('pendingQueue item ' + ele._id + ' deleted.'); //static logging
+                Admin.PendingQueue.findByIdAndDelete(ele._id).then(
+                    deleted => {
+                        logObj.target = deleted;
+                        logger(logObj);
+                    },
+                    err => {
+                        logObj.logLevel = "ERROR";
+                        logObj.error = err;
+                        logger(logObj);
+                    }
+                );
             });
         }
     }, (err) => {
         logObj.logLevel = 'ERROR';
         logObj.error = err;
         logger(logObj)
-            // console.log('err in the pending delete sub ', err); //static logging
     })
 }
 

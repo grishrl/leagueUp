@@ -231,16 +231,16 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
                             }
                             //save the team and the user
                             foundTeam.save().then((savedTeam) => {
-                                    foundUser.save().then((savedUser) => {
-                                        res.status(200).send(util.returnMessaging(path, 'Team and User updated!', false, savedTeam, savedUser, logObj));
-                                        teamSub.updateTeamMmr(savedTeam);
-                                    }, (userSaveErr) => {
-                                        res.status(500).send(util.returnMessaging(path, "Error saving user", userSaveErr, null, null, logObj));
-                                    })
-                                }, (teamSaveErr) => {
-                                    res.status(500).send(util.returnMessaging(path, 'Error saving team', teamSaveErr, null, null, logObj));
+                                foundUser.save().then((savedUser) => {
+                                    res.status(200).send(util.returnMessaging(path, 'Team and User updated!', false, savedTeam, savedUser, logObj));
+                                    teamSub.updateTeamMmr(savedTeam);
+                                }, (userSaveErr) => {
+                                    res.status(500).send(util.returnMessaging(path, "Error saving user", userSaveErr, null, null, logObj));
                                 })
-                                //this should fire whether the user was approved or denied, clean this item from the queue
+                            }, (teamSaveErr) => {
+                                res.status(500).send(util.returnMessaging(path, 'Error saving team', teamSaveErr, null, null, logObj));
+                            });
+                            //this should fire whether the user was approved or denied, clean this item from the queue
                             QueueSub.removePendingByTeamAndUser(foundTeam.teamName_lower, foundUser.displayName);
                         } else {
                             logObj.logLevel = 'ERROR';
