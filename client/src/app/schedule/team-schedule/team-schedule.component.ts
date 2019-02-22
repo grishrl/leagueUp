@@ -71,7 +71,6 @@ export class TeamScheduleComponent implements OnInit {
         this.standingsService.getStandings(div).subscribe(
           res => {
             let standings = res;
-            console.log('standings ', standings)
             matches.forEach(match => {
               standings.forEach(standing => {
                 if (match.home.teamName == standing.teamName) {
@@ -106,10 +105,8 @@ export class TeamScheduleComponent implements OnInit {
                         ] 
                       }
         */
-        console.log('matches ', matches)
        let roundsArray = [];
        if(matches.length % 2 == 0){
-        console.log('matches ', matches, 'matches.length ', matches.length)
          for (var i = 0; i <= matches.length; i++) {
            if (this.rounds == null || this.rounds == undefined) {
              this.rounds = {};
@@ -118,19 +115,17 @@ export class TeamScheduleComponent implements OnInit {
            let realRoundNumber = i + 1;
            roundsArray.push(realRoundNumber);
            matches.forEach(match => {
-            let realRoundNumber = i + 1;
              if (this.rounds[realRoundNumber] == null || this.rounds[realRoundNumber] == undefined) {
                this.rounds[realRoundNumber] = [];
              }
              if (match.round == realRoundNumber) {
-                roundsArray.push(realRoundNumber);
+                // roundsArray.push(realRoundNumber);
                this.rounds[realRoundNumber].push(match);
              }
 
            });
          }
-       }
-        if (matches.length % 2 != 0) {
+       }else if (matches.length % 2 != 0) {
           for (var i = 0; i < matches.length; i++) {
             if (this.rounds == null || this.rounds == undefined) {
               this.rounds = {};
