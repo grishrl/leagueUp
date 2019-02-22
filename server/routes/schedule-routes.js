@@ -203,9 +203,18 @@ router.get('/get/matches/scheduled', (req, res) => {
         scheduledTime: {
             $exists: true
         }
-    }).then((found) => {
+    }).lean().then((found) => {
         if (found) {
-            res.status(200).send(util.returnMessaging(path, 'Found scheduled matches', false, found));
+            let teamIds = findTeamIds(found);
+            addTeamNamesToMatch(teamIds, found).then(
+                added => {
+                    res.status(200).send(util.returnMessaging(path, 'Found scheduled matches', false, added));
+                },
+                err => {
+                    res.status(500).send(util.returnMessaging(path, 'Failed to get team matches', err, false));
+                }
+            )
+
         } else {
             res.status(400).send(util.returnMessaging(path, 'No matches found'));
         }
