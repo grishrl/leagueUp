@@ -7,6 +7,7 @@ const Admin = require('../models/admin-models');
 const QueueSub = require('../subroutines/queue-subs');
 const TeamSub = require('../subroutines/team-subs');
 const UserSub = require('../subroutines/user-subs');
+const DivSub = require('../subroutines/division-subs');
 const Team = require("../models/team-models");
 const passport = require("passport");
 const fs = require('fs');
@@ -166,7 +167,9 @@ router.post('/delete', passport.authenticate('jwt', {
     }).then((deletedTeam) => {
         if (deletedTeam) {
             UserSub.clearUsersTeam(deletedTeam.teamMembers);
-            TeamSub.updateTeamMatches(deletedTeam);
+            TeamSub.updateTeamMatches(deletedTeam.toObject());
+            DivSub.updateTeamNameDivision(deletedTeam.teamName, deletedTeam.teamName + ' (withdrawn)');
+            //TODO: division sub to handle removing team from the division
             res.status(200).send(util.returnMessaging(path, 'Team has been deleted', false, false, null, logObj));
         } else {
             logObj.logLevel = 'ERROR';

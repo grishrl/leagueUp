@@ -292,7 +292,8 @@ router.post('/delete/team', passport.authenticate('jwt', {
     Team.findOneAndDelete({ teamName_lower: team }).then((deleted) => {
         if (deleted) {
             UserSub.clearUsersTeam(deleted.teamMembers);
-            DivSub.removeTeamFromDivision(deleted.teamName);
+            teamSub.updateTeamMatches(deleted.toObject());
+            DivSub.updateTeamNameDivision(deleted.teamName, deleted.teamName + ' (withdrawn)');
             res.status(200).send(util.returnMessaging(path, 'Team deleted', false, deleted, null, logObj));
         }
     }, (err) => {

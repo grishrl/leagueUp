@@ -348,7 +348,8 @@ export class TeamProfileComponent implements OnInit {
       if (result.toLowerCase() == 'delete') {
         this.admin.deleteTeam(this.returnedProfile.teamName_lower).subscribe(
           res => {
-            this.showMe = false;
+            this.router.navigate(['/_admin/manageTeam']);
+            
           }, err => {
             console.log(err);
           }

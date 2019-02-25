@@ -27,7 +27,7 @@
                                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                                     <a class="dropdown-item finger" (click)="openCaptainChangeDialog()"><span class="icon-align"><i class="material-icons">cached</i>Change
                                                         captain</span></a>
-                                                    <a class="dropdown-item finger" (click)="openDialog()"><span class="icon-align"><i class="material-icons">delete_forever</i>Delete team</span></a>
+                                                    <!-- <a class="dropdown-item finger" (click)="openDialog()"><span class="icon-align"><i class="material-icons">delete_forever</i>Delete team</span></a> -->
                                                 </div>
                                             </div>
 
@@ -102,6 +102,9 @@
                         </mat-form-field>
                         <mat-form-field class="mat-FullWidth">
                             <input matInput placeholder="Team MMR Average" [(ngModel)]="returnedProfile.teamMMRAvg" disabled="true">
+                        </mat-form-field>
+                        <mat-form-field class="mat-FullWidth">
+                            <input matInput placeholder="Team Captain" [(ngModel)]="returnedProfile.captain" disabled="true">
                         </mat-form-field>
                         <mat-slide-toggle *ngIf="checkRosterSize()" [disabled]="editOn" [(ngModel)]="returnedProfile.lookingForMore">
                             Looking for More.
@@ -189,7 +192,7 @@
                     <div class="col">
                         <div class="row mt-3" *ngFor="let player of displayMembersLeft">
                             <div class="col-7 verticalAlign">
-                                <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]">{{player.displayName}}</a>
+                                <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]"><i *ngIf="player.displayName == returnedProfile.captain" class="fas fa-crown"></i> {{player.displayName}}</a>
 
                             </div>
                             <div *ngIf="showLeaveTeam(player.displayName)" class="col">
@@ -205,7 +208,8 @@
                     <div class="col">
                         <div class="row mt-3" *ngFor="let player of displayMembersRight">
                             <div class="col">
-                                <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]">{{player.displayName}}</a>
+                                <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]"><i *ngIf="player.displayName == returnedProfile.captain"
+    class="fas fa-crown"></i>{{player.displayName}}</a>
                             </div>
                             <div *ngIf="showLeaveTeam(player.displayName)" class="col">
                                 <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)">

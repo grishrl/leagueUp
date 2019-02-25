@@ -437,15 +437,18 @@ function scrubUserFromTeams(username) {
 //match object
 function updateTeamMatches(team) {
     //find all matches that has the team in the away or home 
+    let id = team._id.toString();
     Match.find({
         $or: [{
-            'away.id': team._id
+            'away.id': id
         }, {
-            'home.id': team._id
+            'home.id': id
         }]
     }).then((found) => {
         if (found) {
             //add the team name to the matches that were found
+            team.teamName = team.teamName + ' (withdrawn)';
+            team.teamName_lower = team.teamName_lower + ' (withdrawn)';
             addTeamNamesToMatch(team, found).then(
                 res => {
                     console.log('matches modified')
@@ -486,10 +489,10 @@ async function addTeamNamesToMatch(team, found) {
     //loop through all the found matches
     found.forEach(match => {
         let homeid, awayid;
-        if (util.returnBoolByPath(match, 'home.id')) {
+        if (util.returnBoolByPath(match.toObject(), 'home.id')) {
             homeid = match.home.id.toString();
         }
-        if (util.returnBoolByPath(match, 'away.id')) {
+        if (util.returnBoolByPath(match.toObject(), 'away.id')) {
             awayid = match.away.id.toString();
         }
         //if the provided team id matches the homeid them update the home team info, if it 
@@ -498,16 +501,21 @@ async function addTeamNamesToMatch(team, found) {
             match.home['teamName'] = team.teamName;
             match.home['logo'] = team.logo;
             match.home['teamName_lower'] = team.teamName_lower;
+            match.markModified('home');
         }
         if (teamid == awayid) {
             match.away['teamName'] = team.teamName;
             match.away['logo'] = team.logo;
             match.away['teamName_lower'] = team.teamName_lower;
+            match.markModified('away');
         }
+
     });
     let saved = [];
-    for (var i = 0; i < found; i++) {
+    for (var i = 0; i < found.length; i++) {
         let save = await found[i].save().then(res => { return res; }, err => { return null });
+        saved.push(save);
     }
+
     return saved;
 }
