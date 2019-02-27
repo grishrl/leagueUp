@@ -381,7 +381,7 @@ async function postToHotsProfileHandler(limNum) {
     let success = false;
 
     if (!limNum) {
-        limNum = 10;
+        limNum = 20;
     } else {
         limNum = parseInt(limNum);
     }
