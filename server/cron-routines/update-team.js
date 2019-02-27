@@ -104,9 +104,12 @@ async function updateTeamsNotTouched(days, limit) {
 
 
             if (team.divisionConcat) {
+                // console.log('team ', team.teamName);
+                // console.log('team.divisionConcat ', team.divisionConcat);
                 let division = await Division.findOne({ divisionConcat: team.divisionConcat }).then(foundDiv => { return foundDiv; }, err => { return null; });
+                // console.log('division ', division);
                 if (division) {
-                    if (division.teams.indexOf(team.displayName) == -1) {
+                    if (division.teams.indexOf(team.teamName) == -1) {
                         team.divisionDisplayName = '';
                         team.divisionConcat = '';
                     } else {
