@@ -7,6 +7,7 @@ import { EventModalComponent } from './event-modal/event-modal.component';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 import { EventsService } from '../services/events.service';
+import { UtilitiesService } from '../services/utilities.service';
 
 const colors: any = {
   heroic: {  //navy
@@ -70,7 +71,23 @@ export class CalendarViewComponent implements OnInit {
 
   key = colors;
 
-  constructor(private matches: ScheduleService, public dialog: MatDialog, private router:Router, private eventService:EventsService) { }
+  constructor(private matches: ScheduleService, public dialog: MatDialog, private router:Router, private eventService:EventsService, private util: UtilitiesService) { }
+
+  showCasterNameUrl(match) {
+    // console.log(this.util.returnBoolByPath(match, 'casterName'), match.casterName.length > 0, match.casterName.length)
+    // console.log();
+    let ret = false;
+    if (this.util.returnBoolByPath(match, 'casterName')) {
+      if (match.casterName.length > 0) {
+        ret = true;
+      } else {
+        ret = false;
+      }
+    } else {
+      ret = false;
+    }
+    return ret;
+  }
 
   _matches = [];
   ngOnInit(){
@@ -86,7 +103,8 @@ export class CalendarViewComponent implements OnInit {
             'meta':{ id: match.matchId, 'type':'match'}
           };
 
-          if(match.casterName!=null||match.casterName!=undefined){
+
+          if (this.showCasterNameUrl(match)){
             event['title']+=' Casted! '
           }
 

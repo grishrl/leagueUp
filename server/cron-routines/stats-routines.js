@@ -2,9 +2,33 @@ const Replay = require('../models/replay-parsed-models');
 const User = require('../models/user-models');
 const Team = require('../models/team-models');
 const Stats = require('../models/stats-model');
+const Match = require('../models/match-model');
 const logger = require('../subroutines/sys-logging-subs');
 const summarizePlayerData = require('../summarizeData/summarize-player-data');
 const summarizeTeamData = require('../summarizeData/summarize-team-data');
+const axios = require('axios');
+const _ = require('lodash');
+const querystring = require('querystring');
+const util = require('../utils');
+
+//TODO: move string into env. variable
+const postToHotsProfileURL = 'https://www.heroesprofile.com/API/Games/NGS/';
+const config = {
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+    }
+}
+async function postToHotsProfile(postObj) {
+    let returnUrl = 'null';
+    try {
+        returnUrl = await axios.get(postToHotsProfileURL + '?' + querystring.stringify(postObj), config);
+    } catch (error) {
+        // console.log(error);
+
+    }
+
+    return returnUrl;
+}
 
 function getToonHandle(obj, name) {
     let handle = null;
@@ -352,8 +376,195 @@ async function tabulateTeamStats() {
 
 }
 
+async function postToHotsProfileHandler(limNum) {
+
+    let success = false;
+
+    if (!limNum) {
+        limNum = 20;
+    } else {
+        limNum = parseInt(limNum);
+    }
+    // console.log('limit ', limNum);
+    let matches = await Match.find({
+        $and: [{
+                $or: [{
+                        "postedToHP": null
+                    },
+                    {
+                        "postedToHP": {
+                            $exists: false
+                        }
+                    },
+                    {
+                        "postedToHP": false
+                    }
+                ]
+            },
+            {
+                "reported": true
+            }
+        ]
+    }).limit(limNum).then(
+        found => {
+            return found;
+        },
+        err => {
+            return null;
+        }
+    );
+
+    if (matches) {
+        let savedArray = [];
+        for (var i = 0; i < matches.length; i++) {
+            let postedReplays = true;
+            // console.log('i ', i);
+            let postObj = {};
+            postObj['api_key'] = 'ngs!7583hh';
+            let match = matches[i];
+            let matchObj = match.toObject();
+
+            // console.log(match);
+            let teamIds = [];
+
+            if (util.returnByPath(matchObj, 'away.id')) {
+                teamIds.push(util.returnByPath(matchObj, 'away.id'));
+            }
+
+            if (util.returnByPath(matchObj, 'home.id')) {
+                teamIds.push(util.returnByPath(matchObj, 'home.id'));
+            }
+
+            let teams = await Team.find({ _id: { $in: teamIds } }).then(
+                found => { return found; },
+                err => {
+                    return null;
+                }
+            )
+
+            let replays = matchObj.replays;
+            // console.log('replays ', replays);
+            let keys = Object.keys(replays);
+            // console.log('keys ', keys);
+            let matchCopy = _.cloneDeep(match);
+
+            for (var j = 0; j < keys.length; j++) {
+                // console.log('J ', j, ' J+1 ', j + 1);
+                let localKey = keys[j];
+                // console.log('localKey ', localKey);
+                if (localKey != '_id') {
+
+                    let replayInf = matchObj.replays[localKey];
+                    let parsed = await Replay.findOne({
+                        systemId: replayInf.data
+                    }).then(
+                        found => {
+                            return found;
+                        },
+                        err => {
+                            return null;
+                        }
+                    );
+
+                    if (parsed) {
+                        replayInf['parsed'] = parsed;
+                    } else {
+
+                        //error
+                    }
+
+                    postObj['replay_url'] = 'https://s3.amazonaws.com/dev-ngs-replay-storage/' + replayInf.url;
+                    postObj['team_one_name'] = replayInf.parsed.match.teams["0"].teamName;
+                    let playerNameKey = replayInf.parsed.match.teams["0"].ids[0];
+                    let battleTag = replayInf.parsed.players[playerNameKey].name + "#" + replayInf.parsed.players[playerNameKey].tag
+                    postObj['team_one_player'] = battleTag;
+                    postObj['team_one_map_ban'] = matchCopy.mapBans.home;
+                    postObj['team_two_name'] = replayInf.parsed.match.teams["1"].teamName;
+                    playerNameKey = replayInf.parsed.match.teams["1"].ids[0];
+                    battleTag = replayInf.parsed.players[playerNameKey].name + "#" + replayInf.parsed.players[playerNameKey].tag
+                    postObj['team_two_player'] = battleTag;
+                    postObj['team_two_map_ban'] = matchCopy.mapBans.away;
+                    postObj['round'] = matchCopy.round.toString();
+                    postObj['division'] = teams[0].divisionDisplayName;
+                    postObj['game'] = (j + 1).toString();
+                    postObj['season'] = "6";
+
+                    if (teams) {
+
+                        teams.forEach(team => {
+                            let teamObj = team.toObject()
+                            if (teamObj.teamName == postObj['team_one_name']) {
+                                if (!util.isNullOrEmpty(teamObj.logo)) {
+                                    postObj['team_one_image_url'] = 'https://s3.amazonaws.com/dev-ngs-image-storage/' + teamObj.logo;
+                                }
+                            }
+                            if (teamObj.teamName == postObj['team_two_name']) {
+                                if (!util.isNullOrEmpty(teamObj.logo)) {
+                                    postObj['team_two_image_url'] = 'https://s3.amazonaws.com/dev-ngs-image-storage/' + teamObj.logo;
+                                }
+
+                            }
+                        })
+                    }
+
+                    // console.log('post Obj ', postObj);
+
+                    // let posted = { data: { url: " yo mamma " } };
+                    // console.log('postObj ', postObj);
+                    // call to hotsprofile
+                    let posted = await postToHotsProfile(postObj).then(
+                        reply => {
+                            return reply;
+                        },
+                        err => {
+                            return null;
+                        }
+                    );
+
+                    // console.log('posted ', posted);
+
+                    if (posted) {
+                        // postedReplays += 1;
+                        match['replays'][localKey]['parsedUrl'] = posted.data.url;
+                    } else {
+                        //if posted fails then do not set the match to fully reported
+                        postedReplays = false;
+                    }
+
+                } else {
+                    //do nothing
+                }
+
+            }
+
+            match['postedToHP'] = postedReplays;
+            // console.log('match ', match);
+            let saved = await match.save().then(
+                saved => {
+                    return saved;
+                },
+                err => {
+                    console.log(err);
+                    return null;
+                }
+            )
+            savedArray.push(saved);
+
+        }
+
+        // console.log('SAVED ARRAY ', savedArray);
+
+    } else {
+        //no matches found
+    }
+
+    return success;
+
+}
+
 module.exports = {
     asscoatieReplays: asscoatieReplays,
     tabulateUserStats: tabulateUserStats,
-    tabulateTeamStats: tabulateTeamStats
+    tabulateTeamStats: tabulateTeamStats,
+    postToHotsProfileHandler: postToHotsProfileHandler
 }

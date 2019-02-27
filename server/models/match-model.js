@@ -20,22 +20,27 @@ const scheduleSubSchema = new Schema({
 
 const replaySchema = new Schema({
     "1": {
+        "parsedUrl": String,
         "url": String,
         "data": String
     },
     "2": {
+        "parsedUrl": String,
         "url": String,
         "data": String
     },
     "3": {
+        "parsedUrl": String,
         "url": String,
         "data": String
     },
     "4": {
+        "parsedUrl": String,
         "url": String,
         "data": String
     },
     "5": {
+        "parsedUrl": String,
         "url": String,
         "data": String
     }
@@ -59,6 +64,7 @@ const matchSchema = new Schema({
     "casterUrl": String,
     "mapBans": Object,
     "other": Object,
+    "postedToHP": Boolean,
     "reported": Boolean,
     "scheduleDeadline": String
 }, { useNestedStrict: false });

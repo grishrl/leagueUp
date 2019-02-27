@@ -9,6 +9,7 @@ const jwt = require('jsonwebtoken');
 const System = require('../models/system-models');
 const AWS = require('aws-sdk');
 
+
 AWS.config.update({
     accessKeyId: process.env.S3accessKeyId,
     secretAccessKey: process.env.S3secretAccessKey,
@@ -279,6 +280,41 @@ router.post('/image/upload', passport.authenticate('jwt', {
     }
 
 });
+
+router.post('/tabulate-stats/hots-profile', (req, res) => {
+
+    const path = '/utility/tabulate-stats/team';
+
+    var apiKey = req.body.apiKey || req.query.apiKey;
+    var limit = req.body.limit || req.query.limit;
+
+    //construct log object
+    let logObj = {};
+    logObj.actor = "SYSTEM";
+    logObj.action = 'upload replays to hots-profile ';
+    logObj.target = 'replays';
+    logObj.logLevel = 'STD';
+
+    checkApiKey(apiKey).then(
+        validate => {
+            if (validate) {
+
+                StatsJobs.postToHotsProfileHandler(limit).then(
+                    (response) => {
+                        res.status(200).send(util.returnMessaging(path, 'Submitting replays to Hots Profile Completed Normally', null, null, null, logObj))
+                    },
+                    err => {
+                        res.status(500).send(util.returnMessaging(path, 'Submitting replays to Hots Profile Failed', err, null, null, logObj));
+                    }
+                )
+
+            } else {
+                res.status(401).send(util.returnMessaging(path, 'Unauthorized', null, null, null, logObj));
+            }
+        }
+    );
+
+})
 
 module.exports = router;
 

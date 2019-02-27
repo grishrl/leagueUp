@@ -3,6 +3,8 @@ import { ScheduleService } from 'src/app/services/schedule.service';
 import { PageEvent, MatPaginator } from '@angular/material';
 import { TeamService } from 'src/app/services/team.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { FilterService } from 'src/app/services/filter.service';
 
 
 @Component({
@@ -14,7 +16,8 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(public team:TeamService, private scheduleService:ScheduleService, private util:UtilitiesService) {
+  constructor(public team:TeamService, private scheduleService:ScheduleService, private util:UtilitiesService, private Auth: AuthService,
+    private filterService:FilterService) {
 
    }
 
@@ -26,16 +29,24 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
   rounds=[];
   
   filterTeam:string='';
-  scheduledOnly:boolean=false;
+  scheduledOnlyFlt:boolean=false;
 
-  
+  times: any[] = [];
+  suffix;
+  friendlyTime;
+  friendlyDate;
+  amPm = ['PM', 'AM'];
 
   displayArray = [];
   length: number;
   pageSize: number = 10;
   filteredArray: any = [];
   pageIndex:number;
-  tournamentOnly:false;
+  tournamentOnlyFlt:false;
+  divFlt;
+  roundFlt;
+  teamFlt;
+  startTimeFlt;
 
 
   ngAfterViewInit(){
@@ -74,123 +85,226 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
           this.displayArray = this.filterMatches.slice(0, 10);
         }
       )
+    for (let i = 1; i < 13; i++) {
+      for (let j = 0; j <= 3; j++) {
+        let min: any = j * 15;
+        if (min == 0) {
+          min = '00';
+        }
+        let time = i + ":" + min;
+        this.times.push(time);
+      }
+    }
   }
 
-  /*
- div, round, team
- div, round, 
- div, team,
- round, team,
- div, 
- round, 
- team
- */
-  //filters the matches based on selected criteria
-  doFilterMatches(div, round, team) {
-    if(div){
-      div = div.divisionConcat
-    }
-    this.filterMatches = this.originalMatches.filter(match => {
-      let home, away;
-      if (!this.util.returnBoolByPath(match, 'away.teamName')){
-        away = '';
-      } else {
-        away = match.away.teamName.toLowerCase();
-      }
-      if (!this.util.returnBoolByPath(match, 'home.teamName')) {
-        home = '';
-      } else {
-        home = match.home.teamName.toLowerCase();
-      }
-      if (team) {
-        team = team.toLowerCase();
-      }
+  resetTime(){
+    this.startTimeFlt = null;
+    this.friendlyDate = null;
+    this.friendlyTime = null;
+    this.doFilterMatches();
+  }
 
-      let pass = false;
-      if (div && round && team) {
-        if (div == match.divisionConcat && round == match.round &&
-          (away.indexOf(team) > -1 || home.indexOf(team) > -1)) {
-          pass = true;
+  timeChanged(){
+
+    if (this.friendlyDate && this.friendlyTime) {
+      if (this.friendlyTime && this.suffix) {
+        let years = this.friendlyDate.getFullYear();
+        let month = this.friendlyDate.getMonth();
+        let day = this.friendlyDate.getDate();
+
+        let colonSplit = this.friendlyTime.split(':');
+        colonSplit[1] = parseInt(colonSplit[1]);
+        if (this.suffix == 'PM') {
+          colonSplit[0] = parseInt(colonSplit[0]);
+          colonSplit[0] += 12;
         }
-      } else if (div && round) {
-        if (div == match.divisionConcat && round == match.round) {
-          pass = true;
-        }
-      } else if (div && team) {
-        if (div == match.divisionConcat && (away.indexOf(team) > -1 || home.indexOf(team) > -1)) {
-          pass = true;
-        }
-      } else if (round && team) {
-        if (round == match.round && (away.indexOf(team) > -1 || home.indexOf(team) > -1)) {
-          pass = true;
-        }
-      } else if (div) {
-        if (div == match.divisionConcat) {
-          pass = true;
-        }
-      } else if (round) {
-        if (round == match.round) {
-          pass = true;
-        }
-      } else if (team) {
-        if (away.indexOf(team) > -1 || home.indexOf(team) > -1) {
-          pass = true;
-        }
-      } else {
-        pass = true
-      }
-      return pass;
+        let setDate = new Date();
+        setDate.setFullYear(years);
+        setDate.setMonth(month);
+        setDate.setDate(day);
+        this.endTimeFlt = setDate.getTime() + 86400000;
+        setDate.setHours(colonSplit[0]);
+        setDate.setMinutes(colonSplit[1]);
+        //86400000
+        let msDate = setDate.getTime();
+        this.startTimeFlt = msDate;
+        this.doFilterMatches();
+        console.log('msDate ', msDate)
+      } 
+    } else if (this.friendlyDate){
+      let years = this.friendlyDate.getFullYear();
+      let month = this.friendlyDate.getMonth();
+      let day = this.friendlyDate.getDate();
+      let setDate = new Date();
+      setDate.setFullYear(years);
+      setDate.setMonth(month);
+      setDate.setDate(day);
+      this.endTimeFlt = setDate.getTime() + 86400000;
+      let msDate = setDate.getTime();
+      this.startTimeFlt = msDate;
+      this.doFilterMatches();
+      console.log('msDate ', msDate)
     }
-    );
+
+
+
+  }
+
+  selected(div){
+    this.divFlt = div;
+    this.doFilterMatches();
+  }
+
+  //filters the matches based on selected criteria
+
+  
+   endTimeFlt;
+  doFilterMatches() {
+
+    // if(!this.util.isNullOrEmpty(div)){
+    //   div = div.divisionConcat
+    // }
+    this.filterMatches = this.originalMatches;
+    if(!this.util.isNullOrEmpty(this.divFlt)){
+      this.filterMatches = this.filterMatches.filter(match => {
+        return this.filterService.testDivision(match, this.divFlt);
+      });
+    }
+    if (!this.util.isNullOrEmpty(this.roundFlt)) {
+      this.filterMatches = this.filterMatches.filter(match => {
+        return this.filterService.testRound(match, this.roundFlt);
+      });
+    }
+    if(!this.util.isNullOrEmpty(this.teamFlt)){
+      this.filterMatches = this.filterMatches.filter(match => {
+        return this.filterService.testName(match, this.teamFlt);
+      });
+    }
+    if(!this.util.isNullOrEmpty(this.scheduledOnlyFlt)&&this.scheduledOnlyFlt){
+      this.filterMatches = this.filterMatches.filter(match => {
+        return this.filterService.testScheduled(match);
+      });
+    }
+    if (!this.util.isNullOrEmpty(this.tournamentOnlyFlt)&&this.tournamentOnlyFlt) {
+      this.filterMatches = this.filterMatches.filter(match => {
+        return this.filterService.testTournament(match);
+      });
+    }
+    if (!this.util.isNullOrEmpty(this.startTimeFlt)) {
+      this.filterMatches = this.filterMatches.filter(match => {
+        return this.filterService.testTime(match, this.startTimeFlt, this.endTimeFlt);
+      });
+    }
     this.length=this.filterMatches.length;
     this.displayArray = this.filterMatches.slice(0,this.pageSize>this.length? this.length:this.pageSize);
     this.paginator.firstPage();
   }
 
-  filterTournament(filter){
-    if (filter) {
-      this.filterMatches = this.originalMatches.filter((match) => {
-        let pass = false;
-        if (match.type && match.type == 'tournament') {
-          pass = true;
-          // if (match.scheduledTime.startTime != undefined || match.scheduledTime.startTime != null) {
-          //   pass = true;
-          // }
-        }
-        return pass;
-      });
-      this.length = this.filterMatches.length;
-      this.displayArray = this.filterMatches.slice(0, this.pageSize > this.length ? this.length : this.pageSize);
-      this.paginator.pageIndex = 0;
-    } else {
-      this.filterMatches = this.originalMatches;
-      this.length = this.filterMatches.length;
-      this.displayArray = this.filterMatches.slice(0, this.pageSize > this.length ? this.length : this.pageSize);
-      this.paginator.pageIndex = 0;
+  // filterTournament(filter){
+  //   if (filter) {
+  //     this.filterMatches = this.originalMatches.filter((match) => {
+  //       let pass = false;
+  //       if (match.type && match.type == 'tournament') {
+  //         pass = true;
+  //         // if (match.scheduledTime.startTime != undefined || match.scheduledTime.startTime != null) {
+  //         //   pass = true;
+  //         // }
+  //       }
+  //       return pass;
+  //     });
+  //     this.length = this.filterMatches.length;
+  //     this.displayArray = this.filterMatches.slice(0, this.pageSize > this.length ? this.length : this.pageSize);
+  //     this.paginator.pageIndex = 0;
+  //   } else {
+  //     this.filterMatches = this.originalMatches;
+  //     this.length = this.filterMatches.length;
+  //     this.displayArray = this.filterMatches.slice(0, this.pageSize > this.length ? this.length : this.pageSize);
+  //     this.paginator.pageIndex = 0;
+  //   }
+  // }
+
+  // filterScheduled(filter){
+  //   if(filter){
+  //     this.filterMatches = this.originalMatches.filter((match) => {
+  //       let pass = false;
+  //       if (match.scheduledTime) {
+  //         if (match.scheduledTime.startTime != undefined || match.scheduledTime.startTime != null) {
+  //           pass = true;
+  //         }
+  //       }
+  //       return pass;
+  //     });
+  //     this.length = this.filterMatches.length;
+  //     this.displayArray = this.filterMatches.slice(0, this.pageSize > this.length ? this.length : this.pageSize);
+  //     this.paginator.pageIndex = 0;
+  //   }else{
+  //     this.filterMatches = this.originalMatches;
+  //     this.length = this.filterMatches.length;
+  //     this.displayArray = this.filterMatches.slice(0, this.pageSize > this.length ? this.length : this.pageSize);
+  //     this.paginator.pageIndex = 0;
+  //   }
+
+  // }
+
+
+
+  checkRights(){
+    let ret = false;
+    if (this.Auth.getAdmin() && this.Auth.getAdmin().indexOf('match')>-1){
+      ret = true;
     }
+    return ret;
   }
 
-  filterScheduled(filter){
-    if(filter){
-      this.filterMatches = this.originalMatches.filter((match) => {
-        let pass = false;
-        if (match.scheduledTime) {
-          if (match.scheduledTime.startTime != undefined || match.scheduledTime.startTime != null) {
-            pass = true;
-          }
-        }
-        return pass;
-      });
-      this.length = this.filterMatches.length;
-      this.displayArray = this.filterMatches.slice(0, this.pageSize > this.length ? this.length : this.pageSize);
-      this.paginator.pageIndex = 0;
-    }else{
-      this.filterMatches = this.originalMatches;
-      this.length = this.filterMatches.length;
-      this.displayArray = this.filterMatches.slice(0, this.pageSize > this.length ? this.length : this.pageSize);
-      this.paginator.pageIndex = 0;
-    }
+  removeCaster(match){
+          this.scheduleService.addCaster(match.matchId, '', '').subscribe(
+            (res) => {
+              console.log(res);
+              let i = -1;
+              this.originalMatches.forEach(
+                (match, index)=>{
+                  if(match.matchId == res.matchId){
+                    i = index;
+                  }
+                }
+              )
+              if (i > -1) {
+                this.originalMatches[i] = res;
+              }
+              this.displayArray.forEach(
+                (match, index) => {
+                  if (match.matchId == res.matchId) {
+                    i = index;
+                  }
+                }
+              )
+              if(i>-1){
+                this.displayArray[i] = res;
+              }
+              console.log(this.originalMatches[i]);
+              // match = res;
+            },
+            (err) => {
+              console.log(err);
+            }
+          )
 
+  }
+
+  showCasterNameUrl(match){
+    // console.log(this.util.returnBoolByPath(match, 'casterName'), match.casterName.length > 0, match.casterName.length)
+    // console.log();
+    let ret = false;
+    if (this.util.returnBoolByPath(match, 'casterName')){
+      if (match.casterName.length > 0){
+        ret = true;
+      }else{
+        ret = false;
+      }
+    }else{
+      ret = false;
+    }
+    return ret;
   }
 
   displayTime(ms) {

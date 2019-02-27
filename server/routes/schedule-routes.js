@@ -14,6 +14,7 @@ const Scheduling = require('../models/schedule-models');
 const fs = require('fs');
 const n_util = require('util');
 
+
 fs.readFileAsync = n_util.promisify(fs.readFile);
 
 AWS.config.update({
@@ -372,7 +373,7 @@ router.post('/report/match', passport.authenticate('jwt', {
                         } else if (fields.homeTeamScore == 0 && fields.awayTeamScore == 2) {
                             awayDominate = true;
                         }
-
+                        teamInfo = [];
                         foundTeams.forEach(team => {
                             let teamid = team._id.toString();
                             let homeid, awayid;
@@ -396,7 +397,18 @@ router.post('/report/match', passport.authenticate('jwt', {
                                 foundMatch.away.teamName = team.teamName;
                                 foundMatch.away.score = fields.awayTeamScore;
                             }
+                            let teamInf = {};
+                            teamInf['teamName'] = team.teamName;
+                            teamInf['players'] = [];
+                            team.teamMembers.forEach(member => {
+                                let name = member.displayName.split('#');
+                                name = name[0];
+                                players.push(name);
+                            });
+                            teamInfo.push(teamInf);
                         });
+
+                        console.log("teamInfo ", teamInfo);
 
                         if (fields.otherDetails != null && fields.otherDetails != undefined) {
                             foundMatch.other = JSON.parse(fields.otherDetails);
@@ -405,8 +417,6 @@ router.post('/report/match', passport.authenticate('jwt', {
                         if (fields.mapBans != null && fields.mapBans != undefined) {
                             foundMatch.mapBans = JSON.parse(fields.mapBans);
                         }
-
-
 
                         let isCapt = false;
                         foundTeams.forEach(team => {
@@ -460,12 +470,15 @@ router.post('/report/match', passport.authenticate('jwt', {
                                 let composeFilename = 'ngs_' + timeStamp + submitterTeamName + '_vs_' + otherTeamName + '_' + element.match.map;
                                 composeFilename = composeFilename.replace(/[^A-Z0-9\-]+/ig, "_");
                                 tieBack.fileName = composeFilename + '.stormReplay';
+
                                 replayfilenames.push(tieBack);
                                 element.match['ngsMatchId'] = foundMatch.matchId;
                                 element.match.filename = composeFilename;
                                 element.systemId = UUID;
+
                                 let teams = element.match.teams;
                                 let teamKeys = Object.keys(teams);
+
                                 teamKeys.forEach(teamKey => {
                                     let team = teams[teamKey];
                                     if (team.names.indexOf(submitterUserName) > -1) {
@@ -488,8 +501,6 @@ router.post('/report/match', passport.authenticate('jwt', {
                                 }
                                 foundMatch.replays[(i + 1).toString()].url = replayfilenames[i].fileName;
                                 foundMatch.replays[(i + 1).toString()].data = replayfilenames[i].id;
-
-                                // let buffer = fs.readFileSync(files[fileKeys[i]].path);
 
                                 let fileName = replayfilenames[i].fileName;
 
