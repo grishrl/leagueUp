@@ -397,15 +397,15 @@ router.post('/report/match', passport.authenticate('jwt', {
                                 foundMatch.away.teamName = team.teamName;
                                 foundMatch.away.score = fields.awayTeamScore;
                             }
-                            let teamInf = {};
-                            teamInf['teamName'] = team.teamName;
-                            teamInf['players'] = [];
-                            team.teamMembers.forEach(member => {
-                                let name = member.displayName.split('#');
-                                name = name[0];
-                                players.push(name);
-                            });
-                            teamInfo.push(teamInf);
+                            // let teamInf = {};
+                            // teamInf['teamName'] = team.teamName;
+                            // teamInf['players'] = [];
+                            // team.teamMembers.forEach(member => {
+                            //     let name = member.displayName.split('#');
+                            //     name = name[0];
+                            //     players.push(name);
+                            // });
+                            // teamInfo.push(teamInf);
                         });
 
                         console.log("teamInfo ", teamInfo);
