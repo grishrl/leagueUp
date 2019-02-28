@@ -521,6 +521,13 @@ async function postToHotsProfileHandler(limNum) {
                         }
                     );
 
+                    let logObj = {};
+                    logObj.actor = 'SYSTEM; CRON; Hots-Profile Submit';
+                    logObj.action = ' logging reply from hots-profile ' + JSON.stringify(posted.data);
+                    logObj.target = 'Match Id: ' + matchObj.matchId + ', ReplayID: ' + replayInf.data;
+                    logObj.timeStamp = new Date().getTime();
+                    logObj.logLevel = 'STD';
+                    logger(logObj);
                     // console.log('posted ', posted);
 
                     if (posted) {

@@ -301,7 +301,7 @@ router.post('/tabulate-stats/hots-profile', (req, res) => {
 
                 StatsJobs.postToHotsProfileHandler(limit).then(
                     (response) => {
-                        res.status(200).send(util.returnMessaging(path, 'Submitting replays to Hots Profile Completed Normally', null, null, null, logObj))
+                        res.status(200).send(util.returnMessaging(path, 'Submitting replays to Hots Profile Completed Normally', null, null, response, logObj))
                     },
                     err => {
                         res.status(500).send(util.returnMessaging(path, 'Submitting replays to Hots Profile Failed', err, null, null, logObj));
