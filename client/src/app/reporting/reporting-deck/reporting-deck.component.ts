@@ -62,8 +62,8 @@ export class ReportingDeckComponent implements OnInit {
   Crypts: 'Tomb of the Spider Queen',
   Volskaya: 'Volskaya Foundry',
   // 'Warhead Junction': 'Warhead Junction',   // blizz why
-  BraxisHoldout: 'Braxis Holdout',
-  Hanamura: 'Hanamura',
+  // BraxisHoldout: 'Braxis Holdout',
+  // Hanamura: 'Hanamura',
   AlteracPass: 'Alterac Pass'
 };
 
@@ -145,6 +145,7 @@ removeBan(hero, arr){
     "Guld": "Gul'dan",
     "Hanz": "Hanzo",
     "Illi": "Illidan",
+    "IMP": "Imperius",
     "Jain": "Jaina",
     "Crus": "Johanna",
     "Junk": "Junkrat",
