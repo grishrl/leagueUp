@@ -89,6 +89,11 @@ export class CalendarViewComponent implements OnInit {
     return ret;
   }
 
+  shouldShowTimeInEventTitle() : boolean 
+  {
+    return this.view == CalendarView.Month;
+  }
+
   _matches = [];
   ngOnInit(){
     this.matches.getAllMatchesWithStartTime().subscribe(
@@ -101,13 +106,18 @@ export class CalendarViewComponent implements OnInit {
           let event: CalendarEvent = {
             'start': startDate,
             'end': endDate,
-            'title': startDate.toLocaleTimeString() + ': ' + match.home.teamName + ' vs ' + match.away.teamName,
+            'title': match.home.teamName + ' vs ' + match.away.teamName,
             'meta':{ id: match.matchId, 'type':'match'}
           };
 
 
           if (this.showCasterNameUrl(match)){
             event['title']+=' Casted! '
+          }
+
+          if (this.shouldShowTimeInEventTitle())
+          {
+            event['title'] = startDate.toLocaleTimeString() + ': ' + event['title'];
           }
 
           event['color']=colors[match.divisionConcat];
