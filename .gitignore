@@ -81,3 +81,6 @@ typings/
 
 # DynamoDB Local files
 .dynamodb/
+
+# Angular client build output
+client/dist
