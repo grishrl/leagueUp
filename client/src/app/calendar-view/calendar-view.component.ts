@@ -96,10 +96,12 @@ export class CalendarViewComponent implements OnInit {
         let matches = res;
         this._matches = res;
         matches.forEach(match => {
+          let startDate: Date = new Date(parseInt(match.scheduledTime.startTime));
+          let endDate: Date = new Date(parseInt(match.scheduledTime.endTime));
           let event: CalendarEvent = {
-            'start': new Date(parseInt(match.scheduledTime.startTime)),
-            'end': new Date(parseInt(match.scheduledTime.endTime)),
-            'title': match.home.teamName + ' vs ' + match.away.teamName,
+            'start': startDate,
+            'end': endDate,
+            'title': startDate.toLocaleTimeString() + ': ' + match.home.teamName + ' vs ' + match.away.teamName,
             'meta':{ id: match.matchId, 'type':'match'}
           };
 
