@@ -117,7 +117,7 @@ export class CalendarViewComponent implements OnInit {
 
           if (this.shouldShowTimeInEventTitle())
           {
-            event['title'] = startDate.toLocaleTimeString() + ': ' + event['title'];
+            event['title'] = this.util.getFormattedDate(startDate, "hh:mm A zz") + ': ' + event['title'];
           }
 
           event['color']=colors[match.divisionConcat];
