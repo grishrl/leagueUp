@@ -12,7 +12,7 @@ const querystring = require('querystring');
 const util = require('../utils');
 
 //TODO: move string into env. variable
-const postToHotsProfileURL = 'https://www.heroesprofile.com/API/Games/NGS/';
+const postToHotsProfileURL = process.env.heroProfileAPI;
 const config = {
     headers: {
         'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
@@ -21,6 +21,8 @@ const config = {
 async function postToHotsProfile(postObj) {
     let returnUrl = 'null';
     try {
+        console.log('POST API: ',
+            postToHotsProfileURL + '?' + querystring.stringify(postObj))
         returnUrl = await axios.get(postToHotsProfileURL + '?' + querystring.stringify(postObj), config);
     } catch (error) {
         // console.log(error);
@@ -414,6 +416,7 @@ async function postToHotsProfileHandler(limNum) {
         }
     );
 
+    console.log('matches.length ', matches.length);
     if (matches) {
         let savedArray = [];
         for (var i = 0; i < matches.length; i++) {
@@ -473,70 +476,97 @@ async function postToHotsProfileHandler(limNum) {
                         //error
                     }
 
-                    postObj['replay_url'] = 'https://s3.amazonaws.com/dev-ngs-replay-storage/' + replayInf.url;
-                    postObj['team_one_name'] = replayInf.parsed.match.teams["0"].teamName;
-                    let playerNameKey = replayInf.parsed.match.teams["0"].ids[0];
-                    let battleTag = replayInf.parsed.players[playerNameKey].name + "#" + replayInf.parsed.players[playerNameKey].tag
-                    postObj['team_one_player'] = battleTag;
-                    postObj['team_one_map_ban'] = matchCopy.mapBans.home;
-                    postObj['team_two_name'] = replayInf.parsed.match.teams["1"].teamName;
-                    playerNameKey = replayInf.parsed.match.teams["1"].ids[0];
-                    battleTag = replayInf.parsed.players[playerNameKey].name + "#" + replayInf.parsed.players[playerNameKey].tag
-                    postObj['team_two_player'] = battleTag;
-                    postObj['team_two_map_ban'] = matchCopy.mapBans.away;
-                    postObj['round'] = matchCopy.round.toString();
-                    postObj['division'] = teams[0].divisionDisplayName;
-                    postObj['game'] = (j + 1).toString();
-                    postObj['season'] = "6";
-
                     if (teams) {
 
-                        teams.forEach(team => {
-                            let teamObj = team.toObject()
-                            if (teamObj.teamName == postObj['team_one_name']) {
-                                if (!util.isNullOrEmpty(teamObj.logo)) {
-                                    postObj['team_one_image_url'] = 'https://s3.amazonaws.com/dev-ngs-image-storage/' + teamObj.logo;
+                        postObj['team_one_name'] = teams[0].teamName;
+                        postObj['team_one_image_url'] = process.env.heroProfileImage + teams[0].logo;
+                        postObj['team_two_name'] = teams[1].teamName;
+                        postObj['team_two_image_url'] = process.env.heroProfileImage + teams[1].logo;
+
+                        let team1player = '';
+                        let team2player = '';
+
+                        teams[0].teamMembers.forEach(member => {
+                            let playerKeys = Object.keys(replayInf.parsed.players);
+                            playerKeys.forEach(player => {
+                                let wholePlayer = replayInf.parsed.players[player];
+                                let simpleName = member.displayName.split('#')[0];
+                                if (simpleName == wholePlayer.name) {
+                                    team1player = member.displayName;
                                 }
-                            }
-                            if (teamObj.teamName == postObj['team_two_name']) {
-                                if (!util.isNullOrEmpty(teamObj.logo)) {
-                                    postObj['team_two_image_url'] = 'https://s3.amazonaws.com/dev-ngs-image-storage/' + teamObj.logo;
+                            })
+                        });
+
+                        teams[1].teamMembers.forEach(member => {
+                            let playerKeys = Object.keys(replayInf.parsed.players);
+                            playerKeys.forEach(player => {
+                                let wholePlayer = replayInf.parsed.players[player];
+                                let simpleName = member.displayName.split('#')[0];
+                                if (simpleName == wholePlayer.name) {
+                                    team2player = member.displayName;
                                 }
+                            })
+                        });
 
+                        // teams.forEach(team => {
+                        //     let teamObj = team.toObject()
+                        //     if (teamObj.teamName == postObj['team_one_name']) {
+                        //         if (!util.isNullOrEmpty(teamObj.logo)) {
+
+                        //         }
+                        //     }
+                        //     if (teamObj.teamName == postObj['team_two_name']) {
+                        //         if (!util.isNullOrEmpty(teamObj.logo)) {
+                        //             postObj['team_two_image_url'] = process.env.heroProfileImage + teamObj.logo;
+                        //         }
+
+                        //     }
+                        // })
+
+                        postObj['replay_url'] = process.env.heroProfileReplay + replayInf.url;
+                        // postObj['team_one_name'] = teamName1;
+                        postObj['team_one_player'] = team1player;
+                        postObj['team_one_map_ban'] = matchCopy.mapBans.home;
+                        // postObj['team_two_name'] = teamName2;
+                        postObj['team_two_player'] = team2player;
+                        postObj['team_two_map_ban'] = matchCopy.mapBans.away;
+                        postObj['round'] = matchCopy.round.toString();
+                        postObj['division'] = teams[0].divisionDisplayName;
+                        postObj['game'] = (j + 1).toString();
+                        postObj['season'] = "6";
+
+
+                        console.log(postObj);
+                        // call to hotsprofile
+                        let posted = await postToHotsProfile(postObj).then(
+                            reply => {
+                                return reply;
+                            },
+                            err => {
+                                return null;
                             }
-                        })
-                    }
+                        );
 
-                    // console.log('post Obj ', postObj);
+                        let logObj = {};
+                        logObj.actor = 'SYSTEM; CRON; Hots-Profile Submit';
+                        logObj.action = ' logging reply from hots-profile ' + JSON.stringify(posted.data);
+                        logObj.target = 'Match Id: ' + matchObj.matchId + ', ReplayID: ' + replayInf.data;
+                        logObj.timeStamp = new Date().getTime();
+                        logObj.logLevel = 'STD';
+                        logger(logObj);
 
-                    // let posted = { data: { url: " yo mamma " } };
-                    // console.log('postObj ', postObj);
-                    // call to hotsprofile
-                    let posted = await postToHotsProfile(postObj).then(
-                        reply => {
-                            return reply;
-                        },
-                        err => {
-                            return null;
+                        if (posted) {
+                            // postedReplays += 1;
+                            match['replays'][localKey]['parsedUrl'] = posted.data.url;
+                        } else {
+                            //if posted fails then do not set the match to fully reported
+                            postedReplays = false;
                         }
-                    );
 
-                    let logObj = {};
-                    logObj.actor = 'SYSTEM; CRON; Hots-Profile Submit';
-                    logObj.action = ' logging reply from hots-profile ' + JSON.stringify(posted.data);
-                    logObj.target = 'Match Id: ' + matchObj.matchId + ', ReplayID: ' + replayInf.data;
-                    logObj.timeStamp = new Date().getTime();
-                    logObj.logLevel = 'STD';
-                    logger(logObj);
-                    // console.log('posted ', posted);
-
-                    if (posted) {
-                        // postedReplays += 1;
-                        match['replays'][localKey]['parsedUrl'] = posted.data.url;
-                    } else {
-                        //if posted fails then do not set the match to fully reported
-                        postedReplays = false;
                     }
+
+
+
 
                 } else {
                     //do nothing
@@ -556,6 +586,9 @@ async function postToHotsProfileHandler(limNum) {
                 }
             )
             savedArray.push(saved);
+            if (savedArray.length == matches.length) {
+                success = true;
+            }
 
         }
 

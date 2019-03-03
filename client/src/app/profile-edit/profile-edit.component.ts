@@ -12,6 +12,8 @@ import { HotsLogsService } from '../services/hots-logs.service';
 import { Router } from '@angular/router';
 import { DeleteConfrimModalComponent } from '../modal/delete-confrim-modal/delete-confrim-modal.component'
 import { UtilitiesService } from '../services/utilities.service';
+import { HotsProfileService } from '../services/hots-profile.service';
+import { TeamService } from '../services/team.service';
 
 @NgModule({
   imports:[
@@ -29,7 +31,7 @@ export class ProfileEditComponent implements OnInit {
   navigationSubscription
 
   constructor(public timezone: TimezoneService, private user: UserService, public auth: AuthService, private router: Router, private route: ActivatedRoute, 
-    public hotsLogsService: HotsLogsService, public dialog: MatDialog, private util:UtilitiesService) {
+    public hotsLogsService: HotsLogsService, public dialog: MatDialog, private util:UtilitiesService, public hotsProfile: HotsProfileService, public team:TeamService) {
 
     this.navigationSubscription = this.router.events.subscribe((e: any) => {
 

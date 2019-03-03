@@ -107,7 +107,9 @@ removeBan(hero, arr){
     let keys = Object.keys(this.heroes);
     keys.forEach(element=>{
       let heroName = this.heroes[element];
-      if(currentArr.indexOf(heroName)==-1){
+      if(heroName == "Missed"){
+        disArr.push(this.heroes[element]);
+      } else if(currentArr.indexOf(heroName)==-1){
         disArr.push(this.heroes[element]);
       }
     });
@@ -115,6 +117,7 @@ removeBan(hero, arr){
   }
 
   heroes = {
+    "miss":"Missed",
     "Abat": "Abathur",
     "Alar": "Alarak",
     "Alex": "Alexstrasza",
