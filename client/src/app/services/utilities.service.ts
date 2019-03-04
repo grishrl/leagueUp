@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import { environment } from '../../environments/environment'
+import { environment } from '../../environments/environment';
+import * as moment from 'moment-timezone';
 
 @Injectable({
   providedIn: 'root'
@@ -32,14 +33,14 @@ export class UtilitiesService {
     }
   }
 
-  prePendHttp(link){
-    if(link!= undefined&& link!=null){
+  prePendHttp(link) {
+    if (link != undefined && link != null) {
       if (link.indexOf('http://www.') == -1 || link.indexOf('https://wwww.') == -1) {
         return 'http://www.' + link;
       } else {
         return link;
       }
-    }else{
+    } else {
       return link;
     }
   }
@@ -64,27 +65,37 @@ export class UtilitiesService {
 
   dayOfWeekAsString(dayIndex) {
     return ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][dayIndex];
-}
+  }
 
   getDatePickerFormatFromMS(msDate) {
     return new Date(parseInt(msDate));
   }
 
-  getDateFromMS(msDate){
-    let time = new Date(parseInt(msDate));
-    let year = time.getFullYear();
-    let day = this.dayOfWeekAsString(time.getDay());
-    let date = time.getDate();
-    let month = time.getMonth()+1;
-    if( day == undefined || month == NaN || date == NaN || year == NaN ){
-      return null;
-    }else{
-      return day + ' ' + month + '/' + date + '/' + year;
+  getDateFormatStr(showTimeZone: boolean = false) : string {
+    let displayStr = "dddd M/D/YYYY";
+    if (showTimeZone) {
+      displayStr += " zz";
     }
-    
+
+    return displayStr;
   }
 
-  getSuffixFromMS(msDate){
+  // Formats a date using momentjs. See https://momentjs.com/docs/#/displaying/ 
+  // for more information. timeZone can be used to be specific, or leave null
+  // to use the browser local timezone. 
+  getFormattedDate(time: Date, format: string, timeZone: string = null) : string {
+    timeZone = timeZone || moment.tz.guess();
+
+    let localMoment = moment(time).tz(timeZone);
+    return localMoment.format(format);
+  }
+  
+  getDateFromMS(msDate) {
+    let time = new Date(parseInt(msDate));
+    return this.getFormattedDate(time, "dddd M/D/YYYY");
+  }
+
+  getSuffixFromMS(msDate) {
     let suffix = 'AM';
     let time = new Date(parseInt(msDate));
     let hours = time.getHours();
@@ -112,7 +123,7 @@ export class UtilitiesService {
     }
   }
 
-  updateAvailabilityToNum(obj){
+  updateAvailabilityToNum(obj) {
     let keys = Object.keys(obj.availability);
     keys.forEach(element => {
       let day = obj.availability[element];
@@ -125,10 +136,10 @@ export class UtilitiesService {
 
 
   convertToMil(time) {
-    if(typeof time === 'string'){
+    if (typeof time === 'string') {
       let colonSplit = time.split(':');
       return parseInt(colonSplit[0]) * 100 + parseInt(colonSplit[1]);
-    }else{
+    } else {
       return null;
     }
   }
@@ -141,7 +152,7 @@ export class UtilitiesService {
     timezone = parseInt(timezone);
     let correct = localTime - (timezone * 100);
     return correct;
-}
+  }
 
   returnBoolByPath(obj, path): boolean {
     //path is a string representing a dot notation object path;
