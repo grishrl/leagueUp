@@ -195,6 +195,7 @@ removeBan(hero, arr){
     "VALE": "Valeera",
     "Demo": "Valla",
     "Vari": "Varian",
+    "Whit":"Whitemane",
     "Necr": "Xul",
     "YREL": "Yrel",
     "Zaga": "Zagara",

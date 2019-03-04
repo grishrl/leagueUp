@@ -46,7 +46,7 @@
                             <div class="row mt-2" *ngIf="returnedProfile.teamName">
                                 <div class="col">
                                     <div>Team Name:</div>
-                                    <a href="{{team.routeFriendlyTeamName(returnedProfile.teamName)}}" target="_blank">{{returnedProfile.teamName}}</a>
+                                    <a [routerLink]="['/teamProfile/', team.routeFriendlyTeamName(returnedProfile.teamName)]" target="_blank">{{returnedProfile.teamName}}</a>
                                 </div>
                             </div>
                             <div class="row mt-2">

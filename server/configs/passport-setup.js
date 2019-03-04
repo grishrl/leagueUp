@@ -166,7 +166,7 @@ function generateNewToken(prof, admin) {
     }
 
     var token = jwt.sign(tokenObject, process.env.jwtToken, {
-        expiresIn: '2h'
+        expiresIn: '24h'
     });
     return token;
 }
