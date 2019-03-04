@@ -62,8 +62,8 @@ export class ReportingDeckComponent implements OnInit {
   Crypts: 'Tomb of the Spider Queen',
   Volskaya: 'Volskaya Foundry',
   // 'Warhead Junction': 'Warhead Junction',   // blizz why
-  BraxisHoldout: 'Braxis Holdout',
-  Hanamura: 'Hanamura',
+  // BraxisHoldout: 'Braxis Holdout',
+  // Hanamura: 'Hanamura',
   AlteracPass: 'Alterac Pass'
 };
 
@@ -107,7 +107,9 @@ removeBan(hero, arr){
     let keys = Object.keys(this.heroes);
     keys.forEach(element=>{
       let heroName = this.heroes[element];
-      if(currentArr.indexOf(heroName)==-1){
+      if(heroName == "Missed"){
+        disArr.push(this.heroes[element]);
+      } else if(currentArr.indexOf(heroName)==-1){
         disArr.push(this.heroes[element]);
       }
     });
@@ -115,6 +117,7 @@ removeBan(hero, arr){
   }
 
   heroes = {
+    "miss":"Missed",
     "Abat": "Abathur",
     "Alar": "Alarak",
     "Alex": "Alexstrasza",
@@ -145,6 +148,7 @@ removeBan(hero, arr){
     "Guld": "Gul'dan",
     "Hanz": "Hanzo",
     "Illi": "Illidan",
+    "IMP": "Imperius",
     "Jain": "Jaina",
     "Crus": "Johanna",
     "Junk": "Junkrat",
@@ -191,6 +195,7 @@ removeBan(hero, arr){
     "VALE": "Valeera",
     "Demo": "Valla",
     "Vari": "Varian",
+    "Whit":"Whitemane",
     "Necr": "Xul",
     "YREL": "Yrel",
     "Zaga": "Zagara",

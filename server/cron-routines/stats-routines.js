@@ -12,7 +12,7 @@ const querystring = require('querystring');
 const util = require('../utils');
 
 //TODO: move string into env. variable
-const postToHotsProfileURL = 'https://www.heroesprofile.com/API/Games/NGS/';
+const postToHotsProfileURL = process.env.heroProfileAPI;
 const config = {
     headers: {
         'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
@@ -23,8 +23,7 @@ async function postToHotsProfile(postObj) {
     try {
         returnUrl = await axios.get(postToHotsProfileURL + '?' + querystring.stringify(postObj), config);
     } catch (error) {
-        // console.log(error);
-
+        console.log(error);
     }
 
     return returnUrl;
@@ -414,17 +413,16 @@ async function postToHotsProfileHandler(limNum) {
         }
     );
 
+    // console.log('matches.length ', matches.length);
     if (matches) {
         let savedArray = [];
         for (var i = 0; i < matches.length; i++) {
             let postedReplays = true;
-            // console.log('i ', i);
             let postObj = {};
             postObj['api_key'] = 'ngs!7583hh';
             let match = matches[i];
             let matchObj = match.toObject();
 
-            // console.log(match);
             let teamIds = [];
 
             if (util.returnByPath(matchObj, 'away.id')) {
@@ -444,98 +442,119 @@ async function postToHotsProfileHandler(limNum) {
 
             let replays = matchObj.replays;
             // console.log('replays ', replays);
-            let keys = Object.keys(replays);
-            // console.log('keys ', keys);
-            let matchCopy = _.cloneDeep(match);
+            if (replays) {
+                let keys = Object.keys(replays);
 
-            for (var j = 0; j < keys.length; j++) {
-                // console.log('J ', j, ' J+1 ', j + 1);
-                let localKey = keys[j];
-                // console.log('localKey ', localKey);
-                if (localKey != '_id') {
+                let matchCopy = _.cloneDeep(match);
 
-                    let replayInf = matchObj.replays[localKey];
-                    let parsed = await Replay.findOne({
-                        systemId: replayInf.data
-                    }).then(
-                        found => {
-                            return found;
-                        },
-                        err => {
-                            return null;
-                        }
-                    );
+                for (var j = 0; j < keys.length; j++) {
 
-                    if (parsed) {
-                        replayInf['parsed'] = parsed;
-                    } else {
+                    let localKey = keys[j];
 
-                        //error
-                    }
+                    if (localKey != '_id') {
 
-                    postObj['replay_url'] = 'https://s3.amazonaws.com/dev-ngs-replay-storage/' + replayInf.url;
-                    postObj['team_one_name'] = replayInf.parsed.match.teams["0"].teamName;
-                    let playerNameKey = replayInf.parsed.match.teams["0"].ids[0];
-                    let battleTag = replayInf.parsed.players[playerNameKey].name + "#" + replayInf.parsed.players[playerNameKey].tag
-                    postObj['team_one_player'] = battleTag;
-                    postObj['team_one_map_ban'] = matchCopy.mapBans.home;
-                    postObj['team_two_name'] = replayInf.parsed.match.teams["1"].teamName;
-                    playerNameKey = replayInf.parsed.match.teams["1"].ids[0];
-                    battleTag = replayInf.parsed.players[playerNameKey].name + "#" + replayInf.parsed.players[playerNameKey].tag
-                    postObj['team_two_player'] = battleTag;
-                    postObj['team_two_map_ban'] = matchCopy.mapBans.away;
-                    postObj['round'] = matchCopy.round.toString();
-                    postObj['division'] = teams[0].divisionDisplayName;
-                    postObj['game'] = (j + 1).toString();
-                    postObj['season'] = "6";
-
-                    if (teams) {
-
-                        teams.forEach(team => {
-                            let teamObj = team.toObject()
-                            if (teamObj.teamName == postObj['team_one_name']) {
-                                if (!util.isNullOrEmpty(teamObj.logo)) {
-                                    postObj['team_one_image_url'] = 'https://s3.amazonaws.com/dev-ngs-image-storage/' + teamObj.logo;
-                                }
+                        let replayInf = matchObj.replays[localKey];
+                        let parsed = await Replay.findOne({
+                            systemId: replayInf.data
+                        }).then(
+                            found => {
+                                return found;
+                            },
+                            err => {
+                                return null;
                             }
-                            if (teamObj.teamName == postObj['team_two_name']) {
-                                if (!util.isNullOrEmpty(teamObj.logo)) {
-                                    postObj['team_two_image_url'] = 'https://s3.amazonaws.com/dev-ngs-image-storage/' + teamObj.logo;
+                        );
+
+                        // console.log('parsed ', parsed);
+                        if (parsed) {
+                            replayInf['parsed'] = parsed;
+                            // console.log('teams ', teams);
+                            if (teams) {
+
+                                postObj['team_one_name'] = teams[0].teamName;
+                                postObj['team_one_image_url'] = process.env.heroProfileImage + teams[0].logo;
+                                postObj['team_two_name'] = teams[1].teamName;
+                                postObj['team_two_image_url'] = process.env.heroProfileImage + teams[1].logo;
+
+                                let team1player = '';
+                                let team2player = '';
+
+                                teams[0].teamMembers.forEach(member => {
+                                    let playerKeys = Object.keys(replayInf.parsed.players);
+                                    playerKeys.forEach(player => {
+                                        let wholePlayer = replayInf.parsed.players[player];
+                                        let simpleName = member.displayName.split('#')[0];
+                                        if (simpleName == wholePlayer.name) {
+                                            team1player = member.displayName;
+                                        }
+                                    })
+                                });
+
+                                teams[1].teamMembers.forEach(member => {
+                                    let playerKeys = Object.keys(replayInf.parsed.players);
+                                    playerKeys.forEach(player => {
+                                        let wholePlayer = replayInf.parsed.players[player];
+                                        let simpleName = member.displayName.split('#')[0];
+                                        if (simpleName == wholePlayer.name) {
+                                            team2player = member.displayName;
+                                        }
+                                    })
+                                });
+
+
+                                postObj['replay_url'] = process.env.heroProfileReplay + replayInf.url;
+                                postObj['team_one_player'] = team1player;
+                                postObj['team_one_map_ban'] = matchCopy.mapBans.home;
+                                postObj['team_two_player'] = team2player;
+                                postObj['team_two_map_ban'] = matchCopy.mapBans.away;
+                                postObj['round'] = matchCopy.round.toString();
+                                postObj['division'] = teams[0].divisionDisplayName;
+                                postObj['game'] = (j + 1).toString();
+                                postObj['season'] = "6";
+
+
+                                // console.log(postObj);
+                                // call to hotsprofile
+                                let posted = await postToHotsProfile(postObj).then(
+                                    reply => {
+                                        return reply;
+                                    },
+                                    err => {
+                                        return null;
+                                    }
+                                );
+
+                                let logObj = {};
+                                logObj.actor = 'SYSTEM; CRON; Hots-Profile Submit';
+                                logObj.action = ' logging reply from hots-profile ' + JSON.stringify(posted.data);
+                                logObj.target = 'Match Id: ' + matchObj.matchId + ', ReplayID: ' + replayInf.data;
+                                logObj.timeStamp = new Date().getTime();
+                                logObj.logLevel = 'STD';
+                                logger(logObj);
+
+                                if (posted) {
+                                    match['replays'][localKey]['parsedUrl'] = posted.data.url;
+                                } else {
+                                    //if posted fails then do not set the match to fully reported
+                                    postedReplays = false;
                                 }
 
                             }
-                        })
-                    }
-
-                    // console.log('post Obj ', postObj);
-
-                    // let posted = { data: { url: " yo mamma " } };
-                    // console.log('postObj ', postObj);
-                    // call to hotsprofile
-                    let posted = await postToHotsProfile(postObj).then(
-                        reply => {
-                            return reply;
-                        },
-                        err => {
-                            return null;
+                        } else {
+                            //NO PARSED REPLAYS RETURNED FROM DB this can happen if the game was forfiet
+                            //error
                         }
-                    );
 
-                    // console.log('posted ', posted);
-
-                    if (posted) {
-                        // postedReplays += 1;
-                        match['replays'][localKey]['parsedUrl'] = posted.data.url;
                     } else {
-                        //if posted fails then do not set the match to fully reported
-                        postedReplays = false;
+                        //LOCAL KEY WAS _ID
+                        //do nothing
                     }
 
-                } else {
-                    //do nothing
                 }
-
+            } else {
+                //NO REPLAYS
             }
+
 
             match['postedToHP'] = postedReplays;
             // console.log('match ', match);
@@ -549,6 +568,9 @@ async function postToHotsProfileHandler(limNum) {
                 }
             )
             savedArray.push(saved);
+            if (savedArray.length == matches.length) {
+                success = true;
+            }
 
         }
 

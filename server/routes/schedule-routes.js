@@ -334,19 +334,6 @@ router.post('/report/match', passport.authenticate('jwt', {
 
     let requester = req.user.displayName;
 
-    let submitterUserName;
-    let submitterTeamName;
-    let submitterTeamId;
-    let otherTeamName;
-    let otherTeamId;
-
-    if (util.returnBoolByPath(req, 'user.displayName')) {
-        submitterUserName = req.user.displayName.split('#');
-        submitterUserName = submitterUserName[0];
-        submitterTeamName = req.user.teamName;
-        submitterTeamId = req.user.teamId;
-    }
-
     //log object
     let logObj = {};
     logObj.actor = req.user.displayName;
@@ -373,6 +360,7 @@ router.post('/report/match', passport.authenticate('jwt', {
                         } else if (fields.homeTeamScore == 0 && fields.awayTeamScore == 2) {
                             awayDominate = true;
                         }
+                        //an array of team name and players on each team, used to associate the replays to the specifc team
                         teamInfo = [];
                         foundTeams.forEach(team => {
                             let teamid = team._id.toString();
@@ -397,18 +385,21 @@ router.post('/report/match', passport.authenticate('jwt', {
                                 foundMatch.away.teamName = team.teamName;
                                 foundMatch.away.score = fields.awayTeamScore;
                             }
-                            // let teamInf = {};
-                            // teamInf['teamName'] = team.teamName;
-                            // teamInf['players'] = [];
-                            // team.teamMembers.forEach(member => {
-                            //     let name = member.displayName.split('#');
-                            //     name = name[0];
-                            //     players.push(name);
-                            // });
-                            // teamInfo.push(teamInf);
+                            //info object
+                            let teamInf = {};
+                            //teamname
+                            teamInf['teamName'] = team.teamName;
+                            teamInf['id'] = teamid;
+                            //add all the players of the team into a player array
+                            teamInf['players'] = [];
+                            team.teamMembers.forEach(member => {
+                                let name = member.displayName.split('#');
+                                name = name[0];
+                                teamInf['players'].push(name);
+                            });
+                            teamInfo.push(teamInf);
                         });
 
-                        console.log("teamInfo ", teamInfo);
 
                         if (fields.otherDetails != null && fields.otherDetails != undefined) {
                             foundMatch.other = JSON.parse(fields.otherDetails);
@@ -418,6 +409,7 @@ router.post('/report/match', passport.authenticate('jwt', {
                             foundMatch.mapBans = JSON.parse(fields.mapBans);
                         }
 
+                        //validate the submitter is a captain of one of the teams
                         let isCapt = false;
                         foundTeams.forEach(team => {
                             if (team.captain == requester) {
@@ -441,22 +433,30 @@ router.post('/report/match', passport.authenticate('jwt', {
                                     parsed.push({ match: { map: 'UNKNOWN-PARSE-ERROR' } })
                                     console.log(error);
                                 }
-
                             });
 
-                            if (foundMatch.away.teamName == submitterTeamName) {
-                                otherTeamName = foundMatch.home.teamName;
-                                otherTeamId = foundMatch.home.id;
-                            } else {
-                                otherTeamName = foundMatch.away.teamName;
-                                otherTeamId = foundMatch.away.id;
-                            }
-
                             let replayfilenames = [];
+                            //loop through the parsed replays to grab some info
                             parsed.forEach(element => {
+                                //this object will be pushed into the replayfilenames hold some info we need to save back to the match to tie the two together
                                 let tieBack = {};
                                 let UUID = uniqid();
                                 tieBack.id = UUID;
+
+                                let replayTeamA = element.match.teams["0"];
+                                let replayTeamB = element.match.teams["1"];
+
+                                teamInfo.forEach(teamInfo => {
+                                    if (_.intersection(replayTeamA.names, teamInfo.players).length > _.intersection(replayTeamB.names, teamInfo.players).length) {
+                                        replayTeamA.teamName = teamInfo.teamName;
+                                        replayTeamA.teamId = teamInfo.id;
+                                    } else if (_.intersection(replayTeamA.names, teamInfo.players).length < _.intersection(replayTeamB.names, teamInfo.players).length) {
+                                        replayTeamB.teamName = teamInfo.teamName;
+                                        replayTeamB.teamId = teamInfo.id;
+                                    } else {
+                                        //some error state, both == 0.... 
+                                    }
+                                })
 
                                 let timeStamp = '';
                                 if (util.returnBoolByPath(foundMatch.toObject(), 'scheduledTime.startTime')) {
@@ -467,7 +467,7 @@ router.post('/report/match', passport.authenticate('jwt', {
                                     month = month + 1;
                                     timeStamp = month + "-" + day + "-" + year;
                                 }
-                                let composeFilename = 'ngs_' + timeStamp + submitterTeamName + '_vs_' + otherTeamName + '_' + element.match.map;
+                                let composeFilename = 'ngs_' + timeStamp + teamInfo[0].teamName + '_vs_' + teamInfo[1].teamName + '_' + element.match.map;
                                 composeFilename = composeFilename.replace(/[^A-Z0-9\-]+/ig, "_");
                                 tieBack.fileName = composeFilename + '.stormReplay';
 
@@ -476,21 +476,10 @@ router.post('/report/match', passport.authenticate('jwt', {
                                 element.match.filename = composeFilename;
                                 element.systemId = UUID;
 
-                                let teams = element.match.teams;
-                                let teamKeys = Object.keys(teams);
-
-                                teamKeys.forEach(teamKey => {
-                                    let team = teams[teamKey];
-                                    if (team.names.indexOf(submitterUserName) > -1) {
-                                        team.teamName = submitterTeamName;
-                                        team.teamId = submitterTeamId;
-                                    } else {
-                                        team.teamName = otherTeamName;
-                                        team.teamId = otherTeamId;
-                                    }
-                                });
                             });
 
+
+                            //TODO: possibly combining these into a promise array to bring exectuion time into sync so we can report to hots-profile here?
                             for (var i = 0; i < fileKeys.length; i++) {
                                 if (foundMatch.replays == undefined || foundMatch.replays == null) {
                                     foundMatch.replays = {};
@@ -538,9 +527,6 @@ router.post('/report/match', passport.authenticate('jwt', {
                                         console.log('error ', err);
                                     }
                                 )
-
-
-
                             }
 
                             ParsedReplay.collection.insertMany(parsed).then(
