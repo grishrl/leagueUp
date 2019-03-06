@@ -7,6 +7,7 @@ import { EventModalComponent } from './event-modal/event-modal.component';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 import { EventsService } from '../services/events.service';
+import { UtilitiesService } from '../services/utilities.service';
 
 const colors: any = {
   heroic: {  //navy
@@ -70,7 +71,28 @@ export class CalendarViewComponent implements OnInit {
 
   key = colors;
 
-  constructor(private matches: ScheduleService, public dialog: MatDialog, private router:Router, private eventService:EventsService) { }
+  constructor(private matches: ScheduleService, public dialog: MatDialog, private router:Router, private eventService:EventsService, private util: UtilitiesService) { }
+
+  showCasterNameUrl(match) {
+    // console.log(this.util.returnBoolByPath(match, 'casterName'), match.casterName.length > 0, match.casterName.length)
+    // console.log();
+    let ret = false;
+    if (this.util.returnBoolByPath(match, 'casterName')) {
+      if (match.casterName.length > 0) {
+        ret = true;
+      } else {
+        ret = false;
+      }
+    } else {
+      ret = false;
+    }
+    return ret;
+  }
+
+  shouldShowTimeInEventTitle() : boolean 
+  {
+    return this.view == CalendarView.Month;
+  }
 
   _matches = [];
   ngOnInit(){
@@ -79,15 +101,23 @@ export class CalendarViewComponent implements OnInit {
         let matches = res;
         this._matches = res;
         matches.forEach(match => {
+          let startDate: Date = new Date(parseInt(match.scheduledTime.startTime));
+          let endDate: Date = new Date(parseInt(match.scheduledTime.endTime));
           let event: CalendarEvent = {
-            'start': new Date(parseInt(match.scheduledTime.startTime)),
-            'end': new Date(parseInt(match.scheduledTime.endTime)),
+            'start': startDate,
+            'end': endDate,
             'title': match.home.teamName + ' vs ' + match.away.teamName,
             'meta':{ id: match.matchId, 'type':'match'}
           };
 
-          if(match.casterName!=null||match.casterName!=undefined){
+
+          if (this.showCasterNameUrl(match)){
             event['title']+=' Casted! '
+          }
+
+          if (this.shouldShowTimeInEventTitle())
+          {
+            event['title'] = this.util.getFormattedDate(startDate, "hh:mm A zz") + ': ' + event['title'];
           }
 
           event['color']=colors[match.divisionConcat];

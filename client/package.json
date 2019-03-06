@@ -1,6 +1,6 @@
 {
     "name": "ngsMeanCore",
-    "version": "1.1.10",
+    "version": "1.1.12",
     "scripts": {
         "ng": "ng",
         "start": "ng serve",
@@ -18,7 +18,7 @@
         "@angular/cli": "~7.2.3",
         "@angular/common": "^7.2.2",
         "@angular/compiler": "^7.2.2",
-        "@angular/compiler-cli": "^7.2.2",
+        "@angular/compiler-cli": "^7.2.6",
         "@angular/core": "^7.2.2",
         "@angular/forms": "^7.2.2",
         "@angular/http": "^7.2.2",
@@ -30,6 +30,7 @@
         "@types/croppie": "^2.5.3",
         "@types/jquery": "^3.3.22",
         "@types/lodash": "^4.14.117",
+        "@types/moment-timezone": "^0.5.10",
         "angular-2-local-storage": "^2.0.0",
         "angular-calendar": "^0.26.4",
         "angular-file": "^0.5.4",
@@ -45,6 +46,7 @@
         "jquery-bracket": "^0.11.1",
         "lodash": "^4.17.11",
         "marked": "^0.5.1",
+        "moment-timezone": "^0.5.23",
         "ngx-croppie": "^1.1.0",
         "ngx-drag-scroll": "^7.1.0",
         "ngx-socket-io": "^2.1.1",

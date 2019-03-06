@@ -2,9 +2,32 @@ const Replay = require('../models/replay-parsed-models');
 const User = require('../models/user-models');
 const Team = require('../models/team-models');
 const Stats = require('../models/stats-model');
+const Match = require('../models/match-model');
 const logger = require('../subroutines/sys-logging-subs');
 const summarizePlayerData = require('../summarizeData/summarize-player-data');
 const summarizeTeamData = require('../summarizeData/summarize-team-data');
+const axios = require('axios');
+const _ = require('lodash');
+const querystring = require('querystring');
+const util = require('../utils');
+
+//TODO: move string into env. variable
+const postToHotsProfileURL = process.env.heroProfileAPI;
+const config = {
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+    }
+}
+async function postToHotsProfile(postObj) {
+    let returnUrl = 'null';
+    try {
+        returnUrl = await axios.get(postToHotsProfileURL + '?' + querystring.stringify(postObj), config);
+    } catch (error) {
+        console.log(error);
+    }
+
+    return returnUrl;
+}
 
 function getToonHandle(obj, name) {
     let handle = null;
@@ -352,8 +375,218 @@ async function tabulateTeamStats() {
 
 }
 
+async function postToHotsProfileHandler(limNum) {
+
+    let success = false;
+
+    if (!limNum) {
+        limNum = 20;
+    } else {
+        limNum = parseInt(limNum);
+    }
+    // console.log('limit ', limNum);
+    let matches = await Match.find({
+        $and: [{
+                $or: [{
+                        "postedToHP": null
+                    },
+                    {
+                        "postedToHP": {
+                            $exists: false
+                        }
+                    },
+                    {
+                        "postedToHP": false
+                    }
+                ]
+            },
+            {
+                "reported": true
+            }
+        ]
+    }).limit(limNum).then(
+        found => {
+            return found;
+        },
+        err => {
+            return null;
+        }
+    );
+
+    // console.log('matches.length ', matches.length);
+    if (matches) {
+        let savedArray = [];
+        for (var i = 0; i < matches.length; i++) {
+            let postedReplays = true;
+            let postObj = {};
+            postObj['api_key'] = 'ngs!7583hh';
+            let match = matches[i];
+            let matchObj = match.toObject();
+
+            let teamIds = [];
+
+            if (util.returnByPath(matchObj, 'away.id')) {
+                teamIds.push(util.returnByPath(matchObj, 'away.id'));
+            }
+
+            if (util.returnByPath(matchObj, 'home.id')) {
+                teamIds.push(util.returnByPath(matchObj, 'home.id'));
+            }
+
+            let teams = await Team.find({ _id: { $in: teamIds } }).then(
+                found => { return found; },
+                err => {
+                    return null;
+                }
+            )
+
+            let replays = matchObj.replays;
+            // console.log('replays ', replays);
+            if (replays) {
+                let keys = Object.keys(replays);
+
+                let matchCopy = _.cloneDeep(match);
+
+                for (var j = 0; j < keys.length; j++) {
+
+                    let localKey = keys[j];
+
+                    if (localKey != '_id') {
+
+                        let replayInf = matchObj.replays[localKey];
+                        let parsed = await Replay.findOne({
+                            systemId: replayInf.data
+                        }).then(
+                            found => {
+                                return found;
+                            },
+                            err => {
+                                return null;
+                            }
+                        );
+
+                        // console.log('parsed ', parsed);
+                        if (parsed) {
+                            replayInf['parsed'] = parsed;
+                            // console.log('teams ', teams);
+                            if (teams) {
+
+                                postObj['team_one_name'] = teams[0].teamName;
+                                postObj['team_one_image_url'] = process.env.heroProfileImage + teams[0].logo;
+                                postObj['team_two_name'] = teams[1].teamName;
+                                postObj['team_two_image_url'] = process.env.heroProfileImage + teams[1].logo;
+
+                                let team1player = '';
+                                let team2player = '';
+
+                                teams[0].teamMembers.forEach(member => {
+                                    let playerKeys = Object.keys(replayInf.parsed.players);
+                                    playerKeys.forEach(player => {
+                                        let wholePlayer = replayInf.parsed.players[player];
+                                        let simpleName = member.displayName.split('#')[0];
+                                        if (simpleName == wholePlayer.name) {
+                                            team1player = member.displayName;
+                                        }
+                                    })
+                                });
+
+                                teams[1].teamMembers.forEach(member => {
+                                    let playerKeys = Object.keys(replayInf.parsed.players);
+                                    playerKeys.forEach(player => {
+                                        let wholePlayer = replayInf.parsed.players[player];
+                                        let simpleName = member.displayName.split('#')[0];
+                                        if (simpleName == wholePlayer.name) {
+                                            team2player = member.displayName;
+                                        }
+                                    })
+                                });
+
+
+                                postObj['replay_url'] = process.env.heroProfileReplay + replayInf.url;
+                                postObj['team_one_player'] = team1player;
+                                postObj['team_one_map_ban'] = matchCopy.mapBans.home;
+                                postObj['team_two_player'] = team2player;
+                                postObj['team_two_map_ban'] = matchCopy.mapBans.away;
+                                postObj['round'] = matchCopy.round.toString();
+                                postObj['division'] = teams[0].divisionDisplayName;
+                                postObj['game'] = (j + 1).toString();
+                                postObj['season'] = "6";
+
+
+                                // console.log(postObj);
+                                // call to hotsprofile
+                                let posted = await postToHotsProfile(postObj).then(
+                                    reply => {
+                                        return reply;
+                                    },
+                                    err => {
+                                        return null;
+                                    }
+                                );
+
+                                let logObj = {};
+                                logObj.actor = 'SYSTEM; CRON; Hots-Profile Submit';
+                                logObj.action = ' logging reply from hots-profile ' + JSON.stringify(posted.data);
+                                logObj.target = 'Match Id: ' + matchObj.matchId + ', ReplayID: ' + replayInf.data;
+                                logObj.timeStamp = new Date().getTime();
+                                logObj.logLevel = 'STD';
+                                logger(logObj);
+
+                                if (posted) {
+                                    match['replays'][localKey]['parsedUrl'] = posted.data.url;
+                                } else {
+                                    //if posted fails then do not set the match to fully reported
+                                    postedReplays = false;
+                                }
+
+                            }
+                        } else {
+                            //NO PARSED REPLAYS RETURNED FROM DB this can happen if the game was forfiet
+                            //error
+                        }
+
+                    } else {
+                        //LOCAL KEY WAS _ID
+                        //do nothing
+                    }
+
+                }
+            } else {
+                //NO REPLAYS
+            }
+
+
+            match['postedToHP'] = postedReplays;
+            // console.log('match ', match);
+            let saved = await match.save().then(
+                saved => {
+                    return saved;
+                },
+                err => {
+                    console.log(err);
+                    return null;
+                }
+            )
+            savedArray.push(saved);
+            if (savedArray.length == matches.length) {
+                success = true;
+            }
+
+        }
+
+        // console.log('SAVED ARRAY ', savedArray);
+
+    } else {
+        //no matches found
+    }
+
+    return success;
+
+}
+
 module.exports = {
     asscoatieReplays: asscoatieReplays,
     tabulateUserStats: tabulateUserStats,
-    tabulateTeamStats: tabulateTeamStats
+    tabulateTeamStats: tabulateTeamStats,
+    postToHotsProfileHandler: postToHotsProfileHandler
 }

@@ -15,6 +15,7 @@ import { Profile } from '../classes/profile.class';
 import { UtilitiesService } from '../services/utilities.service';
 import { RequestService } from '../services/request.service';
 import { ConfirmRemoveMemberComponent } from '../modal/confirm-remove-member/confirm-remove-member.component';
+import { HotsProfileService } from '../services/hots-profile.service';
 
 
 @Component({
@@ -81,7 +82,7 @@ export class TeamProfileComponent implements OnInit {
 
   //constructor
   constructor(private auth: AuthService, public user: UserService, public timezone: TimezoneService, private team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router: Router,
-    private admin:AdminService, private util:UtilitiesService, private requestService:RequestService) {
+    private admin:AdminService, private util:UtilitiesService, private requestService:RequestService, public heroProfile: HotsProfileService) {
     this.teamName = team.realTeamName(this.route.snapshot.params['id']);
     console.log(this.teamName)
   }

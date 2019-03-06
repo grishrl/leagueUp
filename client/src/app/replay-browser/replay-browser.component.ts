@@ -44,28 +44,20 @@ export class ReplayBrowserComponent implements OnInit {
   }
 
   filterReplays(){
-    
-    if (this.util.isNullOrEmpty(this.selectedDiv) && this.util.isNullOrEmpty(this.team)){
-      this.filteredArray = this.matches;
-    }else{
-      if(!this.util.isNullOrEmpty(this.selectedDiv)&&this.util.isNullOrEmpty(this.team)){
-        
-        this.filteredArray = this.matches.filter(unit => {
-          return this.testDivision(unit, this.selectedDiv);
-        });
-      } else if (this.util.isNullOrEmpty(this.selectedDiv) && !this.util.isNullOrEmpty(this.team)){
-        
-        this.filteredArray = this.matches.filter( unit => {
-          
-          return this.testName(unit, this.team);
-        })
-      } else if (!this.util.isNullOrEmpty(this.selectedDiv) && !this.util.isNullOrEmpty(this.team)){
-        
-        this.filteredArray = this.matches.filter(unit => {
-          return this.testName(unit, this.team) && this.testDivision(unit, this.selectedDiv);
-        }); 
-      }
+
+    this.filteredArray = this.matches;
+
+    if(this.selectedDiv != undefined && this.selectedDiv != null){
+      this.filteredArray = this.filteredArray.filter(unit=>{
+        return this.testDivision(unit, this.selectedDiv);
+      })
     }
+    if(!this.util.isNullOrEmpty(this.team)){
+      this.filteredArray = this.filteredArray.filter(unit=>{
+        return this.testName(unit, this.team)
+      });
+    }
+
     this.displayArray = this.filteredArray.slice(0,10);
     this.length = this.filteredArray.length;
   }
@@ -89,6 +81,7 @@ export class ReplayBrowserComponent implements OnInit {
   }
 
   private testDivision(unit, flt) {
+     console.log(unit, flt);
     return unit.divisionConcat == flt.divisionConcat;
   }
 
@@ -97,7 +90,7 @@ export class ReplayBrowserComponent implements OnInit {
         res=>{
           this.matches = res;
           this.matches.forEach(match=>{
-            if(match.replays._id){
+            if(this.util.returnBoolByPath(match,'replays._id')){
               delete match.replays._id;
             }   
           });

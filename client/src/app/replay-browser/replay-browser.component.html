@@ -92,7 +92,16 @@
                             <div class="col text-center">
                                 <a href="{{replayFQDN(replay.value.url)}}"> Replay {{replay.key}}</a>
                             </div>
-
+                        </div>
+                        <div class="row">
+                            <div class="col text-center">
+                                Parsed Matches at Heroes Profile:
+                            </div>
+                        </div>
+                        <div class="row" *ngFor="let replay of match.replays | keyvalue">
+                            <div class="col text-center">
+                                <a href="{{replay.value.parsedUrl}}"> Match {{replay.key}}</a>
+                            </div>
                         </div>
                     </div>
                 </div>
