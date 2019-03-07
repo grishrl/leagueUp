@@ -122,14 +122,15 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
         setDate.setFullYear(years);
         setDate.setMonth(month);
         setDate.setDate(day);
+        setDate.setHours(0);
+        setDate.setMinutes(0);
+        setDate.setMilliseconds(0);
         this.endTimeFlt = setDate.getTime() + 86400000;
         setDate.setHours(colonSplit[0]);
         setDate.setMinutes(colonSplit[1]);
-        //86400000
         let msDate = setDate.getTime();
         this.startTimeFlt = msDate;
         this.doFilterMatches();
-        console.log('msDate ', msDate)
       } 
     } else if (this.friendlyDate){
       let years = this.friendlyDate.getFullYear();
@@ -139,11 +140,13 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
       setDate.setFullYear(years);
       setDate.setMonth(month);
       setDate.setDate(day);
+      setDate.setHours(0);
+      setDate.setMinutes(0);
+      setDate.setMilliseconds(0);
       this.endTimeFlt = setDate.getTime() + 86400000;
       let msDate = setDate.getTime();
       this.startTimeFlt = msDate;
       this.doFilterMatches();
-      console.log('msDate ', msDate)
     }
 
 
@@ -156,14 +159,8 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
   }
 
   //filters the matches based on selected criteria
-
-  
    endTimeFlt;
   doFilterMatches() {
-
-    // if(!this.util.isNullOrEmpty(div)){
-    //   div = div.divisionConcat
-    // }
     this.filterMatches = this.originalMatches;
     if(!this.util.isNullOrEmpty(this.divFlt)){
       this.filterMatches = this.filterMatches.filter(match => {
@@ -199,52 +196,6 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
     this.displayArray = this.filterMatches.slice(0,this.pageSize>this.length? this.length:this.pageSize);
     this.paginator.firstPage();
   }
-
-  // filterTournament(filter){
-  //   if (filter) {
-  //     this.filterMatches = this.originalMatches.filter((match) => {
-  //       let pass = false;
-  //       if (match.type && match.type == 'tournament') {
-  //         pass = true;
-  //         // if (match.scheduledTime.startTime != undefined || match.scheduledTime.startTime != null) {
-  //         //   pass = true;
-  //         // }
-  //       }
-  //       return pass;
-  //     });
-  //     this.length = this.filterMatches.length;
-  //     this.displayArray = this.filterMatches.slice(0, this.pageSize > this.length ? this.length : this.pageSize);
-  //     this.paginator.pageIndex = 0;
-  //   } else {
-  //     this.filterMatches = this.originalMatches;
-  //     this.length = this.filterMatches.length;
-  //     this.displayArray = this.filterMatches.slice(0, this.pageSize > this.length ? this.length : this.pageSize);
-  //     this.paginator.pageIndex = 0;
-  //   }
-  // }
-
-  // filterScheduled(filter){
-  //   if(filter){
-  //     this.filterMatches = this.originalMatches.filter((match) => {
-  //       let pass = false;
-  //       if (match.scheduledTime) {
-  //         if (match.scheduledTime.startTime != undefined || match.scheduledTime.startTime != null) {
-  //           pass = true;
-  //         }
-  //       }
-  //       return pass;
-  //     });
-  //     this.length = this.filterMatches.length;
-  //     this.displayArray = this.filterMatches.slice(0, this.pageSize > this.length ? this.length : this.pageSize);
-  //     this.paginator.pageIndex = 0;
-  //   }else{
-  //     this.filterMatches = this.originalMatches;
-  //     this.length = this.filterMatches.length;
-  //     this.displayArray = this.filterMatches.slice(0, this.pageSize > this.length ? this.length : this.pageSize);
-  //     this.paginator.pageIndex = 0;
-  //   }
-
-  // }
 
 
 
@@ -292,8 +243,6 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
   }
 
   showCasterNameUrl(match){
-    // console.log(this.util.returnBoolByPath(match, 'casterName'), match.casterName.length > 0, match.casterName.length)
-    // console.log();
     let ret = false;
     if (this.util.returnBoolByPath(match, 'casterName')){
       if (match.casterName.length > 0){
