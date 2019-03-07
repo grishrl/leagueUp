@@ -49,7 +49,7 @@
                                     <a [routerLink]="['/teamProfile/', team.routeFriendlyTeamName(returnedProfile.teamName)]" target="_blank">{{returnedProfile.teamName}}</a>
                                 </div>
                             </div>
-                            <div class="row mt-2">
+                            <div class="row mt-2" *ngIf="returnedProfile.toonHandle && returnedProfile.toonHandle.length>0">
                                 <div class="col">
                                     <div>See this user's NGS Stats at Heroes Profile</div>
                                     <a href="{{hotsProfile.getHPPlayerLink(returnedProfile.toonHandle,returnedProfile.displayName)}}" target="_blank">{{returnedProfile.displayName}}</a>
