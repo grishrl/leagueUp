@@ -417,7 +417,7 @@ async function postToHotsProfileHandler(limNum) {
     if (matches) {
         let savedArray = [];
         for (var i = 0; i < matches.length; i++) {
-            let postedReplays = false;
+            let postedReplays = true;
             let postObj = {};
             postObj['api_key'] = 'ngs!7583hh';
             let match = matches[i];
@@ -544,7 +544,7 @@ async function postToHotsProfileHandler(limNum) {
                                         postedReplays = true;
                                     } else {
                                         //if posted fails then do not set the match to fully reported
-                                        postedReplays = false;
+                                        // postedReplays = false;
                                     }
                                 } else {
                                     // console.log('NOT POSTED!')
