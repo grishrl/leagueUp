@@ -300,9 +300,7 @@ router.post('/tabulate-stats/hots-profile', (req, res) => {
             if (validate) {
 
                 StatsJobs.postToHotsProfileHandler(limit).then(
-                    (response) => {
-                        res.status(200).send(util.returnMessaging(path, 'Submitting replays to Hots Profile Completed Normally', false, null, response, logObj))
-                    },
+                    (response) => {},
                     err => {
                         res.status(500).send(util.returnMessaging(path, 'Submitting replays to Hots Profile Failed', err, null, null, logObj));
                     }
@@ -311,7 +309,9 @@ router.post('/tabulate-stats/hots-profile', (req, res) => {
             } else {
                 res.status(401).send(util.returnMessaging(path, 'Unauthorized', false, null, null, logObj));
             }
+            res.status(200).send(util.returnMessaging(path, 'Submitting replays to Hots Profile Routine Check Logs for details', false, null, {}, logObj));
         }
+
     );
 
 })

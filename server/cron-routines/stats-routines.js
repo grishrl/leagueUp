@@ -444,11 +444,11 @@ async function postToHotsProfileHandler(limNum) {
             // console.log('replays ', replays);
             if (replays) {
                 let keys = Object.keys(replays);
-
+                // console.log(keys);
                 let matchCopy = _.cloneDeep(match);
 
                 for (var j = 0; j < keys.length; j++) {
-
+                    // console.log('keyz ', j);
                     let localKey = keys[j];
 
                     if (localKey != '_id') {
@@ -489,18 +489,21 @@ async function postToHotsProfileHandler(limNum) {
                                         }
                                     })
                                 });
-
+                                // console.log('team 0: ', teams[0])
+                                // console.log('team 1: ', teams[1])
                                 teams[1].teamMembers.forEach(member => {
                                     let playerKeys = Object.keys(replayInf.parsed.players);
                                     playerKeys.forEach(player => {
+
                                         let wholePlayer = replayInf.parsed.players[player];
                                         let simpleName = member.displayName.split('#')[0];
+                                        // console.log(wholePlayer.name, simpleName)
                                         if (simpleName == wholePlayer.name) {
                                             team2player = member.displayName;
                                         }
                                     })
                                 });
-
+                                // console.log("team2PlayerName ", team2player);
 
                                 postObj['replay_url'] = process.env.heroProfileReplay + replayInf.url;
                                 postObj['team_one_player'] = team1player;
@@ -513,31 +516,43 @@ async function postToHotsProfileHandler(limNum) {
                                 postObj['season'] = "6";
 
 
-                                // console.log(postObj);
-                                // call to hotsprofile
-                                let posted = await postToHotsProfile(postObj).then(
-                                    reply => {
-                                        return reply;
-                                    },
-                                    err => {
-                                        return null;
-                                    }
-                                );
 
+                                // console.log(postObj);
+                                // console.log(screenPostObject(postObj));
                                 let logObj = {};
                                 logObj.actor = 'SYSTEM; CRON; Hots-Profile Submit';
-                                logObj.action = ' logging reply from hots-profile ' + JSON.stringify(posted.data);
                                 logObj.target = 'Match Id: ' + matchObj.matchId + ', ReplayID: ' + replayInf.data;
                                 logObj.timeStamp = new Date().getTime();
                                 logObj.logLevel = 'STD';
-                                logger(logObj);
 
-                                if (posted) {
-                                    match['replays'][localKey]['parsedUrl'] = posted.data.url;
+                                if (screenPostObject(postObj)) {
+                                    // call to hotsprofile
+                                    let posted = await postToHotsProfile(postObj).then(
+                                        reply => {
+                                            return reply;
+                                        },
+                                        err => {
+                                            return null;
+                                        }
+                                    );
+                                    // console.log('POSTED!')
+                                    logObj.action = ' logging reply from hots-profile ' + JSON.stringify(posted.data);
+                                    logger(logObj);
+
+                                    if (posted) {
+                                        match['replays'][localKey]['parsedUrl'] = posted.data.url;
+                                        postedReplays = true;
+                                    } else {
+                                        //if posted fails then do not set the match to fully reported
+                                        // postedReplays = false;
+                                    }
                                 } else {
-                                    //if posted fails then do not set the match to fully reported
-                                    postedReplays = false;
+                                    // console.log('NOT POSTED!')
+                                    logObj.logLevel = "ERROR";
+                                    logObj.error = "This replay failed the screen, NOT SENT TO HEROSPROFILE!!";
+                                    logger(logObj);
                                 }
+
 
                             }
                         } else {
@@ -589,4 +604,23 @@ module.exports = {
     tabulateUserStats: tabulateUserStats,
     tabulateTeamStats: tabulateTeamStats,
     postToHotsProfileHandler: postToHotsProfileHandler
+}
+
+function screenPostObject(postObj) {
+    let retBool = true;
+    let objKeys = Object.keys(postObj);
+    objKeys.forEach(key => {
+        let value = postObj[key];
+        if (key != 'team_two_image_url' && key != 'team_two_image_url') {
+            if (util.isNullOrEmpty(value)) {
+                retBool = false;
+            } else {
+                //do nothing
+            }
+        } else {
+            //image can empty
+        }
+        let val = postObj[key];
+    });
+    return retBool;
 }
