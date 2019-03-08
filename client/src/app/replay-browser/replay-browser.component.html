@@ -70,17 +70,19 @@
                                 <span class="titles">{{match.away.score}}</span>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col text-center">
-                                Map Bans:
+                        <div *ngIf="match.mapBans">
+                            <div class="row">
+                                <div class="col text-center">
+                                    Map Bans:
+                                </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col text-center">
-                                <span class="titles">{{match.mapBans.home}}</span>
-                            </div>
-                            <div class="col text-center">
-                                <span class="titles">{{match.mapBans.away}}</span>
+                            <div class="row">
+                                <div class="col text-center">
+                                    <span class="titles">{{match.mapBans.home}}</span>
+                                </div>
+                                <div class="col text-center">
+                                    <span class="titles">{{match.mapBans.away}}</span>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
