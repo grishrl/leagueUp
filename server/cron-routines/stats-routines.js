@@ -413,7 +413,7 @@ async function postToHotsProfileHandler(limNum) {
         }
     );
 
-    // console.log('matches.length ', matches.length);
+    console.log('matches.length ', matches.length);
     if (matches) {
         let savedArray = [];
         for (var i = 0; i < matches.length; i++) {
@@ -476,6 +476,18 @@ async function postToHotsProfileHandler(limNum) {
                                 postObj['team_two_name'] = teams[1].teamName;
                                 postObj['team_two_image_url'] = process.env.heroProfileImage + teams[1].logo;
 
+                                if (teams[0]._id == matchCopy.away.id) {
+                                    postObj['team_one_map_ban'] = matchCopy.mapBans.away;
+                                } else {
+                                    postObj['team_one_map_ban'] = matchCopy.mapBans.home;
+                                }
+
+                                if (teams[1]._id == matchCopy.away.id) {
+                                    postObj['team_two_map_ban'] = matchCopy.mapBans.away;
+                                } else {
+                                    postObj['team_two_map_ban'] = matchCopy.mapBans.home;
+                                }
+
                                 let team1player = '';
                                 let team2player = '';
 
@@ -505,11 +517,13 @@ async function postToHotsProfileHandler(limNum) {
                                 });
                                 // console.log("team2PlayerName ", team2player);
 
+
+
                                 postObj['replay_url'] = process.env.heroProfileReplay + replayInf.url;
                                 postObj['team_one_player'] = team1player;
-                                postObj['team_one_map_ban'] = matchCopy.mapBans.home;
+
                                 postObj['team_two_player'] = team2player;
-                                postObj['team_two_map_ban'] = matchCopy.mapBans.away;
+                                // postObj['team_two_map_ban'] = matchCopy.mapBans.away;
                                 postObj['round'] = matchCopy.round.toString();
                                 postObj['division'] = teams[0].divisionDisplayName;
                                 postObj['game'] = (j + 1).toString();
@@ -526,7 +540,7 @@ async function postToHotsProfileHandler(limNum) {
                                 logObj.logLevel = 'STD';
 
                                 if (screenPostObject(postObj)) {
-                                    // call to hotsprofile
+                                    //     // call to hotsprofile
                                     let posted = await postToHotsProfile(postObj).then(
                                         reply => {
                                             return reply;
@@ -535,7 +549,7 @@ async function postToHotsProfileHandler(limNum) {
                                             return null;
                                         }
                                     );
-                                    // console.log('POSTED!')
+                                    //     // console.log('POSTED!')
                                     logObj.action = ' logging reply from hots-profile ' + JSON.stringify(posted.data);
                                     logger(logObj);
 

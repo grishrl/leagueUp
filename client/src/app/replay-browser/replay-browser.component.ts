@@ -64,7 +64,6 @@ export class ReplayBrowserComponent implements OnInit {
 
   private testName(unit, team) {
     let bool = false;
-    
     let awayName = this.util.returnBoolByPath(unit, 'away.teamName') ? unit.away.teamName : '';
     let homeName = this.util.returnBoolByPath(unit, 'home.teamName') ? unit.home.teamName : '';
       awayName = awayName.toLowerCase();
@@ -81,7 +80,6 @@ export class ReplayBrowserComponent implements OnInit {
   }
 
   private testDivision(unit, flt) {
-     console.log(unit, flt);
     return unit.divisionConcat == flt.divisionConcat;
   }
 
