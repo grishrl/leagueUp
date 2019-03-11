@@ -62,9 +62,7 @@ router.post('/get/matches', (req, res) => {
     });
 });
 
-router.post('/get/reported/matches', passport.authenticate('jwt', {
-    session: false
-}), (req, res) => {
+router.post('/get/reported/matches', (req, res) => {
 
     const path = 'schedule/get/reported/matches';
     let season = req.body.season;
