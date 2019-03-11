@@ -149,7 +149,7 @@ returnBoolByPath = function(obj, path) {
             retVal = obj[ele]
         }
     }
-    if (retVal == 0) {
+    if (typeof retVal == 'number' && retVal == 0) {
         retVal = 1;
     }
     return !!retVal;

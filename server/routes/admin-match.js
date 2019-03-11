@@ -40,6 +40,8 @@ router.post('/match/update', passport.authenticate('jwt', {
                 }
                 match.away.dominator = true;
             }
+            //if scores are sent - regardless of whether there was domination; set this match to reported
+            match.reported = true;
         }
 
         Match.findOne({ matchId: match.matchId }).then(
