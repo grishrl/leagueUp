@@ -376,6 +376,17 @@ resetReplay(game){
       }
     });
 
+    if (this.mapBans.away == ''){
+      submittable = false;
+      alert('This match\'s away map ban not filled out, can not submit.');
+    }
+
+    if (this.mapBans.home == '') {
+      submittable = false;
+      alert('This match\'s home map ban not filled out, can not submit.');
+    }
+
+
     if (report.homeTeamScore == 1 && report.awayTeamScore == 1 || report.awayTeamScore == 1 && report.homeTeamScore == 1){
       submittable = false;
       alert('This out come is not allowed, matches must end 2-0 or 2-1');

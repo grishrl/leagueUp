@@ -10,7 +10,7 @@
                                 All
                             </mat-option>
                             <mat-option *ngFor="let category of categories" [value]="category.sys.id">
-                                {{category.fields.title}}
+                                <span *ngIf="category.fields && category.fields.title">{{category.fields.title}}</span>
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
@@ -22,11 +22,11 @@
                 <div class="col-xs-12 col-md-4 mt-1" *ngFor="let item of row">
                     <mat-card class="blog-card finger" (click)="goToBlogPage(item)">
                         <mat-card-header>
-                            <img mat-card-avatar src="{{item.fields.author.fields.image.fields.file.url}}" class="author-image">
-                            <mat-card-title><span class="anchor">{{item.fields.title}}</span></mat-card-title>
-                            <mat-card-subtitle>{{item.fields.author.fields.name}}</mat-card-subtitle>
+                            <img *ngIf="util.returnBoolByPath(item, 'fields.author.fields.image.fields.file.url')" mat-card-avatar src="{{item.fields.author.fields.image.fields.file.url}}" class="author-image">
+                            <mat-card-title><span class="anchor" *ngIf="util.returnBoolByPath(item, 'fields.title')">{{item.fields.title}}</span></mat-card-title>
+                            <mat-card-subtitle *ngIf="util.returnBoolByPath(item, 'fields.author.fields.name')">{{item.fields.author.fields.name}}</mat-card-subtitle>
                         </mat-card-header>
-                        <img mat-card-image src="{{item.fields.heroImage.fields.file.url}}?w=450&h=300&fit=scale" alt="{{item.fields.heroImage.fields.description}}">
+                        <img *ngIf="util.returnBoolByPath(item, 'fields.heroImage.fields.file.url')" mat-card-image src="{{item.fields.heroImage.fields.file.url}}?w=450&h=300&fit=scale" alt="{{item.fields.heroImage.fields.description}}">
                         <mat-card-content>
                             <div *ngIf="item.fields.description" [innerHTML]="md.convertMarkdown(item.fields.description)"></div>
                         </mat-card-content>
