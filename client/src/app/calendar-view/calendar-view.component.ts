@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 import { EventsService } from '../services/events.service';
 import { UtilitiesService } from '../services/utilities.service';
+import { asElementData } from '@angular/core/src/view';
 
 const colors: any = {
   heroic: {  //navy
@@ -100,9 +101,18 @@ export class CalendarViewComponent implements OnInit {
       res=>{
         let matches = res;
         this._matches = res;
+        matches.sort((a,b)=>{
+          let retVal = 0;
+          if (parseInt(a.scheduledTime.startTime) > parseInt(b.scheduledTime.startTime)){
+            retVal = 1;
+          }else{
+            retVal = -1;
+          }
+          return retVal;
+        })
         matches.forEach(match => {
           let startDate: Date = new Date(parseInt(match.scheduledTime.startTime));
-          let endDate: Date = new Date(parseInt(match.scheduledTime.endTime));
+          let endDate: Date = new Date(parseInt(match.scheduledTime.startTime)+1);
           let event: CalendarEvent = {
             'start': startDate,
             'end': endDate,
