@@ -101,7 +101,8 @@ export class CalendarViewComponent implements OnInit {
       res=>{
         let matches = res;
         this._matches = res;
-        matches.sort((a,b)=>{
+        
+        matches = matches.sort((a,b)=>{
           let retVal = 0;
           if (parseInt(a.scheduledTime.startTime) > parseInt(b.scheduledTime.startTime)){
             retVal = 1;
@@ -110,6 +111,7 @@ export class CalendarViewComponent implements OnInit {
           }
           return retVal;
         })
+        
         matches.forEach(match => {
           let startDate: Date = new Date(parseInt(match.scheduledTime.startTime));
           let endDate: Date = new Date(parseInt(match.scheduledTime.startTime)+1);
