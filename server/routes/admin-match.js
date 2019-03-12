@@ -27,6 +27,9 @@ router.post('/match/update', passport.authenticate('jwt', {
                 homeDominate = true;
             } else if (match.home.score == 0 && match.away.score == 2) {
                 awayDominate = true;
+            } else {
+                match.home.dominator = false;
+                match.away.dominator = false;
             }
             if (homeDominate) {
                 if (util.returnBoolByPath(match, 'away.dominator')) {
