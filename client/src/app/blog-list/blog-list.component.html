@@ -26,7 +26,7 @@
                             <mat-card-title><span class="anchor" *ngIf="util.returnBoolByPath(item, 'fields.title')">{{item.fields.title}}</span></mat-card-title>
                             <mat-card-subtitle *ngIf="util.returnBoolByPath(item, 'fields.author.fields.name')">{{item.fields.author.fields.name}}</mat-card-subtitle>
                         </mat-card-header>
-                        <img *ngIf="util.returnBoolByPath(item, 'fields.heroImage.fields.file.url')" mat-card-image src="{{item.fields.heroImage.fields.file.url}}?w=450&h=300&fit=scale" alt="{{item.fields.heroImage.fields.description}}">
+                        <img *ngIf="util.returnBoolByPath(item, 'fields.heroImage.fields.file.url')" mat-card-image src="{{item.fields.heroImage.fields.file.url}}?w=400&h=225&&fit=pad" alt="{{item.fields.heroImage.fields.description}}">
                         <mat-card-content>
                             <div *ngIf="item.fields.description" [innerHTML]="md.convertMarkdown(item.fields.description)"></div>
                         </mat-card-content>
