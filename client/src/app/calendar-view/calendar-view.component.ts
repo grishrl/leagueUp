@@ -110,8 +110,8 @@ export class CalendarViewComponent implements OnInit {
             retVal = -1;
           }
           return retVal;
-        })
-        
+        });
+
         matches.forEach(match => {
           let startDate: Date = new Date(parseInt(match.scheduledTime.startTime));
           let endDate: Date = new Date(parseInt(match.scheduledTime.startTime)+1);
@@ -149,8 +149,20 @@ export class CalendarViewComponent implements OnInit {
 
               event['color'] = colors.event;
               this.events.push(event);
+              
 
-            })
+            });
+
+            this.events = this.events.sort((a,b)=>{
+              let retVal = 0;
+              if (a.start > b.start) {
+                retVal = 1;
+              } else {
+                retVal = -1;
+              }
+              return retVal;
+            });
+
             this.refresh.next();
           },
           err=>{
@@ -204,6 +216,7 @@ export class CalendarViewComponent implements OnInit {
   activeDayIsOpen: boolean = true;
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
+
     if (isSameMonth(date, this.viewDate)) {
       this.viewDate = date;
       if (
