@@ -2,3 +2,10 @@
     margin-top: auto;
     margin-bottom: auto;
 }
+
+.schedule-deadline {
+    width: max-content;
+    border-style: solid;
+    padding: 10px;
+    border-color: #ffc107;
+}

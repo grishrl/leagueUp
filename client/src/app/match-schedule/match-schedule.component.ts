@@ -10,10 +10,13 @@ import { Router } from '@angular/router';
 })
 export class MatchScheduleComponent implements OnInit {
 
-  constructor(private router:Router, private Auth: AuthService, private util:UtilitiesService) { }
+  constructor(private router:Router, private Auth: AuthService, public util:UtilitiesService) { }
   recTeam;
   todayDate;
   recMatch;
+
+  scheduleDeadline = this.recMatch.scheduleDeadline - 604800000;
+
   ngOnInit() {
     this.todayDate = new Date().getTime();
   }
@@ -41,15 +44,14 @@ export class MatchScheduleComponent implements OnInit {
       return false;
     }
   }
-  
 
   checkDate(match) {
 
     let ret = false;
     if (match['scheduleDeadline']) {
       let intDate = parseInt(match['scheduleDeadline']);
-
-      if (this.todayDate > intDate) {
+      let weekAgo = intDate - 604800000;
+      if (this.todayDate > weekAgo) {
         ret = true;
       }
     }
