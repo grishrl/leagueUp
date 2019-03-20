@@ -32,6 +32,9 @@ export class MatchViewComponent implements OnInit {
   @Input() set passMatch(_match){
     if(_match != undefined && _match != null){
       this.match = _match;
+      if (this.util.returnBoolByPath(this.match, 'scheduledTime.startTime')){
+        this.match.scheduledTime.startTime = parseInt(this.match.scheduledTime.startTime);
+      }
     }
   }
 
