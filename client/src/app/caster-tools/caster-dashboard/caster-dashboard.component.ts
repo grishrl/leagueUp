@@ -16,11 +16,17 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(public team:TeamService, private scheduleService:ScheduleService, private util:UtilitiesService, private Auth: AuthService,
+  constructor(public team:TeamService, private scheduleService:ScheduleService, public util:UtilitiesService, private Auth: AuthService,
     private filterService:FilterService) {
 
    }
 
+  
+   timeParseAndReturn(time){
+     time = parseInt(time);
+     return this.util.getFormattedDate(time, "M/D/YYYY h:mm A zz");
+   }
+   
   hideForm = true;
   selectedRound:any
   selectedDivision:any
@@ -69,6 +75,23 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
   ngOnInit() {
       this.scheduleService.getAllMatches().subscribe(
         (sched) => {
+          // sched = sched.sort((a, b)=>{
+          //   let ret;
+          //   console.log("this.util.returnBoolByPath(a, 'scheduledTime.startTime') ", this.util.returnBoolByPath(a, 'scheduledTime.startTime'));
+          //   console.log("this.util.returnBoolByPath(b, 'scheduledTime.startTime') ", this.util.returnBoolByPath(b, 'scheduledTime.startTime'));
+          //   if (!this.util.returnBoolByPath(a, 'scheduledTime.startTime')){
+          //     ret = -1;
+          //   } else if (!this.util.returnBoolByPath(b, 'scheduledTime.startTime')){
+          //     ret = -1;
+          //   }else{
+          //     if (parseInt(a.scheduledTime.startTime) > parseInt(b.scheduledTime.startTime)) {
+          //       ret = 1;
+          //     } else {
+          //       ret = -1;
+          //     }
+          //   }
+          //   return ret;
+          // });
           this.originalMatches = sched;
           this.length = sched.length;
           this.filterMatches = sched;

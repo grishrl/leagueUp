@@ -17,12 +17,10 @@ function cleanUpPendingQueue(item) {
     logObj.timeStamp = new Date().getTime();
     Admin.PendingQueue.findByIdAndDelete(item._id).then((deleted) => {
         logger(logObj);
-        // console.log('pendingQueue item ' + deleted._id + ' deleted.'); //static logging
     }, (err) => {
         logObj.logLevel = 'ERROR';
         logObj.error = err;
         logger(logObj)
-            // console.log('err in the pending delete sub ', err); //static logging
     })
 }
 
@@ -103,12 +101,10 @@ function addToPendingTeamMemberQueue(teamLower, user) {
             "userName": user
         }).save().then((savedQueue) => {
             logger(logObj);
-            // console.log('added to pendingteam member queue'); //static logging
         }, (err) => {
             logObj.logLevel = 'ERROR';
             logObj.error = err;
             logger(logObj);
-            // console.log('we had an error creating this queue'); //static logging
         });
     }
 }
@@ -134,12 +130,10 @@ function updatePendingMembersTeamNameChange(teamnameOld, teamnameNew) {
                 queue.save().then((saved) => {
                     logObj.action += ' pending queue team name updated';
                     logger(logObj);
-                    // console.log('pending queue team name updated'); //static logging
                 }, (err) => {
                     logObj.logLevel = "ERROR";
                     logObj.error = err;
                     logger(logObj);
-                    // console.log('err'); //static logging
                 });
             })
         }

@@ -99,7 +99,8 @@
                         </div>
                         <div class="row mt-2 ">
                             <div class="col ">
-                                Scheduled Time: <span *ngIf="match.scheduledTime !=undefined && match.scheduledTime !=null else notScheduled ">{{displayTime(match.scheduledTime.startTime)}}</span>
+                                Scheduled Time: <span *ngIf="match.scheduledTime !=undefined && match.scheduledTime !=null else notScheduled
+                                  ">{{timeParseAndReturn(match.scheduledTime.startTime)}}</span>
                                 <ng-template #notScheduled>
                                     <span>Not Yet Scheduled</span>
                                 </ng-template>

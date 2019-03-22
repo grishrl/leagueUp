@@ -40,24 +40,20 @@ function clearUserTeam(user) {
             foundUser.isCaptain = null;
             foundUser.save().then((savedUser) => {
                 logger(logObj);
-                // console.log('need some persistent logging');
             }, (err) => {
                 logObj.logLevel = 'ERROR';
                 logObj.error = err;
                 logger(logObj);
-                // console.log('need some persistent logging');
             });
         } else {
             logObj.logLevel = 'ERROR';
             logObj.error = 'user not found';
             logger(logObj);
-            // console.log('need some persistent logging');
         }
     }, (err) => {
         logObj.logLevel = 'ERROR';
         logObj.error = err;
         logger(logObj);
-        // console.log('need some persistent logging');
     });
 }
 
@@ -70,27 +66,44 @@ function upsertUsersTeamName(users, team) {
 
 //update a users team info
 function upsertUserTeamName(user, team) {
+    let logObj = {};
+    logObj.actor = 'SYSTEM; upsertUserTeamName ';
+    logObj.action = 'Update users team name in team';
+    logObj.target = user.displayName;
+    logObj.timeStamp = new Date().getTime();
+    logObj.logLevel = 'STD';
     User.findOne({
         displayName: user.displayName
     }).then((foundUser) => {
         if (foundUser) {
             foundUser.teamName = team;
             foundUser.save().then((savedUser) => {
-                console.log('need some persistent logging');
+                logger(logObj);
             }, (err) => {
-                console.log('need some persistent logging');
+                logObj.logLevel = 'ERROR';
+                logObj.error = err;
+                logger(logObj);
             });
         } else {
-            console.log('need some persistent logging');
+            logObj.logLevel = 'ERROR';
+            logObj.error = 'User was not found.';
+            logger(logObj);
         }
     }, (err) => {
-        console.log('need some persistent logging');
+        logObj.logLevel = 'ERROR';
+        logObj.error = err;
+        logger(logObj);
     });
 }
 
 
 function toggleCaptain(user) {
-    console.log(user);
+    let logObj = {};
+    logObj.actor = 'SYSTEM; toggleCaptain ';
+    logObj.action = 'Toggle Team Captain Status';
+    logObj.target = user;
+    logObj.timeStamp = new Date().getTime();
+    logObj.logLevel = 'STD';
     User.findOne({ displayName: user }).then((foundUser) => {
         //get the value in teamInfo, is captain, will be boolean if it's been set before
         let changed = false;
@@ -106,25 +119,33 @@ function toggleCaptain(user) {
                 foundUser.isCaptain = true;
             }
         }
-        console.log(user, ' changed: ', changed)
         if (changed) {
             foundUser.save().then((save) => {
-                console.log(save.displayName + ' user profile update cpttoggle');
+                logger(logObj);
             }, (err) => {
-                console.log('cpt toggle error saving user profile');
+                logObj.logLevel = 'ERROR';
+                logObj.error = err;
+                logger(logObj);
             });
         }
 
     }, (err) => {
-        console.log('error toggling user as captain ', err);
-    })
+        logObj.logLevel = 'ERROR';
+        logObj.error = err;
+        logger(logObj);
+    });
 }
 
 function togglePendingTeam(user) {
+    let logObj = {};
+    logObj.actor = 'SYSTEM; togglePendingTeam ';
+    logObj.action = 'Toggle Pending Team';
+    logObj.target = user;
+    logObj.timeStamp = new Date().getTime();
+    logObj.logLevel = 'STD';
     User.findOne({
         displayName: user
     }).then((foundUser) => {
-        // console.log('foundUser ', foundUser);
         //get the value in teamInfo, is captain, will be boolean if it's been set before
         let changed = false;
         let pendingTeam = foundUser.pendingTeam;
@@ -138,18 +159,21 @@ function togglePendingTeam(user) {
             foundUser.pendingTeam = true;
             foundUser.lookingForGroup = false;
         }
-        console.log(changed);
         if (changed) {
             foundUser.save().then((save) => {
-                console.log(save.displayName + ' user profile update pendingTeamToggle');
+                logger(logObj);
             }, (err) => {
-                console.log('pendingteam toggle error saving user profile');
+                logObj.logLevel = 'ERROR';
+                logObj.error = err;
+                logger(logObj);
             });
         }
 
     }, (err) => {
-        console.log('error toggling user as pending ', err);
-    })
+        logObj.logLevel = 'ERROR';
+        logObj.error = err;
+        logger(logObj);
+    });
 }
 
 async function updateUserName(id, newUserName) {

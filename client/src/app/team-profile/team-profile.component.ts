@@ -84,7 +84,6 @@ export class TeamProfileComponent implements OnInit {
   constructor(private auth: AuthService, public user: UserService, public timezone: TimezoneService, private team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router: Router,
     private admin:AdminService, private util:UtilitiesService, private requestService:RequestService, public heroProfile: HotsProfileService) {
     this.teamName = team.realTeamName(this.route.snapshot.params['id']);
-    console.log(this.teamName)
   }
 
   //methods

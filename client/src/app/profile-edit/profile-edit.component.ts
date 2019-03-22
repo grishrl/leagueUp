@@ -255,27 +255,7 @@ formControlledEnable(){
       //  });
 
        if(!this.hotsLogsUrlReq){
-         this.hotsLogsService.getMMRdisplayName(this.user.routeFriendlyUsername(this.returnedProfile.displayName)).subscribe(
-           res => {
-
-             if (res != 'error') {
-               this.returnedProfile.averageMmr = res.avgMMR;
-               this.returnedProfile['hotsLogsPlayerID'] = res.PlayerID;
-               this.user.saveUser(this.returnedProfile).subscribe((res) => {
-                 if (res) {
-                   this.editOn = true;
-                   this.formControlledDisable();
-                 } else {
-                   alert("error");
-                 }
-               });
-             } else {
-               alert('We could not validate your hots logs, please recheck the URL!');
-               this.hotsLogsUrlReq = true;
-               this.cancel();
-             }
-           }
-         )
+         this.updateUserMMR();
        }
 
        if (this.hotsLogsUrlReq){
@@ -312,6 +292,29 @@ formControlledEnable(){
        console.log('the data was invalid we cant save');
      }
    }
+
+  private updateUserMMR() {
+    this.hotsLogsService.getMMRdisplayName(this.user.routeFriendlyUsername(this.returnedProfile.displayName)).subscribe(res => {
+      if (res != 'error') {
+        this.returnedProfile.averageMmr = res.avgMMR;
+        this.returnedProfile['hotsLogsPlayerID'] = res.PlayerID;
+        this.user.saveUser(this.returnedProfile).subscribe((res) => {
+          if (res) {
+            this.editOn = true;
+            this.formControlledDisable();
+          }
+          else {
+            alert("error");
+          }
+        });
+      }
+      else {
+        alert('We could not validate your hots logs, please recheck the URL!');
+        this.hotsLogsUrlReq = true;
+        this.cancel();
+      }
+    });
+  }
 
   timezoneUpdate(){
     if (this.returnedProfile.timeZone != null || this.returnedProfile.timeZone!=undefined){

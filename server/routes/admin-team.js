@@ -334,6 +334,7 @@ router.post('/teamSave', passport.authenticate('jwt', {
                         teamName_lower: teamLower
                     }).then((originalTeam) => {
                         if (originalTeam) {
+                            let originalTeamName = originalTeam.teamName
 
                             //update the team name and teamname lower
                             originalTeam.teamName = payload.teamName;
@@ -373,9 +374,9 @@ router.post('/teamSave', passport.authenticate('jwt', {
 
                                 //now we need subs to remove all instances of the old team name and replace it with
                                 //this new team name
-                                DivSub.updateTeamNameDivision(team, savedTeam.teamName);
-                                OutreachSub.updateOutreachTeamname(team, savedTeam.teamName);
-                                QueueSub.updatePendingMembersTeamNameChange(team, savedTeam.teamName_lower);
+                                DivSub.updateTeamNameDivision(originalTeamName, savedTeam.teamName);
+                                OutreachSub.updateOutreachTeamname(originalTeamName, savedTeam.teamName);
+                                QueueSub.updatePendingMembersTeamNameChange(originalTeamName, savedTeam.teamName_lower);
                                 //matches ... not existing yet
                                 UserSub.upsertUsersTeamName(savedTeam.teamMembers, savedTeam.teamName);
                             }, (err) => {
