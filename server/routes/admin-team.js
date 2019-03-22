@@ -490,7 +490,7 @@ router.post('/resultantmmr', passport.authenticate('jwt', {
 //refreshes the MMR of a supplied team, in case the team mmr may need to be updated
 router.post('/team/refreshMmr', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
+}), util.appendResHeader, (req, res) => {
     const path = 'admin/team/refreshMmr';
     let teamName = req.body.teamName;
     teamName = teamName.toLowerCase();

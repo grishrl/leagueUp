@@ -4,6 +4,7 @@ import { ScheduleService } from 'src/app/services/schedule.service';
 import { TeamService } from 'src/app/services/team.service';
 import { StandingsService } from 'src/app/services/standings.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-schedule-view',
@@ -64,7 +65,7 @@ export class ScheduleViewComponent implements OnInit {
       div = this.selectedDivision.divisionConcat;
     }
 
-    let season = 6;
+    let season = environment.season;
     this.scheduleService.getScheduleMatches(season, div, this.selectedRound).subscribe(
       res=>{
         this.matches = res; 

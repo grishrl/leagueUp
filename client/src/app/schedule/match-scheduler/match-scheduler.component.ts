@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { TeamService } from 'src/app/services/team.service';
+import { environment } from '../../../environments/environment';
 
 
 @Component({
@@ -35,7 +36,7 @@ export class MatchSchedulerComponent implements OnInit {
  
   ngOnInit() {
     //get the match from the ID we receieved
-    this.scheduleService.getMatchInfo(6, this.matchId).subscribe(
+    this.scheduleService.getMatchInfo(environment.season, this.matchId).subscribe(
       res=>{ 
         //assign the result to local prop match
         this.match = res;

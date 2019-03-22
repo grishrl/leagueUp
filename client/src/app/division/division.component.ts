@@ -4,6 +4,7 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Team } from '../classes/team.class';
 import { TeamService } from '../services/team.service';
+import { environment } from '../../environments/environment';
 
 
 
@@ -23,7 +24,7 @@ export class DivisionComponent implements OnInit {
   navigationSubscription
   divDisplay = {displayName:'', divisionConcat:''};
 
-  
+  season = environment.season;
 
   constructor(private division:DivisionService, private teamService:TeamService, private route:ActivatedRoute, private router: Router) {
     

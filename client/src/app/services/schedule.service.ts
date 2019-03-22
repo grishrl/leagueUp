@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { map } from 'rxjs/operators'
 import { HttpServiceService } from './http-service.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -82,7 +83,7 @@ export class ScheduleService {
   getReportedMatches(){
     let url = 'schedule/get/reported/matches';
     let payload = {
-      season:6
+      season:environment.season
     };
     return this.httpService.httpPost(url, payload, true);
   }

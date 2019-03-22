@@ -5,6 +5,7 @@ import { TeamService } from 'src/app/services/team.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { StandingsService } from 'src/app/services/standings.service';
 import { EventsService } from 'src/app/services/events.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-event-large',
@@ -26,7 +27,7 @@ export class EventLargeComponent implements OnInit {
     let eventInfo = this.EventService.getLocalEvent();
     if(eventInfo['type']){
       if (eventInfo['type'] == 'match'){
-        this.scheduleService.getMatchInfo(6, eventInfo['id']).subscribe(
+        this.scheduleService.getMatchInfo(environment.season, eventInfo['id']).subscribe(
           res => {
             this.match = res;
             let match = res;

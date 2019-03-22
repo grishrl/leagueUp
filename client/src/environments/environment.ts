@@ -20,7 +20,8 @@ export const environment = {
   s3bucketGeneralImage: 'dev-ngs-general-image',
   socketURL:'https://dev-ngs.herokuapp.com',
   heroesProfilePlayer: "https://www.heroesprofile.com/NGS/Profile/?",
-  heroesProfileTeam: "https://heroesprofile.com/NGS/Team/Single/?team="
+  heroesProfileTeam: "https://heroesprofile.com/NGS/Team/Single/?team=",
+  season: 6
 };
 
 /*

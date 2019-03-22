@@ -15,30 +15,41 @@
                                     <div *ngIf="editOn == true">
                                         <button type="button" (click)="openEdit()" class="btn btn-primary float-right">Edit</button>
                                     </div>
-                                    <div class="row" *ngIf="!editOn">
-                                        <div class="col">
-                                            <div class="dropdown">
-                                                <button type="button" class="mt-1 btn btn-danger dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <div *ngIf="!editOn">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="dropdown">
+                                                    <button type="button" class="mt-1 btn btn-danger dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 <span class="icon-align">
-                                                    <i class="material-icons md-18">settings</i> 
-                                                    Manage 
+                                                  <i class="material-icons md-18">settings</i>
+                                                  Manage
                                                 </span>
-                                            </button>
-                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                    <a class="dropdown-item finger" (click)="openCaptainChangeDialog()"><span class="icon-align"><i class="material-icons">cached</i>Change
-                                                        captain</span></a>
-                                                    <!-- <a class="dropdown-item finger" (click)="openDialog()"><span class="icon-align"><i class="material-icons">delete_forever</i>Delete team</span></a> -->
+                                              </button>
+                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                        <a class="dropdown-item finger" (click)="openCaptainChangeDialog()"><span class="icon-align"><i
+                                                      class="material-icons">cached</i>Change
+                                                    captain</span></a>
+                                                        <!-- <a class="dropdown-item finger" (click)="openDialog()"><span class="icon-align"><i class="material-icons">delete_forever</i>Delete team</span></a> -->
+                                                    </div>
                                                 </div>
+
+                                            </div>
+                                            <div class="col">
+                                                <button type="button" [disabled]="!validate()" (click)="save()" class="mt-1 btn btn-success ">Save</button>
                                             </div>
 
+                                            <div class="col">
+                                                <button type="button" (click)="cancel()" class="mt-1 btn btn-danger">Cancel</button>
+                                            </div>
                                         </div>
-                                        <div class="col">
-                                            <button type="button" [disabled]="!validate()" (click)="save()" class="mt-1 btn btn-success ">Save</button>
-                                        </div>
-                                        <div class="col">
-                                            <button type="button" (click)="cancel()" class="mt-1 btn btn-danger">Cancel</button>
+                                        <div class="row">
+                                            <div class="col">
+                                                <button type="button" (click)="adminRefreshMMR()" class="mt-1 btn btn-info">Update Team
+                                                MMR</button>
+                                            </div>
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>

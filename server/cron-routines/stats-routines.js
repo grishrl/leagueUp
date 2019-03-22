@@ -527,7 +527,7 @@ async function postToHotsProfileHandler(limNum) {
                                 postObj['round'] = matchCopy.round.toString();
                                 postObj['division'] = teams[0].divisionDisplayName;
                                 postObj['game'] = (j + 1).toString();
-                                postObj['season'] = "6";
+                                postObj['season'] = process.env.season.toString();
 
 
 

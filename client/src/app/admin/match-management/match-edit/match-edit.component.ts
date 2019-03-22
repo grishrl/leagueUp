@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { AdminService } from 'src/app/services/admin.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-match-edit',
@@ -41,7 +42,7 @@ export class MatchEditComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.scheduleService.getMatchInfo(6, this.matchId).subscribe(res=>{
+    this.scheduleService.getMatchInfo(environment.season, this.matchId).subscribe(res=>{
       this.match = res;
       if (this.match.away.score || this.match.home.score) {
         this.homeScore = this.match.home.score;
