@@ -58,14 +58,14 @@ function clearUserTeam(user) {
 }
 
 //update an array of users team info
-function upsertUsersTeamName(users, team) {
+function upsertUsersTeamName(users, team, teamid) {
     users.forEach(function(user) {
-        upsertUserTeamName(user, team);
+        upsertUserTeamName(user, team, teamid);
     });
 }
 
 //update a users team info
-function upsertUserTeamName(user, team) {
+function upsertUserTeamName(user, team, teamid) {
     let logObj = {};
     logObj.actor = 'SYSTEM; upsertUserTeamName ';
     logObj.action = 'Update users team name in team';
@@ -77,6 +77,7 @@ function upsertUserTeamName(user, team) {
     }).then((foundUser) => {
         if (foundUser) {
             foundUser.teamName = team;
+            foundUser.teamId = teamid;
             foundUser.save().then((savedUser) => {
                 logger(logObj);
             }, (err) => {

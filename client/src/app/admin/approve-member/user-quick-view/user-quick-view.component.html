@@ -5,6 +5,12 @@
                 Name: <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]">{{player.displayName}}</a>
             </div>
         </div>
+        <div class="row" *ngIf="player.smurfAccount">
+            <div class="col">
+                <span class="text-danger"> <i class="text-warning fas fa-exclamation-triangle"></i> !!! This account has been flagged
+                  as a smurf / banned account !!!! <i class="text-warning fas fa-exclamation-triangle"></i> </span>
+            </div>
+        </div>
         <div class="row">
             <div class="col">
                 <div *ngIf="player.averageMmr; else noMmr">MMR: {{player.averageMmr}}</div>

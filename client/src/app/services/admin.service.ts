@@ -160,6 +160,23 @@ export class AdminService {
     return this.httpService.httpPost(url, payload, true);
   }
 
+  saveUser(user){
+    let url = '/admin/user/save';
+    let payload = {
+      user:user
+    };
+    return this.httpService.httpPost(url, payload, true);
+  }
+
+  manualTeamAdd(user, team){
+    let url ='admin/team/memberAdd';
+    let payload = {
+      teamName:team,
+      user:user
+    };
+    return this.httpService.httpPost(url, payload, true);
+  }
+
   //deletes provided team by teamName
   deleteTeam(team){
     let url = 'admin/delete/team';

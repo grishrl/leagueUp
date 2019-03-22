@@ -378,7 +378,7 @@ router.post('/teamSave', passport.authenticate('jwt', {
                                 OutreachSub.updateOutreachTeamname(originalTeamName, savedTeam.teamName);
                                 QueueSub.updatePendingMembersTeamNameChange(originalTeamName, savedTeam.teamName_lower);
                                 //matches ... not existing yet
-                                UserSub.upsertUsersTeamName(savedTeam.teamMembers, savedTeam.teamName);
+                                UserSub.upsertUsersTeamName(savedTeam.teamMembers, savedTeam.teamName, savedTeam._id.toString());
                             }, (err) => {
                                 res.status(400).send(util.returnMessaging(path, 'Error saving team information', err, null, null, logObj));
                             });
@@ -550,6 +550,72 @@ router.get('/get/teams/all', passport.authenticate('jwt', {
     )
 
 });
+
+router.post('/team/memberAdd',
+    passport.authenticate('jwt', {
+        session: false
+    }), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
+        const path = 'admin/team/memberAdd';
+        let user = req.body.user;
+        let team = req.body.teamName;
+
+        //log object
+        let logObj = {};
+        logObj.actor = req.user.displayName;
+        logObj.action = ' manual add user to team ';
+        logObj.target = team + ' : ' + user;
+        logObj.logLevel = 'ADMIN';
+
+        Team.findOne({ teamName_lower: team.toLowerCase() }).then(
+            found => {
+                if (found) {
+                    let index = -1;
+                    found.teamMembers.forEach(
+                        (member, i) => {
+                            if (member.displayName == user) {
+                                index = i;
+                            }
+                        }
+                    )
+                    if (index == -1) {
+
+                        if (found.teamMembers) {
+                            found.teamMembers.push({
+                                "displayName": user
+                            });
+                        } else {
+                            found.teamMembers = [{
+                                "displayName": user
+                            }]
+                        }
+
+                        found.save().then(
+                            saved => {
+                                UserSub.upsertUsersTeamName([{ displayName: user }], found.teamName, found._id.toString());
+                                res.status(200).send(util.returnMessaging(path, 'User Added To Team', false, saved, null, logObj));
+                            },
+                            err => {
+                                res.status(500).send(util.returnMessaging(path, 'Error saving team', err, false, null, logObj));
+                            }
+                        )
+
+                    } else {
+                        logObj.logLevel = 'ERROR';
+                        logObj.error = 'User Existed On Team All Ready';
+                        res.status(200).send(util.returnMessaging(path, 'User Existed On Team All Ready', false, found, null, logObj));
+                    }
+
+                } else {
+                    logObj.logLevel = 'ERROR';
+                    logObj.error = 'team not found'
+                    res.status(200).send(util.returnMessaging(path, 'Team not found', false, false, null, logObj));
+                }
+            },
+            err => {
+                res.status(500).send(util.returnMessaging(path, 'Error finding team', err, false, null, logObj));
+            }
+        )
+    })
 
 
 module.exports = router;

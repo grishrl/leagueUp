@@ -8,7 +8,7 @@
 
     <div class="row">
         <div class="col">
-            <app-user-search (userSelected)="receiveUser($event)" [buttonText]="'Select User For Delete'"></app-user-search>
+            <app-user-search (userSelected)="receiveUser($event)" [buttonText]="'Select User For Management'"></app-user-search>
         </div>
         <div class="col">
             <div class="row" *ngIf="turnOnForm">
@@ -26,6 +26,6 @@
 
     <div class="row" *ngIf="turnOnForm">
         <div class="col">
-            <app-profile-edit [passedProfile]="recievedProfile"></app-profile-edit>
+            <app-profile-edit [passedProfile]="recievedProfile" [source]="'admin'"></app-profile-edit>
         </div>
     </div>

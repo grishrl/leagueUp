@@ -26,7 +26,8 @@ const userSchema = new Schema({
     "discordTag": String,
     "lastTouched": Number,
     "replays": [String],
-    "parseStats": Boolean
+    "parseStats": Boolean,
+    "smurfAccount": Boolean
 });
 
 

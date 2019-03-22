@@ -52,6 +52,65 @@ router.post('/delete/user', passport.authenticate('jwt', {
 
 });
 
+router.post('/user/save', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.userLevel, util.appendResHeader, (req, res) => {
+    const path = '/admin/user/save';
+
+    let user = req.body.user;
+    let id = user._id;
+    let target = user.displayName
+        //log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = 'delete user';
+    logObj.target = target;
+    logObj.logLevel = 'ADMIN';
+
+    if (user.teamId == 'nil') {
+        user.teamId = null;
+    }
+    if (user.teamName == 'nil') {
+        user.teamName = null;
+    }
+
+
+    User.findById(id).then(
+        found => {
+            if (found) {
+                let userKeys = Object.keys(user);
+                userKeys.forEach(userKey => {
+                    if (userKey != '_id') {
+                        found[userKey] = user[userKey];
+                    }
+                });
+                found.save().then(
+                    saved => {
+                        res.status(200).send(util.returnMessaging(path, 'User saved!', null, saved, null, logObj));
+                    },
+                    err => {
+                        res.status(500).send(util.returnMessaging(path, 'User saved!', err, false, null, logObj));
+                    }
+                )
+            }
+        },
+        err => {
+            res.status(500).send(util.returnMessaging(path, 'User saved!', err, false, null, logObj));
+        }
+    )
+
+});
+
+router.post('/user/teamUpdate', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.userLevel, util.appendResHeader, (req, res) => {
+    const path = '/admin/user/teamUpdate';
+    let user = req.body.displayName;
+    let teamId = req.body.teamId;
+    let teamName = req.body.teamName;
+
+})
+
 router.get('/user/update', (req, res) => {
     User.find().then(
         found => {
