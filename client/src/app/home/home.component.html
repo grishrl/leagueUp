@@ -45,22 +45,25 @@
         <div class="row">
             <div class="col-xs-12 col-md-4 mt-1">
                 <!-- showdown -->
-                <app-mini-carousel category="4ppO2xYoPHCmRmEGaQMFDF" byline="Thursday Night Showdown"></app-mini-carousel>
+                <app-mini-carousel playlistId="PLCylT7hBfO1QUpX4IB_4tI7G9lDvLnbsU" byline="Thursday Night Showdown">
+                </app-mini-carousel>
             </div>
             <div class="col-xs-12 col-md-4 mt-1">
                 <!-- nexus edge -->
-                <app-mini-carousel category="dlyJJ9HDiQry7cjYFb6VX" byline="Nexus Edge"></app-mini-carousel>
+                <app-mini-carousel playlistId="PLCylT7hBfO1SIMocVH3UWqrCywkKrM8JM" byline="Nexus Edge">
+                </app-mini-carousel>
             </div>
             <div class="col-xs-12 col-md-4 mt-1">
                 <!-- podcast -->
-                <app-mini-carousel category="5tANSA3t3WNrFtzsCl5Wnp" byline="Nexus Now Podcast"></app-mini-carousel>
+                <app-mini-carousel playlistId="PLCylT7hBfO1TfE4U-kdLMSvksc-nx4stD" byline="Nexus Now Podcast">
+                </app-mini-carousel>
             </div>
         </div>
 
         <h2 class="mt-4">Recent news</h2>
         <div class="row m-t" *ngFor="let row of rows">
             <div class="col-xs-12 col-md-4 mt-1" *ngFor="let item of row">
-                <mat-card (click)="goToBlogPage(item)" class="blog-card finger">
+                <mat-card (click)="goToBlogPage(item)" class="blog-card finger mx-auto">
                     <mat-card-header>
                         <img mat-card-avatar src="{{item.fields.author.fields.image.fields.file.url}}" class="author-image">
                         <mat-card-title><span class="anchor" (click)="goToBlogPage(item)">{{item.fields.title}}</span></mat-card-title>

@@ -4,6 +4,9 @@ import { Router } from '@angular/router';
 import { MarkdownParserService } from '../services/markdown-parser.service';
 import { environment } from 'src/environments/environment';
 import { UtilitiesService } from '../services/utilities.service';
+import { HttpServiceService } from '../services/http-service.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
 
 @Component({
   selector: 'app-mini-carousel',
@@ -12,13 +15,11 @@ import { UtilitiesService } from '../services/utilities.service';
 })
 export class MiniCarouselComponent implements OnInit {
 
-  constructor(private contentfulService: ContentfulService, private router: Router, public md: MarkdownParserService, public util:UtilitiesService) { }
+  constructor(private contentfulService: ContentfulService, private router: Router, public md: MarkdownParserService, public util:UtilitiesService, private http: HttpClient) { }
 
   carousel: any = [];
 
-
   currentSlide = 0;
-
 
   next(){
     let res = this.currentSlide + 1;
@@ -44,12 +45,12 @@ export class MiniCarouselComponent implements OnInit {
     }
   }
 
-  categoryID: string;
-  @Input() set category(catId){
+  listId: string;
+  @Input() set playlistId(catId){
     if(this.util.isNullOrEmpty(catId)){
 
     }else{
-      this.categoryID = catId;
+      this.listId = catId;
     }
   }
 
@@ -63,18 +64,31 @@ export class MiniCarouselComponent implements OnInit {
   }
 
   createBind(){
-    return '#' + this.categoryID;
+    return '#' + this.listId;
   }
 
   ngOnInit() {
-    this.contentfulService.getBlogs((Object.assign({ content_type: 'blogPost' }, { links_to_entry: this.categoryID, order: '-sys.createdAt', limit: 3 }))).then(res => {
-      this.carousel = res;
-    });
+    // this.contentfulService.getBlogs((Object.assign({ content_type: 'blogPost' }, { links_to_entry: this.categoryID, order: '-sys.createdAt', limit: 3 }))).then(res => {
+    //   this.carousel = res;
+    // });
+
+    let url = 'https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=3&playlistId=' + this.listId + '&key=AIzaSyD2eeQyVPBpeCIgytCPdie3jd6YAEzCUNc';
+    this.http.get(url).subscribe(
+      res=>{
+        console.log(res['items']);
+        this.carousel = res['items'];
+      }
+    )
   }
 
   goToBlogPage(blog) {
-    this.contentfulService.cacheBlog(blog);
-    this.router.navigate(['/blog', blog.sys.id]);
+    //
+    let videoId = blog.snippet.resourceId.videoId;
+    let playlistId = blog.snippet.playlistId;
+    let url = 'https://www.youtube.com/watch?v='+videoId+'&list='+playlistId;
+    window.open(url,'_blank');
+    // this.contentfulService.cacheBlog(blog);
+    // this.router.navigate(['/blog', blog.sys.id]);
   }
 
 }
