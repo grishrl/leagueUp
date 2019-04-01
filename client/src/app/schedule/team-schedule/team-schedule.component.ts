@@ -19,13 +19,20 @@ export class TeamScheduleComponent implements OnInit {
   rounds: any //local variable to parse received team matches into
   roundsArray:any
 
-  constructor(private Auth: AuthService, private route: ActivatedRoute, private router: Router, private scheduleService:ScheduleService, private util:UtilitiesService, public team: TeamService, private standingsService:StandingsService) {
+  constructor(private Auth: AuthService, private route: ActivatedRoute, private router: Router, private scheduleService:ScheduleService, public util:UtilitiesService, public team: TeamService, private standingsService:StandingsService) {
     //get the ID from the route
     if (this.route.snapshot.params['id']) {
       this.recTeam = this.route.snapshot.params['id'];
     }
    }
 
+  showDeadlineText(match){
+    let ret = true;
+    if (match.scheduledTime && match.scheduledTime.startTime){
+      ret = false;
+    }
+    return ret;
+  }
 
   scheduleMatch(id){
     this.router.navigate(['schedule/scheduleMatch', id]);
@@ -37,8 +44,8 @@ export class TeamScheduleComponent implements OnInit {
     let ret = false;
     if (match['scheduleDeadline']){
       let intDate = parseInt(match['scheduleDeadline']);
-      
-      if (this.todayDate > intDate){
+      let weekAgo = intDate - 604800000;
+      if (this.todayDate > weekAgo){
         ret = true;
       }
     }

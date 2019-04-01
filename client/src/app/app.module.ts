@@ -90,7 +90,7 @@ import { EventDisplayComponent } from './events/event-display/event-display.comp
 import { EventCreateComponent } from './admin/events/event-create/event-create.component';
 import { EventListComponent } from './admin/events/event-list/event-list.component';
 import { GeneralImageUploadComponent } from './general-image-upload/general-image-upload.component';
-
+import { MiniCarouselComponent } from './mini-carousel/mini-carousel.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -171,7 +171,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     EventDisplayComponent,
     EventCreateComponent,
     EventListComponent,
-    GeneralImageUploadComponent
+    GeneralImageUploadComponent,
+    MiniCarouselComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

@@ -18,7 +18,7 @@
     <div class="row">
         <div class="col">
             <mat-form-field>
-                <mat-select placeholder="Division:" [(ngModel)]="selectedWeek" disableOptionCentering>
+                <mat-select placeholder="Week: #" [(ngModel)]="selectedWeek" disableOptionCentering>
                     <mat-option *ngFor="let week of weeks; let i = index" [value]="week">{{week}}</mat-option>
                 </mat-select>
             </mat-form-field>
@@ -40,7 +40,7 @@
     </div>
     <div class="row">
         <div class="col">
-            <button (click)="createDeadline()" class="btn btn-info">Set Scheduling Deadlines!</button>
+            <button (click)="createDeadline()" class="btn btn-info">Set Play Deadlines!</button>
         </div>
     </div>
 
