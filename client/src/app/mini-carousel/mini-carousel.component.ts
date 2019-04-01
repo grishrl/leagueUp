@@ -75,7 +75,6 @@ export class MiniCarouselComponent implements OnInit {
     let url = 'https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=3&playlistId=' + this.listId + '&key=AIzaSyD2eeQyVPBpeCIgytCPdie3jd6YAEzCUNc';
     this.http.get(url).subscribe(
       res=>{
-        console.log(res['items']);
         this.carousel = res['items'];
       }
     )
