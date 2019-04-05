@@ -27,7 +27,8 @@ const userSchema = new Schema({
     "lastTouched": Number,
     "replays": [String],
     "parseStats": Boolean,
-    "smurfAccount": Boolean
+    "smurfAccount": Boolean,
+    "history": [Object] //history of player in NGS
 });
 
 

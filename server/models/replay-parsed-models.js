@@ -7,7 +7,8 @@ const replayScheam = new Schema({
     "players": Object,
     "status": Number,
     "fullyAssociated": Boolean,
-    "systemId": String
+    "systemId": String,
+    "season": Number
 }, {
     strict: false,
     useNestedStrict: false
