@@ -24,9 +24,7 @@ export class ImageUploadComponent implements OnInit {
 
   _embedded:boolean=false;
   @Input() set embedded(embedded){
-    console.log('embedded ', embedded, this.util.isNullOrEmpty(embedded))
     if(!this.util.isNullOrEmpty(embedded)){
-      console.log('asdf');
       this._embedded = embedded;
     }
   }
@@ -41,11 +39,8 @@ export class ImageUploadComponent implements OnInit {
   }
 
   @Input() set teamLogo(img){
-    if (img != null && img != undefined && img.length) {
-      console.log(img);
-      
+    if (img != null && img != undefined && img.length) {      
       this.currentImage = this.teamService.imageFQDN(encodeURIComponent(img));
-      console.log(this.currentImage);
     } else {
       this.currentImage = null;
     }
@@ -66,7 +61,6 @@ export class ImageUploadComponent implements OnInit {
   removeImage(){
     this.admin.teamRemoveLogo(this._teamName).subscribe(
       res=>{
-        console.log(res);
         this.currentImage = `https://placehold.it/${this.widthPx}x${this.heightPx}`;
       },
       err=>{

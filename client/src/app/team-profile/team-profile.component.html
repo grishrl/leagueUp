@@ -117,7 +117,7 @@
                                 Team name is required
                             </mat-error>
                         </mat-form-field>
-                        <mat-form-field class="mat-FullWidth">
+                        <mat-form-field class="mat-FullWidth" *ngIf="showDivision">
                             <input matInput placeholder="Team Division" [(ngModel)]="returnedProfile.divisionDisplayName" disabled="true">
                         </mat-form-field>
                         <mat-form-field class="mat-FullWidth">
@@ -218,15 +218,19 @@
                 <div class="row mt-3">
                     <div class="col">
                         <div class="row mt-3" *ngFor="let player of displayMembersLeft">
+                            <!-- player name -->
                             <div class="col-7 verticalAlign">
-                                <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]"><i *ngIf="player.displayName == returnedProfile.captain" class="fas fa-crown"></i> {{player.displayName}}</a>
-
+                                <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]">
+                                    <i *ngIf="player.displayName == returnedProfile.captain" class="fas fa-crown"></i> {{player.displayName}}
+                                </a>
                             </div>
+                            <!-- leave button : shows for user only -->
                             <div *ngIf="showLeaveTeam(player.displayName)" class="col">
                                 <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)">
                                 Leave Team 
                             </button>
                             </div>
+                            <!-- remove from team : shows for admin and captain -->
                             <div *ngIf="!editOn" class="col">
                                 <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)"> X </button>
                             </div>
@@ -234,15 +238,19 @@
                     </div>
                     <div class="col">
                         <div class="row mt-3" *ngFor="let player of displayMembersRight">
+                            <!-- player name -->
                             <div class="col">
-                                <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]"><i *ngIf="player.displayName == returnedProfile.captain"
-    class="fas fa-crown"></i>{{player.displayName}}</a>
+                                <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]">
+                                    <i *ngIf="player.displayName == returnedProfile.captain" class="fas fa-crown"></i> {{player.displayName}}
+                                </a>
                             </div>
+                            <!-- leave button : shows for user only -->
                             <div *ngIf="showLeaveTeam(player.displayName)" class="col">
                                 <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)">
                                 Leave Team 
                             </button>
                             </div>
+                            <!-- remove from team : shows for admin and captain -->
                             <div *ngIf="!editOn" class="col">
                                 <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)"> X </button>
                             </div>
