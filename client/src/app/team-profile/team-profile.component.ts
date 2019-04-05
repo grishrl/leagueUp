@@ -81,7 +81,7 @@ export class TeamProfileComponent implements OnInit {
   }
 
   //constructor
-  constructor(private auth: AuthService, public user: UserService, public timezone: TimezoneService, private team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router: Router,
+  constructor(public auth: AuthService, public user: UserService, public timezone: TimezoneService, private team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router: Router,
     private admin:AdminService, private util:UtilitiesService, private requestService:RequestService, public heroProfile: HotsProfileService) {
     this.teamName = team.realTeamName(this.route.snapshot.params['id']);
   }
@@ -578,7 +578,7 @@ export class TeamProfileComponent implements OnInit {
       this.nameControl.setErrors({ required: true });
       valid = false;
     } else {
-      let regEx = new RegExp(/[%_]/gm);
+      let regEx = new RegExp(/[%_\/\\`#]/gm);
       if (regEx.test(this.returnedProfile.teamName)) {
         valid = false;
         this.nameControl.setErrors({ invalidCharacters: true });
@@ -614,7 +614,7 @@ export class TeamProfileComponent implements OnInit {
       this.displayMembersRight = [];
     }
     //PENDING MEMBERS
-    if (this.returnedProfile.pendingMembers.length > 3) {
+    if (this.returnedProfile.pendingMembers && this.returnedProfile.pendingMembers.length > 3) {
       let half = Math.round(this.returnedProfile.pendingMembers.length / 2);
       for (var i = 0; i < half; i++) {
         this.displayPendingMembersLeft.push(this.returnedProfile.pendingMembers[i]);

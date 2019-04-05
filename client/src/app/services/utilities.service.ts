@@ -14,6 +14,9 @@ export class UtilitiesService {
     if (dat == null || dat == undefined) {
       return true;
     }
+    if(typeof dat == 'boolean'){
+      return false;
+    }
     if (Array.isArray(dat)) {
       if (dat.length == 0) {
         return true;
