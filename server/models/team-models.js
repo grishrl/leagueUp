@@ -32,7 +32,8 @@ const teamSchema = new Schema({
     "pendingMembers": [miniUser],
     "lastTouched": Number,
     "replays": [String],
-    "parseStats": Boolean
+    "parseStats": Boolean,
+    "history": [Object]
 });
 
 const Team = mongoose.model('team', teamSchema);

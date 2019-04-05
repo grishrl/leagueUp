@@ -3,7 +3,8 @@ const Schema = mongoose.Schema;
 
 const statisticsModel = new Schema({
     "stats": Object,
-    "associateId": Object
+    "associateId": Object,
+    "season": Number
 }, {
     strict: false,
     useNestedStrict: false

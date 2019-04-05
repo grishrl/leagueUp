@@ -22,7 +22,7 @@
 
                             <div class="row mt-3" *ngFor="let match of rounds[round]">
                                 <div class="col">
-                                    <div class="row" *ngIf="showDeadlineText(match)">
+                                    <div class="row mb-3" *ngIf="showDeadlineText(match)">
                                         <div class="col text-center">
                                             <div class="schedule-deadline mx-auto p-3">
                                                 <div *ngIf="match.friendlyDeadline">Schedule match by: {{util.getFormattedDate(match.scheduleDeadline-604800000, "dddd M/D/YYYY")}}
@@ -33,7 +33,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <app-match-view [passMatch]="match"></app-match-view>
+                                    <app-match-view-verticle [passMatch]="match"></app-match-view-verticle>
                                     <div class="row mt-2">
                                         <div class="col text-center">
                                             <span *ngIf="!match.scheduledTime">

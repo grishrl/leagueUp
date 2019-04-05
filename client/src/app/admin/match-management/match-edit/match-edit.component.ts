@@ -71,6 +71,8 @@ export class MatchEditComponent implements OnInit {
   }
 
   saveMatch(match){
+
+    
     let submittable = true;
 
     if (this.homeScore != undefined && this.homeScore != null){
@@ -105,6 +107,7 @@ export class MatchEditComponent implements OnInit {
     }
 
     if(submittable){
+      console.log(match);
       this.adminService.matchUpdate(match).subscribe(
         (res) => {
           this.ngOnInit();
