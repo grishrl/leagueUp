@@ -196,7 +196,12 @@ export class UtilitiesService {
     } else {
 
     }
-
     return imgFQDN;
+  }
+
+
+  replayFQDN(replay) {
+    let url = 'https://s3.amazonaws.com/' + environment.s3bucketReplays + '/' + replay;
+    return url;
   }
 }

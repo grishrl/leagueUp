@@ -611,13 +611,12 @@ router.post('/removeMember', passport.authenticate('jwt', {
 router.post('/uploadLogo', passport.authenticate('jwt', {
     session: false
 }), confirmCaptain, (req, res) => {
+
     const path = '/team/uploadLogo';
     let uploadedFileName = "";
 
     let teamName = req.body.teamName;
     let dataURI = req.body.logo;
-
-    var decoded = Buffer.byteLength(dataURI, 'base64');
 
     //construct log object
     let logObj = {};
@@ -626,98 +625,12 @@ router.post('/uploadLogo', passport.authenticate('jwt', {
     logObj.target = teamName;
     logObj.logLevel = 'STD';
 
-    if (decoded.length > 2500000) {
-        logObj.logLevel = 'ERROR';
-        logObj.error = 'File was too big';
-        res.status(500).send(util.returnMessaging(path, "File is too big!", false, null, null, logObj));
-    } else {
-
-        var png = dataURI.indexOf('png');
-        var jpg = dataURI.indexOf('jpg');
-        var jpeg = dataURI.indexOf('jpeg');
-        var gif = dataURI.indexOf('gif');
-
-        var stamp = Date.now()
-        stamp = stamp.toString();
-        stamp = stamp.slice(stamp.length - 4, stamp.length);
-
-        uploadedFileName += teamName + stamp + "_logo.png";
-
-
-        var buf = new Buffer.from(dataURI.replace(/^data:image\/\w+;base64,/, ""), 'base64');
-        // var buf = new Buffer.from(dataURI, 'base64');
-
-        var data = {
-            Key: uploadedFileName,
-            Body: buf,
-            ContentEncoding: 'base64',
-            ContentType: 'image/png'
-        };
-        s3Bucket.putObject(data, function(err, data) {
-            if (err) {
-                //log object
-                let sysObj = {};
-                sysObj.actor = 'SYSTEM';
-                sysObj.action = 'error uploading to AWS ';
-                sysObj.logLevel = 'ERROR';
-                sysObj.error = err;
-                sysObj.location = path;
-                sysObj.target = teamName;
-                sysObj.timeStamp = new Date().getTime();
-                logger(sysObj);
-            } else {
-                //log object
-                let sysObj = {};
-                sysObj.actor = 'SYSTEM';
-                sysObj.action = 'uploaded to AWS ';
-                sysObj.logLevel = 'STD';
-                sysObj.location = path;
-                sysObj.target = teamName;
-                sysObj.timeStamp = new Date().getTime();
-                logger(sysObj);
-            }
+    uploadTeamLogo(path, dataURI, teamName).then(rep => {
+            res.status(200).send(util.returnMessaging(path, "Image Uploaded.", false, null, rep.eo, logObj))
+        },
+        err => {
+            res.status(500).send(util.returnMessaging(path, "err.message", err, null, null, logObj))
         });
-
-        let lower = teamName.toLowerCase();
-        Team.findOne({
-            teamName_lower: lower
-        }).then((foundTeam) => {
-            if (foundTeam) {
-                if (foundTeam.captain == req.user.displayName) {
-                    var logoToDelete;
-                    if (foundTeam.logo) {
-                        logoToDelete = foundTeam.logo;
-                    }
-                    if (logoToDelete) {
-                        deleteFile(logoToDelete);
-                    }
-                    foundTeam.logo = uploadedFileName;
-                    foundTeam.save().then((savedTeam) => {
-                        if (savedTeam) {
-                            res.status(200).send(util.returnMessaging(path, "File uploaded", false, savedTeam, null, logObj));
-                        }
-                    }, (err) => {
-                        deleteFile(filePath);
-                        res.status(500).send(util.returnMessaging(path, "Error uploading file", err, null, null, logObj));
-                    })
-                } else {
-                    deleteFile(filePath);
-                    logObj.logLevel = 'ERROR';
-                    logObj.error = 'Actor was not captain'
-                    res.status(500).send(util.returnMessaging(path, "Error uploading file", false, null, null, logObj));
-                }
-            } else {
-                deleteFile(filePath);
-                logObj.logLevel = 'ERROR';
-                logObj.error = 'Team was not found';
-                res.status(500).send(util.returnMessaging(path, "Error uploading file", false, null, null, logObj));
-            }
-
-        }, (err) => {
-            deleteFile(filePath);
-            res.status(500).send(util.returnMessaging(path, "Error uploading file", err, null, null, logObj));
-        });
-    }
 
 });
 
@@ -795,6 +708,136 @@ router.post('/get/sys/dat', passport.authenticate('jwt', {
         }
     )
 });
+
+class CustomError extends Error {
+    constructor(reason, message) {
+        // Pass remaining arguments (including vendor specific ones) to parent constructor
+        super(message);
+
+        // Maintains proper stack trace for where our error was thrown (only available on V8)
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, CustomError);
+        }
+
+        this.name = 'CustomError';
+        // Custom debugging information
+        this.reason = reason;
+        this.date = new Date();
+    }
+}
+
+
+async function uploadTeamLogo(path, dataURI, teamName) {
+    let uploadedFileName = '';
+    var decoded = Buffer.byteLength(dataURI, 'base64');
+
+    if (decoded.length > 2500000) {
+        let error = new CustomError('fileSize', 'File is too big!');
+        throw error;
+    } else {
+        var png = dataURI.indexOf('png');
+        var jpg = dataURI.indexOf('jpg');
+        var jpeg = dataURI.indexOf('jpeg');
+        var gif = dataURI.indexOf('gif');
+        var stamp = Date.now();
+        stamp = stamp.toString();
+        stamp = stamp.slice(stamp.length - 4, stamp.length);
+        uploadedFileName += teamName + stamp + "_logo.png";
+        var buf = new Buffer.from(dataURI.replace(/^data:image\/\w+;base64,/, ""), 'base64');
+        var data = {
+            Key: uploadedFileName,
+            Body: buf,
+            ContentEncoding: 'base64',
+            ContentType: 'image/png'
+        };
+        let x = 'aaaa'
+            // s3Bucket.putObject(data, function(err, data) {
+            //     if (err) {
+            //         let sysObj = {};
+            //         sysObj.actor = 'SYSTEM';
+            //         sysObj.action = 'error uploading to AWS ';
+            //         sysObj.logLevel = 'ERROR';
+            //         sysObj.error = err;
+            //         sysObj.location = path;
+            //         sysObj.target = teamName;
+            //         sysObj.timeStamp = new Date().getTime();
+            //         logger(sysObj);
+            //     } else {
+            //         console.log('LOGGING X ', x);
+            //         let sysObj = {};
+            //         sysObj.actor = 'SYSTEM';
+            //         sysObj.action = 'uploaded to AWS ';
+            //         sysObj.logLevel = 'STD';
+            //         sysObj.location = path;
+            //         sysObj.target = teamName;
+            //         sysObj.timeStamp = new Date().getTime();
+            //         logger(sysObj);
+            //     }
+            // });
+        let successObject = {};
+        let putObjectPromise = s3Bucket.putObject(data).promise();
+        let s3await = await putObjectPromise.then(
+            s3pass => {
+                return { "cont": true, "eo": s3pass };
+                // console.log('s3 success!');
+            },
+            s3fail => {
+                return {
+                    "cont": false,
+                    "eo": s3fail
+                };
+                // console.log('S3 failure!');
+            }
+        )
+        if (s3await.cont) {
+            let lower = teamName.toLowerCase();
+            let foundTeam = await Team.findOne({
+                teamName_lower: lower
+            }).then((foundTeam) => {
+                if (foundTeam) {
+                    var logoToDelete;
+                    if (foundTeam.logo) {
+                        logoToDelete = foundTeam.logo;
+                    }
+                    if (logoToDelete) {
+                        deleteFile(logoToDelete);
+                    }
+                    return foundTeam;
+                } else {
+                    deleteFile(filePath);
+                    let error = new CustomError('queryError', 'Team not found!');
+                    throw error;
+                }
+            }, (err) => {
+                deleteFile(filePath);
+                let error = new CustomError('queryError', 'Team not found!');
+                throw error;
+            });
+            if (foundTeam) {
+                foundTeam.logo = uploadedFileName;
+                let bubbleUp = await foundTeam.save().then((savedTeam) => {
+                    if (savedTeam) {
+                        return savedTeam;
+                    }
+                }, (err) => {
+                    deleteFile(filePath);
+                    let error = new CustomError('genErr', 'Error uploading file!');
+                    throw error;
+                });
+                if (bubbleUp) {
+                    successObject.message = "File uploaded";
+                    successObject.eo = bubbleUp.toObject();
+                }
+            }
+
+        } else {
+            let error = new CustomError('uploadError', 's3 upload failure!');
+            throw error;
+        }
+
+        return successObject;
+    }
+}
 
 function deleteFile(path) {
     let data = {
