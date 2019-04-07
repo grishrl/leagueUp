@@ -1,0 +1,99 @@
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark fixed-top">
+    <div class="container">
+        <a class="finger" routerLink="" (click)="navGo('remove')"><img class="ngsImg" src="/assets/Lettermark.png"></a>
+        <!-- data-toggle="collapse" data-target="#navbarResponsive" -->
+        <button class="navbar-toggler navbar-toggler-right" type="button" (click)="navGo()" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+        <!-- class="collapse navbar-collapse" -->
+        <div [ngClass]="navBarClass" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <!--   [routerLink]="['/blog','3BLsIya6ZiWQWka4IeUw2']" -->
+                    <a class="nav-link finger" href="https://www.heroesprofile.com/Series" target="_blank">Statistics</a>
+                </li>
+                <li class="nav-item">
+                    <!--   [routerLink]="['/blog','3BLsIya6ZiWQWka4IeUw2']" -->
+                    <a class="nav-link finger" [routerLink]="['/blog','1JtsmWFT5YB9hfDewXMx75']">FAQ</a>
+                </li>
+                <li class="nav-item">
+                    <!--   [routerLink]="['/blog','3BLsIya6ZiWQWka4IeUw2']" -->
+                    <a class="nav-link finger" [routerLink]="['/rules']" (click)="navGo('/rules')">Rules</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle finger" id="divisionDropdown" role="button" data-toggle="dropdown" aria-expanded="false">Divisions</a>
+                    <div class="dropdown-menu">
+                        <!-- [routerLink]="['/division/',division.divisionConcat]" -->
+                        <a class="dropdown-item finger" *ngFor="let division of divisions" [routerLink]="['/division/',division.divisionConcat]" (click)="navGo('/division/',division.divisionConcat)">{{division.displayName}}</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <!--  [routerLink]="['/calendar']" -->
+                    <a class="nav-link finger" [routerLink]="['/calendar']" (click)="navGo('/calendar')">Calendar</a>
+                </li>
+                <li class="nav-item">
+                    <!-- [routerLink]="['/blog']" -->
+                    <a class="nav-link finger" [routerLink]="['/blog']" (click)="navGo('/blog')">Blog</a>
+                </li>
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item" *ngIf="!Auth.isAuthenticated() else loggedIn">
+                        <!-- [routerLink]="['/login']" -->
+                        <a class="nav-link finger" [routerLink]="['/login']" (click)="navGo('/login')">Login</a>
+                    </li>
+                    <ng-template #loggedIn>
+                        <li class="nav-item dropdown">
+
+
+                            <div class="nav-link dropdown-toggle finger" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
+                                <span>{{Auth.getUser()}}</span>
+                                <span *ngIf="userMessages>0" class="myFaStack fa" style="line-height:inherit;">
+                                <i class="far fa-envelope fa-stack-1x"></i>
+                                <span class="fa-stack-1x">!</span>
+                                </span>
+                                <!-- <i *ngIf="userMessages>0" class="material-icons">email</i><span>{{userMessages}}</span> -->
+                                <!-- <span style="position: relative; left: -20px; color: black; top: -5px;" *ngIf="userMessages>0">{{userMessages}}</span> -->
+                            </div>
+
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item finger" [routerLink]="['/profile/',user.routeFriendlyUsername(Auth.getUser())]" (click)="navGo('/profile/',user.routeFriendlyUsername(Auth.getUser()))">Profile</a>
+                                <!-- message center -->
+                                <a class="dropdown-item finger" [routerLink]="['/messageCenter']" (click)="navGo('/messageCenter')">
+                                    <div>
+                                        <span>Message Center</span>
+                                        <span class="badge badge-pill ml-1 badge-success" *ngIf="userMessages>0"> {{userMessages}} </span>
+                                    </div>
+                                </a>
+
+                                <div *ngIf="Auth.getTeam(); else noTeam">
+                                    <a class="dropdown-item finger" [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(Auth.getTeam())]" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( Auth.getTeam() ) )">Team</a>
+                                    <!-- [routerLink]="['/schedule/teamSchedule']" -->
+                                    <a class="dropdown-item finger" [routerLink]="['/schedule/teamSchedule']" (click)="navGo('/schedule/teamSchedule')">Schedule</a>
+                                    <div *ngIf="Auth.getCaptain() && Auth.getCaptain() != 'false'">
+
+                                        <a class="dropdown-item" [routerLink]="['/findPlayers']" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( Auth.getTeam() ) )">Find Players</a>
+                                        <a class="dropdown-item finger" [routerLink]="['/reporting',team.routeFriendlyTeamName( Auth.getTeam() )]" (click)="navGo('/reporting/',team.routeFriendlyTeamName( Auth.getTeam() ) )">Reporting</a>
+                                    </div>
+
+                                </div>
+                                <ng-template #noTeam>
+                                    <!-- [routerLink]="['/teamCreate']" -->
+                                    <a class="dropdown-item finger" [routerLink]="['/teamCreate']" (click)="navGo('/teamCreate')">Create
+  Team</a>
+
+                                    <a class="dropdown-item finger" [routerLink]="['/findTeams']" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( teamName ) )">Find Team</a>
+                                </ng-template>
+                                <a class="dropdown-item finger" [routerLink]="['/replayBrowser']" (click)="navGo()">Replay Browser</a>
+                                <a *ngIf="Auth.getAdmin() && Auth.getAdmin().length>0" class="dropdown-item finger" [routerLink]="['/_admin/dashboard']" (click)="navGo('/_admin/dashboard')">Admin Dashboard</a>
+                                <a *ngIf="Auth.getCaster()" class="dropdown-item finger" data-toggle="collapse" [routerLink]="['/_casterDashboard']" (click)="navGo('/_casterDashboard')">Caster
+  Dashboard</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item finger" (click)="logout()">Logout</a>
+                            </div>
+                        </li>
+                    </ng-template>
+
+                </ul>
+            </ul>
+        </div>
+    </div>
+</nav>
