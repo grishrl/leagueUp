@@ -92,7 +92,7 @@ import { EventListComponent } from './admin/events/event-list/event-list.compone
 import { GeneralImageUploadComponent } from './general-image-upload/general-image-upload.component';
 import { MiniCarouselComponent } from './mini-carousel/mini-carousel.component';
 import { LargeCarouselComponent } from './large-carousel/large-carousel.component';
-import { SlickCarouselModule } from 'ngx-slick-carousel';
+
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -199,8 +199,7 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     }),
     SocketIoModule.forRoot(config),
     DragDropModule,
-    DragScrollModule,
-    SlickCarouselModule
+    DragScrollModule
   ],
   providers: [
     {
