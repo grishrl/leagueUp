@@ -2,7 +2,6 @@ import { Component, OnInit, Input } from '@angular/core';
 import { ContentfulService } from '../services/contentful.service';
 import { Router } from '@angular/router';
 import { MarkdownParserService } from '../services/markdown-parser.service';
-import { environment } from 'src/environments/environment';
 import { UtilitiesService } from '../services/utilities.service';
 
 @Component({
