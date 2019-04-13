@@ -54,9 +54,11 @@ async function calulateStandings(division, season) {
             standing['dominations'] = 0;
             standing['id'] = team;
             standing['matchesPlayed'] = 0;
+
             matchesForDivision.forEach(match => {
                 if (match.away.id == team) {
                     standing['teamName'] = match.away.teamName;
+                    standing['logo'] = match.away.logo;
                     let score = match.away.score
                     let dominator = match.away.dominator;
                     if (match.reported) {
@@ -173,10 +175,12 @@ async function addTeamNamesToMatch(teams, found) {
                     }
                     if (teamid == homeid) {
                         match.home['teamName'] = team.teamName;
+                        match.home['logo'] = team.logo;
                         match.home['teamName_lower'] = team.teamName_lower;
                     }
                     if (teamid == awayid) {
                         match.away['teamName'] = team.teamName;
+                        match.away['logo'] = team.logo;
                         match.away['teamName_lower'] = team.teamName_lower;
                     }
                 });

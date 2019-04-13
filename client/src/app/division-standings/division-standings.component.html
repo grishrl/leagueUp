@@ -1,0 +1,25 @@
+<div class="club-ranking">
+    <!-- TODO: router link -->
+    <h5><a>Division Rankings</a></h5>
+    <div class="info-ranking">
+
+        <div class="text-center pt-2">
+
+            <app-division-selector [inputDiv]="passDiv" (selectedDiv)="selectedDiv($event)"></app-division-selector>
+
+        </div>
+        <ul>
+            <li *ngFor="let standing of standings">
+                <span class="position">
+          {{standing.standing}}
+        </span>
+                <a href="single-team.html">
+                    <img src="team.imageFQDN(standing.logo)" alt=""> {{standing.teamName}}
+                </a>
+                <span class="points">
+          {{standing.points}}
+        </span>
+            </li>
+        </ul>
+    </div>
+</div>

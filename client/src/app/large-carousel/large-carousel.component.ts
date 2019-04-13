@@ -33,6 +33,9 @@ export class LargeCarouselComponent implements OnInit {
 
   //slide model
   currentSlide = {
+    sys:{
+      id:null
+    },
     fields:{
       title:'',
       description:'',

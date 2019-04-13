@@ -80,12 +80,17 @@ export class ScheduleService {
     return this.httpService.httpPost(url, payload, true);
   }
 
-  getReportedMatches(){
+  getReportedMatches(showSnack?){
     let url = 'schedule/get/reported/matches';
     let payload = {
       season:environment.season
     };
-    return this.httpService.httpPost(url, payload, true);
+    if(showSnack != undefined){
+      showSnack = showSnack
+    }else{
+      showSnack = true;
+    }
+    return this.httpService.httpPost(url, payload, showSnack);
   }
 
   //get tournament

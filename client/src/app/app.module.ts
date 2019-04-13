@@ -92,6 +92,9 @@ import { EventListComponent } from './admin/events/event-list/event-list.compone
 import { GeneralImageUploadComponent } from './general-image-upload/general-image-upload.component';
 import { MiniCarouselComponent } from './mini-carousel/mini-carousel.component';
 import { LargeCarouselComponent } from './large-carousel/large-carousel.component';
+import { NewsNoSidebarComponent } from './news-no-sidebar/news-no-sidebar.component';
+import { DivisionStandingsComponent } from './division-standings/division-standings.component';
+import { RecentResultsComponent } from './recent-results/recent-results.component';
 
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
@@ -175,7 +178,10 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     EventListComponent,
     GeneralImageUploadComponent,
     MiniCarouselComponent,
-    LargeCarouselComponent
+    LargeCarouselComponent,
+    NewsNoSidebarComponent,
+    DivisionStandingsComponent,
+    RecentResultsComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
