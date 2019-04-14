@@ -2,6 +2,7 @@ const util = require('../utils');
 const router = require('express').Router();
 const User = require('../models/user-models');
 const TeamSub = require('../subroutines/team-subs');
+const System = require('../models/system-models').system;
 const passport = require("passport");
 
 /*
@@ -141,6 +142,37 @@ router.post('/save', passport.authenticate('jwt', {
         }
 
     });
+
+router.get('/frontPageStats', (req, res) => {
+
+    const path = '/user/frontPageStats';
+    var stat = req.query.stat;
+    console.log('stat ', stat);
+    if (stat) {
+        let query = {
+            '$and': [{
+                    'dataName': 'TopStatList'
+                },
+                {
+                    'stat': stat
+                }
+            ]
+        }
+
+        System.findOne(query).then(
+            found => {
+                res.status(200).send(util.returnMessaging(path, 'Found stat/', false, found));
+            },
+            err => {
+                res.status(400).send(util.returnMessaging(path, 'Error getting stat.', err, null, null));
+            }
+        );
+    } else {
+        //stat not recieved
+    }
+
+
+});
 
 
 function removeUneeded(user) {

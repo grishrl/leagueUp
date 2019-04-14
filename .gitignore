@@ -92,3 +92,6 @@ server/routes/words
 
 # Angular client build output
 client/dist
+
+#custom ignore
+server/uuid.js

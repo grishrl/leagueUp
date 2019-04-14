@@ -1,0 +1,19 @@
+<div class="player-ranking">
+    <h5><a href="group-list.html">Top {{currStat}}</a></h5>
+    <div class="info-player">
+        <ul>
+            <li *ngFor="let stat of stats; let i = index">
+                <span class="position">
+                      {{i+1}}
+          </span>
+                <a href="single-team.html">
+                    <!-- <img src="assets/img/players/1.jpg" alt="">  -->
+                    {{stat.name}}
+                </a>
+                <span class="points">
+            {{stat.points}}
+          </span>
+            </li>
+        </ul>
+    </div>
+</div>

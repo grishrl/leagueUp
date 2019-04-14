@@ -95,6 +95,7 @@ import { LargeCarouselComponent } from './large-carousel/large-carousel.componen
 import { NewsNoSidebarComponent } from './news-no-sidebar/news-no-sidebar.component';
 import { DivisionStandingsComponent } from './division-standings/division-standings.component';
 import { RecentResultsComponent } from './recent-results/recent-results.component';
+import { TopStatsWidgetComponent } from './top-stats-widget/top-stats-widget.component';
 
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
@@ -181,7 +182,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     LargeCarouselComponent,
     NewsNoSidebarComponent,
     DivisionStandingsComponent,
-    RecentResultsComponent
+    RecentResultsComponent,
+    TopStatsWidgetComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
