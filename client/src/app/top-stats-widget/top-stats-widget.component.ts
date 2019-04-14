@@ -12,6 +12,7 @@ export class TopStatsWidgetComponent implements OnInit {
 
   stats=[]
   currStat;
+  displayStat;
 
   statList=[
     'kills'
@@ -20,6 +21,8 @@ export class TopStatsWidgetComponent implements OnInit {
   ngOnInit() {
     let randomInt = Math.floor(Math.random() * this.statList.length);
     this.currStat = this.statList[randomInt];
+
+    this.displayStat = this.currStat.substring(0,1).toUpperCase()+this.currStat.substring(1, this.currStat.length);
     this.hp.getTopStats(this.currStat).subscribe(
       res=>{
         // console.log(res);
