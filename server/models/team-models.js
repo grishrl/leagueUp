@@ -32,7 +32,8 @@ const teamSchema = new Schema({
     "pendingMembers": [miniUser],
     "lastTouched": Number,
     "replays": [String],
-    "parseStats": Boolean
+    "parseStats": Boolean,
+    "ticker": String //short aberviation of team name
 });
 
 const Team = mongoose.model('team', teamSchema);
