@@ -191,7 +191,12 @@ export class TournamentViewComponent implements OnInit {
         headMatch = match;
       }
     });
-    return this.returnMatchById(headMatch['idChildren'][0]);
+    if (headMatch['idChildren']){
+      return this.returnMatchById(headMatch['idChildren'][0]);
+    }else{
+      return undefined;
+    }
+    
     
   }
 

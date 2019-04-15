@@ -249,7 +249,7 @@
                             </div>
                         </section>
                         <section class="round semifinals">
-                            <div class="winners">
+                            <div class="winners" *ngIf="tournamentObject.semiFinalRight && tournamentObject.semiFinalLeft">
                                 <div class="matchups">
                                     <div class="matchup" *ngIf="tournamentObject.semiFinalLeft">
                                         <div class="participants border border-secondary">
