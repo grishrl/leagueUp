@@ -1,8 +1,8 @@
 <div class="row">
     <div class="col text-center">
-        <div *ngIf="recMatch.friendlyDeadline">Schedule match by: {{util.getFormattedDate(scheduleDeadline, "dddd M/D/YYYY")}}
+        <div *ngIf="recMatch && recMatch.friendlyDeadline">Schedule match by: {{util.getFormattedDate(scheduleDeadline, "dddd M/D/YYYY")}}
         </div>
-        Play match by: <span *ngIf="recMatch.friendlyDeadline else freeGame">{{match.friendlyDeadline}}</span>
+        Play match by: <span *ngIf="recMatch && recMatch.friendlyDeadline else freeGame">{{match.friendlyDeadline}}</span>
         <ng-template #freeGame> Open Game or No Deadline Set Yet </ng-template>
 
     </div>
@@ -10,7 +10,7 @@
 <app-match-view [passMatch]="recMatch"></app-match-view>
 <div class="row mt-2">
     <div class="col text-center">
-        <span *ngIf="!recMatch.scheduledTime">
+        <span *ngIf="recMatch && !recMatch.scheduledTime">
       <div class="p-1 text-danger" *ngIf="checkDate(recMatch) else timeElapsed">
         This match was not scheduled before it's due date contact an admin!
       </div>
