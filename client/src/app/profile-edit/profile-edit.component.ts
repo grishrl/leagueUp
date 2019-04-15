@@ -14,6 +14,7 @@ import { DeleteConfrimModalComponent } from '../modal/delete-confrim-modal/delet
 import { UtilitiesService } from '../services/utilities.service';
 import { HotsProfileService } from '../services/hots-profile.service';
 import { TeamService } from '../services/team.service';
+import { AdminService } from '../services/admin.service';
 
 @NgModule({
   imports:[
@@ -31,7 +32,7 @@ export class ProfileEditComponent implements OnInit {
   navigationSubscription
 
   constructor(public timezone: TimezoneService, private user: UserService, public auth: AuthService, private router: Router, private route: ActivatedRoute, 
-    public hotsLogsService: HotsLogsService, public dialog: MatDialog, private util:UtilitiesService, public hotsProfile: HotsProfileService, public team:TeamService) {
+    public hotsLogsService: HotsLogsService, public dialog: MatDialog, private util:UtilitiesService, public hotsProfile: HotsProfileService, public team:TeamService, private admin:AdminService) {
 
     this.navigationSubscription = this.router.events.subscribe((e: any) => {
 
@@ -132,6 +133,66 @@ formControlledEnable(){
       this.providedProfile = profile;
       this.ngOnInit();
     }
+  }
+
+  adminSave(){
+    this.admin.saveUser(this.returnedProfile).subscribe(
+      res=>{
+        // console.log(res);
+      },
+      err=>{
+        console.log(err);
+      }
+    )
+  }
+
+  removeTeam(){
+    this.admin.removeMembers(this.returnedProfile.teamName, this.returnedProfile.displayName).subscribe(
+      res=>{
+        console.log(res);
+        this.returnedProfile.teamId = null;
+        this.returnedProfile.teamName = null;
+      },
+      err=>{
+        console.log(err);
+      }
+    )
+  }
+
+  newTeam(team){
+    this.admin.manualTeamAdd(this.returnedProfile.displayName, team).subscribe(
+      res=>{
+        console.log(res);
+        this.returnedProfile.teamId = res._id;
+        this.returnedProfile.teamName = res.teamName;
+      },
+      err=>{
+        console.log(err);
+      }
+    )
+    // this.team.getTeam(team).subscribe(
+    //   res=>{
+    //     console.log(res);
+    //     this.returnedProfile.teamId = res._id;
+    //     this.returnedProfile.teamName = res.teamName;
+    //   },
+    //   err=>{
+    //     console.log(err);
+    //   }
+    // )
+  }
+
+  embedSource: string = '';
+  @Input() set source(_source) {
+    this.embedSource = _source;
+  }
+  
+  adminShow(){
+    let ret = false;
+    if(this.providedProfile && this.embedSource == 'admin'){
+      ret = true;
+    }
+    return ret;
   }
 
   showInviteToTeamButton(){
@@ -255,27 +316,7 @@ formControlledEnable(){
       //  });
 
        if(!this.hotsLogsUrlReq){
-         this.hotsLogsService.getMMRdisplayName(this.user.routeFriendlyUsername(this.returnedProfile.displayName)).subscribe(
-           res => {
-
-             if (res != 'error') {
-               this.returnedProfile.averageMmr = res.avgMMR;
-               this.returnedProfile['hotsLogsPlayerID'] = res.PlayerID;
-               this.user.saveUser(this.returnedProfile).subscribe((res) => {
-                 if (res) {
-                   this.editOn = true;
-                   this.formControlledDisable();
-                 } else {
-                   alert("error");
-                 }
-               });
-             } else {
-               alert('We could not validate your hots logs, please recheck the URL!');
-               this.hotsLogsUrlReq = true;
-               this.cancel();
-             }
-           }
-         )
+         this.updateUserMMR();
        }
 
        if (this.hotsLogsUrlReq){
@@ -312,6 +353,29 @@ formControlledEnable(){
        console.log('the data was invalid we cant save');
      }
    }
+
+  private updateUserMMR() {
+    this.hotsLogsService.getMMRdisplayName(this.user.routeFriendlyUsername(this.returnedProfile.displayName)).subscribe(res => {
+      if (res != 'error') {
+        this.returnedProfile.averageMmr = res.avgMMR;
+        this.returnedProfile['hotsLogsPlayerID'] = res.PlayerID;
+        this.user.saveUser(this.returnedProfile).subscribe((res) => {
+          if (res) {
+            this.editOn = true;
+            this.formControlledDisable();
+          }
+          else {
+            alert("error");
+          }
+        });
+      }
+      else {
+        alert('We could not validate your hots logs, please recheck the URL!');
+        this.hotsLogsUrlReq = true;
+        this.cancel();
+      }
+    });
+  }
 
   timezoneUpdate(){
     if (this.returnedProfile.timeZone != null || this.returnedProfile.timeZone!=undefined){

@@ -30,3 +30,8 @@
     display: inline-flex;
     vertical-align: middle;
 }
+
+.border-team {
+    border-style: solid;
+    border-color: orange;
+}

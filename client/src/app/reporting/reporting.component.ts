@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ScheduleService } from '../services/schedule.service';
 import { AuthService } from '../services/auth.service';
 import { TeamService } from '../services/team.service';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-reporting',
@@ -30,7 +31,7 @@ export class ReportingComponent implements OnInit {
     }
 
     
-    this.scheduleService.getTeamSchedules(6, getTeam).subscribe(
+    this.scheduleService.getTeamSchedules(environment.season, getTeam).subscribe(
       res => {
         let matches = res;
         if(matches.length == 0){

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
 import { HttpServiceService } from './http-service.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +12,7 @@ export class StandingsService {
     let url = 'standings/get/division';
     let payload = {
       division:div,
-      season:6
+      season:environment.season
     };
     return this.httpService.httpPost(url, payload);
   }

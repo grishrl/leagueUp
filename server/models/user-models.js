@@ -26,7 +26,9 @@ const userSchema = new Schema({
     "discordTag": String,
     "lastTouched": Number,
     "replays": [String],
-    "parseStats": Boolean
+    "parseStats": Boolean,
+    "smurfAccount": Boolean,
+    "history": [Object] //history of player in NGS
 });
 
 

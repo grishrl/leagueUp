@@ -16,6 +16,7 @@ export class UserQuickViewComponent implements OnInit {
   @Input() set userId(usr){
     if(usr != null && usr != undefined){
       this.player = usr;
+      // console.log(this.player);
     } 
   }
 

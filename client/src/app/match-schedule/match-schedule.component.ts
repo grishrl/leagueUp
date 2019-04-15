@@ -15,10 +15,14 @@ export class MatchScheduleComponent implements OnInit {
   todayDate;
   recMatch;
 
-  scheduleDeadline = this.recMatch.scheduleDeadline - 604800000;
+  scheduleDeadline;
 
   ngOnInit() {
     this.todayDate = new Date().getTime();
+
+    if (this.recMatch.scheduleDeadline){
+      this.scheduleDeadline = this.recMatch.scheduleDeadline - 604800000;
+    }
   }
 
   @Input() set team(_team){

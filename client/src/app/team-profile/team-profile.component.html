@@ -15,30 +15,41 @@
                                     <div *ngIf="editOn == true">
                                         <button type="button" (click)="openEdit()" class="btn btn-primary float-right">Edit</button>
                                     </div>
-                                    <div class="row" *ngIf="!editOn">
-                                        <div class="col">
-                                            <div class="dropdown">
-                                                <button type="button" class="mt-1 btn btn-danger dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <div *ngIf="!editOn">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="dropdown">
+                                                    <button type="button" class="mt-1 btn btn-danger dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 <span class="icon-align">
-                                                    <i class="material-icons md-18">settings</i> 
-                                                    Manage 
+                                                  <i class="material-icons md-18">settings</i>
+                                                  Manage
                                                 </span>
-                                            </button>
-                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                    <a class="dropdown-item finger" (click)="openCaptainChangeDialog()"><span class="icon-align"><i class="material-icons">cached</i>Change
-                                                        captain</span></a>
-                                                    <!-- <a class="dropdown-item finger" (click)="openDialog()"><span class="icon-align"><i class="material-icons">delete_forever</i>Delete team</span></a> -->
+                                              </button>
+                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                        <a class="dropdown-item finger" (click)="openCaptainChangeDialog()"><span class="icon-align"><i
+                                                      class="material-icons">cached</i>Change
+                                                    captain</span></a>
+                                                        <!-- <a class="dropdown-item finger" (click)="openDialog()"><span class="icon-align"><i class="material-icons">delete_forever</i>Delete team</span></a> -->
+                                                    </div>
                                                 </div>
+
+                                            </div>
+                                            <div class="col">
+                                                <button type="button" [disabled]="!validate()" (click)="save()" class="mt-1 btn btn-success ">Save</button>
                                             </div>
 
+                                            <div class="col">
+                                                <button type="button" (click)="cancel()" class="mt-1 btn btn-danger">Cancel</button>
+                                            </div>
                                         </div>
-                                        <div class="col">
-                                            <button type="button" [disabled]="!validate()" (click)="save()" class="mt-1 btn btn-success ">Save</button>
-                                        </div>
-                                        <div class="col">
-                                            <button type="button" (click)="cancel()" class="mt-1 btn btn-danger">Cancel</button>
+                                        <div class="row">
+                                            <div class="col">
+                                                <button type="button" (click)="adminRefreshMMR()" class="mt-1 btn btn-info">Update Team
+                                                MMR</button>
+                                            </div>
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -85,9 +96,18 @@
 
                 <div class="row mt-3">
                     <div class="col-sm-12 col-md-5">
-                        <app-image-upload [showEdit]="auth.getUser()===returnedProfile.captain" [teamName]="returnedProfile.teamName" [teamLogo]="returnedProfile.logo"></app-image-upload>
+                        <app-image-upload [showEdit]="auth.getUser()===returnedProfile.captain || componentEmbedded" [embedded]="componentEmbedded" [teamName]="returnedProfile.teamName" [teamLogo]="returnedProfile.logo"></app-image-upload>
                     </div>
                     <div class="col-sm-12 col-md-7">
+                        <mat-form-field class="mat-FullWidth" *ngIf="componentEmbedded">
+                            <input matInput placeholder="Team Id" [(ngModel)]="returnedProfile._id" disabled="true">
+                            <mat-error *ngIf="nameControl.hasError('invalidCharacters')">
+                                Invalid character entered
+                            </mat-error>
+                            <mat-error *ngIf="nameControl.hasError('required')">
+                                Team name is required
+                            </mat-error>
+                        </mat-form-field>
                         <mat-form-field class="mat-FullWidth">
                             <input matInput placeholder="Team Name" [formControl]="nameControl" [(ngModel)]="returnedProfile.teamName" (ngModelChange)="modelChange()">
                             <mat-error *ngIf="nameControl.hasError('invalidCharacters')">
@@ -97,7 +117,7 @@
                                 Team name is required
                             </mat-error>
                         </mat-form-field>
-                        <mat-form-field class="mat-FullWidth">
+                        <mat-form-field class="mat-FullWidth" *ngIf="showDivision">
                             <input matInput placeholder="Team Division" [(ngModel)]="returnedProfile.divisionDisplayName" disabled="true">
                         </mat-form-field>
                         <mat-form-field class="mat-FullWidth">
@@ -198,15 +218,19 @@
                 <div class="row mt-3">
                     <div class="col">
                         <div class="row mt-3" *ngFor="let player of displayMembersLeft">
+                            <!-- player name -->
                             <div class="col-7 verticalAlign">
-                                <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]"><i *ngIf="player.displayName == returnedProfile.captain" class="fas fa-crown"></i> {{player.displayName}}</a>
-
+                                <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]">
+                                    <i *ngIf="player.displayName == returnedProfile.captain" class="fas fa-crown"></i> {{player.displayName}}
+                                </a>
                             </div>
+                            <!-- leave button : shows for user only -->
                             <div *ngIf="showLeaveTeam(player.displayName)" class="col">
                                 <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)">
                                 Leave Team 
                             </button>
                             </div>
+                            <!-- remove from team : shows for admin and captain -->
                             <div *ngIf="!editOn" class="col">
                                 <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)"> X </button>
                             </div>
@@ -214,15 +238,19 @@
                     </div>
                     <div class="col">
                         <div class="row mt-3" *ngFor="let player of displayMembersRight">
+                            <!-- player name -->
                             <div class="col">
-                                <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]"><i *ngIf="player.displayName == returnedProfile.captain"
-    class="fas fa-crown"></i>{{player.displayName}}</a>
+                                <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]">
+                                    <i *ngIf="player.displayName == returnedProfile.captain" class="fas fa-crown"></i> {{player.displayName}}
+                                </a>
                             </div>
+                            <!-- leave button : shows for user only -->
                             <div *ngIf="showLeaveTeam(player.displayName)" class="col">
                                 <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)">
                                 Leave Team 
                             </button>
                             </div>
+                            <!-- remove from team : shows for admin and captain -->
                             <div *ngIf="!editOn" class="col">
                                 <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)"> X </button>
                             </div>

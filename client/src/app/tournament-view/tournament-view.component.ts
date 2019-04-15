@@ -97,20 +97,90 @@ export class TournamentViewComponent implements OnInit {
   arrangeMatches(){
     let obj = {};
     obj['championship'] = this.returnChampionship();
-    obj['semiFinalLeft'] = this.returnMatchById(obj['championship'].idChildren[0]);
-    obj['semiFinalRight'] = this.returnMatchById(obj['championship'].idChildren[1]);
-    obj['quarterFinal1'] = this.returnMatchById(obj['semiFinalLeft'].idChildren[0]);
-    obj['quarterFinal2'] = this.returnMatchById(obj['semiFinalLeft'].idChildren[1]);
-    obj['quarterFinal3'] = this.returnMatchById(obj['semiFinalRight'].idChildren[0]);
-    obj['quarterFinal4'] = this.returnMatchById(obj['semiFinalRight'].idChildren[1]);
-    obj["ro16_1"] = this.returnMatchById(obj['quarterFinal1'].idChildren[0]);
-    obj["ro16_2"] = this.returnMatchById(obj['quarterFinal1'].idChildren[1]);
-    obj["ro16_3"] = this.returnMatchById(obj['quarterFinal2'].idChildren[0]);
-    obj["ro16_4"] = this.returnMatchById(obj['quarterFinal2'].idChildren[1]);
-    obj["ro16_5"] = this.returnMatchById(obj['quarterFinal3'].idChildren[0]);
-    obj["ro16_6"] = this.returnMatchById(obj['quarterFinal3'].idChildren[1]);
-    obj["ro16_7"] = this.returnMatchById(obj['quarterFinal4'].idChildren[0]);
-    obj["ro16_8"] = this.returnMatchById(obj['quarterFinal4'].idChildren[1]);
+
+    if (obj['championship'] && obj['championship'].idChildren[0]){
+      obj['semiFinalLeft'] = this.returnMatchById(obj['championship'].idChildren[0]);
+    }else{
+      obj['semiFinalLeft'] = undefined;
+    }
+
+    if (obj['championship'] && obj['championship'].idChildren[1]){
+      obj['semiFinalRight'] = this.returnMatchById(obj['championship'].idChildren[1]);
+    }else{
+      obj['semiFinalRight'] = undefined;
+    }
+
+    if (obj['semiFinalLeft'] && obj['semiFinalLeft'].idChildren[0]){
+      obj['quarterFinal1'] = this.returnMatchById(obj['semiFinalLeft'].idChildren[0]);
+    }else{
+      obj['quarterFinal1'] = undefined;
+    }
+
+    if (obj['semiFinalLeft'] && obj['semiFinalLeft'].idChildren[1]){
+      obj['quarterFinal2'] = this.returnMatchById(obj['semiFinalLeft'].idChildren[1]);
+    }else{
+      obj['quarterFinal2'] = undefined;
+    }
+
+    if (obj['semiFinalRight'] && obj['semiFinalRight'].idChildren[0]){
+      obj['quarterFinal3'] = this.returnMatchById(obj['semiFinalRight'].idChildren[0]);
+    }else{
+      obj['quarterFinal3'] = undefined;
+    }
+
+    if (obj['semiFinalRight'] && obj['semiFinalRight'].idChildren[1]){
+      obj['quarterFinal4'] = this.returnMatchById(obj['semiFinalRight'].idChildren[1]);
+    }else{
+      obj['quarterFinal4'] = undefined;
+    }
+
+    if (obj['quarterFinal1'] && obj['quarterFinal1'].idChildren[0]){
+      obj["ro16_1"] = this.returnMatchById(obj['quarterFinal1'].idChildren[0]);
+    }else{
+      obj["ro16_1"] = undefined;
+    }
+
+    if (obj['quarterFinal1'] && obj['quarterFinal1'].idChildren[1]){
+      obj["ro16_2"] = this.returnMatchById(obj['quarterFinal1'].idChildren[1]);
+    }else{
+      obj["ro16_2"] = undefined;
+    }
+
+    if (obj['quarterFinal2'] && obj['quarterFinal2'].idChildren[0]){
+      obj["ro16_3"] = this.returnMatchById(obj['quarterFinal2'].idChildren[0]);
+    }else{
+      obj["ro16_3"] = undefined;
+    }
+
+    if (obj['quarterFinal2'] && obj['quarterFinal2'].idChildren[1]){
+      obj["ro16_4"] = this.returnMatchById(obj['quarterFinal2'].idChildren[1]);
+    }else{
+      obj["ro16_4"] = undefined;
+    }
+
+    if (obj['quarterFinal3'] && obj['quarterFinal3'].idChildren[0]){
+      obj["ro16_5"] = this.returnMatchById(obj['quarterFinal3'].idChildren[0]);
+    }else{
+      obj["ro16_5"] = undefined;
+    }
+
+    if (obj['quarterFinal3'] && obj['quarterFinal3'].idChildren[1]){
+      obj["ro16_6"] = this.returnMatchById(obj['quarterFinal3'].idChildren[1]);
+    }else{
+      obj["ro16_6"] = undefined;
+    }
+
+    if (obj['quarterFinal4'] && obj['quarterFinal4'].idChildren[0]){
+      obj["ro16_7"] = this.returnMatchById(obj['quarterFinal4'].idChildren[0]);
+    }else{
+      obj["ro16_7"] = undefined;
+    }
+
+    if (obj['quarterFinal4'] && obj['quarterFinal4'].idChildren[1]){
+      obj["ro16_8"] = this.returnMatchById(obj['quarterFinal4'].idChildren[1]);
+    }else{
+      obj["ro16_8"] = undefined;
+    }
     return obj;
   }
 

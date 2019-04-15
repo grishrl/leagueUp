@@ -11,6 +11,8 @@ const UserSub = require('../subroutines/user-subs');
 const passport = require("passport");
 const levelRestrict = require("../configs/admin-leveling");
 const messageSub = require('../subroutines/message-subs');
+const uploadTeamLogo = require('../methods/teamLogoUpload').uploadTeamLogo;
+const deleteFile = require('../methods/teamLogoUpload').deleteFile;
 
 //returns the lists of users who are awaiting admin attention to complete the team join process
 router.get('/pendingMemberQueue', passport.authenticate('jwt', {
@@ -334,6 +336,7 @@ router.post('/teamSave', passport.authenticate('jwt', {
                         teamName_lower: teamLower
                     }).then((originalTeam) => {
                         if (originalTeam) {
+                            let originalTeamName = originalTeam.teamName
 
                             //update the team name and teamname lower
                             originalTeam.teamName = payload.teamName;
@@ -373,11 +376,11 @@ router.post('/teamSave', passport.authenticate('jwt', {
 
                                 //now we need subs to remove all instances of the old team name and replace it with
                                 //this new team name
-                                DivSub.updateTeamNameDivision(team, savedTeam.teamName);
-                                OutreachSub.updateOutreachTeamname(team, savedTeam.teamName);
-                                QueueSub.updatePendingMembersTeamNameChange(team, savedTeam.teamName_lower);
+                                DivSub.updateTeamNameDivision(originalTeamName, savedTeam.teamName);
+                                OutreachSub.updateOutreachTeamname(originalTeamName, savedTeam.teamName);
+                                QueueSub.updatePendingMembersTeamNameChange(originalTeamName, savedTeam.teamName_lower);
                                 //matches ... not existing yet
-                                UserSub.upsertUsersTeamName(savedTeam.teamMembers, savedTeam.teamName);
+                                UserSub.upsertUsersTeamName(savedTeam.teamMembers, savedTeam.teamName, savedTeam._id.toString());
                             }, (err) => {
                                 res.status(400).send(util.returnMessaging(path, 'Error saving team information', err, null, null, logObj));
                             });
@@ -489,7 +492,7 @@ router.post('/resultantmmr', passport.authenticate('jwt', {
 //refreshes the MMR of a supplied team, in case the team mmr may need to be updated
 router.post('/team/refreshMmr', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
+}), util.appendResHeader, (req, res) => {
     const path = 'admin/team/refreshMmr';
     let teamName = req.body.teamName;
     teamName = teamName.toLowerCase();
@@ -550,5 +553,145 @@ router.get('/get/teams/all', passport.authenticate('jwt', {
 
 });
 
+router.post('/team/memberAdd',
+    passport.authenticate('jwt', {
+        session: false
+    }), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
+        const path = 'admin/team/memberAdd';
+        let user = req.body.user;
+        let team = req.body.teamName;
+
+        //log object
+        let logObj = {};
+        logObj.actor = req.user.displayName;
+        logObj.action = ' manual add user to team ';
+        logObj.target = team + ' : ' + user;
+        logObj.logLevel = 'ADMIN';
+
+        Team.findOne({ teamName_lower: team.toLowerCase() }).then(
+            found => {
+                if (found) {
+                    let index = -1;
+                    found.teamMembers.forEach(
+                        (member, i) => {
+                            if (member.displayName == user) {
+                                index = i;
+                            }
+                        }
+                    )
+                    if (index == -1) {
+
+                        if (found.teamMembers) {
+                            found.teamMembers.push({
+                                "displayName": user
+                            });
+                        } else {
+                            found.teamMembers = [{
+                                "displayName": user
+                            }]
+                        }
+
+                        found.save().then(
+                            saved => {
+                                UserSub.upsertUsersTeamName([{ displayName: user }], found.teamName, found._id.toString());
+                                res.status(200).send(util.returnMessaging(path, 'User Added To Team', false, saved, null, logObj));
+                            },
+                            err => {
+                                res.status(500).send(util.returnMessaging(path, 'Error saving team', err, false, null, logObj));
+                            }
+                        )
+
+                    } else {
+                        logObj.logLevel = 'ERROR';
+                        logObj.error = 'User Existed On Team All Ready';
+                        res.status(200).send(util.returnMessaging(path, 'User Existed On Team All Ready', false, found, null, logObj));
+                    }
+
+                } else {
+                    logObj.logLevel = 'ERROR';
+                    logObj.error = 'team not found'
+                    res.status(200).send(util.returnMessaging(path, 'Team not found', false, false, null, logObj));
+                }
+            },
+            err => {
+                res.status(500).send(util.returnMessaging(path, 'Error finding team', err, false, null, logObj));
+            }
+        )
+    });
+
+//returns a list of all teams!
+router.post('/team/uploadLogo', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
+
+    const path = '/admin/team/uploadLogo';
+    let uploadedFileName = "";
+
+    let teamName = req.body.teamName;
+    let dataURI = req.body.logo;
+
+    //construct log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = 'upload team logo ';
+    logObj.target = teamName;
+    logObj.logLevel = 'STD';
+
+    uploadTeamLogo(path, dataURI, teamName).then(rep => {
+            res.status(200).send(util.returnMessaging(path, "Image Uploaded.", false, null, rep.eo, logObj));
+        },
+        err => {
+            res.status(500).send(util.returnMessaging(path, "err.message", err, null, null, logObj))
+        });
+
+});
+
+router.post('/team/removeLogo', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
+
+    const path = '/admin/team/removeLogo';
+
+    let teamName = req.body.teamName;
+
+    //construct log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = 'remove team logo ';
+    logObj.target = teamName;
+    logObj.logLevel = 'STD';
+
+    Team.findOne({ teamName: teamName }).then(
+        found => {
+            if (found) {
+                if (found.logo) {
+                    let path = found.logo;
+                    found.logo = null;
+                    deleteFile(path);
+                    found.save().then(
+                        saved => {
+                            res.status(200).send(util.returnMessaging(path, 'Logo removed.', null, null, saved, logObj));
+                        },
+                        err => {
+                            res.status(500).send(util.returnMessaging(path, 'Team save error.', err, null, null, logObj));
+                        }
+                    )
+                } else {
+                    logObj.logLevel = "ERROR";
+                    logObj.error = 'Team had no logo';
+                    res.status(500).send(util.returnMessaging(path, 'Team had no logo', null, null, null, logObj));
+                }
+            } else {
+                logObj.logLevel = "ERROR";
+                logObj.error = 'Team not found.';
+                res.status(500).send(util.returnMessaging(path, 'Team not found.', null, null, null, logObj));
+            }
+        },
+        err => {
+            res.status(500).send(util.returnMessaging(path, 'Team query error.', err, null, null, logObj));
+        }
+    )
+
+});
 
 module.exports = router;

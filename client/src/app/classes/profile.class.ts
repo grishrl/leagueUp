@@ -18,6 +18,9 @@ export class Profile {  //addition of stats for future plans
   averageMmr: number;  //user average mmr
   toonHandle:string;
   discordTag:string;
+  pendingTeam:Boolean;
+  hotsLogsPlayerID:string;
+  smurfAccount:Boolean;
   __v: string;//useless
 
 

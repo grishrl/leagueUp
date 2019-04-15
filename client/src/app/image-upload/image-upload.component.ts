@@ -2,6 +2,8 @@ import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { CroppieOptions } from 'croppie';
 import { NgxCroppieComponent } from 'ngx-croppie';
 import { TeamService } from '../services/team.service';
+import { UtilitiesService } from '../services/utilities.service';
+import { AdminService } from '../services/admin.service';
 
 @Component({
   selector: 'app-image-upload',
@@ -19,6 +21,14 @@ export class ImageUploadComponent implements OnInit {
       this._teamName = '';
     }
   }
+
+  _embedded:boolean=false;
+  @Input() set embedded(embedded){
+    if(!this.util.isNullOrEmpty(embedded)){
+      this._embedded = embedded;
+    }
+  }
+
   _showEdit:boolean=false;
   @Input() set showEdit(show){
     if (show != null && show != undefined) {
@@ -29,8 +39,8 @@ export class ImageUploadComponent implements OnInit {
   }
 
   @Input() set teamLogo(img){
-    if (img != null && img != undefined && img.length) {
-      this.currentImage = this.teamService.imageFQDN(img);
+    if (img != null && img != undefined && img.length) {      
+      this.currentImage = this.teamService.imageFQDN(encodeURIComponent(img));
     } else {
       this.currentImage = null;
     }
@@ -44,8 +54,21 @@ export class ImageUploadComponent implements OnInit {
   currentImage: string;
   croppieImage: string;
 
-  constructor(private teamService:TeamService){
+  constructor(private teamService:TeamService, private util:UtilitiesService, private admin:AdminService){
 
+  }
+
+  removeImage(){
+    this.admin.teamRemoveLogo(this._teamName).subscribe(
+      res=>{
+        this.currentImage = `https://placehold.it/${this.widthPx}x${this.heightPx}`;
+      },
+      err=>{
+        console.log(err);
+      }
+      
+      
+    )
   }
 
   public get imageToDisplay() {
@@ -99,13 +122,25 @@ export class ImageUploadComponent implements OnInit {
       teamName: this._teamName
     }
 
-    this.teamService.logoUpload(input).subscribe(res=>{
-      this.currentImage = this.croppieImage;
-      this.croppieImage = null;
-      this.editClicked = true;
-    },(err)=>{
-      console.log(err);
-    });
+    if(this._embedded){
+      this.admin.teamLogoUpload(input).subscribe(res=>{
+        this.currentImage = this.croppieImage;
+        this.croppieImage = null;
+        this.editClicked = true;
+      },
+      (err)=>{
+        console.log(err)
+      })
+    }else{
+      this.teamService.logoUpload(input).subscribe(res => {
+        this.currentImage = this.croppieImage;
+        this.croppieImage = null;
+        this.editClicked = true;
+      }, (err) => {
+        console.log(err);
+      });
+    }
+
    
   }
 

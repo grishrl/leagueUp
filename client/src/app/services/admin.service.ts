@@ -16,6 +16,29 @@ export class AdminService {
     return this.httpService.httpPost(url, imgInput, true);
   }
 
+  teamLogoUpload(img, teamName?){
+    let url = '/admin/team/uploadLogo';
+    let imgInput;
+    if(typeof img != 'object'){
+      imgInput = {
+        logo:img,
+        teamName:teamName
+      };
+    }else{
+      imgInput = img;
+    }
+    return this.httpService.httpPost(url, imgInput, true);  
+  }
+
+  teamRemoveLogo(team){
+    let url = '/admin/team/removeLogo';
+    let payload = {
+      teamName:team
+    };
+    return this.httpService.httpPost(url, payload, true);
+  }
+  
+
   //returns a list of all teams
   getTeams(){
     let url = 'admin/get/teams/all';
@@ -157,6 +180,23 @@ export class AdminService {
   deleteUser(user:string){
     let url = 'admin/delete/user';
     let payload = {displayName:user};
+    return this.httpService.httpPost(url, payload, true);
+  }
+
+  saveUser(user){
+    let url = '/admin/user/save';
+    let payload = {
+      user:user
+    };
+    return this.httpService.httpPost(url, payload, true);
+  }
+
+  manualTeamAdd(user, team){
+    let url ='admin/team/memberAdd';
+    let payload = {
+      teamName:team,
+      user:user
+    };
     return this.httpService.httpPost(url, payload, true);
   }
 
