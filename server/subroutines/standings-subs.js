@@ -177,11 +177,13 @@ async function addTeamNamesToMatch(teams, found) {
                         match.home['teamName'] = team.teamName;
                         match.home['logo'] = team.logo;
                         match.home['teamName_lower'] = team.teamName_lower;
+                        match.home['ticker'] = team.ticker;
                     }
                     if (teamid == awayid) {
                         match.away['teamName'] = team.teamName;
                         match.away['logo'] = team.logo;
                         match.away['teamName_lower'] = team.teamName_lower;
+                        match.away['ticker'] = team.ticker;
                     }
                 });
             });

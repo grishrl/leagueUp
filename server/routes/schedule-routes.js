@@ -71,10 +71,18 @@ router.post('/get/reported/matches', (req, res) => {
     Match.find({
         season: season,
         reported: true
-    }).then(
+    }).lean().then(
         found => {
             if (found) {
-                res.status(200).send(util.returnMessaging(path, 'Found these matches', null, found));
+
+                addTeamNamesToMatch_foundOnly(found).then(
+                    processed => {
+                        res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
+                    },
+                    err => {
+                        res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
+                    }
+                )
             } else {
                 res.status(200).send(util.returnMessaging(path, 'No Matches Found', null, found));
             }
@@ -976,12 +984,13 @@ module.exports = router;
 
 function findTeamIds(found) {
     let teams = [];
+
     //type checking make sure we have array
     if (!Array.isArray(found)) {
         found = [found];
     }
-    found.forEach(match => {
 
+    found.forEach(match => {
         if (util.returnBoolByPath(match, 'home.id')) {
             if (match.home.id != 'null' && teams.indexOf(match.home.id.toString()) == -1) {
                 teams.push(match.home.id.toString());
@@ -996,6 +1005,60 @@ function findTeamIds(found) {
 
     return teams;
 }
+
+async function addTeamNamesToMatch_foundOnly(found) {
+    //typechecking
+    if (!Array.isArray(found)) {
+        found = [found];
+    }
+
+    let teams = findTeamIds(found);
+
+    let teamInfo = await Team.find({
+        _id: {
+            $in: teams
+        }
+    }).then((foundTeams) => {
+        if (foundTeams) {
+            return foundTeams;
+        } else {
+            return [];
+        }
+    }, (err) => {
+        return err;
+    });
+    if (teamInfo) {
+        teamInfo.forEach(team => {
+            let teamid = team._id.toString();
+            found.forEach(match => {
+                let homeid, awayid;
+                if (util.returnBoolByPath(match, 'home.id')) {
+                    homeid = match.home.id.toString();
+                }
+                if (util.returnBoolByPath(match, 'away.id')) {
+                    awayid = match.away.id.toString();
+                }
+                if (teamid == homeid) {
+
+                    match.home['teamName'] = team.teamName;
+                    match.home['logo'] = team.logo;
+                    match.home['teamName_lower'] = team.teamName_lower;
+                    match.home['ticker'] = team.ticker;
+                }
+                if (teamid == awayid) {
+
+                    match.away['teamName'] = team.teamName;
+                    match.away['logo'] = team.logo;
+                    match.away['teamName_lower'] = team.teamName_lower;
+                    match.away['ticker'] = team.ticker;
+                }
+            });
+        });
+    }
+
+    return found
+
+};
 
 async function addTeamNamesToMatch(teams, found) {
     //typechecking
@@ -1020,11 +1083,13 @@ async function addTeamNamesToMatch(teams, found) {
                         match.home['teamName'] = team.teamName;
                         match.home['logo'] = team.logo;
                         match.home['teamName_lower'] = team.teamName_lower;
+                        match.home['ticker'] = team.ticker;
                     }
                     if (teamid == awayid) {
                         match.away['teamName'] = team.teamName;
                         match.away['logo'] = team.logo;
                         match.away['teamName_lower'] = team.teamName_lower;
+                        match.home['ticker'] = team.ticker;
                     }
                 });
             });
