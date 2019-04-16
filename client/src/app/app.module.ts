@@ -97,6 +97,8 @@ import { DivisionStandingsComponent } from './division-standings/division-standi
 import { RecentResultsComponent } from './recent-results/recent-results.component';
 import { TopStatsWidgetComponent } from './top-stats-widget/top-stats-widget.component';
 import { CountdownComponent } from './countdown/countdown.component';
+import { DivisionTableViewComponent } from './division-table-view/division-table-view.component';
+import { MiniTeamViewComponent } from './division-table-view/mini-team-view/mini-team-view.component';
 
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
@@ -185,7 +187,9 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     DivisionStandingsComponent,
     RecentResultsComponent,
     TopStatsWidgetComponent,
-    CountdownComponent
+    CountdownComponent,
+    DivisionTableViewComponent,
+    MiniTeamViewComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

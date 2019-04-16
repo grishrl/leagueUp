@@ -1,0 +1,10 @@
+<div class="groups-list">
+    <div class="row" *ngFor="let row of rowArray">
+        <div class="col-lg-3 col-md-6" *ngFor="let col of row">
+            <!-- todo: proper route linking -->
+            <h5><a href="groups.html">{{col.displayName}}</a></h5>
+            <app-mini-team-view [teams]="col.teams"></app-mini-team-view>
+        </div>
+    </div>
+</div>
+<!-- [teams]="col.teams" -->

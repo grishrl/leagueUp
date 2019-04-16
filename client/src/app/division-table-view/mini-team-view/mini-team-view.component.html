@@ -1,0 +1,10 @@
+<div class="item-group">
+    <ul>
+        <!-- todo: route friendly router name -->
+        <li *ngFor="let team of teamList">
+            <a href="single-team.html">
+                <img src="{{teamService.imageFQDN(team.logo)}}" alt=""> {{team.teamName}}
+            </a>
+        </li>
+    </ul>
+</div>

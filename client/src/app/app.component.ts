@@ -8,6 +8,7 @@ import { NotificationService } from './services/notification.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
+
 export class AppComponent {
   constructor(private notificationService:NotificationService, private snackBar:MatSnackBar){
     this.notificationService.subj_notification.subscribe(
@@ -16,5 +17,6 @@ export class AppComponent {
       }
     )
   }
-  
+
+  index=0;
 }

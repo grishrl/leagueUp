@@ -150,14 +150,14 @@ $(document).ready(function($) {
 
     //=================================== Form Newslleter  =================================//
 
-    $('#newsletterForm').submit(function(event) {
-        event.preventDefault();
-        var url = $(this).attr('action');
-        var datos = $(this).serialize();
-        $.get(url, datos, function(resultado) {
-            $('#result-newsletter').html(resultado);
-        });
-    });
+    // $('#newsletterForm').submit(function(event) {
+    //     event.preventDefault();
+    //     var url = $(this).attr('action');
+    //     var datos = $(this).serialize();
+    //     $.get(url, datos, function(resultado) {
+    //         $('#result-newsletter').html(resultado);
+    //     });
+    // });
 
 
     // $(document).ready(function() {
