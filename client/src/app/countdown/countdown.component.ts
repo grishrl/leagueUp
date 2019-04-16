@@ -43,6 +43,8 @@ export class CountdownComponent implements OnInit {
     seconds:0
   }
 
+  startDate;
+
   initCountdown(){
     this.countdownService.getCountDown(this.targetMatch.scheduledTime.startTime).subscribe(
       tick=>{
@@ -67,7 +69,8 @@ export class CountdownComponent implements OnInit {
 
         if (nearestMatch){
           nearestMatch.scheduledTime.startTime = parseInt(nearestMatch.scheduledTime.startTime);
-          console.log(nearestMatch);
+          // console.log(nearestMatch);
+          this.startDate = new Date(nearestMatch.scheduledTime.startTime);
           this.targetMatch = nearestMatch;
           this.initCountdown();
           this.divisionService.getDivision(this.targetMatch.divisionConcat).subscribe(
