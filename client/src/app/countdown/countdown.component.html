@@ -1,0 +1,50 @@
+<div class="counter-home-wraper">
+    <div class="title-color text-center">
+        <h4>Upcoming Match</h4>
+    </div>
+
+    <div class="content-counter content-counter-home">
+        <p class="text-center">
+            <i class="fa fa-clock-o"></i> Countdown Till Start
+        </p>
+        <div id="event-one" class="counter">
+            <span>{{timeRemaining.days}}<br> <small>days</small></span>
+            <span>{{timeRemaining.hours}} <br> <small>hr</small> </span>
+            <span>{{timeRemaining.minutes}} <br> <small>min</small> </span>
+            <span>{{timeRemaining.seconds}} <br> <small>sec</small></span>
+        </div>
+        <ul class="post-options">
+            <li><i class="fa fa-calendar"></i>{{util.getFormattedDate(targetMatch.scheduledTime.startTime, "DD MMMM, YYYY")}}</li>
+            <li><i class="fa fa-clock-o"></i>Draft Starts, {{util.getFormattedDate(targetMatch.scheduledTime.startTime, "hh:mm A zz")}}</li>
+        </ul>
+
+        <div class="list-groups">
+            <div class="row align-items-center">
+
+                <div class="col-md-12">
+                    <p>{{divisionInfo.displayName}}<span *ngIf="targetMatch.casterName">at {{targetMatch.casterName}}'s stream</span></p>
+                </div>
+
+                <div class="col-md-5">
+                    <img src="{{team.imageFQDN(targetMatch.home.logo)}}" alt="">
+                    <span>{{targetMatch.home.teamName}}</span>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="vs">Vs</div>
+                </div>
+
+                <div class="col-md-5">
+                    <img src="{{team.imageFQDN(targetMatch.away.logo)}}" alt="">
+                    <span>{{targetMatch.away.teamName}}</span>
+                </div>
+            </div>
+        </div>
+
+        <a *ngIf="targetMatch.casterUrl" class="btn btn-primary" href="{{util.prePendHttp(targetMatch.casterUrl)}}" target="_blank">
+      Watch At
+      <i class="fab fa-twitch"></i>
+    </a>
+    </div>
+</div>
+<!-- Content Counter -->

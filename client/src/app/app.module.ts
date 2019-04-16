@@ -96,6 +96,7 @@ import { NewsNoSidebarComponent } from './news-no-sidebar/news-no-sidebar.compon
 import { DivisionStandingsComponent } from './division-standings/division-standings.component';
 import { RecentResultsComponent } from './recent-results/recent-results.component';
 import { TopStatsWidgetComponent } from './top-stats-widget/top-stats-widget.component';
+import { CountdownComponent } from './countdown/countdown.component';
 
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
@@ -183,7 +184,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     NewsNoSidebarComponent,
     DivisionStandingsComponent,
     RecentResultsComponent,
-    TopStatsWidgetComponent
+    TopStatsWidgetComponent,
+    CountdownComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

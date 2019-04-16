@@ -160,18 +160,18 @@ $(document).ready(function($) {
     });
 
 
-    $(document).ready(function() {
-        /*var feed = new Instafeed({
-            get: 'user',
-            userId: '',
-            limit: 6,
-            resolution: 'standard_resolution',
-            template: '<div class="insta-items"><a href="{{link}}" target="_blank" id="{{id}}"><img src="{{image}}" /></a></div>',
-            accessToken: '',
-        });
-
-        feed.run();*/
+    // $(document).ready(function() {
+    /*var feed = new Instafeed({
+        get: 'user',
+        userId: '',
+        limit: 6,
+        resolution: 'standard_resolution',
+        template: '<div class="insta-items"><a href="{{link}}" target="_blank" id="{{id}}"><img src="{{image}}" /></a></div>',
+        accessToken: '',
     });
+
+    feed.run();*/
+    // });
 
     //=====Ligbox=====//
     // $('.swipebox-ligbox').swipebox({
@@ -223,10 +223,10 @@ $(document).ready(function($) {
 
     //=================================== Totop  ============================================//
 
-    // $().UItoTop({
-    //     scrollSpeed: 500,
-    //     easingType: 'linear'
-    // });
+    $().UItoTop({
+        scrollSpeed: 500,
+        easingType: 'linear'
+    });
 
     //=================================== Hover Efects =====================================//
     // $('.item-boxed-img').hover(function() {
