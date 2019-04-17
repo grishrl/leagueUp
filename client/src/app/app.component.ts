@@ -18,5 +18,4 @@ export class AppComponent {
     )
   }
 
-  index=0;
 }

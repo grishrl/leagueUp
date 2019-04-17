@@ -25,14 +25,14 @@
                 <!-- End Widget Categories-->
 
                 <!-- Widget Text-->
-                <div class="panel-box">
+                <!-- <div class="panel-box">
                     <div class="titles no-margin">
                         <h4>{{displayBlog.fields.author.fields.name}}</h4>
                     </div>
                     <div class="info-panel">
                         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, incididunt ut labore et dolore.</p>
                     </div>
-                </div>
+                </div> -->
                 <!-- End Widget Text-->
 
                 <!-- Widget img-->
@@ -42,8 +42,8 @@
                     </div>
                     <img src="{{displayBlog.fields.author.fields.image.fields.file.url}}" alt="">
                     <div class="row">
-                        <div class="info-panel">
-                            <p>{{displayBlog.fields.author.fields.shortBio}}</p>
+                        <div class="info-panel" *ngIf="displayBlog.fields.author.fields.shortBio">
+                            <p [innerHTML]="md.convertMarkdown(displayBlog.fields.author.fields.shortBio)"></p>
                         </div>
                     </div>
                 </div>
@@ -58,7 +58,10 @@
                     <div class="titles no-margin">
                         <h4>{{displayBlog.fields.title}}</h4>
                     </div>
-                    <img src="img/locations/1.jpg" alt="">
+                    <div class="centerImage text-center mt-4 mb-2">
+                        <img class="image-size" src="{{displayBlog.fields.heroImage.fields.file.url}}" alt="">
+                    </div>
+
                     <div class="info-panel">
                         <div [innerHTML]="md.convertMarkdown(displayBlog.fields.description)"></div>
                         <div id="markedBody" [innerHTML]="md.convertMarkdown(displayBlog.fields.body)"></div>

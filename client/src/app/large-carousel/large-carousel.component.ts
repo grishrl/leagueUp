@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { MarkdownParserService } from '../services/markdown-parser.service';
 import { UtilitiesService } from '../services/utilities.service';
 import { environment } from 'src/environments/environment';
-import { timer, Subscription, Subject, Observable, BehaviorSubject } from 'rxjs';
+import { timer, Subscription, Subject, Observable, BehaviorSubject, interval } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 import { animate, AnimationBuilder, AnimationFactory, AnimationPlayer, style, trigger, state, transition } from '@angular/animations';
 
@@ -66,20 +66,26 @@ timing = 300;
     const fadeOut: AnimationFactory = this.builder.build([
       animate(300, style({ opacity: 0 }))
     ]);
+
+    const fadeIn: AnimationFactory = this.builder.build([
+      animate(300, style({ opacity: 1 }))
+    ]);
+
+    let fadeInPlayer = fadeIn.create(this.carouselEl.nativeElement);
+
     this.player = fadeOut.create(this.carouselEl.nativeElement);
 
     this.player.onDone(
       () => {
-        callback();
-        const fadeIn: AnimationFactory = this.builder.build([
-          animate(300, style({ opacity: 1 }))
-        ]);
 
-        let fadeInPlayer = fadeIn.create(this.carouselEl.nativeElement);
+        callback();
+
         fadeInPlayer.play();
+
       }
     )
     this.player.play();
+    this.reset$.next(null);
   }
 
   //loads next slide
@@ -95,7 +101,6 @@ timing = 300;
       }
     }.bind(this);
     this.animateSlides(nextFunction);
-    this.reset$.next(null);
   }
 
   //loads previous slide
@@ -111,7 +116,7 @@ timing = 300;
       }
     }.bind(this);
     this.animateSlides(prevFunction);
-    this.reset$.next(null);
+
   }
 
   slideTo(num) {
@@ -144,6 +149,7 @@ timing = 300;
   }
 
 
+
   ngOnInit() {
     this.contentfulService.getBlogs((Object.assign({ content_type: 'blogPost' }, { links_to_entry: environment.contentful.categoryIDs.jumbotron, order: '-sys.createdAt', limit: 3 }))).then(res => {
       this.carousel = res;
@@ -151,21 +157,21 @@ timing = 300;
     })
   }
 
-  
-   ngAfterViewInit(): void {
+  subscription: Subscription
+  ngAfterViewInit(): void {
     this.reset$ = new BehaviorSubject(null);
-    this.reset$.pipe(
-      switchMap( ()=>timer(10000, 10000) )
+    this.subscription = this.reset$.pipe(
+      switchMap(
+        () => timer(10000))
     ).subscribe(
-      ()=>{
+      () => {
         this.next();
       }
     )
-
   }
 
   ngOnDestroy(): void {
-    this.reset$.unsubscribe();
+    this.subscription.unsubscribe();
   }
 
   goToBlogPage(blog) {

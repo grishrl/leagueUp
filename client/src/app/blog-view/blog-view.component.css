@@ -18,3 +18,12 @@
     width: 100%;
     height: auto;
 }
+
+.centerImage {
+    width: 100%;
+}
+
+.image-size {
+    max-width: 25%;
+    height: auto;
+}

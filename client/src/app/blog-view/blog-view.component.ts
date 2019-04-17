@@ -32,7 +32,15 @@ export class BlogViewComponent implements OnInit {
         'body':'',
         'author': {
           'fields': {
-            'name': ''
+            'name': '',
+            'shortBio':'',
+            'image':{
+              'fields':{
+                'file':{
+                  'url':''
+                }
+              }
+            }
           }
         },
         'title': '',

@@ -3,6 +3,7 @@ import { ContentfulService } from '../services/contentful.service';
 import { environment } from '../../environments/environment';
 import { UtilitiesService } from '../services/utilities.service';
 import { MarkdownParserService } from '../services/markdown-parser.service';
+import { BlogCommonService } from '../services/blog-common.service';
 
 @Component({
   selector: 'app-recent-news',
@@ -11,7 +12,7 @@ import { MarkdownParserService } from '../services/markdown-parser.service';
 })
 export class RecentNewsComponent implements OnInit {
 
-  constructor(private contentfulService: ContentfulService, public util: UtilitiesService, public md: MarkdownParserService) { }
+  constructor(private contentfulService: ContentfulService, public util: UtilitiesService, public md: MarkdownParserService, public blogCommon: BlogCommonService) { }
 
   blogs = [];
   ngOnInit() {
