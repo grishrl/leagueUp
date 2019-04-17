@@ -12,16 +12,16 @@ import { cloneDeep } from 'lodash';
 export class EventCreateComponent implements OnInit {
 
   recId;
-  constructor(private util:UtilitiesService, private eventService:EventsService, private route:ActivatedRoute) { 
+  constructor(private util:UtilitiesService, private eventService:EventsService, private route:ActivatedRoute) {
     if (this.route.snapshot.params['id']) {
       this.recId = this.route.snapshot.params['id'];
     }
   }
 
   event;
-  
+
   eventOrig;
-  
+
   editEvent = false;
 
   suffix;
@@ -118,7 +118,6 @@ export class EventCreateComponent implements OnInit {
         this.eventService.upsertEvent(this.eventOrig, this.event).subscribe(
           res => {
             //saved
-            console.log(res);
             this.event['_id']=res['_id'];
           },
           err => {
@@ -138,7 +137,7 @@ export class EventCreateComponent implements OnInit {
         )
       }
     }
-    
+
   }
 
   getBlankEvent() {

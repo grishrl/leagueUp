@@ -18,7 +18,6 @@ export class RecentNewsComponent implements OnInit {
     this.contentfulService.getBlogs((Object.assign({ content_type: 'blogPost' }, { links_to_entry: environment.contentful.categoryIDs.news, order: '-sys.createdAt', limit: 4 }))).then(
       res => {
         this.blogs = res;
-        console.log(res);
       }
     );
   }

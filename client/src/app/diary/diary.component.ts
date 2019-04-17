@@ -17,13 +17,6 @@ export class DiaryComponent implements OnInit {
     this.scheduleService.getAllMatchesWithStartTime().subscribe(
       res => {
         let matches = res;
-        // matches.sort( (a,b)=>{
-        //   if (a.scheduledTime.startTime > b.scheduledTime.startTime){
-        //     return 1;
-        //   }else{
-        //     return -1;
-        //   }
-        // });
         let now = Date.now();
 
         matches = matches.filter( a=>{
@@ -48,25 +41,6 @@ export class DiaryComponent implements OnInit {
             this.next4matches.push(match);
           }
         });
-        console.log(matches);
-        // let nearestMatch = nextDate(now, matches);
-
-        // if (nearestMatch) {
-        //   nearestMatch.scheduledTime.startTime = parseInt(nearestMatch.scheduledTime.startTime);
-        //   // console.log(nearestMatch);
-        //   this.startDate = new Date(nearestMatch.scheduledTime.startTime);
-        //   this.targetMatch = nearestMatch;
-        //   this.initCountdown();
-        //   this.divisionService.getDivision(this.targetMatch.divisionConcat).subscribe(
-        //     reply => {
-        //       this.divisionInfo = reply;
-        //     },
-        //     err => {
-        //       console.log(err)
-        //     }
-        //   )
-        // }
-
       },
       err => { }
     )

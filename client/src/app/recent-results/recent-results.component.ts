@@ -39,7 +39,6 @@ export class RecentResultsComponent implements OnInit {
         for (let i = 0; i < arrayBounds; i++){
           this.display.push(matches[i])
         }
-        console.log(this.display);
       },
       err=>{
         console.log(err);

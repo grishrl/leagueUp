@@ -39,7 +39,6 @@ export class RecentContentComponent implements OnInit {
   createURL(item){
     if(item){
       let x = 'https://www.youtube.com/embed/' + item.snippet.resourceId.videoId;
-      console.log(x);
       return x
     }
 
@@ -66,7 +65,6 @@ export class RecentContentComponent implements OnInit {
       res => {
         this.showdownItem = res['items'][0];
         this.showdownItem.url = this.createURL(this.showdownItem);
-        console.log('this.showdownItem ', this.showdownItem)
       }
     )
 
@@ -75,7 +73,6 @@ export class RecentContentComponent implements OnInit {
       res => {
         this.edgeItem = res['items'][0];
         this.edgeItem.url = this.createURL(this.edgeItem);
-        console.log('this.edgeItem ', this.edgeItem)
       }
     )
 
@@ -84,7 +81,6 @@ export class RecentContentComponent implements OnInit {
       res => {
         this.podcastItem = res['items'][0];
         this.podcastItem.url = this.createURL(this.podcastItem);
-        console.log('this.podcastItem ', this.podcastItem)
       }
     )
   }

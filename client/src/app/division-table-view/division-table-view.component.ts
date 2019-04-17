@@ -15,7 +15,6 @@ export class DivisionTableViewComponent implements OnInit {
     this.divisionService.getDivisionInfo().subscribe(res => {
       let columnArray = [];
       res.forEach( (item, iterator)=>{
-        console.log(iterator)
         if(iterator%4==0 && iterator != 0){
           this.rowArray.push(columnArray);
           columnArray = [];
@@ -27,7 +26,6 @@ export class DivisionTableViewComponent implements OnInit {
           columnArray.push(item);
         }
       } );
-      console.log(this.rowArray);
     }, err => {
       console.log(err);
     });
