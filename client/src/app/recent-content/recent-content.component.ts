@@ -11,9 +11,30 @@ export class RecentContentComponent implements OnInit {
 
   constructor(private http:HttpClient, private sanitizer:DomSanitizer) { }
 
-  showdownItem;
-  edgeItem;
-  podcastItem;
+  showdownItem = {
+    'url':'',
+    'snippet':{
+      'resourceId':{
+        'videoId':''
+      }
+    }
+};
+  edgeItem = {
+    'url': '',
+    'snippet': {
+      'resourceId': {
+        'videoId': ''
+      }
+    }
+  };
+  podcastItem = {
+    'url': '',
+    'snippet': {
+      'resourceId': {
+        'videoId': ''
+      }
+    }
+  };
 
   createURL(item){
     if(item){
@@ -22,6 +43,16 @@ export class RecentContentComponent implements OnInit {
       return x
     }
 
+  }
+
+  createPlaylistUrl(context) {
+    let url;
+    if(context){
+      let videoId = context.snippet.resourceId.videoId;
+      let playlistId = context.snippet.playlistId;
+      url = 'https://www.youtube.com/watch?v=' + videoId + '&list=' + playlistId;
+    }
+    return url;
   }
 
   ngOnInit() {

@@ -19,7 +19,6 @@ export class DivisionStandingsComponent implements OnInit {
     this.standingsService.getStandings(div).subscribe(
       (res) => {
         this.standings = res;
-        console.log('this.standings ',this.standings);
       },
       (err) => {
         console.log(err);
@@ -40,8 +39,7 @@ export class DivisionStandingsComponent implements OnInit {
     if (this.auth.getTeam()){
       this.team.getTeam(this.auth.getTeam()).subscribe(
         res => {
-          console.log(res);
-          // this.getStandings(res.divisonConcat)
+          this.getStandings(res.divisonConcat)
         },
         err => {
           console.log(err);
@@ -52,7 +50,6 @@ export class DivisionStandingsComponent implements OnInit {
         let divisions = res;
         let randomDivInt = Math.floor(Math.random() * divisions.length);
         let randomDivision = divisions[randomDivInt];
-        // console.log('randomDivInt ', randomDivInt, ' randomDivision ', randomDivision);
         this.getStandings(randomDivision.divisionConcat);
         this.passDiv = randomDivision;
       }, (err) => {

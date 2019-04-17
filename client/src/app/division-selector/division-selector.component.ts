@@ -46,7 +46,6 @@ export class DivisionSelectorComponent implements OnInit {
 
   @Input() set inputDiv(div){
     if(div){
-      console.log('inputDiv ', div);
       this.selectedDivision=div._id;
     }else{
       this.selectedDivision = null;

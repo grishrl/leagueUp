@@ -52,7 +52,6 @@ export class TournamentGeneratorComponent implements OnInit {
     this.standingsService.getStandings(div).subscribe(
       (res) => {
         this.fetching = false;
-        console.log(res);
         this.standings = res;
       },
       (err) => {
@@ -96,7 +95,7 @@ export class TournamentGeneratorComponent implements OnInit {
     this.displayArray = [];
     this.displayArray = this.filteredArray.slice(i, endSlice)
 
-  } 
+  }
 
   disableGenerate(){
     let disable = true;
@@ -123,7 +122,7 @@ export class TournamentGeneratorComponent implements OnInit {
     )
   }
 
-  
+
 
   ngOnInit() {
     this.standings = [];
@@ -137,7 +136,7 @@ export class TournamentGeneratorComponent implements OnInit {
     this.division=null;
     this.name = null;
     this.tournamentSeed = [];
-    
+
   }
 
 

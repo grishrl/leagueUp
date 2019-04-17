@@ -21,19 +21,19 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
 
    }
 
-  
+
    timeParseAndReturn(time){
      time = parseInt(time);
      return this.util.getFormattedDate(time, "M/D/YYYY h:mm A zz");
    }
-   
+
   hideForm = true;
   selectedRound:any
   selectedDivision:any
   originalMatches:any
   filterMatches:any
   rounds=[];
-  
+
   filterTeam:string='';
   scheduledOnlyFlt:boolean=false;
 
@@ -70,7 +70,7 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
     this.displayArray = [];
     this.displayArray = this.filterMatches.slice(i, endSlice)
 
-  } 
+  }
 
   ngOnInit() {
       this.scheduleService.getAllMatches().subscribe(
@@ -154,7 +154,7 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
         let msDate = setDate.getTime();
         this.startTimeFlt = msDate;
         this.doFilterMatches();
-      } 
+      }
     } else if (this.friendlyDate){
       let years = this.friendlyDate.getFullYear();
       let month = this.friendlyDate.getMonth();
@@ -233,7 +233,6 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
   removeCaster(match){
           this.scheduleService.addCaster(match.matchId, '', '').subscribe(
             (res) => {
-              console.log(res);
               let i = -1;
               this.originalMatches.forEach(
                 (match, index)=>{

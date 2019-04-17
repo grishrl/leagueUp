@@ -13,7 +13,6 @@ export class DivisionTableViewComponent implements OnInit {
   rowArray = [];
   ngOnInit() {
     this.divisionService.getDivisionInfo().subscribe(res => {
-      console.log(res);
       let columnArray = [];
       res.forEach( (item, iterator)=>{
         console.log(iterator)
