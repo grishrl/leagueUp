@@ -33,7 +33,7 @@ const teamSchema = new Schema({
     "lastTouched": Number,
     "replays": [String],
     "parseStats": Boolean,
-    "ticker": String //short aberviation of team name
+    "ticker": String, //short aberviation of team name
     "history": [Object]
 });
 

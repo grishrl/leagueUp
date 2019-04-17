@@ -147,7 +147,7 @@ router.get('/frontPageStats', (req, res) => {
 
     const path = '/user/frontPageStats';
     var stat = req.query.stat;
-    console.log('stat ', stat);
+
     if (stat) {
         let query = {
             '$and': [{

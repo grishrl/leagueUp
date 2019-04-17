@@ -9,9 +9,9 @@
         <!-- Widget Text-->
         <div class="panel-box">
             <div class="titles no-margin">
-                <h4><a href="#">Eliminatory to the world.</a></h4>
+                <h4><a href="#">Showdown Match</a></h4>
             </div>
-            <iframe class="video" src="https://www.youtube.com/embed/Ln8rXkeeyP0" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
+            <iframe class="video" [src]="showdownItem.url | safe" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
         </div>
         <!-- End Widget Text-->
     </div>
@@ -22,9 +22,9 @@
         <!-- Widget Text-->
         <div class="panel-box">
             <div class="titles no-margin">
-                <h4><a href="#">Colombia classification</a></h4>
+                <h4><a href="#">Nexus Edge</a></h4>
             </div>
-            <iframe class="video" src="https://www.youtube.com/embed/Z5cackyUfgk" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
+            <iframe class="video" [src]="edgeItem.url | safe" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
         </div>
         <!-- End Widget Text-->
     </div>
@@ -35,9 +35,9 @@
         <!-- Widget Text-->
         <div class="panel-box">
             <div class="titles no-margin">
-                <h4><a href="#">World Cup goal</a></h4>
+                <h4><a href="#">Nexus Now Podcast</a></h4>
             </div>
-            <iframe class="video" src="https://www.youtube.com/embed/hW3hnUoUS0k" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
+            <iframe class="video" [src]="podcastItem.url | safe" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
         </div>
         <!-- End Widget Text-->
     </div>

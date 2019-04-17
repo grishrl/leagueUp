@@ -91,6 +91,7 @@ import { EventCreateComponent } from './admin/events/event-create/event-create.c
 import { EventListComponent } from './admin/events/event-list/event-list.component';
 import { GeneralImageUploadComponent } from './general-image-upload/general-image-upload.component';
 import { MiniCarouselComponent } from './mini-carousel/mini-carousel.component';
+import { MatchViewVerticleComponent } from './match-view-verticle/match-view-verticle.component';
 import { LargeCarouselComponent } from './large-carousel/large-carousel.component';
 import { NewsNoSidebarComponent } from './news-no-sidebar/news-no-sidebar.component';
 import { DivisionStandingsComponent } from './division-standings/division-standings.component';
@@ -102,6 +103,7 @@ import { MiniTeamViewComponent } from './division-table-view/mini-team-view/mini
 import { RecentNewsComponent } from './recent-news/recent-news.component';
 import { DiaryComponent } from './diary/diary.component';
 import { RecentContentComponent } from './recent-content/recent-content.component';
+import { SafePipe } from './safe.pipe';
 
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
@@ -185,7 +187,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     EventListComponent,
     GeneralImageUploadComponent,
     MiniCarouselComponent,
-    MatchViewVerticleComponent
+    MatchViewVerticleComponent,
+    LargeCarouselComponent,
     NewsNoSidebarComponent,
     DivisionStandingsComponent,
     RecentResultsComponent,
@@ -195,7 +198,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     MiniTeamViewComponent,
     RecentNewsComponent,
     DiaryComponent,
-    RecentContentComponent
+    RecentContentComponent,
+    SafePipe
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
@@ -204,7 +208,7 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     EventModalComponent
   ],
   imports: [
-    BrowserModule, 
+    BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,
