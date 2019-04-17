@@ -91,6 +91,7 @@ import { EventCreateComponent } from './admin/events/event-create/event-create.c
 import { EventListComponent } from './admin/events/event-list/event-list.component';
 import { GeneralImageUploadComponent } from './general-image-upload/general-image-upload.component';
 import { MiniCarouselComponent } from './mini-carousel/mini-carousel.component';
+<<<<<<< HEAD
 import { LargeCarouselComponent } from './large-carousel/large-carousel.component';
 import { NewsNoSidebarComponent } from './news-no-sidebar/news-no-sidebar.component';
 import { DivisionStandingsComponent } from './division-standings/division-standings.component';
@@ -103,6 +104,9 @@ import { RecentNewsComponent } from './recent-news/recent-news.component';
 import { DiaryComponent } from './diary/diary.component';
 import { RecentContentComponent } from './recent-content/recent-content.component';
 
+=======
+import { MatchViewVerticleComponent } from './match-view-verticle/match-view-verticle.component';
+>>>>>>> development
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -185,7 +189,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     EventListComponent,
     GeneralImageUploadComponent,
     MiniCarouselComponent,
-    MatchViewVerticleComponent
+<<<<<<< HEAD
+    LargeCarouselComponent,
     NewsNoSidebarComponent,
     DivisionStandingsComponent,
     RecentResultsComponent,
@@ -196,6 +201,9 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     RecentNewsComponent,
     DiaryComponent,
     RecentContentComponent
+=======
+    MatchViewVerticleComponent
+>>>>>>> development
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

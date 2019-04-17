@@ -99,7 +99,7 @@ export class CreateTeamComponent implements OnInit {
       this.nameContorl.setErrors({required:true});
       valid = false;
     }else{
-      let regEx = new RegExp(/[%_]/gm);
+      let regEx = new RegExp(/[%_\/\\`#]/gm);
       if (regEx.test(this.returnedProfile.teamName)) {
         valid = false;
         this.nameContorl.setErrors({ invalidCharacters: true });

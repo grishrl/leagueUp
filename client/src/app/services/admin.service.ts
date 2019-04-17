@@ -16,6 +16,29 @@ export class AdminService {
     return this.httpService.httpPost(url, imgInput, true);
   }
 
+  teamLogoUpload(img, teamName?){
+    let url = '/admin/team/uploadLogo';
+    let imgInput;
+    if(typeof img != 'object'){
+      imgInput = {
+        logo:img,
+        teamName:teamName
+      };
+    }else{
+      imgInput = img;
+    }
+    return this.httpService.httpPost(url, imgInput, true);  
+  }
+
+  teamRemoveLogo(team){
+    let url = '/admin/team/removeLogo';
+    let payload = {
+      teamName:team
+    };
+    return this.httpService.httpPost(url, payload, true);
+  }
+  
+
   //returns a list of all teams
   getTeams(){
     let url = 'admin/get/teams/all';

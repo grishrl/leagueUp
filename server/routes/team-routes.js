@@ -10,24 +10,8 @@ const UserSub = require('../subroutines/user-subs');
 const DivSub = require('../subroutines/division-subs');
 const Team = require("../models/team-models");
 const passport = require("passport");
-const fs = require('fs');
-const imageDataURI = require('image-data-uri');
-const AWS = require('aws-sdk');
 const sysModels = require('../models/system-models');
-
-const logger = require('../subroutines/sys-logging-subs');
-
-AWS.config.update({
-    accessKeyId: process.env.S3accessKeyId,
-    secretAccessKey: process.env.S3secretAccessKey,
-    region: process.env.S3region
-});
-
-const s3Bucket = new AWS.S3({
-    params: {
-        Bucket: process.env.s3bucketImages
-    }
-});
+const uploadTeamLogo = require('../methods/teamLogoUpload').uploadTeamLogo;
 
 /*
 routes for team management --
@@ -611,13 +595,12 @@ router.post('/removeMember', passport.authenticate('jwt', {
 router.post('/uploadLogo', passport.authenticate('jwt', {
     session: false
 }), confirmCaptain, (req, res) => {
+
     const path = '/team/uploadLogo';
     let uploadedFileName = "";
 
     let teamName = req.body.teamName;
     let dataURI = req.body.logo;
-
-    var decoded = Buffer.byteLength(dataURI, 'base64');
 
     //construct log object
     let logObj = {};
@@ -626,98 +609,12 @@ router.post('/uploadLogo', passport.authenticate('jwt', {
     logObj.target = teamName;
     logObj.logLevel = 'STD';
 
-    if (decoded.length > 2500000) {
-        logObj.logLevel = 'ERROR';
-        logObj.error = 'File was too big';
-        res.status(500).send(util.returnMessaging(path, "File is too big!", false, null, null, logObj));
-    } else {
-
-        var png = dataURI.indexOf('png');
-        var jpg = dataURI.indexOf('jpg');
-        var jpeg = dataURI.indexOf('jpeg');
-        var gif = dataURI.indexOf('gif');
-
-        var stamp = Date.now()
-        stamp = stamp.toString();
-        stamp = stamp.slice(stamp.length - 4, stamp.length);
-
-        uploadedFileName += teamName + stamp + "_logo.png";
-
-
-        var buf = new Buffer.from(dataURI.replace(/^data:image\/\w+;base64,/, ""), 'base64');
-        // var buf = new Buffer.from(dataURI, 'base64');
-
-        var data = {
-            Key: uploadedFileName,
-            Body: buf,
-            ContentEncoding: 'base64',
-            ContentType: 'image/png'
-        };
-        s3Bucket.putObject(data, function(err, data) {
-            if (err) {
-                //log object
-                let sysObj = {};
-                sysObj.actor = 'SYSTEM';
-                sysObj.action = 'error uploading to AWS ';
-                sysObj.logLevel = 'ERROR';
-                sysObj.error = err;
-                sysObj.location = path;
-                sysObj.target = teamName;
-                sysObj.timeStamp = new Date().getTime();
-                logger(sysObj);
-            } else {
-                //log object
-                let sysObj = {};
-                sysObj.actor = 'SYSTEM';
-                sysObj.action = 'uploaded to AWS ';
-                sysObj.logLevel = 'STD';
-                sysObj.location = path;
-                sysObj.target = teamName;
-                sysObj.timeStamp = new Date().getTime();
-                logger(sysObj);
-            }
+    uploadTeamLogo(path, dataURI, teamName).then(rep => {
+            res.status(200).send(util.returnMessaging(path, "Image Uploaded.", false, null, rep.eo, logObj))
+        },
+        err => {
+            res.status(500).send(util.returnMessaging(path, "err.message", err, null, null, logObj))
         });
-
-        let lower = teamName.toLowerCase();
-        Team.findOne({
-            teamName_lower: lower
-        }).then((foundTeam) => {
-            if (foundTeam) {
-                if (foundTeam.captain == req.user.displayName) {
-                    var logoToDelete;
-                    if (foundTeam.logo) {
-                        logoToDelete = foundTeam.logo;
-                    }
-                    if (logoToDelete) {
-                        deleteFile(logoToDelete);
-                    }
-                    foundTeam.logo = uploadedFileName;
-                    foundTeam.save().then((savedTeam) => {
-                        if (savedTeam) {
-                            res.status(200).send(util.returnMessaging(path, "File uploaded", false, savedTeam, null, logObj));
-                        }
-                    }, (err) => {
-                        deleteFile(filePath);
-                        res.status(500).send(util.returnMessaging(path, "Error uploading file", err, null, null, logObj));
-                    })
-                } else {
-                    deleteFile(filePath);
-                    logObj.logLevel = 'ERROR';
-                    logObj.error = 'Actor was not captain'
-                    res.status(500).send(util.returnMessaging(path, "Error uploading file", false, null, null, logObj));
-                }
-            } else {
-                deleteFile(filePath);
-                logObj.logLevel = 'ERROR';
-                logObj.error = 'Team was not found';
-                res.status(500).send(util.returnMessaging(path, "Error uploading file", false, null, null, logObj));
-            }
-
-        }, (err) => {
-            deleteFile(filePath);
-            res.status(500).send(util.returnMessaging(path, "Error uploading file", err, null, null, logObj));
-        });
-    }
 
 });
 
@@ -795,37 +692,6 @@ router.post('/get/sys/dat', passport.authenticate('jwt', {
         }
     )
 });
-
-function deleteFile(path) {
-    let data = {
-        Bucket: process.env.s3bucketImages,
-        Key: path
-    };
-    s3Bucket.deleteObject(data, (err, data) => {
-        if (err) {
-            //log object
-            let sysObj = {};
-            sysObj.actor = 'SYSTEM';
-            sysObj.action = 'error deleting from AWS ';
-            sysObj.location = 'team-route-deleteFile'
-            sysObj.logLevel = 'ERROR';
-            sysObj.error = err;
-            sysObj.target = path;
-            sysObj.timeStamp = new Date().getTime();
-            logger(sysObj);
-        } else {
-            //log object
-            let sysObj = {};
-            sysObj.actor = 'SYSTEM';
-            sysObj.action = 'deleted from AWS ';
-            sysObj.location = 'team-route-deleteFile'
-            sysObj.logLevel = 'STD';
-            sysObj.target = path;
-            sysObj.timeStamp = new Date().getTime();
-            logger(sysObj);
-        }
-    })
-}
 
 //post route
 //updates the team questionnaire related info

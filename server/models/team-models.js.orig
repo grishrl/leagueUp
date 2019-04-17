@@ -33,8 +33,11 @@ const teamSchema = new Schema({
     "lastTouched": Number,
     "replays": [String],
     "parseStats": Boolean,
+<<<<<<< HEAD
     "ticker": String //short aberviation of team name
+=======
     "history": [Object]
+>>>>>>> development
 });
 
 const Team = mongoose.model('team', teamSchema);

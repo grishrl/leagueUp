@@ -207,8 +207,8 @@
                                     <div class="line"></div>
                                 </div>
                             </div>
-                            <div class="winners">
-                                <div class="matchups" *ngIf="tournamentObject.quarterFinal3 && tournamentObject.quarterFinal4">
+                            <div class="winners" *ngIf="tournamentObject.quarterFinal3 && tournamentObject.quarterFinal4">
+                                <div class="matchups">
                                     <div class="matchup" *ngIf="tournamentObject.quarterFinal3">
                                         <div class="participants border border-secondary">
                                             <div class="participant" [ngClass]="{'winner': winner(tournamentObject.quarterFinal3, 'home')}">
@@ -249,7 +249,7 @@
                             </div>
                         </section>
                         <section class="round semifinals">
-                            <div class="winners">
+                            <div class="winners" *ngIf="tournamentObject.semiFinalRight && tournamentObject.semiFinalLeft">
                                 <div class="matchups">
                                     <div class="matchup" *ngIf="tournamentObject.semiFinalLeft">
                                         <div class="participants border border-secondary">

@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { AdminService } from 'src/app/services/admin.service';
 import { AclServiceService } from './acl-service.service';
 import { PageEvent, MatPaginator } from '@angular/material';
+import { UtilitiesService } from 'src/app/services/utilities.service';
 
 @Component({
   selector: 'app-admin-acl-management',
@@ -37,7 +38,7 @@ export class AdminAclManagementComponent implements OnInit, AfterViewInit {
     this.paginator.pageIndex = 0;
   }
 
-  constructor(private adminService:AdminService, private aclService: AclServiceService) { }
+  constructor(private adminService:AdminService, private aclService: AclServiceService, private util: UtilitiesService) { }
 
   filterUsers(filterName){
     if(filterName == null || filterName == undefined || filterName.length == 0){
@@ -48,8 +49,10 @@ export class AdminAclManagementComponent implements OnInit, AfterViewInit {
     }else{
       this.filteredArray = [];
       this.users.forEach(element => {
-        if (element.displayName.toLowerCase().indexOf(filterName.toLowerCase())>-1){
-          this.filteredArray.push(element);
+        if(!this.util.isNullOrEmpty(element.displayName)){
+          if (element.displayName.toLowerCase().indexOf(filterName.toLowerCase()) > -1) {
+            this.filteredArray.push(element);
+          }
         }
       });
       this.length = this.filteredArray.length;

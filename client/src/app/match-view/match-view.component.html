@@ -44,12 +44,10 @@
 
                 </div>
                 <div class="col-7 text-center">
-                    Scheduled Time: <span *ngIf="match.scheduledTime && match.scheduledTime.startTime != null else tbd">
-                        <!-- {{match.friendlyDate}}
-  - {{match.friendlyTime}}
-            {{match.suffix}} -->
-{{util.getFormattedDate(match.scheduledTime.startTime, "dddd M/D/YYYY h:mm A zz")}}
-        </span>
+                    Scheduled Time:
+                    <span *ngIf="match.scheduledTime && match.scheduledTime.startTime != null else tbd">
+                        {{util.getFormattedDate(match.scheduledTime.startTime, "dddd M/D/YYYY h:mm A zz")}}
+                    </span>
                     <ng-template #tbd><span> TBD </span></ng-template>
                 </div>
                 <div class="col">
@@ -105,7 +103,7 @@
             </div>
             <div class="row">
                 <div class="col text-center">
-                    Scheduled Time: <span *ngIf="match.scheduledTime && match.scheduledTime.startTime != null  else tbd">{{match.friendlyDate}} - {{match.friendlyTime}} {{match.suffix}}</span>
+                    Scheduled Time: <span *ngIf="match.scheduledTime && match.scheduledTime.startTime != null  else tbd">{{util.getFormattedDate(match.scheduledTime.startTime, "dddd M/D/YYYY h:mm A zz")}}</span>
                     <ng-template #tbd><span> TBD </span></ng-template>
                 </div>
             </div>

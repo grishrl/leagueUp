@@ -14,6 +14,9 @@
             <div class="col">
                 <span class="finger"><i (click)="editClicked=!editClicked" class="material-icons">launch</i></span>
             </div>
+            <div class="col" *ngIf="_embedded">
+                <span class="finger" (click)="removeImage()"><i class="fas fa-ban"></i> Remove Image</span>
+            </div>
         </div>
         <div class="row" [hidden]="editClicked">
             <div class="col">

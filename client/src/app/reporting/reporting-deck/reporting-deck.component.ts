@@ -167,6 +167,7 @@ removeBan(hero, arr){
     "Malg":"Mal'Ganis",
     "MALT": "Malthael",
     "Mdvh": "Medivh",
+    "MEP":"Mephisto",
     "Mura": "Muradin",
     "Murk": "Murky",
     "Witc": "Nazeebo",

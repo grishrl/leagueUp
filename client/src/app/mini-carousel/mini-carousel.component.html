@@ -6,11 +6,11 @@
             <li (click)="slideTo(2)" [ngClass]="{'active':2==currentSlide}"></li>
         </ol>
         <div class="carousel-inner" role="listbox">
-            <div (click)="goToBlogPage(slide)" *ngFor="let slide of carousel let i = index" class="carousel-item finger" [ngClass]="{'active':i==currentSlide}" [style.background-image]="'url('+slide.fields.heroImage.fields.file.url+'?w=400&h=225&fit=pad)'">
+            <div (click)="goToBlogPage(slide)" *ngFor="let slide of carousel let i = index" class="carousel-item finger" [ngClass]="{'active':i==currentSlide}" [style.background-image]="'url('+slide.snippet.thumbnails.high.url+')'">
                 <div class="carousel-caption d-none d-md-block badge-pill carouselBackground">
 
                     <span>{{display}}</span>
-                    <div> {{util.getFormattedDate(slide.fields.publishDate, "M/D/YY")}} </div>
+                    <div> {{util.getFormattedDate(slide.snippet.publishedAt, "M/D/YY")}} </div>
                 </div>
             </div>
             <a class="carousel-control-prev" (click)="prev()" role="button">

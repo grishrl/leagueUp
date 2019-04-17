@@ -16,6 +16,7 @@ import { UtilitiesService } from '../services/utilities.service';
 import { RequestService } from '../services/request.service';
 import { ConfirmRemoveMemberComponent } from '../modal/confirm-remove-member/confirm-remove-member.component';
 import { HotsProfileService } from '../services/hots-profile.service';
+import { DivisionService } from '../services/division.service';
 
 
 @Component({
@@ -39,6 +40,7 @@ export class TeamProfileComponent implements OnInit {
   displayMembersRight: any[] = [];
   displayPendingMembersLeft: any[] = [];
   displayPendingMembersRight: any[] = [];
+  showDivision = false;
 
   hlMedals = ['Grand Master', 'Master', 'Diamond', 'Platinum', 'Gold', 'Silver', 'Bronze'];
   hlDivision = [1, 2, 3, 4, 5];
@@ -81,8 +83,8 @@ export class TeamProfileComponent implements OnInit {
   }
 
   //constructor
-  constructor(private auth: AuthService, public user: UserService, public timezone: TimezoneService, private team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router: Router,
-    private admin:AdminService, private util:UtilitiesService, private requestService:RequestService, public heroProfile: HotsProfileService) {
+  constructor(public auth: AuthService, public user: UserService, public timezone: TimezoneService, private team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router: Router,
+    private admin:AdminService, private util:UtilitiesService, private requestService:RequestService, public heroProfile: HotsProfileService, private divisionServ: DivisionService) {
     this.teamName = team.realTeamName(this.route.snapshot.params['id']);
   }
 
@@ -201,6 +203,7 @@ export class TeamProfileComponent implements OnInit {
         this.setUpTeamMemberFilter(this.returnedProfile);
         this.stratifyTeamMembers()
         this.orignalName = this.returnedProfile.teamName_lower;
+        this.checkDivision(this.returnedProfile.divisionConcat);
         // this.cleanUpDivision();
       }
     } else {
@@ -540,6 +543,26 @@ export class TeamProfileComponent implements OnInit {
     }
   }
 
+  //method determines whether a division is marked public so as to show the division info in team profile or not, prevents peeking division placement preseason
+  checkDivision(div){
+    if(this.embedSource == 'admin'){
+      this.showDivision = true;
+    }else{
+      if (!this.util.isNullOrEmpty(div)) {
+        this.divisionServ.getDivision(div).subscribe(
+          res => {
+            if(res.public){
+              this.showDivision=true;
+            }
+          },
+          err => {
+            console.log(err)
+          }
+        )
+      }
+    }
+  }
+
 
   //helper function of dubious helpfulness.
   isNullOrEmpty(dat): boolean {
@@ -578,7 +601,7 @@ export class TeamProfileComponent implements OnInit {
       this.nameControl.setErrors({ required: true });
       valid = false;
     } else {
-      let regEx = new RegExp(/[%_]/gm);
+      let regEx = new RegExp(/[%_\/\\`#]/gm);
       if (regEx.test(this.returnedProfile.teamName)) {
         valid = false;
         this.nameControl.setErrors({ invalidCharacters: true });
@@ -614,7 +637,7 @@ export class TeamProfileComponent implements OnInit {
       this.displayMembersRight = [];
     }
     //PENDING MEMBERS
-    if (this.returnedProfile.pendingMembers.length > 3) {
+    if (this.returnedProfile.pendingMembers && this.returnedProfile.pendingMembers.length > 3) {
       let half = Math.round(this.returnedProfile.pendingMembers.length / 2);
       for (var i = 0; i < half; i++) {
         this.displayPendingMembersLeft.push(this.returnedProfile.pendingMembers[i]);
@@ -635,6 +658,7 @@ export class TeamProfileComponent implements OnInit {
       merge(this.returnedProfile, res);
       this.setUpTeamMemberFilter(this.returnedProfile);
       this.stratifyTeamMembers()
+      this.checkDivision(this.returnedProfile.divisionConcat);
       // console.log('team ', this.returnedProfile);
       // this.cleanUpDivision();
     });

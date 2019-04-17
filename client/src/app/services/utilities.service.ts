@@ -14,6 +14,9 @@ export class UtilitiesService {
     if (dat == null || dat == undefined) {
       return true;
     }
+    if(typeof dat == 'boolean'){
+      return false;
+    }
     if (Array.isArray(dat)) {
       if (dat.length == 0) {
         return true;
@@ -196,7 +199,12 @@ export class UtilitiesService {
     } else {
 
     }
-
     return imgFQDN;
+  }
+
+
+  replayFQDN(replay) {
+    let url = 'https://s3.amazonaws.com/' + environment.s3bucketReplays + '/' + replay;
+    return url;
   }
 }

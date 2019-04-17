@@ -19,7 +19,21 @@ const logSchema = new Schema({
     'location': String
 });
 
+const archiveSchema = new Schema({
+    "season": Number,
+    "type": String,
+    "object": Object,
+    "timeStamp": String
+}, {
+    useNestedStrict: false
+})
+
 const System = mongoose.model('system', systemSchema);
 const Log = mongoose.model('log', logSchema);
+const Archive = mongoose.model('archive', archiveSchema);
 
-module.exports = { system: System, Log: Log };
+module.exports = {
+    system: System,
+    Log: Log,
+    archive: Archive
+};

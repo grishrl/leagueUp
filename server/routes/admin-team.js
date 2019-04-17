@@ -11,6 +11,8 @@ const UserSub = require('../subroutines/user-subs');
 const passport = require("passport");
 const levelRestrict = require("../configs/admin-leveling");
 const messageSub = require('../subroutines/message-subs');
+const uploadTeamLogo = require('../methods/teamLogoUpload').uploadTeamLogo;
+const deleteFile = require('../methods/teamLogoUpload').deleteFile;
 
 //returns the lists of users who are awaiting admin attention to complete the team join process
 router.get('/pendingMemberQueue', passport.authenticate('jwt', {
@@ -615,7 +617,81 @@ router.post('/team/memberAdd',
                 res.status(500).send(util.returnMessaging(path, 'Error finding team', err, false, null, logObj));
             }
         )
-    })
+    });
 
+//returns a list of all teams!
+router.post('/team/uploadLogo', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
+
+    const path = '/admin/team/uploadLogo';
+    let uploadedFileName = "";
+
+    let teamName = req.body.teamName;
+    let dataURI = req.body.logo;
+
+    //construct log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = 'upload team logo ';
+    logObj.target = teamName;
+    logObj.logLevel = 'STD';
+
+    uploadTeamLogo(path, dataURI, teamName).then(rep => {
+            res.status(200).send(util.returnMessaging(path, "Image Uploaded.", false, null, rep.eo, logObj));
+        },
+        err => {
+            res.status(500).send(util.returnMessaging(path, "err.message", err, null, null, logObj))
+        });
+
+});
+
+router.post('/team/removeLogo', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
+
+    const path = '/admin/team/removeLogo';
+
+    let teamName = req.body.teamName;
+
+    //construct log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = 'remove team logo ';
+    logObj.target = teamName;
+    logObj.logLevel = 'STD';
+
+    Team.findOne({ teamName: teamName }).then(
+        found => {
+            if (found) {
+                if (found.logo) {
+                    let path = found.logo;
+                    found.logo = null;
+                    deleteFile(path);
+                    found.save().then(
+                        saved => {
+                            res.status(200).send(util.returnMessaging(path, 'Logo removed.', null, null, saved, logObj));
+                        },
+                        err => {
+                            res.status(500).send(util.returnMessaging(path, 'Team save error.', err, null, null, logObj));
+                        }
+                    )
+                } else {
+                    logObj.logLevel = "ERROR";
+                    logObj.error = 'Team had no logo';
+                    res.status(500).send(util.returnMessaging(path, 'Team had no logo', null, null, null, logObj));
+                }
+            } else {
+                logObj.logLevel = "ERROR";
+                logObj.error = 'Team not found.';
+                res.status(500).send(util.returnMessaging(path, 'Team not found.', null, null, null, logObj));
+            }
+        },
+        err => {
+            res.status(500).send(util.returnMessaging(path, 'Team query error.', err, null, null, logObj));
+        }
+    )
+
+});
 
 module.exports = router;
