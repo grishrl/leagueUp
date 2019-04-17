@@ -65,6 +65,9 @@ export class RecentContentComponent implements OnInit {
       res => {
         this.showdownItem = res['items'][0];
         this.showdownItem.url = this.createURL(this.showdownItem);
+      },
+      err => {
+        console.log(err)
       }
     )
 
@@ -73,6 +76,9 @@ export class RecentContentComponent implements OnInit {
       res => {
         this.edgeItem = res['items'][0];
         this.edgeItem.url = this.createURL(this.edgeItem);
+      },
+      err=>{
+        console.log(err)
       }
     )
 
@@ -81,6 +87,9 @@ export class RecentContentComponent implements OnInit {
       res => {
         this.podcastItem = res['items'][0];
         this.podcastItem.url = this.createURL(this.podcastItem);
+      },
+      err => {
+        console.log(err)
       }
     )
   }
