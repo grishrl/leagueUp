@@ -1,0 +1,26 @@
+<!-- Recent Post -->
+<div class="panel-box">
+
+    <div class="titles">
+        <h4>Recent News</h4>
+    </div>
+
+    <!-- Post Item -->
+    <div class="post-item" *ngFor="let blog of blogs">
+        <div class="row">
+            <div class="col-md-4 text-center">
+                <div class="img-hover">
+                    <img src="{{blog.fields.heroImage.fields.file.url}}" alt="" class="img-responsive image-height">
+                    <div class="overlay"><a href="single-news.html">+</a></div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <h5><a href="single-news.html">{{blog.fields.title}}</a></h5>
+                <span class="data-info">{{util.getFormattedDate(blog.fields.publishDate, "MMMM DD, YYYY")}}</span>
+                <p [innerHTML]="md.convertMarkdown(blog.fields.description)">
+                    <a href="single-news.html">Read More [+]</a></p>
+            </div>
+        </div>
+    </div>
+
+</div>

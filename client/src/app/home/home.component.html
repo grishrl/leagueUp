@@ -66,7 +66,7 @@
                         <mat-card-title><span class="anchor" (click)="goToBlogPage(item)">{{item.fields.title}}</span></mat-card-title>
                         <mat-card-subtitle>{{item.fields.author.fields.name}}</mat-card-subtitle>
                     </mat-card-header>
-                    <img mat-card-image src="{{item.fields.heroImage.fields.file.url}}?w=400&h=225&fit=pad" alt="{{item.fields.heroImage.fields.description}}">
+                    <img mat-card-image src="{{item.fields.heroImage.fields.file.url}}?w=210&h=140&fit=pad" alt="{{item.fields.heroImage.fields.description}}">
                     <mat-card-content>
                         <div [innerHTML]="md.convertMarkdown(item.fields.description)"></div>
                     </mat-card-content>

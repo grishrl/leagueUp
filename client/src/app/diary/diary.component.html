@@ -1,0 +1,75 @@
+<!-- Diary -->
+<div class="panel-box">
+    <div class="titles">
+        <h4><i class="fa fa-calendar"></i>Diary</h4>
+    </div>
+
+    <!-- List Diary -->
+    <ul class="list-diary">
+        <!-- Item List Diary -->
+        <li *ngFor="let match of next4matches">
+            <h6>{{match.divisionDisplayName}}<span>{{util.getFormattedDate(match.scheduledTime.startTime, "DD MMM - hh:mm A zz")}}</span></h6>
+            <ul class="club-logo">
+                <li>
+                    <img src="{{team.imageFQDN(match.home.logo)}}" alt="">
+                    <span>{{match.home.ticker}}</span>
+                </li>
+                <li>
+                    <img src="{{team.imageFQDN(match.away.logo)}}" alt="">
+                    <span>{{match.away.ticker}}</span>
+                </li>
+            </ul>
+        </li>
+        <!-- End Item List Diary -->
+
+        <!-- Item List Diary -->
+        <!-- <li>
+            <h6>GROUP E <span>22 JUN 2018 - 15:00</span></h6>
+            <ul class="club-logo">
+                <li>
+                    <img src="assets/img/clubs-logos/bra.png" alt="">
+                    <span>BRAZIL</span>
+                </li>
+                <li>
+                    <img src="assets/img/clubs-logos/costa-rica.png" alt="">
+                    <span>COSTA RICA</span>
+                </li>
+            </ul>
+        </li> -->
+        <!-- End Item List Diary -->
+
+        <!-- Item List Diary -->
+        <!-- <li>
+            <h6>GROUP H <span>19 JUN 2018 - 15:00</span></h6>
+            <ul class="club-logo">
+                <li>
+                    <img src="assets/img/clubs-logos/colombia.png" alt="">
+                    <span>COLOMBIA</span>
+                </li>
+                <li>
+                    <img src="assets/img/clubs-logos/japan.png" alt="">
+                    <span>JAPAN</span>
+                </li>
+            </ul>
+        </li> -->
+        <!-- End Item List Diary -->
+
+        <!-- Item List Diary -->
+        <!-- <li>
+            <h6>GROUP C <span>16 JUN 2018 - 15:00</span></h6>
+            <ul class="club-logo">
+                <li>
+                    <img src="assets/img/clubs-logos/fra.png" alt="">
+                    <span>FRANCE</span>
+                </li>
+                <li>
+                    <img src="assets/img/clubs-logos/aus.png" alt="">
+                    <span>AUSTRALIA</span>
+                </li>
+            </ul>
+        </li> -->
+        <!-- End Item List Diary -->
+    </ul>
+    <!-- End List Diary -->
+</div>
+<!-- End Diary -->

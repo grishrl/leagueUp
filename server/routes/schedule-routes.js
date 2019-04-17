@@ -13,6 +13,7 @@ const logger = require('../subroutines/sys-logging-subs');
 const Scheduling = require('../models/schedule-models');
 const fs = require('fs');
 const n_util = require('util');
+const Division = require('../models/division-models');
 
 
 fs.readFileAsync = n_util.promisify(fs.readFile);
@@ -222,14 +223,22 @@ router.get('/get/matches/scheduled', (req, res) => {
     }).lean().then((found) => {
         if (found) {
             let teamIds = findTeamIds(found);
-            addTeamNamesToMatch(teamIds, found).then(
+            addTeamAndDivsionNames(found).then(
                 added => {
                     res.status(200).send(util.returnMessaging(path, 'Found scheduled matches', false, added));
                 },
                 err => {
                     res.status(500).send(util.returnMessaging(path, 'Failed to get team matches', err, false));
                 }
-            )
+            );
+            // addTeamNamesToMatch(teamIds, found).then(
+            //     added => {
+            //         res.status(200).send(util.returnMessaging(path, 'Found scheduled matches', false, added));
+            //     },
+            //     err => {
+            //         res.status(500).send(util.returnMessaging(path, 'Failed to get team matches', err, false));
+            //     }
+            // )
 
         } else {
             res.status(400).send(util.returnMessaging(path, 'No matches found'));
@@ -1089,7 +1098,7 @@ async function addTeamNamesToMatch(teams, found) {
                         match.away['teamName'] = team.teamName;
                         match.away['logo'] = team.logo;
                         match.away['teamName_lower'] = team.teamName_lower;
-                        match.home['ticker'] = team.ticker;
+                        match.away['ticker'] = team.ticker;
                     }
                 });
             });
@@ -1101,3 +1110,50 @@ async function addTeamNamesToMatch(teams, found) {
         return err;
     });
 };
+
+function findDivs(found) {
+    let divs = [];
+
+    //type checking make sure we have array
+    if (!Array.isArray(found)) {
+        found = [found];
+    }
+
+    found.forEach(match => {
+        if (divs.indexOf(match.divisionConcat) == -1) {
+            divs.push(match.divisionConcat);
+        }
+    });
+
+    return divs;
+}
+
+async function addTeamAndDivsionNames(found) {
+    let divs = await getDivisionNames(found);
+    let completed = await addTeamNamesToMatch_foundOnly(found).then(
+        nameProcess => {
+            nameProcess.forEach(match => {
+                divs.forEach(div => {
+                    if (match.divisionConcat == div.divisionConcat) {
+                        match.divisionDisplayName = div.displayName;
+                    }
+                });
+            });
+            return nameProcess;
+        },
+        err => {
+            return err;
+        }
+    );
+
+    return completed;
+}
+
+async function getDivisionNames(found) {
+    let div = findDivs(found);
+    let divInfo = await Division.find({ divisionConcat: { $in: div } }).lean().then(
+        found => { return found; },
+        err => { return null; }
+    );
+    return divInfo;
+}

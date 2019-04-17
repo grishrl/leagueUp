@@ -14,12 +14,13 @@ import { Iinterval } from '../model/iinterval';
 })
 export class CountdownComponent implements OnInit {
 
-  constructor(private scheduleService:ScheduleService, private divisionService:DivisionService, public util:UtilitiesService, public team: TeamService, private countdownService:CountdownService) { }
+  constructor(private scheduleService:ScheduleService, public util:UtilitiesService, public team: TeamService, private countdownService:CountdownService) { }
 
   targetMatch = {
     casterName:'',
     casterUrl:'',
     divisionConcat:'',
+    divisionDisplayName:'',
     scheduledTime:{
       startTime:0
     },
@@ -57,34 +58,20 @@ export class CountdownComponent implements OnInit {
     this.scheduleService.getAllMatchesWithStartTime().subscribe(
       res=>{
         let matches = res;
-        // matches.sort( (a,b)=>{
-        //   if (a.scheduledTime.startTime > b.scheduledTime.startTime){
-        //     return 1;
-        //   }else{
-        //     return -1;
-        //   }
-        // });
         let now = Date.now();
         let nearestMatch = nextDate(now, matches);
 
         if (nearestMatch){
           nearestMatch.scheduledTime.startTime = parseInt(nearestMatch.scheduledTime.startTime);
-          // console.log(nearestMatch);
           this.startDate = new Date(nearestMatch.scheduledTime.startTime);
           this.targetMatch = nearestMatch;
           this.initCountdown();
-          this.divisionService.getDivision(this.targetMatch.divisionConcat).subscribe(
-            reply=>{
-              this.divisionInfo = reply;
-            },
-            err=>{
-              console.log(err)
-            }
-          )
         }
 
       },
-      err=>{}
+      err=>{
+        console.log(err);
+      }
     )
   }
 
