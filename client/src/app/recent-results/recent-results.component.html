@@ -4,19 +4,21 @@
         <ul>
             <li *ngFor="let match of display">
                 <span class="head" style="overflow: hidden">
-      {{match.home.ticker}} Vs {{match.away.ticker}} 
+      {{match.home.ticker}} Vs {{match.away.ticker}}
       <span *ngIf="match.scheduledTime && match.scheduledTime.startTime"
             class="date">{{util.getFormattedDate(match.scheduledTime.startTime, 'DD MMM YYYY')}}</span>
                 </span>
                 <div class="goals-result">
                     <a href="single-team.html">
-                        <img src="{{team.imageFQDN(match.home.logo)}}" alt=""> {{match.home.ticker}}
+                        <!-- <img src="{{team.imageFQDN(match.home.logo)}}" alt="">  -->
+                        {{match.home.ticker}}
                     </a>
                     <span class="goals">
                                    <b>{{match.home.score}}</b> - <b>{{match.away.score}}</b>
                                  </span>
                     <a href="single-team.html">
-                        <img src="{{team.imageFQDN(match.away.logo)}}" alt=""> {{match.away.ticker}}
+                        <!-- <img src="{{team.imageFQDN(match.away.logo)}}" alt="">  -->
+                        {{match.away.ticker}}
                     </a>
                 </div>
             </li>
