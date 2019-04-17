@@ -101,6 +101,7 @@ import { DivisionTableViewComponent } from './division-table-view/division-table
 import { MiniTeamViewComponent } from './division-table-view/mini-team-view/mini-team-view.component';
 import { RecentNewsComponent } from './recent-news/recent-news.component';
 import { DiaryComponent } from './diary/diary.component';
+import { RecentContentComponent } from './recent-content/recent-content.component';
 
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
@@ -193,7 +194,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     DivisionTableViewComponent,
     MiniTeamViewComponent,
     RecentNewsComponent,
-    DiaryComponent
+    DiaryComponent,
+    RecentContentComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
