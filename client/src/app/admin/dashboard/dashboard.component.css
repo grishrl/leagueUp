@@ -8,3 +8,15 @@ ul {
     margin: 0;
     padding: 0;
 }
+
+a div i {
+    color: #c1c1c1;
+}
+
+a div i:hover {
+    color: #505050;
+}
+
+.hover-test:hover {
+    color: #505050;
+}

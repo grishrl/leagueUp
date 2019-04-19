@@ -42,18 +42,6 @@ export class NavComponent implements OnInit {
     }else{
       this.navBarClass = toggleShow(this.navBarClass);
     }
-    // if (!appRoute && !path){
-    //   //hamburger
-    //   this.navBarClass = toggleShow(this.navBarClass);
-    // }
-    // else if(path != null && path != undefined && path.length>0){
-    //   this.router.navigateByUrl(appRoute+path);
-    //   this.navBarClass = removeShow(this.navBarClass);
-    // }else{
-    //   this.router.navigateByUrl(appRoute);
-    //   this.navBarClass = removeShow(this.navBarClass);
-    //   //nah
-    // }
   }
 
   logout(){
@@ -74,7 +62,7 @@ export class NavComponent implements OnInit {
         if(res){
           this.userMessages = parseInt(res);
         }
-        
+
       }
     }, err=>{
       console.log(err);
@@ -108,7 +96,7 @@ export class NavComponent implements OnInit {
           }else{
             this.userMessages = 0;
           }
-          
+
         }, err => {
           console.log(err);
         });

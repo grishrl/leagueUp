@@ -89,8 +89,8 @@ const APP_ROUTES: Routes = [
   { path: 'findPlayers', component:UserMarketplaceComponent},
   { path: 'replayBrowser', component:ReplayBrowserComponent},
   { path: 'tournament', component:TournamentViewComponent },
-  { path: '404', component: StaticHtmlLoaderComponent , data:{ template:'404', headerText:'404' }},
-  { path: 'page/:id', component: StaticHtmlLoaderComponent }
+  { path: 'page/:id', component: StaticHtmlLoaderComponent },
+  { path: '**', component: StaticHtmlLoaderComponent, data: { template: '404', headerText: 'Not Found' } }
 ]
 
 @NgModule({

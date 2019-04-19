@@ -35,11 +35,11 @@ export class DivisionStandingsComponent implements OnInit {
   // selectedDiv;
 
   ngOnInit() {
-
+    console.log('this.auth.getTeam() ', this.auth.getTeam());
     if (this.auth.getTeam()){
       this.team.getTeam(this.auth.getTeam()).subscribe(
         res => {
-          this.getStandings(res.divisonConcat)
+          this.getStandings(res.divisionConcat)
         },
         err => {
           console.log(err);
