@@ -43,6 +43,7 @@ import { TournamentViewComponent } from "./tournament-view/tournament-view.compo
 import { TeamScheduleComboComponent } from "./schedule/team-schedule-combo/team-schedule-combo.component";
 import { EventCreateComponent } from './admin/events/event-create/event-create.component';
 import { EventListComponent } from './admin/events/event-list/event-list.component';
+import { StaticHtmlLoaderComponent } from './static-html-loader/static-html-loader.component';
 
 const APP_ROUTES: Routes = [
   { path: 'directory', component: DirectoryComponent},
@@ -87,7 +88,9 @@ const APP_ROUTES: Routes = [
   { path: 'findTeams', component:TeamMarketComponent},
   { path: 'findPlayers', component:UserMarketplaceComponent},
   { path: 'replayBrowser', component:ReplayBrowserComponent},
-  { path: 'tournament', component:TournamentViewComponent }
+  { path: 'tournament', component:TournamentViewComponent },
+  { path: '404', component: StaticHtmlLoaderComponent , data:{ template:'404' }},
+  { path: 'page/:id', component: StaticHtmlLoaderComponent }
 ]
 
 @NgModule({

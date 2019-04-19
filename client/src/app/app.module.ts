@@ -104,6 +104,7 @@ import { RecentNewsComponent } from './recent-news/recent-news.component';
 import { DiaryComponent } from './diary/diary.component';
 import { RecentContentComponent } from './recent-content/recent-content.component';
 import { SafePipe } from './safe.pipe';
+import { StaticHtmlLoaderComponent } from './static-html-loader/static-html-loader.component';
 
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
@@ -199,7 +200,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     RecentNewsComponent,
     DiaryComponent,
     RecentContentComponent,
-    SafePipe
+    SafePipe,
+    StaticHtmlLoaderComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
