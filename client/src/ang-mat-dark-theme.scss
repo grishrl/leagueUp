@@ -16,4 +16,12 @@ $ngs-dark-theme: mat-dark-theme($ngs-dark-primary, $ngs-dark-accent, $ngs-dark-w
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
-@include angular-material-theme($ngs-dark-theme);
+.ngs-dark {
+    @include angular-material-theme($ngs-dark-theme);
+}
+
+$ngs-light-primary: mat-palette($mat-purple);
+$ngs-light-accent: mat-palette($mat-indigo, A200, A100, A400);
+$ngs-light-warn: mat-palette($mat-red);
+$ngs-light-theme: mat-light-theme($ngs-light-primary, $ngs-light-accent, $ngs-light-warn);
+@include angular-material-theme($ngs-light-theme);

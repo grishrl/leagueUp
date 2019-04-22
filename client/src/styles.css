@@ -42,7 +42,7 @@ url('/assets/testGutter.png'); */
 /* } */
 
 
-/* 
+/*
 
 .mat-FullWidth {
     width: 100%;
@@ -26527,4 +26527,8 @@ table.career tr td img {
 
 .finger {
     cursor: pointer;
+}
+
+.forceFull {
+    min-height: 100vh;
 }
