@@ -95,3 +95,4 @@ client/dist
 
 #custom ignore
 server/uuid.js
+matchBlank.JSON
