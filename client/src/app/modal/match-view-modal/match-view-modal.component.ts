@@ -13,7 +13,7 @@ export class MatchViewModalComponent implements OnInit {
   navStart: Observable<NavigationStart>;
 
   ngOnInit(): void {
-    
+
     this.navStart.subscribe(evt => {
       this.dialogRef.close();
     });
@@ -24,14 +24,15 @@ export class MatchViewModalComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<MatchViewModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    private router: Router) { 
+    private router: Router) {
       this.navStart = this.router.events.pipe(
         filter(evt => evt instanceof NavigationStart)
       ) as Observable<NavigationStart>
     }
 
-  
+
 }
 export interface DialogData {
-  confirm: string;
+  confirm: string
+  match:object
 }

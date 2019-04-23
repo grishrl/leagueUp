@@ -26,6 +26,7 @@ export class MatchViewComponent implements OnInit {
       startTime:null,
       endTime:null
     },
+    type:'',
     casterName:'',
     casterUrl:''
   }
@@ -34,6 +35,28 @@ export class MatchViewComponent implements OnInit {
       this.match = _match;
       if (this.util.returnBoolByPath(this.match, 'scheduledTime.startTime')){
         this.match.scheduledTime.startTime = parseInt(this.match.scheduledTime.startTime);
+      }
+      if(this.match.type && this.match.type=='tournament'){
+        if(!this.util.returnBoolByPath(this.match, 'home')){
+          this.match.home = {
+            teamName: '',
+            logo: '',
+            wins: null,
+            losses: null
+          };
+          this.match.home.teamName = 'TBD';
+          this.match.home.logo = null;
+        }
+        if (!this.util.returnBoolByPath(this.match, 'away')) {
+          this.match.away = {
+            teamName: '',
+            logo: '',
+            wins: null,
+            losses: null
+          };
+          this.match.away.teamName = 'TBD';
+          this.match.away.logo = null;
+        }
       }
     }
   }
