@@ -16,7 +16,7 @@ export class BlogCommonService {
     return {
   'fields':
   {
-    'publishDate':0,
+    'publishDate': null,
     'description': '',
     'body': '',
     'author': {
