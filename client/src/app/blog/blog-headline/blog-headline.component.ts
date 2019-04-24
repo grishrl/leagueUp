@@ -10,15 +10,15 @@ import { BlogCommonService } from 'src/app/services/blog-common.service';
 })
 export class BlogHeadlineComponent implements OnInit {
 
-  blog = {
+  blog;
 
-  }
   @Input() set blogObj(blog){
     this.blog = blog;
   }
   constructor(public util: UtilitiesService, public md: MarkdownParserService, public blogCommon: BlogCommonService) { }
 
   ngOnInit() {
+    this.blog = this.blogCommon.blogObj();
   }
 
 }

@@ -2,8 +2,8 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ContentfulService } from '../../services/contentful.service';
 import { ActivatedRoute } from '@angular/router';
 import { MarkdownParserService } from '../../services/markdown-parser.service';
-import { Entry } from 'contentful';
 import { merge } from 'lodash';
+import { BlogCommonService } from 'src/app/services/blog-common.service';
 
 @Component({
   selector: 'app-blog-view',
@@ -17,7 +17,7 @@ export class BlogViewComponent implements OnInit {
   recId: string  //local property for a receieved blog ID
   displayBlog //local property to hold a fetched blog
 
-  constructor(private contentfulService:ContentfulService, private route: ActivatedRoute, public md:MarkdownParserService) {
+  constructor(private contentfulService:ContentfulService, private route: ActivatedRoute, public md:MarkdownParserService, public blogCommon:BlogCommonService) {
     //gets the ID from the url route
     if(this.route.snapshot.params['id']){
       this.recId = this.route.snapshot.params['id'];
@@ -25,34 +25,7 @@ export class BlogViewComponent implements OnInit {
    }
 
   ngOnInit() {
-    this.displayBlog = {
-      'fields':
-      {
-        'description':'',
-        'body':'',
-        'author': {
-          'fields': {
-            'name': '',
-            'shortBio':'',
-            'image':{
-              'fields':{
-                'file':{
-                  'url':''
-                }
-              }
-            }
-          }
-        },
-        'title': '',
-        'heroImage': {
-          'fields': {
-            'file':{
-              'url':''
-            }
-          }
-        }
-      }
-    };
+    this.displayBlog = this.blogCommon.blogObj();
     //gets provided blog post from received id
     if(this.contentfulService.getCache()){
       this.displayBlog = this.contentfulService.getCache();
@@ -61,7 +34,6 @@ export class BlogViewComponent implements OnInit {
       this.contentfulService.getBlog(this.recId).then(
         res=>{
           merge(this.displayBlog, res);
-          // this.displayBlog = res;
         }
       )
     }

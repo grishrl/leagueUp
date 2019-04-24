@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ContentfulService } from '../../services/contentful.service';
-import { Entry } from 'contentful';
 import { MarkdownParserService } from '../../services/markdown-parser.service';
 import { UtilitiesService } from '../../services/utilities.service';
 

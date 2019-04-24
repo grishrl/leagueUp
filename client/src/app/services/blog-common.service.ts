@@ -9,7 +9,43 @@ export class BlogCommonService {
   constructor(private router: Router) { }
 
   goToBlogPage(blog) {
-    // this.contentfulService.cacheBlog(blog);
     this.router.navigate(['/blog', blog.sys.id]);
   }
+
+  blogObj() {
+    return {
+  'fields':
+  {
+    'publishDate':0,
+    'description': '',
+    'body': '',
+    'author': {
+      'fields': {
+        'name': '',
+        'shortBio': '',
+        'image': {
+          'fields': {
+            'file': {
+              'url': ''
+            }
+          }
+        }
+      }
+    },
+    'title': '',
+    'heroImage': {
+      'fields': {
+        'file': {
+          'url': ''
+        }
+      }
+    }
+  },
+  'sys':{
+    'id':''
+  }
+};
+}
+
+
 }
