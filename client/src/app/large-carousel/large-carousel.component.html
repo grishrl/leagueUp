@@ -8,7 +8,8 @@
                             <h1>{{currentSlide.fields.title}}</h1>
                             <p [innerHTML]="md.convertMarkdown(currentSlide.fields.description)">
                             </p>
-                            <a (click)="goToBlogPage(currentSlide)" class="finger btn-iw outline">Read More <i class="fas fa-long-arrow-alt-right"></i></a>
+                            <a (click)="goToBlogPage(currentSlide)" class="finger btn-cst btn-iw outline"><span
+                                class="buttonText">Read More <i class="fas fa-long-arrow-alt-right"></i></span></a>
                         </div>
                     </div>
                 </div>

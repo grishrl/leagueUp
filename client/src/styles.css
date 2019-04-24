@@ -356,10 +356,11 @@ a:hover {
 
 /* line 206, ../sass/bootstrap/_reboot.scss */
 
-a:not([href]):not([tabindex]) {
+
+/* a:not([href]):not([tabindex]) {
     color: inherit;
     text-decoration: none;
-}
+} */
 
 
 /* line 23, ../sass/bootstrap/mixins/_hover.scss */

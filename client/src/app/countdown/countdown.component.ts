@@ -58,6 +58,10 @@ export class CountdownComponent implements OnInit {
     this.scheduleService.getAllMatchesWithStartTime().subscribe(
       res=>{
         let matches = res;
+
+        matches = matches.filter( match => {
+          return this.util.returnBoolByPath(match, 'casterName');
+        });
         let now = Date.now();
         let nearestMatch = nextDate(now, matches);
 
