@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ContentfulService } from '../services/contentful.service';
+import { ContentfulService } from '../../services/contentful.service';
 import { Entry } from 'contentful';
-import { MarkdownParserService } from '../services/markdown-parser.service';
-import { UtilitiesService } from '../services/utilities.service';
+import { MarkdownParserService } from '../../services/markdown-parser.service';
+import { UtilitiesService } from '../../services/utilities.service';
 
 @Component({
   selector: 'app-blog-list',
@@ -23,7 +23,7 @@ export class BlogListComponent implements OnInit {
     });
 
     this.contentfulService.getBlogs().then(
-      res => { 
+      res => {
         this.createMyDisplay(res);
       });
   }
@@ -47,7 +47,7 @@ export class BlogListComponent implements OnInit {
     }else{
       //do nothing
     }
- 
+
   }
 
   createMyDisplay(dat) {

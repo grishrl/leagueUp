@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { ContentfulService } from '../services/contentful.service';
+import { ContentfulService } from '../../services/contentful.service';
 import { ActivatedRoute } from '@angular/router';
-import { MarkdownParserService } from '../services/markdown-parser.service';
+import { MarkdownParserService } from '../../services/markdown-parser.service';
 import { Entry } from 'contentful';
 import { merge } from 'lodash';
 
