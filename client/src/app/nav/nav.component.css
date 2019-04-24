@@ -50,3 +50,19 @@
     vertical-align: middle;
     width: 2.5em;
 } */
+
+.linkColorFix {
+    color: #232323
+}
+
+.linkColorFix:not([href]):not([tabindex]) {
+    color: #232323;
+}
+
+.linkColorBigDropDown {
+    color: #666
+}
+
+.linkColorBigDropDown:not([href]):not([tabindex]) {
+    color: #666;
+}

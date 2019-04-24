@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { TeamService } from '../services/team.service';
@@ -14,10 +14,7 @@ import { Socket } from 'ngx-socket-io';
   styleUrls: ['./nav.component.css']
 })
 export class NavComponent implements OnInit {
-  userName: string
-  teamName: string
   divisions
-  navBarClass: string = 'collapse navbar-collapse';
   userMessages:number=0;
 
   constructor(public Auth:AuthService, private socket:Socket, private router: Router, public team:TeamService, public user:UserService, private divisionService: DivisionService, private messages:MessagesService,
@@ -36,27 +33,20 @@ export class NavComponent implements OnInit {
       )
      }
 
-  navGo(toggleOrRemove?){
-    if(toggleOrRemove == 'remove'){
-      this.navBarClass = removeShow(this.navBarClass);
-    }else{
-      this.navBarClass = toggleShow(this.navBarClass);
-    }
-  }
-
   logout(){
-    this.navBarClass = removeShow(this.navBarClass);
     this.Auth.destroyAuth('/logout');
   }
 
   ngOnInit() {
 
+    //get divisions for the division list drop down
     this.divisionService.getDivisionInfo().subscribe( res => {
       this.divisions = res;
     }, err=>{
       console.log(err);
     });
 
+    //get any user messages
     this.messages.getMessageNumbers(this.Auth.getUserId()).subscribe( (res)=>{
       if(res){
         if(res){
@@ -68,15 +58,11 @@ export class NavComponent implements OnInit {
       console.log(err);
     })
 
-    if(this.Auth.getTeam()){
-      this.teamName = this.Auth.getTeam();
-    }
-    if(this.Auth.isAuthenticated()){
-      this.userName=this.Auth.getUser();
-    }
+    //set up socket connection for the logged in user
     if(this.Auth.getUserId()){
       this.socket.emit('storeClientInfo', { userId: this.Auth.getUserId() });
     }
+    //subscribe to the socket emiter if a user gets a message to update their information
     this.socket.fromEvent('newMessage').subscribe(
       res=>{
         console.log('message from socket IO')
@@ -104,24 +90,4 @@ export class NavComponent implements OnInit {
     )
 
   }
-}
-
-function removeShow(str){
-  let strArr = str.split(' ');
-  let index = strArr.indexOf('show');
-  if (index > - 1) {
-    strArr.splice(index, 1);
-  }
-  return strArr.join(' ');
-}
-
-function toggleShow(str){
-  let strArr = str.split(' ');
-  let index = strArr.indexOf('show');
-  if(index >- 1){
-    strArr.splice(index, 1);
-  }else{
-    strArr.push('show');
-  }
-  return strArr.join(' ');
 }

@@ -7,7 +7,7 @@
                 <!-- Logo-->
                 <div class="col col-xl-2">
                     <div class="logo">
-                        <a href="index.html" title="Return Home">
+                        <a routerLink="" title="Return Home">
                             <img src="/assets/Lettermark.png" alt="Logo" class="logo_img">
                         </a>
                     </div>
@@ -21,84 +21,113 @@
                         <div class="container">
                             <!-- Menu-->
                             <ul class="sf-menu" id="menu">
+                                <li>
+                                    <a [routerLink]="['/rules']">Rules</a>
+                                </li>
+                                <li>
+                                    <a [routerLink]="['/blog','1JtsmWFT5YB9hfDewXMx75']">FAQ</a>
+                                </li>
                                 <li class="current">
-                                    <a href="#">League Info</a>
-                                    <ul class="sub-current">
+                                    <a class="finger linkColorFix">Statistics</a>
+                                    <ul class="sub-current" appHideMenu>
                                         <li>
-                                            <a href="index.html">Rules</a>
+                                            <a href="https://www.heroesprofile.com/Series" target="_blank">Heroes
+                                              Profile</a>
                                         </li>
                                         <li>
-                                            <a href="index-2.html">FAQ</a>
+                                            <a href="https://github.com/ebshimizu/stats-of-the-storm" target="_blank">Stats of the
+                                              Storm</a>
                                         </li>
-                                        <li>
-                                            <a href="index-3.html">Statistics - Heroes Profile</a>
-                                        </li>
-                                        <!-- <li>
-                                            <a href="index-4.html">Home 4</a>
-                                        </li>
-                                        <li>
-                                            <a href="index-5.html">Home 5</a>
-                                        </li>
-                                        <li>
-                                            <a href="index-6.html">Home 6</a>
-                                        </li> -->
                                     </ul>
                                 </li>
 
                                 <li class="current">
-                                    <a href="#">Divisions</a>
-                                    <ul class="sub-current">
+                                    <a class="linkColorFix finger">Divisions</a>
+                                    <ul class="sub-current" #dropDownDiv>
                                         <li *ngFor="let division of divisions">
-                                            <a [routerLink]="['/division/',division.divisionConcat]" (click)="navGo('/division/',division.divisionConcat)">{{division.displayName}}</a>
+                                            <a [routerLink]="['/division/',division.divisionConcat]">{{division.displayName}}</a>
                                         </li>
                                     </ul>
                                 </li>
-
+                                <!-- todo : fill in links for past seasons -->
+                                <li class="current">
+                                    <a class="linkColorFix finger">Past Seasons</a>
+                                    <ul class="sub-current" appHideMenu>
+                                        <li>
+                                            <a href="#">Past Seasons</a>
+                                        </li>
+                                        <li>
+                                            <a href="#">Hall of Fame</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a [routerLink]="['/blog']">Blog</a>
+                                </li>
+                                <!-- todo: fill in links for teams -->
                                 <li>
                                     <a href="groups.html">Teams</a>
                                 </li>
-                                <li>
+                                <!-- todo : fill in links for players -->
+                                <!-- <li>
                                     <a href="groups.html">Players</a>
-                                </li>
+                                </li> -->
 
                                 <li>
-                                    <a href="fixtures.html">Calendar</a>
+                                    <a [routerLink]="['/calendar']">Calendar</a>
                                 </li>
                                 <li *ngIf="!Auth.isAuthenticated() else loggedIn">
                                     <a [routerLink]="['/login']">Login</a>
                                 </li>
                                 <ng-template #loggedIn>
                                     <li>
-                                        <a href>{{Auth.getUser()}}</a>
-                                        <div class="sf-mega">
+                                        <a class="linkColorFix finger">{{Auth.getUser()}}</a>
+                                        <div class="sf-mega" appHideMenu>
                                             <div class="row">
                                                 <div class="col-md-4">
                                                     <h5>Team</h5>
                                                     <ul *ngIf="Auth.getTeam(); else noTeam">
-                                                        <li><a href="page-right-sidebar.html">Profile</a></li>
-                                                        <li><a href="page-full-width.html">Schedule</a></li>
-                                                        <li><a href="page-left-sidebar.html">Result Reporting</a></li>
-                                                        <li><a href="page-left-sidebar.html">Find Players</a></li>
+                                                        <li><a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(Auth.getTeam())]">Profile</a>
+                                                        </li>
+                                                        <li><a [routerLink]="['/schedule/teamSchedule']">Schedule</a>
+                                                        </li>
+                                                        <li><a [routerLink]="['/reporting',team.routeFriendlyTeamName( Auth.getTeam() )]">Result
+                                                            Reporting</a></li>
+
                                                     </ul>
                                                     <ng-template #noTeam>
-                                                        <li><a href="page-left-sidebar.html">Create Team</a></li>
-                                                        <li><a href="page-left-sidebar.html">Find Team</a></li>
+                                                        <ul>
+                                                            <li><a [routerLink]="['/teamCreate']">Create Team</a>
+                                                            </li>
+                                                            <li><a [routerLink]="['/findTeams']">Find Team</a>
+                                                            </li>
+                                                        </ul>
+
                                                     </ng-template>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <h5>Player</h5>
                                                     <ul>
-                                                        <li><a href="feature-header-footer-1.html">Profile</a></li>
+                                                        <li><a [routerLink]="['/profile/',user.routeFriendlyUsername(Auth.getUser())]">My Profile</a>
+                                                        </li>
+                                                        <li><a [routerLink]="['/findPlayers']">Find Free Agents</a></li>
                                                     </ul>
                                                 </div>
 
                                                 <div class="col-md-4">
                                                     <h5>System</h5>
                                                     <ul>
-                                                        <li><a href="page-about.html">Messages</a></li>
-                                                        <li><a href="single-player.html">Caster Dashboard</a></li>
+                                                        <li>
+                                                            <a [routerLink]="['/messageCenter']">
+                                                                <div>
+                                                                    <span>Message Center</span>
+                                                                    <span class="badge badge-pill ml-1 badge-success" *ngIf="userMessages>0">{{userMessages}}</span>
+                                                                </div>
+                                                            </a>
+                                                        </li>
+                                                        <li><a [routerLink]="['/_casterDashboard']">Caster Dashboard</a></li>
                                                         <li><a [routerLink]="['/_admin/dashboard']">Admin Dashboard</a></li>
-                                                        <li><a href="services.html">Logout</a></li>
+                                                        <li><a class="finger linkColorBigDropDown" (click)="logout()">Logout</a></li>
                                                     </ul>
                                                 </div>
                                             </div>
@@ -127,188 +156,75 @@
     <!-- Menu-->
     <ul>
         <li>
-            <a href="index.html">Home</a>
-            <!-- <ul>
-                <li>
-                    <a href="index-1.html">Home 1</a>
-                </li>
-                <li>
-                    <a href="index-2.html">Home 2</a>
-                </li>
-                <li>
-                    <a href="index-3.html">Home 3</a>
-                </li>
-                <li>
-                    <a href="index-4.html">Home 4</a>
-                </li>
-                <li>
-                    <a href="index-5.html">Home 5</a>
-                </li>
-                <li>
-                    <a href="index-6.html">Home 6</a>
-                </li>
-            </ul> -->
+            <a routerLink="">Home</a>
+        </li>
+
+        <li><a [routerLink]="['/rules']">Rules</a></li>
+        <li><a [routerLink]="['/blog','1JtsmWFT5YB9hfDewXMx75']">FAQ</a></li>
+
+        <!-- todo: links for teams -->
+        <li>
+            <a href="teams.html">Teams</a>
+        </li>
+
+        <!-- todo: links for players -->
+        <li>
+            <a href="players.html">Players</a>
         </li>
 
         <li>
-            <a href="">League Info</a>
-            <ul>
-                <li>
-                    <!-- <a href="#">World Cup</a>
-                    <ul>
-                        <li><a href="table-point.html">Point Table</a></li>
-                        <li><a href="fixtures.html">Fixtures</a></li>
-                        <li><a href="groups.html">Groups</a></li>
-                        <li><a href="news-left-sidebar.html">News</a></li>
-                        <li><a href="contact.html">Contact Us</a></li>
-                    </ul>
-                </li> -->
+            <a [routerLink]="['/calendar']">Calendar</a>
+        </li>
 
-                    <li><a href="teams.html">Rules</a></li>
-                    <li><a href="players.html">FAQ</a></li>
-                    <!-- <li><a href="results.html">Results List</a></li> -->
-            </ul>
-            </li>
+        <li *ngIf="!Auth.isAuthenticated() else mobileLoggedIn">
+            <a [routerLink]="['/login']">Login</a>
+        </li>
 
+        <ng-template #mobileLoggedIn>
             <li>
-                <a href="teams.html">Teams</a>
-                <!-- <ul>
-                    <li>
-                        <a href="teams.html">Teams List</a>
-                    </li>
-                    <li>
-                        <a href="single-team.html">Single Team</a>
-                    </li>
-                </ul> -->
-            </li>
-
-            <li>
-                <a href="players.html">Players</a>
-                <!-- <ul>
-                    <li>
-                        <a href="players.html">Players List</a>
-                    </li>
-                    <li>
-                        <a href="single-player.html">Single Player</a>
-                    </li>
-                </ul> -->
-            </li>
-
-            <li>
-                <a href="fixtures.html">Calendar</a>
-            </li>
-
-            <li *ngIf="!Auth.isAuthenticated() else mobileLoggedIn">
-                <a href="table-point.html">Login</a>
-            </li>
-
-            <ng-template #mobileLoggedIn>
-                <li>
-                    <a href="">{{Auth.getUser()}}</a>
-                    <ul>
-                        <li>
-                            <a href="">Team</a>
-                            <ul *ngIf="Auth.getTeam(); else mobileNoTeam">
-                                <li><a href="page-right-sidebar.html">Profile</a></li>
-                                <li><a href="page-full-width.html">Schedule</a></li>
-                                <li><a href="page-left-sidebar.html">Find Players</a></li>
-                            </ul>
-                            <ng-template #mobileNoTeam>
-                                <li><a href="page-left-sidebar.html">Create Team</a></li>
-                                <li><a href="page-left-sidebar.html">Find Team</a></li>
-                            </ng-template>
-                        </li>
-                        <li>
-                            <a href="single-result.html">Player</a>
-                            <ul>
-                                <li><a href="feature-header-footer-1.html">Profile</a></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="">System</a>
-                            <ul>
-                                <li><a href="single-player.html">Caster Dashboard</a></li>
-                                <li><a [routerLink]="['/_admin/dashboard']">Admin Dashboard</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="page-about.html">Messages</a></li>
-                        <li>
-                            <a href="">Logout</a>
-                        </li>
-                    </ul>
-                </li>
-            </ng-template>
-
-
-
-
-            <!-- <li>
-                <a href="groups.html">Groups</a>
-            </li>
-
-            <li>
-                <a href="#">Features</a>
+                <a href="">
+                    <span>{{Auth.getUser()}}</span>
+                    <span *ngIf="userMessages>0" class="myFaStack fa" style="line-height:inherit;">
+                                                    <i class="far fa-envelope fa-stack-1x"></i>
+                                                    <span class="fa-stack-1x">!</span>
+                    </span>
+                </a>
                 <ul>
                     <li>
-                        <a href="#">Features</a>
-                        <ul>
-                            <li><a href="page-full-width.html">Full Width</a></li>
-                            <li><a href="page-left-sidebar.html">Left Sidebar</a></li>
-                            <li><a href="page-right-sidebar.html">Right Sidebar</a></li>
-                            <li><a href="page-404.html">404 Page</a></li>
-                            <li><a href="page-faq.html">FAQ</a></li>
-                            <li><a href="sitemap.html">Sitemap</a></li>
-                            <li><a href="page-pricing.html">Pricing</a></li>
-                            <li><a href="page-register.html">Register Form</a></li>
+                        <a href="">Team</a>
+                        <ul *ngIf="Auth.getTeam(); else mobileNoTeam">
+                            <li><a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(Auth.getTeam())]">Profile</a>
+                            </li>
+                            <li><a [routerLink]="['/schedule/teamSchedule']">Schedule</a>
+                            </li>
+                            <li><a [routerLink]="['/findPlayers']">Find Players</a></li>
                         </ul>
+                        <ng-template #mobileNoTeam>
+                            <li><a [routerLink]="['/teamCreate']">Create Team</a></li>
+                            <li><a [routerLink]="['/findTeams']">Find Team</a></li>
+                        </ng-template>
                     </li>
-
                     <li>
-                        <a href="#">Headers & Footers</a>
+                        <a href="single-result.html">Player</a>
                         <ul>
-                            <li><a href="feature-header-footer-1.html">Header Version 1</a></li>
-                            <li><a href="feature-header-footer-2.html">Header Version 2</a></li>
-                            <li><a href="feature-header-footer-3.html">Header Version 3</a></li>
-                            <li><a href="index-5.html">Header Version 4</a></li>
-                            <li><a href="feature-header-footer-1.html#footer">Footer Version 1</a></li>
-                            <li><a href="feature-header-footer-2.html#footer">Footer Version 2</a></li>
-                            <li><a href="feature-header-footer-3.html#footer">Footer Version 3</a></li>
+                            <li><a [routerLink]="['/profile/',user.routeFriendlyUsername(Auth.getUser())]">Profile</a>
+                            </li>
                         </ul>
                     </li>
                     <li>
-                        <a href="#">Pages</a>
+                        <a href="">System</a>
                         <ul>
-                            <li><a href="page-about.html">About Us</a></li>
-                            <li><a href="single-player.html">About Me</a></li>
-                            <li><a href="feature-header-footer-2.html#footer">Services</a></li>
-                            <li><a href="single-team.html">Club Info</a></li>
-                            <li><a href="single-result.html">Match Result</a></li>
-                            <li><a href="table-point.html">Positions</a></li>
+                            <li><a [routerLink]="['/_casterDashboard']">Caster Dashboard</a></li>
+                            <li><a [routerLink]="['/_admin/dashboard']">Admin Dashboard</a></li>
                         </ul>
                     </li>
+                    <li><a [routerLink]="['/messageCenter']">Messages</a></li>
                     <li>
-                        <a href="#">News</a>
-                        <ul>
-                            <li>
-                                <a href="news-left-sidebar.html">News Lef Sidebar</a>
-                            </li>
-                            <li>
-                                <a href="news-right-sidebar.html">News Right Sidebar</a>
-                            </li>
-                            <li>
-                                <a href="news-no-sidebar.html">News No Sidebar</a>
-                            </li>
-                            <li>
-                                <a href="single-news.html">Single News</a>
-                            </li>
-                        </ul>
+                        <a (click)="logout()">Logout</a>
                     </li>
                 </ul>
             </li>
+        </ng-template>
 
-            <li>
-                <a href="contact.html">Contact</a>
-            </li> -->
     </ul>
-    <!-- End Menu-->
 </div>

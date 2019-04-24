@@ -105,6 +105,7 @@ import { DiaryComponent } from './diary/diary.component';
 import { RecentContentComponent } from './recent-content/recent-content.component';
 import { SafePipe } from './safe.pipe';
 import { StaticHtmlLoaderComponent } from './static-html-loader/static-html-loader.component';
+import { HideMenuDirective } from './nav/hide-menu.directive';
 
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
@@ -201,7 +202,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     DiaryComponent,
     RecentContentComponent,
     SafePipe,
-    StaticHtmlLoaderComponent
+    StaticHtmlLoaderComponent,
+    HideMenuDirective
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
