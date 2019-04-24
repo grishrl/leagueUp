@@ -41,13 +41,6 @@ url('/assets/testGutter.png'); */
 
 /* } */
 
-
-/*
-
-.mat-FullWidth {
-    width: 100%;
-} */
-
 @charset "UTF-8";
 
 /*!
@@ -26532,4 +26525,9 @@ table.career tr td img {
 
 .forceFull {
     min-height: 100vh;
+    padding-bottom: 100px;
+}
+
+.mat-FullWidth {
+    width: 100%;
 }
