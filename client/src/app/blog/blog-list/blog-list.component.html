@@ -1,4 +1,101 @@
-<div class="container">
+<!-- Section Title -->
+<div class="section-title" style="background:url(img/slide/1.jpg)">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <h1>Blog</h1>
+            </div>
+
+            <!-- <div class="col-md-4">
+                <div class="breadcrumbs">
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li>Inner Page</li>
+                    </ul>
+                </div>
+            </div> -->
+        </div>
+    </div>
+</div>
+<!-- End Section Title -->
+
+<!-- Section Area - Content Central -->
+<section class="content-info">
+
+    <div class="container paddings-mini">
+        <div class="row">
+
+            <!-- Sidebars -->
+            <aside class="col-lg-3">
+
+                <div>
+                    <h4>Searh Sidebar</h4>
+                    <form class="search" action="#" method="Post">
+                        <div class="input-group">
+                            <input class="form-control" placeholder="Search..." name="email" type="email" required="required">
+                            <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit" name="subscribe">Go!</button>
+                  </span>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Widget Categories-->
+                <app-blog-categories (currentCategory)="updateDisplay($event)"></app-blog-categories>
+                <!-- End Widget Categories-->
+
+                <!-- Widget Text-->
+                <!-- <div class="panel-box">
+                    <div class="titles no-margin">
+                        <h4>Widget Text</h4>
+                    </div>
+                    <div class="info-panel">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, incididunt ut labore et dolore.</p>
+                    </div>
+                </div> -->
+                <!-- End Widget Text-->
+
+                <!-- Widget img-->
+                <!-- <div class="panel-box">
+                    <div class="titles no-margin">
+                        <h4>Widget Image</h4>
+                    </div>
+                    <img src="img/slide/1.jpg" alt="">
+                    <div class="row">
+                        <div class="info-panel">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, ut sit amet, consectetur adipisicing elit, labore et dolore.</p>
+                        </div>
+                    </div>
+                </div> -->
+                <!-- End Widget img-->
+            </aside>
+            <!-- End Sidebars -->
+
+
+            <div class="col-lg-9">
+                <!-- Content Text-->
+                <div class="panel-box">
+                    <div class="titles">
+                        <h4>Recent Blog Posts</h4>
+                    </div>
+
+                    <!-- Post Item -->
+                    <div class="post-item" *ngFor="let post of posts">
+                        <app-blog-headline [blogObj]="post"></app-blog-headline>
+                    </div>
+                    <!-- End Post Item -->
+                </div>
+                <!-- End Content Text-->
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <!-- <div class="container">
     <div class="row bg-white forceFull">
         <div class="col">
             <div class="row">
@@ -35,4 +132,4 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->

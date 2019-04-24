@@ -11,7 +11,6 @@ export class HideMenuDirective {
     this.router.events.subscribe(
       event=>{
         if(event instanceof NavigationStart){
-          console.log(event)
           this.el.nativeElement.style.display = 'none';
         }
 

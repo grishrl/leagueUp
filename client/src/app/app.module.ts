@@ -106,6 +106,8 @@ import { RecentContentComponent } from './recent-content/recent-content.componen
 import { SafePipe } from './safe.pipe';
 import { StaticHtmlLoaderComponent } from './static-html-loader/static-html-loader.component';
 import { HideMenuDirective } from './nav/hide-menu.directive';
+import { CategoriesComponent } from './blog/categories/categories.component';
+import { BlogHeadlineComponent } from './blog/blog-headline/blog-headline.component';
 
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
@@ -203,7 +205,9 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     RecentContentComponent,
     SafePipe,
     StaticHtmlLoaderComponent,
-    HideMenuDirective
+    HideMenuDirective,
+    CategoriesComponent,
+    BlogHeadlineComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

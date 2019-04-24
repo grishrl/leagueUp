@@ -7,22 +7,7 @@
 
     <!-- Post Item -->
     <div class="post-item" *ngFor="let blog of blogs">
-        <div class="row">
-            <div class="col-md-4 text-center">
-                <div class="img-hover">
-                    <img src="{{blog.fields.heroImage.fields.file.url}}" alt="" class="img-responsive image-height">
-                    <div class="overlay">
-                        <a class="finger" (click)="blogCommon.goToBlogPage(blog)">+</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-8">
-                <h5><a class="finger" (click)="blogCommon.goToBlogPage(blog)">{{blog.fields.title}}</a></h5>
-                <span class="data-info">{{util.getFormattedDate(blog.fields.publishDate, "MMMM DD, YYYY")}}</span>
-                <p [innerHTML]="md.convertMarkdown(blog.fields.description)">
-                    <a href="single-news.html">Read More [+]</a></p>
-            </div>
-        </div>
+        <app-blog-headline [blogObj]="blog"></app-blog-headline>
     </div>
 
 </div>

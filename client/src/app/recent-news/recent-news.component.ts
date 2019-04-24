@@ -12,7 +12,7 @@ import { BlogCommonService } from '../services/blog-common.service';
 })
 export class RecentNewsComponent implements OnInit {
 
-  constructor(private contentfulService: ContentfulService, public util: UtilitiesService, public md: MarkdownParserService, public blogCommon: BlogCommonService) { }
+  constructor(private contentfulService: ContentfulService) { }
 
   blogs = [];
   ngOnInit() {
