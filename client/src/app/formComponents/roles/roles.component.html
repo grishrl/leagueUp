@@ -1,0 +1,18 @@
+<div class="row mt-1" *ngIf="!edit">
+    <div class="col">
+        Roles:
+        <section>
+            <mat-checkbox class="role-margin" disabled="{{editOn}}" [(ngModel)]="roleValues.tank">Tank</mat-checkbox>
+            <mat-checkbox class="role-margin" disabled="{{editOn}}" [(ngModel)]="roleValues.offlane">Offlane</mat-checkbox>
+            <mat-checkbox class="role-margin" disabled="{{editOn}}" [(ngModel)]="roleValues.meleeassassin">Melee Assassin
+            </mat-checkbox>
+            <mat-checkbox class="role-margin" disabled="{{editOn}}" [(ngModel)]="roleValues.rangedassassin">Ranged Assassin
+            </mat-checkbox>
+            <mat-checkbox class="role-margin" disabled="{{editOn}}" [(ngModel)]="roleValues.support">Support</mat-checkbox>
+            <mat-checkbox class="role-margin" disabled="{{editOn}}" [(ngModel)]="roleValues.flex">Flex</mat-checkbox>
+        </section>
+    </div>
+</div>
+<div *ngIf="edit">
+    Roles!
+</div>

@@ -3,7 +3,7 @@ import { DirectoryComponent } from "./directory/directory.component";
 import { RouterModule, Routes } from '@angular/router';
 import { NgModule, Component } from "@angular/core";
 import { LoginComponent } from "./login/login.component";
-import { ProfileEditComponent } from "./profile-edit/profile-edit.component";
+import { ProfileEditComponent } from "./player/profile-edit/profile-edit.component";
 import { TeamProfileComponent } from "./team-profile/team-profile.component";
 import { DivisionComponent } from "./division/division.component";
 import { OutreachEmailResponseComponent } from "./outreach-email-response/outreach-email-response.component";

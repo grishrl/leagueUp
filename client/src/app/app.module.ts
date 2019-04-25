@@ -8,7 +8,7 @@ import { AppRoutingModule } from './app.Routes';
 import { NavComponent } from './nav/nav.component';
 import { LoginComponent } from './login/login.component';
 import { ResponseInterceptor } from './services/token-interceptor.service';
-import { ProfileEditComponent } from './profile-edit/profile-edit.component';
+import { ProfileEditComponent } from './player/profile-edit/profile-edit.component';
 import { InputFormMaterial } from './classes/aM-input-Import.class';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -108,6 +108,11 @@ import { StaticHtmlLoaderComponent } from './static-html-loader/static-html-load
 import { HideMenuDirective } from './nav/hide-menu.directive';
 import { CategoriesComponent } from './blog/categories/categories.component';
 import { BlogHeadlineComponent } from './blog/blog-headline/blog-headline.component';
+import { TextInputComponent } from './formComponents/competitiveLevel/competitive-level.component';
+import { StormLeagueComponent } from './formComponents/storm-league/storm-league.component';
+import { PlayHistoryComponent } from './formComponents/play-history/play-history.component';
+import { RolesComponent } from './formComponents/roles/roles.component';
+import { DiscordTagComponent } from './formComponents/discord-tag/discord-tag.component';
 
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
@@ -207,7 +212,12 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     StaticHtmlLoaderComponent,
     HideMenuDirective,
     CategoriesComponent,
-    BlogHeadlineComponent
+    BlogHeadlineComponent,
+    TextInputComponent,
+    StormLeagueComponent,
+    PlayHistoryComponent,
+    RolesComponent,
+    DiscordTagComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
