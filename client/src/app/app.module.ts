@@ -93,6 +93,7 @@ import { GeneralImageUploadComponent } from './general-image-upload/general-imag
 import { MiniCarouselComponent } from './mini-carousel/mini-carousel.component';
 import { MatchViewVerticleComponent } from './match-view-verticle/match-view-verticle.component';
 import { LargeCarouselComponent } from './large-carousel/large-carousel.component';
+import { MatchViewModalComponent } from './modal/match-view-modal/match-view-modal.component';
 import { NewsNoSidebarComponent } from './news-no-sidebar/news-no-sidebar.component';
 import { DivisionStandingsComponent } from './division-standings/division-standings.component';
 import { RecentResultsComponent } from './recent-results/recent-results.component';
@@ -175,6 +176,7 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     EventLargeComponent,
     SetDeadlineComponent,
     MatchViewComponent,
+    MatchViewModalComponent,
     DropDownTimeComponent,
     UserMessageCenterComponent,
     RulesComponent,
@@ -223,7 +225,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     DeleteConfrimModalComponent,
     ChangeCaptainModalComponent,
     ConfirmRemoveMemberComponent,
-    EventModalComponent
+    EventModalComponent,
+    MatchViewModalComponent
   ],
   imports: [
     BrowserModule,

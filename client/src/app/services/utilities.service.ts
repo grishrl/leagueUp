@@ -83,16 +83,16 @@ export class UtilitiesService {
     return displayStr;
   }
 
-  // Formats a date using momentjs. See https://momentjs.com/docs/#/displaying/ 
+  // Formats a date using momentjs. See https://momentjs.com/docs/#/displaying/
   // for more information. timeZone can be used to be specific, or leave null
-  // to use the browser local timezone. 
+  // to use the browser local timezone.
   getFormattedDate(time: Date, format: string, timeZone: string = null) : string {
     timeZone = timeZone || moment.tz.guess();
 
     let localMoment = moment(time).tz(timeZone);
     return localMoment.format(format);
   }
-  
+
   getDateFromMS(msDate) {
     let time = new Date(parseInt(msDate));
     return this.getFormattedDate(time, "dddd M/D/YYYY");
@@ -188,6 +188,9 @@ export class UtilitiesService {
       } else {
         retVal = obj[ele]
       }
+    }
+    if (typeof retVal == 'number' && retVal == 0) {
+      retVal = 1;
     }
     return !!retVal;
   }

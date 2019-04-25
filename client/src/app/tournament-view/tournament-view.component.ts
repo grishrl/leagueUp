@@ -2,6 +2,8 @@ import { Component, OnInit, Input } from '@angular/core';
 import { ScheduleService } from '../services/schedule.service';
 import { TeamService } from '../services/team.service';
 import { UtilitiesService } from '../services/utilities.service';
+import { MatDialog, MatDialogRef, MatDialogConfig } from '@angular/material'
+import { MatchViewModalComponent } from '../modal/match-view-modal/match-view-modal.component';
 
 @Component({
   selector: 'app-tournament-view',
@@ -12,11 +14,12 @@ export class TournamentViewComponent implements OnInit {
   // _iScroll:iScroll;
   _bracket;
 
-  noBracket=true;
+  hasBracket=true;
+  dialogRef: MatDialogRef<MatchViewModalComponent>;
 
-  constructor(private scheduleService:ScheduleService, public _team:TeamService, private util: UtilitiesService) {
-    
+  constructor(private scheduleService:ScheduleService, public _team:TeamService, private util: UtilitiesService, private dialog: MatDialog) {
    }
+
    x:any;
    y:any;
 
@@ -48,8 +51,8 @@ export class TournamentViewComponent implements OnInit {
     //    this._name=
     //  }
    }
-   
-  
+
+
   matches: any = [];
   tournamentObject:any;
   ngOnInit() {
@@ -66,16 +69,16 @@ export class TournamentViewComponent implements OnInit {
     console.log(this._name, this._season, this._division);
     if (this.util.isNullOrEmpty(this._name) && this.util.isNullOrEmpty(this._season) && this.util.isNullOrEmpty(this._division)) {
       console.warn('Tournament view must be provided input');
-      this.noBracket = false;
+      this.hasBracket = false;
     } else {
       this.scheduleService.getTournamentGames(this._name, this._season, this._division).subscribe(res => {
-        this.noBracket = true;
+        this.hasBracket = true;
         if (res['tournMatches']){
           this.matches = res['tournMatches'];
           this.tournamentObject = this.arrangeMatches();
         }
       }, err => {
-        this.noBracket = false;
+        this.hasBracket = false;
       });
     }
   }
@@ -91,6 +94,14 @@ export class TournamentViewComponent implements OnInit {
       return false;
     }
 
+  }
+
+  ClickMatch(match: any)
+  {
+    this.dialog.closeAll();
+    this.dialogRef = this.dialog.open(MatchViewModalComponent, {
+      data: { match: match }
+    });
   }
 
   championship:any;
@@ -196,13 +207,13 @@ export class TournamentViewComponent implements OnInit {
     }else{
       return undefined;
     }
-    
-    
+
+
   }
 
   buildTree(match){
     if(match['idChildren']){
-      
+
     }
   }
 
