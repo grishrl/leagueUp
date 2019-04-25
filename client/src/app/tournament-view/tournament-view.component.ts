@@ -51,8 +51,8 @@ export class TournamentViewComponent implements OnInit {
     //    this._name=
     //  }
    }
-   
-  
+
+
   matches: any = [];
   tournamentObject:any;
   ngOnInit() {
@@ -207,13 +207,13 @@ export class TournamentViewComponent implements OnInit {
     }else{
       return undefined;
     }
-    
-    
+
+
   }
 
   buildTree(match){
     if(match['idChildren']){
-      
+
     }
   }
 
