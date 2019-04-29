@@ -1,12 +1,11 @@
 import { Component, OnInit, NgModule, Input} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, NavigationEnd } from '@angular/router';
-import { TimezoneService } from '../../services/timezone.service';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { Profile } from '../../classes/profile.class';
-import { Observable, Subscription } from 'rxjs';
-import { ReactiveFormsModule, FormControl, Validators, FormGroup } from '@angular/forms';
+import { Subscription } from 'rxjs';
+import { ReactiveFormsModule, FormControl, FormGroup } from '@angular/forms';
 import { merge } from 'lodash';
 import { HotsLogsService } from '../../services/hots-logs.service';
 import { Router } from '@angular/router';
@@ -31,7 +30,7 @@ export class ProfileEditComponent implements OnInit {
 
   navigationSubscription
 
-  constructor(public timezone: TimezoneService, private user: UserService, public auth: AuthService, private router: Router, private route: ActivatedRoute,
+  constructor(private user: UserService, public auth: AuthService, private router: Router, private route: ActivatedRoute,
     public hotsLogsService: HotsLogsService, public dialog: MatDialog, private util:UtilitiesService, public hotsProfile: HotsProfileService, public team:TeamService, private admin:AdminService) {
 
       //so that people can manually enter different tags from currently being on a profile page; we can reinitialize the component with the new info
@@ -72,25 +71,13 @@ export class ProfileEditComponent implements OnInit {
   //profile edit is turned off by default;
   disabled = true;
 
-  timezoneControl = new FormControl({ value: '', disabled: true }, [
-    // Validators.required
-  ]);
-
   timesAvailControl = new FormControl();
 
   profileForm = new FormGroup({
-    timezone: this.timezoneControl,
     timeAvail:this.timesAvailControl
   })
 
-  //method for enabling form controls for edit
-formControlledEnable(){
-  this.timezoneControl.enable();
-}
-  //method for disabling form controls for edit
-  formControlledDisable(){
-    this.timezoneControl.disable();
-  }
+
 
   //admin profile save method
   adminSave(){
@@ -191,7 +178,6 @@ formControlledEnable(){
 //enable editing for profile, create a copy of current data
    openEdit(){
      this.disabled=false;
-     this.formControlledEnable();
      this.markFormGroupTouched(this.profileForm);
      this.tempProfile = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
      merge(this.tempProfile, this.returnedProfile);
@@ -201,7 +187,6 @@ formControlledEnable(){
    cancel(){
      this.returnedProfile = Object.assign({}, this.tempProfile);
      this.disabled = true;
-     this.formControlledDisable();
    }
 
    save(){
@@ -212,7 +197,6 @@ formControlledEnable(){
          this.user.saveUser(this.returnedProfile).subscribe((res) => {
            if (res) {
              this.disabled = true;
-             this.formControlledDisable();
            } else {
              alert("error");
            }
@@ -231,7 +215,6 @@ formControlledEnable(){
         this.user.saveUser(this.returnedProfile).subscribe((res) => {
           if (res) {
             this.disabled = true;
-            this.formControlledDisable();
           }
           else {
             alert("error");
@@ -239,12 +222,6 @@ formControlledEnable(){
         });
       }
     });
-  }
-
-  timezoneUpdate(){
-    if (this.returnedProfile.timeZone != null || this.returnedProfile.timeZone!=undefined){
-      this.timezoneControl.setErrors(null);
-    }
   }
 
   //init method ; checks to see if the name we're getting comes from the router URL, or the displayName property
@@ -272,9 +249,9 @@ formControlledEnable(){
       this.timesAvailControl.setErrors({ invalid: true });
     }
     if (event.numdays > 0 && this.isNullOrEmpty(this.returnedProfile.timeZone)) {
-      this.timezoneControl.setErrors({ required: true });
+      //  todo: figure out linking these components this.timezoneControl.setErrors({ required: true });
     } else {
-      this.timezoneControl.setErrors(null);
+      //  todo figure out linking these components this.timezoneControl.setErrors(null);
     }
   }
 
@@ -291,9 +268,9 @@ formControlledEnable(){
 
     //ensure time zone
     if (this.vaildAvailDays>0 && this.isNullOrEmpty(this.returnedProfile.timeZone)) {
-      this.timezoneControl.setErrors({ required: true });
+      // todo : figure out linking these components this.timezoneControl.setErrors({ required: true });
     } else {
-      this.timezoneControl.setErrors(null);
+      // todo : figure out linking these components this.timezoneControl.setErrors(null);
     }
     return valid;
   }

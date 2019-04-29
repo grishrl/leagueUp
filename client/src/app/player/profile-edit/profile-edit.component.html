@@ -213,16 +213,7 @@
                                 <!-- timezone -->
                                 <div class="row mt-3">
                                     <div class="col">
-                                        <mat-form-field class="pe-full-width">
-                                            <mat-select placeholder="Timezone:" [formControl]="timezoneControl" [(ngModel)]="returnedProfile.timeZone" (ngModelChange)="timezoneUpdate()">
-                                                <mat-option *ngFor="let zone of timezone.timezones" [value]="zone.value">
-                                                    {{zone.text}}
-                                                </mat-option>
-                                            </mat-select>
-                                            <mat-error *ngIf="timezoneControl.hasError('required')">
-                                                Timezone is required
-                                            </mat-error>
-                                        </mat-form-field>
+                                        <app-timezone [(timezone)]="returnedProfile.timeZone" [disabled]="disabled"></app-timezone>
                                     </div>
                                 </div>
                                 <!-- panel box close -->

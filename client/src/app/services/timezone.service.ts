@@ -130,5 +130,14 @@ export class TimezoneService {
       "text": "(GMT +12:00) Auckland, Wellington, Fiji, Kamchatka"
     }
   ];
+  returnTimezoneInfoFromValue(val){
+    let retVal = null;
+    this.timezones.forEach(zone=>{
+      if(zone.value == val){
+        retVal = zone;
+      }
+    });
+    return retVal;
+  }
   constructor() { }
 }

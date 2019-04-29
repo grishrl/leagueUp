@@ -114,6 +114,7 @@ import { StormLeagueComponent } from './formComponents/storm-league/storm-league
 import { PlayHistoryComponent } from './formComponents/play-history/play-history.component';
 import { RolesComponent } from './formComponents/roles/roles.component';
 import { DiscordTagComponent } from './formComponents/discord-tag/discord-tag.component';
+import { TimezoneComponent } from './formComponents/timezone/timezone.component';
 
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
@@ -219,7 +220,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     StormLeagueComponent,
     PlayHistoryComponent,
     RolesComponent,
-    DiscordTagComponent
+    DiscordTagComponent,
+    TimezoneComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
