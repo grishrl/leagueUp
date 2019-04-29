@@ -56,7 +56,7 @@ import { ManageTeamViewComponent } from './admin/manage-team/manage-team-view/ma
 import { DeleteConfrimModalComponent } from './modal/delete-confrim-modal/delete-confrim-modal.component';
 import { NoAccessComponent } from './no-access/no-access.component';
 import { SessionTimeoutComponent } from './session-timeout/session-timeout.component';
-import { TimesAvailableComponent } from './times-available/times-available.component';
+import { TimesAvailableComponent } from './formComponents/times-available/times-available.component';
 import { QuestionnaireComponent } from './questionnaire/questionnaire.component';
 import { LogsViewerComponent } from './admin/logs-viewer/logs-viewer.component';
 import { CalendarViewComponent } from './calendar-view/calendar-view.component';
@@ -66,7 +66,7 @@ import { EventModalComponent } from './calendar-view/event-modal/event-modal.com
 import { EventLargeComponent } from './calendar-view/event-large/event-large.component';
 import { SetDeadlineComponent } from './admin/match-management/set-deadline/set-deadline.component';
 import { MatchViewComponent } from './match-view/match-view.component';
-import { DropDownTimeComponent } from './times-available/drop-down-time/drop-down-time.component';
+import { DropDownTimeComponent } from './formComponents/times-available/drop-down-time/drop-down-time.component';
 import { UserMessageCenterComponent } from './messageCenter/user-message-center/user-message-center.component';
 import { RulesComponent } from './rules/rules.component';
 import { TeamMarketComponent } from './marketplace/team-market/team-market.component';

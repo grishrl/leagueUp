@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, DoCheck } from '@angular/core';
-import { UtilitiesService } from '../services/utilities.service';
+import { UtilitiesService } from '../../services/utilities.service';
 import { findIndex } from 'lodash';
 
 @Component({
