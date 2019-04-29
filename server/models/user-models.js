@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+const archiveSchema = new Schema({
+    season: Number,
+    replays: [String]
+})
 
 const userSchema = new Schema({
     "bNetId": String,
@@ -26,12 +30,19 @@ const userSchema = new Schema({
     "discordTag": String,
     "lastTouched": Number,
     "replays": [String],
+    "replayArchive": [archiveSchema],
     "parseStats": Boolean,
     "smurfAccount": Boolean,
+    "seasonsPlayed": Number,
     "history": [Object] //history of player in NGS
 });
 
 
+/**
+ * {
+ *  <seasonNumber>:['replays']
+ * }
+ */
 
 const User = mongoose.model('user', userSchema);
 // const MiniUser = mongoose.model('miniUser', miniUser);

@@ -185,7 +185,7 @@ async function asscoatieReplays() {
 async function tabulateUserStats() {
 
 
-    //grab users who have been marked for tabulation
+    //grab users who have been marked for tabulation (this is a flag on the user model set after a replay is associated to a user)
     let players = await User.find({ parseStats: true }).then(
         found => { return found; },
         err => {
@@ -197,13 +197,15 @@ async function tabulateUserStats() {
 
     if (players && players.length > 0) {
 
+
         for (var i = 0; i < players.length; i++) {
 
             let player = players[i];
             let playerObj = player.toObject();
             let toonHandle = playerObj.toonHandle;
+            //running archive of the replays a player is associated to
             let replays = playerObj.replays;
-            // console.log('replays ', replays)
+            //grab replays from the database
             let fullReplays = await Replay.find({
                 systemId: {
                     $in: replays
@@ -219,11 +221,20 @@ async function tabulateUserStats() {
                 })
                 // console.log(replaysObj.length);
             if (replaysObj && replaysObj.length > 0) {
+                //parse each replay found
                 let playerData = summarizePlayerData(replaysObj, toonHandle);
                 playerData = playerData[toonHandle];
                 player.parseStats = false;
-
-                let dbStats = await Stats.findOne({ associateId: player._id.toString() }).then(
+                // find the stats data that corresponds to this user and season
+                let dbStats = await Stats.findOne({
+                    $and: [{
+                            associateId: player._id.toString()
+                        },
+                        {
+                            season: process.env.season
+                        }
+                    ]
+                }).then(
                     found => { return found },
                     err => { return null }
                 )
@@ -239,7 +250,8 @@ async function tabulateUserStats() {
                 } else {
                     let statObj = {
                         stats: playerData,
-                        associateId: player._id.toString()
+                        associateId: player._id.toString(),
+                        season: process.env.season
                     }
                     statResult = await new Stats(statObj).save().then(
                         saved => { return saved },
