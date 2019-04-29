@@ -11,7 +11,7 @@ export class RolesComponent implements OnInit {
 
   edit: boolean = false;
 
-  @Input() set editOn(val) {
+  @Input() set disabled(val) {
     this.edit = val;
   }
 
@@ -20,8 +20,13 @@ export class RolesComponent implements OnInit {
     'meleeassassin': false,
     'rangedassassin': false,
     offlane: false,
-    support: false,
+    healer: false,
+    support:false,
     flex: false
+  }
+
+  selectRole(role){
+    this.roleValues[role]=!this.roleValues[role];
   }
 
   @Output()

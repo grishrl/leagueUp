@@ -10,7 +10,7 @@ export class TextInputComponent implements OnInit {
 
   edit:boolean=false;
 
-  @Input() set editOn(val){
+  @Input() set disabled(val){
     this.edit = val;
   }
 

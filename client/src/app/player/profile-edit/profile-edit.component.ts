@@ -34,37 +34,43 @@ export class ProfileEditComponent implements OnInit {
   constructor(public timezone: TimezoneService, private user: UserService, public auth: AuthService, private router: Router, private route: ActivatedRoute,
     public hotsLogsService: HotsLogsService, public dialog: MatDialog, private util:UtilitiesService, public hotsProfile: HotsProfileService, public team:TeamService, private admin:AdminService) {
 
+      //so that people can manually enter different tags from currently being on a profile page; we can reinitialize the component with the new info
     this.navigationSubscription = this.router.events.subscribe((e: any) => {
-
       // If it is a NavigationEnd event re-initalise the component
       if (e instanceof NavigationEnd) {
         this.displayName = user.realUserName(this.route.snapshot.params['id']);
         this.ngOnInit();
       }
     });
-
   }
 
-  showInvite = false;
-  editOn = true;
 
-  hotsLogsFormControl = new FormControl({value:'',disabled:true} ,[
-    // Validators.required,
-    this.hotslogsUrlPatternValidator
-  ]);
+  //this variable is used in case someone re-routes to profile from a profile
+  displayName: string;
+  //variable to hold profile returned from server
+  returnedProfile = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+  //subscription to profiles
+  profSub: Subscription;
+  //temp profile; stores old information in case a user hits cancel we have a copy to replace errant changes.
+  tempProfile: Profile;
 
-  discordTagFormControl = new FormControl({ value: '', disabled: true }, [
-    Validators.required,
-    this.discordPatternValidator
-  ]);
+  //if this componenet is embedded we can pass a user name as a string for it (instead of getting it from the router)
+  providedProfile: string;
+  @Input() set passedProfile(profile) {
+    if (profile != null && profile != undefined) {
+      this.providedProfile = profile;
+      this.ngOnInit();
+    }
+  }
 
-  heroeLeagueDivisionControl = new FormControl({ value: '',disabled:true}, [
-    // Validators.required
-  ]);
+  //if this component is embedded we can include a source; special flags for 'admin' to allow the admin options to open
+  embedSource: string = '';
+  @Input() set source(_source) {
+    this.embedSource = _source;
+  }
 
-  heroeLeagueRankControl = new FormControl({ value: '', disabled: true }, [
-    // Validators.required
-  ]);
+  //profile edit is turned off by default;
+  disabled = true;
 
   timezoneControl = new FormControl({ value: '', disabled: true }, [
     // Validators.required
@@ -72,69 +78,21 @@ export class ProfileEditComponent implements OnInit {
 
   timesAvailControl = new FormControl();
 
-  discordPatternValidator(control: FormControl){
-    let discordTag = control.value;
-    if (discordTag){
-      if (discordTag && discordTag.indexOf('#') <= 0) {
-        return { invalidTag: true }
-      } else {
-        let tagArr = discordTag.split('#');
-        let regex = new RegExp(/(\d{4})/);
-        if (tagArr[1].length == 4 && regex.test(tagArr[1])) {
-          return null;
-        } else {
-          return { invalidTag: true }
-        }
-      }
-    }else{
-
-    }
-  }
-
-  hotslogsUrlPatternValidator(control: FormControl) {
-  let hotslogsURL = control.value;
-    let regex = new RegExp(/^((https):\/)\/www\.hotslogs\.com\/player\/profile\?playerid\=[0-9]+/, 'i');
-    if (regex.test(hotslogsURL)) {
-      return null;
-  }else{
-      return {
-        invalidurl:true
-        }
-      };
-  }
-
   profileForm = new FormGroup({
-    discordTag: this.discordTagFormControl,
-    hlDivision: this.heroeLeagueDivisionControl,
-    hlRank: this.heroeLeagueRankControl,
     timezone: this.timezoneControl,
     timeAvail:this.timesAvailControl
   })
 
+  //method for enabling form controls for edit
 formControlledEnable(){
-  this.hotsLogsFormControl.enable();
-  this.discordTagFormControl.enable();
-  this.heroeLeagueDivisionControl.enable();
-  this.heroeLeagueRankControl.enable();
   this.timezoneControl.enable();
 }
-
+  //method for disabling form controls for edit
   formControlledDisable(){
-    this.hotsLogsFormControl.disable();
-    this.discordTagFormControl.disable();
-    this.heroeLeagueDivisionControl.disable();
-    this.heroeLeagueRankControl.disable();
     this.timezoneControl.disable();
   }
 
-  providedProfile:string;
-  @Input() set passedProfile(profile){
-    if(profile!=null&&profile!=undefined){
-      this.providedProfile = profile;
-      this.ngOnInit();
-    }
-  }
-
+  //admin profile save method
   adminSave(){
     this.admin.saveUser(this.returnedProfile).subscribe(
       res=>{
@@ -145,7 +103,7 @@ formControlledEnable(){
       }
     )
   }
-
+//admin method for removing a team from a player profile
   removeTeam(){
     this.admin.removeMembers(this.returnedProfile.teamName, this.returnedProfile.displayName).subscribe(
       res=>{
@@ -159,6 +117,7 @@ formControlledEnable(){
     )
   }
 
+  //admin method for adding a team to a player profile
   newTeam(team){
     this.admin.manualTeamAdd(this.returnedProfile.displayName, team).subscribe(
       res=>{
@@ -170,23 +129,9 @@ formControlledEnable(){
         console.log(err);
       }
     )
-    // this.team.getTeam(team).subscribe(
-    //   res=>{
-    //     console.log(res);
-    //     this.returnedProfile.teamId = res._id;
-    //     this.returnedProfile.teamName = res.teamName;
-    //   },
-    //   err=>{
-    //     console.log(err);
-    //   }
-    // )
   }
 
-  embedSource: string = '';
-  @Input() set source(_source) {
-    this.embedSource = _source;
-  }
-
+  //checks the validity of showing admin options
   adminShow(){
     let ret = false;
     if(this.providedProfile && this.embedSource == 'admin'){
@@ -195,20 +140,7 @@ formControlledEnable(){
     return ret;
   }
 
-  showInviteToTeamButton(){
-    if ((this.returnedProfile.teamId == null || this.returnedProfile.teamId == undefined)
-      &&  (this.returnedProfile.teamName == null || this.returnedProfile.teamName == undefined )
-      && (this.returnedProfile['pendingTeam'] == null || this.returnedProfile['pendingTeam'] == undefined || this.returnedProfile['pendingTeam'] == false)) {
-      if (this.auth.getCaptain() === 'true'){
-        this.showInvite = true;
-      }else{
-        this.showInvite = false;
-      }
-    }else{
-      this.showInvite = false;
-    }
-  }
-
+  //dialog options for deleting a user account
   confirm: string
 
   openDialog(): void {
@@ -231,25 +163,7 @@ formControlledEnable(){
     });
   }
 
-  answers: object;
-  selectedMedal: string;
-  displayName : string;
-  profileObs : Observable<Profile>;
-  returnedProfile = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-
-  dataRet = false;
-  profSub: Subscription;
-  tempProfile: Profile;
-
-  hlMedals = ['Grand Master','Master','Diamond','Platinum','Gold','Silver','Bronze','Unranked'];
-  hlDivision = [1,2,3,4,5];
-
-  competitonLevel = [
-    { val: 1, display: 'Low' },
-    { val: 3, display: 'Medium' },
-    { val: 5, display: 'High' }
-  ]
-
+  //if the user is on a team do not display the looking for group button
   hideLookingForGroup(){
     if(this.auth.getTeam()){
       return false;
@@ -258,25 +172,13 @@ formControlledEnable(){
     }
   }
 
-   hideDay(editSwitch, dayAvailabilty): boolean {
-     if (!editSwitch){
-      return false;
-     }else{
-       if(dayAvailabilty){
-         return false;
-       }else{
-         return true;
-       }
-     }
-   }
 
+  //this has to be fired to kick of error checking inside form boxes
   markFormGroupTouched(formGroup: FormGroup) {
-
   if (formGroup.controls) {
     const keys = Object.keys(formGroup.controls);
     for (let i = 0; i < keys.length; i++) {
       const control = formGroup.controls[keys[i]];
-
       if (control instanceof FormControl) {
         control.markAsTouched();
       } else if (control instanceof FormGroup) {
@@ -286,69 +188,36 @@ formControlledEnable(){
   }
 }
 
+//enable editing for profile, create a copy of current data
    openEdit(){
-     this.editOn=false;
+     this.disabled=false;
      this.formControlledEnable();
      this.markFormGroupTouched(this.profileForm);
      this.tempProfile = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
      merge(this.tempProfile, this.returnedProfile);
    }
 
+   //disabled editing for profile, replace any changes with original copy
    cancel(){
      this.returnedProfile = Object.assign({}, this.tempProfile);
-     this.editOn = true;
+     this.disabled = true;
      this.formControlledDisable();
    }
-
-   hotsLogsUrlReq = false;
 
    save(){
      if(this.validate()){
 
       this.util.updateAvailabilityToNum(this.returnedProfile);
-      //  let keys = Object.keys(this.returnedProfile.availability);
-      //  keys.forEach(element => {
-      //    let obj = this.returnedProfile.availability[element];
-      //    if (obj.available) {
-      //      obj['startTimeNumber'] = this.util.convertToMil(obj.startTime);
-      //      obj['endTimeNumber'] = this.util.convertToMil(obj.endTime);
-      //    }
-      //  });
 
-       if(!this.hotsLogsUrlReq){
-         this.updateUserMMR();
-       }
-
-       if (this.hotsLogsUrlReq){
-
-         this.hotsLogsService.getMMR(this.returnedProfile.hotsLogsURL).subscribe(res => {
-           if (res != 'error') {
-             this.returnedProfile.averageMmr = res.avgMMR;
-             this.returnedProfile['hotsLogsPlayerID'] = res.PlayerID;
-             this.user.saveUser(this.returnedProfile).subscribe((res) => {
-               if (res) {
-                 this.editOn = true;
-                 this.formControlledDisable();
-               } else {
-                 alert("error");
-               }
-             });
-            }else{
-              alert('We could not validate your hots logs, please recheck the URL!');
-              this.cancel();
-            }
-
-         });
-       }else{
          this.user.saveUser(this.returnedProfile).subscribe((res) => {
            if (res) {
-             this.editOn = true;
+             this.disabled = true;
              this.formControlledDisable();
            } else {
              alert("error");
            }
          });
-       }
+
      }else{
        console.log('the data was invalid we cant save');
      }
@@ -361,18 +230,13 @@ formControlledEnable(){
         this.returnedProfile['hotsLogsPlayerID'] = res.PlayerID;
         this.user.saveUser(this.returnedProfile).subscribe((res) => {
           if (res) {
-            this.editOn = true;
+            this.disabled = true;
             this.formControlledDisable();
           }
           else {
             alert("error");
           }
         });
-      }
-      else {
-        alert('We could not validate your hots logs, please recheck the URL!');
-        this.hotsLogsUrlReq = true;
-        this.cancel();
       }
     });
   }
@@ -383,6 +247,7 @@ formControlledEnable(){
     }
   }
 
+  //init method ; checks to see if the name we're getting comes from the router URL, or the displayName property
   ngOnInit() {
     let getProfile:string;
     if(this.providedProfile){
@@ -392,10 +257,10 @@ formControlledEnable(){
     }
     this.profSub = this.user.getUser(getProfile).subscribe((res) => {
       merge(this.returnedProfile, res);
-      this.showInviteToTeamButton()
-      } )
+      } );
   }
 
+  //method for receiving times-availability object back from the avail-component; checks to make sure it retuns times meeting criteria
   validAvailTimes:boolean=false;
   vaildAvailDays:number=0;
   recieveAvailTimeValidity(event){
@@ -413,38 +278,10 @@ formControlledEnable(){
     }
   }
 
-  modifyForm(metal){
-    if(metal == 'Unranked'){
-      this.heroeLeagueRankControl.setErrors(null);
-    }else{
-
-    }
-  }
-
+  //check the return profile object to make sure it's valid for saving
   validate(){
     let valid = true;
-    //validate the hotslogs URL
-    if (this.hotsLogsUrlReq && (this.isNullOrEmpty(this.returnedProfile.hotsLogsURL) ||
-      this.returnedProfile.hotsLogsURL.indexOf('https://www.hotslogs.com/Player/Profile?PlayerID=') == -1)){
-      valid = false;
-    }
 
-    //validate the hero leauge information
-    // if (this.returnedProfile.hlRankMetal == 'Unranked'){
-    //   valid = true;
-
-    // }else if (this.isNullOrEmpty(this.returnedProfile.hlRankMetal) && this.isNullOrEmpty(this.returnedProfile.hlRankDivision)){
-    //   valid = false;
-    // }
-
-    //validate looking for team:
-    // if (this.isNullOrEmpty(this.returnedProfile.lookingForGroup)) {
-    //   valid = false;
-    // }
-
-    //will we require the comp level, play history, roles?
-
-    //validate that we have start and end times for available days
     if(!this.validAvailTimes){
       valid=false;
       this.timesAvailControl.setErrors({invalid:true});

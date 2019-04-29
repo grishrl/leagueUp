@@ -1,12 +1,13 @@
 <div class="row mt-3" *ngIf="!edit">
     <div class="col">
-        <mat-form-field class="pe-full-width">
+        <span class="h6">Heroes of the Storm play and competitive history update</span>
+        <mat-form-field class="play-history">
             <mat-label>Describe your play history / style</mat-label>
-            <textarea matInput cdkTextareaAutosize disabled="{{edit}}" [(ngModel)]="descriptionValue"></textarea>
+            <textarea class="min-text-area" matInput cdkTextareaAutosize disabled="{{edit}}" [(ngModel)]="descriptionValue"></textarea>
         </mat-form-field>
     </div>
 </div>
 <div *ngIf="edit">
-    <span>Description/History of play:</span>
+    <span class="h6">Heroes of the Storm play and competitive history</span>
     <p>{{descriptionValue}}</p>
 </div>

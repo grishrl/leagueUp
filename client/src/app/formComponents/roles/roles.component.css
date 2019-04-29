@@ -1,0 +1,39 @@
+    .icons {
+        max-height: 96px;
+        fill: #dedcd8;
+        stroke: #848282;
+        stroke-width: .50;
+    }
+    
+    .icons.active {
+        max-height: 96px;
+        fill: gold;
+        stroke: black;
+        stroke-width: .50;
+    }
+    
+    .tank-outer-active {
+        fill: gold
+    }
+    
+    .tank-inner-active {
+        fill: #888686
+    }
+    
+    .icons-select {
+        max-height: 96px;
+        fill: #dedcd8;
+        stroke: #848282;
+        stroke-width: .50;
+    }
+    
+    .icons-select.active {
+        max-height: 96px;
+        fill: gold;
+        stroke: black;
+        stroke-width: .50;
+    }
+    
+    .icons-select:hover {
+        fill: green
+    }

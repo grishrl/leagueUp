@@ -8,7 +8,7 @@ import { findIndex } from 'lodash';
   styleUrls: ['./times-available.component.css']
 })
 export class TimesAvailableComponent implements OnInit, DoCheck {
-  
+
 
   daySelected:any = {
     "monday":'',
@@ -78,10 +78,10 @@ export class TimesAvailableComponent implements OnInit, DoCheck {
   days=[
     "monday",
     "tuesday",
-    "wednesday", 
+    "wednesday",
     "thursday",
-    "friday", 
-    "saturday", 
+    "friday",
+    "saturday",
     "sunday"
   ]
 
@@ -91,8 +91,8 @@ export class TimesAvailableComponent implements OnInit, DoCheck {
   errorReply: string = '';
   differ: any
 
-  constructor(private util: UtilitiesService) { 
-   
+  constructor(private util: UtilitiesService) {
+
   }
 
   ngOnInit() {
@@ -113,7 +113,7 @@ export class TimesAvailableComponent implements OnInit, DoCheck {
         startTime: null,
         endTime: null,
         allDay:false
-      }  
+      }
     }
   }
 
@@ -137,10 +137,10 @@ export class TimesAvailableComponent implements OnInit, DoCheck {
     }
   }
 
-  editOn:boolean=false;
-  @Input() set disabled(_editOn) {
-    if (typeof _editOn == 'boolean' && _editOn != null && _editOn != undefined) {
-      this.editOn = _editOn;
+  local_disabled:boolean=false;
+  @Input() set disabled(_disabled) {
+    if (typeof _disabled == 'boolean' && _disabled != null && _disabled != undefined) {
+      this.local_disabled = _disabled;
       this.recalculateCopyDays();
     }
   }
@@ -152,7 +152,7 @@ export class TimesAvailableComponent implements OnInit, DoCheck {
       let ind = findIndex(this.populatedDays, function (o) {
         return o.value == element;
       });
-      if (this.availability[element].available && this.availability[element].startTime && this.availability[element].endTime) {        
+      if (this.availability[element].available && this.availability[element].startTime && this.availability[element].endTime) {
         let firstChar = element.charAt(0);
         firstChar = firstChar.toUpperCase();
         let prettyName = firstChar + element.substring(1, element.length);

@@ -20,7 +20,7 @@
 <!-- End Section Title -->
 
 <!-- Section Area - Content Central -->
-<section class="content-info">
+<section class="content-info pb-5">
 
     <!-- Single Team Tabs -->
     <div class="single-player-tabs">
@@ -36,8 +36,8 @@
                         </div>
                         <div class="info-player">
                             <span class="number-player">
-                                            10
-                                        </span>
+                10
+              </span>
                             <h4>
                                 {{returnedProfile.displayName}}
                                 <span>Main Role</span>
@@ -50,6 +50,7 @@
                                 <li><strong>MMR:</strong> <span>{{returnedProfile.averageMmr}}</span></li>
                                 <li><strong>Matches:</strong> <span>90</span></li>
                                 <li><strong>Seasons:</strong> <span>2</span></li>
+                                <!-- todo: more player content later? -->
                                 <!-- <li><strong>Goals:</strong> <span>108</span></li>
                                 <li><strong>Discipline:</strong> <span>4 fouls against</span></li>
                                 <li><strong>Passing:</strong> <span>40 free kicks</span></li> -->
@@ -84,6 +85,7 @@
                     </div>
 
                     <!-- Attack -->
+                    <!-- todo: possible panel for some patreon stuff? -->
                     <!-- <div class="panel-box">
                         <div class="titles no-margin">
                             <h4><i class="fa fa-user"></i>Personal Info</h4>
@@ -114,7 +116,7 @@
                     <!-- Nav Tabs -->
                     <ul class="nav nav-tabs" id="myTab">
                         <li class="active"><a href="#overview" data-toggle="tab">Overview</a></li>
-                        <li><a href="#career" data-toggle="tab">CAREER</a></li>
+                        <li><a href="#career" data-toggle="tab">History</a></li>
                         <li><a href="#stats" data-toggle="tab">STATS</a></li>
                     </ul>
                     <!-- End Nav Tabs -->
@@ -123,6 +125,7 @@
                     <div class="tab-content">
                         <!-- Tab One - overview -->
                         <div class="tab-pane active" id="overview">
+
                             <!-- edit buttons -->
                             <div class="row" *ngIf="auth.getUser() === returnedProfile.displayName">
                                 <!-- if this is viewers profile show them the edit button -->
@@ -131,99 +134,100 @@
                                     <p>The more info you complete in your profile the more information teams will have to find you!</p>
                                 </div>
                                 <div class="col-5">
-                                    <div *ngIf="editOn == true">
+                                    <div *ngIf="disabled">
                                         <button type="button" (click)="openEdit()" class="btn btn-primary float-right">Edit</button>
                                     </div>
-                                    <div class="row" *ngIf="!editOn">
+                                    <div class="row" *ngIf="!disabled">
                                         <div class="col">
                                             <button type="button" (click)="openDialog()" class="mt-1 btn btn-danger "><span
-                                          class="icon-align"><i
-                                            class="material-icons">delete_forever</i>Delete</span></button>
+                          class="icon-align"><i class="material-icons">delete_forever</i>Delete</span></button>
                                         </div>
                                         <div class="col">
                                             <button type="button" [disabled]="!profileForm.valid" (click)="save()" class="mt-1 btn btn-success "><span class="icon-align"><i
-                                            class="material-icons">check</i>Save</span></button>
+                            class="material-icons">check</i>Save</span></button>
                                         </div>
                                         <div class="col">
-                                            <button type="button" (click)="cancel()" class="mt-1 btn btn-danger"><span
-                                          class="icon-align"><i class="material-icons">close</i>Cancel</span></button>
+                                            <button type="button" (click)="cancel()" class="mt-1 btn btn-danger"><span class="icon-align"><i
+                            class="material-icons">close</i>Cancel</span></button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
+                            <!-- content -->
                             <div class="panel-box padding-b">
                                 <div class="titles">
                                     <h4>Overview</h4>
                                 </div>
                                 <!-- discord tag -->
-                                <div class="row" *ngIf="!editOn">
+                                <div class="row" *ngIf="!disabled">
                                     <div class="col">
-                                        <app-discord-tag [editOn]="editOn" [(discordTag)]="returnedProfile.discordTag"></app-discord-tag>
+                                        <app-discord-tag [disabled]="disabled" [(discordTag)]="returnedProfile.discordTag">
+                                        </app-discord-tag>
                                     </div>
                                 </div>
                                 <!-- roles form control -->
                                 <div class="row">
                                     <div class="col">
-                                        <app-roles [editOn]="editOn" [(roles)]="returnedProfile.role"></app-roles>
+                                        <app-roles [disabled]="disabled" [(roles)]="returnedProfile.role"></app-roles>
                                     </div>
                                 </div>
-                                <!-- competitive level -->
+                                <!-- competitive level and description of play -->
                                 <div class="row">
                                     <div class="col">
-                                        <app-competitive-level [editOn]="editOn" [(message)]="returnedProfile.competitiveLevel"></app-competitive-level>
                                     </div>
                                 </div>
-                                <!-- storm league rank -->
-                                <div class="row">
-                                    <div class="col">
-                                        <app-storm-league [editOn]="editOn" [(division)]="returnedProfile.hlRankMetal" [(rank)]="returnedProfile.hlRankDivision"></app-storm-league>
+                                <div class="row mt-5">
+                                    <div class="col-6">
+                                        <app-competitive-level [disabled]="disabled" [(message)]="returnedProfile.competitiveLevel">
+                                        </app-competitive-level>
                                     </div>
-                                </div>
-                                <!-- description of play -->
-                                <div class="row">
-                                    <div class="col">
-                                        <app-play-history [editOn]="editOn" [(description)]="returnedProfile.descriptionOfPlay">
+                                    <div class="col-6">
+                                        <app-play-history [disabled]="disabled" [(description)]="returnedProfile.descriptionOfPlay">
                                         </app-play-history>
                                     </div>
                                 </div>
-
-                                <div class="row mt-2">
-                                    <div class="col-md-12">
-                                        <div class="example-container">
-
-                                            <div class="row" *ngIf="hideLookingForGroup()">
-                                                <div class="col">
-                                                    <mat-slide-toggle disabled="{{editOn}}" [(ngModel)]="returnedProfile.lookingForGroup">
-                                                        Looking for team.
-                                                    </mat-slide-toggle>
-                                                </div>
-                                            </div>
-
-                                            <!-- !editOn && !returnedProfile.availability.monday.available || editOn &&  -->
-                                            <app-times-available [customText]="'Availability'" [availObj]="returnedProfile.availability" (availValid)="recieveAvailTimeValidity($event)" [disabled]="editOn">
-                                            </app-times-available>
-
-                                            <div class="row mt-3">
-                                                <div class="col">
-                                                    <mat-form-field class="pe-full-width">
-                                                        <mat-select placeholder="Timezone:" [formControl]="timezoneControl" [(ngModel)]="returnedProfile.timeZone" (ngModelChange)="timezoneUpdate()">
-                                                            <mat-option *ngFor="let zone of timezone.timezones" [value]="zone.value">
-                                                                {{zone.text}}
-                                                            </mat-option>
-                                                        </mat-select>
-                                                        <mat-error *ngIf="timezoneControl.hasError('required')">
-                                                            Timezone is required
-                                                        </mat-error>
-                                                    </mat-form-field>
-                                                </div>
-                                            </div>
-                                        </div>
+                                <!-- storm league rank -->
+                                <div class="row mt-5">
+                                    <div class="col">
+                                        <app-storm-league [disabled]="disabled" [(division)]="returnedProfile.hlRankMetal" [(rank)]="returnedProfile.hlRankDivision"></app-storm-league>
                                     </div>
                                 </div>
-
+                                <!-- looking for group -->
+                                <div class="row mt-5" *ngIf="hideLookingForGroup()">
+                                    <div class="col">
+                                        <mat-slide-toggle disabled="{{disabled}}" [(ngModel)]="returnedProfile.lookingForGroup">
+                                            Looking for team.
+                                        </mat-slide-toggle>
+                                    </div>
+                                </div>
+                                <!-- times -->
+                                <div class="row mt-5">
+                                    <div class="col">
+                                        <h6>Player Availability and Time Zone:</h6>
+                                        <!-- !disabled && !returnedProfile.availability.monday.available || disabled &&  -->
+                                        <app-times-available [customText]="''" [availObj]="returnedProfile.availability" (availValid)="recieveAvailTimeValidity($event)" [disabled]="disabled">
+                                        </app-times-available>
+                                    </div>
+                                </div>
+                                <!-- timezone -->
+                                <div class="row mt-3">
+                                    <div class="col">
+                                        <mat-form-field class="pe-full-width">
+                                            <mat-select placeholder="Timezone:" [formControl]="timezoneControl" [(ngModel)]="returnedProfile.timeZone" (ngModelChange)="timezoneUpdate()">
+                                                <mat-option *ngFor="let zone of timezone.timezones" [value]="zone.value">
+                                                    {{zone.text}}
+                                                </mat-option>
+                                            </mat-select>
+                                            <mat-error *ngIf="timezoneControl.hasError('required')">
+                                                Timezone is required
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                                <!-- panel box close -->
                             </div>
-
+                            <!-- tab one close -->
                         </div>
                         <!-- Tab One - overview -->
 
@@ -377,7 +381,7 @@
                                             <a href="{{hotsProfile.getHPPlayerLink(returnedProfile.toonHandle,returnedProfile.displayName)}}" target="_blank">{{returnedProfile.displayName}}</a>
                                         </div>
                                     </div>
-                                    <div class="row mt-2" *ngIf="editOn">
+                                    <div class="row mt-2" *ngIf="disabled">
                                         <div class="col">
                                             <div>User Hots Log Profile:</div>
                                             <a href="{{hotsLogsService.returnProfileLink(returnedProfile.hotsLogsPlayerID)}}" target="_blank">HOTS LOGS Url</a>

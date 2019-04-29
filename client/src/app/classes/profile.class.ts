@@ -25,7 +25,7 @@ export class Profile {  //addition of stats for future plans
 
 
   constructor (id: string, displayName: string, teamId:string, teamName:string, isCaptain:boolean,
-    hlRankMetal:string, hlRankDivision:number, lookingForGroup: Boolean, availability:schedule, 
+    hlRankMetal:string, hlRankDivision:number, lookingForGroup: Boolean, availability:schedule,
     competitiveLevel:number, descriptionOfPlay:string, role:roles, timeZone:string, hotsLogsURL:string,
     averageMmr: number, toonHandle: string, discordTag:string){
   if (id != null && id != undefined && id.length > 0) {
@@ -122,7 +122,7 @@ export class Profile {  //addition of stats for future plans
     if (role != null && role != undefined) {
       this.role = role;
     } else {
-      this.role = { "tank": false, "meleeassassin": false, "rangedassassin": false, "support": false, "offlane": false, "flex": false };
+      this.role = { "tank": false, "meleeassassin": false, "rangedassassin": false, "support": false, "healer":false,  "offlane": false, "flex": false };
     }
     if (timeZone != null && timeZone != undefined) {
       this.timeZone = timeZone;
@@ -174,6 +174,7 @@ export interface roles {
   'meleeassassin': boolean,
   'rangedassassin': boolean,
   offlane: boolean,
+  healer:boolean,
   support: boolean,
   flex: boolean
 }

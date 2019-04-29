@@ -12,10 +12,19 @@ export class StormLeagueComponent implements OnInit {
 
   hlMedals = ['Grand Master', 'Master', 'Diamond', 'Platinum', 'Gold', 'Silver', 'Bronze', 'Unranked'];
   hlDivision = [1, 2, 3, 4, 5];
+  assetLookup = {
+    'Bronze':'bronzeMedal.png',
+    'Silver':'silverMedal.png',
+    'Gold':'goldMedal.png',
+    'Platinum':'platinumMedal.png',
+    'Diamond':'diamondMedal.png',
+    'Master':'masterMedal.png',
+    'Grand Master':'grandMasterMedal.png'
+  }
 
   edit: boolean = false;
 
-  @Input() set editOn(val) {
+  @Input() set disabled(val) {
     this.edit = val;
   }
 
@@ -47,6 +56,14 @@ export class StormLeagueComponent implements OnInit {
   set rank(val) {
     this.rankValue = val;
     this.rankChange.emit(this.rankValue);
+  }
+
+  modifyForm(metal) {
+    if (metal == 'Unranked') {
+      this.heroeLeagueRankControl.setErrors(null);
+    } else {
+
+    }
   }
 
   heroeLeagueDivisionControl = new FormControl({ value: '', disabled: true }, [

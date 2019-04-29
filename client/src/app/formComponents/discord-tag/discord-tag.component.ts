@@ -17,7 +17,7 @@ export class DiscordTagComponent implements OnInit, OnChanges {
 
   edit: boolean = false;
 
-  @Input() set editOn(val) {
+  @Input() set disabled(val) {
     this.edit = val;
   }
 
@@ -43,7 +43,7 @@ export class DiscordTagComponent implements OnInit, OnChanges {
 
 ngOnChanges(change){
 
-  if(change.editOn.currentValue == false){
+  if(change.disabled.currentValue == false){
     this.discordTagFormControl.enable();
   }
 

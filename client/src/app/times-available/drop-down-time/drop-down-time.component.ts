@@ -11,7 +11,7 @@ export class DropDownTimeComponent implements OnInit {
   constructor() { }
 
   times:any=[];
-  editOn:boolean=false;
+  local_disabled:boolean=false;
 
   _time:any;
   _suffix:any;
@@ -25,9 +25,9 @@ export class DropDownTimeComponent implements OnInit {
     }
   }
 
-  @Input() set disabled(_editOn){
-    if (_editOn != null && _editOn != undefined) {
-      this.editOn = _editOn;
+  @Input() set disabled(_disabled){
+    if (_disabled != null && _disabled != undefined) {
+      this.local_disabled = _disabled;
     }
   }
 
