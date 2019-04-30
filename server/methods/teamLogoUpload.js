@@ -54,30 +54,6 @@ async function uploadTeamLogo(path, dataURI, teamName) {
             ContentEncoding: 'base64',
             ContentType: 'image/png'
         };
-        let x = 'aaaa'
-            // s3Bucket.putObject(data, function(err, data) {
-            //     if (err) {
-            //         let sysObj = {};
-            //         sysObj.actor = 'SYSTEM';
-            //         sysObj.action = 'error uploading to AWS ';
-            //         sysObj.logLevel = 'ERROR';
-            //         sysObj.error = err;
-            //         sysObj.location = path;
-            //         sysObj.target = teamName;
-            //         sysObj.timeStamp = new Date().getTime();
-            //         logger(sysObj);
-            //     } else {
-            //         console.log('LOGGING X ', x);
-            //         let sysObj = {};
-            //         sysObj.actor = 'SYSTEM';
-            //         sysObj.action = 'uploaded to AWS ';
-            //         sysObj.logLevel = 'STD';
-            //         sysObj.location = path;
-            //         sysObj.target = teamName;
-            //         sysObj.timeStamp = new Date().getTime();
-            //         logger(sysObj);
-            //     }
-            // });
         let successObject = {};
         let putObjectPromise = s3Bucket.putObject(data).promise();
         let s3await = await putObjectPromise.then(
@@ -146,6 +122,45 @@ async function uploadTeamLogo(path, dataURI, teamName) {
     }
 }
 
+async function teamLogoArchive(logo) {
+    let aws = new AWS.S3({
+
+    });
+    let successObject = {};
+    var params = {
+        Bucket: process.env.s3bucketArchiveImages,
+        CopySource: process.env.s3bucketImages + "/" + logo,
+        Key: logo
+    }
+
+    let copyObjectPromise = aws.copyObject(params).promise();
+    let s3await = await copyObjectPromise.then(
+        s3pass => {
+            return {
+                "cont": true,
+                "eo": s3pass
+            };
+            // console.log('s3 success!');
+        },
+        s3fail => {
+            console.log(s3fail);
+            return {
+                "cont": false,
+                "eo": s3fail
+            };
+            // console.log('S3 failure!');
+        }
+    )
+    if (s3await.cont) {
+        successObject.message = "File uploaded";
+        successObject.eo = {};
+    } else {
+        let error = new CustomError('uploadError', 's3 copy failure!');
+        throw error;
+    }
+    return successObject;
+}
+
 function deleteFile(path) {
     let data = {
         Bucket: process.env.s3bucketImages,
@@ -179,5 +194,6 @@ function deleteFile(path) {
 
 module.exports = {
     uploadTeamLogo: uploadTeamLogo,
+    archiveTeamLogo: teamLogoArchive,
     deleteFile: deleteFile
 };

@@ -2,6 +2,7 @@ const Team = require('../models/team-models');
 const User = require('../models/user-models');
 const Division = require('../models/division-models');
 const Archive = require('../models/system-models').archive;
+const archiveTeamLogo = require('./teamLogoUpload').archiveTeamLogo;
 
 async function archiveDivisions() {
     console.log('finding divisions for archival...')
@@ -49,6 +50,16 @@ async function archiveDivisions() {
                         object: team.toObject(),
                         timeStamp: Date.now()
                     }).save();
+                    if (team.logo) {
+                        archiveTeamLogo(team.logo).then(
+                            succ => {
+                                // console.log('image copied ', succ)
+                            },
+                            err => {
+                                // console.log('image copy failed ', err)
+                            }
+                        )
+                    }
                 }
             } else {
                 //error handling

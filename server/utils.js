@@ -37,18 +37,18 @@ returnMessaging = function(route, message, err, obj, additional, logInfo) {
         "route": route,
         "message": message
     };
-    if (!isNullOrEmpty(err) && err) {
+    if (!isNullorUndefined(err) && err) {
         ret.err = err;
     }
     if (!isNullorUndefined(obj) && obj) {
         ret.returnObject = obj;
     }
-    if (!isNullOrEmpty(additional)) {
+    if (!isNullorUndefined(additional)) {
         ret = Object.assign(additional, ret);
     }
 
     let logObj = {};
-    if (!isNullOrEmpty(err) && err) {
+    if (!isNullorUndefined(err) && err) {
         logObj.logLevel = 'ERROR';
         logObj.error = err;
     } else {
