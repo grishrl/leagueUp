@@ -57,49 +57,6 @@ router.get('/get', (req, res) => {
     );
 });
 
-//get
-//
-//asynch check to see if captain can still invite users to join team
-// router.get('/check/status', passport.authenticate('jwt', {
-//     session: false
-// }), confirmCaptain, (req, res) => {
-//     const path = '/team/check/status';
-
-//     var user = req.query.user;
-
-//     user = decodeURIComponent(user);
-
-//     let team = req.user.teamName;
-//     team = team.toLowerCase();
-
-//     Team.findOne({
-//         teamName_lower: team
-//     }).lean().then(
-//         (foundTeam) => {
-//             if (foundTeam) {
-//                 let belowRosterSize = true;
-//                 let roster = 0;
-//                 if (foundTeam.teamMembers) {
-//                     roster += foundTeam.teamMembers.length;
-//                 }
-//                 if (foundTeam.pendingMembers) {
-//                     roster += foundTeam.pendingMembers.length;
-//                 }
-//                 if (roster >= 9) {
-//                     belowRosterSize = false;
-//                 } else if (
-//                     team.invitedUsers.indexOf(user);
-//                 )
-//                     res.status(200).send(util.returnMessaging(path, "Team found", false, belowRosterSize));
-//             } else {
-//                 res.status(200).send(util.returnMessaging(path, "Team not found", false, false));
-//             }
-//         }, (err) => {
-//             res.status(500).send(util.returnMessaging(path, "Error querying teams.", err));
-//         }
-//     );
-// });
-
 //post
 // path: /team/get
 // URI query param - team
@@ -221,7 +178,7 @@ router.post('/create', passport.authenticate('jwt', {
             delete recievedTeam._id;
         }
 
-        if (!util.isNullOrEmpty(status) && !util.isNullOrEmpty(message)) {
+        if (!util.isNullorUndefined(status) && !util.isNullorUndefined(message)) {
             //we were missing data so send an error back.
             logObj.logLevel = 'ERROR';
             logObj.error = 'Missing required data'
