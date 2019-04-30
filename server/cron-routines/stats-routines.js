@@ -638,7 +638,7 @@ function screenPostObject(postObj) {
     objKeys.forEach(key => {
         let value = postObj[key];
         if (key != 'team_two_image_url' && key != 'team_two_image_url') {
-            if (util.isNullOrEmpty(value)) {
+            if (util.isNullorUndefined(value)) {
                 retBool = false;
             } else {
                 //do nothing

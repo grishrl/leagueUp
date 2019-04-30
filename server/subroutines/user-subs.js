@@ -36,8 +36,18 @@ function clearUserTeam(user) {
         //update the fetched users info
         if (foundUser) {
             foundUser.teamId = null;
+            let teamname = foundUser.teamName;
             foundUser.teamName = null;
             foundUser.isCaptain = null;
+            if (foundUser.history) {
+                foundUser.history.push({ timestamp: Date.now(), action: 'Left team', target: teamname });
+            } else {
+                foundUser.history = [{
+                    timestamp: Date.now(),
+                    action: 'Left team',
+                    target: teamname
+                }];
+            }
             foundUser.save().then((savedUser) => {
                 logger(logObj);
             }, (err) => {
@@ -78,6 +88,19 @@ function upsertUserTeamName(user, team, teamid) {
         if (foundUser) {
             foundUser.teamName = team;
             foundUser.teamId = teamid;
+            if (foundUser.history) {
+                foundUser.history.push({
+                    timestamp: Date.now(),
+                    action: 'Joined team',
+                    target: team
+                });
+            } else {
+                foundUser.history = [{
+                    timestamp: Date.now(),
+                    action: 'Joined team',
+                    target: team
+                }];
+            }
             foundUser.save().then((savedUser) => {
                 logger(logObj);
             }, (err) => {

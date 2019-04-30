@@ -216,11 +216,37 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
                                 //push the member into the team's actual members then splice them out of the pending members
                                 foundTeam.teamMembers.push(foundTeamObject.pendingMembers[index]);
                                 foundTeam.pendingMembers.splice(index, 1);
+                                if (foundTeam.history) {
+                                    foundTeam.history.push({
+                                        timestamp: Date.now(),
+                                        action: 'Joined team',
+                                        target: foundUser.displayName
+                                    });
+                                } else {
+                                    foundTeam.history = [{
+                                        timestamp: Date.now(),
+                                        action: 'Joined team',
+                                        target: foundUser.displayName
+                                    }];
+                                }
                                 //update the user with the team info
-                                foundUser.teamName = teamName;
+                                foundUser.teamName = foundTeam.teamName;
                                 foundUser.teamId = foundTeam._id
                                 foundUser.pendingTeam = false;
                                 foundUser.lookingForGroup = false;
+                                if (foundUser.history) {
+                                    foundUser.history.push({
+                                        timestamp: Date.now(),
+                                        action: 'Joined team',
+                                        target: foundTeam.teamName
+                                    });
+                                } else {
+                                    foundUser.history = [{
+                                        timestamp: Date.now(),
+                                        action: 'Joined team',
+                                        target: foundTeam.teamName
+                                    }];
+                                }
                             } else {
                                 //remove the member from the pending members
                                 foundTeam.pendingMembers.splice(index, 1);
@@ -589,6 +615,20 @@ router.post('/team/memberAdd',
                             found.teamMembers = [{
                                 "displayName": user
                             }]
+                        }
+
+                        if (found.history) {
+                            found.history.push({
+                                timestamp: Date.now(),
+                                action: 'Joined team',
+                                target: user
+                            });
+                        } else {
+                            found.history = [{
+                                timestamp: Date.now(),
+                                action: 'Joined team',
+                                target: user
+                            }];
                         }
 
                         found.save().then(
