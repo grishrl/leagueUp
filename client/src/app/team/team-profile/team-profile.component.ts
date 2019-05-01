@@ -1,22 +1,21 @@
 import { Component, OnInit, Input} from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { DeleteConfrimModalComponent } from '../modal/delete-confrim-modal/delete-confrim-modal.component'
-import { ChangeCaptainModalComponent } from '../modal/change-captain-modal/change-captain-modal.component';
-import { TimezoneService } from '../services/timezone.service';
-import { TeamService } from '../services/team.service';
+import { DeleteConfrimModalComponent } from '../../modal/delete-confrim-modal/delete-confrim-modal.component'
+import { ChangeCaptainModalComponent } from '../../modal/change-captain-modal/change-captain-modal.component';
+import { TimezoneService } from '../../services/timezone.service';
+import { TeamService } from '../../services/team.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { merge } from 'lodash';
-import { Team } from '../classes/team.class';
-import { AuthService } from '../services/auth.service';
-import { UserService } from '../services/user.service';
-import { AdminService } from '../services/admin.service';
+import { Team } from '../../classes/team.class';
+import { AuthService } from '../../services/auth.service';
+import { UserService } from '../../services/user.service';
+import { AdminService } from '../../services/admin.service';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
-import { Profile } from '../classes/profile.class';
-import { UtilitiesService } from '../services/utilities.service';
-import { RequestService } from '../services/request.service';
-import { ConfirmRemoveMemberComponent } from '../modal/confirm-remove-member/confirm-remove-member.component';
-import { HotsProfileService } from '../services/hots-profile.service';
-import { DivisionService } from '../services/division.service';
+import { UtilitiesService } from '../../services/utilities.service';
+import { RequestService } from '../../services/request.service';
+import { ConfirmRemoveMemberComponent } from '../../modal/confirm-remove-member/confirm-remove-member.component';
+import { HotsProfileService } from '../../services/hots-profile.service';
+import { DivisionService } from '../../services/division.service';
 
 
 @Component({

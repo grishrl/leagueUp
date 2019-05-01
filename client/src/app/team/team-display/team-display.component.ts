@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Team } from '../classes/team.class';
-import { TeamService } from '../services/team.service';
+import { Team } from '../../classes/team.class';
+import { TeamService } from '../../services/team.service';
 
 @Component({
   selector: 'app-team-display',
@@ -17,7 +17,7 @@ export class TeamDisplayComponent implements OnInit {
       this._teams = teams;
       this.createMyDisplay();
     }else{
-      
+
       this._teams = [];
       this.rows = [];
     }
@@ -69,7 +69,7 @@ export class TeamDisplayComponent implements OnInit {
   }
 
   ngOnInit() {
-    
+
   }
 
 }

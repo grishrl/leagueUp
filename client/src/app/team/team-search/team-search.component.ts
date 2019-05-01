@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { TeamService } from '../services/team.service';
+import { TeamService } from '../../services/team.service';
 
 @Component({
   selector: 'app-team-search',
@@ -8,7 +8,6 @@ import { TeamService } from '../services/team.service';
   styleUrls: ['./team-search.component.css']
 })
 export class TeamSearchComponent implements OnInit {
-
   priorSelect: any
   lastChange: number = 0;
   selectedTeam: any

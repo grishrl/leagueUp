@@ -12,9 +12,9 @@ import { ProfileEditComponent } from './player/profile-edit/profile-edit.compone
 import { InputFormMaterial } from './classes/aM-input-Import.class';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TeamProfileComponent } from './team-profile/team-profile.component';
+import { TeamProfileComponent } from './team/team-profile/team-profile.component';
 import { DivisionComponent } from './division/division.component';
-import { TeamDisplayComponent } from './team-display/team-display.component';
+import { TeamDisplayComponent } from './team/team-display/team-display.component';
 import { MembersDisplayComponent } from './members-display/members-display.component';
 import { UserSearchComponent } from './user-search/user-search.component';
 import { OutreachEmailResponseComponent } from './outreach-email-response/outreach-email-response.component';
@@ -31,7 +31,7 @@ import { TeamQuickViewComponent } from './admin/approve-member/team-quick-view/t
 import { ApproveMemberViewComponent } from './admin/approve-member/approve-member-view/approve-member-view.component';
 import { DeleteMemberComponent } from './admin/delete-member/delete-member.component';
 import { ManageSelectTeamComponent } from './admin/manage-team/manage-select-team.component';
-import { TeamSearchComponent } from './team-search/team-search.component';
+import { TeamSearchComponent } from './team/team-search/team-search.component';
 import { ChangeCaptainModalComponent } from './modal/change-captain-modal/change-captain-modal.component';
 import { DivisionManagementComponent } from './admin/division-management/division-management.component';
 import { AddTeamComponent } from './admin/division-management/add-team/add-team.component';
