@@ -40,12 +40,18 @@ function clearUserTeam(user) {
             foundUser.teamName = null;
             foundUser.isCaptain = null;
             if (foundUser.history) {
-                foundUser.history.push({ timestamp: Date.now(), action: 'Left team', target: teamname });
+                foundUser.history.push({
+                    timestamp: Date.now(),
+                    action: 'Left team',
+                    target: teamname,
+                    season: process.env.season
+                });
             } else {
                 foundUser.history = [{
                     timestamp: Date.now(),
                     action: 'Left team',
-                    target: teamname
+                    target: teamname,
+                    season: process.env.season
                 }];
             }
             foundUser.save().then((savedUser) => {
@@ -92,13 +98,15 @@ function upsertUserTeamName(user, team, teamid) {
                 foundUser.history.push({
                     timestamp: Date.now(),
                     action: 'Joined team',
-                    target: team
+                    target: team,
+                    season: process.env.season
                 });
             } else {
                 foundUser.history = [{
                     timestamp: Date.now(),
                     action: 'Joined team',
-                    target: team
+                    target: team,
+                    season: process.env.season
                 }];
             }
             foundUser.save().then((savedUser) => {

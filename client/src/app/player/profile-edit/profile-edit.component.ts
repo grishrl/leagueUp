@@ -43,11 +43,13 @@ export class ProfileEditComponent implements OnInit {
     });
   }
 
+  //active tab
+  index=0;
 
   //this variable is used in case someone re-routes to profile from a profile
   displayName: string;
   //variable to hold profile returned from server
-  returnedProfile = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+  returnedProfile = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
   //subscription to profiles
   profSub: Subscription;
   //temp profile; stores old information in case a user hits cancel we have a copy to replace errant changes.
@@ -179,7 +181,7 @@ export class ProfileEditComponent implements OnInit {
    openEdit(){
      this.disabled=false;
      this.markFormGroupTouched(this.profileForm);
-     this.tempProfile = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+     this.tempProfile = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
      merge(this.tempProfile, this.returnedProfile);
    }
 
@@ -273,6 +275,20 @@ export class ProfileEditComponent implements OnInit {
       // todo : figure out linking these components this.timezoneControl.setErrors(null);
     }
     return valid;
+  }
+
+  //estimate the total games played by this player
+  estimateGamesPlayed(){
+    let count = 0;
+    if(this.returnedProfile.replays && this.returnedProfile.replays.length>0){
+      count += this.returnedProfile.replays.length;
+    }
+    if (this.returnedProfile.replayArchive && this.returnedProfile.replayArchive.length>0){
+      this.returnedProfile.replayArchive.forEach(season=>{
+        count+=season.replays.length;
+      })
+    }
+    return count;
   }
 
   isNullOrEmpty( dat ) : boolean {

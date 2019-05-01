@@ -19,7 +19,11 @@ export class Profile {  //addition of stats for future plans
   toonHandle:string;
   discordTag:string;
   pendingTeam:Boolean;
+  history:Array<object>;
   hotsLogsPlayerID:string;
+  seasonsPlayed:number;
+  replays:Array<string>;
+  replayArchive: Array<replayarchive>;
   smurfAccount:Boolean;
   __v: string;//useless
 
@@ -27,7 +31,7 @@ export class Profile {  //addition of stats for future plans
   constructor (id: string, displayName: string, teamId:string, teamName:string, isCaptain:boolean,
     hlRankMetal:string, hlRankDivision:number, lookingForGroup: Boolean, availability:schedule,
     competitiveLevel:number, descriptionOfPlay:string, role:roles, timeZone:string, hotsLogsURL:string,
-    averageMmr: number, toonHandle: string, discordTag:string){
+    averageMmr: number, toonHandle: string, discordTag:string, history:Array<object>){
   if (id != null && id != undefined && id.length > 0) {
     this._id = id;
   } else {
@@ -149,6 +153,14 @@ export class Profile {  //addition of stats for future plans
     } else {
       this.discordTag = null;
     }
+    if(history){
+      this.history = history;
+    }else{
+      this.history = [];
+    }
+    this.seasonsPlayed = 0;
+    this.replayArchive = [];
+    this.replays = [];
 }
 }
 
@@ -167,6 +179,11 @@ export interface atset {
   available:boolean,
   startTime:number,
   endTime: number
+}
+
+export interface replayarchive {
+  replays:Array<string>,
+  season:number
 }
 
 export interface roles {

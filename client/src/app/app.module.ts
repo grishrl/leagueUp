@@ -115,6 +115,8 @@ import { PlayHistoryComponent } from './formComponents/play-history/play-history
 import { RolesComponent } from './formComponents/roles/roles.component';
 import { DiscordTagComponent } from './formComponents/discord-tag/discord-tag.component';
 import { TimezoneComponent } from './formComponents/timezone/timezone.component';
+import { HistoryComponent } from './player/history/history.component';
+import { PlayerStatsComponent } from './player/player-stats/player-stats.component';
 
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
@@ -221,7 +223,9 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     PlayHistoryComponent,
     RolesComponent,
     DiscordTagComponent,
-    TimezoneComponent
+    TimezoneComponent,
+    HistoryComponent,
+    PlayerStatsComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

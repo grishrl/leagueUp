@@ -18,7 +18,7 @@ export class UserService {
     let encodedID = encodeURIComponent(id);
     let url = 'user/get';
     let params = [{user: encodedID}];
-    return this.httpService.httpGet(url, params);    
+    return this.httpService.httpGet(url, params);
   }
 
   //sends the information to the outreach route
@@ -42,7 +42,7 @@ export class UserService {
     let allUrl = 'search/user';
     let unTeamedUrl = '/search/user/unteamed';
     let url;
-    
+
     if(typeof id != 'object'){
         id = {'userName':id}
     }
@@ -55,7 +55,7 @@ export class UserService {
      url = allUrl;
    }
 
-   return this.httpService.httpPost(url, id);   
+   return this.httpService.httpPost(url, id);
 
   }
 
@@ -134,6 +134,13 @@ export class UserService {
     }else{
       return '';
     }
+  }
+
+  getStatistics(username){
+    let encodedID = encodeURIComponent(username);
+    let url = '/user/statistics';
+    let params = [{ id: encodedID }];
+    return this.httpService.httpGet(url, params);
   }
 
   constructor(private httpService: HttpServiceService) { }

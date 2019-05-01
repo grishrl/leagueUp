@@ -220,13 +220,15 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
                                     foundTeam.history.push({
                                         timestamp: Date.now(),
                                         action: 'Joined team',
-                                        target: foundUser.displayName
+                                        target: foundUser.displayName,
+                                        season: process.env.season
                                     });
                                 } else {
                                     foundTeam.history = [{
                                         timestamp: Date.now(),
                                         action: 'Joined team',
-                                        target: foundUser.displayName
+                                        target: foundUser.displayName,
+                                        season: process.env.season
                                     }];
                                 }
                                 //update the user with the team info
@@ -238,13 +240,15 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
                                     foundUser.history.push({
                                         timestamp: Date.now(),
                                         action: 'Joined team',
-                                        target: foundTeam.teamName
+                                        target: foundTeam.teamName,
+                                        season: process.env.season
                                     });
                                 } else {
                                     foundUser.history = [{
                                         timestamp: Date.now(),
                                         action: 'Joined team',
-                                        target: foundTeam.teamName
+                                        target: foundTeam.teamName,
+                                        season: process.env.season
                                     }];
                                 }
                             } else {
@@ -621,13 +625,15 @@ router.post('/team/memberAdd',
                             found.history.push({
                                 timestamp: Date.now(),
                                 action: 'Joined team',
-                                target: user
+                                target: user,
+                                season: process.env.season
                             });
                         } else {
                             found.history = [{
                                 timestamp: Date.now(),
                                 action: 'Joined team',
-                                target: user
+                                target: user,
+                                season: process.env.season
                             }];
                         }
 

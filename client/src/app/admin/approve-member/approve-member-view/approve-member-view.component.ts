@@ -12,13 +12,13 @@ import { AdminService } from '../../../services/admin.service';
 })
 
 export class ApproveMemberViewComponent implements OnInit {
-  
+
   //component properties
-  player = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null); //local user profile - blank user profile
+  player = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null); //local user profile - blank user profile
   viewTeam = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null); //local team profile - blank team profile
   resultantMmr: number //local var for holding returned resultant MMR calculation
   _info: any  //local var, holds the bindings passed to this component
-  
+
 
   //Input bindings , object that has username and teamname
   @Input() set info(info){

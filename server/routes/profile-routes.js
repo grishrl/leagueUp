@@ -4,6 +4,7 @@ const User = require('../models/user-models');
 const TeamSub = require('../subroutines/team-subs');
 const System = require('../models/system-models').system;
 const passport = require("passport");
+const Stats = require('../models/stats-model');
 
 /*
 /get
@@ -161,7 +162,7 @@ router.get('/frontPageStats', (req, res) => {
 
         System.findOne(query).then(
             found => {
-                res.status(200).send(util.returnMessaging(path, 'Found stat/', false, found));
+                res.status(200).send(util.returnMessaging(path, 'Found stat', false, found));
             },
             err => {
                 res.status(400).send(util.returnMessaging(path, 'Error getting stat.', err, null, null));
@@ -170,6 +171,35 @@ router.get('/frontPageStats', (req, res) => {
     } else {
         //stat not recieved
     }
+
+
+});
+
+router.get('/statistics', (req, res) => {
+
+    const path = '/user/statistics';
+    var id = decodeURIComponent(req.query.id);
+
+    User.findOne({ displayName: id }).then(
+        found => {
+            if (found) {
+                let id = found._id.toString();
+                Stats.find({ associateId: id }).then(
+                    foundStats => {
+                        res.status(200).send(util.returnMessaging(path, 'Found stat', false, foundStats));
+                    },
+                    err => {
+                        res.status(400).send(util.returnMessaging(path, 'Error finding stats.', err, null, null));
+                    }
+                )
+            } else {
+                res.status(400).send(util.returnMessaging(path, 'User ID not found.', false, null, null, logObj));
+            }
+        },
+        err => {
+            res.status(400).send(util.returnMessaging(path, 'Error finding user.', err, null, null));
+        }
+    )
 
 
 });
