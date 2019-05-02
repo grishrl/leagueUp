@@ -64,19 +64,21 @@ export class PlayerStatsComponent implements OnInit {
   }
 
   roundTree(obj){
-    if(typeof obj == 'object'){
-      let keys = Object.keys(obj);
-      keys.forEach(key=>{
-        let item = obj[key];
-        if(typeof item == 'object'){
-          this.roundTree(item);
-        }else{
-          if(!isNaN(item)){
-            obj[key]=Math.round(item);
+
+      if (typeof obj == 'object') {
+        let keys = Object.keys(obj);
+        keys.forEach(key => {
+          let item = obj[key];
+          if (typeof item == 'object') {
+            this.roundTree(item);
+          } else {
+            if (!isNaN(item)) {
+              obj[key] = Math.round(item);
+            }
           }
-        }
-      })
+        })
     }
+
   }
 
   toonHandle:string;

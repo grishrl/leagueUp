@@ -151,7 +151,7 @@ export class TeamService {
     }
     return this.httpService.httpPost(url, payload);
   }
-  
+
 
 
   //retuns a formatted string that includes the requisite info to retrieve an image from s3 bucket
@@ -162,7 +162,7 @@ export class TeamService {
     }else{
       imgFQDN += 'defaultTeamLogo.png';
     }
-    
+
     return imgFQDN;
   }
 
@@ -191,19 +191,19 @@ export class TeamService {
 
   //returns team name re formatted with spaces
   realTeamName(teamname):string{
-    // var pattern = '_';
-    // var re = new RegExp(pattern, "g");
-    // if (teamname != null && teamname != undefined) {
-    //   return teamname.replace(re, ' ');
-    // }else{
-    //   return '';
-    // }
     if (teamname != null && teamname != undefined) {
       return this.charServ.reverse(teamname)
     } else {
       return '';
     }
-    
+
+  }
+
+    getStatistics(username){
+    let encodedID = encodeURIComponent(username);
+    let url = '/team/statistics';
+    let params = [{ id: encodedID }];
+    return this.httpService.httpGet(url, params);
   }
 
   constructor(private httpService: HttpServiceService, private charServ: SpecialCharactersService) { }

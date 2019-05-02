@@ -1,7 +1,7 @@
 export class Team {
   _id: string;
   logo: string;
-  teamName: string; //added to display form 
+  teamName: string; //added to display form
   teamName_lower: string ;
   divisionDisplayName: string;
   divisionConcat: string;
@@ -13,11 +13,13 @@ export class Team {
   descriptionOfTeam: string;
   timeZone: string;
   captain: string;
+  history: Array<history>;
   teamMMRAvg: number; //added to display
   teamMembers: [{displayName:string}]; //added to display
   pendingMembers: [{displayName:string}];
   questionnaire:object;
-  
+  ticker: string;
+
 
 
   constructor(id: string, logo:string, teamName: string, lookingForMore: Boolean, availability:schedule,
@@ -138,7 +140,16 @@ export class Team {
         pickedMaps:[]
       };
     }
+    this.ticker=null;
+    this.history=[];
   }
+}
+
+interface history{
+  season:number,
+  target:string,
+  timestamp:string,
+  action:string
 }
 
 interface schedule {

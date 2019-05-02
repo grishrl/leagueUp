@@ -12,6 +12,7 @@ const Team = require("../models/team-models");
 const passport = require("passport");
 const sysModels = require('../models/system-models');
 const uploadTeamLogo = require('../methods/teamLogoUpload').uploadTeamLogo;
+const Stats = require('../models/stats-model');
 
 /*
 routes for team management --
@@ -683,6 +684,39 @@ router.post('/questionnaire/save', passport.authenticate('jwt', {
     }, err => {
         res.status(500).send(util.returnMessaging(path, 'error querying team', err, null, null, logObj));
     })
+});
+
+router.get('/statistics', (req, res) => {
+
+    const path = '/team/statistics';
+    var id = decodeURIComponent(req.query.id);
+
+    Team.findOne({
+        teamName: id
+    }).then(
+        found => {
+            if (found) {
+                let id = found._id.toString();
+                Stats.find({
+                    associateId: id
+                }).then(
+                    foundStats => {
+                        res.status(200).send(util.returnMessaging(path, 'Found stat', false, foundStats));
+                    },
+                    err => {
+                        res.status(400).send(util.returnMessaging(path, 'Error finding stats.', err, null, null));
+                    }
+                )
+            } else {
+                res.status(400).send(util.returnMessaging(path, 'User ID not found.', false, null, null, logObj));
+            }
+        },
+        err => {
+            res.status(400).send(util.returnMessaging(path, 'Error finding user.', err, null, null));
+        }
+    )
+
+
 });
 
 //this confirms the calling user is the captain OR is themselves, for removing from team

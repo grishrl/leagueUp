@@ -29,35 +29,12 @@ export class TeamProfileComponent implements OnInit {
   //these properties are used for inputs
   disabled: boolean = true;
   teamName: string;
-  displayDivision: string = ""
   returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
   filterUsers: any[] = []
   tempProfile
   message: string
-  showMe:boolean = true;
-  errorAvail:boolean = false;
-  displayMembersLeft: any[] = [];
-  displayMembersRight: any[] = [];
-  displayPendingMembersLeft: any[] = [];
-  displayPendingMembersRight: any[] = [];
   showDivision = false;
 
-  hlMedals = ['Grand Master', 'Master', 'Diamond', 'Platinum', 'Gold', 'Silver', 'Bronze'];
-  hlDivision = [1, 2, 3, 4, 5];
-  competitonLevel = [
-    { val: 1, display: 'Low' },
-    { val: 3, display: 'Medium' },
-    { val: 5, display: 'High' }
-  ]
-
-  //form controls
-  timezoneControl = new FormControl({ value: '', disabled: true }, [
-    // Validators.required
-  ]);
-
-  teamControlGroup = new FormGroup({
-    timeZone: this.timezoneControl
-  })
 
   emailControl = new FormControl({ value: '' }, [
     Validators.email,
@@ -67,6 +44,7 @@ export class TeamProfileComponent implements OnInit {
   nameControl = new FormControl({ value:''});
 
   emailAddress: string;
+
   inviteEmail() {
     let storedEmail = this.emailAddress;
     this.emailAddress = '';
@@ -89,11 +67,9 @@ export class TeamProfileComponent implements OnInit {
   }
 
   //methods
-
   deleteUserButtonOn(player){
     return player==this.returnedProfile.captain;
   }
-
 
   openConfirmRemove(player): void {
       const openConfirmRemove = this.dialog.open(ConfirmRemoveMemberComponent, {
@@ -113,7 +89,6 @@ export class TeamProfileComponent implements OnInit {
 
 
   removeMember(player){
-
     //TODO: ADD A CONFIRM HERE
     if(this.componentEmbedded){
       this.admin.removeMembers(this.returnedProfile.teamName_lower, player).subscribe(
@@ -156,17 +131,11 @@ export class TeamProfileComponent implements OnInit {
   }
 
 
-  formControlledEnable() {
-    this.timezoneControl.enable();
-  }
-
   adminFormControlledEnable(){
-    this.formControlledEnable();
     this.nameControl.enable();
   }
 
   formControlledDisable() {
-    this.timezoneControl.disable();
     this.nameControl.disable();
   }
 
@@ -179,11 +148,9 @@ export class TeamProfileComponent implements OnInit {
   ngOnInit() {
     this.disabled = true;
     this.formControlledDisable();
-    this.displayMembersLeft = [];
-    this.displayMembersRight = [];
-    this.displayPendingMembersLeft = [];
-    this.displayPendingMembersRight = [];
-    this.util.markFormGroupTouched(this.teamControlGroup)
+
+    // this.util.markFormGroupTouched(this.teamControlGroup)
+
     if(this.componentEmbedded && this.embedSource == 'admin'){
       this.disabled = false;
       this.adminFormControlledEnable();
@@ -201,7 +168,6 @@ export class TeamProfileComponent implements OnInit {
       } else {
         merge(this.returnedProfile, this.providedProfile);
         this.setUpTeamMemberFilter(this.returnedProfile);
-        this.stratifyTeamMembers()
         this.orignalName = this.returnedProfile.teamName_lower;
         this.checkDivision(this.returnedProfile.divisionConcat);
         // this.cleanUpDivision();
@@ -227,6 +193,7 @@ export class TeamProfileComponent implements OnInit {
     }
     return mem < 9;
   }
+
   setUpTeamMemberFilter(teamProfile){
     if (teamProfile.teamMembers && teamProfile.teamMembers.length > 0) {
       teamProfile.teamMembers.forEach(element => {
@@ -410,7 +377,6 @@ export class TeamProfileComponent implements OnInit {
   //this method enables form inputs for changes
   openEdit(){
     this.disabled=false;
-    this.formControlledEnable();
     this.tempProfile = Object.assign({}, this.returnedProfile);
   }
 
@@ -611,53 +577,53 @@ export class TeamProfileComponent implements OnInit {
 
     }
     //ensure time zone
-    if (this.validAvailDays>0 && this.isNullOrEmpty(this.returnedProfile.timeZone)) {
-      valid = false;
-      this.timezoneControl.setErrors({required:true});
-    }else{
-      this.timezoneControl.setErrors(null);
-    }
+    // if (this.validAvailDays>0 && this.isNullOrEmpty(this.returnedProfile.timeZone)) {
+    //   valid = false;
+    //   this.timezoneControl.setErrors({required:true});
+    // }else{
+    //   this.timezoneControl.setErrors(null);
+    // }
     return valid;
   }
 
-  stratifyTeamMembers(){
-    this.displayMembersLeft = [];
-    this.displayMembersRight = [];
-    if(this.returnedProfile.teamMembers.length>3){
-      let half = Math.round(this.returnedProfile.teamMembers.length / 2);
-      for(var i = 0; i < half; i++){
-        this.displayMembersLeft.push(this.returnedProfile.teamMembers[i]);
-      }
+  // stratifyTeamMembers(){
+  //   this.displayMembersLeft = [];
+  //   this.displayMembersRight = [];
+  //   if(this.returnedProfile.teamMembers.length>3){
+  //     let half = Math.round(this.returnedProfile.teamMembers.length / 2);
+  //     for(var i = 0; i < half; i++){
+  //       this.displayMembersLeft.push(this.returnedProfile.teamMembers[i]);
+  //     }
 
-      for (var j = half; j < this.returnedProfile.teamMembers.length; j++){
-        this.displayMembersRight.push(this.returnedProfile.teamMembers[j]);
-      }
-    }else{
-      this.displayMembersLeft = this.returnedProfile.teamMembers;
-      this.displayMembersRight = [];
-    }
-    //PENDING MEMBERS
-    if (this.returnedProfile.pendingMembers && this.returnedProfile.pendingMembers.length > 3) {
-      let half = Math.round(this.returnedProfile.pendingMembers.length / 2);
-      for (var i = 0; i < half; i++) {
-        this.displayPendingMembersLeft.push(this.returnedProfile.pendingMembers[i]);
-      }
+  //     for (var j = half; j < this.returnedProfile.teamMembers.length; j++){
+  //       this.displayMembersRight.push(this.returnedProfile.teamMembers[j]);
+  //     }
+  //   }else{
+  //     this.displayMembersLeft = this.returnedProfile.teamMembers;
+  //     this.displayMembersRight = [];
+  //   }
+  //   //PENDING MEMBERS
+  //   if (this.returnedProfile.pendingMembers && this.returnedProfile.pendingMembers.length > 3) {
+  //     let half = Math.round(this.returnedProfile.pendingMembers.length / 2);
+  //     for (var i = 0; i < half; i++) {
+  //       this.displayPendingMembersLeft.push(this.returnedProfile.pendingMembers[i]);
+  //     }
 
-      for (var j = half; j < this.returnedProfile.pendingMembers.length; j++) {
-        this.displayPendingMembersRight.push(this.returnedProfile.pendingMembers[j]);
-      }
-    } else {
-      this.displayPendingMembersLeft = this.returnedProfile.pendingMembers;
-      this.displayPendingMembersRight = [];
-    }
-  }
+  //     for (var j = half; j < this.returnedProfile.pendingMembers.length; j++) {
+  //       this.displayPendingMembersRight.push(this.returnedProfile.pendingMembers[j]);
+  //     }
+  //   } else {
+  //     this.displayPendingMembersLeft = this.returnedProfile.pendingMembers;
+  //     this.displayPendingMembersRight = [];
+  //   }
+  // }
 
   //method to get team by provided string
   private getTeamByString(getProfile: string) {
     this.team.getTeam(getProfile).subscribe((res) => {
       merge(this.returnedProfile, res);
       this.setUpTeamMemberFilter(this.returnedProfile);
-      this.stratifyTeamMembers()
+
       this.checkDivision(this.returnedProfile.divisionConcat);
       // console.log('team ', this.returnedProfile);
       // this.cleanUpDivision();
@@ -678,8 +644,11 @@ export class TeamProfileComponent implements OnInit {
     }
   }
 
+  timeValid;
   recieveAvailTimeValidity($event){
-    console.log('$event ',$event);
+    if(this.timeValid != $event.valid){
+      this.timeValid = $event.valid
+    }
   }
 
   leaveTeam(){

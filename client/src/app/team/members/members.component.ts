@@ -10,9 +10,11 @@ export class MembersComponent implements OnInit {
   constructor() { }
 
   teamMembers=[];
-  @Input() set members(val){
+  profile;
+  @Input() set teamProfile(val){
     if(val){
-      this.teamMembers = val;
+      this.profile = val;
+      this.teamMembers = val.teamMembers;
     }
   }
 

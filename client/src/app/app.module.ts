@@ -121,6 +121,9 @@ import { MembersComponent } from './team/members/members.component';
 import { PlayerSmallCardComponent } from './player/player-small-card/player-small-card.component';
 import { TeamScheduleTableComponent } from './schedule/team-schedule-table/team-schedule-table.component';
 import { TeamResultsTilesComponent } from './team/team-results-tiles/team-results-tiles.component';
+import { TeamStatsComponent } from './team/team-stats/team-stats.component';
+import { TeamHistoryComponent } from './team/team-history/team-history.component';
+import { TeamUpcomingMatchComponent } from './team/team-upcoming-match/team-upcoming-match.component';
 
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
@@ -233,7 +236,10 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     MembersComponent,
     PlayerSmallCardComponent,
     TeamScheduleTableComponent,
-    TeamResultsTilesComponent
+    TeamResultsTilesComponent,
+    TeamStatsComponent,
+    TeamHistoryComponent,
+    TeamUpcomingMatchComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
