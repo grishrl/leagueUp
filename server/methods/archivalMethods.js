@@ -1,6 +1,8 @@
 const Team = require('../models/team-models');
+const User = require('../models/user-models');
 const Division = require('../models/division-models');
 const Archive = require('../models/system-models').archive;
+const archiveTeamLogo = require('./teamLogoUpload').archiveTeamLogo;
 
 async function archiveDivisions() {
     console.log('finding divisions for archival...')
@@ -48,12 +50,22 @@ async function archiveDivisions() {
                         object: team.toObject(),
                         timeStamp: Date.now()
                     }).save();
+                    if (team.logo) {
+                        archiveTeamLogo(team.logo).then(
+                            succ => {
+                                // console.log('image copied ', succ)
+                            },
+                            err => {
+                                // console.log('image copy failed ', err)
+                            }
+                        )
+                    }
                 }
             } else {
                 //error handling
             }
         }
-
+        playerSeasonFinalize();
         console.log('finished up archiving...')
 
     } else {
@@ -61,6 +73,46 @@ async function archiveDivisions() {
     }
 
 };
+
+//go through each player and if they have replays; archive them into an object noted by the season;
+//if they have replays OR they were a member of a team when this is run, increment their season counter
+function playerSeasonFinalize() {
+    User.find().then(
+        found => {
+            found.forEach(player => {
+                let save = false;
+                if (player.replays && player.replays.length > 0) {
+                    let tO = {
+                        season: process.env.season,
+                        replays: player.replays
+                    }
+                    if (player.replayArchive) {
+                        player.replayArchive.push(tO);
+                    } else {
+                        player.replayArchive = [tO];
+                    }
+                    player.replays = [];
+                    player.markModified('replayArchive');
+                    player.markModified('replays');
+                    save = true;
+                } else if (player.teamName) {
+                    save = true;
+                }
+                if (save) {
+                    if (player.seasonsPlayed) {
+                        player.seasonsPlayed += 1;
+                    } else {
+                        player.seasonsPlayed = 1;
+                    }
+                    player.save();
+                }
+            });
+        },
+        err => {
+            console.log(err);
+        }
+    )
+}
 
 
 module.exports = {

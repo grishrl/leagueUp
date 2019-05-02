@@ -37,7 +37,15 @@ function cleanUpPendingQueueTeamnameUsername(teamname, username) {
     logObj.timeStamp = new Date().getTime();
     teamname = teamname.toLowerCase();
     //find the queue item of specified team/user combo
-    Admin.PendingQueue.find({ teamName: teamname, userName: username }).then((toDelete) => {
+    Admin.PendingQueue.find({
+        $and: [{
+                teamName: teamname
+            },
+            {
+                userName: username
+            }
+        ]
+    }).then((toDelete) => {
         if (toDelete && toDelete.length > 0) {
             //iterate through each element
             toDelete.forEach(ele => {
