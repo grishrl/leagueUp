@@ -305,7 +305,7 @@
                                             </div>
                                             <div class="participant" [ngClass]="{'winner': winner(tournamentObject.championship, 'away')}">
                                                 <span *ngIf="tournamentObject.championship.away else tbd">
-                                                    <img class="imgThumb img-fluid" src="{{_team.imageFQDN(tournamentObject.championship.away.logo)}}" *ngIf="tournamentObject.championship.home.teamName != 'BYE'">
+                                                    <img class="imgThumb img-fluid" src="{{_team.imageFQDN(tournamentObject.championship.away.logo)}}" *ngIf="tournamentObject.championship.away.teamName != 'BYE'">
                                                     <span>{{tournamentObject.championship.away.teamName}}</span>
                                                 </span>
                                             </div>
