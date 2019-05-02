@@ -25,6 +25,7 @@ import { DivisionService } from '../../services/division.service';
 })
 export class TeamProfileComponent implements OnInit {
 
+  index=0;
   //these properties are used for inputs
   disabled: boolean = true;
   teamName: string;
@@ -675,6 +676,10 @@ export class TeamProfileComponent implements OnInit {
         return false;
       }
     }
+  }
+
+  recieveAvailTimeValidity($event){
+    console.log('$event ',$event);
   }
 
   leaveTeam(){

@@ -15,6 +15,18 @@ export class RolesComponent implements OnInit {
     this.edit = val;
   }
 
+  displayText: string = "Player Roles:";
+
+  @Input() set customDisplayText(val) {
+    this.displayText = val;
+  }
+
+  editText: string = "Select Roles:";
+
+  @Input() set customEditText(val) {
+    this.editText = val;
+  }
+
   roleValues = {
     tank: false,
     'meleeassassin': false,

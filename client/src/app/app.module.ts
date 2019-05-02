@@ -117,6 +117,10 @@ import { DiscordTagComponent } from './formComponents/discord-tag/discord-tag.co
 import { TimezoneComponent } from './formComponents/timezone/timezone.component';
 import { HistoryComponent } from './player/history/history.component';
 import { PlayerStatsComponent } from './player/player-stats/player-stats.component';
+import { MembersComponent } from './team/members/members.component';
+import { PlayerSmallCardComponent } from './player/player-small-card/player-small-card.component';
+import { TeamScheduleTableComponent } from './schedule/team-schedule-table/team-schedule-table.component';
+import { TeamResultsTilesComponent } from './team/team-results-tiles/team-results-tiles.component';
 
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
@@ -225,7 +229,11 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     DiscordTagComponent,
     TimezoneComponent,
     HistoryComponent,
-    PlayerStatsComponent
+    PlayerStatsComponent,
+    MembersComponent,
+    PlayerSmallCardComponent,
+    TeamScheduleTableComponent,
+    TeamResultsTilesComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

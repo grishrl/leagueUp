@@ -1,370 +1,418 @@
-<div class="container" *ngIf="showMe">
-    <div class="whiteBg">
+<!-- Section Title -->
+<div class="section-title-team">
+    <div class="container">
         <div class="row">
-            <div class="col-md-12">
-                <div>
-                    <!-- captain options -->
-                    <div class="row" *ngIf="showEditDialog()">
-                        <div class="col-8 offset-2">
-                            <div class="row mt-3">
-                                <div class="col-6">
-                                    <p>Welcome to your team profile!</p>
-                                    <p>The more info you complete in your profile the more information players will have to find you!</p>
-                                </div>
-                                <div class="col-6">
-                                    <div *ngIf="disabled == true">
-                                        <button type="button" (click)="openEdit()" class="btn btn-primary float-right">Edit</button>
-                                    </div>
-                                    <div *ngIf="!disabled">
-                                        <div class="row">
-                                            <div class="col">
-                                                <div class="dropdown">
-                                                    <button type="button" class="mt-1 btn btn-danger dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <span class="icon-align">
-                                                  <i class="material-icons md-18">settings</i>
-                                                  Manage
-                                                </span>
-                                              </button>
-                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                        <a class="dropdown-item finger" (click)="openCaptainChangeDialog()"><span class="icon-align"><i
-                                                      class="material-icons">cached</i>Change
-                                                    captain</span></a>
-                                                        <!-- <a class="dropdown-item finger" (click)="openDialog()"><span class="icon-align"><i class="material-icons">delete_forever</i>Delete team</span></a> -->
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                            <div class="col">
-                                                <button type="button" [disabled]="!validate()" (click)="save()" class="mt-1 btn btn-success ">Save</button>
-                                            </div>
-
-                                            <div class="col">
-                                                <button type="button" (click)="cancel()" class="mt-1 btn btn-danger">Cancel</button>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                <button type="button" (click)="adminRefreshMMR()" class="mt-1 btn btn-info">Update Team
-                                                MMR</button>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- admin options -->
-                    <div class="row" *ngIf="componentEmbedded">
-                        <div class="col-8 offset-2">
-                            <div class="row">
-                                <div class="col">
-                                    <div class="dropdown">
-                                        <button type="button" class="mt-1 btn btn-danger dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <span class="icon-align">
-                                            <i class="material-icons md-18">settings</i>
-                                                 Manage
-                                        </span>
-                                    </button>
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <a class="dropdown-item finger" (click)="openAdminCaptainChangeDialog()"><span class="icon-align"><i class="material-icons">cached</i>Change captain</span></a>
-                                            <a class="dropdown-item finger" (click)="openAdminDeleteDialog()"><span class="icon-align"><i class="material-icons">delete_forever</i>Delete team</span></a>
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="col">
-                                    <button type="button" (click)="adminRefreshMMR()" class="mt-1 btn btn-info">Update Team MMR</button>
-                                </div>
-                                <div class="col">
-                                    <button type="button" [disabled]="!validate()" (click)="adminSave()" class="mt-1 btn btn-success ">Save</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- request to join team -->
-                    <!-- <div class="row mt-3" *ngIf="showRequestToJoin() ">
-                        <div class="col-8 offset-2">
-                            <div class="row">
-                                <div class="col text-center">
-                                    <button class="btn btn-success" (click)="requestToJoin()">Request to Join Team</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div> -->
-                </div>
-
-                <div class="row mt-3">
-                    <div class="col-sm-12 col-md-5">
-                        <app-image-upload [showEdit]="auth.getUser()===returnedProfile.captain || componentEmbedded" [embedded]="componentEmbedded" [teamName]="returnedProfile.teamName" [teamLogo]="returnedProfile.logo"></app-image-upload>
-                    </div>
-                    <div class="col-sm-12 col-md-7">
-                        <mat-form-field class="mat-FullWidth" *ngIf="componentEmbedded">
-                            <input matInput placeholder="Team Id" [(ngModel)]="returnedProfile._id" disabled="true">
-                            <mat-error *ngIf="nameControl.hasError('invalidCharacters')">
-                                Invalid character entered
-                            </mat-error>
-                            <mat-error *ngIf="nameControl.hasError('required')">
-                                Team name is required
-                            </mat-error>
-                        </mat-form-field>
-                        <mat-form-field class="mat-FullWidth">
-                            <input matInput placeholder="Team Name" [formControl]="nameControl" [(ngModel)]="returnedProfile.teamName" (ngModelChange)="modelChange()">
-                            <mat-error *ngIf="nameControl.hasError('invalidCharacters')">
-                                Invalid character entered
-                            </mat-error>
-                            <mat-error *ngIf="nameControl.hasError('required')">
-                                Team name is required
-                            </mat-error>
-                        </mat-form-field>
-                        <mat-form-field class="mat-FullWidth" *ngIf="showDivision">
-                            <input matInput placeholder="Team Division" [(ngModel)]="returnedProfile.divisionDisplayName" disabled="true">
-                        </mat-form-field>
-                        <mat-form-field class="mat-FullWidth">
-                            <input matInput placeholder="Team MMR Average" [(ngModel)]="returnedProfile.teamMMRAvg" disabled="true">
-                        </mat-form-field>
-                        <mat-form-field class="mat-FullWidth">
-                            <input matInput placeholder="Team Captain" [(ngModel)]="returnedProfile.captain" disabled="true">
-                        </mat-form-field>
-                        <mat-slide-toggle *ngIf="checkRosterSize()" [disabled]="disabled" [(ngModel)]="returnedProfile.lookingForMore">
-                            Looking for More.
-                        </mat-slide-toggle>
-                    </div>
-                </div>
-
-                <div *ngIf="!componentEmbedded">
-
-                    <!-- add team member -->
-
-                    <div class="row mt-3" *ngIf="!disabled">
-                        <div class="col">
-                            <div *ngIf="checkRosterSize() else sizeLimit">
-                                <h3>Invite users to your team!</h3>
-                                <mat-accordion>
-                                    <mat-expansion-panel>
-                                        <mat-expansion-panel-header>
-                                            <mat-panel-title>
-                                                Existing User:
-                                            </mat-panel-title>
-                                            <mat-panel-description>
-                                                Invite a player that already has a profile on the NGS Website using their battle tag.
-                                            </mat-panel-description>
-                                        </mat-expansion-panel-header>
-
-                                        <app-user-search [filterUser]="filterUsers" [type]="'unteamed'" [buttonText]="'Invite User'" (userSelected)="invite($event)"></app-user-search>
-
-                                    </mat-expansion-panel>
-
-                                    <mat-expansion-panel>
-                                        <mat-expansion-panel-header>
-                                            <mat-panel-title>
-                                                New User:
-                                            </mat-panel-title>
-                                            <mat-panel-description>
-                                                Invite a user to join the NGS Website!
-                                            </mat-panel-description>
-                                        </mat-expansion-panel-header>
-                                        <div class="row">
-                                            <div class="col-7">
-                                                <mat-form-field class="mat-FullWidth">
-                                                    <input matInput [formControl]="emailControl" [(ngModel)]="emailAddress" placeholder="Enter users email to send them an invite to the NGS Website!">
-                                                </mat-form-field>
-                                            </div>
-                                            <div class="col">
-                                                <button type="button" [disabled]="emailControl.invalid" (click)="inviteEmail()">Invite!</button>
-                                            </div>
-                                        </div>
-
-
-
-                                    </mat-expansion-panel>
-                                </mat-accordion>
-
-                            </div>
-                        </div>
-                        <ng-template #sizeLimit>
-                            <div class="text-center">
-                                <div> You have reached the team size limit! 9 Members </div>
-                                <div> {{returnedProfile.teamMembers.length}} members on roster </div>
-                                <div> {{returnedProfile.pendingMembers.length}} members pending roster add </div>
-                            </div>
-                        </ng-template>
-
-                    </div>
-
-
-
-                    <div class="row mt-3">
-                        <div class="col">
-                            <span class="p-3 text-success">{{message}}</span>
-                        </div>
-                    </div>
-                </div>
-
+            <div class="col-xl-7">
                 <div class="row">
-                    <div class="col">
-                        <div>View this teams NGS Stats at Heroes Profile</div>
-                        <a href="{{heroProfile.getHPTeamLink(returnedProfile.teamName)}}" target="_blank"> {{returnedProfile.teamName}} </a>
+                    <div class="col-md-3">
+                        <img src="https://placekitten.com/150/150" alt="">
                     </div>
-                </div>
 
+                    <div class="col-md-9">
+                        <h1>{{returnedProfile.teamName}}</h1>
+                        <ul class="general-info">
+                            <li *ngIf="showDivision">
+                                <h6><strong>Division:</strong>{{returnedProfile.divisionDisplayName}} </h6>
+                            </li>
+                            <li>
+                                <h6><strong>Average MMR:</strong> {{returnedProfile.teamMMRAvg}}</h6>
+                            </li>
+                            <li>
+                                <h6><strong>Captain:</strong>{{returnedProfile.captain}}</h6>
+                            </li>
+                            <!-- <li>
+                                <h6><strong>Location:</strong> Colombia</h6>
+                            </li>
+                            <li>
+                                <h6>
+                                    <i class="fa fa-link" aria-hidden="true"></i>
+                                    <a href="https://themeforest.net/user/iwthemes/portfolio?ref=iwthemes" target="_blank">www.site.com</a>
+                                </h6>
+                            </li> -->
+                        </ul>
 
-                <div class="row mt-3">
-                    <div class="col">
-                        <h2>Current Team Members:</h2>
-                    </div>
-                </div>
-                <!-- team members list -->
-                <div class="row mt-3">
-                    <div class="col">
-                        <div class="row mt-3" *ngFor="let player of displayMembersLeft">
-                            <!-- player name -->
-                            <div class="col-7 verticalAlign">
-                                <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]">
-                                    <i *ngIf="player.displayName == returnedProfile.captain" class="fas fa-crown"></i> {{player.displayName}}
-                                </a>
-                            </div>
-                            <!-- leave button : shows for user only -->
-                            <div *ngIf="showLeaveTeam(player.displayName)" class="col">
-                                <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)">
-                                Leave Team
-                            </button>
-                            </div>
-                            <!-- remove from team : shows for admin and captain -->
-                            <div *ngIf="!disabled" class="col">
-                                <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)"> X </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="row mt-3" *ngFor="let player of displayMembersRight">
-                            <!-- player name -->
-                            <div class="col">
-                                <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]">
-                                    <i *ngIf="player.displayName == returnedProfile.captain" class="fas fa-crown"></i> {{player.displayName}}
-                                </a>
-                            </div>
-                            <!-- leave button : shows for user only -->
-                            <div *ngIf="showLeaveTeam(player.displayName)" class="col">
-                                <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)">
-                                Leave Team
-                            </button>
-                            </div>
-                            <!-- remove from team : shows for admin and captain -->
-                            <div *ngIf="!disabled" class="col">
-                                <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)"> X </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div *ngIf="showEditDialog()">
-                    <div class="row mt-3">
-                        <div class="col">
-                            <h2>Pending Members:</h2>
-                        </div>
-                    </div>
-                    <!-- team members list -->
-                    <div class="row mt-3">
-                        <div class="col">
-                            <div class="row mt-3" *ngFor="let player of displayPendingMembersLeft">
-                                <div class="col-7 verticalAlign">
-                                    <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]">{{player.displayName}}</a>
-
+                        <!-- <ul class="social-teams">
+                            <li>
+                                <div>
+                                    <a href="#" class="facebook">
+                                        <i class="fa fa-facebook"></i>
+                                    </a>
                                 </div>
-                                <!-- <div *ngIf="showLeaveTeam(player.displayName)" class="col">
-                                    <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)">
-          Leave Team
-        </button>
+                            </li>
+                            <li>
+                                <div>
+                                    <a href="#" class="twitter-icon">
+                                        <i class="fa fa-twitter"></i>
+                                    </a>
                                 </div>
-                                <div *ngIf="!disabled" class="col">
-                                    <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)">
-          X </button>
-                                </div> -->
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="row mt-3" *ngFor="let player of displayPendingMembersRight">
-                                <div class="col">
-                                    <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]">{{player.displayName}}</a>
+                            </li>
+                            <li>
+                                <div>
+                                    <a href="#" class="youtube">
+                                        <i class="fa fa-youtube"></i>
+                                    </a>
                                 </div>
-                                <!-- <div *ngIf="showLeaveTeam(player.displayName)" class="col">
-                                    <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)">
-          Leave Team
-        </button>
-                                </div>
-                                <div *ngIf="!disabled" class="col">
-                                    <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)">
-          X </button>
-                                </div> -->
-                            </div>
-                        </div>
+                            </li>
+                        </ul> -->
                     </div>
                 </div>
-
-
-
-                <div class="row mt-3">
-                    <div class="col">
-                        <mat-form-field class="mat-FullWidth">
-                            <mat-select placeholder="Team Competitive Level" [disabled]="disabled" [(ngModel)]="returnedProfile.competitiveLevel">
-                                <mat-option *ngFor="let level of competitonLevel" [value]="level.val">
-                                    {{level.display}}
-                                </mat-option>
-                            </mat-select>
-                            <mat-hint align="start"><strong>Generally how serious / competitively you're looking to play</strong> </mat-hint>
-                        </mat-form-field>
-                        <mat-form-field class="mat-FullWidth">
-                            <mat-label>Describe the teams play history / style</mat-label>
-                            <textarea matInput cdkTextareaAutosize [(ngModel)]="returnedProfile.descriptionOfTeam" [disabled]="disabled"></textarea>
-                        </mat-form-field>
-                    </div>
-                </div>
-
-                <div class="row mt-3">
-                    <div class="col">
-                        Roles the team needs:
-                        <section>
-                            <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.tank" [disabled]="disabled">Tank</mat-checkbox>
-                            <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.offlane" [disabled]="disabled">Offlane</mat-checkbox>
-                            <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.meleeassassin" [disabled]="disabled">Melee Assassin</mat-checkbox>
-                            <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.rangedassassin" [disabled]="disabled">Ranged Assassin</mat-checkbox>
-                            <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.support" [disabled]="disabled">Support</mat-checkbox>
-                            <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.flex" [disabled]="disabled">Flex</mat-checkbox>
-                        </section>
-                    </div>
-                </div>
-                <!-- Availability Schedule -->
-                <app-times-available [availObj]="returnedProfile.availability" [disabled]="disabled" (availValid)="receiveValidTimes($event)"></app-times-available>
-
-                <div class="row mt-3">
-                    <div class="col">
-                        <mat-form-field class="mat-FullWidth">
-                            <mat-select placeholder="Timezone:" [formControl]="timezoneControl" [(ngModel)]="returnedProfile.timeZone">
-                                <mat-option *ngFor="let zone of timezone.timezones" [value]="zone.value" [disabled]="disabled">
-                                    {{zone.text}}
-                                </mat-option>
-                            </mat-select>
-                            <mat-error *ngIf="timezoneControl.hasError('required')">
-                                Timezone is required
-                            </mat-error>
-                        </mat-form-field>
-                    </div>
-                </div>
-
-                <!-- <div class="row mt-3" *ngIf="showRegisteredQuestionnaire() else registered">
-                    <div class="col">
-                        <app-questionnaire [team]="returnedProfile"></app-questionnaire>
-
-                    </div>
-                </div> -->
             </div>
         </div>
     </div>
+    <div class="bg-image-team" [style.background-image]="'url('+ imageFQDN(returnedProfile.logo) +')'"></div>
 </div>
-<ng-template #registered>
-    <div *ngIf="auth.getUser()==returnedProfile.captain">
-        <div class="text-center text-success p-5"> Thanks for registering for NGS Season 6! Good Luck and We'll see you in the Nexus</div>
+<!-- End Section Title -->
+
+<!-- Section Area - Content Central -->
+<section class="content-info">
+
+    <!-- Single Team Tabs -->
+    <div class="single-team-tabs pb-5">
+        <div class="container">
+            <div class="row">
+                <!-- Left Content - Tabs and Carousel -->
+                <div class="col-xl-12 col-md-12">
+                    <!-- Nav Tabs -->
+                    <ul class="nav nav-tabs" id="myTab">
+                        <li [ngClass]="{'active': index==0}"><a href="#overview" data-toggle="tab" (click)="index=0">Overview</a></li>
+                        <li [ngClass]="{'active': index==1}"><a href="#squad" data-toggle="tab" (click)="index=1">Squad</a></li>
+                        <li [ngClass]="{'active': index==2}"><a href="#fixtures" data-toggle="tab" (click)="index=2">Schedule</a></li>
+                        <li [ngClass]="{'active': index==3}"><a href="#results" data-toggle="tab" (click)="index=3">RESULTS</a></li>
+                        <li [ngClass]="{'active': index==4}"><a href="#stats" data-toggle="tab" (click)="index=4">STATS</a></li>
+                    </ul>
+                    <!-- End Nav Tabs -->
+                </div>
+
+                <div class="col-lg-9 padding-top-mini">
+                    <!-- Content Tabs -->
+                    <div class="tab-content">
+                        <!-- Tab One - overview -->
+                        <div class="tab-pane active" id="overview">
+
+                            <div class="panel-box padding-b">
+                                <div class="titles">
+                                    <h4>Team Info</h4>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col">
+                                                <app-roles [disabled]="disabled" [customDisplayText]="'Roles Needed:'" [(roles)]="returnedProfile.rolesNeeded"></app-roles>
+                                            </div>
+                                        </div>
+                                        <!-- competitive level and description of play -->
+                                        <div class="row">
+                                            <div class="col">
+                                            </div>
+                                        </div>
+                                        <div class="row mt-5">
+                                            <div class="col-6">
+                                                <app-competitive-level [disabled]="disabled" [(message)]="returnedProfile.competitiveLevel">
+                                                </app-competitive-level>
+                                            </div>
+                                            <div class="col-6">
+                                                <app-play-history [disabled]="disabled" [(description)]="returnedProfile.descriptionOfTeam">
+                                                </app-play-history>
+                                            </div>
+                                        </div>
+                                        <!-- looking for group -->
+                                        <div class="row mt-5" *ngIf="returnedProfile.lookingForMore">
+                                            <div class="col">
+                                                <mat-slide-toggle disabled="{{disabled}}" [(ngModel)]="returnedProfile.lookingForMore">
+                                                    Looking for team.
+                                                </mat-slide-toggle>
+                                            </div>
+                                        </div>
+                                        <!-- times -->
+                                        <div class="row mt-5">
+                                            <div class="col">
+                                                <h6>Player Availability and Time Zone:</h6>
+                                                <!-- !disabled && !returnedProfile.availability.monday.available || disabled &&  -->
+                                                <app-times-available [customText]="''" [availObj]="returnedProfile.availability" (availValid)="recieveAvailTimeValidity($event)" [disabled]="disabled">
+                                                </app-times-available>
+                                            </div>
+                                        </div>
+                                        <!-- timezone -->
+                                        <div class="row mt-3">
+                                            <div class="col">
+                                                <app-timezone [(timezone)]="returnedProfile.timeZone" [disabled]="disabled"></app-timezone>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- Tab One - overview -->
+
+                        <!-- Tab Two - squad -->
+                        <div class="tab-pane" id="squad">
+                            <div *ngIf="index==1">
+                                <app-members [members]="returnedProfile.teamMembers"></app-members>
+                            </div>
+
+                        </div>
+                        <!-- End Tab Two - squad -->
+
+                        <!-- Tab Theree - fixtures -->
+                        <div class="tab-pane" id="fixtures">
+                            <div *ngIf="index==2">
+                                <app-team-schedule-table [team]="returnedProfile.teamName"></app-team-schedule-table>
+                            </div>
+                        </div>
+                        <!-- End Tab Theree - fixtures -->
+
+                        <!-- Tab Theree - results -->
+                        <div class="tab-pane" id="results">
+                            <div *ngIf="index==3">
+                                <app-team-results-tiles [team]="returnedProfile.teamName"></app-team-results-tiles>
+                            </div>
+                        </div>
+                        <!-- End Tab Theree - results -->
+
+                        <!-- Tab Theree - stats -->
+                        <div class="tab-pane" id="stats">
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="stats-info">
+                                        <ul>
+                                            <li>
+                                                Matches Played
+                                                <h3>866</h3>
+                                            </li>
+
+                                            <li>
+                                                Wins
+                                                <h3>328</h3>
+                                            </li>
+
+                                            <li>
+                                                Losses
+                                                <h3>317</h3>
+                                            </li>
+
+                                            <li>
+                                                Goals
+                                                <h3>1,188</h3>
+                                            </li>
+
+                                            <li>
+                                                Goals Conceded
+                                                <h3>1,170</h3>
+                                            </li>
+
+                                            <li>
+                                                Clean Sheets
+                                                <h3>226</h3>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-6 col-xl-4">
+                                    <!-- Attack -->
+                                    <div class="panel-box">
+                                        <div class="titles no-margin">
+                                            <h4><i class="fa fa-calendar"></i>Attack</h4>
+                                        </div>
+                                        <ul class="list-panel">
+                                            <li>
+                                                <p>Goals <span>1,188</span></p>
+                                            </li>
+                                            <li>
+                                                <p>Goals Per Match <span>1.37</span></p>
+                                            </li>
+                                            <li>
+                                                <p>Shots <span>4,621</span></p>
+                                            </li>
+                                            <li>
+                                                <p>Shooting Accuracy % <span>32%</span></p>
+                                            </li>
+                                            <li>
+                                                <p>Penalties Scored <span>30</span></p>
+                                            </li>
+                                            <li>
+                                                <p>Big Chances Created <span>293</span></p>
+                                            </li>
+                                            <li>
+                                                <p>Hit Woodwork <span>107</span></p>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <!-- End Attack -->
+                                </div>
+
+                                <div class="col-lg-6 col-xl-4">
+                                    <!-- Attack -->
+                                    <div class="panel-box">
+                                        <div class="titles no-margin">
+                                            <h4><i class="fa fa-calendar"></i>Team Play</h4>
+                                        </div>
+                                        <ul class="list-panel">
+                                            <li>
+                                                <p>Passes <span>140,417</span></p>
+                                            </li>
+                                            <li>
+                                                <p>Passes Per Match <span>162.14</span></p>
+                                            </li>
+                                            <li>
+                                                <p>Pass Accuracy % <span>76%</span></p>
+                                            </li>
+                                            <li>
+                                                <p>Crosses <span>8,148</span></p>
+                                            </li>
+                                            <li>
+                                                <p>Cross Accuracy % <span>22%</span></p>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <!-- End Attack -->
+                                </div>
+
+                                <div class="col-lg-6 col-xl-4">
+                                    <!-- Attack -->
+                                    <div class="panel-box">
+                                        <div class="titles no-margin">
+                                            <h4><i class="fa fa-calendar"></i>Defence</h4>
+                                        </div>
+                                        <ul class="list-panel">
+                                            <li>
+                                                <p>Clean Sheets <span>226</span></p>
+                                            </li>
+                                            <li>
+                                                <p>Goals Conceded <span>1,170</span></p>
+                                            </li>
+                                            <li>
+                                                <p>Goals Conceded Per Match <span>1.35</span></p>
+                                            </li>
+                                            <li>
+                                                <p>Saves <span>392</span></p>
+                                            </li>
+                                            <li>
+                                                <p>Tackles <span>7,438</span></p>
+                                            </li>
+                                            <li>
+                                                <p>Tackle Success % <span>75%</span></p>
+                                            </li>
+                                            <li>
+                                                <p>Blocked Shots <span>1,208</span></p>
+                                            </li>
+                                            <li>
+                                                <p>Interceptions <span>5,334</span></p>
+                                            </li>
+                                            <li>
+                                                <p>Clearances <span>11,436</span></p>
+                                            </li>
+                                            <li>
+                                                <p>Headed Clearance <span>3,710</span></p>
+                                            </li>
+                                            <li>
+                                                <p>Aerial Battles/Duels Won <span>25,401</span></p>
+                                            </li>
+                                            <li>
+                                                <p>Errors Leading To Goal <span>59</span></p>
+                                            </li>
+                                            <li>
+                                                <p>Own Goals <span>27</span></p>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <!-- End Attack -->
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- End Tab Theree - stats -->
+                    </div>
+                    <!-- Content Tabs -->
+                </div>
+
+                <!-- Side info single team-->
+                <div class="col-lg-3 padding-top-mini">
+                    <!-- Diary -->
+                    <div class="panel-box">
+                        <div class="titles">
+                            <h4><i class="fa fa-calendar"></i>Diary</h4>
+                        </div>
+
+                        <!-- List Diary -->
+                        <ul class="list-diary">
+                            <!-- Item List Diary -->
+                            <li>
+                                <h6>GROUP A <span>14 JUN 2018 - 18:00</span></h6>
+                                <ul class="club-logo">
+                                    <li>
+                                        <img src="img/clubs-logos/rusia.png" alt="">
+                                        <span>RUSSIA</span>
+                                    </li>
+                                    <li>
+                                        <img src="img/clubs-logos/arabia.png" alt="">
+                                        <span>SAUDI ARABIA</span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <!-- End Item List Diary -->
+
+                            <!-- Item List Diary -->
+                            <li>
+                                <h6>GROUP E <span>22 JUN 2018 - 15:00</span></h6>
+                                <ul class="club-logo">
+                                    <li>
+                                        <img src="img/clubs-logos/bra.png" alt="">
+                                        <span>BRAZIL</span>
+                                    </li>
+                                    <li>
+                                        <img src="img/clubs-logos/costa-rica.png" alt="">
+                                        <span>COSTA RICA</span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <!-- End Item List Diary -->
+
+                            <!-- Item List Diary -->
+                            <li>
+                                <h6>GROUP H <span>19 JUN 2018 - 15:00</span></h6>
+                                <ul class="club-logo">
+                                    <li>
+                                        <img src="img/clubs-logos/colombia.png" alt="">
+                                        <span>COLOMBIA</span>
+                                    </li>
+                                    <li>
+                                        <img src="img/clubs-logos/japan.png" alt="">
+                                        <span>JAPAN</span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <!-- End Item List Diary -->
+
+                            <!-- Item List Diary -->
+                            <li>
+                                <h6>GROUP C <span>16 JUN 2018 - 15:00</span></h6>
+                                <ul class="club-logo">
+                                    <li>
+                                        <img src="img/clubs-logos/fra.png" alt="">
+                                        <span>FRANCE</span>
+                                    </li>
+                                    <li>
+                                        <img src="img/clubs-logos/aus.png" alt="">
+                                        <span>AUSTRALIA</span>
+                                    </li>
+                                </ul>
+                            </li>
+                            <!-- End Item List Diary -->
+                        </ul>
+                        <!-- End List Diary -->
+                    </div>
+                    <!-- End Diary -->
+
+                </div>
+                <!-- end Side info single team-->
+
+            </div>
+        </div>
     </div>
 
-</ng-template>
+</section>

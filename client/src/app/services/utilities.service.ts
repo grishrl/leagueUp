@@ -87,7 +87,12 @@ export class UtilitiesService {
   // for more information. timeZone can be used to be specific, or leave null
   // to use the browser local timezone.
   getFormattedDate(time: Date, format: string, timeZone: string = null) : string {
+    if (!(time instanceof Date)){
+      time = new Date(parseInt(time));
+    }
+
     timeZone = timeZone || moment.tz.guess();
+
 
     let localMoment = moment(time).tz(timeZone);
     return localMoment.format(format);

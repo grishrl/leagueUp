@@ -1,7 +1,7 @@
 <div *ngIf="!edit">
     <div class="row">
         <div class="col">
-            <h6>Select Roles:</h6>
+            <h6>{{editText}}</h6>
         </div>
     </div>
     <div class="row">
@@ -147,7 +147,7 @@
 <div *ngIf="edit">
     <div class="row">
         <div class="col">
-            <h6>Players Roles:</h6>
+            <h6>{{displayText}}</h6>
         </div>
     </div>
     <div class="row">
@@ -244,7 +244,7 @@
         <div class="col">
             <svg class="icons" [ngClass]="{'active':roleValues.healer}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 301.27 298.53">
               <defs>
-              
+
               </defs>
               <title>Asset 2</title>
               <g id="Layer_2" data-name="Layer 2">

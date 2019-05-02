@@ -1,0 +1,20 @@
+<div class="item-player">
+    <div class="head-player">
+        <img src="img/players/1.jpg" alt="location-team">
+        <div class="overlay"><a href="single-player.html">+</a></div>
+    </div>
+    <div class="info-player">
+        <span class="number-player">
+      13
+    </span>
+        <h4>
+            {{player.displayName}}
+            <span>Main Role</span>
+        </h4>
+        <ul>
+            <li><strong>MATCHES:</strong> <span>{{matches}}</span></li>
+            <li><strong>Seasons:</strong> <span>{{player.seasonsPlayed}}</span></li>
+        </ul>
+    </div>
+    <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]" class="btn">View Player <i class="fa fa-angle-right" aria-hidden="true"></i></a>
+</div>

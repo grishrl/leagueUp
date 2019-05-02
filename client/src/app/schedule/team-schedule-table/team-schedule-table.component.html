@@ -1,0 +1,83 @@
+<table class=" table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Home</th>
+            <th class="text-center">VS</th>
+            <th>Away</th>
+            <th>Details</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        <tr *ngFor="let match of matches">
+            <td>
+                <img src="{{teamServ.imageFQDN(match.home.logo)}}" alt="icon">
+                <strong>{{match.home.teamName}}</strong><br>
+                <!-- <small class="meta-text">GROUP H.</small> -->
+            </td>
+            <td class="text-center">Vs</td>
+            <td>
+                <img src="{{teamServ.imageFQDN(match.away.logo)}}" alt="icon1">
+                <strong>{{match.away.teamName}}</strong><br>
+                <!-- <small class="meta-text">GROUP H.</small> -->
+            </td>
+            <td>
+                {{util.getFormattedDate(match.scheduledTime.startTime, "MMM DD hh:mm A zz")}}<br>
+                <small class="meta-text">Mordovia Arena,Saransk</small>
+            </td>
+        </tr>
+
+
+        <!-- <tr>
+            <td>
+                <img src="img/clubs-logos/pol.png" alt="icon1">
+                <strong>Poland</strong><br>
+                <small class="meta-text">GROUP H.</small>
+            </td>
+            <td class="text-center">Vs</td>
+            <td>
+                <img src="img/clubs-logos/colombia.png" alt="icon">
+                <strong>Colombia</strong><br>
+                <small class="meta-text">GROUP H.</small>
+            </td>
+            <td>
+                Jun 24, 13:00<br>
+                <small class="meta-text">Kazan Arena,Kazan</small>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <img src="img/clubs-logos/sen.png" alt="icon1">
+                <strong>Senegal</strong><br>
+                <small class="meta-text">GROUP H.</small>
+            </td>
+            <td class="text-center">Vs</td>
+            <td>
+                <img src="img/clubs-logos/colombia.png" alt="icon">
+                <strong>Colombia</strong><br>
+                <small class="meta-text">GROUP H.</small>
+            </td>
+            <td>
+                Jun 28, 09:00<br>
+                <small class="meta-text">Samara Arena,Samara</small>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <img src="img/clubs-logos/colombia.png" alt="icon">
+                <strong>Colombia</strong><br>
+                <small class="meta-text">GROUP H.</small>
+            </td>
+            <td class="text-center">Vs</td>
+            <td>
+                <img src="img/clubs-logos/pol.png" alt="icon1">
+                <strong>Poland</strong><br>
+                <small class="meta-text">GROUP H.</small>
+            </td>
+            <td>
+                Jun 24, 13:00<br>
+                <small class="meta-text">Kazan Arena,Kazan</small>
+            </td>
+        </tr> -->
+    </tbody>
+</table>
