@@ -159,9 +159,7 @@ router.post('/get/matches/all',
  * return matches that fit the criterea
  * 
  */
-router.post('/get/matches/team', passport.authenticate('jwt', {
-    session: false
-}), util.appendResHeader, (req, res) => {
+router.post('/get/matches/team', (req, res) => {
     const path = 'schedule/get/matches/team';
     let team = req.body.team;
     let season = req.body.season;
