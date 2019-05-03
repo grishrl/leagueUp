@@ -1,25 +1,36 @@
-<div class="container p-3">
-    <div class="row mt-3" *ngFor="let row of rows">
-        <div class="col-xs-12 col-md-12 col-lg-4 mt-2" *ngFor="let item of row">
-            <mat-card class="example-card">
-                <mat-card-header class="largeName text-center">
-                    <!-- <div mat-card-avatar class="example-header-image"></div> -->
-                    <mat-card-title><a [routerLink]="['/teamProfile/', team.routeFriendlyTeamName(item.teamName)]">{{item.teamName}}</a></mat-card-title>
-                </mat-card-header>
-                <img mat-card-image src="{{teamImage(item.logo)}}" alt="team logo">
-                <mat-card-content>
-                    <mat-accordion>
-                        <mat-expansion-panel>
-                            <mat-expansion-panel-header>
-                                <mat-panel-title>
-                                    Members
-                                </mat-panel-title>
-                            </mat-expansion-panel-header>
-                            <app-members-display [members]="item.teamMembers"></app-members-display>
-                        </mat-expansion-panel>
-                    </mat-accordion>
-                </mat-card-content>
-            </mat-card>
+<section class="content-info">
+
+    <div class="container">
+        <div class="row portfolioContainer">
+
+            <!-- Item Team Group A-->
+            <div class="col-md-6 col-lg-4 col-xl-3 " *ngFor="let item of _teams">
+                <div class="item-team">
+                    <div class="head-team">
+                        <img src="{{teamImage(item.logo)}}" alt="location-team">
+                        <div class="overlay"><a href="single-team.html">+</a></div>
+                    </div>
+                    <div class="info-team">
+                        <span class="logo-team">
+              <img src="{{teamImage(item.logo)}}" alt="logo-team">
+            </span>
+                        <h4>{{item.teamName}}</h4>
+                        <!-- <span class="location-team">
+              <i class="fa fa-map-marker" aria-hidden="true"></i>
+              Stadium
+            </span>
+                        <span class="group-team">
+              <i class="fa fa-trophy" aria-hidden="true"></i>
+              Group A
+            </span> -->
+                    </div>
+                    <a [routerLink]="['/teamProfile/', team.routeFriendlyTeamName(item.teamName)]" class="btn">Team
+                      Profile <i class="fa fa-angle-right" aria-hidden="true"></i></a>
+                </div>
+            </div>
+            <!-- End Item Team Group A-->
+
         </div>
     </div>
-</div>
+
+</section>

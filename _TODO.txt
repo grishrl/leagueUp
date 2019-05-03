@@ -1,22 +1,14 @@
 
+Team:
+Add leave team option to new team
+add remove member option back to team captain
 
-admins need a more robust user admin tool
- -need to be able to manage user points hotslogsID, pendingteam, teamid, teamname for sure
 
-admins need a more robust team admin tool
--need to be able to manage invited users, pending users, users, 
--admin needs to be able to change team logo
+BLOG:
+Text Search
+
 
 admins need a log browser
-
---team profiles need division to be hidden until the divisions are set to live
-
-
-users
--need smarter MMR update tools, user can update their hotslogsid/url
-
-teams
--need manual MMR update tool
 
 --tournament brackets display dates
 --clickable to show more match information

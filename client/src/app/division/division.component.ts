@@ -17,7 +17,7 @@ import { environment } from '../../environments/environment';
 export class DivisionComponent implements OnInit {
 
 
- 
+
   teams:Team[]
   divSub: Subscription
   param: string
@@ -27,7 +27,7 @@ export class DivisionComponent implements OnInit {
   season = environment.season;
 
   constructor(private division:DivisionService, private teamService:TeamService, private route:ActivatedRoute, private router: Router) {
-    
+
 
     this.navigationSubscription = this.router.events.subscribe((e: any) => {
 
@@ -39,7 +39,9 @@ export class DivisionComponent implements OnInit {
     });
 
    }
-  
+
+   index=0;
+
   initialise(){
     this.divDisplay;
     this.teams = [];
@@ -47,24 +49,16 @@ export class DivisionComponent implements OnInit {
 
       if(res!=undefined&&res!=null){
         this.divDisplay = res;
-
-        if (res.teams && res.teams.length > 0) {
-          this.teamService.getTeams(res.teams).subscribe((retn) => {
-            this.teams = retn;
-          }, (error) => {
-            console.log(error);
-          });
-        }
       }
     }, (err)=>{
       var arr : Team[] = [];
-      this.teams = arr; 
+      this.teams = arr;
         });
-  
+
       }
 
   ngOnInit() {
     this.initialise();
-  } 
+  }
 
 }

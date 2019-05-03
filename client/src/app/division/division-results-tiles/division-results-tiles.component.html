@@ -1,0 +1,37 @@
+<div class="row">
+    <div class="col">
+        <mat-form-field>
+            <mat-select placeholder="Round:" [(ngModel)]="selectedRound" (ngModelChange)="getMatches()" disableOptionCentering>
+                <mat-option *ngFor="let round of rounds; let i = index" [value]="round">{{round}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+</div>
+<div class="recent-results results-page">
+    <div class="info-results">
+        <ul>
+            <li *ngFor="let match of matches">
+                <span class="head">
+                 {{match.home.teamName}} Vs {{match.away.teamName}} <span *ngIf="match.scheduledTime && match.scheduledTime.startTime"
+                   class="date">{{util.getFormattedDate(match.scheduledTime.startTime, "dd MMM YYYY")}}</span>
+                </span>
+
+                <div class="goals-result">
+                    <!-- <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.away.teamName)]">{{match.away.teamName}}</a> -->
+                    <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.home.teamName)]">
+                        <img src="{{team.imageFQDN(match.home.logo)}}" alt=""> {{match.home.teamName}}
+                    </a>
+
+                    <span class="goals">
+            <b>{{match.home.score}}</b> - <b>{{match.away.score}}</b>
+            <a href="single-result.html" class="btn theme">View More</a>
+          </span>
+
+                    <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.away.teamName)]">
+                        <img src="{{team.imageFQDN(match.away.logo)}}" alt=""> {{match.away.teamName}}
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>

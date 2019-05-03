@@ -1,55 +1,46 @@
-<div class="container pt-4">
-    <div class="row">
-        <div class="col">
-            <div class="row" *ngIf="!this.provDiv; else provDiv">
-                <div class="col">
-
-                    <app-division-selector (selectedDiv)="calculateRounds($event)"></app-division-selector>
-
-                </div>
-                <div class="col">
-                    <mat-form-field>
-                        <mat-select placeholder="Round:" [(ngModel)]="selectedRound" (ngModelChange)="getMatches()" disableOptionCentering>
-                            <mat-option *ngFor="let round of rounds; let i = index" [value]="round">{{round}}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-            </div>
-            <ng-template #provDiv>
-                <div class="row mt-3" *ngIf="rounds.length>0">
-                    <div>
-                        <div class="col">
-                            <mat-form-field>
-                                <mat-select placeholder="Round:" [(ngModel)]="selectedRound" (ngModelChange)="getMatches()" disableOptionCentering>
-                                    <mat-option *ngFor="let round of rounds; let i = index" [value]="round">{{round}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
-                    </div>
-
-                </div>
-            </ng-template>
-            <!-- else noMatches -->
-            <div *ngIf="matches.length>0 else noMatch">
-                <div class="row">
-                    <div class="col">
-                        <h2>Matches</h2>
-                    </div>
-                </div>
-                <div class="row mt-3" *ngFor="let match of matches">
-                    <div class="col">
-                        <app-match-view-verticle [passMatch]="match"></app-match-view-verticle>
-                    </div>
-                </div>
-
-
-            </div>
-        </div>
+<div class="row">
+    <div class="col">
+        <mat-form-field>
+            <mat-select placeholder="Round:" [(ngModel)]="selectedRound" (ngModelChange)="getMatches()" disableOptionCentering>
+                <mat-option *ngFor="let round of rounds; let i = index" [value]="round">{{round}}</mat-option>
+            </mat-select>
+        </mat-form-field>
     </div>
 </div>
-<!-- <ng-template #bye>
-    BYE
-</ng-template> -->
-<ng-template #noMatch>
-    <div>No matches currently for this round!</div>
-</ng-template>
+<div class="table-responsive">
+    <table class="table-striped  table-hover">
+        <thead>
+            <tr>
+                <th>Home</th>
+                <th class="text-center">VS</th>
+                <th>Away</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let match of matches">
+                <td>
+                    <img src="{{team.imageFQDN(match.home.logo)}}" alt="icon">
+                    <strong>{{match.home.teamName}}</strong><br>
+                    <!-- <small class="meta-text">GROUP H.</small> -->
+                </td>
+                <td class="text-center">Vs</td>
+                <td>
+                    <img src="{{team.imageFQDN(match.away.logo)}}" alt="icon1">
+                    <strong>{{match.away.teamName}}</strong><br>
+                    <!-- <small class="meta-text">GROUP H.</small> -->
+                </td>
+                <td>
+                    <span *ngIf="match.scheduledTime && match.scheduledTime.startTime else tbd">{{util.getFormattedDate(match.scheduledTime.startTime, "MMM DD hh:mm A zz")}}</span><br>
+                    <span *ngIf="match.casterName"><small class="meta-text">Caster: {{match.casterName}}, <a
+                          href="{{util.prePendHttp(match.casterUrl)}}"
+                          target="_blank">{{match.casterUrl}}</a></small></span>
+                </td>
+            </tr>
+            <!-- <ng-container *ngFor="let match of matches">
+                <app-schedule-table-row [match]="match"></app-schedule-table-row>
+            </ng-container> -->
+        </tbody>
+    </table>
+</div>
+<ng-template #tbd> Not yet scheduled </ng-template>

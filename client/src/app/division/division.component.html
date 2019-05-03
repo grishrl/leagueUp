@@ -1,42 +1,133 @@
-<div id="myDiv" class="container" style="height: 100%">
-    <div class="row">
-        <div class="col">
-            <div id="wrapper">
-                <mat-tab-group id="tab-group" dynamicHeight class="mb-3">
-                    <mat-tab label="Division">
-                        <ng-template matTabContent>
-                            <div>
-                                <div class="row mt-3">
-                                    <div class="col-md-12">
-                                        <h2 class="text-center">{{divDisplay.displayName}} </h2>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <app-team-display [teams]="teams"></app-team-display>
-                                    </div>
-                                </div>
-                            </div>
-                        </ng-template>
+<!-- Section Title -->
+<div class="section-title-team">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-7">
+                <div class="row">
+                    <div class="col-md-3">
+                        <img src="https://placekitten.com/150/150" alt="">
+                    </div>
 
-                    </mat-tab>
-                    <mat-tab label="Schedule">
-                        <ng-template matTabContent>
-                            <app-schedule-view [division]="divDisplay"></app-schedule-view>
-                        </ng-template>
-                    </mat-tab>
-                    <mat-tab label="Standings">
-                        <ng-template matTabContent>
-                            <app-standings-view [division]="divDisplay"></app-standings-view>
-                        </ng-template>
-                    </mat-tab>
-                    <mat-tab label="Tournament">
-                        <ng-template matTabContent>
-                            <app-tournament-view [division]="divDisplay.divisionConcat" [season]="season"></app-tournament-view>
-                        </ng-template>
-                    </mat-tab>
-                </mat-tab-group>
+                    <div class="col-md-9">
+                        <h1>{{divDisplay.displayName}}</h1>
+                        <ul class="general-info">
+                            <li>
+                                <h6><strong>MMR Upper:</strong> 1930</h6>
+                            </li>
+                            <li>
+                                <h6><strong>MMR Lower:</strong> Juan R.</h6>
+                            </li>
+                            <li>
+                                <h6><strong>Moderator:</strong> Pekerman</h6>
+                            </li>
+                            <!-- <li>
+                                <h6><strong>Total Titles:</strong> 100+</h6>
+                            </li>
+                            <li>
+                                <h6><strong>Location:</strong> Colombia</h6>
+                            </li>
+                            <li>
+                                <h6>
+                                    <i class="fa fa-link" aria-hidden="true"></i>
+                                    <a href="https://themeforest.net/user/iwthemes/portfolio?ref=iwthemes" target="_blank">www.site.com</a>
+                                </h6>
+                            </li> -->
+                        </ul>
+
+                        <!-- <ul class="social-teams">
+                            <li>
+                                <div>
+                                    <a href="#" class="facebook">
+                                        <i class="fa fa-facebook"></i>
+                                    </a>
+                                </div>
+                            </li>
+                            <li>
+                                <div>
+                                    <a href="#" class="twitter-icon">
+                                        <i class="fa fa-twitter"></i>
+                                    </a>
+                                </div>
+                            </li>
+                            <li>
+                                <div>
+                                    <a href="#" class="youtube">
+                                        <i class="fa fa-youtube"></i>
+                                    </a>
+                                </div>
+                            </li>
+                        </ul> -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    <!-- <div class="bg-image-team" style="background:url(img/clubs-teams/colombia.jpg);"></div> -->
 </div>
+<!-- End Section Title -->
+
+<!-- Section Area - Content Central -->
+<section class="content-info">
+
+    <!-- Single Team Tabs -->
+    <div class="single-team-tabs">
+        <div class="container">
+            <div class="row pb-5">
+                <!-- Left Content - Tabs and Carousel -->
+                <div class="col-xl-12 col-md-12">
+                    <!-- Nav Tabs -->
+                    <ul class="nav nav-tabs" id="myTab">
+                        <li [ngClass]="{'active': index==0}"><a href="#standings" data-toggle="tab" (click)="index=0">Standings</a></li>
+                        <li [ngClass]="{'active': index==1}"><a href="#teams" data-toggle="tab" (click)="index=1">Teams</a></li>
+                        <li [ngClass]="{'active': index==2}"><a href="#fixtures" data-toggle="tab" (click)="index=2">Schedule</a></li>
+                        <li [ngClass]="{'active': index==3}"><a href="#results" data-toggle="tab" (click)="index=3">Results</a></li>
+                        <!-- <li [ngClass]="{'active': index==4}"><a href="#stats" data-toggle="tab" (click)="index=4">STATS</a></li> -->
+                    </ul>
+                    <!-- End Nav Tabs -->
+                </div>
+
+                <div class="col-lg-9 padding-top-mini">
+                    <!-- Content Tabs -->
+                    <div class="tab-content">
+                        <!-- Tab One - overview -->
+                        <div class="tab-pane active" id="standings">
+
+                            <app-standings-view [division]="divDisplay"></app-standings-view>
+
+                        </div>
+                        <!-- Tab One - overview -->
+
+                        <!-- Tab Two - squad -->
+                        <div class="tab-pane" id="teams">
+                            <app-team-display [teams]="divDisplay.teams"></app-team-display>
+                        </div>
+                        <!-- End Tab Two - squad -->
+
+                        <!-- Tab Theree - fixtures -->
+                        <div class="tab-pane" id="fixtures">
+                            <ng-container *ngIf="index == 2">
+                                <app-schedule-view [division]="divDisplay"></app-schedule-view>
+                            </ng-container>
+
+                        </div>
+                        <!-- End Tab Theree - fixtures -->
+
+                        <!-- Tab Theree - results -->
+                        <div class="tab-pane" id="results">
+                            <app-division-results-tiles [division]="divDisplay"></app-division-results-tiles>
+                        </div>
+                        <!-- End Tab Theree - results -->
+                    </div>
+                    <!-- Content Tabs -->
+                </div>
+
+                <!-- Side info single team-->
+                <div class="col-lg-3 padding-top-mini">
+                    <app-division-upcoming-matches [division]="divDisplay.divisionConcat"></app-division-upcoming-matches>
+                </div>
+                <!-- end Side info single team-->
+
+            </div>
+        </div>
+    </div>
+    <!-- Single Team Tabs -->
