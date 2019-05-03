@@ -86,7 +86,7 @@ export class UtilitiesService {
   // Formats a date using momentjs. See https://momentjs.com/docs/#/displaying/
   // for more information. timeZone can be used to be specific, or leave null
   // to use the browser local timezone.
-  getFormattedDate(time: Date, format: string, timeZone: string = null) : string {
+  getFormattedDate(time, format: string, timeZone: string = null) : string {
     if (!(time instanceof Date)){
       time = new Date(parseInt(time));
     }

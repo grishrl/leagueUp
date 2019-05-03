@@ -9,9 +9,29 @@
     </thead>
     <tbody>
 
-        <ng-container *ngFor="let match of matches">
+        <tr *ngFor="let match of matches">
+            <td>
+                <img src="{{teamServ.imageFQDN(match.home.logo)}}" alt="icon">
+                <strong>{{match.home.teamName}}</strong><br>
+                <!-- <small class="meta-text">GROUP H.</small> -->
+            </td>
+            <td class="text-center">Vs</td>
+            <td>
+                <img src="{{teamServ.imageFQDN(match.away.logo)}}" alt="icon1">
+                <strong>{{match.away.teamName}}</strong><br>
+                <!-- <small class="meta-text">GROUP H.</small> -->
+            </td>
+            <td>
+                <span *ngIf="match.scheduledTime && match.scheduledTime.startTime else tbd">{{util.getFormattedDate(match.scheduledTime.startTime, "MMM DD hh:mm A zz")}}</span><br>
+                <span *ngIf="match.casterName"><small class="meta-text">Caster: {{match.casterName}}, <a
+                          href="{{util.prePendHttp(match.casterUrl)}}"
+                          target="_blank">{{match.casterUrl}}</a></small></span>
+            </td>
+        </tr>
+        <!-- <ng-container *ngFor="let match of matches">
             <app-schedule-table-row [match]="match"></app-schedule-table-row>
-        </ng-container>
+        </ng-container> -->
 
     </tbody>
 </table>
+<ng-template #tbd> Not yet scheduled </ng-template>

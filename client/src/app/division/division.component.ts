@@ -22,7 +22,7 @@ export class DivisionComponent implements OnInit {
   divSub: Subscription
   param: string
   navigationSubscription
-  divDisplay = {displayName:'', divisionConcat:''};
+  divDisplay = {displayName:'', divisionConcat:'', teams:[]};
 
   season = environment.season;
 
