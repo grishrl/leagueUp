@@ -3,6 +3,8 @@ import { TeamService } from 'src/app/services/team.service';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { StandingsService } from 'src/app/services/standings.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-team-schedule-table',
@@ -11,7 +13,7 @@ import { StandingsService } from 'src/app/services/standings.service';
 })
 export class TeamScheduleTableComponent implements OnInit {
 
-  constructor(public teamServ:TeamService, private scheduleService:ScheduleService, public util:UtilitiesService, private standingsService:StandingsService) { }
+  constructor(public teamServ:TeamService, private scheduleService:ScheduleService, public util:UtilitiesService, private standingsService:StandingsService, private Auth:AuthService, private router:Router) { }
 
   noMatches;
   rounds;
@@ -59,73 +61,48 @@ export class TeamScheduleTableComponent implements OnInit {
 
 
       this.matches = matches;
-        //build out the rounds object:
-        /*
-        rounds = {
-          'roundNubmer':[
-                          {matchObject},
-                          {matchObject}
-                        ]
-                      }
-        */
-        // let roundsArray = [];
-        // if (matches.length % 2 == 0) {
-        //   for (var i = 0; i <= matches.length; i++) {
-        //     if (this.rounds == null || this.rounds == undefined) {
-        //       this.rounds = {};
-        //     }
 
-        //     let realRoundNumber = i + 1;
-        //     roundsArray.push(realRoundNumber);
-        //     matches.forEach(match => {
-        //       if (this.rounds[realRoundNumber] == null || this.rounds[realRoundNumber] == undefined) {
-        //         this.rounds[realRoundNumber] = [];
-        //       }
-        //       if (match.round == realRoundNumber) {
-        //         // roundsArray.push(realRoundNumber);
-        //         this.rounds[realRoundNumber].push(match);
-        //       }
-
-        //     });
-        //   }
-        // } else if (matches.length % 2 != 0) {
-        //   for (var i = 0; i < matches.length; i++) {
-        //     if (this.rounds == null || this.rounds == undefined) {
-        //       this.rounds = {};
-        //     }
-        //     let realRoundNumber = i + 1;
-        //     roundsArray.push(realRoundNumber);
-        //     matches.forEach(match => {
-        //       if (this.rounds[realRoundNumber] == null || this.rounds[realRoundNumber] == undefined) {
-        //         this.rounds[realRoundNumber] = [];
-        //       }
-        //       if (match.round == realRoundNumber) {
-        //         this.rounds[realRoundNumber].push(match);
-        //       }
-
-        //     });
-        //   }
-        // }
-
-
-
-        // this.rounds;
-        // this.roundsArray = roundsArray;
-
-        // console.log(this.rounds);
-        // console.log(this.roundsArray);
       },
       err => { console.log(err) }
     )
   }
 
+  checkDate(match) {
+
+    let ret = false;
+    if (match['scheduleDeadline']) {
+      let intDate = parseInt(match['scheduleDeadline']);
+      let weekAgo = intDate - 604800000;
+      if (this.todayDate > weekAgo) {
+        ret = true;
+      }
+    }
+    return ret;
+  }
+
+  teamObj;
   @Input() set team(val){
     if(val){
-      this.initTeamSchedule(val)
+      this.teamObj = val;
+      this.initTeamSchedule(val.teamName)
     }
   }
 
+  userCanSchedule() {
+    if (this.teamObj.teamName == this.Auth.getTeam() && this.Auth.getCaptain() != 'false') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  todayDate;
   ngOnInit() {
+    this.todayDate = new Date().getTime();
+  }
+
+  scheduleMatch(id) {
+    this.router.navigate(['schedule/scheduleMatch', id]);
   }
 
 }

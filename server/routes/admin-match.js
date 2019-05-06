@@ -47,6 +47,7 @@ router.post('/match/update', passport.authenticate('jwt', {
             match.reported = true;
         }
 
+
         Match.findOne({ matchId: match.matchId }).then(
             (found) => {
                 if (found) {
@@ -57,6 +58,7 @@ router.post('/match/update', passport.authenticate('jwt', {
                     });
                     found.save().then(
                         (saved) => {
+                            promoteTournamentMatch(saved.toObject());
                             res.status(200).send(util.returnMessaging(path, 'Match Saved', false, saved, null, logInfo));
                         },
                         (err) => {
@@ -172,4 +174,38 @@ async function updateFoundAsync(endWeek, found, date) {
         date += (1000 * 60 * 60 * 24 * 7);
     }
     return updateFound;
+}
+
+function promoteTournamentMatch(foundMatch) {
+    if (foundMatch.type == 'tournament') {
+        let winner = {};
+        if (foundMatch.home.score > foundMatch.away.score) {
+            winner['id'] = foundMatch.home.id;
+            winner['teamName'] = foundMatch.home.teamName;
+        } else {
+            winner['id'] = foundMatch.away.id;
+            winner['teamName'] = foundMatch.away.teamName;
+        }
+        Match.findOne({
+            matchId: foundMatch.parentId
+        }).then(found => {
+            if (found) {
+                let foundObj = found.toObject();
+                if (util.returnBoolByPath(foundObj, 'away')) {
+                    found.home = winner;
+                } else {
+                    found.away = winner;
+                }
+                found.save().then(saved => {
+                    console.log(saved);
+                }, err => {
+                    console.log(err);
+                });
+            } else {
+                console.log('the parent match was not found');
+            }
+        }, err => {
+            console.log(err);
+        });
+    }
 }
