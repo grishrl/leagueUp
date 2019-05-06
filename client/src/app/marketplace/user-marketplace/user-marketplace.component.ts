@@ -270,6 +270,11 @@ export class UserMarketplaceComponent implements OnInit {
     }
   }
 
+  resetMMRS() {
+    this.searchParameters.lowerMMR = null;
+    this.searchParameters.upperMMR = null;
+  }
+
   resetRoles() {
     let keys = Object.keys(this.searchParameters.rolesNeeded);
     keys.forEach(key => {
