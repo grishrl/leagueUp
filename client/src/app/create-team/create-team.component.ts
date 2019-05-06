@@ -13,21 +13,15 @@ import { UtilitiesService } from '../services/utilities.service';
   styleUrls: ['./create-team.component.css']
 })
 export class CreateTeamComponent implements OnInit {
-  returnedProfile: Team 
+  returnedProfile: Team
 
-  hlMedals = ['Grand Master', 'Master', 'Diamond', 'Platinum', 'Gold', 'Silver', 'Bronze'];
-  hlDivision = [1, 2, 3, 4, 5];
-  competitonLevel = [
-    { val: 1, display: 'Low'},
-    { val: 3, display: 'Medium'},
-    { val: 5, display: 'High'}
-  ]
   availabilityValid:boolean
   availabilityDays:number=0;
-  
+
   constructor(private team: TeamService, public timezone:TimezoneService, private auth: AuthService, private route:Router, private util:UtilitiesService) { }
 
   nameContorl = new FormControl();
+
   timeZoneControl = new FormControl();
 
   createTeamControlGroup = new FormGroup({
@@ -35,7 +29,7 @@ export class CreateTeamComponent implements OnInit {
     timeZone: this.timeZoneControl
   })
 
-  
+
 
   ngOnInit() {
     this.markFormGroupTouched(this.createTeamControlGroup);

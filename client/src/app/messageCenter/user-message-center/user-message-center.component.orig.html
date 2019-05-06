@@ -1,38 +1,12 @@
-<!-- Section Title -->
-<div class="section-title" style="background:url(img/slide/1.jpg)">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-8">
-                <h1>Message Center</h1>
-            </div>
-            <!--
-            <div class="col-md-4">
-                <div class="breadcrumbs">
-                    <ul>
-                        <li><a href="index.html">Home</a></li>
-                        <li>Inner Page</li>
-                    </ul>
-                </div>
-            </div> -->
-        </div>
-    </div>
-</div>
-<!-- End Section Title -->
+<div class="container forceFull">
+    <div class="row">
+        <div class="col">
 
-<!-- Section Area - Content Central -->
-<section class="content-info">
-
-    <div class="container paddings-mini">
-        <!-- Content Text-->
-        <div class="panel-box padding-b">
-            <div class="titles">
-                <h4>Inbox</h4>
-            </div>
-            <!-- <div class="row mt-3">
+            <div class="row mt-3">
                 <div class="col text-center">
                     <h3>User Message Center</h3>
                 </div>
-            </div> -->
+            </div>
             <div class="row mt-3">
                 <div class="col" *ngIf="messages.length>0 else noMessages">
                     <div class="list-group">
@@ -51,8 +25,7 @@
                                     </div>
                                 </div>
                                 <div class="col-2">
-                                    <div><span class="icon-align finger" (click)="deleteMessage(message)"><i
-                              class="material-icons">delete_forever</i>Delete</span></div>
+                                    <div><span class="icon-align finger" (click)="deleteMessage(message)"><i class="material-icons">delete_forever</i>Delete</span></div>
                                 </div>
                             </div>
                         </div>
@@ -65,14 +38,9 @@
                     </div>
                 </ng-template>
             </div>
-            <!-- <div style="height:100px"></div> -->
-        </div>
-        <!-- End Content Text-->
-        <div class="panel-box padding-b" *ngIf="selectedMessage">
-            <div class="titles">
-                <h4>Selected Message</h4>
-            </div>
-            <div class="row p-4">
+            <div style="height:100px"></div>
+
+            <div class="row border border-secondary p-4" *ngIf="selectedMessage">
                 <div class="col">
                     <div class="row mt-1">
                         <div class="col">
@@ -110,10 +78,8 @@
                         </div>
                         <div class="row">
                             <div class="col">
-                                <span *ngIf="selectedMessage.request.instance=='team'"> View User Profile <a
-                          [routerLink]="['/profile/', user.routeFriendlyUsername(selectedMessage.request.requester)]">{{selectedMessage.request.requester}}</a></span>
-                                <span *ngIf="selectedMessage.request.instance=='user'"> View Team Profile <a
-                          [routerLink]="['/teamProfile/', team.routeFriendlyTeamName(selectedMessage.request.requester)]">{{selectedMessage.request.requester}}</a></span>
+                                <span *ngIf="selectedMessage.request.instance=='team'"> View User Profile <a [routerLink]="['/profile/', user.routeFriendlyUsername(selectedMessage.request.requester)]">{{selectedMessage.request.requester}}</a></span>
+                                <span *ngIf="selectedMessage.request.instance=='user'"> View Team Profile <a [routerLink]="['/teamProfile/', team.routeFriendlyTeamName(selectedMessage.request.requester)]">{{selectedMessage.request.requester}}</a></span>
                             </div>
                             <div class="col text-center">
                                 <button (click)="actionRequest(true, selectedMessage)" class="btn btn-success">Accept</button>
@@ -124,8 +90,9 @@
 
                 </div>
             </div>
+
+
+
         </div>
     </div>
-
-</section>
-<!-- End Section Area -  Content Central -->
+</div>

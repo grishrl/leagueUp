@@ -14,7 +14,7 @@ export class TimezoneComponent implements OnInit {
   edit: boolean = false;
 
   @Input() set disabled(val) {
-    this.edit = val;
+      this.edit = val;
   }
 
 

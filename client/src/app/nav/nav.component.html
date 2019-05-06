@@ -89,8 +89,8 @@
                                                     <ul *ngIf="Auth.getTeam(); else noTeam">
                                                         <li><a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(Auth.getTeam())]">Profile</a>
                                                         </li>
-                                                        <li><a [routerLink]="['/schedule/teamSchedule']">Schedule</a>
-                                                        </li>
+                                                        <!-- <li><a [routerLink]="['/schedule/teamSchedule']">Schedule</a>
+                                                        </li> -->
                                                         <li><a [routerLink]="['/reporting',team.routeFriendlyTeamName( Auth.getTeam() )]">Result
                                                             Reporting</a></li>
 

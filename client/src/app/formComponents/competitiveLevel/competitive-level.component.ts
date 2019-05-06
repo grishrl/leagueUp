@@ -26,11 +26,11 @@ export class TextInputComponent implements OnInit {
   messageChange = new EventEmitter();
 
   @Input()
-  get message() {
+  get competitiveLevel() {
     return this.messageValue;
   }
 
-  set message(val) {
+  set competitiveLevel(val) {
     this.messageValue = val;
     this.messageChange.emit(this.messageValue);
   }

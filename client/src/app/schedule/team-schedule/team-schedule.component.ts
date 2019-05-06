@@ -12,12 +12,13 @@ import { StandingsService } from 'src/app/services/standings.service';
   styleUrls: ['./team-schedule.component.css']
 })
 export class TeamScheduleComponent implements OnInit {
-  
+
   //component properties
   recTeam  //holds id received in the url route
   noMatches: boolean; // set to true if there are no matches returned or false if there are, used for displaying certain messages
   rounds: any //local variable to parse received team matches into
   roundsArray:any
+  index = 0;
 
   constructor(private Auth: AuthService, private route: ActivatedRoute, private router: Router, private scheduleService:ScheduleService, public util:UtilitiesService, public team: TeamService, private standingsService:StandingsService) {
     //get the ID from the route
@@ -34,13 +35,14 @@ export class TeamScheduleComponent implements OnInit {
     return ret;
   }
 
+
   scheduleMatch(id){
     this.router.navigate(['schedule/scheduleMatch', id]);
   }
   todayDate
 
   checkDate(match){
-   
+
     let ret = false;
     if (match['scheduleDeadline']){
       let intDate = parseInt(match['scheduleDeadline']);
@@ -62,7 +64,7 @@ export class TeamScheduleComponent implements OnInit {
       getTeam = this.Auth.getTeam();
       this.recTeam = getTeam;
     }
-    
+
     //TODO: remove hard coded season 6!!!
     this.scheduleService.getTeamSchedules(6, getTeam).subscribe(
       res=>{
@@ -105,11 +107,11 @@ export class TeamScheduleComponent implements OnInit {
 
         //build out the rounds object:
         /*
-        rounds = { 
+        rounds = {
           'roundNubmer':[
                           {matchObject},
                           {matchObject}
-                        ] 
+                        ]
                       }
         */
        let roundsArray = [];

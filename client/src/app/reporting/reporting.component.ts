@@ -18,6 +18,7 @@ export class ReportingComponent implements OnInit {
       this.recTeam = this.route.snapshot.params['id'];
     }
   }
+  index = 0;
   roundsArray:any
   rounds:any
   noMatches: Boolean;
@@ -30,7 +31,7 @@ export class ReportingComponent implements OnInit {
       getTeam = this.Auth.getTeam()
     }
 
-    
+
     this.scheduleService.getTeamSchedules(environment.season, getTeam).subscribe(
       res => {
         let matches = res;

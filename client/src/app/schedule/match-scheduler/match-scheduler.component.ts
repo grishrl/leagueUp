@@ -33,7 +33,7 @@ export class MatchSchedulerComponent implements OnInit {
 
 
 
-
+index = 0;
   ngOnInit() {
     //get the match from the ID we receieved
     this.scheduleService.getMatchInfo(environment.season, this.matchId).subscribe(

@@ -1,0 +1,148 @@
+<div class="container">
+    <div>
+        <div class="row">
+            <div class="col">
+
+                <div class="row">
+                    <div class="col">
+                        <h2>Caster Dashboard</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <h5>Filter Matches By:</h5>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <app-division-selector (selectedDiv)="selected($event)"></app-division-selector>
+                    </div>
+                    <div class="col">
+                        <mat-form-field class="mat-FullWidth">
+                            <mat-select placeholder="Round:" [(ngModel)]="roundFlt" (ngModelChange)="doFilterMatches()" disableOptionCentering>
+                                <mat-option [value]="null"> </mat-option>
+                                <mat-option *ngFor="let round of rounds" [value]="round">{{round}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col">
+                        <mat-form-field class="mat-FullWidth">
+                            <input matInput placeholder="Team Name" [(ngModel)]="teamFlt" (ngModelChange)="doFilterMatches()">
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <mat-checkbox [(ngModel)]="scheduledOnlyFlt" (ngModelChange)="doFilterMatches()">Only Scheduled Matches.</mat-checkbox>
+                    </div>
+                    <div class="col">
+                        <mat-checkbox [(ngModel)]="tournamentOnlyFlt" (ngModelChange)="doFilterMatches()">Tournament Matches.
+                        </mat-checkbox>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <mat-form-field class="mat-FullWidth">
+                            <input matInput [matDatepicker]="picker" placeholder="Choose a date" [(ngModel)]="friendlyDate" (ngModelChange)="timeChanged()">
+                            <mat-datepicker-toggle matSuffix [for]=" picker "></mat-datepicker-toggle>
+                            <mat-datepicker #picker></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                    <div class="col ">
+                        <mat-form-field class="mat-FullWidth ">
+                            <mat-select placeholder="Start Time: " [(ngModel)]="friendlyTime" (ngModelChange)="timeChanged()">
+                                <mat-option *ngFor="let time of times " [value]="time ">
+                                    {{time}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col ">
+                        <mat-form-field class="mat-FullWidth ">
+                            <mat-select placeholder="AM/PM: " [(ngModel)]="suffix" (ngModelChange)="timeChanged()">
+                                <mat-option *ngFor="let suffix of amPm " [value]="suffix ">
+                                    {{suffix}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <span class="finger float-right badge badge-pill pill-shadow badge-light" (click)="resetTime()">Reset Time</span>
+                    </div>
+                </div>
+                <mat-paginator [length]="length " [pageIndex]="pageIndex " [pageSize]="pageSize " (page)="pageEventHandler($event) ">
+
+                </mat-paginator>
+                <div *ngIf="displayArray.length==0 " style="height: 650px "></div>
+                <div class="row mb-3 p-4 " *ngFor="let match of displayArray; let ind=index " [ngClass]="{ 'bg-light':ind%2==0} ">
+                    <div class="col ">
+                        <div class="row ">
+                            <div class="col ">
+                                {{match.divisionDisplayName}}
+                            </div>
+                        </div>
+                        <div class="row ">
+                            <div class="col ">
+                                <span *ngIf="match.home else tbd "><a [routerLink]="[ '/teamProfile/',team.routeFriendlyTeamName(match.home.teamName)] ">{{match.home.teamName}}</a></span>
+
+                            </div>
+                            <div class="col ">
+                                -VS-
+                            </div>
+                            <div class="col ">
+                                <span *ngIf="match.away else tbd "><a [routerLink]="[ '/teamProfile/',team.routeFriendlyTeamName(match.away.teamName)] ">{{match.away.teamName}}</a></span>
+
+
+                            </div>
+                        </div>
+                        <div class="row mt-2 ">
+                            <div class="col ">
+                                Scheduled Time: <span *ngIf="match.scheduledTime !=undefined && match.scheduledTime !=null else notScheduled
+                                  ">{{timeParseAndReturn(match.scheduledTime.startTime)}}</span>
+                                <ng-template #notScheduled>
+                                    <span>Not Yet Scheduled</span>
+                                </ng-template>
+                            </div>
+                            <div class="col ">
+                                <span *ngIf="match.type && match.type=='tournament' else seasonal ">Tournament Match</span>
+                                <ng-template #seasonal>
+                                    <span>Regular Season Game</span>
+                                </ng-template>
+                            </div>
+                        </div>
+                        <div class="row mt-2 ">
+                            <div class="col ">
+                                <div *ngIf="showCasterNameUrl(match) else addCasterButton ">
+                                    <div class="row ">
+                                        <div class="col ">
+                                            Caster: {{match.casterName}}
+                                            <div>
+                                                Url: {{match.casterUrl}}
+                                            </div>
+                                        </div>
+                                        <div class="col ">
+                                            <span *ngIf="checkRights() ">
+                                                <button class="btn btn-danger" (click)="removeCaster(match) "><i class="fas fa-ban"></i> Remove caster</button>
+                                            </span>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <ng-template #addCasterButton>
+                                    <app-caster-inputs [(match)]="match " [matchId]="match.matchId "></app-caster-inputs>
+                                </ng-template>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #tbd>
+    <span> TBD </span>
+</ng-template>
