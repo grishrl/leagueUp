@@ -17,30 +17,30 @@
         "@angular/cli": "^6.2.9",
         "@uirouter/angularjs": "^1.0.22",
         "angular": "^1.7.8",
-        "aws-sdk": "^2.422.0",
+        "aws-sdk": "^2.451.0",
         "axios": "^0.18.0",
-        "body-parser": "^1.18.3",
+        "body-parser": "^1.19.0",
         "bracketzada": "^0.1.2",
         "express": "^4.16.4",
         "express-https-redirect": "^1.0.0",
         "formidable": "^1.2.1",
-        "hots-parser": "^7.43.3",
+        "hots-parser": "^7.44.2",
         "image-data-uri": "^2.0.0",
-        "jsonwebtoken": "^8.5.0",
+        "jsonwebtoken": "^8.5.1",
         "lodash": "^4.17.11",
-        "mongoose": "^5.4.19",
+        "mongoose": "^5.5.6",
         "nodemailer": "^4.7.0",
         "passport": "^0.4.0",
         "passport-bnet": "^2.0.0",
         "passport-google-oauth20": "^1.0.0",
         "passport-jwt": "^4.0.0",
-        "pino-pretty": "^2.5.0",
+        "pino-pretty": "^2.6.1",
         "request": "^2.88.0",
         "roundrobin": "^1.0.3",
         "socket.io": "^2.2.0",
         "uniqid": "^5.0.3"
     },
     "devDependencies": {
-        "eslint": "^5.15.2"
+        "eslint": "^5.16.0"
     }
 }

@@ -443,7 +443,7 @@ router.post('/report/match', passport.authenticate('jwt', {
                             let fileKeys = Object.keys(files);
                             let parsed = [];
 
-                            let parseCounter = 0;
+
                             //parse the replays
                             fileKeys.forEach(fileKey => {
                                 try {
@@ -451,29 +451,44 @@ router.post('/report/match', passport.authenticate('jwt', {
                                         useAttributeName: true,
                                         overrideVerifiedBuild: true
                                     });
-                                    parsed.push(parsedReplay);
-                                    if (parsedReplay.status == 1) {
-                                        parseCounter += 1;
+
+                                    if (parsedReplay.status != 1) {
+                                        parsedReplay['failed'] = true;
                                     }
+                                    parsed.push(parsedReplay);
                                 } catch (error) {
                                     parsed.push({ match: { map: 'UNKNOWN-PARSE-ERROR' } })
                                     console.log('caught error :', error);
                                 }
                             });
-                            //new if to check if the replay parser completed, if not return an error to the client instead of falling over dead.
-                            if (parseCounter == fileKeys.length) {
 
-                                let replayfilenames = [];
-                                //loop through the parsed replays to grab some info
-                                parsed.forEach(element => {
+                            let replayfilenames = [];
+                            //loop through the parsed replays to grab some info
+                            parsed.forEach(element => {
+                                //this tie back object is used to tie together the parsed replays, the match objects, and the replay files
+                                let tieBack = {};
+                                let UUID = uniqid();
+                                tieBack.id = UUID;
+                                let timeStamp = '';
+                                if (util.returnBoolByPath(foundMatch.toObject(), 'scheduledTime.startTime')) {
+                                    let date = new Date(parseInt(foundMatch.scheduledTime.startTime));
+                                    let day = date.getDate();
+                                    let year = date.getFullYear();
+                                    let month = date.getMonth();
+                                    month = month + 1;
+                                    timeStamp = month + "-" + day + "-" + year;
+                                }
+                                let composeFilename = 'ngs_' + timeStamp + "_" + teamInfo[0].teamName + '_vs_' + teamInfo[1].teamName;
+
+                                //if the replay does not parse we will still store in the s3 giving it an unknown_map suffix
+                                if (element.hasOwnProperty('failed') && element.failed == true) {
+                                    composeFilename += '_' + 'unknown_map';
+                                } else {
                                     //this object will be pushed into the replayfilenames hold some info we need to save back to the match to tie the two together
-                                    let tieBack = {};
-                                    let UUID = uniqid();
-                                    tieBack.id = UUID;
-
                                     let replayTeamA = element.match.teams["0"];
                                     let replayTeamB = element.match.teams["1"];
 
+                                    //sort through the team members in the replay to assign the proper team names into the parsed replay object
                                     teamInfo.forEach(teamInfo => {
                                         if (_.intersection(replayTeamA.names, teamInfo.players).length > _.intersection(replayTeamB.names, teamInfo.players).length) {
                                             replayTeamA.teamName = teamInfo.teamName;
@@ -486,107 +501,108 @@ router.post('/report/match', passport.authenticate('jwt', {
                                         }
                                     })
 
-                                    let timeStamp = '';
-                                    if (util.returnBoolByPath(foundMatch.toObject(), 'scheduledTime.startTime')) {
-                                        let date = new Date(parseInt(foundMatch.scheduledTime.startTime));
-                                        let day = date.getDate();
-                                        let year = date.getFullYear();
-                                        let month = date.getMonth();
-                                        month = month + 1;
-                                        timeStamp = month + "-" + day + "-" + year;
-                                    }
-                                    let composeFilename = 'ngs_' + timeStamp + teamInfo[0].teamName + '_vs_' + teamInfo[1].teamName + '_' + element.match.map;
-                                    composeFilename = composeFilename.replace(/[^A-Z0-9\-]+/ig, "_");
-                                    tieBack.fileName = composeFilename + '.stormReplay';
+                                    composeFilename += '_' + element.match.map;
 
-                                    replayfilenames.push(tieBack);
                                     element.match['ngsMatchId'] = foundMatch.matchId;
+                                    composeFilename = composeFilename.replace(/[^A-Z0-9\-]+/ig, "_");
                                     element.match.filename = composeFilename;
                                     element.systemId = UUID;
-
-                                });
-
-
-                                //TODO: possibly combining these into a promise array to bring exectuion time into sync so we can report to hots-profile here?
-                                for (var i = 0; i < fileKeys.length; i++) {
-                                    if (foundMatch.replays == undefined || foundMatch.replays == null) {
-                                        foundMatch.replays = {};
-                                    }
-
-                                    if (foundMatch.replays[(i + 1).toString()] == undefined || foundMatch.replays[(i + 1).toString()] == null) {
-                                        foundMatch.replays[(i + 1).toString()] = {};
-                                    }
-                                    foundMatch.replays[(i + 1).toString()].url = replayfilenames[i].fileName;
-                                    foundMatch.replays[(i + 1).toString()].data = replayfilenames[i].id;
-
-                                    let fileName = replayfilenames[i].fileName;
-
-                                    fs.readFileAsync(files[fileKeys[i]].path).then(
-                                        buffer => {
-                                            var data = {
-                                                Key: fileName,
-                                                Body: buffer
-                                            };
-                                            s3replayBucket.putObject(data, function(err, data) {
-                                                if (err) {
-                                                    console.log(err);
-                                                    //log object
-                                                    let sysLog = {};
-                                                    sysLog.actor = 'SYS';
-                                                    sysLog.action = ' upload replay ';
-                                                    sysLog.logLevel = 'ERROR';
-                                                    sysLog.target = data.Key
-                                                    sysLog.timeStamp = new Date().getTime();
-                                                    sysLog.error = err;
-                                                    logger(sysLog);
-                                                } else {
-                                                    //log object
-                                                    let sysLog = {};
-                                                    sysLog.actor = 'SYS';
-                                                    sysLog.action = ' upload replay ';
-                                                    sysLog.logLevel = 'SYSTEM';
-                                                    sysLog.target = data.Key
-                                                    sysLog.timeStamp = new Date().getTime();
-                                                    logger(sysLog);
-                                                }
-                                            });
-                                        },
-                                        err => {
-                                            console.log('error ', err);
-                                        }
-                                    )
                                 }
 
-                                ParsedReplay.collection.insertMany(parsed).then(
-                                    (records) => {
-                                        //log object
-                                        let sysLog = {};
-                                        sysLog.actor = 'SYS';
-                                        sysLog.action = ' parsed replay stored';
-                                        sysLog.logLevel = 'SYSTEM';
-                                        sysLog.target = replayfilenames.toString();
-                                        sysLog.timeStamp = new Date().getTime();
-                                        logger(sysLog);
+                                composeFilename = composeFilename.replace(/[^A-Z0-9\-]+/ig, "_");
+                                tieBack.fileName = composeFilename + '.stormReplay';
+                                replayfilenames.push(tieBack);
 
-                                        foundMatch.reported = true;
-                                        foundMatch.save((saved) => {
-                                            res.status(200).send(util.returnMessaging(path, 'Match reported', false, saved, null, logObj));
-                                        }, (err) => {
-                                            res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
-                                        })
+                            });
+
+
+                            //TODO: possibly combining these into a promise array to bring exectuion time into sync so we can report to hots-profile here?
+                            for (var i = 0; i < fileKeys.length; i++) {
+                                if (foundMatch.replays == undefined || foundMatch.replays == null) {
+                                    foundMatch.replays = {};
+                                }
+
+                                if (foundMatch.replays[(i + 1).toString()] == undefined || foundMatch.replays[(i + 1).toString()] == null) {
+                                    foundMatch.replays[(i + 1).toString()] = {};
+                                }
+                                foundMatch.replays[(i + 1).toString()].url = replayfilenames[i].fileName;
+                                foundMatch.replays[(i + 1).toString()].data = replayfilenames[i].id;
+
+                                let fileName = replayfilenames[i].fileName;
+
+                                fs.readFileAsync(files[fileKeys[i]].path).then(
+                                    buffer => {
+                                        var data = {
+                                            Key: fileName,
+                                            Body: buffer
+                                        };
+                                        s3replayBucket.putObject(data, function(err, data) {
+                                            if (err) {
+                                                console.log(err);
+                                                //log object
+                                                let sysLog = {};
+                                                sysLog.actor = 'SYS';
+                                                sysLog.action = ' upload replay ';
+                                                sysLog.logLevel = 'ERROR';
+                                                sysLog.target = data.Key
+                                                sysLog.timeStamp = new Date().getTime();
+                                                sysLog.error = err;
+                                                logger(sysLog);
+                                            } else {
+                                                //log object
+                                                let sysLog = {};
+                                                sysLog.actor = 'SYS';
+                                                sysLog.action = ' upload replay ';
+                                                sysLog.logLevel = 'SYSTEM';
+                                                sysLog.target = data.Key
+                                                sysLog.timeStamp = new Date().getTime();
+                                                logger(sysLog);
+                                            }
+                                        });
                                     },
-                                    (err) => {
-                                        res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
+                                    err => {
+                                        console.log('error ', err);
                                     }
                                 )
-
-                                //if this match was a tournmanet match then we need to promote the winner to the parent match
-                                promoteTournamentMatch(foundMatch);
-
-                            } else {
-                                //parser did not finish properly
-                                res.status(500).send(util.returnMessaging(path, 'Error (1) reporting match result', false, null, null, logObj));
                             }
+
+                            //if we have failed parse - remove those junk objects from the array before inserting them into the database.
+                            indiciesToRemove = [];
+                            parsed.forEach((element, index) => {
+                                if (element.hasOwnProperty('failed') && element.failed == true) {
+                                    indiciesToRemove.push(index);
+                                }
+                            });
+
+                            indiciesToRemove.forEach(index => {
+                                parsed.splice(index, 1);
+                            });
+
+                            ParsedReplay.collection.insertMany(parsed).then(
+                                (records) => {
+                                    //log object
+                                    let sysLog = {};
+                                    sysLog.actor = 'SYS';
+                                    sysLog.action = ' parsed replay stored';
+                                    sysLog.logLevel = 'SYSTEM';
+                                    sysLog.target = replayfilenames.toString();
+                                    sysLog.timeStamp = new Date().getTime();
+                                    logger(sysLog);
+
+                                    foundMatch.reported = true;
+                                    foundMatch.save((saved) => {
+                                        res.status(200).send(util.returnMessaging(path, 'Match reported', false, saved, null, logObj));
+                                    }, (err) => {
+                                        res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
+                                    })
+                                },
+                                (err) => {
+                                    res.status(500).send(util.returnMessaging(path, 'Error (2) reporting match result', err, null, null, logObj));
+                                }
+                            )
+
+                            //if this match was a tournmanet match then we need to promote the winner to the parent match
+                            promoteTournamentMatch(foundMatch);
 
 
 
