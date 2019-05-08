@@ -11,7 +11,7 @@ import {merge} from 'lodash';
   styleUrls: ['./reporting-deck.component.css']
 })
 export class ReportingDeckComponent implements OnInit {
-   
+
   hideButton:boolean=false;
   recMatch = {
     away:{logo:null,teamName:''},
@@ -28,11 +28,37 @@ export class ReportingDeckComponent implements OnInit {
 
   uploading = false;
 
+  homeTeam
+  awayTeam
+  homeTeamPlayer
+  awayTeamPlayer
+
   @Input() set match(match){
     if(match!=null && match != undefined){
-      
+
       merge( this.recMatch, match);
-      
+
+      let teams = [];
+      teams.push(match.away.teamName);
+      teams.push(match.home.teamName);
+      this.team.getTeam(match.home.teamName).subscribe(
+        res=>{
+          console.log('home team ', res);
+          this.homeTeam = res;
+        },
+        err=>{
+          console.log(err);
+        }
+      )
+      this.team.getTeam(match.away.teamName).subscribe(
+        res => {
+          console.log('away team ', res);
+          this.awayTeam = res;
+        },
+        err => {
+          console.log(err);
+        }
+      )
     }
     if(this.recMatch.other != null && this.recMatch.mapBans != undefined){
       this.games = this.recMatch.other;
@@ -40,15 +66,15 @@ export class ReportingDeckComponent implements OnInit {
     if(this.recMatch.mapBans != null && this.recMatch.mapBans != undefined){
       this.mapBans = this.recMatch.mapBans;
     }
-    
+
     if(this.recMatch.reported){
       this.hideButton = true;
       this.formControlsDisable();
-      
+
     }
   }
   constructor(private scheduleService: ScheduleService, private util: UtilitiesService, public team:TeamService) { }
-    
+
   maps = {
   ControlPoints: 'Sky Temple',
   TowersOfDoom: 'Towers of Doom',
@@ -73,7 +99,7 @@ removeBan(hero, arr){
     arr = arr.splice(ind, 1);
   }
 }
-  
+
   mapBans = {
     away:'',
     home:''
@@ -227,7 +253,7 @@ resetReplay(game){
     }else{
       return true;
     }
-    
+
   }
 
   removeGame(game, games){
@@ -242,7 +268,7 @@ resetReplay(game){
   ]);
   replay1Control = new FormControl('', [
     Validators.required
-  ]); 
+  ]);
   replay2Control = new FormControl('', [
     Validators.required
   ]);
@@ -259,6 +285,17 @@ resetReplay(game){
 
   ngOnInit() {
     this.util.markFormGroupTouched(this.reportForm);
+  }
+
+  initGetTeamsInfo(teams){
+    this.team.getTeams(teams).subscribe(
+      res=>{
+        console.log(res);
+      },
+      err=>{
+        console.log(err);
+      }
+    )
   }
 
   homeScore: number
@@ -321,7 +358,7 @@ resetReplay(game){
         disable = true;
       }
     }
-    
+
     return disable;
   }
 
@@ -331,7 +368,7 @@ resetReplay(game){
     this.show = !this.show;
   }
 
-  report() {  
+  report() {
 
     let submittable = true;
 
@@ -342,6 +379,18 @@ resetReplay(game){
     };
     let otherData = {};
 
+    if(!this.homeTeamPlayer){
+      submittable = false;
+      alert('Home team player is not selected, can not submit.');
+    }else{
+      otherData['homeTeamPlayer'] = this.homeTeamPlayer;
+    }
+    if (!this.awayTeamPlayer) {
+      submittable = false;
+      alert('Away team player is not selected, can not submit.');
+    }else{
+      otherData['awayTeamPlayer'] = this.awayTeamPlayer;
+    }
     let keys = Object.keys(this.games);
     keys.forEach(key => {
       let game = this.games[key];
@@ -353,12 +402,12 @@ resetReplay(game){
         submittable = false;
         alert('Game ' + key + ' winner is not selected, can not submit.');
       }
-      
+
       if (game.replay == null && game.replay == undefined){
           submittable = false;
           alert('Game ' + key + ' replay is not attached, can not submit.');
         }
-      
+
       report['replay'+key.toString()]=game.replay;
 
       let gamenum = key.toString();
@@ -408,7 +457,7 @@ resetReplay(game){
         this.uploading = false
         console.log(err);
       })
-    }  
+    }
 
   }
 

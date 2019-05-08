@@ -53,7 +53,12 @@
 
             <div class="row reportingDiv" *ngIf="show">
                 <div class="col">
-                    <div class="row m-t-20">
+                    <div class="row  m-t-20">
+                        <div class="col">
+                            <h6> Please select the maps that each team banned: </h6>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col">
                             Home Map Ban
                             <div class="row m-t-5">
@@ -61,6 +66,7 @@
                                     <mat-select placeholder="Map " [(ngModel)]="mapBans.home">
                                         <mat-option *ngFor="let map of maps | keyvalue" [value]="map.value">{{map.value}}</mat-option>
                                     </mat-select>
+
                                 </div>
                             </div>
                         </div>
@@ -73,6 +79,40 @@
                                 <div class="col">
                                     <mat-select placeholder="Map " [(ngModel)]="mapBans.away">
                                         <mat-option *ngFor="let map of maps | keyvalue" [value]="map.value">{{map.value}}</mat-option>
+                                    </mat-select>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row  m-t-20">
+                        <div class="col">
+                            <h6> Please select a player that was in the game from each team: </h6>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            Home Player
+                            <div class="row m-t-5">
+                                <div class="col">
+                                    <mat-select placeholder="Player " [(ngModel)]="homeTeamPlayer">
+                                        <mat-option *ngFor="let player of homeTeam.teamMembers" [value]="player.displayName">{{player.displayName}}
+                                        </mat-option>
+                                    </mat-select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+
+                        </div>
+                        <div class="col">
+                            Away Player
+                            <div class="row">
+                                <div class="col">
+                                    <mat-select placeholder="Player " [(ngModel)]="awayTeamPlayer">
+                                        <mat-option *ngFor="let player of awayTeam.teamMembers" [value]="player.displayName">{{player.displayName}}
+                                        </mat-option>
                                     </mat-select>
                                 </div>
                             </div>

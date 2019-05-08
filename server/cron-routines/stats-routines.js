@@ -1,5 +1,6 @@
 const Replay = require('../models/replay-parsed-models');
 const User = require('../models/user-models');
+const Division = require('../models/division-models');
 const Team = require('../models/team-models');
 const Stats = require('../models/stats-model');
 const Match = require('../models/match-model');
@@ -427,6 +428,28 @@ async function postToHotsProfileHandler(limNum) {
 
     console.log('matches.length ', matches.length);
     if (matches) {
+
+        let divisionList = [];
+        matches.forEach(match => {
+            if (divisionList.indexOf(match.divisionConcat) == -1) {
+                divisionList.push(match.divisionConcat);
+            }
+        });
+
+        let divisions = await Division.find({
+            divisionConcat: {
+                $in: divisionList
+            }
+        }).then(
+            reply => {
+                return reply;
+            },
+            err => {
+                console.log(err);
+                return null;
+            }
+        );
+
         let savedArray = [];
         for (var i = 0; i < matches.length; i++) {
             let postedReplays = true;
@@ -435,167 +458,61 @@ async function postToHotsProfileHandler(limNum) {
             let match = matches[i];
             let matchObj = match.toObject();
 
-            let teamIds = [];
+            let matchCopy = _.cloneDeep(match);
 
-            if (util.returnByPath(matchObj, 'away.id')) {
-                teamIds.push(util.returnByPath(matchObj, 'away.id'));
-            }
+            postObj['team_one_name'] = matchCopy.home.teamName;
+            postObj['team_one_image_url'] = process.env.heroProfileImage + matchCopy.home.logo;
+            postObj['team_one_map_ban'] = matchCopy.mapBans.home;
+            postObj['team_one_player'] = matchCopy.other.homeTeamPlayer;
 
-            if (util.returnByPath(matchObj, 'home.id')) {
-                teamIds.push(util.returnByPath(matchObj, 'home.id'));
-            }
+            postObj['team_two_name'] = matchCopy.away.teamName;
+            postObj['team_two_player'] = matchCopy.other.awayTeamPlayer;
+            postObj['team_two_image_url'] = process.env.heroProfileImage + matchCopy.away.logo;
+            postObj['team_two_map_ban'] = matchCopy.mapBans.away;
 
-            let teams = await Team.find({ _id: { $in: teamIds } }).then(
-                found => { return found; },
-                err => {
-                    return null;
-                }
-            )
+            postObj['round'] = matchCopy.round.toString();
+            postObj['division'] = getDivisionNameFromConcat(divisions, matchCopy.divisionConcat);
+            postObj['game'] = (j + 1).toString();
+            postObj['season'] = process.env.season.toString();
 
-            let replays = matchObj.replays;
-            // console.log('replays ', replays);
-            if (replays) {
-                let keys = Object.keys(replays);
-                // console.log(keys);
-                let matchCopy = _.cloneDeep(match);
+            let replayKeys = Object.keys(matchCopy.replays);
+            for (var j = 0; j < replayKeys.length; j++) {
+                let replayObj = matchCopy.replays[(j + 1).toString()];
+                postObj['replay_url'] = process.env.heroProfileReplay + replayObj.url;
+                let logObj = {};
+                logObj.actor = 'SYSTEM; CRON; Hots-Profile Submit';
+                logObj.target = 'Match Id: ' + matchObj.matchId + ', ReplayID: ' + replayInf.data;
+                logObj.timeStamp = new Date().getTime();
+                logObj.logLevel = 'STD';
 
-                for (var j = 0; j < keys.length; j++) {
-                    // console.log('keyz ', j);
-                    let localKey = keys[j];
-
-                    if (localKey != '_id') {
-
-                        let replayInf = matchObj.replays[localKey];
-                        let parsed = await Replay.findOne({
-                            systemId: replayInf.data
-                        }).then(
-                            found => {
-                                return found;
-                            },
-                            err => {
-                                return null;
-                            }
-                        );
-
-                        // console.log('parsed ', parsed);
-                        if (parsed) {
-                            replayInf['parsed'] = parsed;
-                            // console.log('teams ', teams);
-                            if (teams) {
-
-                                postObj['team_one_name'] = teams[0].teamName;
-                                postObj['team_one_image_url'] = process.env.heroProfileImage + teams[0].logo;
-                                postObj['team_two_name'] = teams[1].teamName;
-                                postObj['team_two_image_url'] = process.env.heroProfileImage + teams[1].logo;
-
-                                if (teams[0]._id == matchCopy.away.id) {
-                                    postObj['team_one_map_ban'] = matchCopy.mapBans.away;
-                                } else {
-                                    postObj['team_one_map_ban'] = matchCopy.mapBans.home;
-                                }
-
-                                if (teams[1]._id == matchCopy.away.id) {
-                                    postObj['team_two_map_ban'] = matchCopy.mapBans.away;
-                                } else {
-                                    postObj['team_two_map_ban'] = matchCopy.mapBans.home;
-                                }
-
-                                let team1player = '';
-                                let team2player = '';
-
-                                teams[0].teamMembers.forEach(member => {
-                                    let playerKeys = Object.keys(replayInf.parsed.players);
-                                    playerKeys.forEach(player => {
-                                        let wholePlayer = replayInf.parsed.players[player];
-                                        let simpleName = member.displayName.split('#')[0];
-                                        if (simpleName == wholePlayer.name) {
-                                            team1player = member.displayName;
-                                        }
-                                    })
-                                });
-                                // console.log('team 0: ', teams[0])
-                                // console.log('team 1: ', teams[1])
-                                teams[1].teamMembers.forEach(member => {
-                                    let playerKeys = Object.keys(replayInf.parsed.players);
-                                    playerKeys.forEach(player => {
-
-                                        let wholePlayer = replayInf.parsed.players[player];
-                                        let simpleName = member.displayName.split('#')[0];
-                                        // console.log(wholePlayer.name, simpleName)
-                                        if (simpleName == wholePlayer.name) {
-                                            team2player = member.displayName;
-                                        }
-                                    })
-                                });
-                                // console.log("team2PlayerName ", team2player);
-
-
-
-                                postObj['replay_url'] = process.env.heroProfileReplay + replayInf.url;
-                                postObj['team_one_player'] = team1player;
-
-                                postObj['team_two_player'] = team2player;
-                                // postObj['team_two_map_ban'] = matchCopy.mapBans.away;
-                                postObj['round'] = matchCopy.round.toString();
-                                postObj['division'] = teams[0].divisionDisplayName;
-                                postObj['game'] = (j + 1).toString();
-                                postObj['season'] = process.env.season.toString();
-
-
-
-                                // console.log(postObj);
-                                // console.log(screenPostObject(postObj));
-                                let logObj = {};
-                                logObj.actor = 'SYSTEM; CRON; Hots-Profile Submit';
-                                logObj.target = 'Match Id: ' + matchObj.matchId + ', ReplayID: ' + replayInf.data;
-                                logObj.timeStamp = new Date().getTime();
-                                logObj.logLevel = 'STD';
-
-                                if (screenPostObject(postObj)) {
-                                    //     // call to hotsprofile
-                                    let posted = await postToHotsProfile(postObj).then(
-                                        reply => {
-                                            return reply;
-                                        },
-                                        err => {
-                                            return null;
-                                        }
-                                    );
-                                    //     // console.log('POSTED!')
-                                    logObj.action = ' logging reply from hots-profile ' + JSON.stringify(posted.data);
-                                    logger(logObj);
-
-                                    if (posted) {
-                                        match['replays'][localKey]['parsedUrl'] = posted.data.url;
-                                        postedReplays = true;
-                                    } else {
-                                        //if posted fails then do not set the match to fully reported
-                                        // postedReplays = false;
-                                    }
-                                } else {
-                                    // console.log('NOT POSTED!')
-                                    logObj.logLevel = "ERROR";
-                                    logObj.error = "This replay failed the screen, NOT SENT TO HEROSPROFILE!!";
-                                    logger(logObj);
-                                }
-
-
-                            }
-                        } else {
-                            //NO PARSED REPLAYS RETURNED FROM DB this can happen if the game was forfiet
-                            //error
+                if (screenPostObject(postObj)) {
+                    //     // call to hotsprofile
+                    let posted = await postToHotsProfile(postObj).then(
+                        reply => {
+                            return reply;
+                        },
+                        err => {
+                            return null;
                         }
+                    );
+                    //     // console.log('POSTED!')
+                    logObj.action = ' logging reply from hots-profile ' + JSON.stringify(posted.data);
+                    logger(logObj);
 
+                    if (posted) {
+                        match['replays'][localKey]['parsedUrl'] = posted.data.url;
+                        postedReplays = true;
                     } else {
-                        //LOCAL KEY WAS _ID
-                        //do nothing
+                        //if posted fails then do not set the match to fully reported
+                        // postedReplays = false;
                     }
-
+                } else {
+                    // console.log('NOT POSTED!')
+                    logObj.logLevel = "ERROR";
+                    logObj.error = "This replay failed the screen, NOT SENT TO HEROSPROFILE!!";
+                    logger(logObj);
                 }
-            } else {
-                //NO REPLAYS
             }
-
 
             match['postedToHP'] = postedReplays;
             // console.log('match ', match);
@@ -614,8 +531,6 @@ async function postToHotsProfileHandler(limNum) {
             }
 
         }
-
-        // console.log('SAVED ARRAY ', savedArray);
 
     } else {
         //no matches found
@@ -649,4 +564,14 @@ function screenPostObject(postObj) {
         let val = postObj[key];
     });
     return retBool;
+}
+
+function getDivisionNameFromConcat(divisionList, divConcat) {
+    let returnDiv = '';
+    divisionList.forEach(element => {
+        if (element.divisionConcat == divConcat) {
+            returnDiv = element.divisionDisplayName;
+        }
+    });
+    return returnDiv;
 }

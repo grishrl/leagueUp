@@ -49,7 +49,6 @@ const replaySchema = new Schema({
 const matchSchema = new Schema({
     "matchId": String,
     "season": Number,
-    "division": String,
     "divisionConcat": String,
     "round": Number,
     "home": team,
