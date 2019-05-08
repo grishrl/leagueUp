@@ -1088,7 +1088,7 @@ iframe {
                     }
                     &.goal {
                         &:after {
-                            font-family: fontawesome;
+                            font-family: "Font Awesome 5 Free";
                             content: "\f1e3";
                             width: 10px;
                             height: 10px;
@@ -1098,7 +1098,7 @@ iframe {
                     }
                     &.change {
                         &:after {
-                            font-family: fontawesome;
+                            font-family: "Font Awesome 5 Free";
                             content: "\f07e";
                             width: 10px;
                             height: 10px;
@@ -1263,7 +1263,7 @@ iframe {
             color: #fff;
             font-size: 12px;
             &:after {
-                font-family: fontawesome;
+                font-family: "Font Awesome 5 Free";
                 content: "\f101";
                 padding: 0 5px 0 7px;
             }
@@ -3572,7 +3572,7 @@ table {
     }
     a {
         &:after {
-            font-family: fontawesome;
+            font-family: "Font Awesome 5 Free";
             content: "\f101";
             padding-left: 5px;
             font-size: 12px;

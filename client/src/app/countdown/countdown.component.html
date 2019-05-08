@@ -3,7 +3,7 @@
         <h4>Upcoming Match</h4>
     </div>
 
-    <div class="content-counter content-counter-home">
+    <div class="content-counter content-counter-home" *ngIf="validMatch else noMatch">
         <p class="text-center">
             <i class="fa fa-clock-o"></i> Countdown Till Start
         </p>
@@ -46,5 +46,15 @@
       <i class="fab fa-twitch"></i>
     </a>
     </div>
+    <ng-template #noMatch>
+        <div class="content-counter content-counter-home padding-top-xl padding-bottom-xl">
+            <div class="text-center">
+                <span class="h5">No Casted Upcoming Matches Found!</span><br>
+                <span class="h6">Check back later!</span>
+            </div>
+
+        </div>
+    </ng-template>
+
 </div>
 <!-- Content Counter -->

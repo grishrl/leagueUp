@@ -16,6 +16,7 @@ export class CountdownComponent implements OnInit {
 
   constructor(private scheduleService:ScheduleService, public util:UtilitiesService, public team: TeamService, private countdownService:CountdownService) { }
 
+  validMatch = false;
   targetMatch = {
     casterName:'',
     casterUrl:'',
@@ -69,6 +70,7 @@ export class CountdownComponent implements OnInit {
           nearestMatch.scheduledTime.startTime = parseInt(nearestMatch.scheduledTime.startTime);
           this.startDate = new Date(nearestMatch.scheduledTime.startTime);
           this.targetMatch = nearestMatch;
+          this.validMatch = true;
           this.initCountdown();
         }
 
