@@ -536,7 +536,11 @@ async function postToHotsProfileHandler(limNum) {
 
                                 postObj['team_two_player'] = team2player;
                                 // postObj['team_two_map_ban'] = matchCopy.mapBans.away;
-                                postObj['round'] = matchCopy.round.toString();
+                                if (match.hasOwnProperty('round')) {
+                                    postObj['round'] = matchCopy.round.toString();
+                                } else {
+                                    postObj['round'] = 'T-1';
+                                }
                                 postObj['division'] = teams[0].divisionDisplayName;
                                 postObj['game'] = (j + 1).toString();
                                 postObj['season'] = process.env.season.toString();
