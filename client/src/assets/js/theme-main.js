@@ -14,7 +14,6 @@
 
 
 $(document).ready(function($) {
-
     'use strict';
     //=========== Sticky nav ===========//
     $(".mainmenu").sticky({ topSpacing: 0 });
@@ -22,14 +21,9 @@ $(document).ready(function($) {
     //======== Nav Superfish ===========//
     $('ul.sf-menu').superfish();
 
-    $(document).ready(function() {
-        $('#mobile-nav').mmenu();
-    });
-
     $().UItoTop({
         scrollSpeed: 500,
         easingType: 'linear'
     });
-
 
 });

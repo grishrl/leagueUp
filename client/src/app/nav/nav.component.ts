@@ -1,12 +1,14 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { AuthService } from '../services/auth.service';
-import { Router } from '@angular/router';
+import { Router, NavigationStart } from '@angular/router';
 import { TeamService } from '../services/team.service';
 import { UserService } from '../services/user.service';
 import { DivisionService } from '../services/division.service';
 import { MessagesService } from '../services/messages.service';
 import { NotificationService } from '../services/notification.service';
 import { Socket } from 'ngx-socket-io';
+
+declare var Mmenu: any;
 
 @Component({
   selector: 'app-nav',
@@ -31,13 +33,34 @@ export class NavComponent implements OnInit {
           this.ngOnInit();
         }
       )
+
      }
 
   logout(){
     this.Auth.destroyAuth('/logout');
   }
 
+  @ViewChild('mobileNav') mobileMavElement;
+
+  menuVar;
+  menuAPI;
+  ngAfterViewInit(){
+    this.menuVar = new Mmenu(this.mobileMavElement.nativeElement, {}, {});
+    this.menuAPI = this.menuVar.API;
+}
+
+
   ngOnInit() {
+
+    this.router.events.subscribe(
+      event=>{
+        if(event instanceof NavigationStart){
+          if (this.menuAPI) {
+            this.menuAPI.close();
+          }
+        }
+      }
+    )
 
     //get divisions for the division list drop down
     this.divisionService.getDivisionInfo().subscribe( res => {
