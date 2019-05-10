@@ -28,25 +28,33 @@ export class NavComponent implements OnInit {
 
         });
       }
-      this.notificationService.updateLogin.subscribe(
-        res=>{
-          this.ngOnInit();
-        }
-      )
-
+    this.notificationService.updateLogin.subscribe(
+      res => {
+        this.ngOnInit();
+        this.menuAPI.initPanels([document.querySelector('#mobile-nav-list')]);
+      }
+    )
      }
 
   logout(){
     this.Auth.destroyAuth('/logout');
+    this.menuAPI.closeAllPanels();
+    this.menuAPI.initPanels([document.querySelector('#mobile-nav-list')]);
   }
 
   @ViewChild('mobileNav') mobileMavElement;
+  @ViewChild('menuList') menuList;
 
   menuVar;
   menuAPI;
   ngAfterViewInit(){
-    this.menuVar = new Mmenu(this.mobileMavElement.nativeElement, {}, {});
-    this.menuAPI = this.menuVar.API;
+    this.createMobileNav();
+}
+
+createMobileNav(){
+
+  this.menuVar = new Mmenu(this.mobileMavElement.nativeElement, {}, {});
+  this.menuAPI = this.menuVar.API;
 }
 
 

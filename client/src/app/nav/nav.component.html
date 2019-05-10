@@ -155,7 +155,7 @@
 <!-- Mobile Nav-->
 <div id="mobile-nav" #mobileNav>
     <!-- Menu-->
-    <ul>
+    <ul id="mobile-nav-list">
         <li>
             <a routerLink="">Home</a>
         </li>
@@ -168,64 +168,58 @@
             <a href="teams.html">Teams</a>
         </li>
 
-        <!-- todo: links for players -->
-        <li>
-            <a href="players.html">Players</a>
-        </li>
-
         <li>
             <a [routerLink]="['/calendar']">Calendar</a>
         </li>
 
-        <li *ngIf="!Auth.isAuthenticated() else mobileLoggedIn">
+        <li [hidden]="Auth.isAuthenticated()">
             <a [routerLink]="['/login']">Login</a>
         </li>
 
-        <ng-template #mobileLoggedIn>
-            <li>
-                <a href="">
-                    <span>{{Auth.getUser()}}</span>
-                    <span *ngIf="userMessages>0" class="myFaStack fa" style="line-height:inherit;">
-                                                    <i class="far fa-envelope fa-stack-1x"></i>
-                                                    <span class="fa-stack-1x">!</span>
-                    </span>
-                </a>
-                <ul>
-                    <li>
-                        <a href="">Team</a>
-                        <ul *ngIf="Auth.getTeam(); else mobileNoTeam">
-                            <li><a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(Auth.getTeam())]">Profile</a>
-                            </li>
-                            <li><a [routerLink]="['/schedule/teamSchedule']">Schedule</a>
-                            </li>
-                            <li><a [routerLink]="['/findPlayers']">Find Players</a></li>
-                        </ul>
-                        <ng-template #mobileNoTeam>
-                            <li><a [routerLink]="['/teamCreate']">Create Team</a></li>
-                            <li><a [routerLink]="['/findTeams']">Find Team</a></li>
-                        </ng-template>
-                    </li>
-                    <li>
-                        <a href="single-result.html">Player</a>
-                        <ul>
-                            <li><a [routerLink]="['/profile/',user.routeFriendlyUsername(Auth.getUser())]">Profile</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="">System</a>
-                        <ul>
-                            <li><a [routerLink]="['/_casterDashboard']">Caster Dashboard</a></li>
-                            <li><a [routerLink]="['/_admin/dashboard']">Admin Dashboard</a></li>
-                        </ul>
-                    </li>
-                    <li><a [routerLink]="['/messageCenter']">Messages</a></li>
-                    <li>
-                        <a (click)="logout()">Logout</a>
-                    </li>
-                </ul>
-            </li>
-        </ng-template>
+        <li [hidden]="!Auth.isAuthenticated()">
+            <a>
+                <span>{{Auth.getUser()}}</span>
+                <span *ngIf="userMessages>0" class="myFaStack fa" style="line-height:inherit;">
+                <i class="far fa-envelope fa-stack-1x"></i>
+                <span class="fa-stack-1x">!</span>
+                </span>
+            </a>
+            <ul id="logged-in-panel-1">
+                <li>
+                    <a>Team</a>
+                    <ul [hidden]="!Auth.getTeam()">
+                        <li><a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(Auth.getTeam())]">Profile</a>
+                        </li>
+                        <li><a [routerLink]="['/schedule/teamSchedule']">Schedule</a>
+                        </li>
+                        <li><a [routerLink]="['/findPlayers']">Find Players</a></li>
+                    </ul>
+                    <ul [hidden]="Auth.getTeam()">
+                        <!-- <li><a [routerLink]="['/teamCreate']">Create Team</a></li> -->
+                        <li><a [routerLink]="['/findTeams']">Find Team</a></li>
+                    </ul>
+
+                </li>
+                <li>
+                    <a>Player</a>
+                    <ul>
+                        <li><a [routerLink]="['/profile/',user.routeFriendlyUsername(Auth.getUser())]">Profile</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a>System</a>
+                    <ul>
+                        <li><a [routerLink]="['/_casterDashboard']">Caster Dashboard</a></li>
+                        <li><a [routerLink]="['/_admin/dashboard']">Admin Dashboard</a></li>
+                    </ul>
+                </li>
+                <li><a [routerLink]="['/messageCenter']">Messages</a></li>
+                <li>
+                    <a (click)="logout()">Logout</a>
+                </li>
+            </ul>
+        </li>
 
     </ul>
 </div>
