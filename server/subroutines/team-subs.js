@@ -432,6 +432,47 @@ function scrubUserFromTeams(username) {
     );
 };
 
+//will update all received teams history that they have been added to a divison once the division has been set to public:
+function updateDivisionHistory(teams, divisonName) {
+
+    let logObj = {};
+    logObj.actor = 'SYSTEM; updateDivisionHistory';
+    logObj.action = ' updating team division history';
+    logObj.timeStamp = new Date().getTime();
+    logObj.logLevel = 'STD';
+
+    Team.find({ teamName: { $in: teams } }).then(
+        foundTeams => {
+            for (var i = 0; i < foundTeams.length; i++) {
+                let teamObj = foundTeams[i].toObject()
+                if (!teamObj.hasOwnProperty('history')) {
+                    foundTeams[i].history = [{
+                        timestamp: Date.now(),
+                        action: 'Added to division',
+                        target: divisonName,
+                        season: process.env.season
+                    }]
+                } else {
+                    foundTeams[i].history.push({
+                        timestamp: Date.now(),
+                        action: 'Added to division',
+                        target: divisonName,
+                        season: process.env.season
+                    })
+                }
+                foundTeams[i].markModified('history');
+                foundTeams[i].save();
+            }
+        },
+        err => {
+            logObj.logLevel = 'ERROR';
+            logObj.error = err;
+            logger(logObj);
+        }
+    )
+
+}
+
 
 //will find all the matches that  team is associated to and will update the team name that is in the 
 //match object
@@ -475,7 +516,8 @@ module.exports = {
     resultantMMR: resultantMMR,
     returnTeamMMR: topMemberMmr,
     updateTeamMmrAsynch: updateTeamMmrAsynch,
-    updateTeamMatches: updateTeamMatches
+    updateTeamMatches: updateTeamMatches,
+    updateTeamDivHistory: updateDivisionHistory
 }
 
 

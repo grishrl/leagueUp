@@ -143,6 +143,9 @@ router.post('/upsertDivision', passport.authenticate('jwt', {
             });
             found.save().then(
                 (saved) => {
+                    if (saved.public) {
+                        TeamSubs.updateTeamDivHistory(saved.teams, saved.displayName);
+                    }
                     res.status(200).send(util.returnMessaging(path, 'Division updated', false, saved, null, logObj));
                     if (runSubs) {
                         TeamSubs.upsertTeamsDivision(found.teams, {
