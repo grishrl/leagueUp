@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, Injector, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
@@ -105,6 +105,7 @@ import { RecentNewsComponent } from './recent-news/recent-news.component';
 import { DiaryComponent } from './diary/diary.component';
 import { RecentContentComponent } from './recent-content/recent-content.component';
 import { SafePipe } from './safe.pipe';
+import { SafeHtmlPipe } from './static-html-loader/static-html-loader.component';
 import { StaticHtmlLoaderComponent } from './static-html-loader/static-html-loader.component';
 import { HideMenuDirective } from './nav/hide-menu.directive';
 import { CategoriesComponent } from './blog/categories/categories.component';
@@ -125,9 +126,11 @@ import { TeamStatsComponent } from './team/team-stats/team-stats.component';
 import { TeamHistoryComponent } from './team/team-history/team-history.component';
 import { TeamUpcomingMatchComponent } from './team/team-upcoming-match/team-upcoming-match.component';
 import { ScheduleTableRowComponent } from './schedule/schedule-table-row/schedule-table-row.component';
-import { DivisionResultsTilesComponent } from './division/division-results-tiles/division-results-tiles.component';
+import { DivisionResultsTilesComponent } from './division-results-tiles/division-results-tiles.component';
 import { DivisionUpcomingMatchesComponent } from './division/division-upcoming-matches/division-upcoming-matches.component';
-
+import { NgsAccordianComponent } from './elements/ngs-accordian/ngs-accordian.component';
+import { BannerImageComponent } from './banner-image/banner-image.component';
+import { BannerImagePlayerComponent } from './banner-image-player/banner-image-player.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -245,14 +248,19 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     TeamUpcomingMatchComponent,
     ScheduleTableRowComponent,
     DivisionResultsTilesComponent,
-    DivisionUpcomingMatchesComponent
+    DivisionUpcomingMatchesComponent,
+    SafeHtmlPipe,
+    NgsAccordianComponent,
+    BannerImageComponent,
+    BannerImagePlayerComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
     ChangeCaptainModalComponent,
     ConfirmRemoveMemberComponent,
     EventModalComponent,
-    MatchViewModalComponent
+    MatchViewModalComponent,
+    NgsAccordianComponent
   ],
   imports: [
     BrowserModule,
@@ -279,8 +287,17 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     multi:true
     }
   ],
+  schemas:[
+    CUSTOM_ELEMENTS_SCHEMA
+  ],
   bootstrap: [AppComponent]
 })
 
 
-export class AppModule { }
+export class AppModule {}
+
+/*
+    NgsAccordianComponent,
+    NgsAccordianTitleComponent,
+    NgsAccordianContentComponent
+ */

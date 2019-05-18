@@ -29,6 +29,20 @@ export class TeamResultsTilesComponent implements OnInit {
     )
   }
 
+  reportScore(match, side) {
+    let ret;
+    if (match.forfeit) {
+      if (match[side].score == 0) {
+        ret = 'F';
+      } else {
+        ret = 0;
+      }
+    } else {
+      ret = match[side].score;
+    }
+    return ret;
+  }
+
   @Input() set team(val){
     console.log('do something');
     if(val){

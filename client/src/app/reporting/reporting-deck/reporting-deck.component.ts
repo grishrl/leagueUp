@@ -411,17 +411,16 @@ resetReplay(game){
       report['replay'+key.toString()]=game.replay;
 
       let gamenum = key.toString();
-      if(game.homeBans.length<3){
-        alert('Game ' + key + ' home bans is not filled, can not submit.');
-        submittable = false
-      }
-      if (game.awayBans.length < 3) {
-        alert('Game ' + key + ' away bans is not filled, can not submit.');
-        submittable = false
-      }
+      // if(game.homeBans.length<3){
+      //   alert('Game ' + key + ' home bans is not filled, can not submit.');
+      //   submittable = false
+      // }
+      // if (game.awayBans.length < 3) {
+      //   alert('Game ' + key + ' away bans is not filled, can not submit.');
+      //   submittable = false
+      // }
       otherData[gamenum]={
-        awayBans:game.awayBans,
-        homeBans:game.homeBans,
+
         winner : game.winner
       }
     });

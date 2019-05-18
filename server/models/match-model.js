@@ -65,7 +65,9 @@ const matchSchema = new Schema({
     "other": Object,
     "postedToHP": Boolean,
     "reported": Boolean,
-    "scheduleDeadline": String
+    "scheduleDeadline": String,
+    "forfeit": Boolean,
+    "notes": String
 }, { useNestedStrict: false });
 
 

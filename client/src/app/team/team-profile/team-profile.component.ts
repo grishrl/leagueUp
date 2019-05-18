@@ -557,10 +557,19 @@ export class TeamProfileComponent implements OnInit {
   //method to validate the inputs we require.
   validate() {
 
+    /**
+     *  if there is a available times selected then timezone should be selected
+     *
+     *  otherwise is anything required to save? I don't think so
+     *
+     */
+
+     //
+
     let valid = true;
-    if (!this.validAvailableTimes){
-      valid = false;
-    }
+    // if (!this.validAvailableTimes){
+    //   valid = false;
+    // }
 
     //validate team name is there
     if (!this.util.returnBoolByPath(this.returnedProfile, 'teamName')) {

@@ -51,6 +51,7 @@ const APP_ROUTES: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'rules', component: RulesComponent },
   { path: 'logout', component: LogoutComponent },
+  { path: 'faq', component: StaticHtmlLoaderComponent, data: { template: 'faq', headerText: 'Frequently Asked Questions' }},
   { path: 'login/:token', component: LoginComponent},
   { path: 'profile/:id', component: ProfileEditComponent},
   { path: 'teamProfile/:id', component: TeamProfileComponent},

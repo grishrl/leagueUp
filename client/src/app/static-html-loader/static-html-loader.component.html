@@ -1,19 +1,10 @@
 <!-- layout-->
 <div id="layout">
     <!-- Section Title -->
-    <div class="section-title" style="background:url(img/slide/1.jpg)">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-8">
-                    <h1>{{pageHeader}}</h1>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End Section Title -->
+    <app-banner-image [bannerTitle]="pageHeader"></app-banner-image>
 
     <!-- Section Area - Content Central -->
-    <div class="mb-5" [innerHTML]="loadedHTML"></div>
+    <div class="mb-5" [innerHTML]="loadedHTML | safeHtml"></div>
     <!-- End Section Area -  Content Central -->
 
 </div>

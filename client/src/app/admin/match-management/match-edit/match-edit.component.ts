@@ -25,7 +25,9 @@ export class MatchEditComponent implements OnInit {
       score: null
     },
     casterName: null,
-    casterUrl: null
+    casterUrl: null,
+    notes:'',
+    forfeit:false
   }; //match prototype
   homeScore: number;
   awayScore: number;
@@ -34,8 +36,8 @@ export class MatchEditComponent implements OnInit {
   friendlyDate;
   amPm = ['PM', 'AM'];
 
-  
-  constructor(private route: ActivatedRoute, private scheduleService: ScheduleService, private adminService: AdminService, private util:UtilitiesService) { 
+
+  constructor(private route: ActivatedRoute, private scheduleService: ScheduleService, private adminService: AdminService, private util:UtilitiesService) {
     if (this.route.snapshot.params['id']) {
       this.matchId = this.route.snapshot.params['id'];
     }
@@ -72,13 +74,13 @@ export class MatchEditComponent implements OnInit {
 
   saveMatch(match){
 
-    
+
     let submittable = true;
 
     if (this.homeScore != undefined && this.homeScore != null){
       match.home.score = this.homeScore;
     }
-    
+
     if (this.awayScore != undefined && this.awayScore != null) {
       match.away.score = this.awayScore;
     }
@@ -117,8 +119,8 @@ export class MatchEditComponent implements OnInit {
         }
       )
     }
-    
-    
+
+
   }
- 
+
 }

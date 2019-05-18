@@ -127,14 +127,14 @@
                                 </div>
                             </div>
                             <!-- report hero bans -->
-                            <div class="row m-t-10">
+                            <!-- <div class="row m-t-10">
                                 <div class="col">
                                     Home Hero Bans: <span *ngIf="game.value.homeBans.length == 3"><i class="material-icons text-success">done</i></span>
 
                                     <div class="row m-t-5" *ngIf="game.value.homeBans.length<3">
                                         <div class=" col ">
                                             <mat-select placeholder="Hero Banned " [(ngModel)]="game.value.tmp.leftSelect" (ngModelChange)="addBan(game.value.tmp.leftSelect, game.value.homeBans)">
-                                                <!-- heroes | keyvalue -->
+                                                
                                                 <mat-option *ngFor="let hero of returnFilteredHeroes(game)" [value]="hero ">{{hero}}</mat-option>
                                             </mat-select>
                                         </div>
@@ -146,7 +146,7 @@
 
                                 </div>
                                 <div class="col ">
-                                    <!-- space holder -->
+                                    
                                 </div>
                                 <div class="col ">
                                     Away Hero Bans: <span *ngIf="game.value.awayBans.length == 3"><i class="material-icons text-success">done</i></span>
@@ -154,7 +154,7 @@
                                     <div class="row m-t-5 " *ngIf="game.value.awayBans.length<3 ">
                                         <div class="col ">
                                             <mat-select placeholder="Hero Banned " [(ngModel)]="game.value.tmp.rightSelect" (ngModelChange)="addBan(game.value.tmp.rightSelect, game.value.awayBans)">
-                                                <!-- heroes | keyvalue -->
+                                                
                                                 <mat-option *ngFor="let hero of returnFilteredHeroes(game)  " [value]="hero ">{{hero}}</mat-option>
                                             </mat-select>
                                         </div>
@@ -165,7 +165,7 @@
                                     </div>
 
                                 </div>
-                            </div>
+                            </div> -->
                             <!-- report match winner -->
                             <div class="row m-t-20 ">
                                 <div class="col ">
