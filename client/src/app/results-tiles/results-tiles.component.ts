@@ -20,12 +20,11 @@ export class ResultsTilesComponent implements OnInit {
   ngOnInit() {
   }
 
-  provDiv
+  provMatches = [];
 
-  @Input() set division(div) {
-    if (div != undefined && div != null) {
-      this.provDiv = div;
-      this.calculateRounds(this.provDiv);
+  @Input() set matches(val) {
+    if (val != undefined && val != null) {
+      this.provMatches = val;
     }
   }
 
@@ -61,78 +60,77 @@ export class ResultsTilesComponent implements OnInit {
     return ret;
   }
 
-  matches: any[] = [];
   selectedDivision: any
   rounds: number[] = [];
 
-  calculateRounds(div) {
-    this.provDiv = this.provDiv ? this.provDiv : div;
-    let roundNumber = 0;
-    if (this.provDiv != undefined && this.provDiv != null && this.provDiv.teams != undefined && this.provDiv.teams != null) {
-      if (this.provDiv % 2 == 0) {
-        roundNumber = this.provDiv.teams.length - 1;
-      } else {
-        roundNumber = this.provDiv.teams.length;
-      }
+  // calculateRounds(div) {
+  //   this.provDiv = this.provDiv ? this.provDiv : div;
+  //   let roundNumber = 0;
+  //   if (this.provDiv != undefined && this.provDiv != null && this.provDiv.teams != undefined && this.provDiv.teams != null) {
+  //     if (this.provDiv % 2 == 0) {
+  //       roundNumber = this.provDiv.teams.length - 1;
+  //     } else {
+  //       roundNumber = this.provDiv.teams.length;
+  //     }
 
-    } else if (this.selectedDivision != null && this.selectedDivision != undefined && this.selectedDivision.teams != undefined && this.selectedDivision.teams != null) {
-      roundNumber = this.selectedDivision.teams.length - 1;
-    }
-    this.rounds = [];
-    this.matches = [];
-    if (roundNumber == 0) {
-      roundNumber = 1;
-    }
-    for (let i = 0; i < roundNumber; i++) {
-      this.rounds.push(i + 1);
-    }
-  }
+  //   } else if (this.selectedDivision != null && this.selectedDivision != undefined && this.selectedDivision.teams != undefined && this.selectedDivision.teams != null) {
+  //     roundNumber = this.selectedDivision.teams.length - 1;
+  //   }
+  //   this.rounds = [];
+  //   this.matches = [];
+  //   if (roundNumber == 0) {
+  //     roundNumber = 1;
+  //   }
+  //   for (let i = 0; i < roundNumber; i++) {
+  //     this.rounds.push(i + 1);
+  //   }
+  // }
 
-  selectedRound: number
-  getMatches() {
-    let div;
-    if (this.provDiv != undefined && this.provDiv != null) {
-      div = this.provDiv.divisionConcat;
-    } else {
-      div = this.selectedDivision.divisionConcat;
-    }
+  // selectedRound: number
+  // getMatches() {
+  //   let div;
+  //   if (this.provDiv != undefined && this.provDiv != null) {
+  //     div = this.provDiv.divisionConcat;
+  //   } else {
+  //     div = this.selectedDivision.divisionConcat;
+  //   }
 
-    let season = environment.season;
-    this.scheduleService.getScheduleMatches(season, div, this.selectedRound).subscribe(
-      res => {
-        this.matches = res;
-        this.matches = this.matches.filter( match=>{
-          return match.reported;
-        })
-        this.standingsService.getStandings(this.provDiv.divisionConcat).subscribe(
-          res => {
-            this.standings = res;
-            this.matches.forEach(match => {
-              this.standings.forEach(standing => {
-                if (match.home.teamName == standing.teamName) {
-                  match.home['losses'] = standing.losses;
-                  match.home['wins'] = standing.wins;
-                }
-                if (match.away.teamName == standing.teamName) {
-                  match.away['losses'] = standing.losses;
-                  match.away['wins'] = standing.wins;
-                }
-              });
-              if (match.scheduledTime) {
-                if (match.scheduledTime.startTime != null || match.scheduledTime.startTime != undefined) {
-                  match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
-                  match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
-                  match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
-                }
-              }
-            },
-              err => {
-                console.log(err);
-              }
-            )
-          });
-      },
-      err => { console.log(err) }
-    )
-  }
+  //   let season = environment.season;
+  //   this.scheduleService.getScheduleMatches(season, div, this.selectedRound).subscribe(
+  //     res => {
+  //       this.matches = res;
+  //       this.matches = this.matches.filter( match=>{
+  //         return match.reported;
+  //       })
+  //       this.standingsService.getStandings(this.provDiv.divisionConcat).subscribe(
+  //         res => {
+  //           this.standings = res;
+  //           this.matches.forEach(match => {
+  //             this.standings.forEach(standing => {
+  //               if (match.home.teamName == standing.teamName) {
+  //                 match.home['losses'] = standing.losses;
+  //                 match.home['wins'] = standing.wins;
+  //               }
+  //               if (match.away.teamName == standing.teamName) {
+  //                 match.away['losses'] = standing.losses;
+  //                 match.away['wins'] = standing.wins;
+  //               }
+  //             });
+  //             if (match.scheduledTime) {
+  //               if (match.scheduledTime.startTime != null || match.scheduledTime.startTime != undefined) {
+  //                 match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
+  //                 match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
+  //                 match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
+  //               }
+  //             }
+  //           },
+  //             err => {
+  //               console.log(err);
+  //             }
+  //           )
+  //         });
+  //     },
+  //     err => { console.log(err) }
+  //   )
+  // }
 }

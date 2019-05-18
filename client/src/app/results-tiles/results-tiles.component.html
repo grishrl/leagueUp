@@ -1,40 +1,38 @@
-<div class="row">
-    <div class="col">
-        <mat-form-field>
-            <mat-select placeholder="Round:" [(ngModel)]="selectedRound" (ngModelChange)="getMatches()" disableOptionCentering>
-                <mat-option *ngFor="let round of rounds; let i = index" [value]="round">{{round}}</mat-option>
-            </mat-select>
-        </mat-form-field>
-    </div>
-</div>
 <div class="recent-results results-page">
     <div class="info-results">
         <ul>
-            <li *ngFor="let match of matches">
+            <li *ngFor="let match of provMatches">
                 <span class="head">
-                 {{match.home.teamName}} Vs {{match.away.teamName}} <span *ngIf="match.scheduledTime && match.scheduledTime.startTime"
-                   class="date">{{util.getFormattedDate(match.scheduledTime.startTime, "ddd MMM YYYY")}}</span>
+          {{match.home.teamName}} Vs {{match.away.teamName}} <span
+            *ngIf="match.scheduledTime && match.scheduledTime.startTime"
+            class="date">{{util.getFormattedDate(match.scheduledTime.startTime, "ddd MMM YYYY")}}</span>
                 </span>
+
 
                 <div class="goals-result">
                     <span>
-                      <i *ngIf="dominator(match, 'home')" style="position: absolute;" class="fas fa-crown"></i>
+                    <i *ngIf="dominator(match, 'home')" style="position: absolute;" class="fas fa-crown"></i>
                     <!-- <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.away.teamName)]">{{match.away.teamName}}</a> -->
                     <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.home.teamName)]">
-                        <img src="{{team.imageFQDN(match.home.logo)}}" alt=""> {{match.home.ticker}}
+                                                <img src="{{team.imageFQDN(match.home.logo)}}" alt="">
+                                                {{match.home.ticker}}
+
                     </a>
-                    </span>
+                  </span>
+
                     <span class="goals">
-            <b>{{reportScore(match, 'home')}}</b> - <b>{{reportScore(match, 'away')}}</b>
+                      <b>{{reportScore(match, 'home')}}</b> - <b>{{reportScore(match, 'away')}}</b>
             <a href="single-result.html" class="btn theme">View More</a>
           </span>
                     <span>
-            <i *ngIf="dominator(match, 'away')" style="position: absolute;" class="fas fa-crown"></i>
-                                <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.away.teamName)]">
-                                  <img src="{{team.imageFQDN(match.away.logo)}}" alt=""> {{match.away.ticker}}
-                                </a>
-          </span>
+                      <i *ngIf="dominator(match, 'away')" style="position: absolute;" class="fas fa-crown"></i>
 
+                    <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.away.teamName)]">
+                                                         <img src="{{team.imageFQDN(match.away.logo)}}" alt="">
+                                                         {{match.away.ticker}}
+
+                    </a>
+                    </span>
                 </div>
             </li>
         </ul>

@@ -97,3 +97,5 @@ client/dist
 server/uuid.js
 matchBlank.JSON
 server/parser-test.js
+server/massMMRgetter.js
+server/massMMRgrab.json

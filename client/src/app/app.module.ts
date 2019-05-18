@@ -126,11 +126,11 @@ import { TeamStatsComponent } from './team/team-stats/team-stats.component';
 import { TeamHistoryComponent } from './team/team-history/team-history.component';
 import { TeamUpcomingMatchComponent } from './team/team-upcoming-match/team-upcoming-match.component';
 import { ScheduleTableRowComponent } from './schedule/schedule-table-row/schedule-table-row.component';
-import { DivisionResultsTilesComponent } from './division-results-tiles/division-results-tiles.component';
+import { DivisionResultsTilesComponent } from './division/division-results-tiles/division-results-tiles.component';
 import { DivisionUpcomingMatchesComponent } from './division/division-upcoming-matches/division-upcoming-matches.component';
 import { NgsAccordianComponent } from './elements/ngs-accordian/ngs-accordian.component';
 import { BannerImageComponent } from './banner-image/banner-image.component';
-import { BannerImagePlayerComponent } from './banner-image-player/banner-image-player.component';
+import { ResultsTilesComponent } from './results-tiles/results-tiles.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -252,7 +252,7 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     SafeHtmlPipe,
     NgsAccordianComponent,
     BannerImageComponent,
-    BannerImagePlayerComponent
+    ResultsTilesComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
