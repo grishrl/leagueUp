@@ -34,7 +34,10 @@ const teamSchema = new Schema({
     "replays": [String],
     "parseStats": Boolean,
     "ticker": String, //short aberviation of team name
-    "history": [Object]
+    "history": [Object],
+    "twitch": String,
+    "twitter": String,
+    "youtube": String
 });
 
 const Team = mongoose.model('team', teamSchema);

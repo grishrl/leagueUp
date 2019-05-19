@@ -134,6 +134,9 @@ import { ResultsTilesComponent } from './results-tiles/results-tiles.component';
 import { AvatarUploadComponent } from './player/avatar-upload/avatar-upload.component';
 import { ApprovePendingAvatarComponent } from './admin/approve-pending-avatar/approve-pending-avatar.component';
 import { ApproveAvatarViewComponent } from './admin/approve-pending-avatar/approve-avatar-view/approve-avatar-view.component';
+import { TwitchComponent } from './formComponents/twitch/twitch.component';
+import { TwitterComponent } from './formComponents/twitter/twitter.component';
+import { YoutubeComponent } from './formComponents/youtube/youtube.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -258,7 +261,10 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     ResultsTilesComponent,
     AvatarUploadComponent,
     ApprovePendingAvatarComponent,
-    ApproveAvatarViewComponent
+    ApproveAvatarViewComponent,
+    TwitchComponent,
+    TwitterComponent,
+    YoutubeComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

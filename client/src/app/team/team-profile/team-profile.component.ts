@@ -2,7 +2,6 @@ import { Component, OnInit, Input} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { DeleteConfrimModalComponent } from '../../modal/delete-confrim-modal/delete-confrim-modal.component'
 import { ChangeCaptainModalComponent } from '../../modal/change-captain-modal/change-captain-modal.component';
-import { TimezoneService } from '../../services/timezone.service';
 import { TeamService } from '../../services/team.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { merge } from 'lodash';
@@ -61,8 +60,8 @@ export class TeamProfileComponent implements OnInit {
   }
 
   //constructor
-  constructor(public auth: AuthService, public user: UserService, public timezone: TimezoneService, private team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router: Router,
-    private admin:AdminService, private util:UtilitiesService, private requestService:RequestService, public heroProfile: HotsProfileService, private divisionServ: DivisionService) {
+  constructor(public auth: AuthService, public user: UserService, private team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router: Router,
+    private admin:AdminService, public util:UtilitiesService, private requestService:RequestService, public heroProfile: HotsProfileService, private divisionServ: DivisionService) {
     this.teamName = team.realTeamName(this.route.snapshot.params['id']);
   }
 
@@ -554,78 +553,24 @@ export class TeamProfileComponent implements OnInit {
     }
   }
 
+  timezoneError;
+
   //method to validate the inputs we require.
   validate() {
 
-    /**
-     *  if there is a available times selected then timezone should be selected
-     *
-     *  otherwise is anything required to save? I don't think so
-     *
-     */
-
-     //
-
     let valid = true;
-    // if (!this.validAvailableTimes){
-    //   valid = false;
-    // }
 
-    //validate team name is there
-    if (!this.util.returnBoolByPath(this.returnedProfile, 'teamName')) {
-      this.nameControl.setErrors({ required: true });
-      valid = false;
-    } else {
-      let regEx = new RegExp(/[%_\/\\`#]/gm);
-      if (regEx.test(this.returnedProfile.teamName)) {
-        valid = false;
-        this.nameControl.setErrors({ invalidCharacters: true });
-      } else {
-        this.nameControl.setErrors(null);
-      }
-
-    }
     //ensure time zone
-    // if (this.validAvailDays>0 && this.isNullOrEmpty(this.returnedProfile.timeZone)) {
-    //   valid = false;
-    //   this.timezoneControl.setErrors({required:true});
-    // }else{
-    //   this.timezoneControl.setErrors(null);
-    // }
+    if (this.validAvailDays>0 && this.isNullOrEmpty(this.returnedProfile.timeZone)) {
+      valid = false;
+      this.timezoneError = {
+        error:true
+      }
+    }else{
+      this.timezoneError = {error:false};
+    }
     return valid;
   }
-
-  // stratifyTeamMembers(){
-  //   this.displayMembersLeft = [];
-  //   this.displayMembersRight = [];
-  //   if(this.returnedProfile.teamMembers.length>3){
-  //     let half = Math.round(this.returnedProfile.teamMembers.length / 2);
-  //     for(var i = 0; i < half; i++){
-  //       this.displayMembersLeft.push(this.returnedProfile.teamMembers[i]);
-  //     }
-
-  //     for (var j = half; j < this.returnedProfile.teamMembers.length; j++){
-  //       this.displayMembersRight.push(this.returnedProfile.teamMembers[j]);
-  //     }
-  //   }else{
-  //     this.displayMembersLeft = this.returnedProfile.teamMembers;
-  //     this.displayMembersRight = [];
-  //   }
-  //   //PENDING MEMBERS
-  //   if (this.returnedProfile.pendingMembers && this.returnedProfile.pendingMembers.length > 3) {
-  //     let half = Math.round(this.returnedProfile.pendingMembers.length / 2);
-  //     for (var i = 0; i < half; i++) {
-  //       this.displayPendingMembersLeft.push(this.returnedProfile.pendingMembers[i]);
-  //     }
-
-  //     for (var j = half; j < this.returnedProfile.pendingMembers.length; j++) {
-  //       this.displayPendingMembersRight.push(this.returnedProfile.pendingMembers[j]);
-  //     }
-  //   } else {
-  //     this.displayPendingMembersLeft = this.returnedProfile.pendingMembers;
-  //     this.displayPendingMembersRight = [];
-  //   }
-  // }
 
   //method to get team by provided string
   private getTeamByString(getProfile: string) {

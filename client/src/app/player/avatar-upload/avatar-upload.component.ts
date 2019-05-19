@@ -106,7 +106,6 @@ export class AvatarUploadComponent implements OnInit {
   }
 
   newImageResultFromCroppie(img: string) {
-    console.log('x')
     this.editedImage = img;
   }
 

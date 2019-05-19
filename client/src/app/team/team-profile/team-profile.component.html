@@ -32,23 +32,23 @@
                         </ul>
 
                         <ul class="social-teams">
-                            <li>
+                            <li *ngIf="returnedProfile.twitch">
                                 <div>
-                                    <a href="#" class="facebook">
-                                        <i class="fab fa-facebook"></i>
+                                    <a href="{{util.prePendHttp(returnedProfile.twitch)}}" target="_blank" class="facebook">
+                                        <i class="fab fa-twitch"></i>
                                     </a>
                                 </div>
                             </li>
-                            <li>
+                            <li *ngIf="returnedProfile.twitter">
                                 <div>
-                                    <a href="#" class="twitter-icon">
+                                    <a href="{{util.prePendHttp(returnedProfile.twitter)}}" target="_blank" class="twitter-icon">
                                         <i class="fab fa-twitter"></i>
                                     </a>
                                 </div>
                             </li>
                             <li>
-                                <div>
-                                    <a href="#" class="youtube">
+                                <div *ngIf="returnedProfile.youtube">
+                                    <a href="{{util.prePendHttp(returnedProfile.youtube)}}" target="_blank" class="youtube">
                                         <i class="fab fa-youtube"></i>
                                     </a>
                                 </div>
@@ -186,6 +186,28 @@
                                     </ng-template>
                                 </div>
 
+                                <div class="panel-box" *ngIf="!disabled">
+                                    <div class="titles">
+                                        <h4>Team Logo and Socials</h4>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <app-image-upload [showEdit]="true" [teamName]="returnedProfile.teamName" [teamLogo]="returnedProfile.logo"></app-image-upload>
+                                            <div class="mt-3">
+                                                <app-twitch [(twitch)]="returnedProfile.twitch"></app-twitch>
+                                            </div>
+                                            <div class="mt-3">
+                                                <app-twitter [(twitter)]="returnedProfile.twitter"></app-twitter>
+                                            </div>
+                                            <div class="mt-3">
+                                                <app-youtube [(youtube)]="returnedProfile.youtube"></app-youtube>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
                                 <div class="panel-box padding-b">
                                     <div class="titles">
                                         <h4>Team Info</h4>
@@ -213,27 +235,26 @@
                                                 </div>
                                             </div>
                                             <!-- looking for group -->
-                                            <div class="row mt-5" *ngIf="returnedProfile.lookingForMore">
+                                            <div class="row mt-5">
                                                 <div class="col">
                                                     <mat-slide-toggle disabled="{{disabled}}" [(ngModel)]="returnedProfile.lookingForMore">
-                                                        Looking for team.
+                                                        Looking for More.
                                                     </mat-slide-toggle>
                                                 </div>
                                             </div>
                                             <!-- times -->
                                             <div class="row mt-5">
                                                 <div class="col">
-                                                    <h6>Player Availability and Time Zone:</h6>
+                                                    <h6>Team Availability and Time Zone:</h6>
                                                     <!-- !disabled && !returnedProfile.availability.monday.available || disabled &&  -->
-                                                    <app-times-available [customText]="''" [availObj]="returnedProfile.availability" (availValid)="recieveAvailTimeValidity($event)" [disabled]="disabled">
+                                                    <app-times-available [customText]="''" [availObj]="returnedProfile.availability" (availValid)="receiveValidTimes($event)" [disabled]="disabled">
                                                     </app-times-available>
                                                 </div>
                                             </div>
                                             <!-- timezone -->
                                             <div class="row mt-3">
                                                 <div class="col">
-                                                    <app-timezone [(timezone)]="returnedProfile.timeZone" [disabled]="disabled">
-                                                    </app-timezone>
+                                                    <app-timezone [(timezone)]="returnedProfile.timeZone" [disabled]="disabled" [(error)]="timezoneError"></app-timezone>
                                                 </div>
                                             </div>
                                         </div>

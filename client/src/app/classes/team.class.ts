@@ -19,6 +19,9 @@ export class Team {
   pendingMembers: [{displayName:string}];
   questionnaire:object;
   ticker: string;
+  twitch:string;
+  twitter:string;
+  youtube:string;
 
 
 
@@ -142,6 +145,9 @@ export class Team {
     }
     this.ticker=null;
     this.history=[];
+    this.twitch = null;
+    this.twitter = null;
+    this.youtube = null;
   }
 }
 

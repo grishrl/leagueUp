@@ -35,6 +35,23 @@ export class TextInputComponent implements OnInit {
     this.messageChange.emit(this.messageValue);
   }
 
+  updateValue(){
+    this.messageChange.emit(this.messageValue);
+  }
+
+  getDisplay(val){
+    let ret;
+    this.competitonLevel.forEach(iter=>{
+      if(iter.val == val){
+        ret = iter.display;
+      }
+    });
+    if(!ret){
+      ret = 'Error in compettive level method';
+    }
+    return ret;
+  }
+
   constructor() { }
 
   ngOnInit() {

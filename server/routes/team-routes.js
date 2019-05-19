@@ -421,6 +421,16 @@ router.post('/save', passport.authenticate('jwt', {
                 foundTeam.rolesNeeded = payload.rolesNeeded;
             }
 
+            if (util.returnBoolByPath(payload, 'twitch')) {
+                foundTeam.twitch = payload.twitch;
+            }
+            if (util.returnBoolByPath(payload, 'twitter')) {
+                foundTeam.twitter = payload.twitter;
+            }
+            if (util.returnBoolByPath(payload, 'youtube')) {
+                foundTeam.youtube = payload.youtube;
+            }
+
             if (util.returnBoolByPath(payload, 'timeZone')) {
                 foundTeam.timeZone = payload.timeZone;
             }

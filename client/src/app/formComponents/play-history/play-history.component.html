@@ -3,7 +3,7 @@
         <span class="h6">Heroes of the Storm play and competitive history update</span>
         <mat-form-field class="play-history">
             <mat-label>Describe your play history / style</mat-label>
-            <textarea class="min-text-area" matInput cdkTextareaAutosize disabled="{{edit}}" [(ngModel)]="descriptionValue"></textarea>
+            <textarea class="min-text-area" matInput cdkTextareaAutosize disabled="{{edit}}" [(ngModel)]="descriptionValue" (ngModelChange)="updateModel($event)"></textarea>
         </mat-form-field>
     </div>
 </div>

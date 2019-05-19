@@ -36,6 +36,10 @@ export class PlayHistoryComponent implements OnInit {
     this.descriptionChange.emit(this.descriptionValue);
   }
 
+  updateModel(val){
+    this.descriptionChange.emit(this.descriptionValue);
+  }
+
   ngOnInit() {
   }
 

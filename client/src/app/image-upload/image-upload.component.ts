@@ -39,7 +39,8 @@ export class ImageUploadComponent implements OnInit {
   }
 
   @Input() set teamLogo(img){
-    if (img != null && img != undefined && img.length) {      
+    console.log('passed img ', img);
+    if (img != null && img != undefined && img.length) {
       this.currentImage = this.teamService.imageFQDN(encodeURIComponent(img));
     } else {
       this.currentImage = null;
@@ -48,11 +49,12 @@ export class ImageUploadComponent implements OnInit {
 
   editClicked:boolean=true;
 
-  widthPx = '350';
-  heightPx = '230';
+  widthPx = '500';
+  heightPx = '350';
   imageUrl = '';
   currentImage: string;
   croppieImage: string;
+  editedImage:string;
 
   constructor(private teamService:TeamService, private util:UtilitiesService, private admin:AdminService){
 
@@ -66,13 +68,13 @@ export class ImageUploadComponent implements OnInit {
       err=>{
         console.log(err);
       }
-      
-      
+
     )
   }
 
   public get imageToDisplay() {
     let imgRet;
+    console.log('this.currentImage ',this.currentImage)
     if (this.currentImage) { imgRet = this.currentImage; }
     else if (this.imageUrl) { imgRet = this.imageUrl; }else{
       imgRet = `https://placehold.it/${this.widthPx}x${this.heightPx}`;
@@ -94,13 +96,13 @@ export class ImageUploadComponent implements OnInit {
     return opts;
   }
 
-  public get croppieImageG():string{
-    return this.croppieImage;
-  }
+  // public get croppieImageG():string{
+  //   return this.croppieImage;
+  // }
 
   ngOnInit() {
-    this.currentImage = this.imageUrl;
-    this.croppieImage = this.imageUrl;
+    // this.currentImage = this.imageUrl;
+    // this.croppieImage = this.imageUrl;
   }
 
   ngOnChanges(changes: any) {
@@ -112,19 +114,19 @@ export class ImageUploadComponent implements OnInit {
   }
 
   newImageResultFromCroppie(img: string) {
-    this.croppieImage = img;
+    this.editedImage = img;
   }
 
   saveImageFromCroppie() {
-    
+
     let input = {
-      logo: this.croppieImage,
+      logo: this.editedImage,
       teamName: this._teamName
     }
 
     if(this._embedded){
       this.admin.teamLogoUpload(input).subscribe(res=>{
-        this.currentImage = this.croppieImage;
+        this.currentImage = this.editedImage;
         this.croppieImage = null;
         this.editClicked = true;
       },
@@ -133,7 +135,7 @@ export class ImageUploadComponent implements OnInit {
       })
     }else{
       this.teamService.logoUpload(input).subscribe(res => {
-        this.currentImage = this.croppieImage;
+        this.currentImage = this.editedImage;
         this.croppieImage = null;
         this.editClicked = true;
       }, (err) => {
@@ -141,11 +143,12 @@ export class ImageUploadComponent implements OnInit {
       });
     }
 
-   
+
   }
 
   cancelCroppieEdit() {
     this.croppieImage = null;
+    this.editedImage = null;
     this.editClicked = true;
   }
 

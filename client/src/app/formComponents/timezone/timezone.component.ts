@@ -18,14 +18,17 @@ export class TimezoneComponent implements OnInit {
   }
 
 
-  timezoneValue: string;
-
   timezoneControl = new FormControl({ value: '', disabled: true }, [
     // Validators.required
   ]);
 
+  timezoneValue: string;
+
+  // @Input() timezone;
+  // @Output() timezoneChange = new EventEmitter
+
   @Output()
-  timezoneValueChange = new EventEmitter();
+  timezoneChange = new EventEmitter();
 
   @Input()
   get timezone() {
@@ -34,10 +37,31 @@ export class TimezoneComponent implements OnInit {
 
   set timezone(val) {
     this.timezoneValue = val;
-    this.timezoneValueChange.emit(this.timezoneValue);
+    this.timezoneChange.emit(this.timezoneValue);
+  }
+
+  errorValue
+  @Input()
+  get error() {
+    return this.errorValue;
+  }
+
+  @Output()
+  errorValueChange = new EventEmitter();
+
+  set error(val) {
+    if(val && val.hasOwnProperty('error') && val.error){
+      this.timezoneControl.setErrors({ required: true });
+
+    }else{
+      this.timezoneControl.setErrors(null);
+    }
+    this.errorValue = val;
+    this.errorValueChange.emit(this.errorValue);
   }
 
   ngOnInit() {
+    this.timezoneControl.markAsTouched();
   }
 
   ngOnChanges(change) {
@@ -50,6 +74,7 @@ export class TimezoneComponent implements OnInit {
 
   timezoneUpdate() {
     if (this.timezoneValue != null || this.timezoneValue != undefined) {
+      this.timezoneChange.emit(this.timezoneValue);
       this.timezoneControl.setErrors(null);
     }
   }
