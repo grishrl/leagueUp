@@ -5,6 +5,8 @@ const TeamSub = require('../subroutines/team-subs');
 const System = require('../models/system-models').system;
 const passport = require("passport");
 const Stats = require('../models/stats-model');
+const Avatar = require('../methods/avatarUpload');
+const PendingAvatarQueue = require('../models/admin-models').PendingAvatarQueue;
 
 /*
 /get
@@ -200,6 +202,49 @@ router.get('/statistics', (req, res) => {
             res.status(400).send(util.returnMessaging(path, 'Error finding user.', err, null, null));
         }
     )
+
+
+});
+
+//post
+// path: /user/upload/avatar
+// requires displayname, and base64 encoded image
+// returns http success or error; json object of updated team if save was successful.
+router.post('/upload/avatar', passport.authenticate('jwt', {
+    session: false
+}), (req, res) => {
+
+    const path = '/user/upload/avatar';
+    let uploadedFileName = "";
+
+    let displayName = req.body.displayName;
+    let dataURI = req.body.logo;
+
+    //construct log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = 'upload team logo ';
+    logObj.target = displayName;
+    logObj.logLevel = 'STD';
+
+    Avatar.uploadAvatar(path, dataURI, displayName).then(rep => {
+            new PendingAvatarQueue({
+                displayName: displayName,
+                fileName: rep.fileName,
+                timestamp: Date.now()
+            }).save().then(
+                saved => {
+                    res.status(200).send(util.returnMessaging(path, "Image Sent to Pending Queue.", false, rep.eo, saved, logObj))
+                },
+                err => {
+                    res.status(200).send(util.returnMessaging(path, "Error Image not Sent to Pending Queue.", err, false, false, logObj))
+                }
+            )
+
+        },
+        err => {
+            res.status(500).send(util.returnMessaging(path, err.message, err, null, null, logObj))
+        });
 
 
 });

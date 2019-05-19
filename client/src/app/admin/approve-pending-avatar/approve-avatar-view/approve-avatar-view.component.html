@@ -1,0 +1,15 @@
+<div class="row row-style">
+    <div class="col">
+        {{queueItem.displayName}}
+    </div>
+    <div class="col">
+        <img class="img-fluid" src="{{User.avatarFQDN(queueItem.fileName)}}">
+    </div>
+    <div class="col">
+        <div class="text-center">
+            <button class="btn btn-success" (click)="actionAvatar(true)">Approve</button>
+            <button class="btn btn-danger ml-1" (click)="actionAvatar(false)">Deny</button>
+        </div>
+
+    </div>
+</div>

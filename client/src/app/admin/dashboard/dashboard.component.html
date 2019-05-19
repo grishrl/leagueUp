@@ -16,18 +16,25 @@
                             <span>Approve Pending Team Adds</span></a>
                     </div>
                     <div class="col-4 text-center">
+                        <a [routerLink]="['/_admin/approveAvatarQueue']">
+                            <div><i class="fas fa-images fa-9x"></i></div>
+                            <span>Appove Pending Avatars</span>
+                        </a>
+                    </div>
+                    <div class="col-4 text-center">
                         <a [routerLink]="['/_admin/deleteUser']">
                             <div><i class="fas fa-9x fa-users-cog"></i></div>
                             <span>User Management</span></a>
                     </div>
-                    <div class="col-4 text-center">
-                        <a [routerLink]="['/_admin/divisionMgmt']">
-                            <div><i class="fas fa-9x fa-divide"></i></div>
-                            <span>Division Management</span></a>
-                    </div>
                 </div>
 
                 <div class="row mt-4">
+                    <div class="col-4 text-center">
+                        <a [routerLink]="['/_admin/divisionMgmt']">
+                            <div><i class="fas fa-9x fa-divide"></i></div>
+                            <span>Division Management</span>
+                        </a>
+                    </div>
                     <div class="col-4 text-center">
                         <a [routerLink]="['/_admin/manageTeam']">
                             <div>
@@ -41,29 +48,6 @@
                                 <i class="fas fa-9x fa-crosshairs"></i>
                             </div>
                             <span>Match Management</span></a>
-                    </div>
-                    <div class="col-4 text-center">
-
-                        <div class="row">
-                            <div class="col">
-                                <div>
-                                    <a [routerLink]="['/_admin/scheduleGenerator']">
-                                        <div class="fa-satck fa-4x">
-                                            <i class="fas fa-stack-2x fa-calendar"></i>
-                                            <i style="padding-top: 25px; color:black;" class="fas fa-stack-1x fa-cogs"></i>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div style="margin-top: 120px;" class="row">
-                            <div class="col">
-                                <a [routerLink]="['/_admin/scheduleGenerator']">
-                                  Generate Season Schedules
-                                </a>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
 
@@ -98,6 +82,29 @@
                     </div>
                 </div>
                 <div class="row mt-4">
+                    <div class="col-4 text-center">
+
+                        <div class="row">
+                            <div class="col">
+                                <div>
+                                    <a [routerLink]="['/_admin/scheduleGenerator']">
+                                        <div class="fa-satck fa-4x">
+                                            <i class="fas fa-stack-2x fa-calendar"></i>
+                                            <i style="padding-top: 25px; color:black;" class="fas fa-stack-1x fa-cogs"></i>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 120px;" class="row">
+                            <div class="col">
+                                <a [routerLink]="['/_admin/scheduleGenerator']">
+                                              Generate Season Schedules
+                                            </a>
+                            </div>
+                        </div>
+
+                    </div>
                     <div class="col-4 text-center">
                         <a [routerLink]="['/_admin/userACLMgmt']">
                             <div>

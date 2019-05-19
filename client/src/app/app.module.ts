@@ -131,6 +131,9 @@ import { DivisionUpcomingMatchesComponent } from './division/division-upcoming-m
 import { NgsAccordianComponent } from './elements/ngs-accordian/ngs-accordian.component';
 import { BannerImageComponent } from './banner-image/banner-image.component';
 import { ResultsTilesComponent } from './results-tiles/results-tiles.component';
+import { AvatarUploadComponent } from './player/avatar-upload/avatar-upload.component';
+import { ApprovePendingAvatarComponent } from './admin/approve-pending-avatar/approve-pending-avatar.component';
+import { ApproveAvatarViewComponent } from './admin/approve-pending-avatar/approve-avatar-view/approve-avatar-view.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -252,7 +255,10 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     SafeHtmlPipe,
     NgsAccordianComponent,
     BannerImageComponent,
-    ResultsTilesComponent
+    ResultsTilesComponent,
+    AvatarUploadComponent,
+    ApprovePendingAvatarComponent,
+    ApproveAvatarViewComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

@@ -14,7 +14,7 @@
 
                     <div class="item-player single-player">
                         <div class="head-player">
-                            <!-- <img src="asset/img/players/7.jpg" alt="location-team"> -->
+                            <img src="{{user.avatarFQDN(returnedProfile.avatar)}}" alt="player-avatar">
                             <div style="height: 200px"></div>
                         </div>
                         <div class="info-player">
@@ -133,6 +133,19 @@
                                             <button type="button" (click)="cancel()" class="mt-1 btn btn-danger"><span class="icon-align"><i
                             class="material-icons">close</i>Cancel</span></button>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- avatar -->
+                            <div *ngIf="!disabled" class="panel-box padding-b">
+                                <div class="titles">
+                                    <h4>Avatar Update</h4>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <h4>NOTE: These avatars must be approved by admin before taking affect</h4>
+                                        <app-avatar-upload [playerName]="returnedProfile.displayName" [showEdit]="disabled" [avatarImage]="returnedProfile.avatar"></app-avatar-upload>
                                     </div>
                                 </div>
                             </div>

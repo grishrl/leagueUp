@@ -133,6 +133,7 @@ router.post('/upsertDivision', passport.authenticate('jwt', {
 
     Division.findOne({ divisionConcat: name }).then((found) => {
         if (found) {
+            let divisionPriorState = found.toObject();
             //check one more time to ensure we dont need to run sub routines:
             if (found.displayName != division.displayName || found.divisionConcat != division.concat) {
                 runSubs = true;
@@ -143,7 +144,7 @@ router.post('/upsertDivision', passport.authenticate('jwt', {
             });
             found.save().then(
                 (saved) => {
-                    if (saved.public) {
+                    if (saved.public && divisionPriorState.public != saved.public) {
                         TeamSubs.updateTeamDivHistory(saved.teams, saved.displayName);
                     }
                     res.status(200).send(util.returnMessaging(path, 'Division updated', false, saved, null, logObj));

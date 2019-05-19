@@ -1,0 +1,21 @@
+<div class="container pt-4 forceFull">
+    <div class="row">
+        <div class="col">
+            <a [routerLink]="['/_admin/dashboard']">Back to Dashboard</a>
+        </div>
+    </div>
+    <div class="row header-style">
+        <div class="col">
+            Player
+        </div>
+        <div class="col">
+            Image
+        </div>
+        <div class="col text-center">
+            Actions
+        </div>
+    </div>
+    <div *ngFor="let queueItem of queue">
+        <app-approve-avatar-view [info]="queueItem" (avatarActioned)="updateView($event)"></app-approve-avatar-view>
+    </div>
+</div>

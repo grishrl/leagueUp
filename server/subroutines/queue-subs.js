@@ -24,6 +24,29 @@ function cleanUpPendingQueue(item) {
     })
 }
 
+//method to remove pending queue items via its object ID
+function cleanUpAvatarPendingQueue(displayName, fileName) {
+    //log object
+    let logObj = {};
+    logObj.actor = 'SYSTEM SUBROUTINE cleanUpPendingQueue';
+    logObj.action = ' remove pending avatar queue item ';
+    logObj.logLevel = 'STD';
+    logObj.timeStamp = new Date().getTime();
+    Admin.PendingAvatarQueue.findOneAndDelete({
+        $and: [
+            { displayName: displayName },
+            { fileName: fileName }
+        ]
+    }).then((deleted) => {
+        logObj.target = deleted;
+        logger(logObj);
+    }, (err) => {
+        logObj.logLevel = 'ERROR';
+        logObj.error = err;
+        logger(logObj)
+    })
+}
+
 //removes a pending memeber queue item of given team and username
 //teamname:string display name of team, username: string battle tag of the user
 function cleanUpPendingQueueTeamnameUsername(teamname, username) {
@@ -155,5 +178,6 @@ module.exports = {
     removePendingByTeamAndUser: cleanUpPendingQueueTeamnameUsername,
     addToPendingTeamMemberQueue: addToPendingTeamMemberQueue,
     removePendingQueueByUsername: removePendingQueueByUsername,
-    updatePendingMembersTeamNameChange: updatePendingMembersTeamNameChange
+    updatePendingMembersTeamNameChange: updatePendingMembersTeamNameChange,
+    removePendingAvatarQueue: cleanUpAvatarPendingQueue
 }

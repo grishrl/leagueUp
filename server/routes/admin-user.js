@@ -7,6 +7,9 @@ const TeamSub = require('../subroutines/team-subs');
 const util = require('../utils');
 const router = require('express').Router();
 const request = require('request');
+const Avatar = require('../methods/avatarUpload');
+const messageSub = require('../subroutines/message-subs');
+const QueueSubs = require('../subroutines/queue-subs');
 
 router.post('/delete/user', passport.authenticate('jwt', {
     session: false
@@ -295,6 +298,93 @@ router.post('/user/upsertRoles', passport.authenticate('jwt', {
     }, (err) => {
         res.status(500).send(util.returnMessaging(path, 'Error finding admin', err, null, null, logObj));
     })
+});
+
+//admin/approveAvatar
+//approves a pending team member queue, removes the item from the queue and adds the member to the team
+//updates the members profile to now be part of the team
+router.post('/approveAvatar', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.userLevel, util.appendResHeader, (req, res) => {
+    const path = '/admin/approveAvatar';
+    var displayName = req.body.displayName;
+    var fileName = req.body.fileName;
+    var approved = req.body.approved;
+
+    //log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = 'pending avatar approval';
+    logObj.target = displayName + ' : ' + fileName + ' - ' + approved;
+    logObj.logLevel = 'ADMIN';
+
+    let msg = {};
+    msg.sender = req.user._id;
+    msg.subject = 'Profile Avatar Approval';
+    msg.timeStamp = new Date().getTime()
+    if (approved) {
+        msg.content = 'Your avatar has been approved!';
+    } else {
+        msg.content = 'Your avatar has been denied!';
+    }
+
+    msg.notSeen = true;
+
+    if (approved) {
+
+    }
+    //find team matching the team in question
+    User.findOne({
+        displayName: displayName
+    }).then((foundUser) => {
+        //we found the team
+        if (foundUser) {
+            msg.recipient = foundUser._id;
+            let oldAvatar;
+            if (foundUser.avatar) {
+                oldAvatar = foundUser.avatar;
+            }
+            //approved image
+            if (approved) {
+                foundUser.avatar = fileName;
+                //if the image was approved delete the old profile; if it wasn't the pending or default image
+                if (oldAvatar && oldAvatar != 'pendingAvatar.png' && oldAvatar != 'defaultAvatar.png') {
+                    Avatar.deleteFile(oldAvatar);
+                }
+            } else {
+                //not approved image
+                //set image back to what it was; or default it wasnt something before
+                if (oldAvatar && oldAvatar != 'pendingAvatar.png') {
+                    foundUser.avatar = foundUser.avatar;
+                } else {
+                    foundUser.avatar = 'defaultAvatar.png';
+                }
+                //delete the uploaded file
+                Avatar.deleteFile(fileName);
+            }
+
+            foundUser.save().then(
+                savedUser => {
+                    if (savedUser) {
+                        messageSub(msg);
+                        QueueSubs.removePendingAvatarQueue(displayName, fileName);
+                        res.status(200).send(util.returnMessaging(path, 'User updated', null, null, savedUser, logObj));
+                    }
+                },
+                err => {
+                    res.status(500).send(util.returnMessaging(path, 'User not updated', err, null, null, logObj))
+                }
+            )
+
+        } else {
+            logObj.logLevel = 'ERROR';
+            logObj.error = 'User was not found';
+            res.status(500).send(util.returnMessaging(path, 'User not found', null, null, null, logObj))
+        }
+    }, (err) => {
+        res.status(500).send(util.returnMessaging(path, 'Error finding user', err, null, null, logObj));
+    })
+
 });
 
 module.exports = router;

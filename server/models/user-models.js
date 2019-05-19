@@ -34,7 +34,8 @@ const userSchema = new Schema({
     "parseStats": Boolean,
     "smurfAccount": Boolean,
     "seasonsPlayed": Number,
-    "history": [Object] //history of player in NGS
+    "history": [Object], //history of player in NGS
+    "avatar": String
 });
 
 

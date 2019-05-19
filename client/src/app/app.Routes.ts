@@ -44,6 +44,7 @@ import { TeamScheduleComboComponent } from "./schedule/team-schedule-combo/team-
 import { EventCreateComponent } from './admin/events/event-create/event-create.component';
 import { EventListComponent } from './admin/events/event-list/event-list.component';
 import { StaticHtmlLoaderComponent } from './static-html-loader/static-html-loader.component';
+import { ApprovePendingAvatarComponent } from "./admin/approve-pending-avatar/approve-pending-avatar.component";
 
 const APP_ROUTES: Routes = [
   { path: 'directory', component: DirectoryComponent},
@@ -61,6 +62,7 @@ const APP_ROUTES: Routes = [
   { path: 'blog', component:BlogListComponent },
   { path: 'blog/:id', component:BlogViewComponent },
   { path: '_admin/approveTeamQueue', component:ApproveMemberComponent, canActivate:[AuthGuardService], data:{role:'team'} },
+  { path: '_admin/approveAvatarQueue', component: ApprovePendingAvatarComponent, canActivate: [AuthGuardService], data: { role: 'user' } },
   { path: '_admin/deleteUser', component: DeleteMemberComponent, canActivate: [AuthGuardService], data: { role: 'user' } },
   { path: '_admin/manageTeam', component: ManageSelectTeamComponent, canActivate: [AuthGuardService], data: { role: 'team' } },
   { path: '_admin/manageTeam/:id', component: ManageTeamViewComponent, canActivate: [AuthGuardService], data: { role: 'team' } },

@@ -30,6 +30,21 @@ router.get('/pendingMemberQueue', passport.authenticate('jwt', {
     })
 });
 
+router.get('/pendingAvatarQueue', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.userLevel, util.appendResHeader, (req, res) => {
+    const path = '/admin/pendingAvatarQueue';
+    const query = Admin.PendingAvatarQueue.find();
+    query.sort('-timestamp');
+    query.limit(20);
+    query.exec().then((reply) => {
+
+        res.status(200).send(util.returnMessaging(path, 'Found queues', false, reply));
+    }, (err) => {
+        res.status(500).send(util.returnMessaging(path, 'Couldn\'t get the queues', err));
+    })
+});
+
 //removes the supplied member from the supplied team
 router.post('/team/removeMember', passport.authenticate('jwt', {
     session: false
@@ -152,7 +167,6 @@ router.post('/reassignCaptain', passport.authenticate('jwt', {
         res.status(500).send(util.returnMessaging(path, 'Error finding team!', err, null, null, logObj));
     })
 });
-
 
 //approves a pending team member queue, removes the item from the queue and adds the member to the team
 //updates the members profile to now be part of the team

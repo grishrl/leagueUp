@@ -4,6 +4,7 @@ import { map, tap } from 'rxjs/operators';
 import { Profile } from  '../classes/profile.class';
 import { Observable } from 'rxjs';
 import { HttpServiceService } from './http-service.service';
+import { environment } from '../../environments/environment'
 
 
 
@@ -134,6 +135,25 @@ export class UserService {
     }else{
       return '';
     }
+  }
+
+  //retuns a formatted string that includes the requisite info to retrieve an image from s3 bucket
+  avatarFQDN(img) {
+    let imgFQDN = 'https://s3.amazonaws.com/' + environment.s3bucketGeneralImage + '/player-avatar/'
+    if (img) {
+      img = encodeURIComponent(img);
+      imgFQDN +=  img;
+    } else {
+      imgFQDN += 'defaultAvatar.png';
+    }
+
+    return imgFQDN;
+  }
+
+  //uploads team logo
+  avatarUpload(imgInput) {
+    let url = 'user/upload/avatar';
+    return this.httpService.httpPost(url, imgInput, true);
   }
 
   getStatistics(username){

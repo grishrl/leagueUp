@@ -1,7 +1,7 @@
-<div class="item-player">
+<div class="item-player" *ngIf="player.displayName else error">
     <div class="head-player">
-        <img src="img/players/1.jpg" alt="location-team">
-        <div class="overlay"><a href="single-player.html">+</a></div>
+        <img src="{{user.avatarFQDN(player.avatar)}}" alt="player-avatar">
+        <div class="overlay"><a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]">+</a></div>
     </div>
     <div class="info-player">
         <span class="number-player">
@@ -18,3 +18,12 @@
     </div>
     <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]" class="btn">View Player <i class="fa fa-angle-right" aria-hidden="true"></i></a>
 </div>
+
+<ng-template #error>
+    <div class="item-player text-center" style="height: 389px; margin-bottom: 50px;">
+        <div style="margin-top: 50%;">
+            <h4>Sorry we couldn't find this user!</h4>
+        </div>
+
+    </div>
+</ng-template>

@@ -21,10 +21,18 @@ const pendingMembersSchema = new Schema({
     "timestamp": Date
 });
 
+const pendingAvatarSchema = new Schema({
+    'displayName': String,
+    'fileName': String,
+    'timestamp': Date
+});
+
 const Admin = mongoose.model('admin', adminSchema);
 const PendingQueue = mongoose.model('pendingQueue', pendingMembersSchema);
+const PendingAvatarQueue = mongoose.model('pendingAvatarQueue', pendingAvatarSchema);
 
 module.exports = {
     AdminLevel: Admin,
-    PendingQueue: PendingQueue
+    PendingQueue: PendingQueue,
+    PendingAvatarQueue: PendingAvatarQueue
 };

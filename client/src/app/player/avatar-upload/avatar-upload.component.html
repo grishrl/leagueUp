@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col">
-        Current Image:
+        Avatar Image
     </div>
 </div>
 <div class="row">
@@ -19,13 +19,13 @@
             <div class="col">
                 <div class="row">
                     <div class="col" [hidden]="!_showEdit">
-                        Upload New Team Logo:
+                        Upload New Avatar:
                     </div>
                 </div>
                 <div class="row">
                     <div class="col" [hidden]="!_showEdit">
                         <div>
-                            <ngx-croppie *ngIf="croppieImage" #ngxCroppie [croppieOptions]="croppieOptions" [imageUrl]="croppieImageG" (result)="newImageResultFromCroppie($event)"></ngx-croppie>
+                            <ngx-croppie *ngIf="croppieImage" #ngxCroppie [croppieOptions]="croppieOptions" [imageUrl]="croppieImage" [points]="[0,0,100,100]" (result)="newImageResultFromCroppie($event)"></ngx-croppie>
                         </div>
                         <div>
                             <input type="file" id="fileupload" #imageUpload (change)="imageUploadEvent($event)" accept="image/gif, image/jpeg, image/png" />

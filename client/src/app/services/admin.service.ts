@@ -27,7 +27,7 @@ export class AdminService {
     }else{
       imgInput = img;
     }
-    return this.httpService.httpPost(url, imgInput, true);  
+    return this.httpService.httpPost(url, imgInput, true);
   }
 
   teamRemoveLogo(team){
@@ -37,7 +37,7 @@ export class AdminService {
     };
     return this.httpService.httpPost(url, payload, true);
   }
-  
+
 
   //returns a list of all teams
   getTeams(){
@@ -172,6 +172,17 @@ export class AdminService {
       teamName:teamName,
       member:memberName,
       approved:action
+    }
+    return this.httpService.httpPost(url, payload, true);
+  }
+
+  //returns to the pending member queue the admins approval or declining of a team member add
+  avatarQueuePost(displayName: string, fileName: string, action: boolean) {
+    let url = 'admin/approveAvatar';
+    let payload = {
+      displayName: displayName,
+      fileName: fileName,
+      approved: action
     }
     return this.httpService.httpPost(url, payload, true);
   }
