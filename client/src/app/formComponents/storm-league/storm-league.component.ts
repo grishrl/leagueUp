@@ -66,6 +66,15 @@ export class StormLeagueComponent implements OnInit {
     }
   }
 
+  ngOnChanges(change) {
+
+    if (change.disabled && change.disabled.currentValue == false) {
+      this.heroeLeagueDivisionControl.enable();
+      this.heroeLeagueRankControl.enable();
+    }
+
+  }
+
   heroeLeagueDivisionControl = new FormControl({ value: '', disabled: true }, [
     // Validators.required
   ]);

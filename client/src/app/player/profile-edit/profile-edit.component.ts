@@ -162,25 +162,25 @@ export class ProfileEditComponent implements OnInit {
   }
 
 
-  //this has to be fired to kick of error checking inside form boxes
-  markFormGroupTouched(formGroup: FormGroup) {
-  if (formGroup.controls) {
-    const keys = Object.keys(formGroup.controls);
-    for (let i = 0; i < keys.length; i++) {
-      const control = formGroup.controls[keys[i]];
-      if (control instanceof FormControl) {
-        control.markAsTouched();
-      } else if (control instanceof FormGroup) {
-        this.markFormGroupTouched(control);
-      }
-    }
-  }
-}
+//   //this has to be fired to kick of error checking inside form boxes
+//   markFormGroupTouched(formGroup: FormGroup) {
+//   if (formGroup.controls) {
+//     const keys = Object.keys(formGroup.controls);
+//     for (let i = 0; i < keys.length; i++) {
+//       const control = formGroup.controls[keys[i]];
+//       if (control instanceof FormControl) {
+//         control.markAsTouched();
+//       } else if (control instanceof FormGroup) {
+//         this.markFormGroupTouched(control);
+//       }
+//     }
+//   }
+// }
 
 //enable editing for profile, create a copy of current data
    openEdit(){
      this.disabled=false;
-     this.markFormGroupTouched(this.profileForm);
+    //  this.markFormGroupTouched(this.profileForm);
      this.tempProfile = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
      merge(this.tempProfile, this.returnedProfile);
    }
@@ -241,10 +241,10 @@ export class ProfileEditComponent implements OnInit {
 
   //method for receiving times-availability object back from the avail-component; checks to make sure it retuns times meeting criteria
   validAvailTimes:boolean=false;
-  vaildAvailDays:number=0;
+  validAvailDays:number=0;
   recieveAvailTimeValidity(event){
     this.validAvailTimes = event.valid;
-    this.vaildAvailDays = event.numdays
+    this.validAvailDays = event.numdays
     if(event.valid){
       this.timesAvailControl.setErrors(null);
     }else{
@@ -257,22 +257,31 @@ export class ProfileEditComponent implements OnInit {
     }
   }
 
+  timezoneError;
+  discordTagError;
   //check the return profile object to make sure it's valid for saving
   validate(){
+
     let valid = true;
 
-    if(!this.validAvailTimes){
+    console.log('this.discordTagError ', this.discordTagError);
+
+    if(this.isNullOrEmpty(this.returnedProfile.discordTag)){
       valid=false;
-      this.timesAvailControl.setErrors({invalid:true});
+      this.discordTagError = { error: true, type:'required' }
     }else{
-      this.timesAvailControl.setErrors(null);
+      this.discordTagError = { error: false}
     }
 
+
     //ensure time zone
-    if (this.vaildAvailDays>0 && this.isNullOrEmpty(this.returnedProfile.timeZone)) {
-      // todo : figure out linking these components this.timezoneControl.setErrors({ required: true });
+    if (this.validAvailDays > 0 && this.isNullOrEmpty(this.returnedProfile.timeZone)) {
+      valid = false;
+      this.timezoneError = {
+        error: true
+      }
     } else {
-      // todo : figure out linking these components this.timezoneControl.setErrors(null);
+      this.timezoneError = { error: false };
     }
     return valid;
   }

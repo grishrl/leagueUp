@@ -26,6 +26,9 @@ export class Profile {  //addition of stats for future plans
   replayArchive: Array<replayarchive>;
   smurfAccount:Boolean;
   avatar:string;
+  twitch: string;
+  twitter: string;
+  youtube: string;
   __v: string;//useless
 
 
@@ -163,6 +166,9 @@ export class Profile {  //addition of stats for future plans
     this.replayArchive = [];
     this.replays = [];
     this.avatar=null;
+    this.twitch = null;
+    this.twitter = null;
+    this.youtube = null;
 }
 }
 

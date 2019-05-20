@@ -39,26 +39,28 @@
                                 <li><strong>Passing:</strong> <span>40 free kicks</span></li> -->
                             </ul>
 
-                            <h6>Follow {{returnedProfile.teamName}}</h6>
+                            <h6 *ngIf="returnedProfile.twitch || returnedProfile.twitter || returnedProfile.youtube">
+                                Follow {{returnedProfile.displayName}}
+                            </h6>
 
                             <ul class="social-player">
-                                <li>
+                                <li *ngIf="returnedProfile.twitch">
                                     <div>
-                                        <a href="#" class="facebook">
+                                        <a href="{{util.prePendHttp(returnedProfile.twitch)}}" target="_blank" class="facebook">
                                             <i class="fab fa-twitch"></i>
                                         </a>
                                     </div>
                                 </li>
-                                <li>
+                                <li *ngIf="returnedProfile.twitter">
                                     <div>
-                                        <a href="#" class="twitter-icon">
+                                        <a href="{{util.prePendHttp(returnedProfile.twitter)}}" target="_blank" class="twitter-icon">
                                             <i class="fab fa-twitter"></i>
                                         </a>
                                     </div>
                                 </li>
                                 <li>
-                                    <div>
-                                        <a href="#" class="youtube">
+                                    <div *ngIf="returnedProfile.youtube">
+                                        <a href="{{util.prePendHttp(returnedProfile.youtube)}}" target="_blank" class="youtube">
                                             <i class="fab fa-youtube"></i>
                                         </a>
                                     </div>
@@ -126,7 +128,7 @@
                           class="icon-align"><i class="material-icons">delete_forever</i>Delete</span></button>
                                         </div>
                                         <div class="col">
-                                            <button type="button" [disabled]="!profileForm.valid" (click)="save()" class="mt-1 btn btn-success "><span class="icon-align"><i
+                                            <button type="button" [disabled]="!validate()" (click)="save()" class="mt-1 btn btn-success "><span class="icon-align"><i
                             class="material-icons">check</i>Save</span></button>
                                         </div>
                                         <div class="col">
@@ -140,12 +142,24 @@
                             <!-- avatar -->
                             <div *ngIf="!disabled" class="panel-box padding-b">
                                 <div class="titles">
-                                    <h4>Avatar Update</h4>
+                                    <h4>Player Avatar and Socials</h4>
                                 </div>
                                 <div class="row">
                                     <div class="col">
                                         <h4>NOTE: These avatars must be approved by admin before taking affect</h4>
                                         <app-avatar-upload [playerName]="returnedProfile.displayName" [showEdit]="disabled" [avatarImage]="returnedProfile.avatar"></app-avatar-upload>
+                                        <div class="mt-3">
+                                            <app-twitch [(twitch)]="returnedProfile.twitch">
+                                            </app-twitch>
+                                        </div>
+                                        <div class="mt-3">
+                                            <app-twitter [(twitter)]="returnedProfile.twitter">
+                                            </app-twitter>
+                                        </div>
+                                        <div class="mt-3">
+                                            <app-youtube [(youtube)]="returnedProfile.youtube">
+                                            </app-youtube>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -158,12 +172,12 @@
                                 <!-- discord tag -->
                                 <div class="row" *ngIf="!disabled">
                                     <div class="col">
-                                        <app-discord-tag [disabled]="disabled" [(discordTag)]="returnedProfile.discordTag">
+                                        <app-discord-tag [disabled]="disabled" [(error)]="discordTagError" [(discordTag)]="returnedProfile.discordTag">
                                         </app-discord-tag>
                                     </div>
                                 </div>
                                 <!-- roles form control -->
-                                <div class="row">
+                                <div class="row mt-3">
                                     <div class="col">
                                         <app-roles [disabled]="disabled" [(roles)]="returnedProfile.role"></app-roles>
                                     </div>
@@ -209,7 +223,7 @@
                                 <!-- timezone -->
                                 <div class="row mt-3">
                                     <div class="col">
-                                        <app-timezone [(timezone)]="returnedProfile.timeZone" [disabled]="disabled"></app-timezone>
+                                        <app-timezone [(timezone)]="returnedProfile.timeZone" [(error)]="timezoneError" [disabled]="disabled"></app-timezone>
                                     </div>
                                 </div>
                                 <!-- panel box close -->

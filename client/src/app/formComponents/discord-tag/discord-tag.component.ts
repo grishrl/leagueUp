@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, SimpleChanges, OnChanges } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
+import { VALID } from '@angular/forms/src/model';
 
 @Component({
   selector: 'app-discord-tag',
@@ -13,6 +14,31 @@ export class DiscordTagComponent implements OnInit, OnChanges {
 
 
   ngOnInit() {
+    this.discordTagFormControl.markAsTouched();
+  }
+
+  errorValue
+  @Input()
+  get error() {
+    return this.errorValue;
+  }
+
+  @Output()
+  errorValueChange = new EventEmitter();
+
+  set error(val) {
+    if (val && val.hasOwnProperty('error') && val.error) {
+      if(val.error.type == 'required'){
+        this.discordTagFormControl.setErrors({ required: true });
+      }
+      if (val.error.type == 'invalidTag') {
+        this.discordTagFormControl.setErrors({ invalidTag: true });
+      }
+    } else {
+      this.discordTagFormControl.setErrors(null);
+    }
+    this.errorValue = val;
+    this.errorValueChange.emit(this.errorValue);
   }
 
   edit: boolean = false;
@@ -43,11 +69,30 @@ export class DiscordTagComponent implements OnInit, OnChanges {
 
 ngOnChanges(change){
 
-  if(change.disabled.currentValue == false){
+  if (change.disabled && change.disabled.currentValue == false){
     this.discordTagFormControl.enable();
   }
 
 }
+
+  update(){
+    console.log(this.discordTagFormControl.status, this.discordTagFormControl.status == 'VALID')
+    if(this.discordTagValue.length == 0 ){
+      this.discordTagFormControl.setErrors({ required: true });
+      this.errorValue = { error: true, type: 'required' }
+    }else{
+      if (this.discordTagFormControl.status == 'VALID') {
+        this.discordTagChange.emit(this.discordTagValue);
+        this.errorValue = { error: false };
+      } else {
+        console.log('asdf?')
+
+        this.discordTagFormControl.setErrors({ invalidTag: true });
+        this.errorValue = { error: true, type: 'invalidTag' }
+      }
+    }
+
+  }
 
   discordPatternValidator(control: FormControl) {
     let discordTag = control.value;

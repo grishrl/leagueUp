@@ -35,7 +35,10 @@ const userSchema = new Schema({
     "smurfAccount": Boolean,
     "seasonsPlayed": Number,
     "history": [Object], //history of player in NGS
-    "avatar": String
+    "avatar": String,
+    "twitch": String,
+    "twitter": String,
+    "youtube": String
 });
 
 

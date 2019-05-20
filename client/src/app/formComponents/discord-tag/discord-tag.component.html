@@ -1,6 +1,6 @@
 <div *ngIf="!edit">
     <mat-form-field class="fullWidth">
-        <input matInput placeholder="Discord Tag" [formControl]="discordTagFormControl" [(ngModel)]="discordTagValue">
+        <input matInput placeholder="Discord Tag" [formControl]="discordTagFormControl" [(ngModel)]="discordTagValue" (ngModelChange)="update()">
         <mat-error *ngIf="discordTagFormControl.hasError('required')">
             Discord Tag is required.
         </mat-error>
