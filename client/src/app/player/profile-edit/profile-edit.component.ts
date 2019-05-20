@@ -5,7 +5,7 @@ import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { Profile } from '../../classes/profile.class';
 import { Subscription } from 'rxjs';
-import { ReactiveFormsModule, FormControl, FormGroup } from '@angular/forms';
+import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { merge } from 'lodash';
 import { HotsLogsService } from '../../services/hots-logs.service';
 import { Router } from '@angular/router';
@@ -104,6 +104,30 @@ export class ProfileEditComponent implements OnInit {
         console.log(err);
       }
     )
+  }
+
+  discordTagFormControl = new FormControl({ value: '', disabled: false }, [
+    Validators.required,
+    this.discordPatternValidator
+  ]);
+
+  discordPatternValidator(control: FormControl) {
+    let discordTag = control.value;
+    if (discordTag) {
+      if (discordTag && discordTag.indexOf('#') <= 0) {
+        return { invalidTag: true }
+      } else {
+        let tagArr = discordTag.split('#');
+        let regex = new RegExp(/(\d{4})/);
+        if (tagArr[1].length == 4 && regex.test(tagArr[1])) {
+          return null;
+        } else {
+          return { invalidTag: true }
+        }
+      }
+    } else {
+
+    }
   }
 
   //admin method for adding a team to a player profile
@@ -234,6 +258,7 @@ export class ProfileEditComponent implements OnInit {
     }else if(this.displayName){
       getProfile = this.displayName;
     }
+    this.discordTagFormControl.markAsTouched();
     this.profSub = this.user.getUser(getProfile).subscribe((res) => {
       merge(this.returnedProfile, res);
       } );
@@ -264,15 +289,9 @@ export class ProfileEditComponent implements OnInit {
 
     let valid = true;
 
-    console.log('this.discordTagError ', this.discordTagError);
-
-    if(this.isNullOrEmpty(this.returnedProfile.discordTag)){
-      valid=false;
-      this.discordTagError = { error: true, type:'required' }
-    }else{
-      this.discordTagError = { error: false}
+    if(this.discordTagFormControl.invalid){
+      valid = false;
     }
-
 
     //ensure time zone
     if (this.validAvailDays > 0 && this.isNullOrEmpty(this.returnedProfile.timeZone)) {

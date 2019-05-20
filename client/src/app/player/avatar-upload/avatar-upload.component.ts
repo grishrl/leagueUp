@@ -25,7 +25,6 @@ export class AvatarUploadComponent implements OnInit {
   _showEdit:boolean=false;
   @Input() set showEdit(show){
     if (show != null && show != undefined) {
-      console.log('show ', show)
       this._showEdit = !show;
     } else {
       this._showEdit = false;
@@ -34,7 +33,7 @@ export class AvatarUploadComponent implements OnInit {
 
   @Input() set avatarImage(img){
     if (img != null && img != undefined && img.length) {
-      this.currentImage = this.user.avatarFQDN(encodeURIComponent(img));
+      this.currentImage = this.user.avatarFQDN(img);
     } else {
       this.currentImage = null;
     }
@@ -92,12 +91,11 @@ export class AvatarUploadComponent implements OnInit {
   // }
 
   ngOnInit() {
-    this.currentImage = this.imageUrl;
-    this.croppieImage = this.imageUrl;
+    // this.currentImage = this.imageUrl;
+    // this.croppieImage = this.imageUrl;
   }
 
   ngOnChanges(changes: any) {
-    console.log('changes ', changes)
     if (this.croppieImage) { return; }
     if (!changes.imageUrl) { return; }
     if (!changes.imageUrl.previousValue && changes.imageUrl.currentValue) {

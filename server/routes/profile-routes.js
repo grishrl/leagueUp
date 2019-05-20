@@ -119,6 +119,15 @@ router.post('/save', passport.authenticate('jwt', {
                     if (util.returnBoolByPath(sentUser, 'hotsLogsURL')) {
                         found.hotsLogsURL = sentUser.hotsLogsURL;
                     }
+                    if (util.returnBoolByPath(sentUser, 'twitch')) {
+                        found.twitch = sentUser.twitch;
+                    }
+                    if (util.returnBoolByPath(sentUser, 'twitter')) {
+                        found.twitter = sentUser.twitter;
+                    }
+                    if (util.returnBoolByPath(sentUser, 'youtube')) {
+                        found.youtube = sentUser.youtube;
+                    }
 
                     sendRes = false;
 
