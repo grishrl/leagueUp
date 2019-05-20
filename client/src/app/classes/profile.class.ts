@@ -19,7 +19,7 @@ export class Profile {  //addition of stats for future plans
   toonHandle:string;
   discordTag:string;
   pendingTeam:Boolean;
-  history:Array<object>;
+  history: Array<history>;
   hotsLogsPlayerID:string;
   seasonsPlayed:number;
   replays:Array<string>;
@@ -35,7 +35,7 @@ export class Profile {  //addition of stats for future plans
   constructor (id: string, displayName: string, teamId:string, teamName:string, isCaptain:boolean,
     hlRankMetal:string, hlRankDivision:number, lookingForGroup: Boolean, availability:schedule,
     competitiveLevel:number, descriptionOfPlay:string, role:roles, timeZone:string, hotsLogsURL:string,
-    averageMmr: number, toonHandle: string, discordTag:string, history:Array<object>){
+    averageMmr: number, toonHandle: string, discordTag: string, history: Array<history>){
   if (id != null && id != undefined && id.length > 0) {
     this._id = id;
   } else {
@@ -202,4 +202,11 @@ export interface roles {
   healer:boolean,
   support: boolean,
   flex: boolean
+}
+
+export interface history {
+  timestamp:string;
+  action:string;
+  target:string;
+  season:string;
 }

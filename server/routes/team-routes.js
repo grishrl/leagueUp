@@ -13,6 +13,7 @@ const passport = require("passport");
 const sysModels = require('../models/system-models');
 const uploadTeamLogo = require('../methods/teamLogoUpload').uploadTeamLogo;
 const Stats = require('../models/stats-model');
+const logger = require('../subroutines/sys-logging-subs');
 
 /*
 routes for team management --
@@ -195,6 +196,12 @@ router.post('/create', passport.authenticate('jwt', {
                     res.status(500).send(util.returnMessaging(path, 'This team name all ready exists!', false, null, null, logObj));
                 } else {
                     recievedTeam.teamName_lower = recievedTeam.teamName.toLowerCase();
+                    recievedTeam.history = [{
+                        timestamp: Date.now(),
+                        season: process.env.season,
+                        action: 'Team Created',
+                        target: recievedTeam.teamName
+                    }];
                     new Team(
                         recievedTeam
                     ).save().then((newTeam) => {
@@ -209,6 +216,20 @@ router.post('/create', passport.authenticate('jwt', {
                                 found["teamId"] = newTeam._id,
                                     found["teamName"] = newTeam.teamName,
                                     found["isCaptain"] = true;
+                                let userHistoryUpdate = {
+                                    timestamp: Date.now(),
+                                    season: process.env.season,
+                                    action: 'Created Team',
+                                    target: recievedTeam.teamName
+                                }
+                                if (found.history) {
+                                    found.history.push(userHistoryUpdate);
+                                } else {
+                                    found.history = [{
+                                        userHistoryUpdate
+                                    }]
+                                }
+                                found.markModified('history');
                                 found.save().then((save) => {
                                     if (save) {
                                         //log object
