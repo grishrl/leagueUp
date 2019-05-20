@@ -3,31 +3,10 @@ Team:
 Add leave team option to new team
 add remove member option back to team captain
 
-
-BLOG:
-Text Search
-
-
-admins need a log browser
-
---tournament brackets display dates
---clickable to show more match information
---calendar show special tournment marker
-
->>> remove all hard codings of season 6 with something... else MEDIUM PRIO
-
-***!!!returnboolbypath is not working on any document returned from mongo investigate further!!!***
+-admin need a log browser
+-admin new team admin page
+-admin new user admin page
 
 > Server, 
->need some persistnet logging to keep up with background notices > in progress
 >post to discord when someone is looking for team 
 >post to discord when team is looking for someone
-
-MOST OF THESE HANDLED BY THE WRITING TEAM, I HOPE
-contentfulservice :
-contenful:
->podcasts on the blogging?
->ADD CATEGORY FOR EACH DIVISION TO LINK BLOG POSTS TO
->TRY TO REDUCE THE AMMOUNT OF CONTENTFUL REQUESTS MADE BY USING LOCAL STORAGE -- MAY REQUIRE SOME OBSERVABLE / PROMISE STATE MIXING TO PULL FROM LOCAL OR HTTP 
->PAGINATION AND LIMITS + PULLING EXTRA ARTICLES 
-> order posts in the list by date.
