@@ -9,6 +9,7 @@ import { ChangeCaptainModalComponent } from '../../../modal/change-captain-modal
 import { DeleteConfrimModalComponent } from '../../../modal/delete-confrim-modal/delete-confrim-modal.component'
 import { AuthService } from 'src/app/services/auth.service';
 import { MatDialog } from '@angular/material';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-update-team-info',
@@ -17,9 +18,14 @@ import { MatDialog } from '@angular/material';
 })
 export class UpdateTeamInfoComponent implements OnInit {
 
-  constructor(public team: TeamService, private admin: AdminService, public user: UserService, public auth: AuthService, public dialog: MatDialog) { }
+  constructor(public team: TeamService, private admin: AdminService, public user: UserService, public auth: AuthService, public dialog: MatDialog,private router: Router,) { }
 
   returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+
+  //methods
+  deleteUserButtonOn(player) {
+    return player == this.returnedProfile.captain;
+  }
 
   adminRefreshMMR() {
     this.admin.refreshTeamMMR(this.returnedProfile.teamName_lower).subscribe(
@@ -32,6 +38,44 @@ export class UpdateTeamInfoComponent implements OnInit {
     )
   }
 
+      displayMembersLeft: any[] = [];
+  displayMembersRight: any[] = [];
+  displayPendingMembersLeft: any[] = [];
+  displayPendingMembersRight: any[] = [];
+
+   stratifyTeamMembers(){
+    this.displayMembersLeft = [];
+    this.displayMembersRight = [];
+    if(this.returnedProfile.teamMembers.length>3){
+      let half = Math.round(this.returnedProfile.teamMembers.length / 2);
+      for(var i = 0; i < half; i++){
+        this.displayMembersLeft.push(this.returnedProfile.teamMembers[i]);
+      }
+
+      for (var j = half; j < this.returnedProfile.teamMembers.length; j++){
+        this.displayMembersRight.push(this.returnedProfile.teamMembers[j]);
+      }
+    }else{
+      this.displayMembersLeft = this.returnedProfile.teamMembers;
+      this.displayMembersRight = [];
+    }
+    //PENDING MEMBERS
+    if (this.returnedProfile.pendingMembers && this.returnedProfile.pendingMembers.length > 3) {
+      let half = Math.round(this.returnedProfile.pendingMembers.length / 2);
+      for (var i = 0; i < half; i++) {
+        this.displayPendingMembersLeft.push(this.returnedProfile.pendingMembers[i]);
+      }
+
+      for (var j = half; j < this.returnedProfile.pendingMembers.length; j++) {
+        this.displayPendingMembersRight.push(this.returnedProfile.pendingMembers[j]);
+      }
+    } else {
+      this.displayPendingMembersLeft = this.returnedProfile.pendingMembers;
+      this.displayPendingMembersRight = [];
+    }
+  }
+  //this method constorls the opening of the delete team confirm modal
+  confirm: string
   openAdminDeleteDialog(): void {
     const dialogRef = this.dialog.open(DeleteConfrimModalComponent, {
       width: '300px',
@@ -65,6 +109,7 @@ export class UpdateTeamInfoComponent implements OnInit {
       this.team.getTeam(teamToGet).subscribe(
         res => {
           this.returnedProfile = res;
+          this.stratifyTeamMembers()
         },
         err => {
           console.log(err);

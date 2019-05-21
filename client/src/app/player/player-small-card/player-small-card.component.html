@@ -17,6 +17,16 @@
         </ul>
     </div>
     <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]" class="btn">View Player <i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    <div class="row mt-1" *ngIf="showRemove()">
+        <div class="col">
+            <button class="btn-remove"><i class="fas fa-ban"></i> Remove From Team </button>
+        </div>
+    </div>
+    <div class="row mt-1" *ngIf="showLeave()">
+        <div class="col">
+            <button class="btn-remove"><i class="fas fa-user-slash"></i> Leave Team </button>
+        </div>
+    </div>
 </div>
 
 <ng-template #error>

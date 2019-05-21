@@ -14,6 +14,7 @@ export class MembersComponent implements OnInit {
   @Input() set teamProfile(val){
     if(val){
       this.profile = val;
+      console.log('this.profile ', this.profile);
       this.teamMembers = val.teamMembers;
     }
   }
