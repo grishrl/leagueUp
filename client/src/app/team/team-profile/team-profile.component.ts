@@ -9,7 +9,7 @@ import { Team } from '../../classes/team.class';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 import { AdminService } from '../../services/admin.service';
-import { FormControl, Validators, FormGroup } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { UtilitiesService } from '../../services/utilities.service';
 import { RequestService } from '../../services/request.service';
 import { ConfirmRemoveMemberComponent } from '../../modal/confirm-remove-member/confirm-remove-member.component';
@@ -40,7 +40,7 @@ export class TeamProfileComponent implements OnInit {
     Validators.required
   ]);
 
-  nameControl = new FormControl({ value:''});
+
 
   emailAddress: string;
 
@@ -129,30 +129,11 @@ export class TeamProfileComponent implements OnInit {
     )
   }
 
-
-  adminFormControlledEnable(){
-    this.nameControl.enable();
-  }
-
-  formControlledDisable() {
-    this.nameControl.disable();
-  }
-
-  // adminFomControlledDislable(){
-  //   this.formControlledDisable();
-  //   this.nameControl.disable();
-  // }
-
   //init implementation
   ngOnInit() {
     this.disabled = true;
-    this.formControlledDisable();
-
-    // this.util.markFormGroupTouched(this.teamControlGroup)
-
     if(this.componentEmbedded && this.embedSource == 'admin'){
       this.disabled = false;
-      this.adminFormControlledEnable();
     }
     this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     let getProfile: string;
@@ -161,13 +142,11 @@ export class TeamProfileComponent implements OnInit {
     if (this.providedProfile != null && this.providedProfile != undefined) {
       if (typeof this.providedProfile == 'string') {
         getProfile = this.providedProfile;
-        this.orignalName = this.team.realTeamName(this.providedProfile);
         this.getTeamByString(getProfile);
 
       } else {
         merge(this.returnedProfile, this.providedProfile);
         this.setUpTeamMemberFilter(this.returnedProfile);
-        this.orignalName = this.returnedProfile.teamName_lower;
         this.checkDivision(this.returnedProfile.divisionConcat);
         // this.cleanUpDivision();
       }
@@ -214,18 +193,6 @@ export class TeamProfileComponent implements OnInit {
 
   //this boolean will keep up with wether the component is embedded in another or is acting as it's own standalone page
   componentEmbedded: boolean = false;
-  //if this component is used in the admin view the team name can be changed, we must hold on to the old team name to update the proper object
-  orignalName:string = null;
-
-  // this model change method will be bound to the name change input, so we can update the lower case name along with the display name
-  modelChange() {
-    if (this.returnedProfile.teamName != undefined && this.returnedProfile.teamName != null){
-      if (this.returnedProfile.teamName != this.returnedProfile.teamName_lower) {
-        this.returnedProfile.teamName_lower = this.returnedProfile.teamName.toLowerCase();
-      }
-    }
-
-  }
 
   //provided profile holds anything bound to the component when it's embedded
   providedProfile: any;
@@ -238,16 +205,6 @@ export class TeamProfileComponent implements OnInit {
       this.disabled = false;
 
       this.ngOnInit();
-    }
-  }
-
-  showRegisteredQuestionnaire(){
-    if (this.embedSource == 'admin'){
-      return true;
-    } else if (this.auth.getUser() == this.returnedProfile.captain) {
-      return !this.returnedProfile.questionnaire['registered'];
-    }else{
-      return false;
     }
   }
 
@@ -277,7 +234,6 @@ export class TeamProfileComponent implements OnInit {
             (res)=>{
               this.returnedProfile = res;
               this.disabled = true;
-              this.formControlledDisable();
               this.auth.destroyCaptain();
             },
             (err)=>{
@@ -352,26 +308,7 @@ export class TeamProfileComponent implements OnInit {
     });
   }
 
-  adminSave(){
-    if (this.validate()) {
-      this.disabled = true;
-      this.formControlledDisable();
-      let cptRemoved = Object.assign({}, this.returnedProfile);
-      delete cptRemoved.captain;
-      this.admin.saveTeam(this.orignalName,this.returnedProfile).subscribe((res) => {
-        // console.log('team was saved!');
-        this.orignalName = res.teamName_lower;
-        this.returnedProfile = res;
-      }, (err) => {
-        console.log(err);
-        alert(err.message);
-      });
-    } else {
-      //activate validator errors
-      alert('the data was invalid');
-      console.log('the data was invalid')
-    }
-  }
+
 
   //this method enables form inputs for changes
   openEdit(){
@@ -383,14 +320,12 @@ export class TeamProfileComponent implements OnInit {
   cancel() {
     this.returnedProfile = Object.assign({}, this.tempProfile);
     this.disabled = true;
-    this.formControlledDisable();
   }
 
   //this method checks that the inputs are valid and if so, saves the team object
   save() {
     if (this.validate()) {
       this.disabled = true;
-      this.formControlledDisable();
 
       this.util.updateAvailabilityToNum(this.returnedProfile);
       // let keys = Object.keys(this.returnedProfile.availability);
@@ -411,7 +346,6 @@ export class TeamProfileComponent implements OnInit {
 
       this.team.saveTeam(cptRemoved).subscribe((res) => {
         this.disabled = true;
-        this.formControlledDisable();
       }, (err) => {
         console.log(err);
         alert(err.message);

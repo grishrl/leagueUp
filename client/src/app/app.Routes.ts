@@ -12,7 +12,7 @@ import { BlogViewComponent } from "./blog/blog-view/blog-view.component";
 import { LogoutComponent } from "./logout/logout.component";
 import { CreateTeamComponent } from "./create-team/create-team.component";
 import { ApproveMemberComponent } from "./admin/approve-member/approve-member.component";
-import { DeleteMemberComponent } from "./admin/delete-member/delete-member.component";
+import { ManageMemberComponent } from "./admin/manage-member/manage-member.component";
 import { ManageSelectTeamComponent } from "./admin/manage-team/manage-select-team.component";
 import { DivisionManagementComponent } from "./admin/division-management/division-management.component";
 import { ScheduleViewComponent } from "./schedule/schedule-view/schedule-view.component";
@@ -63,7 +63,7 @@ const APP_ROUTES: Routes = [
   { path: 'blog/:id', component:BlogViewComponent },
   { path: '_admin/approveTeamQueue', component:ApproveMemberComponent, canActivate:[AuthGuardService], data:{role:'team'} },
   { path: '_admin/approveAvatarQueue', component: ApprovePendingAvatarComponent, canActivate: [AuthGuardService], data: { role: 'user' } },
-  { path: '_admin/deleteUser', component: DeleteMemberComponent, canActivate: [AuthGuardService], data: { role: 'user' } },
+  { path: '_admin/manageUser', component: ManageMemberComponent, canActivate: [AuthGuardService], data: { role: 'user' } },
   { path: '_admin/manageTeam', component: ManageSelectTeamComponent, canActivate: [AuthGuardService], data: { role: 'team' } },
   { path: '_admin/manageTeam/:id', component: ManageTeamViewComponent, canActivate: [AuthGuardService], data: { role: 'team' } },
   { path: '_admin/divisionMgmt', component: DivisionManagementComponent, canActivate: [AuthGuardService], data: { role: 'division' } },

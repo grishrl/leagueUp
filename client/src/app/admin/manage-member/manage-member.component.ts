@@ -1,14 +1,14 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { DeleteConfrimModalComponent } from '../../modal/delete-confrim-modal/delete-confrim-modal.component'; 
+import { DeleteConfrimModalComponent } from '../../modal/delete-confrim-modal/delete-confrim-modal.component';
 import { AdminService } from 'src/app/services/admin.service';
 
 @Component({
-  selector: 'app-delete-member',
-  templateUrl: './delete-member.component.html',
-  styleUrls: ['./delete-member.component.css']
+  selector: 'app-manage-member',
+  templateUrl: './manage-member.component.html',
+  styleUrls: ['./manage-member.component.css']
 })
-export class DeleteMemberComponent implements OnInit {
+export class ManageMemberComponent implements OnInit {
 
   //component properties
   recievedProfile
@@ -47,7 +47,7 @@ export class DeleteMemberComponent implements OnInit {
       }
     });
   }
-  
+
 
   ngOnInit() {
   }

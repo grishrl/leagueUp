@@ -29,7 +29,7 @@ import { ApproveMemberComponent } from './admin/approve-member/approve-member.co
 import { UserQuickViewComponent } from './admin/approve-member/user-quick-view/user-quick-view.component';
 import { TeamQuickViewComponent } from './admin/approve-member/team-quick-view/team-quick-view.component';
 import { ApproveMemberViewComponent } from './admin/approve-member/approve-member-view/approve-member-view.component';
-import { DeleteMemberComponent } from './admin/delete-member/delete-member.component';
+import { ManageMemberComponent } from './admin/manage-member/manage-member.component';
 import { ManageSelectTeamComponent } from './admin/manage-team/manage-select-team.component';
 import { TeamSearchComponent } from './team/team-search/team-search.component';
 import { ChangeCaptainModalComponent } from './modal/change-captain-modal/change-captain-modal.component';
@@ -137,6 +137,8 @@ import { ApproveAvatarViewComponent } from './admin/approve-pending-avatar/appro
 import { TwitchComponent } from './formComponents/twitch/twitch.component';
 import { TwitterComponent } from './formComponents/twitter/twitter.component';
 import { YoutubeComponent } from './formComponents/youtube/youtube.component';
+import { UpdateMemberInfoComponent } from './admin/manage-member/update-member-info/update-member-info.component';
+import { UpdateTeamInfoComponent } from './admin/manage-team/update-team-info/update-team-info.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -164,7 +166,7 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     UserQuickViewComponent,
     TeamQuickViewComponent,
     ApproveMemberViewComponent,
-    DeleteMemberComponent,
+    ManageMemberComponent,
     ManageSelectTeamComponent,
     TeamSearchComponent,
     ChangeCaptainModalComponent,
@@ -264,7 +266,9 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     ApproveAvatarViewComponent,
     TwitchComponent,
     TwitterComponent,
-    YoutubeComponent
+    YoutubeComponent,
+    UpdateMemberInfoComponent,
+    UpdateTeamInfoComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

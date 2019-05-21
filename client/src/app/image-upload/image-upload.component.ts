@@ -74,7 +74,6 @@ export class ImageUploadComponent implements OnInit {
 
   public get imageToDisplay() {
     let imgRet;
-    console.log('this.currentImage ',this.currentImage)
     if (this.currentImage) { imgRet = this.currentImage; }
     else if (this.imageUrl) { imgRet = this.imageUrl; }else{
       imgRet = `https://placehold.it/${this.widthPx}x${this.heightPx}`;
