@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Self } from '@angular/core';
+import { Component, OnInit, Input, Self, Optional } from '@angular/core';
 import { ControlValueAccessor, FormControl, Validators, ValidatorFn, NgControl, AbstractControl, AsyncValidatorFn } from '@angular/forms';
 import { TeamService } from 'src/app/services/team.service';
 import { HttpClient } from '@angular/common/http';
@@ -15,7 +15,7 @@ import { Observable } from 'rxjs';
 export class TeamTickerComponent implements OnInit, ControlValueAccessor {
 
   filterWords;
-  constructor(private team: TeamService, private http: HttpClient, @Self() public controlDir:NgControl) {
+  constructor(private team: TeamService, private http: HttpClient,@Optional() @Self() public controlDir:NgControl) {
     this.http.get('../assets/filterWords.json').subscribe(
       res => { this.filterWords = res['data'] },
       err => { console.log(err) }
