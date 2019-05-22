@@ -33,7 +33,6 @@ export class UpdateMemberInfoComponent implements OnInit {
   removeTeam() {
     this.admin.removeMembers(this.returnedProfile.teamName, this.returnedProfile.displayName).subscribe(
       res => {
-        console.log(res);
         this.returnedProfile.teamId = null;
         this.returnedProfile.teamName = null;
       },
@@ -46,7 +45,6 @@ export class UpdateMemberInfoComponent implements OnInit {
   newTeam(team) {
     this.admin.manualTeamAdd(this.returnedProfile.displayName, team).subscribe(
       res => {
-        console.log(res);
         this.returnedProfile.teamId = res._id;
         this.returnedProfile.teamName = res.teamName;
       },

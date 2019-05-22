@@ -10,6 +10,7 @@ export class UtilitiesService {
 
   constructor() { }
 
+  //this method is terrible
   isNullOrEmpty(dat): boolean {
     if (dat == null || dat == undefined) {
       return true;

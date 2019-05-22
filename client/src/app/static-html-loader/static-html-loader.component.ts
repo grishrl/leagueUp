@@ -54,7 +54,7 @@ export class StaticHtmlLoaderComponent implements OnInit {
               this.templateLoader('404');
             }else{
               this.loadedHTML = res;
-              console.log(res);
+              // console.log(res);
             }
           },
           err => {

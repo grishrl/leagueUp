@@ -1,0 +1,20 @@
+<div>
+    <mat-form-field class="fullWidth">
+        <input matInput placeholder="Team Ticker" [formControl]="controlDir.control" [(ngModel)]="value">
+        <mat-error *ngIf="controlDir && controlDir.hasError('minlength')">
+            This ticker is too short: this ticker: {{value.length}}, required ticker: {{controlDir.control.getError('minlength').requiredLength}}
+        </mat-error>
+        <mat-error *ngIf="controlDir && controlDir.hasError('maxlength')">
+            This ticker is too long: this ticker: {{value.length}}, max ticker: {{controlDir.control.getError('maxlength').requiredLength}}
+        </mat-error>
+        <mat-error *ngIf="controlDir && controlDir.hasError('invalidTicker')">
+            This ticker is not allowed.
+        </mat-error>
+        <mat-error *ngIf="controlDir && controlDir.control.hasError('notUnique')">
+            This ticker is taken.
+        </mat-error>
+        <mat-error *ngIf="controlDir && controlDir.hasError('required')">
+            Ticker is required.
+        </mat-error>
+    </mat-form-field>
+</div>

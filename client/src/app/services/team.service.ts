@@ -18,10 +18,16 @@ export class TeamService {
   }
 
   //returns requested team
-  getTeam(name:string):Observable<any>{
-    let encodededID = encodeURIComponent(this.realTeamName(name));
+  getTeam(name?:string, ticker?:string):Observable<any>{
     let url = 'team/get';
-    let params = [{team:encodededID}];
+    let params = [];
+    if(name){
+      let encodededID = encodeURIComponent(this.realTeamName(name));
+      params.push({ team: encodededID });
+    }
+    if(ticker){
+      params.push({ ticker: ticker });
+    }
     return this.httpService.httpGet(url, params);
   };
 

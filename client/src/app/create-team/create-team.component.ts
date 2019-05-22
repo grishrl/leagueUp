@@ -22,10 +22,13 @@ export class CreateTeamComponent implements OnInit {
 
   nameContorl = new FormControl();
 
+  tickerControl = new FormControl('',[Validators.maxLength(5), Validators.minLength(3)]);
+
   timeZoneControl = new FormControl();
 
   createTeamControlGroup = new FormGroup({
     nameControl: this.nameContorl,
+    tickerControl:this.tickerControl,
     timeZone: this.timeZoneControl
   })
 
@@ -87,6 +90,7 @@ export class CreateTeamComponent implements OnInit {
   }
 
   validate() {
+
     let valid = true;
     //validate team name is there
     if(!this.util.returnBoolByPath(this.returnedProfile, 'teamName')){
@@ -100,7 +104,10 @@ export class CreateTeamComponent implements OnInit {
       } else {
         this.nameContorl.setErrors(null);
       }
+    }
 
+    if(this.tickerControl.errors){
+      valid = false;
     }
 
     //validate looking for team:

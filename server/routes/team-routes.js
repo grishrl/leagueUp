@@ -34,24 +34,40 @@ reassignCaptian - moves captain to another team member
 //get
 // path: /team/get
 // URI query param - team
-// finds team of passed team name
+// URI query param - ticker
+// finds team of passed team name or ticker
 // returns found team
 router.get('/get', (req, res) => {
     const path = '/team/get';
     var team = req.query.team;
+    var ticker = req.query.ticker;
 
-    team = decodeURIComponent(team);
+    if (team) {
+        team = decodeURIComponent(team);
+        team = team.toLowerCase();
+    }
 
-    team = team.toLowerCase();
+    if (ticker) {
+        ticker = ticker.toLowerCase();
+    }
 
-    Team.findOne({
-        teamName_lower: team
-    }).lean().then(
+    let query = {};
+    if (team && ticker) {
+        query['$and'] = [];
+        query['$and'].push({ 'teamName_lower': team });
+        query['$and'].push({ 'ticker': ticker });
+    } else if (team && !ticker) {
+        query['teamName_lower'] = team;
+    } else {
+        query['ticker_lower'] = ticker;
+    }
+
+    Team.findOne(query).lean().then(
         (foundTeam) => {
             if (foundTeam) {
                 res.status(200).send(util.returnMessaging(path, 'Found team', false, foundTeam));
             } else {
-                res.status(200).send(util.returnMessaging(path, "Team not found", false, foundTeam));
+                res.status(200).send(util.returnMessaging(path, "Team not found", false, {}));
             }
         }, (err) => {
             res.status(500).send(util.returnMessaging(path, "Error querying teams.", err));

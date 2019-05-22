@@ -1,11 +1,5 @@
 
-Team:
-Add leave team option to new team
-add remove member option back to team captain
-
 -admin need a log browser
--admin new team admin page
--admin new user admin page
 
 > Server, 
 >post to discord when someone is looking for team 

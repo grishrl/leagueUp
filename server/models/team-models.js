@@ -34,6 +34,7 @@ const teamSchema = new Schema({
     "replays": [String],
     "parseStats": Boolean,
     "ticker": String, //short aberviation of team name
+    "ticker_lower": String,
     "history": [Object],
     "twitch": String,
     "twitter": String,

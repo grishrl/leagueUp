@@ -139,6 +139,7 @@ import { TwitterComponent } from './formComponents/twitter/twitter.component';
 import { YoutubeComponent } from './formComponents/youtube/youtube.component';
 import { UpdateMemberInfoComponent } from './admin/manage-member/update-member-info/update-member-info.component';
 import { UpdateTeamInfoComponent } from './admin/manage-team/update-team-info/update-team-info.component';
+import { TeamTickerComponent } from './formComponents/team-ticker/team-ticker.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -268,7 +269,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     TwitterComponent,
     YoutubeComponent,
     UpdateMemberInfoComponent,
-    UpdateTeamInfoComponent
+    UpdateTeamInfoComponent,
+    TeamTickerComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

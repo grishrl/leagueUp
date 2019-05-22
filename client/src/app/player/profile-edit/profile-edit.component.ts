@@ -96,7 +96,7 @@ export class ProfileEditComponent implements OnInit {
   removeTeam(){
     this.admin.removeMembers(this.returnedProfile.teamName, this.returnedProfile.displayName).subscribe(
       res=>{
-        console.log(res);
+        // console.log(res);
         this.returnedProfile.teamId = null;
         this.returnedProfile.teamName = null;
       },
@@ -134,7 +134,7 @@ export class ProfileEditComponent implements OnInit {
   newTeam(team){
     this.admin.manualTeamAdd(this.returnedProfile.displayName, team).subscribe(
       res=>{
-        console.log(res);
+        // console.log(res);
         this.returnedProfile.teamId = res._id;
         this.returnedProfile.teamName = res.teamName;
       },
