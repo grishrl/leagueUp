@@ -3,7 +3,7 @@ import { ControlValueAccessor, FormControl, Validators, ValidatorFn, NgControl, 
 import { TeamService } from 'src/app/services/team.service';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'app-team-ticker',
@@ -46,17 +46,20 @@ export class TeamTickerComponent implements OnInit, ControlValueAccessor {
 
   validateTickerNotTaken(): AsyncValidatorFn {
     return (control: AbstractControl): Observable<{ [key: string]: any } | null> => {
-      return this.team.getTeam(null, control.value)
-        .pipe(
-          map(res => {
-            let keys = Object.keys(res);
-            // if username is already taken
-            if (keys.length>0) {
-              // return error
-              return { 'notUnique': true };
-            }
-          })
-        );
+      if (this.originalValue == control.value){
+        return of(null);
+      }else{
+        return this.team.getTeam(null, control.value)
+          .pipe(
+            map(res => {
+              let keys = Object.keys(res);
+              if (keys.length > 0) {
+                return { 'notUnique': true };
+              }
+            })
+          );
+      }
+
     };
   }
 
@@ -86,8 +89,11 @@ export class TeamTickerComponent implements OnInit, ControlValueAccessor {
     this.onTouched();
   }
 
+  originalValue;
+
   writeValue(value){
     if (value) {
+      this.originalValue = value;
       this.value = value;
     }
   }

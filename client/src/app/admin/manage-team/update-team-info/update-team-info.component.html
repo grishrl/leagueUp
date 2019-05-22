@@ -51,6 +51,27 @@
         </div>
     </div>
 
+    <div class="row mt-3">
+        <div class="col">
+            <app-team-ticker name="ticker" [(ngModel)]="returnedProfile.ticker"></app-team-ticker>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col">
+            <app-twitch [(twitch)]="returnedProfile.twitch"></app-twitch>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col">
+            <app-twitter [(twitter)]="returnedProfile.twitter"></app-twitter>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col">
+            <app-youtube [(youtube)]="returnedProfile.youtube"></app-youtube>
+        </div>
+    </div>
+
     <div class="row mt-3 ">
         <div class="col ">
             <h2>Current Team Members:</h2>
