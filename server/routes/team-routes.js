@@ -458,6 +458,10 @@ router.post('/save', passport.authenticate('jwt', {
                 foundTeam.rolesNeeded = payload.rolesNeeded;
             }
 
+            if (util.returnBoolByPath(payload, 'timeZone')) {
+                foundTeam.timeZone = payload.timeZone;
+            }
+
             if (util.returnBoolByPath(payload, 'twitch')) {
                 foundTeam.twitch = payload.twitch;
             }
@@ -468,8 +472,9 @@ router.post('/save', passport.authenticate('jwt', {
                 foundTeam.youtube = payload.youtube;
             }
 
-            if (util.returnBoolByPath(payload, 'timeZone')) {
-                foundTeam.timeZone = payload.timeZone;
+            if (util.returnBoolByPath(payload, 'ticker')) {
+                foundTeam.ticker = payload.ticker;
+                foundTeam.ticker = payload.ticker.toLowerCase();
             }
 
             if (util.returnBoolByPath(payload, 'captain')) {

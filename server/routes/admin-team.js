@@ -413,6 +413,21 @@ router.post('/teamSave', passport.authenticate('jwt', {
                                 originalTeam.timeZone = payload.timeZone;
                             }
 
+                            if (util.returnBoolByPath(payload, 'twitch')) {
+                                originalTeam.twitch = payload.twitch;
+                            }
+                            if (util.returnBoolByPath(payload, 'twitter')) {
+                                originalTeam.twitter = payload.twitter;
+                            }
+                            if (util.returnBoolByPath(payload, 'youtube')) {
+                                originalTeam.youtube = payload.youtube;
+                            }
+
+                            if (util.returnBoolByPath(payload, 'ticker')) {
+                                originalTeam.ticker = payload.ticker;
+                                originalTeam.ticker = payload.ticker.toLowerCase();
+                            }
+
                             originalTeam.save().then((savedTeam) => {
                                 var message = "";
                                 message += "Team updated";
@@ -476,6 +491,21 @@ router.post('/teamSave', passport.authenticate('jwt', {
 
                 if (util.returnBoolByPath(payload, 'timeZone')) {
                     foundTeam.timeZone = payload.timeZone;
+                }
+
+                if (util.returnBoolByPath(payload, 'twitch')) {
+                    foundTeam.twitch = payload.twitch;
+                }
+                if (util.returnBoolByPath(payload, 'twitter')) {
+                    foundTeam.twitter = payload.twitter;
+                }
+                if (util.returnBoolByPath(payload, 'youtube')) {
+                    foundTeam.youtube = payload.youtube;
+                }
+
+                if (util.returnBoolByPath(payload, 'ticker')) {
+                    foundTeam.ticker = payload.ticker;
+                    foundTeam.ticker = payload.ticker.toLowerCase();
                 }
 
                 foundTeam.save().then((savedTeam) => {
