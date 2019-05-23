@@ -12,7 +12,9 @@
                         <h1>{{returnedProfile.teamName}}</h1>
                         <ul class="general-info">
                             <li *ngIf="showDivision">
-                                <h6><strong>Division:</strong>{{returnedProfile.divisionDisplayName}} </h6>
+                                <h6><strong>Division:</strong>
+                                    <app-division-if-public [divisionInfo]="returnedProfile.divisionDisplayName"></app-division-if-public>
+                                </h6>
                             </li>
                             <li>
                                 <h6><strong>Average MMR:</strong> {{returnedProfile.teamMMRAvg}}</h6>

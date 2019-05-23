@@ -75,6 +75,30 @@ router.get('/get', (req, res) => {
     );
 });
 
+//get
+// path: /team/get
+// URI query param - team
+// URI query param - ticker
+// finds team of passed team name or ticker
+// returns found team
+router.get('/get/registered', (req, res) => {
+    const path = '/team/get/registered';
+
+    Team.find({
+        'questionnaire.registered': true
+    }).lean().then(
+        (foundTeam) => {
+            if (foundTeam) {
+                res.status(200).send(util.returnMessaging(path, 'Found team', false, foundTeam));
+            } else {
+                res.status(200).send(util.returnMessaging(path, "Team not found", false, {}));
+            }
+        }, (err) => {
+            res.status(500).send(util.returnMessaging(path, "Error querying teams.", err));
+        }
+    );
+});
+
 //post
 // path: /team/get
 // URI query param - team

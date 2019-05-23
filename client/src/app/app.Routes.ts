@@ -45,6 +45,7 @@ import { EventCreateComponent } from './admin/events/event-create/event-create.c
 import { EventListComponent } from './admin/events/event-list/event-list.component';
 import { StaticHtmlLoaderComponent } from './static-html-loader/static-html-loader.component';
 import { ApprovePendingAvatarComponent } from "./admin/approve-pending-avatar/approve-pending-avatar.component";
+import { AllTeamsComponent } from "./team/all-teams/all-teams.component";
 
 const APP_ROUTES: Routes = [
   { path: 'directory', component: DirectoryComponent},
@@ -56,6 +57,7 @@ const APP_ROUTES: Routes = [
   { path: 'login/:token', component: LoginComponent},
   { path: 'profile/:id', component: ProfileEditComponent},
   { path: 'teamProfile/:id', component: TeamProfileComponent},
+  { path: 'allTeams', component:AllTeamsComponent},
   { path: 'teamCreate', component: CreateTeamComponent},
   { path: 'division/:division', component: DivisionComponent, runGuardsAndResolvers:'paramsChange' },
   { path: 'email/invite/:id', component:OutreachEmailResponseComponent },

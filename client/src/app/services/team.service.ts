@@ -17,6 +17,11 @@ export class TeamService {
     return this.httpService.httpPost(url, payload);
   }
 
+  getRegisteredTeams(){
+    let url = '/team/get/registered';
+    return this.httpService.httpGet(url, []);
+  }
+
   //returns requested team
   getTeam(name?:string, ticker?:string):Observable<any>{
     let url = 'team/get';

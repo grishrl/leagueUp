@@ -140,6 +140,8 @@ import { YoutubeComponent } from './formComponents/youtube/youtube.component';
 import { UpdateMemberInfoComponent } from './admin/manage-member/update-member-info/update-member-info.component';
 import { UpdateTeamInfoComponent } from './admin/manage-team/update-team-info/update-team-info.component';
 import { TeamTickerComponent } from './formComponents/team-ticker/team-ticker.component';
+import { AllTeamsComponent } from './team/all-teams/all-teams.component';
+import { DivisionIfPublicComponent } from './division-if-public/division-if-public.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -270,7 +272,9 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     YoutubeComponent,
     UpdateMemberInfoComponent,
     UpdateTeamInfoComponent,
-    TeamTickerComponent
+    TeamTickerComponent,
+    AllTeamsComponent,
+    DivisionIfPublicComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
