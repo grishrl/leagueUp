@@ -3,7 +3,8 @@ const Schema = mongoose.Schema;
 
 
 const systemSchema = new Schema({
-    "dataName": String
+    "dataName": String,
+    "data": Object
 }, {
     strict: false,
     useNestedStrict: false

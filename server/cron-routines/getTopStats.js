@@ -25,7 +25,42 @@ async function getTopHotsProfile(stat) {
 }
 
 const stats = [
-    'kills'
+    'kills',
+    'assists',
+    'takedowns',
+    'deaths',
+    'highest_kill_streak',
+    'hero_damage',
+    'siege_damage',
+    'structure_damage',
+    'minion_damage',
+    'creep_damage',
+    'summon_damage',
+    'time_cc_enemy_heroes',
+    'healing',
+    'self_healing',
+    'damage_taken',
+    'experience_contribution',
+    'town_kills',
+    'time_spent_dead',
+    'merc_camp_captures',
+    'watch_tower_captures',
+    'meta_experience',
+    'protection_allies',
+    'silencing_enemies',
+    'rooting_enemies',
+    'stunning_enemies',
+    'clutch_heals',
+    'escapes',
+    'vengeance',
+    'outnumbered_deaths',
+    'teamfight_escapes',
+    'teamfight_healing',
+    'teamfight_damage_taken',
+    'teamfight_hero_damage',
+    'multikill',
+    'physical_damage',
+    'spell_damage'
 ];
 
 getTopStats = async function() {
@@ -69,47 +104,28 @@ getTopStats = async function() {
                     ]
                 };
                 System.findOneAndUpdate(
-                        query, {
-                            "dataName": "TopStatList",
-                            "stat": stat,
-                            "data": rtval[i].data
-                        }, {
-                            new: true,
-                            upsert: true
-                        }
-                    ).then(
-                        saved => {
-                            let logObj = {};
-                            logObj.actor = 'getTopStatsCron';
-                            logObj.action = 'updated stat';
-                            logObj.target = 'top stats - ' + stat;
-                            logObj.logLevel = 'STD';
-                            logObj.timeStamp = Date.now();
-                            logger(logObj);
-                        },
-                        err => {
-                            console.log(err);
-                        }
-                    )
-                    // new System({
-                    //     "dataName": "TopStatList",
-                    //     "stat": stat,
-                    //     "data": rtval[i].data
-                    // }).save().then(
-                    //     saved => {
-                    //         console.log(saved);
-                    //         let logObj = {};
-                    //         logObj.actor = 'getTopStatsCron';
-                    //         logObj.action = 'updated stat';
-                    //         logObj.target = 'top stats - ' + stat;
-                    //         logObj.logLevel = 'STD';
-                    //         logObj.timeStamp = Date.now();
-                    //         logger(logObj);
-                    //     },
-                    //     err => {
-                    //         console.log(err);
-                    //     }
-                    // )
+                    query, {
+                        "dataName": "TopStatList",
+                        "stat": stat,
+                        "data": rtval[i].data
+                    }, {
+                        new: true,
+                        upsert: true
+                    }
+                ).then(
+                    saved => {
+                        let logObj = {};
+                        logObj.actor = 'getTopStatsCron';
+                        logObj.action = 'updated stat';
+                        logObj.target = 'top stats - ' + stat;
+                        logObj.logLevel = 'STD';
+                        logObj.timeStamp = Date.now();
+                        logger(logObj);
+                    },
+                    err => {
+                        console.log(err);
+                    }
+                )
             }
 
         }

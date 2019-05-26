@@ -7,6 +7,8 @@ const replayScheam = new Schema({
     "players": Object,
     "status": Number,
     "fullyAssociated": Boolean,
+    "futureAssociated": Boolean,
+    "leagueStats": Boolean,
     "systemId": String,
     "season": Number
 }, {

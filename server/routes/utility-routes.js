@@ -164,7 +164,6 @@ router.post('/tabulate-stats/team', (req, res) => {
 
 });
 
-
 //post
 // path: /team/uploadLogo
 // requires id, type, and base64 encoded image
@@ -332,6 +331,29 @@ router.post('/grabTopStats', (req, res) => {
                     },
                     err => {
                         res.status(500).send(util.returnMessaging(path, 'Get top stats failed!', false, null, null));
+                    }
+                )
+            } else {
+                res.status(401).send(util.returnMessaging(path, 'Unauthorized', false, null, null));
+            }
+        });
+});
+
+router.post('/leagueStatRun', (req, res) => {
+    const path = '/utility/leagueStatRun';
+
+    var apiKey = req.body.apiKey || req.query.apiKey;
+
+    checkApiKey(apiKey).then(
+        validate => {
+            if (validate) {
+                //grab top stats from HERO-PROFILE
+                StatsJobs.leagueStatRunner().then(
+                    sucuess => {
+                        res.status(200).send(util.returnMessaging(path, 'League stats runner started check logs for more info', false, null, null));
+                    },
+                    err => {
+                        res.status(500).send(util.returnMessaging(path, 'League stats runner failed!', false, null, null));
                     }
                 )
             } else {

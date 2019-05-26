@@ -11,6 +11,7 @@ const axios = require('axios');
 const _ = require('lodash');
 const querystring = require('querystring');
 const util = require('../utils');
+const System = require('../models/system-models').system;
 
 //TODO: move string into env. variable
 const postToHotsProfileURL = process.env.heroProfileAPI;
@@ -32,7 +33,6 @@ async function postToHotsProfile(postObj) {
 
 function getToonHandle(obj, name) {
     let handle = null;
-    console.log('obj ', obj, ' name ', name);
     obj.forEach(key => {
         if (key.btag == name) {
             handle = key.toonHandle;
@@ -161,7 +161,9 @@ async function asscoatieReplays() {
                     found => { return found; },
                     err => { return null; }
                 )
+
                 if (replayToSave) {
+
                     replayToSave.fullyAssociated = true;
                     replayToSave.markModified('fullyAssociated');
                     replayToSave.save().then(
@@ -180,6 +182,404 @@ async function asscoatieReplays() {
     } else {
 
     }
+}
+/*
+  ControlPoints: 'Sky Temple',
+    TowersOfDoom: 'Towers of Doom',
+    // HauntedMines: 'Haunted Mines',
+    BattlefieldOfEternity: 'Battlefield of Eternity',
+    // BlackheartsBay: "Blackheart's Bay",
+    CursedHollow: 'Cursed Hollow',
+    DragonShire: 'Dragon Shire',
+    // HauntedWoods: 'Garden of Terror',
+    Shrines: 'Infernal Shrines',
+    Crypts: 'Tomb of the Spider Queen',
+    Volskaya: 'Volskaya Foundry',
+    // 'Warhead Junction': 'Warhead Junction',   // blizz why
+    // BraxisHoldout: 'Braxis Holdout',
+    // Hanamura: 'Hanamura',
+    AlteracPass: 'Alterac Pass'
+*/
+
+async function leagueStatRunner() {
+
+    let replays = await Replay.find({
+        $or: [{
+            leagueStats: false
+        }, {
+            leagueStats: null
+        }, {
+            leagueStats: {
+                $exists: false
+            }
+        }]
+    }).then(
+        found => {
+            return found;
+        }
+    )
+    if (replays.length > 0) {
+        for (var i = 0; i < replays.length; i++) {
+            console.log('calculating fun stats ', i + 1, ' of ', replays.length);
+            let replay = replays[i];
+            let finishUpdate = await statsMethods.calcLeagueStats(replay);
+            if (finishUpdate) {
+                replay.leagueStats = true;
+                replay.save().then(
+                    saved => {
+                        console.log('done with ', i + 1, ' of ', replays.length);
+                    }
+                )
+            }
+
+        }
+    }
+    return true;
+}
+
+async function calcLeagueStats(replay) {
+
+    let seasonSave;
+    let overallSave;
+
+    let objectiveInfo = {
+        'globesGathered': 0,
+        'minionsKilled': 0,
+        'secondsPlayed': 0
+    };
+
+    console.log(replay.match.map);
+    switch (replay.match.map) {
+        case 'Braxis Holdout':
+            objectiveInfo['zergWaves'] = braxCalc(replay);
+            break;
+        case 'Cursed Hollow':
+            let cTemp = curseCalc(replay);
+            objectiveInfo['tributesGathered'] = cTemp['tributesGathered'];
+            objectiveInfo['curses'] = cTemp['curses'];
+            break;
+        case 'Volskaya Foundry':
+            objectiveInfo['protectors-Summoned'] = volskCalc(replay);
+            break;
+        case 'Sky Temple':
+            objectiveInfo['templeShots'] = skyCalc(replay);
+            break;
+        case 'Towers of Doom':
+            objectiveInfo['altarsChanneled'] = towersCalc(replay);
+            break;
+        case 'Battlefield of Eternity':
+            objectiveInfo['immortalsWon'] = boeCalc(replay);
+            break;
+        case 'Dragon Shire':
+            objectiveInfo['dragonKnights-Summoned'] = dragonCalc(replay);
+            break;
+        case 'Garden of Terror':
+            objectiveInfo['terrorsSummoned'] = gardenCalc(replay);
+            break;
+        case 'Infernal Shrines':
+            let iTemp = shrinesCalc(replay);
+            objectiveInfo['punishers-Summoned'] = iTemp['punishers-Summoned'];
+            objectiveInfo['protectorsKilled'] = iTemp['protectorsKilled'];
+            break;
+        case 'Tomb of the Spider Queen':
+            let tTemp = tombCalc(replay);
+            objectiveInfo['spiderButtsTurnedIn'] = tTemp['spiderButtsTurnedIn'];
+            objectiveInfo['spiders-Summoned'] = tTemp['spiders-Summoned'];
+            break;
+        case 'Hanamura Temple':
+            objectiveInfo['payloadsPushed'] = hanCalc(replay);
+            break;
+        case 'Alterac Pass':
+            objectiveInfo['calvaryCharges'] = alteracCalc(replay);
+            break;
+        case 'Warhead Junction':
+            let wTemp = warheadCalc(replay);
+            objectiveInfo['warheadsGathered'] = wTemp['warheadsGathered'];
+            objectiveInfo['warheadsUsed'] = wTemp['warheadsUsed'];
+            break;
+        default:
+            objectiveInfo['error'] = true;
+            break;
+
+    }
+
+    objectiveInfo.secondsPlayed += Math.floor(replay.match.length);
+
+    let keys = Object.keys(replay.players);
+
+    keys.forEach(player => {
+        let playerObj = replay.players[player];
+        objectiveInfo.minionsKilled += playerObj.gameStats.MinionKills;
+        objectiveInfo.globesGathered += playerObj.globes.count;
+    });
+
+    let query = {
+        $and: [{
+                dataName: "leagueRunningFunStats"
+            },
+            {
+                span: "overall"
+            }
+        ]
+    }
+    let overall = await System.findOne(query).then(
+        rep => {
+            return rep;
+        }, err => {
+            return null;
+        }
+    );
+
+    if (overall) {
+        let keys = Object.keys(objectiveInfo);
+        keys.forEach(key => {
+            if (util.returnBoolByPath(overall.data, key)) {
+                overall.data[key] += objectiveInfo[key];
+            } else {
+                overall.data[key] = objectiveInfo[key];
+            }
+        });
+        overall.markModified('data');
+        overallSave = await overall.save().then(
+            rep => { return rep; },
+            err => {
+                return null;
+            }
+        )
+    } else {
+        let newObj = {
+            span: "overall",
+            dataName: "leagueRunningFunStats",
+            data: {}
+        }
+        let keys = Object.keys(objectiveInfo);
+        keys.forEach(key => {
+            newObj.data[key] = objectiveInfo[key];
+        });
+        overallSave = await new System(newObj).save().then(
+            res => {
+                return res;
+            },
+            err => {
+                return null;
+            }
+        )
+    }
+    query = {
+        $and: [{
+                dataName: "leagueRunningFunStats"
+            },
+            {
+                span: process.env.season
+            }
+        ]
+    };
+    let season = await System.findOne(query).then(
+        rep => {
+            return rep;
+        }, err => {
+            return null;
+        }
+    );
+
+    if (season) {
+        let keys = Object.keys(objectiveInfo);
+        keys.forEach(key => {
+            if (util.returnBoolByPath(season.data, key)) {
+                season.data[key] += objectiveInfo[key];
+            } else {
+                season.data[key] = objectiveInfo[key];
+            }
+        });
+        season.markModified('data');
+        seasonSave = await season.save().then(
+            rep => {
+                return rep;
+            },
+            err => {
+                return null;
+            }
+        )
+    } else {
+        let newObj = {
+            span: process.env.season,
+            dataName: "leagueRunningFunStats",
+            data: {}
+        }
+        let keys = Object.keys(objectiveInfo);
+        keys.forEach(key => {
+            newObj.data[key] = objectiveInfo[key];
+        });
+        seasonSave = await new System(newObj).save().then(
+            res => {
+                return res;
+            },
+            err => {
+                return null;
+            }
+        )
+    }
+
+    return [
+        overallSave,
+        seasonSave
+    ];
+
+}
+
+function braxCalc(replay) {
+    let obj = 0;
+    if (replay) {
+        obj = replay.match.objective.waves.length;
+    }
+    return obj;
+}
+
+function alteracCalc(replay) {
+    let obj = 0;
+    if (replay) {
+        obj += (replay.match.objective["0"].events.length / 3);
+        obj += (replay.match.objective["1"].events.length / 3);
+    }
+    return obj;
+}
+
+function shrinesCalc(replay) {
+    let obj = {
+        'punishers-Summoned': 0,
+        'protectorsKilled': 0
+    };
+    if (replay) {
+        obj['punishers-Summoned'] = replay.match.objective.shrines.length;
+
+        replay.match.objective.shrines.forEach(event => {
+            obj['protectorsKilled'] += event["team0Score"];
+            obj['protectorsKilled'] += event["team1Score"];
+        })
+    }
+    return obj;
+}
+
+function gardenCalc(replay) {
+    let obj = 0;
+    if (replay) {
+        obj += replay.match.objective["0"].units.length / 3;
+        obj += replay.match.objective["1"].units.length / 3;
+    }
+    return obj;
+}
+
+function dragonCalc(replay) {
+    let obj = 0;
+    if (replay) {
+        obj += replay.match.objective["0"].count;
+        obj += replay.match.objective["1"].count;
+    }
+    return obj;
+}
+
+function hanCalc(replay) {
+    let obj = 0;
+    if (replay) {
+        replay.match.objective.events.forEach(event => {
+            if (event.hasOwnProperty('died')) {
+                obj += 1;
+            }
+        })
+    }
+    return obj;
+}
+
+function skyCalc(replay) {
+    let obj = 0;
+    if (replay) {
+        obj += replay.match.objective["0"].count;
+        obj += replay.match.objective["1"].count;
+        // add this while i'm here in case we want dmg later
+        // obj += replay.objective["0"].damage;
+        // obj += replay.objective["1"].damage;
+    }
+    return obj;
+}
+
+function tombCalc(replay) {
+    let obj = {
+        'spiders-Summoned': 0,
+        'spiderButtsTurnedIn': 0
+    };
+
+    if (replay) {
+        obj['spiders-Summoned'] += replay.match.objective["0"].count;
+        obj['spiders-Summoned'] += replay.match.objective["1"].count;
+
+        let keys = Object.keys(replay.players);
+        keys.forEach(key => {
+            let player = replay.players[key];
+            obj['spiderButtsTurnedIn'] += player.gameStats.GemsTurnedIn;
+        });
+
+    }
+
+    return obj;
+
+}
+
+function towersCalc(replay) {
+    let obj = 0;
+    obj += replay.match.objective["0"].count;
+    obj += replay.match.objective["1"].count;
+    return obj;
+}
+
+function warheadCalc(replay) {
+    let info = {
+        'warheadsGathered': 0,
+        'warheadsUsed': 0
+    };
+    if (replay) {
+        info.warheadsGathered += replay.match.objective["0"].count;
+        info.warheadsGathered += replay.match.objective["1"].count;
+        info.warheadsUsed += replay.match.objective["0"].success;
+        info.warheadsUsed += replay.match.objective["1"].success;
+    }
+    return info;
+}
+
+function volskCalc(replay) {
+    let obj = 0;
+    obj += replay.match.objective["0"].events.length;
+    obj += replay.match.objective["1"].events.length;
+    return obj;
+}
+
+function curseCalc(replay) {
+    let info = {
+        'tributesGathered': 0,
+        'curses': 0
+    };
+
+    if (replay) {
+        info.tributesGathered += replay.match.objective["0"].events.length;
+        info.tributesGathered += replay.match.objective["1"].events.length;
+
+        info.curses += Math.floor(replay.match.objective["0"].events.length / 3);
+        info.curses += Math.floor(replay.match.objective["1"].events.length / 3);
+    }
+
+    return info;
+
+}
+
+function boeCalc(replay) {
+    let retinfo = 0;
+    if (replay) {
+        replay.match.objective.results.forEach(res => {
+            if (res.hasOwnProperty('winner')) {
+                retinfo += 1;
+            }
+        })
+    }
+    return retinfo;
 }
 
 //this will run through players with toon handles and tabulate their stats from replays
@@ -544,7 +944,9 @@ module.exports = {
     asscoatieReplays: asscoatieReplays,
     tabulateUserStats: tabulateUserStats,
     tabulateTeamStats: tabulateTeamStats,
-    postToHotsProfileHandler: postToHotsProfileHandler
+    postToHotsProfileHandler: postToHotsProfileHandler,
+    calcLeagueStats: calcLeagueStats,
+    leagueStatRunner: leagueStatRunner
 }
 
 function screenPostObject(postObj) {
