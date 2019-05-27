@@ -156,7 +156,7 @@ async function asscoatieReplays() {
                 }
             }
             // console.log('associatedCount ', associatedCount)
-            if (associatedCount == 12) {
+            if (associatedCount == asscoatieReplays) {
                 let replayToSave = await Replay.findById(replay._id).then(
                     found => { return found; },
                     err => { return null; }
@@ -164,8 +164,17 @@ async function asscoatieReplays() {
 
                 if (replayToSave) {
 
+                    if (users.length + 2 == 12) {
+                        replayToSave.fullyAssociated = true;
+                        replayToSave.futureAssociated = false;
+                    } else {
+                        replayToSave.fullyAssociated = true;
+                        replayToSave.futureAssociated = true;
+                    }
+
                     replayToSave.fullyAssociated = true;
                     replayToSave.markModified('fullyAssociated');
+                    replayToSave.markModified('futureAssociated');
                     replayToSave.save().then(
                         saved => {
                             // console.log('replay saved');

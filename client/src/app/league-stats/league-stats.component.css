@@ -1,0 +1,31 @@
+    .largeStatContainer {
+        color: white;
+        height: 200px;
+        width: 500px;
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+    
+    .smallStatContainer {
+        color: white;
+        height: 150px;
+        width: 500px;
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+    
+    .statText {
+        font-size: 2em;
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    }
+    
+    .displayText {
+        font-size: 1.5em;
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    }
+    
+    .statPos {
+        position: absolute;
+        display: inline-block;
+        margin-left: 20px;
+    }

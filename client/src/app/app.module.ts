@@ -142,6 +142,8 @@ import { UpdateTeamInfoComponent } from './admin/manage-team/update-team-info/up
 import { TeamTickerComponent } from './formComponents/team-ticker/team-ticker.component';
 import { AllTeamsComponent } from './team/all-teams/all-teams.component';
 import { DivisionIfPublicComponent } from './division-if-public/division-if-public.component';
+import { LeagueStatsComponent } from './league-stats/league-stats.component';
+import { LStatDirective } from './league-stats/l-stat.directive';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -274,7 +276,9 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     UpdateTeamInfoComponent,
     TeamTickerComponent,
     AllTeamsComponent,
-    DivisionIfPublicComponent
+    DivisionIfPublicComponent,
+    LeagueStatsComponent,
+    LStatDirective
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

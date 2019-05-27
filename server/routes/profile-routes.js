@@ -186,6 +186,34 @@ router.get('/frontPageStats', (req, res) => {
 
 });
 
+router.get('/leagueOverallStats', (req, res) => {
+
+    const path = '/user/leagueOverallStats';
+
+
+    let query = {
+        $and: [{
+                dataName: "leagueRunningFunStats"
+            },
+            {
+                span: "overall"
+            }
+        ]
+    }
+
+    System.findOne(query).then(
+        found => {
+            res.status(200).send(util.returnMessaging(path, 'Found stat', false, found));
+        },
+        err => {
+            res.status(400).send(util.returnMessaging(path, 'Error getting stat.', err, null, null));
+        }
+    );
+
+
+
+});
+
 router.get('/statistics', (req, res) => {
 
     const path = '/user/statistics';

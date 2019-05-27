@@ -18,6 +18,12 @@ export class HotsProfileService {
     return this.http.httpGet(url, params, false);
   }
 
+  getOverallLeagueStats() {
+    let url = '/user/leagueOverallStats'
+    let params = [];
+    return this.http.httpGet(url, params, false);
+  }
+
   getHPTeamLink(teamName){
     //https://heroesprofile.com/NGS/Team/Single/?team=TEST%20aggressive%20quorums%20(withdrawn)
     if(this.util.isNullOrEmpty(teamName)){
