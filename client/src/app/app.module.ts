@@ -65,7 +65,7 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { EventModalComponent } from './calendar-view/event-modal/event-modal.component';
 import { EventLargeComponent } from './calendar-view/event-large/event-large.component';
 import { SetDeadlineComponent } from './admin/match-management/set-deadline/set-deadline.component';
-import { MatchViewComponent } from './match-view/match-view.component';
+import { MatchViewComponent } from './match/match-view/match-view.component';
 import { DropDownTimeComponent } from './formComponents/times-available/drop-down-time/drop-down-time.component';
 import { UserMessageCenterComponent } from './messageCenter/user-message-center/user-message-center.component';
 import { RulesComponent } from './rules/rules.component';
@@ -84,14 +84,14 @@ import { DivisionSelectorComponent } from './division-selector/division-selector
 import { DragScrollModule } from 'ngx-drag-scroll';
 import { TeamScheduleComboComponent } from './schedule/team-schedule-combo/team-schedule-combo.component';
 import { TeamTournamentsComponent } from './schedule/team-tournaments/team-tournaments.component';
-import { MatchScheduleComponent } from './match-schedule/match-schedule.component';
+import { MatchScheduleComponent } from './match/match-schedule/match-schedule.component';
 import { TournamentReportingComponent } from './reporting/tournament-reporting/tournament-reporting.component';
 import { EventDisplayComponent } from './events/event-display/event-display.component';
 import { EventCreateComponent } from './admin/events/event-create/event-create.component';
 import { EventListComponent } from './admin/events/event-list/event-list.component';
 import { GeneralImageUploadComponent } from './general-image-upload/general-image-upload.component';
 import { MiniCarouselComponent } from './mini-carousel/mini-carousel.component';
-import { MatchViewVerticleComponent } from './match-view-verticle/match-view-verticle.component';
+import { MatchViewVerticleComponent } from './match/match-view-verticle/match-view-verticle.component';
 import { LargeCarouselComponent } from './large-carousel/large-carousel.component';
 import { MatchViewModalComponent } from './modal/match-view-modal/match-view-modal.component';
 import { NewsNoSidebarComponent } from './news-no-sidebar/news-no-sidebar.component';
@@ -144,6 +144,7 @@ import { AllTeamsComponent } from './team/all-teams/all-teams.component';
 import { DivisionIfPublicComponent } from './division-if-public/division-if-public.component';
 import { LeagueStatsComponent } from './league-stats/league-stats.component';
 import { LStatDirective } from './league-stats/l-stat.directive';
+import { MatchResultsViewComponent } from './match/match-results-view/match-results-view.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -278,7 +279,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     AllTeamsComponent,
     DivisionIfPublicComponent,
     LeagueStatsComponent,
-    LStatDirective
+    LStatDirective,
+    MatchResultsViewComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

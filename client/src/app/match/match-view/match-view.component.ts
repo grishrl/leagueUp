@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { TeamService } from 'src/app/services/team.service';
-import { UtilitiesService } from '../services/utilities.service';
+import { UtilitiesService } from '../../services/utilities.service';
 
 @Component({
   selector: 'app-match-view',

@@ -8,6 +8,7 @@ const Event = require('../models/event-model');
 const jwt = require('jsonwebtoken');
 const System = require('../models/system-models');
 const AWS = require('aws-sdk');
+const Replay = require('../models/replay-parsed-models');
 const getTopStats = require('../cron-routines/getTopStats');
 
 
@@ -21,6 +22,27 @@ const s3Bucket = new AWS.S3({
     params: {
         Bucket: process.env.s3bucketGeneralImages
     }
+});
+
+router.get('/replay/map/name', (req, res) => {
+    const path = '/utility/replay/map/name';
+    var id = decodeURIComponent(req.query.id);
+
+
+    Replay.findOne({ systemId: id }).then(
+        found => {
+            let map = { name: null };
+            if (found) {
+                map.name = found.match.map;
+            }
+            res.status(200).send(util.returnMessaging(path, 'Found replay:', null, map, null, null));
+        },
+        err => {
+            res.status(500).send(util.returnMessaging(path, 'Error qeury replays', err, null, null, null));
+        }
+    )
+
+
 });
 
 

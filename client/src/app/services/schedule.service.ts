@@ -36,7 +36,7 @@ export class ScheduleService {
   };
 
   //returns matches that match criteria of season, division, round
-  getScheduleMatches(season, division:string, round:number){  
+  getScheduleMatches(season, division:string, round:number){
     let url = 'schedule/get/matches';
     let payload = {
       'season':season,
@@ -58,10 +58,9 @@ export class ScheduleService {
   }
 
   //returns a match given the matchId and season
-  getMatchInfo(season, matchId:string){
+  getMatchInfo(matchId:string){
     let url = 'schedule/get/match';
     let payload={
-      "season":season,
       "matchId":matchId
     }
     return this.httpService.httpPost(url, payload);
@@ -71,7 +70,7 @@ export class ScheduleService {
   scheduleMatchTime(matchId:string, scheduledStartTime:number, scheduledEndTime:number){
     // let url = 'http://localhost:3000/schedule/setMatchTime';
     let url = 'schedule/update/match/time';
-  
+
     let payload = {
       "matchId":matchId,
       "scheduledStartTime": scheduledStartTime,

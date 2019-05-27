@@ -44,7 +44,7 @@ export class MatchEditComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.scheduleService.getMatchInfo(environment.season, this.matchId).subscribe(res=>{
+    this.scheduleService.getMatchInfo(this.matchId).subscribe(res=>{
       this.match = res;
       if (this.match.away.score || this.match.home.score) {
         this.homeScore = this.match.home.score;

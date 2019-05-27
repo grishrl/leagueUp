@@ -323,7 +323,6 @@ for getting a match specified by ID
 */
 router.post('/get/match', (req, res) => {
     const path = 'schedule/get/match';
-    let season = req.body.season;
     let matchId = req.body.matchId;
 
     Match.findOne({ matchId: matchId }).lean().then((foundMatch) => {

@@ -1,4 +1,4 @@
-<div *ngIf="show" [ngClass]="returnClass()" [ngStyle]="returnStyle()" style="background-size: cover;">
-    <div [ngStyle]="returnMargin()" class="statPos"><strong><span class="statText">{{displayStat}}</span></strong> <span class="displayText"> {{displayText}}</span>
+<div *ngIf="show" class="statContainer" [ngStyle]="returnStyle()" style="background-size: cover;">
+    <div class="smallStat"><strong><span class="statText">{{displayStat}}</span></strong> <span class="displayText"> {{displayText}}</span>
     </div>
 </div>

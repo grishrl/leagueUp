@@ -46,6 +46,7 @@ import { EventListComponent } from './admin/events/event-list/event-list.compone
 import { StaticHtmlLoaderComponent } from './static-html-loader/static-html-loader.component';
 import { ApprovePendingAvatarComponent } from "./admin/approve-pending-avatar/approve-pending-avatar.component";
 import { AllTeamsComponent } from "./team/all-teams/all-teams.component";
+import { MatchResultsViewComponent } from './match/match-results-view/match-results-view.component';
 
 const APP_ROUTES: Routes = [
   { path: 'directory', component: DirectoryComponent},
@@ -63,6 +64,7 @@ const APP_ROUTES: Routes = [
   { path: 'email/invite/:id', component:OutreachEmailResponseComponent },
   { path: 'blog', component:BlogListComponent },
   { path: 'blog/:id', component:BlogViewComponent },
+  { path: 'match/view/:id', component:MatchResultsViewComponent },
   { path: '_admin/approveTeamQueue', component:ApproveMemberComponent, canActivate:[AuthGuardService], data:{role:'team'} },
   { path: '_admin/approveAvatarQueue', component: ApprovePendingAvatarComponent, canActivate: [AuthGuardService], data: { role: 'user' } },
   { path: '_admin/manageUser', component: ManageMemberComponent, canActivate: [AuthGuardService], data: { role: 'user' } },

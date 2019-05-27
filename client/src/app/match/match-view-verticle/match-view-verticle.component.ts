@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { UtilitiesService } from '../services/utilities.service';
-import { TeamService } from '../services/team.service';
+import { UtilitiesService } from '../../services/utilities.service';
+import { TeamService } from '../../services/team.service';
 
 @Component({
   selector: 'app-match-view-verticle',

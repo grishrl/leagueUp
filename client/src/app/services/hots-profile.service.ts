@@ -18,6 +18,14 @@ export class HotsProfileService {
     return this.http.httpGet(url, params, false);
   }
 
+  getReplay(id){
+    let url = '/utility/replay/map/name'
+    let params = [
+      {id:id}
+    ];
+    return this.http.httpGet(url, params, false);
+  }
+
   getOverallLeagueStats() {
     let url = '/user/leagueOverallStats'
     let params = [];

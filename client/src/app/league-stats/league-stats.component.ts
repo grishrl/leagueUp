@@ -22,10 +22,8 @@ export class LeagueStatsComponent implements OnInit {
   show=false;
 
   ngOnInit() {
-    console.log('on init')
     this.lstat.getStatInfoStream.subscribe(
       obj => {
-        console.log('reply');
         this.randomInt = obj['rInt'];
         this.imgSrc = 'https://s3.amazonaws.com/' + environment.s3bucketGeneralImage + '/' + obj['image'];
         this.displayStat = obj['stat'];
@@ -33,6 +31,14 @@ export class LeagueStatsComponent implements OnInit {
         this.show = true;
       }
     )
+    if(this.lstat.getStatFromLocal()){
+      let obj = this.lstat.getStatFromLocal();
+      this.randomInt = obj['rInt'];
+      this.imgSrc = 'https://s3.amazonaws.com/' + environment.s3bucketGeneralImage + '/' + obj['image'];
+      this.displayStat = obj['stat'];
+      this.displayText = obj['text'];
+      this.show = true;
+    }
     }
 
 ngAfterViewInit(){
@@ -48,9 +54,9 @@ ngAfterViewInit(){
 
   returnClass(){
     if (this.randomInt == 0 || this.randomInt == 2) {
-      return 'largeStatContainer';
+      return 'largeStat';
     }else{
-      return 'smallStatContainer';
+      return 'smallStat';
     }
   }
 

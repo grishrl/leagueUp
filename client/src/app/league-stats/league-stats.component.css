@@ -1,18 +1,29 @@
-    .largeStatContainer {
-        color: white;
-        height: 200px;
+    /* .largeStatContainer {
+        background-size: cover !important;
+        background-position: top center !important;
+        background-repeat: no-repeat !important;
+        position: relative;
         width: 500px;
-        background-size: cover;
-        background-repeat: no-repeat;
+    } */
+    
+    .statContainer {
+        background-size: cover !important;
+        background-position: top center !important;
+        background-repeat: no-repeat !important;
+        position: relative;
+        width: 500px;
     }
     
-    .smallStatContainer {
+    .smallStat {
+        padding-top: 55px;
+        padding-bottom: 55px;
+        background-color: #0000007a;
         color: white;
-        height: 150px;
-        width: 500px;
-        background-size: cover;
-        background-repeat: no-repeat;
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        padding-left: 30px;
     }
+    
+    .largeStat {}
     
     .statText {
         font-size: 2em;
@@ -23,9 +34,8 @@
         font-size: 1.5em;
         text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
     }
-    
-    .statPos {
+    /* .statPos {
         position: absolute;
         display: inline-block;
         margin-left: 20px;
-    }
+    } */

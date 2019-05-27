@@ -22,7 +22,7 @@
 
                     <span class="goals">
                       <b>{{reportScore(match, 'home')}}</b> - <b>{{reportScore(match, 'away')}}</b>
-            <a href="single-result.html" class="btn theme">View More</a>
+            <a [routerLink]="['/match/view/', match.matchId]" class="btn theme">View More</a>
           </span>
                     <span>
                       <i *ngIf="dominator(match, 'away')" style="position: absolute;" class="fas fa-crown"></i>
