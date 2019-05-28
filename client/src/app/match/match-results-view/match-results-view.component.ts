@@ -55,6 +55,7 @@ export class MatchResultsViewComponent implements OnInit {
       }
     )
   }
+  //test
 
 /*
 ControlPoints: 'Sky Temple',

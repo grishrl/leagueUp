@@ -34,6 +34,8 @@ router.get('/getTeamsUndivisioned', passport.authenticate('jwt', {
     }).then((results) => {
         if (results && results.length > 0) {
             res.status(200).send(util.returnMessaging(path, 'Found teams', false, results));
+        } else {
+            res.status(200).send(util.returnMessaging(path, 'Found teams', false, results));
         }
     }, (err) => {
         res.status(500).send(util.returnMessaging(path, 'Error querying teams', err));
