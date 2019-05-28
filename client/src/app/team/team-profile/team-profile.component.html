@@ -259,6 +259,13 @@
                                                     <app-timezone [(timezone)]="returnedProfile.timeZone" [disabled]="disabled" [(error)]="timezoneError"></app-timezone>
                                                 </div>
                                             </div>
+
+                                            <div class="row mt-3" *ngIf="showRegisteredQuestionnaire() else registered">
+                                                <div class="col">
+                                                    <app-questionnaire [team]="returnedProfile">
+                                                    </app-questionnaire>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -333,3 +340,9 @@
     </div>
 
 </section>
+<ng-template #registered>
+    <div *ngIf="auth.getUser()==returnedProfile.captain">
+        <div class="text-center text-success p-5"> Thanks for registering for NGS Season 6! Good Luck and We'll see you in the Nexus</div>
+    </div>
+
+</ng-template>
