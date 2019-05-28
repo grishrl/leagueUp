@@ -182,19 +182,27 @@
         </div>
         <div class="row">
             <div class="col">
-                <mat-radio-group [(ngModel)]='responses.eastWest'>
-                    <mat-radio-button class="example-margin" value="east">Monday - Thursday evenings, with match start times between 5 PM - 8 PM PT</mat-radio-button>
-                </mat-radio-group>
+
+            </div>
+            <div class="col-12">
+                <div>
+                    <mat-radio-group [(ngModel)]='responses.eastWest'>
+                        <mat-radio-button class="example-margin" value="east">Monday - Thursday evenings, with match start times between 5 PM - 8 PM PT</mat-radio-button>
+                    </mat-radio-group>
+                </div>
+                <div>
+                    <mat-radio-group [(ngModel)]='responses.eastWest'>
+                        <mat-radio-button class="example-margin" value="west">Monday - Thursday evenings, with start times between 7 PM - 10 PM PT</mat-radio-button>
+                    </mat-radio-group>
+                </div>
+                <div>
+                    <mat-radio-group [(ngModel)]='responses.eastWest'>
+                        <mat-radio-button class="example-margin" value="either">Either</mat-radio-button>
+                    </mat-radio-group>
+                </div>
             </div>
             <div class="col">
-                <mat-radio-group [(ngModel)]='responses.eastWest'>
-                    <mat-radio-button class="example-margin" value="west">Monday - Thursday evenings, with start times between 7 PM - 10 PM PT</mat-radio-button>
-                </mat-radio-group>
-            </div>
-            <div class="col">
-                <mat-radio-group [(ngModel)]='responses.eastWest'>
-                    <mat-radio-button class="example-margin" value="either">Either</mat-radio-button>
-                </mat-radio-group>
+
             </div>
             <div class="col-12">
                 <div>Note: The primary consideration in placement is competition. We do our best to place teams in their preferred time slot, but there is no guarantee.</div>
