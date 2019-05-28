@@ -2,7 +2,7 @@
     <div class="questionnaireWrapper">
         <div class="row">
             <div class="col">
-                <h3>Season 6 Registration / Questionnaire</h3>
+                <h3>Season 7 Registration / Questionnaire</h3>
                 <span>* Denotes required field</span>
             </div>
             <div class="col">
@@ -23,7 +23,28 @@
         </div>
         <div class="row mt-3">
             <div class="col">
-                <h5>Did you or anyone on your team play in NGS last season?*</h5>
+                <h5>How competitive is your team*</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-radio-group [(ngModel)]='responses.compLevel'>
+                    <mat-radio-button class="checkboxMargin" value="Very Competitive">Very Competitive
+                    </mat-radio-button>
+                </mat-radio-group>
+                <mat-radio-group [(ngModel)]='responses.compLevel'>
+                    <mat-radio-button class="checkboxMargin" value="Balance winning with fun">Balance winning with fun
+                    </mat-radio-button>
+                </mat-radio-group>
+                <mat-radio-group [(ngModel)]='responses.compLevel'>
+                    <mat-radio-button class="checkboxMargin" value="Less competitive more for fun">Less competitive more for fun
+                    </mat-radio-button>
+                </mat-radio-group>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col">
+                <h5>Did you or your team play in NGS last season?*</h5>
             </div>
         </div>
         <div class="row">
@@ -52,7 +73,7 @@
             </div>
             <div class="row mt-3">
                 <div class="col">
-                    <h5>What Div did you play in?*</h5>
+                    <h5>What division did you play in?*</h5>
                 </div>
             </div>
             <div class="row">
@@ -64,7 +85,7 @@
             </div>
             <div class="row mt-3">
                 <div class="col">
-                    <h5>How many returning players do you have? Based on Season 5 NGS divisions, what level were they?*</h5>
+                    <h5>How many returning players do you have? Based on Season 6 NGS divisions, what level were they?*</h5>
                 </div>
             </div>
             <div class="row">
@@ -79,12 +100,54 @@
                     </mat-form-field>
                 </div>
             </div>
+            <div class="row mt-3">
+                <div class="col">
+                    <h5>Who are the new players, if any? Are there any other changes to the team that you feel increase your competitive skill level?</h5>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="mat-FullWidth">
+                        <input matInput placeholder="New Players" [(ngModel)]="responses.newPlayers">
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-form-field class="mat-FullWidth">
+                        <input matInput placeholder="Team Changes" [(ngModel)]="responses.teamChanges">
+                    </mat-form-field>
+                </div>
+            </div>
             <!-- div branch end -->
         </div>
 
         <div class="row mt-3">
             <div class="col">
-                <h5>Has your team played in any other competitions? At what level?*</h5>
+                <h5>Based on Season 6 divisions, what division do you think you belong in?</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="mat-FullWidth">
+                    <input matInput placeholder="Division Placement" [(ngModel)]="responses.divisionPlacement">
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col">
+                <h5>How would you rate your placement and competitive experience in NGS last season? Feedback and comments much appreciated.</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="mat-FullWidth">
+                    <input matInput placeholder="Prior Placement" [(ngModel)]="responses.priorPlacement">
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <h5>Has your team been played in any other competitions? If so, at what level and how competitive was the experience?</h5>
             </div>
         </div>
         <div class="row">
@@ -112,30 +175,43 @@
 
         <div class="row mt-3">
             <div class="col">
-                <h5>What coastal division do you prefer? East, West, Either*</h5>
+                <h5>Which time block (please pick one, or both) best fits your team’s availability?*</h5>
+                <small> Also please have one day Friday - Sunday available to make scheduling as easy as
+                  possible.</small>
             </div>
         </div>
         <div class="row">
             <div class="col">
-                <mat-radio-group [(ngModel)]='responses.eastWest'>
-                    <mat-radio-button class="example-margin" value="east">East</mat-radio-button>
-                </mat-radio-group>
+
+            </div>
+            <div class="col-12">
+                <div>
+                    <mat-radio-group [(ngModel)]='responses.eastWest'>
+                        <mat-radio-button class="example-margin" value="east">Monday - Thursday evenings, with match start times between 5 PM - 8 PM PT</mat-radio-button>
+                    </mat-radio-group>
+                </div>
+                <div>
+                    <mat-radio-group [(ngModel)]='responses.eastWest'>
+                        <mat-radio-button class="example-margin" value="west">Monday - Thursday evenings, with start times between 7 PM - 10 PM PT</mat-radio-button>
+                    </mat-radio-group>
+                </div>
+                <div>
+                    <mat-radio-group [(ngModel)]='responses.eastWest'>
+                        <mat-radio-button class="example-margin" value="either">Either</mat-radio-button>
+                    </mat-radio-group>
+                </div>
             </div>
             <div class="col">
-                <mat-radio-group [(ngModel)]='responses.eastWest'>
-                    <mat-radio-button class="example-margin" value="west">West</mat-radio-button>
-                </mat-radio-group>
+
             </div>
-            <div class="col">
-                <mat-radio-group [(ngModel)]='responses.eastWest'>
-                    <mat-radio-button class="example-margin" value="either">Either</mat-radio-button>
-                </mat-radio-group>
+            <div class="col-12">
+                <div>Note: The primary consideration in placement is competition. We do our best to place teams in their preferred time slot, but there is no guarantee.</div>
             </div>
         </div>
 
         <div class="row mt-3">
             <div class="col">
-                <h5>Pick 9 maps for the NGS player 6 map pool.*</h5>
+                <h5>Pick 9 maps for the NGS season 7 map pool.*</h5>
             </div>
         </div>
         <div class="row" *ngIf="pickedMaps.length<9">
@@ -167,7 +243,7 @@
 
         <div class="row mt-3">
             <div class="col">
-                <h5>Season 6 Registration Check List</h5>
+                <h5>Season 7 Registration Check List</h5>
                 <div>
                     <table>
                         <tr>
@@ -183,7 +259,7 @@
                             <td><span *ngIf="pickedMaps.length!=9"><i class="material-icons text-danger">close</i></span><span *ngIf="pickedMaps.length==9" class="material-icons text-success">check</span></td>
                         </tr>
                         <tr>
-                            <td>Season 6 Questionnaire Completed </td>
+                            <td>Season 7 Questionnaire Completed </td>
                             <td><span *ngIf="!checkQuestionnaire()"><i class="material-icons text-danger">close</i></span><span *ngIf="checkQuestionnaire()" class="material-icons text-success">check</span></td>
                         </tr>
 
@@ -192,7 +268,7 @@
                 </div>
             </div>
             <div class="col vertCentButton">
-                <button [disabled]="!checkValid() || responses.registered" (click)="completeRegistration()" class="btn btn-info">Register for Season 6!</button>
+                <button [disabled]="!checkValid() || responses.registered" (click)="completeRegistration()" class="btn btn-info">Register for Season 7!</button>
             </div>
         </div>
     </div>

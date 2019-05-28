@@ -15,7 +15,7 @@ export class QuestionnaireComponent implements OnInit {
   pickedMaps: any[] = [];
 
   constructor(private teamService: TeamService, private util:UtilitiesService) {  }
-  
+
   @Input() set team(_team){
     if(_team != undefined || _team != null){
       this.passedTeam = _team;
@@ -24,7 +24,7 @@ export class QuestionnaireComponent implements OnInit {
         if (_team.questionnaire.pickedMaps != null && _team.questionnaire.pickedMaps != undefined){
           this.pickedMaps = _team.questionnaire.pickedMaps
         }
-      } 
+      }
     }
   }
 
@@ -44,10 +44,10 @@ export class QuestionnaireComponent implements OnInit {
     AlteracPass: 'Alterac Pass'
   };
 
-  
+
   selectedMap:string;
-  
-  
+
+
 
   checkTeamMates(){
     if(this.passedTeam && this.passedTeam.teamMembers){
@@ -77,18 +77,18 @@ export class QuestionnaireComponent implements OnInit {
       if(this.responses.lastSeason=='yes'){
 
         return this.util.returnBoolByPath(this.responses, 'eastWest') &&
-          this.util.returnBoolByPath(this.responses, 'oldTeam') && 
+          this.util.returnBoolByPath(this.responses, 'compLevel') &&
+          this.util.returnBoolByPath(this.responses, 'oldTeam') &&
           this.util.returnBoolByPath(this.responses, 'oldDivision') &&
           this.util.returnBoolByPath(this.responses, 'returningPlayers') &&
-          this.util.returnBoolByPath(this.responses, 'returningPlayersDiv') &&
-          this.util.returnBoolByPath(this.responses, 'otherLeagues');
+          this.util.returnBoolByPath(this.responses, 'returningPlayersDiv');
 
       } else if (this.responses.lastSeason == 'no'){
 
         return this.util.returnBoolByPath(this.responses, 'eastWest') &&
-          this.util.returnBoolByPath(this.responses, 'otherLeagues') &&
+          this.util.returnBoolByPath(this.responses, 'compLevel') &&
           this.util.returnBoolByPath(this.responses, 'skillGuess')
-      
+
       }else{
         return false;
       }
