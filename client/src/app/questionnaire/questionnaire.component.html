@@ -117,32 +117,31 @@
                     </mat-form-field>
                 </div>
             </div>
+            <div class="row mt-3">
+                <div class="col">
+                    <h5>Based on Season 6 divisions, what division do you think you belong in?</h5>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="mat-FullWidth">
+                        <input matInput placeholder="Division Placement" [(ngModel)]="responses.divisionPlacement">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col">
+                    <h5>How would you rate your placement and competitive experience in NGS last season? Feedback and comments much appreciated.</h5>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="mat-FullWidth">
+                        <input matInput placeholder="Prior Placement" [(ngModel)]="responses.priorPlacement">
+                    </mat-form-field>
+                </div>
+            </div>
             <!-- div branch end -->
-        </div>
-
-        <div class="row mt-3">
-            <div class="col">
-                <h5>Based on Season 6 divisions, what division do you think you belong in?</h5>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="mat-FullWidth">
-                    <input matInput placeholder="Division Placement" [(ngModel)]="responses.divisionPlacement">
-                </mat-form-field>
-            </div>
-        </div>
-        <div class="row mt-3">
-            <div class="col">
-                <h5>How would you rate your placement and competitive experience in NGS last season? Feedback and comments much appreciated.</h5>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="mat-FullWidth">
-                    <input matInput placeholder="Prior Placement" [(ngModel)]="responses.priorPlacement">
-                </mat-form-field>
-            </div>
         </div>
 
         <div class="row mt-3">
@@ -240,6 +239,27 @@
                 </table>
             </div>
         </div>
+        <div class="row mt-3">
+            <div class="col">
+                <h5 style="text-decoration:underline">Change to where we're gathering MMR data</h5>
+                <p style="font-style: italic;">THIS WILL AFFECT YOUR PLACEMENTS</p>
+                <p>
+                    In an attempt to better serve the community and perform better placements; we are moving to Heroes Profile to gather MMR from. As such it is incumbent on you and your team to ensure that you are uploading replays via the HotsAPI uploader.
+                </p>
+                <p><a href="https://hotsapi.net/upload">Hots API</a></p>
+                <p>This free tool uploads your replays the same way that the hots logs uploader does except to an open community database; also this uploader shares the replays with hotslogs, so it's a win-win.</p>
+                <div class="row">
+                    <div class="col text-center vertCentButton">
+                        <mat-checkbox [(ngModel)]="responses.acknowledge">
+                        </mat-checkbox>
+                    </div>
+                    <div class="col-11">
+                        I understand that my team members will need to use the HotsAPI uploader in order to allow NGS access to accurate MMR information for my team's season 7 placement.
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <div class="row mt-3">
             <div class="col">
@@ -259,6 +279,11 @@
                             <td><span *ngIf="pickedMaps.length!=9"><i class="material-icons text-danger">close</i></span><span *ngIf="pickedMaps.length==9" class="material-icons text-success">check</span></td>
                         </tr>
                         <tr>
+                            <td>Acknowledge that you are aware of the move to Heroes Profile and the need to upload replays via HotsAPI for accurate placement MMRs </td>
+                            <td><span *ngIf="!responses.acknowledge"><i
+                                                        class="material-icons text-danger">close</i></span><span *ngIf="responses.acknowledge" class="material-icons text-success">check</span></td>
+                        </tr>
+                        <tr>
                             <td>Season 7 Questionnaire Completed </td>
                             <td><span *ngIf="!checkQuestionnaire()"><i class="material-icons text-danger">close</i></span><span *ngIf="checkQuestionnaire()" class="material-icons text-success">check</span></td>
                         </tr>
@@ -268,7 +293,7 @@
                 </div>
             </div>
             <div class="col vertCentButton">
-                <button [disabled]="!checkValid() || responses.registered" (click)="completeRegistration()" class="btn btn-info">Register for Season 7!</button>
+                <button [disabled]="!checkValid()" (click)="completeRegistration()" class="btn btn-info">Register for Season 7!</button>
             </div>
         </div>
     </div>

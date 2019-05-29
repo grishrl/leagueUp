@@ -95,7 +95,7 @@ export class QuestionnaireComponent implements OnInit {
   }
 
   checkValid(){
-    return this.checkTeamMates() && this.checkQuestionnaire() && this.pickedMaps.length==9;
+    return this.checkTeamMates() && this.checkQuestionnaire() && this.pickedMaps.length == 9 && this.responses.acknowledge == true;
   }
 
   remove(map){
