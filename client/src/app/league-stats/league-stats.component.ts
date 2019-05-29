@@ -31,13 +31,8 @@ export class LeagueStatsComponent implements OnInit {
         this.show = true;
       }
     )
-    if(this.lstat.getStatFromLocal()){
-      let obj = this.lstat.getStatFromLocal();
-      this.randomInt = obj['rInt'];
-      this.imgSrc = 'https://s3.amazonaws.com/' + environment.s3bucketGeneralImage + '/' + obj['image'];
-      this.displayStat = obj['stat'];
-      this.displayText = obj['text'];
-      this.show = true;
+    if(!this.randomInt){
+      this.lstat.getStatInfo();
     }
     }
 

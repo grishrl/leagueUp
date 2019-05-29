@@ -10,7 +10,7 @@ export class LeagueStatService {
   randomInt;
   displayStat;
   displayText;
-  responseData;
+  responseData; //local cache of response data
 
   constructor(private hp: HotsProfileService) {
     this.randomInt = Math.floor(Math.random() * this.statList.length);
@@ -20,17 +20,16 @@ export class LeagueStatService {
    init(){
      this.hp.getOverallLeagueStats().subscribe(
        res => {
-         this.responseData = res.data;
          let keys = Object.keys(res.data);
          keys.forEach(key => {
            if (key == this.statList[this.randomInt].statName) {
              if (key == "secondsPlayed") {
                res.data[key] = Math.floor(res.data[key] / 60);
              }
-             this.displayStat = res.data[key];
-             this.getStatInfo();
            }
-         })
+         });
+         this.responseData = res.data; //add the response data to the local cache; we can use this to make more calls later;
+         this.getStatInfo(); //once we have bootstrapped and have the info we need; call this method to start the observable's pipeline
        },
        err => {
          console.log(err);
@@ -39,27 +38,21 @@ export class LeagueStatService {
    }
 
   public getStatInfoStream: Subject<object> = new Subject();
-
-  getStatFromLocal(){
-    if(this.responseData && this.randomInt){
-      return {
-        rInt: this.randomInt,
-        stat: this.displayStat,
-        text: this.statList[this.randomInt].displayText,
-        image: this.statList[this.randomInt].image
-      };
-    }else{
-
-    }
-  }
-
+   //this is to be used as an external spur to action; if a component loses it's values it can call this method which will fire the next observable
    getStatInfo(){
-     this.getStatInfoStream.next({
-       rInt: this.randomInt,
-       stat: this.displayStat,
-       text: this.statList[this.randomInt].displayText,
-       image: this.statList[this.randomInt].image
-     });
+     //if we don't have cached response data to use we will fire the http request again.
+     if(this.responseData){
+       this.getStatInfoStream.next({
+         rInt: this.randomInt,
+         stat: this.responseData[this.statList[this.randomInt].statName],
+         text: this.statList[this.randomInt].displayText,
+         image: this.statList[this.randomInt].image
+       });
+     }else{
+       //firing the http request one more time.
+       this.init();
+     }
+
    }
 
   statList = [
