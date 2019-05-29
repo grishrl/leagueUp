@@ -1,5 +1,5 @@
 <div class="recent-results">
-    <h5><a href="group-list.html">Recent Result</a></h5>
+    <h5><span>Recent Result</span></h5>
     <div class="info-results">
         <ul>
             <li *ngFor="let match of display">
@@ -9,14 +9,14 @@
             class="date">{{util.getFormattedDate(match.scheduledTime.startTime, 'DD MMM YYYY')}}</span>
                 </span>
                 <div class="goals-result">
-                    <a href="single-team.html">
+                    <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.home.teamName)]">
                         <!-- <img src="{{team.imageFQDN(match.home.logo)}}" alt="">  -->
                         {{match.home.ticker}}
                     </a>
                     <span class="goals">
                                    <b>{{match.home.score}}</b> - <b>{{match.away.score}}</b>
                                  </span>
-                    <a href="single-team.html">
+                    <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.away.teamName)]">
                         <!-- <img src="{{team.imageFQDN(match.away.logo)}}" alt="">  -->
                         {{match.away.ticker}}
                     </a>
