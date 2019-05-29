@@ -11,7 +11,7 @@ import { DivisionService } from '../services/division.service';
 })
 export class DivisionStandingsComponent implements OnInit {
 
-  constructor(private standingsService: StandingsService, private team: TeamService, private auth: AuthService, private DivisionService: DivisionService) { }
+  constructor(private standingsService: StandingsService, public team: TeamService, private auth: AuthService, private DivisionService: DivisionService) { }
 
   standings = [];
   passDiv ;

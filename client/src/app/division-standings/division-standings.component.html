@@ -1,9 +1,9 @@
 <div class="club-ranking">
     <!-- TODO: router link -->
-    <h5><a>Division Rankings</a></h5>
+    <h5><span>Division Rankings</span></h5>
     <div class="info-ranking">
 
-        <div class="text-center pt-2 ngs-dark">
+        <div class="text-center p-3 ngs-dark">
 
             <app-division-selector [inputDiv]="passDiv" (selectedDiv)="selectedDiv($event)"></app-division-selector>
 
@@ -13,7 +13,7 @@
                 <span class="position">
           {{standing.standing}}
         </span>
-                <a href="single-team.html">
+                <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(standing.teamName)]">
                     <!-- <img src="{{team.imageFQDN(standing.logo)}}" alt="">  -->
                     {{standing.teamName}}
                 </a>

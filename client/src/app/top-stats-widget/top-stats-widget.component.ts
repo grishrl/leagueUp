@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HotsProfileService } from '../services/hots-profile.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-top-stats-widget',
@@ -8,7 +9,7 @@ import { HotsProfileService } from '../services/hots-profile.service';
 })
 export class TopStatsWidgetComponent implements OnInit {
 
-  constructor(private hp:HotsProfileService) { }
+  constructor(private hp:HotsProfileService, public user:UserService) { }
 
   stats=[]
   currStat;

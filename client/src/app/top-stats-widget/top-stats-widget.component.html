@@ -8,10 +8,10 @@
           </span>
                 <span class="name">
             <!-- <img src="assets/img/players/1.jpg" alt="">  -->
-            {{stat.name}}
+             <a [routerLink]="['/profile/', user.routeFriendlyUsername(stat.name)]">{{stat.name}}</a>
         </span>
                 <span class="points">
-            {{stat.points}}
+           {{stat.points}}
           </span>
             </li>
         </ul>
