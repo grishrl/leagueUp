@@ -95,3 +95,6 @@ client/dist
 
 server/uuid.js
 matchBlank.JSON
+massMMRgetter.js
+massMMRgrab.json
+server/replays
