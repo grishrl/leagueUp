@@ -227,7 +227,7 @@
                             <!-- leave button : shows for user only -->
                             <div *ngIf="showLeaveTeam(player.displayName)" class="col">
                                 <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)">
-                                Leave Team 
+                                Leave Team
                             </button>
                             </div>
                             <!-- remove from team : shows for admin and captain -->
@@ -247,7 +247,7 @@
                             <!-- leave button : shows for user only -->
                             <div *ngIf="showLeaveTeam(player.displayName)" class="col">
                                 <button class="btn btn-danger" (click)="openConfirmRemove(player.displayName)" [disabled]="deleteUserButtonOn(player.displayName)">
-                                Leave Team 
+                                Leave Team
                             </button>
                             </div>
                             <!-- remove from team : shows for admin and captain -->
@@ -352,12 +352,11 @@
                     </div>
                 </div>
 
-                <!-- <div class="row mt-3" *ngIf="showRegisteredQuestionnaire() else registered">
+                <div class="row mt-3" *ngIf="showRegisteredQuestionnaire() else registered">
                     <div class="col">
                         <app-questionnaire [team]="returnedProfile"></app-questionnaire>
-
                     </div>
-                </div> -->
+                </div>
             </div>
         </div>
     </div>
