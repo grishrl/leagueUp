@@ -54,7 +54,8 @@
 
                 <!-- Column Links -->
                 <div class="col-lg-2 col-md-5 col-sm-5">
-                    <div class="info-links">
+                    <!--  todo: add oransiation links when available -->
+                    <!-- <div class="info-links">
                         <h5>Organisation</h5>
                         <ul>
                             <li><a href="#">Volunteers</a></li>
@@ -62,23 +63,18 @@
                             <li><a href="#">Official Documents</a></li>
                             <li><a href="#">Terms of Service</a></li>
                         </ul>
-                    </div>
+                    </div> -->
                 </div>
                 <!-- End Column Links -->
 
                 <!-- Column Links -->
                 <div class="col-lg-4 col-md-7 col-sm-7">
                     <div class="info-links">
-                        <h5>Groups</h5>
+                        <h5>Divisions</h5>
                         <ul class="columns">
-                            <li><a href="#">GROUP A</a></li>
-                            <li><a href="#">GROUP B</a></li>
-                            <li><a href="#">GROUP C</a></li>
-                            <li><a href="#">GROUP D</a></li>
-                            <li><a href="#">GROUP E</a></li>
-                            <li><a href="#">GROUP F</a></li>
-                            <li><a href="#">GROUP G</a></li>
-                            <li><a href="#">GROUP H</a></li>
+                            <li *ngFor="let division of divisions">
+                                <a [routerLink]="['/division/',division.divisionConcat]">{{division.displayName}}</a>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -87,10 +83,10 @@
                 <!-- Column Links -->
                 <div class="col-lg-2 col-md-5 col-sm-5">
                     <div class="info-links">
-                        <h5>Interest Links</h5>
+                        <h5>Interesting Links</h5>
                         <ul>
-                            <li><a href="#">Rules</a></li>
-                            <li><a href="#">FAQ</a></li>
+                            <li><a [routerLink]="['/rules']">Rules</a></li>
+                            <li><a [routerLink]="['/faq']">FAQ</a></li>
                         </ul>
                     </div>
                 </div>
@@ -98,7 +94,8 @@
 
                 <!-- Column Links -->
                 <div class="col-lg-4 col-md-7 col-sm-7">
-                    <div class="info-links">
+                    <!-- todo: add organistaion links -->
+                    <!-- <div class="info-links">
                         <h5>Organisation</h5>
                         <ul class="columns">
                             <li><a href="#">NIZHNY NOVGOROD</a></li>
@@ -110,7 +107,7 @@
                             <li><a href="#">VOLGOGRAD</a></li>
                             <li><a href="#">ROSTOV-ON-DON</a></li>
                         </ul>
-                    </div>
+                    </div> -->
                 </div>
                 <!-- End Column Links -->
 

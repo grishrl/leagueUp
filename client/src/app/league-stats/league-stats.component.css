@@ -5,7 +5,7 @@
         position: relative;
         width: 500px;
     } */
-    
+
     .statContainer {
         background-size: cover !important;
         background-position: top center !important;
@@ -13,7 +13,13 @@
         position: relative;
         width: 500px;
     }
-    
+
+    @media screen and (max-width: 375px) {
+        .statContainer {
+            width: 330px;
+        }
+    }
+
     .smallStat {
         padding-top: 55px;
         padding-bottom: 55px;
@@ -22,14 +28,14 @@
         text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
         padding-left: 30px;
     }
-    
+
     .largeStat {}
-    
+
     .statText {
         font-size: 2em;
         text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
     }
-    
+
     .displayText {
         font-size: 1.5em;
         text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;

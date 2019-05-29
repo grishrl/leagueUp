@@ -35,7 +35,7 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
   rounds=[];
 
   filterTeam:string='';
-  scheduledOnlyFlt:boolean=false;
+  scheduledOnlyFlt:boolean=true;
 
   times: any[] = [];
   suffix;

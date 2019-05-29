@@ -228,13 +228,13 @@
                 <h5>Selected Maps: {{pickedMaps.length}} of 9</h5>
                 <br>
                 <div> </div>
-                <table>
+                <table class="table table-borderless">
                     <tr *ngFor="let map of pickedMaps">
-                        <td class="tdClass">
+                        <td>
                             {{map}}
                         </td>
-                        <td class="tdClass">
-                            <span class="finger removeClass bg-danger" (click)="remove(map)"> X </span>
+                        <td>
+                            <button class="btn btn-danger" (click)="remove(map)"> X </button>
                         </td>
                     </tr>
                 </table>
@@ -268,7 +268,7 @@
                 </div>
             </div>
             <div class="col vertCentButton">
-                <button [disabled]="!checkValid() || responses.registered" (click)="completeRegistration()" class="btn btn-info">Register for Season 7!</button>
+                <button [disabled]="!checkValid() || responses.registered" (click)="completeRegistration()" class="btn btn-primary">Register for Season 7!</button>
             </div>
         </div>
     </div>

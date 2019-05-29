@@ -39,7 +39,7 @@
                 <mat-paginator [length]="length" [pageIndex]="pageIndex" [pageSize]="pageSize" (page)="pageEventHandler($event)">
 
                 </mat-paginator>
-                <div class="row p-2" *ngFor="let match of displayArray; let ind = index;" [ngClass]="{'bg-light': ind%2!=0}">
+                <div class="row p-2 border" *ngFor="let match of displayArray; let ind = index;" [ngClass]="{'bg-light': ind%2!=0}">
                     <div class="col-10">
                         <div class="row">
                             <div class="col">
