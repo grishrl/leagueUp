@@ -17,7 +17,11 @@ export class BlogHeadlineComponent implements OnInit {
   }
   constructor(public util: UtilitiesService, public md: MarkdownParserService, public blogCommon: BlogCommonService) { }
 
+  dateObject
   ngOnInit() {
+    if (this.blog && this.blog.fields && this.blog.fields.publishDate){
+      this.dateObject = new Date(this.blog.fields.publishDate);
+    }
 
   }
 

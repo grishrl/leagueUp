@@ -9,7 +9,7 @@
     </div>
     <div class="col-md-8">
         <h5><a class="finger" (click)="blogCommon.goToBlogPage(blog)">{{blog.fields.title}}</a></h5>
-        <span class="data-info">{{util.getFormattedDate(blog.fields.publishDate, "MMMM DD, YYYY")}} / <span
+        <span class="data-info">{{util.getFormattedDate(dateObject, "MMMM DD, YYYY")}} / <span
             *ngIf="util.returnBoolByPath(blog,
             'fields.author.fields.name')">{{blog.fields.author.fields.name}}</span> </span>
         <span>
