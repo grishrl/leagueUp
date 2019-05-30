@@ -25353,3 +25353,17 @@ table.career tr td img {
 .mat-FullWidth {
     width: 100%;
 }
+
+.faqSmallQuestion {
+    display: hidden;
+}
+
+@media all and (max-width: 993px) {
+    .faqConstraint {
+        max-height: 80px;
+        overflow-y: hidden;
+    }
+    .faqSmallQuestion {
+        display: visible;
+    }
+}
