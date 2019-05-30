@@ -23,10 +23,10 @@
         <a [routerLink]="['/profile/',_userService.routeFriendlyUsername(player.displayName)]">View Player Profile</a>
     </div>
     <div *ngIf="!rosterFull()">
-        <div class="col text-center" *ngIf="showInvButton == 'notinvited'">
+        <div class="col text-center" *ngIf="showInvButton()">
             <button class="btn btn-success" (click)="requestToJoin(player)">Invite to Team</button>
         </div>
-        <div class="col text-center" *ngIf="showInvButton == 'invited'">
+        <div class="col text-center" *ngIf="invitedStatus == 'invited'">
             <span class="badge badge-pill badge-info font-italic">Invited!</span>
         </div>
     </div>

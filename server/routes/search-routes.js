@@ -428,53 +428,52 @@ user query
 */
 
 function createUserSearchObject(obj, reqUser) {
-    let returnObj = {};
+    let returnObj = {
+        $and: [{
+                $or: [{
+                        "teamId": null
+                    },
+                    {
+                        "teamId": {
+                            $exists: false
+                        }
+                    },
+                ]
+            },
+            {
+                $or: [{
+                        "teamName": null
+                    },
+                    {
+                        "teamName": {
+                            $exists: false
+                        }
+                    }
+                ]
+            },
+            {
+                $or: [{
+                        "pendingTeam": null
+                    },
+                    {
+                        "pendingTeam": {
+                            $exists: false
+                        }
+                    },
+                    {
+                        "pendingTeam": false
+                    }
+                ]
+            },
+            {
+                lookingForGroup: true
+            }
+        ]
+    }
     let keys = Object.keys(obj);
     if (keys.length > 0) {
 
         //staticly set that the user shall not be on another team and shall be lookingforgroup!
-        returnObj = {
-            $and: [{
-                    $or: [{
-                            "teamId": null
-                        },
-                        {
-                            "teamId": {
-                                $exists: false
-                            }
-                        },
-                    ]
-                },
-                {
-                    $or: [{
-                            "teamName": null
-                        },
-                        {
-                            "teamName": {
-                                $exists: false
-                            }
-                        }
-                    ]
-                },
-                {
-                    $or: [{
-                            "pendingTeam": null
-                        },
-                        {
-                            "pendingTeam": {
-                                $exists: false
-                            }
-                        },
-                        {
-                            "pendingTeam": false
-                        }
-                    ]
-                },
-                {
-                    lookingForGroup: true
-                }
-            ]
-        }
 
         // add divisions to the query object
         if (util.returnBoolByPath(obj, 'divisions')) {
