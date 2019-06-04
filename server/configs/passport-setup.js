@@ -88,7 +88,10 @@ passport.use(new BnetStrategy({
                 displayName: profile.battletag,
                 bNetId: id
             }
-            request(reqURL + btag, { json: true }, (err, res, body) => {
+            request(reqURL + btag, {
+                json: true,
+                rejectUnauthorized: false
+            }, (err, res, body) => {
                 if (err) { console.log(err) };
 
 
