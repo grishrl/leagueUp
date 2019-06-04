@@ -57,8 +57,8 @@ async function heroProfileMMR(url, btag) {
     try {
         // console.log(url + btag);
         const response = await axios.get(url + encodeURIComponent(btag));
+        console.log('response ', response)
         let data = response.data[btag.toString()];
-        console.log(JSON.stringify(data));
         let slGames = parseInt(data["Storm League"].games_played)
         if (slGames > 150) {
             val = data["Storm League"].mmr;
@@ -577,7 +577,7 @@ module.exports = {
     updateTeamMmrAsynch: updateTeamMmrAsynch,
     updateTeamMatches: updateTeamMatches,
     updateTeamDivHistory: updateDivisionHistory,
-    heroProfileMMR: heroProfileMMR,
+    heroProfileMMR: heroProfileMMR
     hotslogs: hotslogs
 }
 
