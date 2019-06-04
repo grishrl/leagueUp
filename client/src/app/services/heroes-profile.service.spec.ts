@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { HotsProfileService } from './hots-profile.service';
+import { HotsProfileService } from './heroes-profile.service';
 
 describe('HotsProfileService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));

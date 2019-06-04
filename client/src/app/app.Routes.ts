@@ -47,8 +47,10 @@ import { StaticHtmlLoaderComponent } from './static-html-loader/static-html-load
 import { ApprovePendingAvatarComponent } from "./admin/approve-pending-avatar/approve-pending-avatar.component";
 import { AllTeamsComponent } from "./team/all-teams/all-teams.component";
 import { MatchResultsViewComponent } from './match/match-results-view/match-results-view.component';
+import { ChallongeTournComponent } from "./challonge-tourn/challonge-tourn.component";
 
 const APP_ROUTES: Routes = [
+  { path: 'challonge', component: ChallongeTournComponent },
   { path: 'directory', component: DirectoryComponent},
   { path:'', component: HomeComponent},
   { path: 'login', component: LoginComponent },
@@ -98,6 +100,7 @@ const APP_ROUTES: Routes = [
   { path: 'tournament', component:TournamentViewComponent },
   { path: 'page/:id', component: StaticHtmlLoaderComponent },
   { path: '**', component: StaticHtmlLoaderComponent, data: { template: '404', headerText: 'Not Found' } }
+
 ]
 
 @NgModule({

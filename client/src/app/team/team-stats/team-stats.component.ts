@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { TeamService } from 'src/app/services/team.service';
-import { HotsProfileService } from 'src/app/services/hots-profile.service';
+import { HotsProfileService } from 'src/app/services/heroes-profile.service';
 
 @Component({
   selector: 'app-team-stats',

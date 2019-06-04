@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { TeamService } from 'src/app/services/team.service';
 import { Match } from 'src/app/classes/match.class';
-import { HotsProfileService } from 'src/app/services/hots-profile.service';
+import { HotsProfileService } from 'src/app/services/heroes-profile.service';
 import { environment } from 'src/environments/environment';
 
 @Component({

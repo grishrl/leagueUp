@@ -13,7 +13,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { UtilitiesService } from '../../services/utilities.service';
 import { RequestService } from '../../services/request.service';
 import { ConfirmRemoveMemberComponent } from '../../modal/confirm-remove-member/confirm-remove-member.component';
-import { HotsProfileService } from '../../services/hots-profile.service';
+import { HotsProfileService } from '../../services/heroes-profile.service';
 import { DivisionService } from '../../services/division.service';
 
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HotsProfileService } from '../services/hots-profile.service';
+import { HotsProfileService } from '../services/heroes-profile.service';
 import { Subject } from 'rxjs';
 
 @Injectable({
@@ -61,7 +61,7 @@ export class LeagueStatService {
     { "statName": "secondsPlayed", "displayText": "Minutes Played", "image": "timePlayed.png" },
     { "statName": "punishers-Summoned", "displayText": "Punishers Summoned", "image": "shrines-banner.png" },
     { "statName": "protectorsKilled", "displayText": "Shrine Protectors Slain", "image": "shrines-banner.png" },
-    { "statName": "protectors-Summoned", "displayText": "Triglov Protectors Summoned", "image": "volskaya-banner.png" },
+    { "statName": "protectors-Summoned", "displayText": "Triglav Protectors Summoned", "image": "volskaya-banner.png" },
     { "statName": "dragonKnights-Summoned", "displayText": "Dragon Knights Summoned", "image": "dragon-shire-banner.png" },
     { "statName": "altarsChanneled", "displayText": "Altars Captured", "image": "towers-of-doom-banner.png" },
     { "statName": "spiderButtsTurnedIn", "displayText": "Gems Turned In", "image": "spider-banner.png" },

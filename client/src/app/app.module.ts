@@ -145,6 +145,8 @@ import { DivisionIfPublicComponent } from './division-if-public/division-if-publ
 import { LeagueStatsComponent } from './league-stats/league-stats.component';
 import { LStatDirective } from './league-stats/l-stat.directive';
 import { MatchResultsViewComponent } from './match/match-results-view/match-results-view.component';
+import { ChallongeTournComponent } from './challonge-tourn/challonge-tourn.component';
+import { ToornamentComponent } from './toornament/toornament.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -280,7 +282,9 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     DivisionIfPublicComponent,
     LeagueStatsComponent,
     LStatDirective,
-    MatchResultsViewComponent
+    MatchResultsViewComponent,
+    ChallongeTournComponent,
+    ToornamentComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

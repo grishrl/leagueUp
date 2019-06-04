@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { HotsLogsService } from 'src/app/services/hots-logs.service';
-import { HotsProfileService } from 'src/app/services/hots-profile.service';
+import { HotsProfileService } from 'src/app/services/heroes-profile.service';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({

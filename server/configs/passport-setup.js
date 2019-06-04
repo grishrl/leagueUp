@@ -10,6 +10,7 @@ const UserSub = require('../subroutines/user-subs');
 const User = require('../models/user-models');
 const logger = require('../subroutines/sys-logging-subs');
 const request = require('request');
+const teamSubs = require('../subroutines/team-subs');
 
 
 
@@ -88,6 +89,8 @@ passport.use(new BnetStrategy({
                 displayName: profile.battletag,
                 bNetId: id
             }
+            let heroesProfileURL = 'https://heroesprofile.com/API/MMR/Player/?api_key=' + process.env.heroProfileAPIkey + '&region=1&p_b=';
+
             request(reqURL + btag, { json: true }, (err, res, body) => {
                 if (err) { console.log(err) };
 
@@ -122,16 +125,32 @@ passport.use(new BnetStrategy({
                     }
 
                 }
+                teamSubs.heroProfileMMR(heroesProfileURL, btag).then(
+                    reply => {
+                        if (reply > 0) {
+                            userObj.averageMmr = reply;
+                        } else if (avgMMR > 0) {
+                            userObj.averageMmr = avgMMR;
+                        }
+                        new User(userObj).save().then((newUser) => {
+                            logObj.action = ' new user was created ';
+                            logObj.target = newUser.displayName;
+                            logger(logObj);
+                            returnUserToClient(newUser, done);
+                        });
+                    },
+                    err => {
+                        console.log(err);
+                    }
+                )
 
-                if (avgMMR > 0) {
-                    userObj.averageMmr = avgMMR;
-                }
-                new User(userObj).save().then((newUser) => {
-                    logObj.action = ' new user was created ';
-                    logObj.target = newUser.displayName;
-                    logger(logObj);
-                    returnUserToClient(newUser, done);
-                });
+
+                // new User(userObj).save().then((newUser) => {
+                //     logObj.action = ' new user was created ';
+                //     logObj.target = newUser.displayName;
+                //     logger(logObj);
+                //     returnUserToClient(newUser, done);
+                // });
             });
 
         }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { HotsProfileService } from '../services/hots-profile.service';
+import { HotsProfileService } from '../services/heroes-profile.service';
 import { LeagueStatService } from './league-stat.service';
 
 @Component({
