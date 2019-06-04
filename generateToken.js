@@ -22,27 +22,21 @@ if (api) {
 
 console.log('token ', token);
 
-//connect to mongo db
-// mongoose.connect(process.env.mongoURI, () => {
-//     console.log('connected to mongodb');
-// });
+connect to mongo db
+mongoose.connect(process.env.mongoURI, () => {
+    console.log('connected to mongodb');
+});
 
-// new System.system({
-//     'dataName': 'apiKey',
-//     'value': token
-// }).save().then(
-//     saved => {
-//         console.log('saved ', ' token ', token);
-//         process.exit(0);
-//     },
-//     err => {
-//         console.log('not saved ', ' token ', token);
-//         process.exit(0);
-//     }
-// );
-
-teamSubs.heroProfileMMR('https://heroesprofile.com/API/MMR/Player/?api_key=' + process.env.heroProfileAPIkey + '&region=1&p_b=', 'Mongoose#1844').then(
-    response => {
-        console.log('xxx ', response);
+new System.system({
+    'dataName': 'apiKey',
+    'value': token
+}).save().then(
+    saved => {
+        console.log('saved ', ' token ', token);
+        process.exit(0);
+    },
+    err => {
+        console.log('not saved ', ' token ', token);
+        process.exit(0);
     }
-)
+);
