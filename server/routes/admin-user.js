@@ -119,7 +119,8 @@ router.get('/user/update', (req, res) => {
                 let btag = routeFriendlyUsername(user.displayName);
                 let reqURL = 'https://api.hotslogs.com/Public/Players/1/';
                 request(reqURL + btag, {
-                    json: true
+                    json: true,
+                    rejectUnauthorized: false
                 }, (err, res, body) => {
                     if (err) {
                         console.log(err)

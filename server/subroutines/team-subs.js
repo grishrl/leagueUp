@@ -4,6 +4,7 @@ const User = require('../models/user-models');
 const Match = require('../models/match-model');
 const logger = require('./sys-logging-subs');
 const axios = require('axios');
+const https = require('https');
 
 //helper function to return compatible user name for hotslogs
 //replaces the # in a battle tag with _
@@ -21,7 +22,11 @@ async function hotslogs(url, btag) {
     let val = 0;
     try {
         // console.log(url + btag);
-        const response = await axios.get(url + routeFriendlyUsername(btag));
+        //ignore hotslogs expired certs
+        const agent = new https.Agent({
+            rejectUnauthorized: false
+        });
+        const response = await axios.get(url + routeFriendlyUsername(btag), { httpsAgent: agent });
         let data = response.data;
         var inc = 0
         var totalMMR = 0;
