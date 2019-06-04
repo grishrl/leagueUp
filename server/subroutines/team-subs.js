@@ -3,49 +3,9 @@ const Team = require('../models/team-models');
 const User = require('../models/user-models');
 const Match = require('../models/match-model');
 const logger = require('./sys-logging-subs');
-const axios = require('axios');
-const https = require('https');
+const mmrMethods = require('../methods/mmrMethods');
 
-//helper function to return compatible user name for hotslogs
-//replaces the # in a battle tag with _
-function routeFriendlyUsername(username) {
-    if (username != null && username != undefined) {
-        return username.replace('#', '_');
-    } else {
-        return '';
-    }
-}
 
-let reqURL = 'https://api.hotslogs.com/Public/Players/1/';
-//method to get back user mmr from hotslogs using their mmr
-async function hotslogs(url, btag) {
-    let val = 0;
-    try {
-        // console.log(url + btag);
-        //ignore hotslogs expired certs
-        const agent = new https.Agent({
-            rejectUnauthorized: false
-        });
-        const response = await axios.get(url + routeFriendlyUsername(btag), { httpsAgent: agent });
-        let data = response.data;
-        var inc = 0
-        var totalMMR = 0;
-        var avgMMR = 0;
-        data['LeaderboardRankings'].forEach(element => {
-            if (element['GameMode'] != 'QuickMatch') {
-                if (element['CurrentMMR'] > 0) {
-                    inc += 1;
-                    totalMMR += element.CurrentMMR;
-                }
-            }
-        });
-        avgMMR = Math.round(totalMMR / inc);
-        val = avgMMR;
-    } catch (error) {
-        val = null;
-    }
-    return val;
-};
 
 //how many members of team we will use to calculate avg-mmr
 const numberOfTopMembersToUse = 4;
@@ -147,7 +107,7 @@ async function updateTeamMmrAsynch(team) {
 
 
             //call out to the hots log API grab the most updated users MMR
-            let mmr = await hotslogs(reqURL, member);
+            let mmr = await mmrMethods.hotslogs(reqURL, member);
 
             //grab the player from db
             let player = await User.findOne({ displayName: member }).then(
@@ -159,7 +119,7 @@ async function updateTeamMmrAsynch(team) {
             let savedPlayer;
             //save the players updated MMR
             if (player) {
-                player.averageMmr = mmr;
+                player.averageMmr = mmr.mmr;
                 savedPlayer = await player.save().then(
                     saved => { return saved; },
                     err => { return null; }
