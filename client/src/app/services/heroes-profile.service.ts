@@ -8,7 +8,7 @@ import { map } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
-export class HotsProfileService {
+export class HeroesProfileService {
 
   constructor(private util:UtilitiesService, private http: HttpServiceService, private httpClient:HttpClient) { }
 
@@ -59,51 +59,20 @@ export class HotsProfileService {
     }
   }
 
-  getMMRdisplayName(displayName) {
-    let heroesProfileURL = 'https://heroesprofile.com/API/MMR/Player/?api_key=ngs!7583hh&region=1&p_b=';
-    heroesProfileURL += encodeURIComponent(displayName);
-    return this.httpClient.get(heroesProfileURL).pipe(
-      map(res => {
-        let data = res[displayName.toString()];
-        let slGames = parseInt(data["Storm League"].games_played);
-        let val;
-        if (slGames > 150) {
-          val = data["Storm League"].mmr;
-        } else {
-          let slMMR = data["Storm League"].mmr;
-          let tlMMR = data["Team League"].mmr;
-          let tlGames = parseInt(data["Team League"].games_played);
-          let totalGames = slGames + tlGames
-          if (totalGames > 150) {
-            val = (slMMR * (slGames / totalGames)) + (tlMMR * (tlGames / totalGames));
-          } else {
-            let hlGames = parseInt(data["Hero League"].games_played);
-            let hlMMR = data["Hero League"].mmr;
-            totalGames = hlGames + tlGames + slGames;
-            if (totalGames > 150) {
-              val = (slMMR * (slGames / totalGames)) + (tlMMR * (tlGames / totalGames)) + (hlMMR * (hlGames / totalGames));
-            } else {
-              let urGames = parseInt(data["Unranked Draft"].games_played);
-              let urMMR = data["Unranked Draft"].mmr;
-              totalGames = hlGames + tlGames + slGames + urGames;
-              if (totalGames > 150) {
-                val = (slMMR * (slGames / totalGames)) + (tlMMR * (tlGames / totalGames)) + (hlMMR * (hlGames / totalGames)) + (urMMR * (urGames / totalGames));
-              } else {
-                let qmGames = parseInt(data["Quick Match"].games_played);
-                let qmMMR = data["Quick Match"].mmr;
-                totalGames = hlGames + tlGames + slGames + urGames + qmGames;
-                if (totalGames > 150) {
-                  val = (slMMR * (slGames / totalGames)) + (tlMMR * (tlGames / totalGames)) + (hlMMR * (hlGames / totalGames)) + (urMMR * (urGames / totalGames)) + (qmMMR * (qmGames / totalGames));
-                } else {
-                  val = 0;
-                }
-              }
-            }
-          }
-        }
-        return val;
-      })
-    )
+
+  getHPProfileLink(toonHandle, displayName) {
+    //https://www.heroesprofile.com/Profile/?blizz_id=7905329&battletag=wraithling&region=1
+    if (this.util.isNullOrEmpty(toonHandle)) {
+      return '';
+    } else {
+      //1-Hero-1-848842
+      let splitToonHandle = toonHandle.split('-');
+      let region = splitToonHandle[2];
+      let blizz_id = splitToonHandle[3];
+      let splitName = displayName.split('#');
+      let battletag = splitName[0];
+      return environment.heroesProfile + 'region=' + region + '&blizz_id=' + blizz_id + '&battletag=' + battletag;
+    }
   }
 
 }

@@ -13,7 +13,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { UtilitiesService } from '../../services/utilities.service';
 import { RequestService } from '../../services/request.service';
 import { ConfirmRemoveMemberComponent } from '../../modal/confirm-remove-member/confirm-remove-member.component';
-import { HotsProfileService } from '../../services/heroes-profile.service';
+import { HeroesProfileService } from '../../services/heroes-profile.service';
 import { DivisionService } from '../../services/division.service';
 
 
@@ -61,7 +61,7 @@ export class TeamProfileComponent implements OnInit {
 
   //constructor
   constructor(public auth: AuthService, public user: UserService, private team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router: Router,
-    private admin:AdminService, public util:UtilitiesService, private requestService:RequestService, public heroProfile: HotsProfileService, private divisionServ: DivisionService) {
+    private admin:AdminService, public util:UtilitiesService, private requestService:RequestService, public heroProfile: HeroesProfileService, private divisionServ: DivisionService) {
     this.teamName = team.realTeamName(this.route.snapshot.params['id']);
   }
 

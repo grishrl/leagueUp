@@ -115,11 +115,11 @@ router.post('/user/teamUpdate', passport.authenticate('jwt', {
 
 })
 
-// router.get('/user/update', (req, res) => {
-//     User.find().then(
-//         found => {
-//             let ammountUpdated = 0;
-//             found.forEach(user => {
+router.get('/user/update', (req, res) => {
+    User.find().then(
+        found => {
+            let ammountUpdated = 0;
+            found.forEach(user => {
                 mmrMethods.comboMmr(user.displayName).then(
                     processed => {
                         if (util.returnBoolByPath(processed, 'hotsLogs')) {
@@ -145,11 +145,14 @@ router.post('/user/teamUpdate', passport.authenticate('jwt', {
                         );
                     }
                 )
-//         err => {
-//             console.log(err);
-//         }
-//     )
-// })
+            });
+        },
+        err => {
+            console.log(err);
+        }
+    )
+});
+
 
 //returns all users and acl lists
 router.get('/user/get/usersacl/all', passport.authenticate('jwt', {

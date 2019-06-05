@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { TeamService } from 'src/app/services/team.service';
 import { Match } from 'src/app/classes/match.class';
-import { HotsProfileService } from 'src/app/services/heroes-profile.service';
+import { HeroesProfileService } from 'src/app/services/heroes-profile.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -15,7 +15,7 @@ import { environment } from 'src/environments/environment';
 export class MatchResultsViewComponent implements OnInit {
 
   recId;
-  constructor(private util: UtilitiesService, private sheduleService:ScheduleService, private route: ActivatedRoute, public team: TeamService, private hp:HotsProfileService) {
+  constructor(private util: UtilitiesService, private sheduleService:ScheduleService, private route: ActivatedRoute, public team: TeamService, private hp:HeroesProfileService) {
     if (this.route.snapshot.params['id']) {
       this.recId = this.route.snapshot.params['id'];
     }

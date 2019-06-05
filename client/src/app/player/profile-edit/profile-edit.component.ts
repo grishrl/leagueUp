@@ -11,7 +11,7 @@ import { HotsLogsService } from '../../services/hots-logs.service';
 import { Router } from '@angular/router';
 import { DeleteConfrimModalComponent } from '../../modal/delete-confrim-modal/delete-confrim-modal.component'
 import { UtilitiesService } from '../../services/utilities.service';
-import { HotsProfileService } from '../../services/heroes-profile.service';
+import { HeroesProfileService } from '../../services/heroes-profile.service';
 import { TeamService } from '../../services/team.service';
 import { AdminService } from '../../services/admin.service';
 
@@ -31,7 +31,7 @@ export class ProfileEditComponent implements OnInit {
   navigationSubscription
 
   constructor(public user: UserService, public auth: AuthService, private router: Router, private route: ActivatedRoute,
-    public hotsLogsService: HotsLogsService, public dialog: MatDialog, private util:UtilitiesService, public hotsProfile: HotsProfileService, public team:TeamService, private admin:AdminService) {
+    public hotsLogsService: HotsLogsService, public dialog: MatDialog, private util:UtilitiesService, public hotsProfile: HeroesProfileService, public team:TeamService, private admin:AdminService) {
 
       //so that people can manually enter different tags from currently being on a profile page; we can reinitialize the component with the new info
     this.navigationSubscription = this.router.events.subscribe((e: any) => {

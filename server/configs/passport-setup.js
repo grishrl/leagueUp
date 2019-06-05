@@ -95,6 +95,7 @@ passport.use(new BnetStrategy({
                         userObj.averageMmr = processed.hotsLogs.mmr;
                         userObj.hotsLogsPlayerID = processed.hotsLogs.playerId;
                     }
+
                     if (util.returnBoolByPath(processed, 'heroesProfile')) {
                         if (processed.heroesProfile >= 0) {
                             userObj.heroesProfileMmr = processed.heroesProfile;
@@ -103,11 +104,9 @@ passport.use(new BnetStrategy({
                             userObj.lowReplays = true;
                         }
                     }
+
                     if (util.returnBoolByPath(processed, 'ngsMmr')) {
                         userObj.ngsMmr = processed.ngsMmr;
-                        if (reply > 0) {
-                            userObj.averageMmr = reply;
-                        } else if (avgMMR > 0) {
                     }
                     new User(userObj).save().then((newUser) => {
                         logObj.action = ' new user was created ';
@@ -115,23 +114,15 @@ passport.use(new BnetStrategy({
                         logger(logObj);
                         returnUserToClient(newUser, done);
                     });
-                },
-                err => {
+                }, err => {
                     new User(userObj).save().then((newUser) => {
                         logObj.action = ' new user was created ';
                         logObj.target = newUser.displayName;
-                        logObj.error = 'Hots logs error!';
+                        logObj.error = 'mmr gathering errors!';
                         logger(logObj);
                         returnUserToClient(newUser, done);
-                //     logObj.action = ' new user was created ';
-                //     logObj.target = newUser.displayName;
-                //     logger(logObj);
-                //     returnUserToClient(newUser, done);
-                // });
                     });
-                }
-            )
-
+                });
         }
     })
 }));

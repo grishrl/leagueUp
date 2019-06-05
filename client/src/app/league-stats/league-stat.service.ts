@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HotsProfileService } from '../services/heroes-profile.service';
+import { HeroesProfileService } from '../services/heroes-profile.service';
 import { Subject } from 'rxjs';
 
 @Injectable({
@@ -12,7 +12,7 @@ export class LeagueStatService {
   displayText;
   responseData; //local cache of response data
 
-  constructor(private hp: HotsProfileService) {
+  constructor(private hp: HeroesProfileService) {
     this.randomInt = Math.floor(Math.random() * this.statList.length);
     this.init();
    }

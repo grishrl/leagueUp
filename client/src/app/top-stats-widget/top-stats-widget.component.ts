@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { HotsProfileService } from '../services/heroes-profile.service';
+import { HeroesProfileService } from '../services/heroes-profile.service';
 import { UserService } from '../services/user.service';
 
 @Component({
@@ -9,7 +9,7 @@ import { UserService } from '../services/user.service';
 })
 export class TopStatsWidgetComponent implements OnInit {
 
-  constructor(private hp:HotsProfileService, public user:UserService) { }
+  constructor(private hp:HeroesProfileService, public user:UserService) { }
 
   stats=[]
   currStat;
@@ -61,15 +61,19 @@ export class TopStatsWidgetComponent implements OnInit {
     this.displayStat = this.currStat.displayText;
     this.hp.getTopStats(this.currStat.stat).subscribe(
       res=>{
-        // console.log(res);
-        let object = res.data;
-        let keys = Object.keys(object);
-        keys.forEach(key =>{
-          let tO = {};
-          tO['name']=key;
-          tO['points']=object[key];
-          this.stats.push(tO);
-        });
+        if(res){
+          let object = res.data;
+          let keys = Object.keys(object);
+          keys.forEach(key => {
+            let tO = {};
+            tO['name'] = key;
+            tO['points'] = object[key];
+            this.stats.push(tO);
+          });
+        }else{
+          console.log('no stats found');
+        }
+
       },
       err=>{
         console.log(err);

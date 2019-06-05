@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { TeamService } from 'src/app/services/team.service';
-import { HotsProfileService } from 'src/app/services/heroes-profile.service';
+import { HeroesProfileService } from 'src/app/services/heroes-profile.service';
 
 @Component({
   selector: 'app-team-stats',
@@ -9,7 +9,7 @@ import { HotsProfileService } from 'src/app/services/heroes-profile.service';
 })
 export class TeamStatsComponent implements OnInit {
 
-  constructor(private teamServ: TeamService, public hotsProfile: HotsProfileService) { }
+  constructor(private teamServ: TeamService, public hotsProfile: HeroesProfileService) { }
 
   statistics = {
     stats:{

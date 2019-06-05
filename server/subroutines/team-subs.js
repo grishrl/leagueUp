@@ -4,67 +4,6 @@ const User = require('../models/user-models');
 const Match = require('../models/match-model');
 const logger = require('./sys-logging-subs');
 const mmrMethods = require('../methods/mmrMethods');
-const https = require('https');
-
-
-let hotslogsURL = 'https://api.hotslogs.com/Public/Players/1/';
-let heroesProfileURL = 'https://heroesprofile.com/API/MMR/Player/?api_key=' + process.env.heroProfileAPIkey + '&region=1&p_b=';
-//https://api.hotslogs.com/Public/Players/1/
-//https://heroesprofile.com/API/MMR/Player/?api_key=ngs4343!!0&region=1&p_b=Zemill%231940
-
-            rejectUnauthorized: false
-        });
-        const response = await axios.get(url + routeFriendlyUsername(btag), { httpsAgent: agent });
-        console.log(error);
-
-async function heroProfileMMR(url, btag) {
-    let val = 0;
-    try {
-        // console.log(url + btag);
-        const response = await axios.get(url + encodeURIComponent(btag));
-        console.log('response ', response)
-        let data = response.data[btag.toString()];
-        let slGames = parseInt(data["Storm League"].games_played)
-        if (slGames > 150) {
-            val = data["Storm League"].mmr;
-        } else {
-            let slMMR = data["Storm League"].mmr;
-            let tlMMR = data["Team League"].mmr;
-            let tlGames = parseInt(data["Team League"].games_played);
-            let totalGames = slGames + tlGames
-            if (totalGames > 150) {
-                val = (slMMR * (slGames / totalGames)) + (tlMMR * (tlGames / totalGames));
-            } else {
-                let hlGames = parseInt(data["Hero League"].games_played);
-                let hlMMR = data["Hero League"].mmr;
-                totalGames = hlGames + tlGames + slGames;
-                if (totalGames > 150) {
-                    val = (slMMR * (slGames / totalGames)) + (tlMMR * (tlGames / totalGames)) + (hlMMR * (hlGames / totalGames));
-                } else {
-                    let urGames = parseInt(data["Unranked Draft"].games_played);
-                    let urMMR = data["Unranked Draft"].mmr;
-                    totalGames = hlGames + tlGames + slGames + urGames;
-                    if (totalGames > 150) {
-                        val = (slMMR * (slGames / totalGames)) + (tlMMR * (tlGames / totalGames)) + (hlMMR * (hlGames / totalGames)) + (urMMR * (urGames / totalGames));
-                    } else {
-                        let qmGames = parseInt(data["Quick Match"].games_played);
-                        let qmMMR = data["Quick Match"].mmr;
-                        totalGames = hlGames + tlGames + slGames + urGames + qmGames;
-                        if (totalGames > 150) {
-                            val = (slMMR * (slGames / totalGames)) + (tlMMR * (tlGames / totalGames)) + (hlMMR * (hlGames / totalGames)) + (urMMR * (urGames / totalGames)) + (qmMMR * (qmGames / totalGames));
-                        } else {
-                            val = 0;
-                        }
-                    }
-                }
-            }
-        }
-    } catch (error) {
-        console.log('err', error);
-        val = null;
-    }
-    return val;
-}
 
 //how many members of team we will use to calculate avg-mmr
 const numberOfTopMembersToUse = 4;
@@ -640,9 +579,7 @@ module.exports = {
     returnTeamMMR: topMemberMmr,
     updateTeamMmrAsynch: updateTeamMmrAsynch,
     updateTeamMatches: updateTeamMatches,
-    updateTeamDivHistory: updateDivisionHistory,
-    heroProfileMMR: heroProfileMMR
-    hotslogs: hotslogs
+    updateTeamDivHistory: updateDivisionHistory
 }
 
 
