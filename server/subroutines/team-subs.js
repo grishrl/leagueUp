@@ -107,7 +107,10 @@ async function updateTeamMmrAsynch(team) {
 
 
             //call out to the hots log API grab the most updated users MMR
-            let mmr = await mmrMethods.hotslogs(reqURL, member);
+            // let mmr = await mmrMethods.hotslogs(member);
+            // let hpMmr = await mmrMethods.heroesProfileMMR(member);
+
+            let mmrInfo = await mmrMethods.comboMmr(member);
 
             //grab the player from db
             let player = await User.findOne({ displayName: member }).then(
@@ -119,13 +122,20 @@ async function updateTeamMmrAsynch(team) {
             let savedPlayer;
             //save the players updated MMR
             if (player) {
-                player.averageMmr = mmr.mmr;
+                if (mmrInfo.heroesProfile >= 0) {
+                    player.heroesProfileMmr = mmrInfo.heroesProfile;
+                } else {
+                    player.heroesProfileMmr = -1 * mmrInfo.heroesProfile;
+                    player.lowReplays = true;
+                }
+                player.ngsMmr = mmrInfo.ngsMmr;
+                player.averageMmr = mmrInfo.hotsLogs.mmr;
+                player.hotsLogsPlayerID = mmrInfo.hotsLogs.playerId;
                 savedPlayer = await player.save().then(
                     saved => { return saved; },
                     err => { return null; }
                 )
             }
-
 
         }
 

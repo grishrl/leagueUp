@@ -117,21 +117,29 @@ router.get('/user/update', (req, res) => {
         found => {
             let ammountUpdated = 0;
             found.forEach(user => {
-                mmrMethods.hotslogsMMR(user.displayName).then(
-                    response => {
-                        if (response.playerId && response.mmr) {
-                            user.averageMmr = response.mmr;
-                            user.hotsLogsPlayerID = response.playerId;
-                        };
+                mmrMethods.comboMmr(user.displayName).then(
+                    processed => {
+                        if (util.returnBoolByPath(processed, 'hotsLogs')) {
+                            user.averageMmr = processed.hotsLogs.mmr;
+                            user.hotsLogsPlayerID = processed.hotsLogs.playerId;
+                        }
+                        if (util.returnBoolByPath(processed, 'heroesProfile')) {
+                            if (processed.heroesProfile >= 0) {
+                                user.heroesProfileMmr = processed.heroesProfile;
+                            } else {
+                                user.heroesProfileMmr = -1 * processed.heroesProfile;
+                                user.lowReplays = true;
+                            }
+                        }
+                        if (util.returnBoolByPath(processed, 'ngsMmr')) {
+                            user.ngsMmr = processed.ngsMmr;
+                        }
                         user.save().then(
                             save => {
                                 ammountUpdated += 1;
                                 console.log('updated ', ammountUpdated, ' users');
                             }
                         );
-                    },
-                    err => {
-                        console.log(err);
                     }
                 )
             });

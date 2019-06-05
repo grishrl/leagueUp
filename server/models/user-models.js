@@ -25,6 +25,9 @@ const userSchema = new Schema({
     "hotsLogsURL": String, //form input added
     "hotsLogsPlayerID": String,
     "averageMmr": Number,
+    "heroesProfileMmr": Number,
+    "ngsMmr": Number,
+    "lowReplays": Boolean,
     "pendingTeam": Boolean,
     "toonHandle": String, //used for tieng profile to replays submitted
     "discordTag": String,

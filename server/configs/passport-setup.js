@@ -9,8 +9,8 @@ const UserSub = require('../subroutines/user-subs');
 // const keys = require('./keys');
 const User = require('../models/user-models');
 const logger = require('../subroutines/sys-logging-subs');
-const request = require('request');
 const mmrMethods = require('../methods/mmrMethods');
+const util = require('../utils');
 
 
 var jwtOptions = {
@@ -87,11 +87,22 @@ passport.use(new BnetStrategy({
                 bNetId: id
             }
 
-            mmrMethods.hotslogsMMR(profile.battletag).then(
-                response => {
-                    if (hotsResponse.playerId && hotsResponse.mmr) {
-                        userObj.averageMmr = hotsResponse.mmr;
-                        userObj.hotsLogsPlayerID = hotsResponse.playerId;
+            mmrMethods.comboMmr(profile.battletag).then(
+                processed => {
+                    if (util.returnBoolByPath(processed, 'hotsLogs')) {
+                        userObj.averageMmr = processed.hotsLogs.mmr;
+                        userObj.hotsLogsPlayerID = processed.hotsLogs.playerId;
+                    }
+                    if (util.returnBoolByPath(processed, 'heroesProfile')) {
+                        if (processed.heroesProfile >= 0) {
+                            userObj.heroesProfileMmr = processed.heroesProfile;
+                        } else {
+                            userObj.heroesProfileMmr = -1 * processed.heroesProfile;
+                            userObj.lowReplays = true;
+                        }
+                    }
+                    if (util.returnBoolByPath(processed, 'ngsMmr')) {
+                        userObj.ngsMmr = processed.ngsMmr;
                     }
                     new User(userObj).save().then((newUser) => {
                         logObj.action = ' new user was created ';
@@ -109,7 +120,8 @@ passport.use(new BnetStrategy({
                         returnUserToClient(newUser, done);
                     });
                 }
-            );
+            )
+
         }
     })
 }));

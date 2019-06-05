@@ -1,5 +1,6 @@
 const axios = require('axios');
 const https = require('https');
+const util = require('../utils');
 //helper function to return compatible user name for hotslogs
 //replaces the # in a battle tag with _
 function routeFriendlyUsername(username) {
@@ -49,54 +50,115 @@ let heroesProfileURL = 'https://heroesprofile.com/API/MMR/Player/?api_key=' + pr
 
 async function heroesProfile(btag) {
     let val = 0;
+
     try {
         // console.log(url + btag);
         const response = await axios.get(heroesProfileURL + encodeURIComponent(btag));
-        console.log('response ', response)
         let data = response.data[btag.toString()];
-        let slGames = parseInt(data["Storm League"].games_played)
-        if (slGames > 150) {
+
+        let slMMR = 0;
+        let tlMMR = 0;
+        let hlMMR = 0;
+        let urMMR = 0;
+        let qmMMR = 0;
+
+        let slGames = 0
+        let tlGames = 0
+        let hlGames = 0
+        let urGames = 0
+        let qmGames = 0
+
+        if (util.returnBoolByPath(data, 'Storm League')) {
+            slMMR = data["Storm League"].mmr;
+            slGames = parseInt(data["Storm League"].games_played);
+        }
+        if (util.returnBoolByPath(data, 'Team League')) {
+            tlMMR = data["Team League"].mmr;
+            tlGames = parseInt(data["Team League"].games_played);
+        }
+        if (util.returnBoolByPath(data, 'Hero League')) {
+            hlGames = parseInt(data["Hero League"].games_played);
+            hlMMR = data["Hero League"].mmr;
+        }
+        if (util.returnBoolByPath(data, 'Unranked Draft')) {
+            urGames = parseInt(data["Unranked Draft"].games_played);
+            urMMR = data["Unranked Draft"].mmr;
+        }
+        if (util.returnBoolByPath(data, 'Quick Match')) {
+            qmGames = parseInt(data["Quick Match"].games_played);
+            qmMMR = data["Quick Match"].mmr;
+        }
+        let totalGames = slGames;
+        if (totalGames > 150) {
             val = data["Storm League"].mmr;
         } else {
-            let slMMR = data["Storm League"].mmr;
-            let tlMMR = data["Team League"].mmr;
-            let tlGames = parseInt(data["Team League"].games_played);
-            let totalGames = slGames + tlGames
+            totalGames += tlGames
             if (totalGames > 150) {
                 val = (slMMR * (slGames / totalGames)) + (tlMMR * (tlGames / totalGames));
             } else {
-                let hlGames = parseInt(data["Hero League"].games_played);
-                let hlMMR = data["Hero League"].mmr;
-                totalGames = hlGames + tlGames + slGames;
+                totalGames += hlGames
                 if (totalGames > 150) {
                     val = (slMMR * (slGames / totalGames)) + (tlMMR * (tlGames / totalGames)) + (hlMMR * (hlGames / totalGames));
                 } else {
-                    let urGames = parseInt(data["Unranked Draft"].games_played);
-                    let urMMR = data["Unranked Draft"].mmr;
-                    totalGames = hlGames + tlGames + slGames + urGames;
+                    totalGames += urGames;
                     if (totalGames > 150) {
                         val = (slMMR * (slGames / totalGames)) + (tlMMR * (tlGames / totalGames)) + (hlMMR * (hlGames / totalGames)) + (urMMR * (urGames / totalGames));
                     } else {
-                        let qmGames = parseInt(data["Quick Match"].games_played);
-                        let qmMMR = data["Quick Match"].mmr;
-                        totalGames = hlGames + tlGames + slGames + urGames + qmGames;
+                        totalGames += qmGames;
                         if (totalGames > 150) {
                             val = (slMMR * (slGames / totalGames)) + (tlMMR * (tlGames / totalGames)) + (hlMMR * (hlGames / totalGames)) + (urMMR * (urGames / totalGames)) + (qmMMR * (qmGames / totalGames));
                         } else {
-                            val = 0;
+                            //return a negative MMR value this user had exteremely low games
+                            let arr = [slMMR, tlMMR, hlMMR, urMMR, qmMMR];
+                            arr.forEach(mmr => {
+                                if (mmr > 0) {
+                                    val = -1 * mmr;
+                                }
+                            })
                         }
                     }
                 }
             }
         }
     } catch (error) {
-        console.log('err', error);
         val = null;
     }
+    val = Math.ceil(val);
     return val;
+}
+
+let ngsMmrUrL = 'https://heroesprofile.com/API/MMR/NGS/Player/?api_key=' + process.env.heroProfileAPIkey + '&p_b=';
+
+async function heroesProfileNGS(btag) {
+
+    let reply = 0;
+    const response = await axios.get(ngsMmrUrL + encodeURIComponent(btag));
+    if (util.returnBoolByPath(response.data, btag.toString())) {
+        let data = response.data[btag.toString()];
+        if (util.returnBoolByPath(data, 'NGS')) {
+            data = data['NGS'];
+            reply = data.mmr;
+        }
+    }
+
+    return reply;
+
+}
+
+async function comboMmr(btag) {
+    let hp = await heroesProfile(btag);
+    let hl = await hotslogs(btag);
+    let ngs = await heroesProfileNGS(btag);
+    return {
+        'heroesProfile': hp,
+        'hotsLogs': hl,
+        'ngsMmr': ngs
+    };
 }
 
 module.exports = {
     hotslogsMMR: hotslogs,
-    heroesProfileMMR: heroesProfile
+    heroesProfileMMR: heroesProfile,
+    heroesProfileNGS: heroesProfileNGS,
+    comboMmr: comboMmr
 }
