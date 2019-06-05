@@ -12,24 +12,36 @@
                 <div class="goals-result">
                     <span>
                     <i *ngIf="dominator(match, 'home')" style="position: absolute;" class="fas fa-crown"></i>
+                    <i *ngIf="forfeit(match, 'home')" style="position: absolute;" class="far fa-flag"></i>
+                    <!-- <span
+                      style="display: inline-block;
+                      line-height: .5;
+                      position: absolute;
+                      font-weight: 900;
+                      font-size: 14pt;">{{forfeit(match, 'home')}}</span> -->
                     <!-- <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.away.teamName)]">{{match.away.teamName}}</a> -->
                     <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.home.teamName)]">
-                                                <img src="{{team.imageFQDN(match.home.logo)}}" alt="">
-                                                {{match.home.ticker}}
+                        <img src="{{team.imageFQDN(match.home.logo)}}" alt=""> {{match.home.ticker}}
 
                     </a>
-                  </span>
+                    </span>
 
                     <span class="goals">
                       <b>{{reportScore(match, 'home')}}</b> - <b>{{reportScore(match, 'away')}}</b>
-            <a [routerLink]="['/match/view/', match.matchId]" class="btn theme">View More</a>
-          </span>
+                      <div *ngIf="resultText(match)" style="color:black; margin-bottom: -20px;">{{resultText(match)}}</div>
+                    <a [routerLink]="['/match/view/', match.matchId]" class="btn theme">View More</a>
+                    </span>
                     <span>
                       <i *ngIf="dominator(match, 'away')" style="position: absolute;" class="fas fa-crown"></i>
-
+                      <i *ngIf="forfeit(match, 'away')" style="position: absolute;" class="far fa-flag"></i>
+                      <!-- <span
+                        style=" display: inline-block;
+                        line-height: .5;
+                        position: absolute;
+                        font-weight: 900;
+                        font-size: 14pt;">{{forfeit(match, 'away')}}</span> -->
                     <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.away.teamName)]">
-                                                         <img src="{{team.imageFQDN(match.away.logo)}}" alt="">
-                                                         {{match.away.ticker}}
+                        <img src="{{team.imageFQDN(match.away.logo)}}" alt=""> {{match.away.ticker}}
 
                     </a>
                     </span>

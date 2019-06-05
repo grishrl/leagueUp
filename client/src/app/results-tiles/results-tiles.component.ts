@@ -46,13 +46,58 @@ export class ResultsTilesComponent implements OnInit {
     return ret;
   }
 
-  reportScore(match, side){
+  // forfeit(match, side){
+  //   let ret ='';
+  //   if (match.forfeit) {
+  //     if (match[side].score == 0) {
+  //       ret = 'F';
+  //     }
+  //   }
+  //   return ret;
+  // }
+  forfeit(match, side) {
+    let ret = false;
+    if (match.forfeit) {
+      if (match[side].score == 0) {
+        ret = true;
+      }
+    }
+    return ret;
+  }
+
+  resultText(match){
+    let ret = null;
+    if(match.forfeit){
+      ret = "Forfeit";
+    } else if (match.home.score == 0 && match.away.score == 2 || match.home.score == 2 && match.away.score == 0 ){
+      ret = 'Domination';
+    }
+    return ret;
+  }
+
+  /*
+    reportScore(match, side){
     let ret;
     if(match.forfeit){
       if(match[side].score==0){
         ret = 'F';
       }else{
+        ret = 2;
+      }
+    }else{
+      ret = match[side].score;
+    }
+    return ret;
+  }
+  */
+
+  reportScore(match, side){
+    let ret;
+    if(match.forfeit){
+      if(match[side].score==0){
         ret = 0;
+      }else{
+        ret = 2;
       }
     }else{
       ret = match[side].score;
