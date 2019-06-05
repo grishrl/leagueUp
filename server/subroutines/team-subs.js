@@ -155,7 +155,9 @@ async function updateTeamMmrAsynch(team) {
     //save the teams new MMR back to the database if it was calculated
     let updatedTeam;
     if (processMembersMMR) {
-        retrievedTeam.teamMMRAvg = processMembersMMR;
+        retrievedTeam.teamMMRAvg = processMembersMMR.averageMmr;
+        retrievedTeam.hpMmrAvg = processMembersMMR.heroesProfileAvgMmr;
+        retrievedTeam.ngsMmrAvg = processMembersMMR.ngsAvgMmr
         updatedTeam = await retrievedTeam.save().then(saved => {
             return saved;
         }, err => {
@@ -183,7 +185,9 @@ function updateTeamMmr(team) {
         });
         topMemberMmr(members).then((processed) => {
             if (processed) {
-                foundTeam.teamMMRAvg = processed;
+                foundTeam.teamMMRAvg = processed.averageMmr;
+                foundTeam.hpMmrAvg = processed.heroesProfileAvgMmr;
+                foundTeam.ngsMmrAvg = processed.ngsAvgMmr;
                 foundTeam.save().then(saved => {
                     console.log('team mmr updated successfully');
                 }, err => {
@@ -202,19 +206,47 @@ function updateTeamMmr(team) {
 //members: string array
 //returns average mmrs or Null
 async function topMemberMmr(members) {
-    //fetch all users from the dB
-    let usersMmr = await User.find({ displayName: { $in: members } }).lean().then((users) => {
+
+    try {
+
+        //fetch all users from the dB
+        let returnVal = {
+            'averageMmr': 0,
+            'heroesProfileAvgMmr': 0,
+            'ngsAvgMmr': 0
+        };
+        let users = await User.find({
+            displayName: {
+                $in: members
+            }
+        }).lean().then((users) => {
+            return users;
+        }, (err) => {
+            return null
+        });
 
         if (users && users.length > 0) {
             let mmrArr = [];
+            let hpMmrArr = [];
+            let ngsMmrArr = [];
             //get all users mmrs
             users.forEach(user => {
                 if (util.returnBoolByPath(user, 'averageMmr')) {
                     mmrArr.push(user.averageMmr);
                 }
+                if (util.returnBoolByPath(user, 'heroesProfileMmr')) {
+                    if (util.returnBoolByPath(user, 'lowReplays') && user.lowReplays) {
+                        // this users replays we're too low to trust!
+                    } else {
+                        hpMmrArr.push(user.heroesProfileMmr);
+                    }
+                }
+                if (util.returnBoolByPath(user, 'ngsMmr')) {
+                    ngsMmrArr.push(user.ngsMmr);
+                }
             });
             //sort mmrs
-            if (mmrArr.length > 1) {
+            if (mmrArr.length > 0) {
                 mmrArr.sort((a, b) => {
                     if (a > b) {
                         return -1;
@@ -240,16 +272,73 @@ async function topMemberMmr(members) {
                     average = Math.round(average);
                 }
 
-                return average;
-            } else {
-                return mmrArr[0];
+                returnVal.averageMmr = average;
+            }
+            if (hpMmrArr.length > 0) {
+                hpMmrArr.sort((a, b) => {
+                    if (a > b) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                });
+                //calculate average of the top N mmrs
+                let total = 0;
+                let membersUsed = 0;
+                if (hpMmrArr.length >= numberOfTopMembersToUse) {
+                    membersUsed = numberOfTopMembersToUse;
+                } else {
+                    membersUsed = hpMmrArr.length;
+                }
+
+                for (let i = 0; i < membersUsed; i++) {
+                    total += hpMmrArr[i];
+                }
+
+                let average = total / membersUsed;
+                if (!isNaN(average)) {
+                    average = Math.round(average);
+                }
+
+                returnVal.heroesProfileAvgMmr = average;
+            }
+            if (ngsMmrArr.length > 0) {
+                ngsMmrArr.sort((a, b) => {
+                    if (a > b) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                });
+                //calculate average of the top N mmrs
+                let total = 0;
+                let membersUsed = 0;
+                if (ngsMmrArr.length >= numberOfTopMembersToUse) {
+                    membersUsed = numberOfTopMembersToUse;
+                } else {
+                    membersUsed = ngsMmrArr.length;
+                }
+
+                for (let i = 0; i < membersUsed; i++) {
+                    total += ngsMmrArr[i];
+                }
+
+                let average = total / membersUsed;
+                if (!isNaN(average)) {
+                    average = Math.round(average);
+                }
+
+                returnVal.ngsAvgMmr = average;
             }
         }
-    }, (err) => {
-        return null
-    });
-    // return the average
-    return usersMmr;
+        // return the average
+        return returnVal;
+
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
+
 }
 
 //this is used to calculate MMRS on the fly for admin to apporve a team add

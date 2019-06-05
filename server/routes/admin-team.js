@@ -531,7 +531,10 @@ router.post('/team/refreshMmr', passport.authenticate('jwt', {
             teamSub.returnTeamMMR(members).then(
                 (processed) => {
                     if (processed) {
-                        foundTeam.teamMMRAvg = processed;
+
+                        foundTeam.teamMMRAvg = processed.averageMmr;
+                        foundTeam.hpMmrAvg = processed.heroesProfileAvgMmr;
+                        foundTeam.ngsMmrAvg = processed.ngsAvgMmr;
                         foundTeam.save().then(
                             (saved) => {
                                 res.status(200).send(util.returnMessaging(path, 'Recalculated Team', false, {
@@ -548,7 +551,7 @@ router.post('/team/refreshMmr', passport.authenticate('jwt', {
                     }
                 },
                 (err) => {
-                    res.status(500).send(util.returnMessaging(path, 'Error finding team', err));
+                    res.status(500).send(util.returnMessaging(path, 'Error processing team mmr', err));
                 }
             )
         },
