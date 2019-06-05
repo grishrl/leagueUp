@@ -9,9 +9,8 @@ const UserSub = require('../subroutines/user-subs');
 // const keys = require('./keys');
 const User = require('../models/user-models');
 const logger = require('../subroutines/sys-logging-subs');
-const request = require('request');
-const teamSubs = require('../subroutines/team-subs');
-
+const mmrMethods = require('../methods/mmrMethods');
+const util = require('../utils');
 
 
 var jwtOptions = {
@@ -81,89 +80,62 @@ passport.use(new BnetStrategy({
 
 
         } else {
-            let btag = routeFriendlyUsername(profile.battletag);
-            let reqURL = 'https://api.hotslogs.com/Public/Players/1/';
-            var id = profile.id.toString();
 
+            var id = profile.id.toString();
             let userObj = {
                 displayName: profile.battletag,
                 bNetId: id
             }
             let heroesProfileURL = 'https://heroesprofile.com/API/MMR/Player/?api_key=' + process.env.heroProfileAPIkey + '&region=1&p_b=';
 
-            request(reqURL + btag, { json: true }, (err, res, body) => {
-                if (err) { console.log(err) };
 
-
-
-                if (body) {
-                    if (body.hasOwnProperty('LeaderboardRankings')) {
-
-                        if (body.hasOwnProperty('PlayerID')) {
-                            userObj.hotsLogsPlayerID = body['PlayerID'];
-                        }
-
-                        var inc = 0
-                        var totalMMR = 0;
-                        var avgMMR = 0;
-                        body['LeaderboardRankings'].forEach(element => {
-                            if (element['GameMode'] != 'QuickMatch') {
-                                if (element['CurrentMMR'] > 0) {
-                                    inc += 1;
-                                    totalMMR += element.CurrentMMR;
-                                }
-                            }
-                        });
-                        avgMMR = Math.round(totalMMR / inc);
-
-                    } else {
-                        if (body.hasOwnProperty('Message')) {
-                            if (res['Message'].indexOf('invalid') > -1) {
-                                return 'error';
-                            }
+            mmrMethods.comboMmr(profile.battletag).then(
+                processed => {
+                    if (util.returnBoolByPath(processed, 'hotsLogs')) {
+                        userObj.averageMmr = processed.hotsLogs.mmr;
+                        userObj.hotsLogsPlayerID = processed.hotsLogs.playerId;
+                    }
+                    if (util.returnBoolByPath(processed, 'heroesProfile')) {
+                        if (processed.heroesProfile >= 0) {
+                            userObj.heroesProfileMmr = processed.heroesProfile;
+                        } else {
+                            userObj.heroesProfileMmr = -1 * processed.heroesProfile;
+                            userObj.lowReplays = true;
                         }
                     }
-
-                }
-                teamSubs.heroProfileMMR(heroesProfileURL, btag).then(
-                    reply => {
+                    if (util.returnBoolByPath(processed, 'ngsMmr')) {
+                        userObj.ngsMmr = processed.ngsMmr;
                         if (reply > 0) {
                             userObj.averageMmr = reply;
                         } else if (avgMMR > 0) {
-                            userObj.averageMmr = avgMMR;
-                        }
-                        new User(userObj).save().then((newUser) => {
-                            logObj.action = ' new user was created ';
-                            logObj.target = newUser.displayName;
-                            logger(logObj);
-                            returnUserToClient(newUser, done);
-                        });
-                    },
-                    err => {
-                        console.log(err);
                     }
-                )
-
-
-                // new User(userObj).save().then((newUser) => {
+                    new User(userObj).save().then((newUser) => {
+                        logObj.action = ' new user was created ';
+                        logObj.target = newUser.displayName;
+                        logger(logObj);
+                        returnUserToClient(newUser, done);
+                    });
+                },
+                err => {
+                    new User(userObj).save().then((newUser) => {
+                        logObj.action = ' new user was created ';
+                        logObj.target = newUser.displayName;
+                        logObj.error = 'Hots logs error!';
+                        logger(logObj);
+                        returnUserToClient(newUser, done);
                 //     logObj.action = ' new user was created ';
                 //     logObj.target = newUser.displayName;
                 //     logger(logObj);
                 //     returnUserToClient(newUser, done);
                 // });
-            });
+                    });
+                }
+            )
 
         }
     })
 }));
 
-function routeFriendlyUsername(username) {
-    if (username != null && username != undefined) {
-        return username.replace('#', '_');
-    } else {
-        return '';
-    }
-}
 
 function generateNewToken(prof, admin) {
     let tokenObject = {};

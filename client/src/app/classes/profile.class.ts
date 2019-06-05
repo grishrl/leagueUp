@@ -21,6 +21,9 @@ export class Profile {  //addition of stats for future plans
   pendingTeam:Boolean;
   history: Array<history>;
   hotsLogsPlayerID:string;
+  lowReplays:Boolean;
+  ngsMmr:number;
+  heroesProfileMmr:number;
   seasonsPlayed:number;
   replays:Array<string>;
   replayArchive: Array<replayarchive>;
@@ -157,11 +160,15 @@ export class Profile {  //addition of stats for future plans
     } else {
       this.discordTag = null;
     }
+    this.lowReplays = false;
+    this.ngsMmr=null;
+    this.heroesProfileMmr=null;
     if(history){
       this.history = history;
     }else{
       this.history = [];
     }
+    
     this.seasonsPlayed = 0;
     this.replayArchive = [];
     this.replays = [];
@@ -169,6 +176,7 @@ export class Profile {  //addition of stats for future plans
     this.twitch = null;
     this.twitter = null;
     this.youtube = null;
+    
 }
 }
 

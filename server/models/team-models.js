@@ -28,6 +28,8 @@ const teamSchema = new Schema({
     "captain": String,
     "invitedUsers": [String],
     "teamMMRAvg": Number, //added to display
+    "hpMmrAvg": Number,
+    "ngsMmrAvg": Number,
     "teamMembers": [miniUser], //added to display
     "pendingMembers": [miniUser],
     "lastTouched": Number,

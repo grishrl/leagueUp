@@ -16,6 +16,7 @@ export const environment = {
   s3bucketGeneralImage: 'dev-ngs-general-image',
   socketURL: 'https://www.nexusgamingseries.org',
   heroesProfilePlayer: "https://www.heroesprofile.com/NGS/Profile/?",
+  heroesProfile: "https://www.heroesprofile.com/Profile/?",
   heroesProfileTeam: "https://heroesprofile.com/NGS/Team/Single/?team=",
   season:6
 };

@@ -18,6 +18,8 @@ export class Team {
   teamMembers: [{displayName:string}]; //added to display
   pendingMembers: [{displayName:string}];
   questionnaire:object;
+  hpMmrAvg:number;
+  ngsMmrAvg:number;
   ticker: string;
   twitch:string;
   twitter:string;
@@ -145,6 +147,8 @@ export class Team {
     }
     this.ticker=null;
     this.history=[];
+    this.hpMmrAvg = null;
+    this.ngsMmrAvg = null;
     this.twitch = null;
     this.twitter = null;
     this.youtube = null;

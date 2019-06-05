@@ -879,8 +879,11 @@ async function postToHotsProfileHandler(limNum) {
             postObj['team_two_image_url'] = process.env.heroProfileImage + matchCopy.away.logo;
             postObj['team_two_map_ban'] = matchCopy.mapBans.away;
 
-            postObj['round'] = matchCopy.round.toString();
-            postObj['division'] = getDivisionNameFromConcat(divisions, matchCopy.divisionConcat);
+                                if (match.hasOwnProperty('round')) {
+                                    postObj['round'] = matchCopy.round.toString();
+                                } else {
+                                    postObj['round'] = 'T-1';
+                                }
             postObj['game'] = (j + 1).toString();
             postObj['season'] = process.env.season.toString();
 
