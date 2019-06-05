@@ -110,10 +110,10 @@ export class TeamProfileComponent implements OnInit {
         }
       });
     }
-  
+
 
   removeMember(player){
- 
+
     //TODO: ADD A CONFIRM HERE
     if(this.componentEmbedded){
       this.admin.removeMembers(this.returnedProfile.teamName_lower, player).subscribe(
@@ -128,7 +128,7 @@ export class TeamProfileComponent implements OnInit {
     }else{
       this.team.removeUser(player, this.returnedProfile.teamName_lower).subscribe(
         (res) => {
-          
+
           //if the user left the group, destroy their team local info so they can carry on
           if(this.auth.getUser()==player){
             this.auth.destroyTeam();
@@ -147,7 +147,9 @@ export class TeamProfileComponent implements OnInit {
   adminRefreshMMR(){
     this.admin.refreshTeamMMR(this.returnedProfile.teamName_lower).subscribe(
       (res)=>{
-        this.returnedProfile.teamMMRAvg = res.newMMR;
+        this.returnedProfile.teamMMRAvg = res.newMMR['averageMmr'];
+        this.returnedProfile.hpMmrAvg = res.newMMR['heroesProfileAvgMmr'];
+        this.returnedProfile.ngsMmrAvg = res.newMMR['ngsAvgMmr'];
       },
       (err)=>{
         console.log(err);
@@ -197,7 +199,7 @@ export class TeamProfileComponent implements OnInit {
         getProfile = this.providedProfile;
         this.orignalName = this.team.realTeamName(this.providedProfile);
         this.getTeamByString(getProfile);
-        
+
       } else {
         merge(this.returnedProfile, this.providedProfile);
         this.setUpTeamMemberFilter(this.returnedProfile);
@@ -250,7 +252,7 @@ export class TeamProfileComponent implements OnInit {
   componentEmbedded: boolean = false;
   //if this component is used in the admin view the team name can be changed, we must hold on to the old team name to update the proper object
   orignalName:string = null;
-  
+
   // this model change method will be bound to the name change input, so we can update the lower case name along with the display name
   modelChange() {
     if (this.returnedProfile.teamName != undefined && this.returnedProfile.teamName != null){
@@ -270,7 +272,7 @@ export class TeamProfileComponent implements OnInit {
       //if we received a profile; the component is embedded:
       this.componentEmbedded = true;
       this.editOn = false;
-      
+
       this.ngOnInit();
     }
   }
@@ -288,7 +290,7 @@ export class TeamProfileComponent implements OnInit {
   embedSource:string='';
   @Input() set source(_source){
     this.embedSource = _source;
-  } 
+  }
 
   validAvailableTimes:boolean
   validAvailDays:number=0;
@@ -352,7 +354,7 @@ export class TeamProfileComponent implements OnInit {
         this.admin.deleteTeam(this.returnedProfile.teamName_lower).subscribe(
           res => {
             this.router.navigate(['/_admin/manageTeam']);
-            
+
           }, err => {
             console.log(err);
           }
@@ -412,7 +414,7 @@ export class TeamProfileComponent implements OnInit {
     this.editOn=false;
     this.formControlledEnable();
     this.tempProfile = Object.assign({}, this.returnedProfile);
-  } 
+  }
 
   //this method resets the profile back to pre-edit state and disables inputs for changes
   cancel() {
@@ -466,7 +468,7 @@ export class TeamProfileComponent implements OnInit {
     if (this.returnedProfile.teamName && user) {
       if (this.checkUserInPending(user)) {
         this.message = "User is all ready invited to your team!";
-      }else{  
+      }else{
         this.requestService.inviteToTeamRequest(this.returnedProfile.teamName_lower, user).subscribe(
           res=>{
             if (this.returnedProfile['invitedUsers'] == null) {
