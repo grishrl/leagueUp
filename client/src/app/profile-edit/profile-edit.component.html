@@ -134,9 +134,21 @@
                                 </div>
                             </div>
                             <div class="row mt-2" *ngIf="returnedProfile.toonHandle && returnedProfile.toonHandle.length>0">
-                                <div class="col">
+                                <div class="col-12">
                                     <div>See this user's NGS Stats at Heroes Profile</div>
                                     <a href="{{hotsProfile.getHPPlayerLink(returnedProfile.toonHandle,returnedProfile.displayName)}}" target="_blank">{{returnedProfile.displayName}}</a>
+                                </div>
+                                <div class="col-12 mt-2" *ngIf="returnedProfile.ngsMmr">
+                                    Users NGS Leauge MMR: {{returnedProfile.ngsMmr}}
+                                </div>
+                            </div>
+                            <div class="row mt-2" *ngIf="returnedProfile.toonHandle && returnedProfile.toonHandle.length>0">
+                                <div class="col-12">
+                                    <div>Heroes Profile Career Profile:</div>
+                                    <a href="{{hotsProfile.getHPProfileLink(returnedProfile.toonHandle,returnedProfile.displayName)}}" target="_blank">{{returnedProfile.displayName}}</a>
+                                </div>
+                                <div class="col-12 mt-2">
+                                    <div>User Heroes Profile MMR: {{returnedProfile.heroesProfileMmr}}</div>
                                 </div>
                             </div>
                             <div class="row mt-2" *ngIf="editOn">
@@ -147,7 +159,7 @@
                             </div>
                             <div class="row mt-2" *ngIf="returnedProfile.averageMmr">
                                 <div class="col">
-                                    <div>User MMR:</div>
+                                    <div>User HotsLogs MMR:</div>
                                     {{returnedProfile.averageMmr}}
                                     <button *ngIf="!editOn" (click)="updateUserMMR()" class="ml-5 btn btn-success">
                                                                     Update MMR

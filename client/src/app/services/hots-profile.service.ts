@@ -33,4 +33,19 @@ export class HotsProfileService {
       return environment.heroesProfilePlayer + 'region=' + region + '&blizz_id=' + blizz_id + '&battletag=' + battletag;
     }
   }
+
+  getHPProfileLink(toonHandle, displayName) {
+    //https://www.heroesprofile.com/Profile/?blizz_id=7905329&battletag=wraithling&region=1
+    if (this.util.isNullOrEmpty(toonHandle)) {
+      return '';
+    } else {
+      //1-Hero-1-848842
+      let splitToonHandle = toonHandle.split('-');
+      let region = splitToonHandle[2];
+      let blizz_id = splitToonHandle[3];
+      let splitName = displayName.split('#');
+      let battletag = splitName[0];
+      return environment.heroesProfile + 'region=' + region + '&blizz_id=' + blizz_id + '&battletag=' + battletag;
+    }
+  }
 }

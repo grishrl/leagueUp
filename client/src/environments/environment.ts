@@ -20,9 +20,11 @@ export const environment = {
   s3bucketGeneralImage: 'dev-ngs-general-image',
   socketURL:'https://dev-ngs.herokuapp.com',
   heroesProfilePlayer: "https://www.heroesprofile.com/NGS/Profile/?",
+  heroesProfile: "https://www.heroesprofile.com/Profile/?",
   heroesProfileTeam: "https://heroesprofile.com/NGS/Team/Single/?team=",
   season: 6
 };
+
 
 /*
  * For easier debugging in development mode, you can import the following file
