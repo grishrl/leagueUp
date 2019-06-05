@@ -75,6 +75,18 @@ export class StormLeagueComponent implements OnInit {
 
   }
 
+  rankClass(){
+    if(parseInt(this.rankValue) >= 1000){
+      return 'masterKplusRank';
+    }else if( parseInt(this.rankValue)>=100){
+      return 'masterCplusRank';
+    }else if(parseInt(this.rankValue)>=10){
+      return 'masterXplusRank';
+    }else{
+      return 'rank';
+    }
+  }
+
   heroeLeagueDivisionControl = new FormControl({ value: '', disabled: true }, [
     // Validators.required
   ]);
