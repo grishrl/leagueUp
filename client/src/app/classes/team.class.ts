@@ -1,7 +1,7 @@
 export class Team {
   _id: string;
   logo: string;
-  teamName: string; //added to display form 
+  teamName: string; //added to display form
   teamName_lower: string ;
   divisionDisplayName: string;
   divisionConcat: string;
@@ -17,7 +17,8 @@ export class Team {
   teamMembers: [{displayName:string}]; //added to display
   pendingMembers: [{displayName:string}];
   questionnaire:object;
-  
+  hpMmrAvg:number;
+  ngsMmrAvg:number;
 
 
   constructor(id: string, logo:string, teamName: string, lookingForMore: Boolean, availability:schedule,
@@ -138,7 +139,10 @@ export class Team {
         pickedMaps:[]
       };
     }
+    this.hpMmrAvg = null;
+    this.ngsMmrAvg = null;
   }
+
 }
 
 interface schedule {
