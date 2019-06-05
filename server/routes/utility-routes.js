@@ -51,17 +51,15 @@ router.post('/update/teams', (req, res) => {
         validate => {
             if (validate) {
                 Teamjobs.updateTeamsNotTouched(daysOld, limit).then(reply => {
-                    logObj.action += ' ' + reply.length + ' teams';
-
-                    res.status(200).send(util.returnMessaging(path, 'Update Teams Completed', null, null, null, logObj));
-
+                    logObj.action += 'Update teams completed normally';
+                    logger(logObj);
                 }, err => {
                     logObj.logLevel = "ERROR";
+                    logObj.action = 'Update teams Failed';
                     logObj.error = err;
-
-                    res.status(500).send(util.returnMessaging(path, 'Update Teams Failed', null, null, null, logObj));
-
+                    logger(logObj);
                 });
+                res.status(200).send(util.returnMessaging(path, 'Update teams started check logs for details', null, null, null))
             } else {
                 res.status(401).send(util.returnMessaging(path, 'Unauthorized', null, null, null, logObj));
             }
@@ -87,12 +85,18 @@ router.post('/associate-replays', (req, res) => {
             if (validate) {
                 StatsJobs.asscoatieReplays().then(
                     (response) => {
-                        res.status(200).send(util.returnMessaging(path, 'Associate Replays Completed Normally', null, null, null, logObj))
+                        logObj.action = 'Associate Replays Completed Normally'
+                        logger(logObj);
                     },
                     err => {
-                        res.status(500).send(util.returnMessaging(path, 'Associate Replays Failed', err, null, null, logObj));
+                        logObj.logLevel = 'ERROR';
+                        logObj.action = 'Associate Replays Failed'
+                        logObj.error = err;
+                        logger(logObj);
+                        // res.status(500).send(util.returnMessaging(path, 'Associate Replays Failed', err, null, null));
                     }
-                )
+                );
+                res.status(200).send(util.returnMessaging(path, 'Associate Replays Started check logs for more info', null, null, null))
             } else {
                 res.status(401).send(util.returnMessaging(path, 'Unauthorized', null, null, null, logObj));
             }
@@ -118,12 +122,18 @@ router.post('/tabulate-stats/user', (req, res) => {
             if (validate) {
                 StatsJobs.tabulateUserStats().then(
                     (response) => {
-                        res.status(200).send(util.returnMessaging(path, 'Tabulate User Stats Completed Normally', null, null, null, logObj))
+                        logObj.action = 'Tabulate User Stats completed normally'
+                        logger(logObj);
                     },
                     err => {
-                        res.status(500).send(util.returnMessaging(path, 'Tabulate User Stats Failed', err, null, null, logObj));
+                        logObj.logLevel = 'ERROR';
+                        logObj.action = 'Tabulate User Stats failed'
+                        logObj.error = err;
+                        logger(logObj);
+                        // res.status(500).send(util.returnMessaging(path, 'Tabulate User Stats Failed', err, null, null, logObj));
                     }
                 )
+                res.status(200).send(util.returnMessaging(path, 'Tabulate User Stats started check logs for more info', null, null, null))
             } else {
                 res.status(401).send(util.returnMessaging(path, 'Unauthorized', null, null, null, logObj));
             }
@@ -149,12 +159,18 @@ router.post('/tabulate-stats/team', (req, res) => {
             if (validate) {
                 StatsJobs.tabulateTeamStats().then(
                     (response) => {
-                        res.status(200).send(util.returnMessaging(path, 'Tabulate Team Stats Completed Normally', null, null, null, logObj))
+                        logObj.action = 'Tabulate Team Stats completed normally'
+                        logger(logObj);
                     },
                     err => {
-                        res.status(500).send(util.returnMessaging(path, 'Tabulate Team Stats Failed', err, null, null, logObj));
+                        logObj.logLevel = 'ERROR';
+                        logObj.action = 'Tabulate Team Stats failed'
+                        logObj.error = err;
+                        logger(logObj);
+                        // res.status(500).send(util.returnMessaging(path, 'Tabulate Team Stats Failed', err, null, null, logObj));
                     }
                 )
+                res.status(200).send(util.returnMessaging(path, 'Tabulate Team Stats started check logs for more info', null, null, null, logObj))
             } else {
                 res.status(401).send(util.returnMessaging(path, 'Unauthorized', null, null, null, logObj));
             }
@@ -298,18 +314,24 @@ router.post('/tabulate-stats/hots-profile', (req, res) => {
     checkApiKey(apiKey).then(
         validate => {
             if (validate) {
-
                 StatsJobs.postToHotsProfileHandler(limit).then(
-                    (response) => {},
+                    (response) => {
+                        logObj.action = 'Submitting replays to Hots Profile completed normally ';
+                        logger(logObj);
+                    },
                     err => {
-                        res.status(500).send(util.returnMessaging(path, 'Submitting replays to Hots Profile Failed', err, null, null, logObj));
+                        logObj.logLevel = "ERROR";
+                        logObj.action = 'Submitting replays to Hots Profile failed';
+                        logObj.error = err;
+                        logger(logObj)
+                            // res.status(500).send(util.returnMessaging(path, 'Submitting replays to Hots Profile Failed', err, null, null, logObj));
                     }
                 )
-
+                res.status(200).send(util.returnMessaging(path, 'Submitting replays to Hots Profile Routine Check Logs for details', false, null, {}));
             } else {
                 res.status(401).send(util.returnMessaging(path, 'Unauthorized', false, null, null, logObj));
             }
-            res.status(200).send(util.returnMessaging(path, 'Submitting replays to Hots Profile Routine Check Logs for details', false, null, {}, logObj));
+
         }
 
     );
