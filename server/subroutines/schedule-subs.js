@@ -12,6 +12,7 @@ const {
 const logger = require('./sys-logging-subs');
 
 
+
 /* Match report format required for the generator
     {
       round: 1,
@@ -227,6 +228,41 @@ function generateRoundRobinSchedule(season) {
 }
 
 
+async function generateTournamentTwo(teams, season, division, cup, name) {
+
+    //the bracket function requires of an array of special team objects, 
+    let _teams = [];
+
+    //there are a couple of ways we can get teams and their ids, to make sure we get the ids depening of format
+    //run through teams and grab the id, depending on where it was send to us:  we use this array as the participants 
+    //for the schedule object
+    let teamIds = [];
+    let partipantsArray = [];
+    teams.forEach((team, index) => {
+        let teamid = team._id ? team._id : team.id
+        if (teamIds.indexOf(teamid)) {
+            teamIds.push(teamid);
+        }
+        //create the special team object and add it to the _team array
+        _teams.push(
+            new Team(teamid, team.teamName, team.logo)
+        );
+
+        partipantsArray.push({
+            "name": team.teamName,
+            "seed": index + 1,
+            "misc": teamid
+        });
+    });
+
+    let tournamentId = uniqid();
+
+    name = name ? name : tournamentId
+
+    let url = name + '_link';
+
+}
+
 //generate tournament schedules
 //accepts 
 //teams: array of team objects, {id or _id, teamName, logo}
@@ -234,7 +270,7 @@ function generateRoundRobinSchedule(season) {
 //division: the division info the tournament is for, if it is for one
 //name: name of tournament
 
-async function generateTournament(teams, season, division, name) {
+async function generateTournament(teams, season, division, cup, name) {
     //the bracket function requires of an array of special team objects, 
     let _teams = [];
 

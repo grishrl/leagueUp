@@ -747,6 +747,16 @@ router.post('/generate/tournament', passport.authenticate('jwt', {
         });
     }
 
+    let cupNumber;
+    if (req.body.cupNumber) {
+        cupNumber = req.body.cupNumber;
+        target += ' cup Number: ' + cupNumber;
+        checkObj.$and.push({
+            cupNumber: cupNumber
+        });
+    }
+
+
     let tournamentName;
     if (req.body.tournamentName) {
         tournamentName = req.body.tournamentName;
@@ -779,7 +789,7 @@ router.post('/generate/tournament', passport.authenticate('jwt', {
             if (found) {
                 res.status(500).send(util.returnMessaging(path, 'Tournament previously generated', false, null, null, logObj));
             } else {
-                scheduleGenerator.generateTournament(teams, season, division, tournamentName).then((process) => {
+                scheduleGenerator.generateTournament(teams, season, division, cupNumber, tournamentName).then((process) => {
                     if (process) {
                         res.status(200).send(util.returnMessaging(path, 'Tournament generated', false, process, null, logObj));
                     } else {

@@ -11,7 +11,10 @@ const divisionInfoSchema = new Schema({
     "minMMR": Number,
     "teams": [String],
     "lastTouched": String,
-    "public": Boolean
+    "public": Boolean,
+    "cupDiv": Boolean,
+    "participants": [String],
+    "tournaments": [String] //tournament references for cup divs
 });
 
 
