@@ -11,8 +11,8 @@
 
                 <div class="goals-result">
                     <span>
-                    <i *ngIf="dominator(match, 'home')" style="position: absolute;" class="fas fa-lg fa-crown"></i>
-                    <i *ngIf="forfeit(match, 'home')" style="position: absolute;" class="far fa-lg fa-flag"></i>
+                    <i *ngIf="dominator(match, 'home')" style="position: absolute; top: 70px;" class="fas fa-lg fa-crown"></i>
+                    <i *ngIf="forfeit(match, 'home')" style="position: absolute; top: 70px;" class="far fa-lg fa-flag"></i>
                     <!-- <span
                       style="display: inline-block;
                       line-height: .5;
@@ -34,8 +34,8 @@
                     <a [routerLink]="['/match/view/', match.matchId]" class="btn theme">View More</a>
                     </span>
                     <span>
-                      <i *ngIf="dominator(match, 'away')" style="position: absolute;" class="fas fa-lg fa-crown"></i>
-                      <i *ngIf="forfeit(match, 'away')" style="position: absolute;" class="far fa-lg fa-flag"></i>
+                      <i *ngIf="dominator(match, 'away')" style="position: absolute; top: 70px;" class="fas fa-lg fa-crown"></i>
+                      <i *ngIf="forfeit(match, 'away')" style="position: absolute; top: 70px;" class="far fa-lg fa-flag"></i>
                       <!-- <span
                         style=" display: inline-block;
                         line-height: .5;

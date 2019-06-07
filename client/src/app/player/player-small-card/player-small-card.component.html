@@ -9,7 +9,7 @@
     </span>
         <h4>
             {{player.displayName}}
-            <span>Main Role</span>
+            <span *ngIf="_captain == displayName">Captain</span>
         </h4>
         <ul>
             <li><strong>MATCHES:</strong> <span>{{matches}}</span></li>
