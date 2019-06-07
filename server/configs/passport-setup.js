@@ -11,6 +11,7 @@ const User = require('../models/user-models');
 const logger = require('../subroutines/sys-logging-subs');
 const mmrMethods = require('../methods/mmrMethods');
 const util = require('../utils');
+const archive = require('../methods/archivalMethods');
 
 
 var jwtOptions = {
@@ -83,50 +84,76 @@ passport.use(new BnetStrategy({
 
             var id = profile.id.toString();
             let userObj = {
-                displayName: profile.battletag,
+                    displayName: profile.battletag,
+                    bNetId: id
+                }
+                //check to see if this user is in the archive
+            archive.retrieveAndRemoveArchiveUser({
                 bNetId: id
-            }
-            let heroesProfileURL = 'https://heroesprofile.com/API/MMR/Player/?api_key=' + process.env.heroProfileAPIkey + '&region=1&p_b=';
-
-
-            mmrMethods.comboMmr(profile.battletag).then(
-                processed => {
-                    if (util.returnBoolByPath(processed, 'hotsLogs')) {
-                        userObj.averageMmr = processed.hotsLogs.mmr;
-                        userObj.hotsLogsPlayerID = processed.hotsLogs.playerId;
+            }).then(found => {
+                if (found) {
+                    //if there was a user in the archive; we'll pick some data we want to restore
+                    if (found.smurfAccount) {
+                        //dont wanna lose those smurfs!
+                        userObj.smurfAccount = found.smurfAccount;
                     }
-
-                    if (util.returnBoolByPath(processed, 'heroesProfile')) {
-                        if (processed.heroesProfile >= 0) {
-                            userObj.heroesProfileMmr = processed.heroesProfile;
-                        } else {
-                            userObj.heroesProfileMmr = -1 * processed.heroesProfile;
-                            userObj.lowReplays = true;
-                        }
+                    if (found.history) {
+                        userObj.history = found.history;
                     }
-
-                    if (util.returnBoolByPath(processed, 'ngsMmr')) {
-                        userObj.ngsMmr = processed.ngsMmr;
+                    if (found.replays) {
+                        userObj.replays = found.replays;
                     }
-                    new User(userObj).save().then((newUser) => {
-                        logObj.action = ' new user was created ';
-                        logObj.target = newUser.displayName;
-                        logger(logObj);
-                        returnUserToClient(newUser, done);
-                    });
-                }, err => {
-                    new User(userObj).save().then((newUser) => {
-                        logObj.action = ' new user was created ';
-                        logObj.target = newUser.displayName;
-                        logObj.error = 'mmr gathering errors!';
-                        logger(logObj);
-                        returnUserToClient(newUser, done);
-                    });
-                });
+                    createNewProfile(userObj, logObj);
+                } else {
+                    //no archive go ahead and create new
+                    createNewProfile(userObj, logObj);
+                }
+            }, err => {
+                createNewProfile(userObj, logObj)
+            });
+
+
         }
     })
 }));
 
+function createNewProfile(userObj, logObj) {
+    //get the players MMRs!
+    mmrMethods.comboMmr(userObj.displayName).then(
+        processed => {
+            if (util.returnBoolByPath(processed, 'hotsLogs')) {
+                userObj.averageMmr = processed.hotsLogs.mmr;
+                userObj.hotsLogsPlayerID = processed.hotsLogs.playerId;
+            }
+
+            if (util.returnBoolByPath(processed, 'heroesProfile')) {
+                if (processed.heroesProfile >= 0) {
+                    userObj.heroesProfileMmr = processed.heroesProfile;
+                } else {
+                    userObj.heroesProfileMmr = -1 * processed.heroesProfile;
+                    userObj.lowReplays = true;
+                }
+            }
+
+            if (util.returnBoolByPath(processed, 'ngsMmr')) {
+                userObj.ngsMmr = processed.ngsMmr;
+            }
+            new User(userObj).save().then((newUser) => {
+                logObj.action = ' new user was created ';
+                logObj.target = newUser.displayName;
+                logger(logObj);
+                returnUserToClient(newUser, done);
+            });
+        }, err => {
+            new User(userObj).save().then((newUser) => {
+                logObj.action = ' new user was created ';
+                logObj.target = newUser.displayName;
+                logObj.error = 'mmr gathering errors!';
+                logger(logObj);
+                returnUserToClient(newUser, done);
+            });
+        });
+}
 
 function generateNewToken(prof, admin) {
     let tokenObject = {};
