@@ -7,6 +7,7 @@ const passport = require("passport");
 const Stats = require('../models/stats-model');
 const Avatar = require('../methods/avatarUpload');
 const PendingAvatarQueue = require('../models/admin-models').PendingAvatarQueue;
+const archiveUser = require('../methods/archivalMethods').archiveUser;
 
 /*
 /get
@@ -36,21 +37,26 @@ router.get('/delete', passport.authenticate('jwt', {
     session: false
 }), util.appendResHeader, (req, res) => {
     const path = '/user/delete';
-    let user = req.user;
 
-    if (req.user.teamInfo.isCaptain) {
-        res.status(400).send(util.returnMessaging(path, 'Cannot delete team captain'));
-    } else {
-        User.findOneAndDelete({ displayName: user.displayName }).then((deleted) => {
-            res.status(200).send(util.returnMessaging(path, 'User deleted', false, deleted));
-            if (deleted.hasOwnProperty('teamName')) {
-                let lower = deleted.teamName.toLowerCase();
-                TeamSub.removeUser(lower, deleted.displayName);
-            }
-        }, (err) => {
-            res.status(500).send(util.returnMessaging(path, 'Error querying user', err));
-        })
-    }
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = ' delete user (self) profile ';
+    logObj.target = req.user.displayName;
+    logObj.logLevel = 'STD';
+
+
+    archiveUser({
+            displayName: req.user.displayName
+        },
+        req.user.displayName).then(
+        response => {
+            res.status(200).send(util.returnMessaging(path, 'User deleted!', null, response, null, logObj));
+        },
+        err => {
+            res.stauts(500).send(util.returnMessaging(path, 'Error deleting user!', err, null, null, logObj));
+        }
+    );
+
 });
 
 router.post('/save', passport.authenticate('jwt', {
