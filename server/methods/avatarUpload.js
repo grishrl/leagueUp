@@ -1,6 +1,7 @@
 const User = require('../models/user-models');
 const AWS = require('aws-sdk');
 const logger = require('../subroutines/sys-logging-subs');
+const CustomError = require('../methods/customError');
 
 const avatarFolder = 'player-avatar/'
 
@@ -15,23 +16,6 @@ const s3Bucket = new AWS.S3({
         Bucket: process.env.s3bucketGeneralImages
     }
 });
-
-class CustomError extends Error {
-    constructor(reason, message) {
-        // Pass remaining arguments (including vendor specific ones) to parent constructor
-        super(message);
-
-        // Maintains proper stack trace for where our error was thrown (only available on V8)
-        if (Error.captureStackTrace) {
-            Error.captureStackTrace(this, CustomError);
-        }
-
-        this.name = 'CustomError';
-        // Custom debugging information
-        this.reason = reason;
-        this.date = new Date();
-    }
-}
 
 async function uploadAvatar(path, dataURI, displayName) {
     // console.log('path, dataURI, displayName ', path, dataURI, displayName);
