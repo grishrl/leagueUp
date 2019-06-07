@@ -67,7 +67,10 @@ const matchSchema = new Schema({
     "reported": Boolean,
     "scheduleDeadline": String,
     "forfeit": Boolean,
-    "notes": String
+    "notes": String,
+    "challonge_match_ref": String, //new properties for reference challonge matches
+    "challonge_tournament_ref": String, //new properties for reference challonge matches
+    "challonge_idChildren": [String] //new properties for reference challonge matches
 }, { useNestedStrict: false });
 
 

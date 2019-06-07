@@ -29,7 +29,11 @@ function matchUpdate(tournamentId, matchId, scores, winner) {
         }
     }
 
-    return axios.put(url, postObj);
+    return axios.put(url, postObj).then(response => {
+        return response.data;
+    }, err => {
+        return err.response.data
+    });
 }
 
 function createTournament(name, url, description) {
@@ -41,7 +45,7 @@ function createTournament(name, url, description) {
             description: description
         }
     }
-    return axios.post(tournamnetCreateAPI, postObj);
+    return axios.post(tournamnetCreateAPI, postObj).then(response => { return response.data; }, err => { return err.response.data });
 }
 
 function startTournament(tournamentId) {
@@ -51,7 +55,11 @@ function startTournament(tournamentId) {
         include_matches: 1,
         include_participants: 1
     }
-    return axios.post(url, postObj);
+    return axios.post(url, postObj).then(response => {
+        return response.data;
+    }, err => {
+        return err.response.data
+    });;
 }
 
 function showTournament(tournamentId) {
@@ -59,7 +67,11 @@ function showTournament(tournamentId) {
     url += '?api_key=' + process.env.challongeApiKey;
     url += '&include_matches=1';
     url += '&include_participants=1';
-    return axios.get(url);
+    return axios.get(url).then(response => {
+        return response.data;
+    }, err => {
+        return err.response.data
+    });;
 }
 
 function finalizeTournament(tournamentId) {
@@ -67,7 +79,11 @@ function finalizeTournament(tournamentId) {
     let postObj = {
         api_key: process.env.challongeApiKey
     };
-    return axios.post(url, postObj);
+    return axios.post(url, postObj).then(response => {
+        return response.data;
+    }, err => {
+        return err.response.data
+    });;
 }
 
 function bulkParticpantsAdd(tournamnetId, particpantsArray) {
@@ -78,5 +94,18 @@ function bulkParticpantsAdd(tournamnetId, particpantsArray) {
         participants: particpantsArray
     }
 
-    return axios.post(url, postObj);
+    return axios.post(url, postObj).then(response => {
+        return response.data;
+    }, err => {
+        return err.response.data
+    });;
+}
+
+module.exports = {
+    createTournament: createTournament,
+    startTournament: startTournament,
+    showTournament: showTournament,
+    finalizeTournament: finalizeTournament,
+    bulkParticpantsAdd: bulkParticpantsAdd,
+    matchUpdate: matchUpdate
 }
