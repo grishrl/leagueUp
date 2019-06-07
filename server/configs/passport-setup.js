@@ -103,6 +103,7 @@ passport.use(new BnetStrategy({
                     if (found.replays) {
                         userObj.replays = found.replays;
                     }
+                    logObj.action += ' restored from archive ';
                     createNewProfile(userObj, logObj);
                 } else {
                     //no archive go ahead and create new
