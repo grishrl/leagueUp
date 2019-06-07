@@ -3,6 +3,7 @@ const User = require('../models/user-models');
 const Division = require('../models/division-models');
 const Archive = require('../models/system-models').archive;
 const archiveTeamLogo = require('./teamLogoUpload').archiveTeamLogo;
+const CustomError = require('./customError');
 
 async function archiveDivisions() {
     console.log('finding divisions for archival...')
@@ -114,7 +115,126 @@ function playerSeasonFinalize() {
     )
 }
 
+//USER ARCHIVE METHODS:
+//user shall be an object for querying user database
+async function archiveUser(user, actor) {
+
+    let success = null;
+    let dbUser = await User.findOne(user).then(
+        found => {
+            return found
+        },
+        err => {
+            let error = new CustomError('QueryError', 'Error querying!');
+            throw error;
+        }
+    );
+    if (dbUser) {
+        if (dbUser.isCaptain) {
+            //user was captain
+            //throw error
+            let error = new CustomError('CstErr', 'Can not delete captains!');
+            throw error;
+        } else {
+
+            let removed = dbUser.remove().then(
+                remove => {
+                    return remove
+                },
+                err => {
+                    let error = new CustomError('DeleteError', 'Error deleting!');
+                    throw error;
+                }
+            )
+            if (removed) {
+                if (removed.hasOwnProperty('teamName')) {
+                    let lower = removed.teamName.toLowerCase();
+                    TeamSub.removeUser(lower, removed.displayName);
+                }
+                if (removed.hasOwnProperty('discordTag')) {
+                    delete removed.discordTag;
+                }
+                let archived = await new Archive({
+                    type: 'user',
+                    object: dbUser.toObject(),
+                    timeStamp: Date.now()
+                }).save().then(
+                    saved => {
+                        return saved;
+                    },
+                    err => {
+                        let logObj = {};
+                        logObj.actor = actor;
+                        logObj.action = ' create archived user ';
+                        logObj.target = JSON.stringify(removed);
+                        logObj.logLevel = 'ERROR';
+                        logObj.error = 'Failed to create archive!'
+                        logger(logObj);
+                        // let error = new CustomError('ArchiveError', 'Error deleting user!');
+                        // throw error;
+                    }
+                );
+                if (archived) {
+                    success = removed;
+                }
+            } else {
+                //user was not found 
+                //throw error
+                let error = new CustomError('NotFound', 'User not found!');
+                throw error;
+            }
+
+        }
+    } else {
+        //user was not found 
+        //throw error
+        let error = new CustomError('NotFound', 'User not found!');
+        throw error;
+    }
+
+    return success;
+
+}
+
+async function retrieveAndRemoveArchiveUser(user) {
+    let archivedUser = null;
+
+    let query = {
+        $and: []
+    }
+    query.$and.push({
+        type: 'user'
+    });
+
+    let keys = Object.keys(user);
+    keys.forEach(key => {
+        let str = 'object.' + key;
+        let obj = {};
+        obj[str] = user[key]
+        query.$and.push(obj);
+    })
+
+    let picked = await Archive.findOne(query).then(
+        found => {
+            return found;
+        },
+        err => {
+            console.log(err);
+
+            throw err;
+        }
+    );
+    if (picked) {
+        archivedUser = picked.toObject().object;
+        picked.remove();
+    }
+    return archivedUser;
+}
+
+
 
 module.exports = {
-    archiveDivisions: archiveDivisions
+    archiveDivisions: archiveDivisions,
+    archiveUser: archiveUser,
+    retrieveUser: retrieveAndRemoveArchiveUser
 };
