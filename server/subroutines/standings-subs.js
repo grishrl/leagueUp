@@ -1,11 +1,224 @@
 const Match = require('../models/match-model');
 const util = require('../utils');
 const Team = require('../models/team-models');
+const System = require('../models/system-models').system;
+const Schedules = require('../models/schedule-models');
+const challonge = require('../methods/challongeAPI');
+const Division = require('../models/division-models');
 
 
 //takes the provided division and season and calcuates the current standings of the teams
 //division:string division concat name, season:string or number, season number to check the standings of
 async function calulateStandings(division, season) {
+    let standings;
+    try {
+        let dbDiv = await Division.findOne({ divisionConcat: division }).then(found => { return found; });
+
+        if (util.returnBoolByPath(dbDiv.toObject(), 'cupDiv') && dbDiv.cupDiv == true) {
+            console.log('cup div!');
+            standings = await cupDivStanding(division, season).then(answer => {
+                return answer;
+            });
+        } else {
+            standings = await stdDivStanding(division, season).then(answer => {
+                return answer;
+            });
+        }
+        return standings;
+    } catch (e) {
+        console.log(e);
+    }
+
+
+}
+
+const points = [{
+        "rank": 1,
+        "points": 3
+    },
+    {
+        "rank": 2,
+        "points": 2
+    },
+    {
+        "rank": 3,
+        "points": 1
+    }
+];
+
+function returnObjectForKeyMatch(arrayOfObjects, key, value) {
+    let arr = arrayOfObjects;
+    let returnObj = null;
+    arr.forEach(iter => {
+        let keys = Object.keys(iter);
+        keys.forEach(keyIter => {
+            if (keyIter == key && iter[keyIter] == value) {
+                returnObj = iter;
+            }
+        });
+    });
+    return returnObj;
+}
+
+
+async function cupDivStanding(division, season) {
+    let returnStanding = [];
+    let standingsQuery = {
+        '$and': [{
+                'dataName': 'cupDivStandings'
+            },
+            {
+                "data.season": season
+            },
+            {
+                "data.divisionConcat": division
+            }
+        ]
+    }
+
+    let standingsData = await System.findOne(standingsQuery).then(found => { return found; }, err => { return null; })
+
+    let schedQuery = {
+        '$and': [{
+                'division': division
+            },
+            {
+                'season': season
+            },
+            {
+                'type': 'tournament'
+            }
+        ]
+    };
+    let cups = await Schedules.find(schedQuery).then(found => { return found; }, err => { return null; });
+    console.log(cups);
+    if (cups && cups.length > 0) {
+        let tournamentIds = [];
+        cups.forEach(cup => {
+            cup = cup.toObject();
+            tournamentIds.push(cup.challonge_ref);
+        });
+        console.log(standingsData);
+        if (standingsData) {
+            if (standingsData.data.parsedTournaments) {
+                standingsData.data.parsedTournaments.forEach(parsed => {
+                    if (tournamentIds.indexOf(parsed) > -1) {
+                        tournamentIds.splice(tournamentIds.indexOf(parsed), 1);
+                    }
+                });
+            }
+            //this set of actions
+            //remove any tournments that are in parsed list
+            //pull remaining tournaments
+            //parse finished
+            //update and save standing
+            //return standing
+        } else {
+            standingsData = {
+                    'dataName': 'cupDivStandings',
+                    'data': {
+                        'points': [],
+                        'season': season,
+                        'divisionConcat': division
+                    }
+                }
+                //another set of actions
+                //pull remaining tournaments
+                //parse finished
+                //update and save standing
+                //return standing
+        }
+        if (tournamentIds.length > 0) {
+            let resolvedTournaments = await challonge.retriveTournaments(tournamentIds).then(response => {
+                return response
+            });
+            console.log('resolvedTournaments ', resolvedTournaments);
+            resolvedTournaments.forEach(tourn => {
+
+                tourn = tourn.tournament;
+
+                if (tourn.state == 'complete') {
+                    if (standingsData.data.parsedTournaments) {
+                        standingsData.data.parsedTournaments.push(tourn.id)
+                    } else {
+                        standingsData.data.parsedTournaments = [tourn.id];
+                    }
+
+                    let partipants = tourn.participants;
+                    partipants.forEach(part => {
+                        part = part.participant;
+                        if (part != undefined && part != null) {
+                            //loop through the participants; if the participant earned rank points; calculate them and add them to the standings
+                            //if this participants rank, matches a rank in our point array -
+                            let finishRank = returnObjectForKeyMatch(points, 'rank', part.final_rank);
+                            if (finishRank) {
+                                //create an object out of the participant
+                                let pts = finishRank.points;
+                                let obj = {
+                                        teamName: part.name,
+                                        id: part.misc,
+                                        points: pts
+                                    }
+                                    //check if this participant had a score in the database all ready
+                                let exists = returnObjectForKeyMatch(standingsData.data.points, 'teamName', part.name);
+                                if (exists) {
+                                    //if so add the scores together
+                                    exists.points += exists.points;
+                                } else {
+                                    //if not add the participant to the standings
+                                    standingsData.data.points.push(obj);
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+
+            if (standingsData.data.points) {
+                returnStanding = standingsData.data.points;
+            }
+
+            System.findOneAndUpdate(
+                standingsQuery, standingsData, {
+                    new: true,
+                    upsert: true
+                }
+            ).then(
+                saved => {
+                    console.log('standings upserted');
+                },
+                err => {
+                    console.log(err);
+                }
+            );
+        }
+
+    } else {
+        returnStanding = [];
+    }
+    return returnStanding
+}
+
+/*
+{dataName: "cupDivStandings"
+  data:{
+    divisionConcat:'xxx',
+    season:'',
+    parsedTournaments:[],
+    points:[
+      {teamName:'',id:'dafd',points:XX},
+      {
+        teamName: '',
+        id: 'dafd',
+        points: XX
+      }
+    ]
+
+  }
+}
+ */
+
+async function stdDivStanding(division, season) {
     let teams;
 
     //grab all amtches that match the season and division and are not tournament matches
@@ -43,7 +256,6 @@ async function calulateStandings(division, season) {
     );
 
     let standings = [];
-
     //calcualte the standings of the teams
     if (matchesForDivision != false) {
         teams.forEach(team => {

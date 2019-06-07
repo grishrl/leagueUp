@@ -101,11 +101,30 @@ function bulkParticpantsAdd(tournamnetId, particpantsArray) {
     });;
 }
 
+async function retriveTournaments(tournamentIds) {
+    let promArr = [];
+    for (var i = 0; i < tournamentIds.length; i++) {
+        promArr.push(
+            showTournament(tournamentIds[i])
+        );
+    }
+    let returnArr = await Promise.all(promArr).then(
+        resolves => {
+            return resolves;
+        },
+        err => {
+            console.log('this didnt work')
+        }
+    )
+    return returnArr;
+}
+
 module.exports = {
     createTournament: createTournament,
     startTournament: startTournament,
     showTournament: showTournament,
     finalizeTournament: finalizeTournament,
     bulkParticpantsAdd: bulkParticpantsAdd,
-    matchUpdate: matchUpdate
+    matchUpdate: matchUpdate,
+    retriveTournaments: retriveTournaments
 }

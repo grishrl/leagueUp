@@ -371,9 +371,11 @@ async function generateTournamentTwo(teams, season, division, cup, name, descrip
                         let matchIDsArray = [];
                         let brackets = [];
                         let matchesCrossRef = [];
+                        let finalMatchRef = {};
 
                         //loop through the matches returned from challonge and create NGS match objects for them
-                        chalMatches.forEach(match => {
+                        chalMatches.forEach((match) => {
+
                             match = match.match;
                             let to = {};
                             to["challonge_match_ref"] = String(match.id);
@@ -386,6 +388,11 @@ async function generateTournamentTwo(teams, season, division, cup, name, descrip
                                 id: ngsID,
                                 challonge_ref: match.id
                             });
+                            let iter = match.suggested_play_order;
+                            if (iter == chalMatches.length) {
+                                finalMatchRef['matchId'] = ngsID;
+                                finalMatchRef['challonge_ref'] = match.id
+                            }
                             matchIDsArray.push(ngsID);
                             if (match.prerequisite_match_ids_csv) {
                                 to['challonge_idChildren'] = match.prerequisite_match_ids_csv.split(',');
@@ -437,7 +444,8 @@ async function generateTournamentTwo(teams, season, division, cup, name, descrip
                             'matches': matchIDsArray,
                             'matchesRef': matchesCrossRef,
                             'challonge_ref': tournamentId,
-                            'challonge_url': url
+                            'challonge_url': url,
+                            'finalMatch': finalMatchRef
                         }
                         if (cup) {
                             schedObj['cup'] = cup;
