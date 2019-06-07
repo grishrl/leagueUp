@@ -20,12 +20,15 @@ export class Profile {  //addition of stats for future plans
   discordTag:string;
   pendingTeam:Boolean;
   hotsLogsPlayerID:string;
+  lowReplays:Boolean;
+  ngsMmr:number;
+  heroesProfileMmr:number;
   smurfAccount:Boolean;
   __v: string;//useless
 
 
   constructor (id: string, displayName: string, teamId:string, teamName:string, isCaptain:boolean,
-    hlRankMetal:string, hlRankDivision:number, lookingForGroup: Boolean, availability:schedule, 
+    hlRankMetal:string, hlRankDivision:number, lookingForGroup: Boolean, availability:schedule,
     competitiveLevel:number, descriptionOfPlay:string, role:roles, timeZone:string, hotsLogsURL:string,
     averageMmr: number, toonHandle: string, discordTag:string){
   if (id != null && id != undefined && id.length > 0) {
@@ -149,7 +152,10 @@ export class Profile {  //addition of stats for future plans
     } else {
       this.discordTag = null;
     }
-}
+    this.lowReplays = false;
+    this.ngsMmr=null;
+    this.heroesProfileMmr=null;
+  }
 }
 
 

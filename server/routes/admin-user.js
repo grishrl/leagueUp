@@ -7,6 +7,7 @@ const TeamSub = require('../subroutines/team-subs');
 const util = require('../utils');
 const router = require('express').Router();
 const request = require('request');
+const mmrMethods = require('../methods/mmrMethods');
 
 router.post('/delete/user', passport.authenticate('jwt', {
     session: false
@@ -116,56 +117,31 @@ router.get('/user/update', (req, res) => {
         found => {
             let ammountUpdated = 0;
             found.forEach(user => {
-                let btag = routeFriendlyUsername(user.displayName);
-                let reqURL = 'https://api.hotslogs.com/Public/Players/1/';
-                request(reqURL + btag, {
-                    json: true,
-                    rejectUnauthorized: false
-                }, (err, res, body) => {
-                    if (err) {
-                        console.log(err)
-                    };
-                    var inc = 0
-                    var totalMMR = 0;
-                    var avgMMR = 0;
-                    var playerid = null;
-                    if (body) {
-                        if (body.hasOwnProperty('LeaderboardRankings')) {
-
-
-                            body['LeaderboardRankings'].forEach(element => {
-                                if (element['GameMode'] != 'QuickMatch') {
-                                    if (element['CurrentMMR'] > 0) {
-                                        inc += 1;
-                                        totalMMR += element.CurrentMMR;
-                                    }
-                                }
-                            });
-                            avgMMR = Math.round(totalMMR / inc);
-                        } else {
-                            if (body.hasOwnProperty('Message')) {
-                                if (res['Message'].indexOf('invalid') > -1) {
-                                    return 'error';
-                                }
+                mmrMethods.comboMmr(user.displayName).then(
+                    processed => {
+                        if (util.returnBoolByPath(processed, 'hotsLogs')) {
+                            user.averageMmr = processed.hotsLogs.mmr;
+                            user.hotsLogsPlayerID = processed.hotsLogs.playerId;
+                        }
+                        if (util.returnBoolByPath(processed, 'heroesProfile')) {
+                            if (processed.heroesProfile >= 0) {
+                                user.heroesProfileMmr = processed.heroesProfile;
+                            } else {
+                                user.heroesProfileMmr = -1 * processed.heroesProfile;
+                                user.lowReplays = true;
                             }
                         }
-                        if (body.hasOwnProperty('PlayerID')) {
-                            playerid = body['PlayerID'];
+                        if (util.returnBoolByPath(processed, 'ngsMmr')) {
+                            user.ngsMmr = processed.ngsMmr;
                         }
+                        user.save().then(
+                            save => {
+                                ammountUpdated += 1;
+                                console.log('updated ', ammountUpdated, ' users');
+                            }
+                        );
                     }
-
-                    if (avgMMR > 0) {
-                        user.averageMmr = avgMMR;
-                    }
-                    if (playerid) {
-                        user.hotsLogsPlayerID = playerid;
-                    }
-                    user.save().then(
-                        save => {
-                            ammountUpdated += 1;
-                        }
-                    );
-                })
+                )
             });
         },
         err => {
@@ -173,14 +149,6 @@ router.get('/user/update', (req, res) => {
         }
     )
 })
-
-function routeFriendlyUsername(username) {
-    if (username != null && username != undefined) {
-        return username.replace('#', '_');
-    } else {
-        return '';
-    }
-}
 
 //returns all users and acl lists
 router.get('/user/get/usersacl/all', passport.authenticate('jwt', {

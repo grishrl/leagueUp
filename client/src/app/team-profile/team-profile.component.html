@@ -44,8 +44,7 @@
                                         </div>
                                         <div class="row">
                                             <div class="col">
-                                                <button type="button" (click)="adminRefreshMMR()" class="mt-1 btn btn-info">Update Team
-                                                MMR</button>
+                                                <button type="button" (click)="adminRefreshMMR()" class="mt-1 btn btn-info">Update Team MMR</button>
                                             </div>
                                         </div>
                                     </div>
@@ -121,14 +120,22 @@
                             <input matInput placeholder="Team Division" [(ngModel)]="returnedProfile.divisionDisplayName" disabled="true">
                         </mat-form-field>
                         <mat-form-field class="mat-FullWidth">
-                            <input matInput placeholder="Team MMR Average" [(ngModel)]="returnedProfile.teamMMRAvg" disabled="true">
-                        </mat-form-field>
-                        <mat-form-field class="mat-FullWidth">
                             <input matInput placeholder="Team Captain" [(ngModel)]="returnedProfile.captain" disabled="true">
                         </mat-form-field>
                         <mat-slide-toggle *ngIf="checkRosterSize()" [disabled]="editOn" [(ngModel)]="returnedProfile.lookingForMore">
                             Looking for More.
                         </mat-slide-toggle>
+                        <div class="row mt-2">
+                            <div class="col-12">
+                                Team Avg MMR via HotsLogs: {{returnedProfile.teamMMRAvg}}
+                            </div>
+                            <div class="col-12 mt-1">
+                                Team Avg MMR via Heroes Profile: {{returnedProfile.hpMmrAvg}}
+                            </div>
+                            <div class="col-12 mt-1">
+                                Team Avg MMR League Specific: {{returnedProfile.ngsMmrAvg}}
+                            </div>
+                        </div>
                     </div>
                 </div>
 

@@ -1,6 +1,9 @@
 const jwt = require('jsonwebtoken');
 const System = require('./server/models/system-models');
 const mongoose = require('mongoose')
+const mmrMethods = require('./server/methods/mmrMethods');
+const User = require('./server/models/user-models');
+const fs = require('fs');
 
 let tokenObject = {};
 // set this ID to the _id that the API key will be tied to
@@ -26,16 +29,38 @@ mongoose.connect(process.env.mongoURI, () => {
     console.log('connected to mongodb');
 });
 
-new System.system({
-    'dataName': 'apiKey',
-    'value': token
-}).save().then(
-    saved => {
-        console.log('saved ', ' token ', token);
-        process.exit(0);
-    },
-    err => {
-        console.log('not saved ', ' token ', token);
-        process.exit(0);
-    }
-);
+// new System.system({
+//     'dataName': 'apiKey',
+//     'value': token
+// }).save().then(
+//     saved => {
+//         console.log('saved ', ' token ', token);
+//         process.exit(0);
+//     },
+//     err => {
+//         console.log('not saved ', ' token ', token);
+//         process.exit(0);
+//     }
+// );
+
+// async function test() {
+//     let found = await User.find().limit(1).then(
+//         found => {
+//             return found;
+//         });
+//     let jsonToWrite = {};
+//     for (var i = 0; i < found.length; i++) {
+//         let btag = found[i].displayName;
+//         let comboInfo = await mmrMethods.comboMmr(btag);
+//         console.log(comboInfo);
+//         jsonToWrite[btag] = {
+//             comboInfo
+//         };
+//     }
+//     jsonToWrite = JSON.stringify(jsonToWrite);
+//     fs.writeFileSync('testData.json', jsonToWrite);
+// }
+
+// test().then(x => {
+//     console.log(x);
+// })
