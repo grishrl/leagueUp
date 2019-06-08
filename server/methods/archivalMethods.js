@@ -236,5 +236,5 @@ async function retrieveAndRemoveArchiveUser(user) {
 module.exports = {
     archiveDivisions: archiveDivisions,
     archiveUser: archiveUser,
-    retrieveUser: retrieveAndRemoveArchiveUser
+    retrieveAndRemoveArchiveUser: retrieveAndRemoveArchiveUser
 };
