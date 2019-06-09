@@ -25,6 +25,13 @@
                                         <button type="button" (click)="cancel()" class="mt-1 btn btn-danger"><span class="icon-align"><i class="material-icons">close</i>Cancel</span></button>
                                     </div>
                                 </div>
+                                <div class="row mt-2">
+                                    <div class="col">
+                                        <button *ngIf="!editOn" (click)="updateUserMMR()" class="ml-5 btn btn-outline-dark">
+                                                                    Update MMR
+                                                                </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -161,9 +168,6 @@
                                 <div class="col">
                                     <div>User HotsLogs MMR:</div>
                                     {{returnedProfile.averageMmr}}
-                                    <!-- <button *ngIf="!editOn" (click)="updateUserMMR()" class="ml-5 btn btn-success">
-                                                                    Update MMR
-                                                                </button> -->
                                 </div>
                             </div>
 

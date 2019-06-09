@@ -11,6 +11,7 @@ function routeFriendlyUsername(username) {
     }
 }
 
+
 let hotslogsURL = 'https://api.hotslogs.com/Public/Players/1/';
 //method to get back user mmr from hotslogs using their mmr
 async function hotslogs(btag) {
@@ -26,20 +27,20 @@ async function hotslogs(btag) {
             httpsAgent: agent
         });
         let data = response.data;
-        id = data['PlayerID'];
-        var inc = 0
-        var totalMMR = 0;
-        var avgMMR = 0;
-        data['LeaderboardRankings'].forEach(element => {
-            if (element['GameMode'] != 'QuickMatch') {
-                if (element['CurrentMMR'] > 0) {
-                    inc += 1;
-                    totalMMR += element.CurrentMMR;
-                }
-            }
-        });
-        avgMMR = Math.round(totalMMR / inc);
-        val = avgMMR;
+        if (data['PlayerID']) {
+            id = data.PlayerID
+        }
+        if (data.hasOwnProperty('LeaderboardRankings')) {
+            data['LeaderboardRankings'].forEach(
+                ranking => {
+                    if (ranking['GameMode'] == 'StormLeague') {
+                        val += ranking['CurrentMMR'] * .6;
+                    } else if (ranking['GameMode'] == 'UnrankedDraft') {
+                        val += ranking['CurrentMMR'] * .5;
+                    }
+                });
+            val = Math.round(val);
+        }
     } catch (error) {
         val = null;
     }
@@ -47,6 +48,7 @@ async function hotslogs(btag) {
 };
 
 let heroesProfileURL = 'https://heroesprofile.com/API/MMR/Player/?api_key=' + process.env.heroProfileAPIkey + '&region=1&p_b=';
+
 
 async function heroesProfile(btag) {
     let val = 0;
