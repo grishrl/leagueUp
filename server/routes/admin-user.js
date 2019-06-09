@@ -116,6 +116,7 @@ router.post('/user/teamUpdate', passport.authenticate('jwt', {
 })
 
 router.get('/user/update', (req, res) => {
+    const path = '/admin/user/update';
     User.find().then(
         found => {
             let ammountUpdated = 0;
@@ -149,9 +150,10 @@ router.get('/user/update', (req, res) => {
                     }
                 )
             });
+            res.status(200).send(util.returnMessaging(path, 'Update player mmr started successfully', null, null, {}));
         },
         err => {
-            console.log(err);
+            res.status(500).send(util.returnMessaging(path, 'Update player mmr started successfully', err, null, null));
         }
     )
 });
