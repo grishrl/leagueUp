@@ -129,6 +129,9 @@ router.get('/user/update', (req, res) => {
                         if (util.returnBoolByPath(processed, 'heroesProfile')) {
                             if (processed.heroesProfile >= 0) {
                                 user.heroesProfileMmr = processed.heroesProfile;
+                                if (user.lowReplays) {
+                                    user.lowReplays = false;
+                                }
                             } else {
                                 user.heroesProfileMmr = -1 * processed.heroesProfile;
                                 user.lowReplays = true;

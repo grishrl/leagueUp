@@ -67,9 +67,11 @@
                                     <div><strong>Team Name</strong></div>
                                     {{team.teamName}}
                                 </div>
-                                <div class="col-2">
+                                <div class="col">
                                     <div><strong>Team MMR:</strong></div>
-                                    {{team.teamMMRAvg}}
+                                    <div>Hots Logs: {{team.teamMMRAvg}}</div>
+                                    <div>Heroes Profile: {{team.hpMmrAvg}}</div>
+                                    <div>NGS MMR: {{team.ngsMmrAvg}}</div>
                                 </div>
                                 <div class="col">
                                     <a class="finger underline" (click)="teamSelected(team)">Click to <span *ngIf="isSelected(team) else select"> deselect </span>

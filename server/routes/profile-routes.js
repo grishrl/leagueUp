@@ -4,6 +4,7 @@ const User = require('../models/user-models');
 const TeamSub = require('../subroutines/team-subs');
 const System = require('../models/system-models').system;
 const passport = require("passport");
+const mmrMethods = require('../methods/mmrMethods');
 const Stats = require('../models/stats-model');
 const Avatar = require('../methods/avatarUpload');
 const PendingAvatarQueue = require('../models/admin-models').PendingAvatarQueue;
@@ -159,6 +160,47 @@ router.post('/save', passport.authenticate('jwt', {
             res.status(403).send(util.returnMessaging(path, 'Unauthorized to mofify this profile.', false, null, null, logObj))
         }
 
+    });
+
+
+router.get('/update/mmr', passport.authenticate('jwt', {
+        session: false
+    }), util.appendResHeader,
+    function(req, res) {
+        const path = 'user/update/mmr';
+        if (req.user.displayName) {
+            mmrMethods.comboMmr(req.user.displayName).then(
+                mmrResponse => {
+                    User.findOne({ displayName: req.user.displayName }).then(found => {
+                        if (found) {
+                            found.hotsLogsPlayerID = mmrResponse.hotsLogs.playerId;
+                            found.averageMmr = mmrResponse.hotsLogs.mmr;
+                            found.heroesProfileMmr = mmrResponse.heroesProfile;
+                            found.ngsMmr = mmrResponse.ngsMmr;
+                            if (mmrResponse.heroesProfile < 0) {
+                                found.lowReplays = true;
+                            } else {
+                                if (found.lowReplays) {
+                                    found.lowReplays = false;
+                                }
+                            }
+                            found.save().then(
+                                saved => {
+                                    res.status(200).send(util.returnMessaging(path, 'User Updated', null, null, saved));
+                                },
+                                err => {
+                                    res.status(500).send(util.returnMessaging(path, 'Error saving user', err, null, null));
+                                }
+                            )
+                        } else {
+                            res.status(500).send(util.returnMessaging(path, 'User not found', null, null, found));
+                        }
+                    }, err => {
+                        res.status(500).send(util.returnMessaging(path, 'Error finding user', err, null, null))
+                    })
+                }
+            );
+        }
     });
 
 router.get('/frontPageStats', (req, res) => {

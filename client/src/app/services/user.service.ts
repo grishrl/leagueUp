@@ -163,5 +163,11 @@ export class UserService {
     return this.httpService.httpGet(url, params);
   }
 
+  updateUserMmr(){
+    let url = 'user/update/mmr';
+    return this.httpService.httpGet(url, [], true);
+  }
+
+
   constructor(private httpService: HttpServiceService) { }
 }
