@@ -234,20 +234,11 @@ export class ProfileEditComponent implements OnInit {
    }
 
   private updateUserMMR() {
-    this.hotsLogsService.getMMRdisplayName(this.user.routeFriendlyUsername(this.returnedProfile.displayName)).subscribe(res => {
-      if (res != 'error') {
-        this.returnedProfile.averageMmr = res.avgMMR;
-        this.returnedProfile['hotsLogsPlayerID'] = res.PlayerID;
-        this.user.saveUser(this.returnedProfile).subscribe((res) => {
-          if (res) {
-            this.disabled = true;
-          }
-          else {
-            alert("error");
-          }
-        });
+    this.user.updateUserMmr().subscribe(
+      res => {
+        merge(this.returnedProfile, res);
       }
-    });
+    );
   }
 
   //init method ; checks to see if the name we're getting comes from the router URL, or the displayName property
