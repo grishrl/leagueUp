@@ -73,7 +73,7 @@
                         <h5>Divisions</h5>
                         <ul class="columns">
                             <li *ngFor="let division of divisions">
-                                <a [routerLink]="['/division/',division.divisionConcat]">{{division.displayName}}</a>
+                                <app-division-link [division]="division.divisionConcat">{{division.displayName}}</app-division-link>
                             </li>
                         </ul>
                     </div>

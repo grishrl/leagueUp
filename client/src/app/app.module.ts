@@ -147,6 +147,8 @@ import { LStatDirective } from './league-stats/l-stat.directive';
 import { MatchResultsViewComponent } from './match/match-results-view/match-results-view.component';
 import { ChallongeTournComponent } from './challonge-tourn/challonge-tourn.component';
 
+import { DivisionLinkComponent } from './LinkComponents/division-link/division-link.component';
+
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
 @NgModule({
@@ -282,7 +284,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     LeagueStatsComponent,
     LStatDirective,
     MatchResultsViewComponent,
-    ChallongeTournComponent
+    ChallongeTournComponent,
+    DivisionLinkComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

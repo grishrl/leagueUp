@@ -46,7 +46,7 @@
                                     <a class="linkColorFix finger">Divisions</a>
                                     <ul class="sub-current" #dropDownDiv>
                                         <li *ngFor="let division of divisions">
-                                            <a [routerLink]="['/division/',division.divisionConcat]">{{division.displayName}}</a>
+                                            <app-division-link [division]="division.divisionConcat">{{division.displayName}}</app-division-link>
                                         </li>
                                     </ul>
                                 </li>
@@ -165,6 +165,15 @@
 
         <li><a [routerLink]="['/rules']">Rules</a></li>
         <li><a [routerLink]="['/faq']">FAQ</a></li>
+        <li>
+            <a>Divisions</a>
+            <ul>
+                <li class="mm-listitem" *ngFor="let division of divisions">
+                    <app-division-link [division]="division.divisionConcat">
+                        <span class="mm-listitem__text">{{division.displayName}}</span> </app-division-link>
+                </li>
+            </ul>
+        </li>
 
         <!-- todo: links for teams -->
         <li>
@@ -178,6 +187,8 @@
         <li [hidden]="Auth.isAuthenticated()">
             <a [routerLink]="['/login']">Login</a>
         </li>
+
+
 
         <li [hidden]="!Auth.isAuthenticated()">
             <a>
