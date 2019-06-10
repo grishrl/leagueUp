@@ -34,6 +34,8 @@ export class TeamDisplayComponent implements OnInit {
       }, (error) => {
         console.log(error);
       });
+    }else{
+      this._teams = [];
     }
   }
 

@@ -3,6 +3,7 @@ import { DivisionService } from '../services/division.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Team } from '../classes/team.class';
+import { Division } from '../classes/division';
 import { TeamService } from '../services/team.service';
 import { environment } from '../../environments/environment';
 
@@ -22,7 +23,7 @@ export class DivisionComponent implements OnInit {
   divSub: Subscription
   param: string
   navigationSubscription
-  divDisplay = {displayName:'', divisionConcat:'', teams:[]};
+  divDisplay = new Division();
 
   season = environment.season;
 

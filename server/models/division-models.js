@@ -14,7 +14,8 @@ const divisionInfoSchema = new Schema({
     "public": Boolean,
     "cupDiv": Boolean,
     "participants": [String],
-    "tournaments": [String] //tournament references for cup divs
+    "tournaments": [String], //tournament references for cup divs
+    "moderator": String
 });
 
 

@@ -12,18 +12,21 @@ const Division = require('../models/division-models');
 async function calulateStandings(division, season) {
     let standings;
     try {
+
         let dbDiv = await Division.findOne({ divisionConcat: division }).then(found => { return found; });
 
-        if (util.returnBoolByPath(dbDiv.toObject(), 'cupDiv') && dbDiv.cupDiv == true) {
-            console.log('cup div!');
-            standings = await cupDivStanding(division, season).then(answer => {
-                return answer;
-            });
-        } else {
-            standings = await stdDivStanding(division, season).then(answer => {
-                return answer;
-            });
+        if (dbDiv) {
+            if (util.returnBoolByPath(dbDiv.toObject(), 'cupDiv') && dbDiv.cupDiv == true) {
+                standings = await cupDivStanding(division, season).then(answer => {
+                    return answer;
+                });
+            } else {
+                standings = await stdDivStanding(division, season).then(answer => {
+                    return answer;
+                });
+            }
         }
+
         return standings;
     } catch (e) {
         console.log(e);
@@ -91,14 +94,14 @@ async function cupDivStanding(division, season) {
         ]
     };
     let cups = await Schedules.find(schedQuery).then(found => { return found; }, err => { return null; });
-    console.log(cups);
+    // console.log(cups);
     if (cups && cups.length > 0) {
         let tournamentIds = [];
         cups.forEach(cup => {
             cup = cup.toObject();
             tournamentIds.push(cup.challonge_ref);
         });
-        console.log(standingsData);
+        // console.log(standingsData);
         if (standingsData) {
             if (standingsData.data.parsedTournaments) {
                 standingsData.data.parsedTournaments.forEach(parsed => {
