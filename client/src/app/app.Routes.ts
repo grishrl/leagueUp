@@ -84,7 +84,6 @@ const APP_ROUTES: Routes = [
   { path: '_admin/eventMgmt/:id', component: EventCreateComponent, canActivate: [AuthGuardService], data: { role: 'event' } },
   { path: 'schedule/scheduleMatch/:id', component:MatchSchedulerComponent},
   { path: 'schedule/teamSchedule', component: TeamScheduleComboComponent },
-  { path: 'schedule/teamSchedule/:id', component:TeamScheduleComponent}, //accepts team name as url parameter
   { path: 'reporting/:id', component:ReportingComponent}, //accepts team name as url parameter
   { path: '_admin/dashboard', component: DashboardComponent, canActivate: [AuthGuardService]},
   { path: '_casterDashboard', component: CasterDashboardComponent, canActivate: [AuthGuardService], data: { role: 'caster' }},
@@ -103,6 +102,8 @@ const APP_ROUTES: Routes = [
   { path: '**', component: StaticHtmlLoaderComponent, data: { template: '404', headerText: 'Not Found' } }
 
 ]
+
+//{ path: 'schedule/teamSchedule/:id', component:TeamScheduleComponent}, //accepts team name as url parameter
 
 @NgModule({
   imports: [ RouterModule.forRoot(APP_ROUTES, {onSameUrlNavigation:'reload', scrollPositionRestoration:'enabled', anchorScrolling:'enabled'})],
