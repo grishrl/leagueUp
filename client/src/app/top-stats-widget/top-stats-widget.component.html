@@ -8,7 +8,7 @@
           </span>
                 <span class="name">
             <!-- <img src="assets/img/players/1.jpg" alt="">  -->
-             <a [routerLink]="['/profile/', user.routeFriendlyUsername(stat.name)]">{{stat.name}}</a>
+            <app-player-link [player]="stat.name">{{stat.name}}</app-player-link>
         </span>
                 <span class="points">
            {{stat.points}}

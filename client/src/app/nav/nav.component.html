@@ -111,7 +111,9 @@
                                                 <div class="col-md-4">
                                                     <h5>Player</h5>
                                                     <ul>
-                                                        <li><a [routerLink]="['/profile/',user.routeFriendlyUsername(Auth.getUser())]">My Profile</a>
+                                                        <li>
+                                                            <app-player-link [player]="Auth.getUser()">My Profile
+                                                            </app-player-link>
                                                         </li>
                                                         <li><a [routerLink]="['/findPlayers']">Find Free Agents</a></li>
                                                     </ul>
@@ -219,7 +221,8 @@
                 <li>
                     <a>Player</a>
                     <ul>
-                        <li><a [routerLink]="['/profile/',user.routeFriendlyUsername(Auth.getUser())]">Profile</a>
+                        <li>
+                            <app-player-link [player]="Auth.getUser()">Profile</app-player-link>
                         </li>
                     </ul>
                 </li>

@@ -92,8 +92,10 @@
                         </div>
                         <div class="row">
                             <div class="col">
-                                <span *ngIf="selectedMessage.request.instance=='team'"> View User Profile <a
-                          [routerLink]="['/profile/', user.routeFriendlyUsername(selectedMessage.request.requester)]">{{selectedMessage.request.requester}}</a></span>
+                                <span *ngIf="selectedMessage.request.instance=='team'"> View User Profile
+                                  <app-player-link [player]="selectedMessage.request.requester">
+                                    {{selectedMessage.request.requester}}</app-player-link>
+                                  </span>
                                 <span *ngIf="selectedMessage.request.instance=='user'"> View Team Profile
                                   <app-team-link [team]="selectedMessage.request.requester">
                                     {{selectedMessage.request.requester}}</app-team-link>
