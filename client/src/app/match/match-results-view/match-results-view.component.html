@@ -10,11 +10,10 @@
                 <span>
                   <i *ngIf="dominator(match, 'home')" style="position: absolute;"
                     class="fas fa-crown"></i>
-                  <a
-                    [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.home.teamName)]">
-                    <img src="{{team.imageFQDN(match.home.logo)}}" alt="">
-                    <div>{{match.home.teamName}}</div>
-                  </a>
+                    <app-team-link [team]="match.home.teamName">
+                      <img src="{{team.imageFQDN(match.home.logo)}}" alt="">
+                      <div>{{match.home.teamName}}</div>
+                    </app-team-link>
                   <!-- <div>Record: {{match.home.wins}}-{{match.home.losses}}</div> -->
                 </span>
             </div>
@@ -28,12 +27,13 @@
                   <i *ngIf="dominator(match, 'away')" style="position: absolute;"
                     class="fas fa-crown"></i>
 
-                  <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.away.teamName)]">
-                    <img src="{{team.imageFQDN(match.away.logo)}}" alt="">
-                    <div>
-                      {{match.away.teamName}}
-                    </div>
-                  </a>
+                    <app-team-link [team]="match.away.teamName">
+                      <img src="{{team.imageFQDN(match.away.logo)}}" alt="">
+                      <div>
+                        {{match.away.teamName}}
+                      </div>
+                    </app-team-link>
+
                   <!-- <div>Record: {{match.away.wins}}-{{match.away.losses}}</div> -->
                 </span>
             </div>

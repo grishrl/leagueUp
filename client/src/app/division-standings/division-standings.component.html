@@ -13,10 +13,7 @@
                 <span class="position">
           {{standing.standing}}
         </span>
-                <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(standing.teamName)]">
-                    <!-- <img src="{{team.imageFQDN(standing.logo)}}" alt="">  -->
-                    {{standing.teamName}}
-                </a>
+                <app-team-link [team]="standing.teamName">{{standing.teamName}}</app-team-link>
                 <span class="points">
           {{standing.points}}
         </span>

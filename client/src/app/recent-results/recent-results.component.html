@@ -9,17 +9,16 @@
             class="date">{{util.getFormattedDate(match.scheduledTime.startTime, 'DD MMM YYYY')}}</span>
                 </span>
                 <div class="goals-result">
-                    <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.home.teamName)]">
-                        <!-- <img src="{{team.imageFQDN(match.home.logo)}}" alt="">  -->
+                    <app-team-link [team]="match.home.teamName">
                         {{match.home.ticker}}
-                    </a>
+                    </app-team-link>
+
                     <span class="goals">
                                    <b>{{match.home.score}}</b> - <b>{{match.away.score}}</b>
                                  </span>
-                    <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.away.teamName)]">
-                        <!-- <img src="{{team.imageFQDN(match.away.logo)}}" alt="">  -->
+                    <app-team-link [team]="match.away.teamName">
                         {{match.away.ticker}}
-                    </a>
+                    </app-team-link>
                 </div>
             </li>
         </ul>

@@ -24,8 +24,11 @@
               Group A
             </span> -->
                     </div>
-                    <a [routerLink]="['/teamProfile/', team.routeFriendlyTeamName(item.teamName)]" class="btn">Team
-                      Profile <i class="fa fa-angle-right" aria-hidden="true"></i></a>
+                    <app-team-link [team]="item.teamName">
+                        <span class="btn">Team
+                        Profile <i class="fa fa-angle-right" aria-hidden="true"></i></span>
+                    </app-team-link>
+
                 </div>
             </div>
             <!-- End Item Team Group A-->

@@ -26,7 +26,9 @@
                 <div class="item-team">
                     <div class="head-team">
                         <img src="{{TeamService.imageFQDN(team.logo)}}" alt="location-team">
-                        <div class="overlay"><a [routerLink]="['/teamProfile', TeamService.routeFriendlyTeamName(team.teamName)]">+</a></div>
+                        <div class="overlay">
+                            <app-team-link [team]="team.teamName">+</app-team-link>
+                        </div>
                     </div>
                     <div class="info-team">
                         <span class="logo-team">
@@ -42,8 +44,9 @@
                   <app-division-if-public [divisionInfo]="team.divisionConcat"></app-division-if-public>
                 </span>
                     </div>
-                    <a [routerLink]="['/teamProfile', TeamService.routeFriendlyTeamName(team.teamName)]" class="btn">Team Profile <i class="fa fa-angle-right"
-                  aria-hidden="true"></i></a>
+
+                    <app-team-link [team]="team.teamName"><span class="btn">Team Profile <i class="fa fa-angle-right"
+                          aria-hidden="true"></i></span></app-team-link>
                 </div>
             </div>
             <!-- End Item Team Group A-->

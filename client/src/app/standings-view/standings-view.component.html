@@ -21,8 +21,8 @@
                 <td class="text-left">
                     <!-- <img src="img/clubs-logos/colombia.png" alt="Colombia"> -->
                     <span>
-                      <a
-                        [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(standing.teamName)]">{{standing.teamName}}</a></span>
+                      <app-team-link [team]="standing.teamName">{{standing.teamName}}</app-team-link>
+                    </span>
                 </td>
                 <td>{{standing.points}}</td>
                 <td>{{standing.dominations}}</td>

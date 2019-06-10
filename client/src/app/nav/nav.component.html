@@ -88,7 +88,8 @@
                                                 <div class="col-md-4">
                                                     <h5>Team</h5>
                                                     <ul *ngIf="Auth.getTeam(); else noTeam">
-                                                        <li><a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(Auth.getTeam())]">Profile</a>
+                                                        <li>
+                                                            <app-team-link [team]="Auth.getTeam()">Profile</app-team-link>
                                                         </li>
                                                         <!-- <li><a [routerLink]="['/schedule/teamSchedule']">Schedule</a>
                                                         </li> -->
@@ -98,7 +99,8 @@
                                                     </ul>
                                                     <ng-template #noTeam>
                                                         <ul>
-                                                            <li><a [routerLink]="['/teamCreate']">Create Team</a>
+                                                            <li>
+                                                                <a [routerLink]="['/teamCreate']">Create Team</a>
                                                             </li>
                                                             <li><a [routerLink]="['/findTeams']">Find Team</a>
                                                             </li>
@@ -202,14 +204,14 @@
                 <li>
                     <a>Team</a>
                     <ul [hidden]="!Auth.getTeam()">
-                        <li><a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(Auth.getTeam())]">Profile</a>
+                        <li>
+                            <app-team-link team="Auth.getTeam()">Profile</app-team-link>
                         </li>
                         <li><a [routerLink]="['/schedule/teamSchedule']">Schedule</a>
                         </li>
                         <li><a [routerLink]="['/findPlayers']">Find Players</a></li>
                     </ul>
                     <ul [hidden]="Auth.getTeam()">
-                        <!-- <li><a [routerLink]="['/teamCreate']">Create Team</a></li> -->
                         <li><a [routerLink]="['/findTeams']">Find Team</a></li>
                     </ul>
 

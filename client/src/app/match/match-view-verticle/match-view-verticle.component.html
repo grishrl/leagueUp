@@ -22,7 +22,7 @@
         </div>
         <div class="col text-center  my-auto">
             <div *ngIf="match.home.teamName">
-                <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.home.teamName)]">{{match.home.teamName}}</a>
+                <app-team-link [team]="match.home.teamName">{{match.home.teamName}}</app-team-link>
             </div>
 
         </div>
@@ -62,7 +62,7 @@
         </div>
         <div class="col text-center my-auto">
             <div *ngIf="match.away.teamName; else bye">
-                <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.away.teamName)]">{{match.away.teamName}}</a>
+                <app-team-link [team]="match.away.teamName">{{match.away.teamName}}</app-team-link>
             </div>
         </div>
         <div class="col text-center my-auto">
@@ -151,7 +151,7 @@
                 <div class="col text-center">
                     <div class="row">
                         <div class="col">
-                            <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.home.teamName)]">{{match.home.teamName}}</a>
+                            <app-team-link [team]="match.home.teamName">{{match.home.teamName}}</app-team-link>
                         </div>
                     </div>
                     <div class="row">
@@ -175,7 +175,7 @@
                         <div class="col">
                             <div class="row">
                                 <div class="col">
-                                    <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(match.away.teamName)]">{{match.away.teamName}}</a>
+                                    <app-team-link [team]="match.away.teamName">{{match.away.teamName}}</app-team-link>
                                 </div>
                             </div>
                             <div class="row">

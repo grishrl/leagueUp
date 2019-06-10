@@ -148,6 +148,7 @@ import { MatchResultsViewComponent } from './match/match-results-view/match-resu
 import { ChallongeTournComponent } from './challonge-tourn/challonge-tourn.component';
 
 import { DivisionLinkComponent } from './LinkComponents/division-link/division-link.component';
+import { TeamLinkComponent } from './LinkComponents/team-link/team-link.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -285,7 +286,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     LStatDirective,
     MatchResultsViewComponent,
     ChallongeTournComponent,
-    DivisionLinkComponent
+    DivisionLinkComponent,
+    TeamLinkComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

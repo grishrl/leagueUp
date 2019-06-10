@@ -94,8 +94,10 @@
                             <div class="col">
                                 <span *ngIf="selectedMessage.request.instance=='team'"> View User Profile <a
                           [routerLink]="['/profile/', user.routeFriendlyUsername(selectedMessage.request.requester)]">{{selectedMessage.request.requester}}</a></span>
-                                <span *ngIf="selectedMessage.request.instance=='user'"> View Team Profile <a
-                          [routerLink]="['/teamProfile/', team.routeFriendlyTeamName(selectedMessage.request.requester)]">{{selectedMessage.request.requester}}</a></span>
+                                <span *ngIf="selectedMessage.request.instance=='user'"> View Team Profile
+                                  <app-team-link [team]="selectedMessage.request.requester">
+                                    {{selectedMessage.request.requester}}</app-team-link>
+                                  </span>
                             </div>
                             <div class="col text-center">
                                 <button (click)="actionRequest(true, selectedMessage)" class="btn btn-success">Accept</button>
