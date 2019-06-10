@@ -35,28 +35,45 @@ export class DivisionStandingsComponent implements OnInit {
   // selectedDiv;
 
   ngOnInit() {
-    console.log('this.auth.getTeam() ', this.auth.getTeam());
+
     if (this.auth.getTeam()){
       this.team.getTeam(this.auth.getTeam()).subscribe(
         res => {
-          this.getStandings(res.divisionConcat)
+          if (res.divisionConcat){
+            this.DivisionService.getDivision(res.divisionConcat).subscribe(
+              res=>{
+                if(res.public){
+                  res.divisionConcat;
+                }else{
+                  this.randomDivision();
+                }
+              }
+            );
+          }else{
+            this.randomDivision();
+          }
         },
         err => {
           console.log(err);
         }
       )
     }else{
-      this.DivisionService.getDivisionInfo().subscribe((res) => {
-        let divisions = res;
-        let randomDivInt = Math.floor(Math.random() * divisions.length);
-        let randomDivision = divisions[randomDivInt];
-        this.getStandings(randomDivision.divisionConcat);
-        this.passDiv = randomDivision;
-      }, (err) => {
-        console.log(err);
-      })
+      this.randomDivision();
     }
 
   }
 
+
+  private randomDivision() {
+    this.DivisionService.getDivisionInfo().subscribe((res) => {
+      let divisions = res;
+      let randomDivInt = Math.floor(Math.random() * divisions.length);
+      let randomDivision = divisions[randomDivInt];
+      console.log(randomDivision);
+      this.getStandings(randomDivision.divisionConcat);
+      this.passDiv = randomDivision;
+    }, (err) => {
+      console.log(err);
+    });
+  }
 }
