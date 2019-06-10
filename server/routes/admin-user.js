@@ -11,6 +11,7 @@ const Avatar = require('../methods/avatarUpload');
 const mmrMethods = require('../methods/mmrMethods');
 const messageSub = require('../subroutines/message-subs');
 const QueueSubs = require('../subroutines/queue-subs');
+const _ = require('lodash');
 
 router.post('/delete/user', passport.authenticate('jwt', {
     session: false
@@ -82,10 +83,15 @@ router.post('/user/save', passport.authenticate('jwt', {
     User.findById(id).then(
         found => {
             if (found) {
-                let userKeys = Object.keys(user);
-                userKeys.forEach(userKey => {
-                    if (userKey != '_id') {
-                        found[userKey] = user[userKey];
+                // let userKeys = Object.keys(user);
+                // userKeys.forEach(userKey => {
+                //     if (userKey != '_id') {
+                //         found[userKey] = user[userKey];
+                //     }
+                // });
+                _.forEach(user, (value, key) => {
+                    if (key != '_id') {
+                        found[key] = value;
                     }
                 });
                 found.save().then(

@@ -1,7 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { TeamService } from '../services/team.service';
-import { merge } from 'lodash';
+import { merge, forEach as _forEach, includes as _includes } from 'lodash';
 import { UtilitiesService } from '../services/utilities.service';
+
 
 @Component({
   selector: 'app-questionnaire',
@@ -105,9 +106,9 @@ export class QuestionnaireComponent implements OnInit {
 
   filterMaps(){
     let returnArray = [];
-    let keys = Object.keys(this.maps);
-    keys.forEach(key=>{
-      if(this.pickedMaps.indexOf(this.maps[key])==-1){
+
+    _forEach(this.maps, (value, key)=>{
+      if (!_includes(this.pickedMaps, value) ) {
         returnArray.push(this.maps[key]);
       }
     });

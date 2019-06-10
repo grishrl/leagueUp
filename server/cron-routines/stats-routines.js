@@ -71,12 +71,11 @@ async function asscoatieReplays() {
             var replay = parsedReplays[i];
             var replayObj = replay.toObject();
             let players = replay.players;
-            let playerKey = Object.keys(replay.players);
             let playerTags = [];
             let playerTagsAndToonHandle = [];
-            playerKey.forEach(key => {
-                let player = players[key];
-                let btag = player.name + '#' + player.tag
+            _.forEach(players, (value, key) => {
+                // let player = players[key];
+                let btag = value.name + '#' + value.tag
                 let tO = {
                     'btag': btag,
                     'toonHandle': key
@@ -84,6 +83,17 @@ async function asscoatieReplays() {
                 playerTags.push(btag);
                 playerTagsAndToonHandle.push(tO);
             });
+            // let playerKey = Object.keys(replay.players);
+            // playerKey.forEach(key => {
+            //     let player = players[key];
+            //     let btag = player.name + '#' + player.tag
+            //     let tO = {
+            //         'btag': btag,
+            //         'toonHandle': key
+            //     };
+            //     playerTags.push(btag);
+            //     playerTagsAndToonHandle.push(tO);
+            // });
             let replayTeams = [];
 
             replayTeams.push(replay.match.teams[0].teamId);
@@ -314,12 +324,17 @@ async function calcLeagueStats(replay) {
 
     objectiveInfo.secondsPlayed += Math.floor(replay.match.length);
 
-    let keys = Object.keys(replay.players);
+    // let keys = Object.keys(replay.players);
 
-    keys.forEach(player => {
-        let playerObj = replay.players[player];
-        objectiveInfo.minionsKilled += playerObj.gameStats.MinionKills;
-        objectiveInfo.globesGathered += playerObj.globes.count;
+    // keys.forEach(player => {
+    //     let playerObj = replay.players[player];
+    //     objectiveInfo.minionsKilled += playerObj.gameStats.MinionKills;
+    //     objectiveInfo.globesGathered += playerObj.globes.count;
+    // });
+
+    _.forEach(replay.players, (value, key) => {
+        objectiveInfo.minionsKilled += value.gameStats.MinionKills;
+        objectiveInfo.globesGathered += value.globes.count;
     });
 
     let query = {
@@ -340,14 +355,21 @@ async function calcLeagueStats(replay) {
     );
 
     if (overall) {
-        let keys = Object.keys(objectiveInfo);
-        keys.forEach(key => {
+        _.forEach(objectiveInfo, (value, key) => {
             if (util.returnBoolByPath(overall.data, key)) {
-                overall.data[key] += objectiveInfo[key];
+                overall.data[key] += value;
             } else {
-                overall.data[key] = objectiveInfo[key];
+                overall.data[key] = value;
             }
         });
+        // let keys = Object.keys(objectiveInfo);
+        // keys.forEach(key => {
+        //     if (util.returnBoolByPath(overall.data, key)) {
+        //         overall.data[key] += objectiveInfo[key];
+        //     } else {
+        //         overall.data[key] = objectiveInfo[key];
+        //     }
+        // });
         overall.markModified('data');
         overallSave = await overall.save().then(
             rep => { return rep; },
@@ -361,10 +383,13 @@ async function calcLeagueStats(replay) {
             dataName: "leagueRunningFunStats",
             data: {}
         }
-        let keys = Object.keys(objectiveInfo);
-        keys.forEach(key => {
-            newObj.data[key] = objectiveInfo[key];
+        _.forEach(objectiveInfo, (value, key) => {
+            newObj.data[key] = value;
         });
+        // let keys = Object.keys(objectiveInfo);
+        // keys.forEach(key => {
+        //     newObj.data[key] = objectiveInfo[key];
+        // });
         overallSave = await new System(newObj).save().then(
             res => {
                 return res;
@@ -392,14 +417,21 @@ async function calcLeagueStats(replay) {
     );
 
     if (season) {
-        let keys = Object.keys(objectiveInfo);
-        keys.forEach(key => {
+        _.forEach(objectiveInfo, (value, key) => {
             if (util.returnBoolByPath(season.data, key)) {
-                season.data[key] += objectiveInfo[key];
+                season.data[key] += value;
             } else {
-                season.data[key] = objectiveInfo[key];
+                season.data[key] = value;
             }
         });
+        // let keys = Object.keys(objectiveInfo);
+        // keys.forEach(key => {
+        //     if (util.returnBoolByPath(season.data, key)) {
+        //         season.data[key] += objectiveInfo[key];
+        //     } else {
+        //         season.data[key] = objectiveInfo[key];
+        //     }
+        // });
         season.markModified('data');
         seasonSave = await season.save().then(
             rep => {
@@ -415,10 +447,13 @@ async function calcLeagueStats(replay) {
             dataName: "leagueRunningFunStats",
             data: {}
         }
-        let keys = Object.keys(objectiveInfo);
-        keys.forEach(key => {
-            newObj.data[key] = objectiveInfo[key];
+        _.forEach(objectiveInf, (value, key) => {
+            newObj.data[key] = value;
         });
+        // let keys = Object.keys(objectiveInfo);
+        // keys.forEach(key => {
+        //     newObj.data[key] = objectiveInfo[key];
+        // });
         seasonSave = await new System(newObj).save().then(
             res => {
                 return res;
@@ -521,10 +556,13 @@ function tombCalc(replay) {
         obj['spiders-Summoned'] += replay.match.objective["0"].count;
         obj['spiders-Summoned'] += replay.match.objective["1"].count;
 
-        let keys = Object.keys(replay.players);
-        keys.forEach(key => {
-            let player = replay.players[key];
-            obj['spiderButtsTurnedIn'] += player.gameStats.GemsTurnedIn;
+        // let keys = Object.keys(replay.players);
+        // keys.forEach(key => {
+        //     let player = replay.players[key];
+        //     obj['spiderButtsTurnedIn'] += player.gameStats.GemsTurnedIn;
+        // });
+        _.forEach(replay.player, (value, key) => {
+            obj['spiderButtsTurnedIn'] += value.gameStats.GemsTurnedIn;
         });
 
     }
@@ -879,11 +917,11 @@ async function postToHotsProfileHandler(limNum) {
             postObj['team_two_image_url'] = process.env.heroProfileImage + matchCopy.away.logo;
             postObj['team_two_map_ban'] = matchCopy.mapBans.away;
 
-                                if (match.hasOwnProperty('round')) {
-                                    postObj['round'] = matchCopy.round.toString();
-                                } else {
-                                    postObj['round'] = 'T-1';
-                                }
+            if (match.hasOwnProperty('round')) {
+                postObj['round'] = matchCopy.round.toString();
+            } else {
+                postObj['round'] = 'T-1';
+            }
             postObj['game'] = (j + 1).toString();
             postObj['season'] = process.env.season.toString();
 
@@ -963,9 +1001,7 @@ module.exports = {
 
 function screenPostObject(postObj) {
     let retBool = true;
-    let objKeys = Object.keys(postObj);
-    objKeys.forEach(key => {
-        let value = postObj[key];
+    _.forEach(postObj, (value, key) => {
         if (key != 'team_two_image_url' && key != 'team_two_image_url') {
             if (util.isNullorUndefined(value)) {
                 retBool = false;
@@ -975,8 +1011,21 @@ function screenPostObject(postObj) {
         } else {
             //image can empty
         }
-        let val = postObj[key];
     });
+    // let objKeys = Object.keys(postObj);
+    // objKeys.forEach(key => {
+    //     let value = postObj[key];
+    //     if (key != 'team_two_image_url' && key != 'team_two_image_url') {
+    //         if (util.isNullorUndefined(value)) {
+    //             retBool = false;
+    //         } else {
+    //             //do nothing
+    //         }
+    //     } else {
+    //         //image can empty
+    //     }
+    //     let val = postObj[key];
+    // });
     return retBool;
 }
 

@@ -3,6 +3,8 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 import { HotsLogsService } from 'src/app/services/hots-logs.service';
 import { HeroesProfileService } from 'src/app/services/heroes-profile.service';
 import { UserService } from 'src/app/services/user.service';
+import { ValueConverter } from '@angular/compiler/src/render3/view/template';
+import { forEach as _forEach } from 'lodash';
 
 @Component({
   selector: 'app-player-stats',
@@ -44,6 +46,7 @@ export class PlayerStatsComponent implements OnInit {
       takedowns:0
     }
   };
+
   initStats(){
     this.user.getStatistics(this.displayName).subscribe(
       res=>{
@@ -66,17 +69,16 @@ export class PlayerStatsComponent implements OnInit {
   roundTree(obj){
 
       if (typeof obj == 'object') {
-        let keys = Object.keys(obj);
-        keys.forEach(key => {
-          let item = obj[key];
-          if (typeof item == 'object') {
-            this.roundTree(item);
+        _forEach(obj, (value, key)=>{
+
+          if (typeof value == 'object') {
+            this.roundTree(value);
           } else {
-            if (!isNaN(item)) {
-              obj[key] = Math.round(item);
+            if (!isNaN(value)) {
+              obj[key] = Math.round(value);
             }
           }
-        })
+        });
     }
 
   }

@@ -3,6 +3,7 @@ const router = require('express').Router();
 const passport = require("passport");
 const levelRestrict = require("../configs/admin-leveling");
 const Match = require('../models/match-model');
+const _ = require('lodash');
 
 router.post('/match/update', passport.authenticate('jwt', {
     session: false
@@ -52,9 +53,12 @@ router.post('/match/update', passport.authenticate('jwt', {
             (found) => {
                 if (found) {
                     // found = match;
-                    let keys = Object.keys(match);
-                    keys.forEach(key => {
-                        found[key] = match[key];
+                    // let keys = Object.keys(match);
+                    // keys.forEach(key => {
+                    //     found[key] = match[key];
+                    // });
+                    _.forEach(match, (value, key) => {
+                        found[key] = value;
                     });
                     found.save().then(
                         (saved) => {

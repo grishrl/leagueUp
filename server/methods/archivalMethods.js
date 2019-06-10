@@ -4,6 +4,7 @@ const Division = require('../models/division-models');
 const Archive = require('../models/system-models').archive;
 const archiveTeamLogo = require('./teamLogoUpload').archiveTeamLogo;
 const CustomError = require('./customError');
+const _ = require('lodash');
 
 async function archiveDivisions() {
     console.log('finding divisions for archival...')
@@ -206,13 +207,19 @@ async function retrieveAndRemoveArchiveUser(user) {
         type: 'user'
     });
 
-    let keys = Object.keys(user);
-    keys.forEach(key => {
+    _.forEach(user, (value, key) => {
         let str = 'object.' + key;
         let obj = {};
-        obj[str] = user[key]
+        obj[str] = value;
         query.$and.push(obj);
-    })
+    });
+    // let keys = Object.keys(user);
+    // keys.forEach(key => {
+    //     let str = 'object.' + key;
+    //     let obj = {};
+    //     obj[str] = user[key]
+    //     query.$and.push(obj);
+    // })
 
     let picked = await Archive.findOne(query).then(
         found => {

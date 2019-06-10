@@ -25,7 +25,7 @@ export class TeamTickerComponent implements OnInit, ControlValueAccessor {
 
   ngOnInit() {
     const control = this.controlDir.control;
-    let validators = control.validator ? [control.validator, Validators.required, this.validTicker(this.filterWords) ] : Validators.required
+    let validators = control.validator ? [ control.validator, Validators.required, this.validTicker(this.filterWords) ] : Validators.required
     control.setValidators(validators);
     control.setAsyncValidators(this.validateTickerNotTaken());
     control.updateValueAndValidity();
@@ -49,7 +49,7 @@ export class TeamTickerComponent implements OnInit, ControlValueAccessor {
       if (this.originalValue == control.value){
         return of(null);
       }else{
-        return this.team.getTeam(null, control.value)
+        return this.team.getTeam(control.value)
           .pipe(
             map(res => {
               let keys = Object.keys(res);

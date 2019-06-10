@@ -3,6 +3,7 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 import { EventsService } from 'src/app/services/events.service';
 import { ActivatedRoute } from '@angular/router';
 import { cloneDeep } from 'lodash';
+import { forEach as _forEach } from 'lodash';
 
 @Component({
   selector: 'app-event-create',
@@ -103,10 +104,10 @@ export class EventCreateComponent implements OnInit {
     // console.log('AFTER DELETE: this.editEvent', this.editEvent, 'this.eventOrig ', this.eventOrig, 'this.event ', this.event)
 
     //save the event
-    let keys = Object.keys(this.event);
     let submit = true;
-    keys.forEach(key => {
-      if (key != 'eventImage' && this.util.isNullOrEmpty(this.event[key])) {
+
+    _forEach(this.event, (value, key)=>{
+      if (key != 'eventImage' && this.util.isNullOrEmpty(value)) {
         alert(key);
         submit = false;
       }

@@ -22,6 +22,13 @@ export class UserService {
     return this.httpService.httpGet(url, params);
   }
 
+    getStatistics(username){
+    let encodedID = encodeURIComponent(username);
+    let url = '/user/statistics';
+    let params = [{ id: encodedID }];
+    return this.httpService.httpGet(url, params);
+  }
+
   //sends the information to the outreach route
   emailOutreach(email){
     let url = '/outreach/invite';
@@ -154,13 +161,6 @@ export class UserService {
   avatarUpload(imgInput) {
     let url = 'user/upload/avatar';
     return this.httpService.httpPost(url, imgInput, true);
-  }
-
-  getStatistics(username){
-    let encodedID = encodeURIComponent(username);
-    let url = '/user/statistics';
-    let params = [{ id: encodedID }];
-    return this.httpService.httpGet(url, params);
   }
 
   updateUserMmr(){

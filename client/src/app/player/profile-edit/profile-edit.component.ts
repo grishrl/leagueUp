@@ -186,21 +186,6 @@ export class ProfileEditComponent implements OnInit {
   }
 
 
-//   //this has to be fired to kick of error checking inside form boxes
-//   markFormGroupTouched(formGroup: FormGroup) {
-//   if (formGroup.controls) {
-//     const keys = Object.keys(formGroup.controls);
-//     for (let i = 0; i < keys.length; i++) {
-//       const control = formGroup.controls[keys[i]];
-//       if (control instanceof FormControl) {
-//         control.markAsTouched();
-//       } else if (control instanceof FormGroup) {
-//         this.markFormGroupTouched(control);
-//       }
-//     }
-//   }
-// }
-
 //enable editing for profile, create a copy of current data
    openEdit(){
      this.disabled=false;

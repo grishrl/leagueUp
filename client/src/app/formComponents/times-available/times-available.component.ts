@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, DoCheck } from '@angular/core';
 import { UtilitiesService } from '../../services/utilities.service';
-import { findIndex } from 'lodash';
+import { findIndex, forEach as _forEach } from 'lodash';
 
 @Component({
   selector: 'app-times-available',
@@ -125,7 +125,6 @@ export class TimesAvailableComponent implements OnInit, DoCheck {
   @Input() set availObj(_obj){
     if(typeof _obj == 'object' && _obj != null && _obj != undefined){
       this.availability = _obj;
-      // console.log(this.availability)
       this.recalculateCopyDays();
     }
   }
@@ -146,21 +145,19 @@ export class TimesAvailableComponent implements OnInit, DoCheck {
   }
 
   recalculateCopyDays() {
-    // this.populatedDays = [];
-    let keys = Object.keys(this.availability);
-    keys.forEach(element => {
+    _forEach(this.availability, (value, key)=>{
       let ind = findIndex(this.populatedDays, function (o) {
-        return o.value == element;
+        return o.value == key;
       });
-      if (this.availability[element].available && this.availability[element].startTime && this.availability[element].endTime) {
-        let firstChar = element.charAt(0);
+      if (value.available && value.startTime && value.endTime) {
+        let firstChar = key.charAt(0);
         firstChar = firstChar.toUpperCase();
-        let prettyName = firstChar + element.substring(1, element.length);
-        if(ind==-1){
-          this.populatedDays.push({ 'key': prettyName, 'value': element });
+        let prettyName = firstChar + key.substring(1, key.length);
+        if (ind == -1) {
+          this.populatedDays.push({ 'key': prettyName, 'value': key });
         }
-      }else{
-        if(ind!=-1){
+      } else {
+        if (ind != -1) {
           this.populatedDays.splice(ind, 1);
         }
       }

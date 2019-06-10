@@ -5,6 +5,7 @@ const System = require('../models/system-models').system;
 const Schedules = require('../models/schedule-models');
 const challonge = require('../methods/challongeAPI');
 const Division = require('../models/division-models');
+const _ = require('lodash');
 
 
 //takes the provided division and season and calcuates the current standings of the teams
@@ -49,16 +50,21 @@ const points = [{
     }
 ];
 
-function returnObjectForKeyMatch(arrayOfObjects, key, value) {
+function returnObjectForKeyMatch(arrayOfObjects, matchKey, matchValue) {
     let arr = arrayOfObjects;
     let returnObj = null;
     arr.forEach(iter => {
-        let keys = Object.keys(iter);
-        keys.forEach(keyIter => {
-            if (keyIter == key && iter[keyIter] == value) {
+        _.forEach(iter, (value, key) => {
+            if (key == matchKey && value == matchValue) {
                 returnObj = iter;
             }
         });
+        // let keys = Object.keys(iter);
+        // keys.forEach(keyIter => {
+        //     if (keyIter == key && iter[keyIter] == value) {
+        //         returnObj = iter;
+        //     }
+        // });
     });
     return returnObj;
 }

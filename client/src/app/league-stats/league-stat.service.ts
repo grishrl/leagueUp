@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HeroesProfileService } from '../services/heroes-profile.service';
 import { Subject } from 'rxjs';
+import { forEach as _forEach } from 'lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -20,14 +21,15 @@ export class LeagueStatService {
    init(){
      this.hp.getOverallLeagueStats().subscribe(
        res => {
-         let keys = Object.keys(res.data);
-         keys.forEach(key => {
+
+         _forEach(res.data, (value, key)=>{
            if (key == this.statList[this.randomInt].statName) {
              if (key == "secondsPlayed") {
                res.data[key] = Math.floor(res.data[key] / 60);
              }
            }
          });
+
          this.responseData = res.data; //add the response data to the local cache; we can use this to make more calls later;
          this.getStatInfo(); //once we have bootstrapped and have the info we need; call this method to start the observable's pipeline
        },

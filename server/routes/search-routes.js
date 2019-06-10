@@ -528,15 +528,22 @@ function createUserSearchObject(obj, reqUser) {
             let roles = {
                 $or: []
             };
-            let keys = Object.keys(obj.rolesNeeded);
-            keys.forEach(key => {
+            lodash.forEach(obj.rolesNeeded, (value, key) => {
                 let searchKey = 'role';
-                let value = obj.rolesNeeded[key];
                 searchKey = searchKey + '.' + key;
                 let tO = {}
                 tO[searchKey] = value;
                 roles['$or'].push(tO);
             });
+            // let keys = Object.keys(obj.rolesNeeded);
+            // keys.forEach(key => {
+            //     let searchKey = 'role';
+            //     let value = obj.rolesNeeded[key];
+            //     searchKey = searchKey + '.' + key;
+            //     let tO = {}
+            //     tO[searchKey] = value;
+            //     roles['$or'].push(tO);
+            // });
             returnObj['$and'].push(roles);
         }
 
@@ -552,6 +559,7 @@ function createUserSearchObject(obj, reqUser) {
             }
 
             if (util.returnBoolByPath(user, 'availability')) {
+                //todo - replace with lodash foreach
                 let keys = Object.keys(user.availability);
                 keys.forEach(key => {
                     let unit = user.availability[key];
@@ -726,15 +734,22 @@ function createTeamSearchObject(obj, reqUser) {
         //add roles to the query object
         if (util.returnBoolByPath(obj, 'rolesNeeded')) {
             let roles = { $or: [] };
-            let keys = Object.keys(obj.rolesNeeded);
-            keys.forEach(key => {
+            lodash.forEach(obj.rolesNeeded, (value, key) => {
                 let searchKey = 'rolesNeeded';
-                let value = obj.rolesNeeded[key];
                 searchKey = searchKey + '.' + key;
                 let tO = {}
                 tO[searchKey] = value;
                 roles['$or'].push(tO);
             });
+            // let keys = Object.keys(obj.rolesNeeded);
+            // keys.forEach(key => {
+            //     let searchKey = 'rolesNeeded';
+            //     let value = obj.rolesNeeded[key];
+            //     searchKey = searchKey + '.' + key;
+            //     let tO = {}
+            //     tO[searchKey] = value;
+            //     roles['$or'].push(tO);
+            // });
             returnObj['$and'].push(roles);
         }
 
@@ -753,6 +768,7 @@ function createTeamSearchObject(obj, reqUser) {
                 }
             }
             if (util.returnBoolByPath(user, 'availability')) {
+                //todo: replace with lodash foreach
                 let keys = Object.keys(user.availability);
                 keys.forEach(key => {
                     let unit = user.availability[key];

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HeroesProfileService } from '../services/heroes-profile.service';
 import { UserService } from '../services/user.service';
+import { forEach as _forEach } from 'lodash';
 
 @Component({
   selector: 'app-top-stats-widget',
@@ -63,11 +64,10 @@ export class TopStatsWidgetComponent implements OnInit {
       res=>{
         if(res){
           let object = res.data;
-          let keys = Object.keys(object);
-          keys.forEach(key => {
+          _forEach(object, (value, key)=>{
             let tO = {};
             tO['name'] = key;
-            tO['points'] = object[key];
+            tO['points'] = value;
             this.stats.push(tO);
           });
         }else{

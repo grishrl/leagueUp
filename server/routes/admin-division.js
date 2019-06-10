@@ -6,6 +6,7 @@ const TeamSubs = require('../subroutines/team-subs');
 const Team = require("../models/team-models");
 const passport = require("passport");
 const levelRestrict = require("../configs/admin-leveling");
+const _ = require('lodash');
 
 //this api retrieves all teams that do not have a division assigned, and have 
 //successuflly registered for the season
@@ -140,10 +141,14 @@ router.post('/upsertDivision', passport.authenticate('jwt', {
             if (found.displayName != division.displayName || found.divisionConcat != division.concat) {
                 runSubs = true;
             }
-            let keys = Object.keys(division);
-            keys.forEach(key => {
-                found[key] = division[key];
+            _.forEach(division, (value, key) => {
+                found[key] = value;
             });
+            // let keys = Object.keys(division);
+            // keys.forEach(key => {
+            //     found[key] = division[key];
+            // });
+
             found.save().then(
                 (saved) => {
                     if (saved.public && divisionPriorState.public != saved.public) {

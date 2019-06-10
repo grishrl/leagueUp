@@ -6,6 +6,7 @@ import { TeamService } from 'src/app/services/team.service';
 import { Match } from 'src/app/classes/match.class';
 import { HeroesProfileService } from 'src/app/services/heroes-profile.service';
 import { environment } from 'src/environments/environment';
+import { forEach as _forEach } from 'lodash';
 
 @Component({
   selector: 'app-match-results-view',
@@ -25,19 +26,20 @@ export class MatchResultsViewComponent implements OnInit {
   resultsArray = [];
 
   ngOnInit() {
+    console.log('asdf');
     this.sheduleService.getMatchInfo(this.recId).subscribe(
       res=>{
         console.log(res);
         this.match = res;
         if(res.hasOwnProperty('replays')){
-          let keys = Object.keys(res.replays);
-          keys.forEach(key =>{
-            if(key != '_id'){
-              let item = res.replays[key];
+
+          _forEach(res.replays, (value, key)=>{
+            if (key != '_id') {
+              let item = value;
               this.hp.getReplay(item.data).subscribe(
-                reply=>{
+                reply => {
                   console.log(reply);
-                  if(reply && reply.name){
+                  if (reply && reply.name) {
                     item['map'] = reply.name;
                   }
                   this.resultsArray.push(
@@ -46,8 +48,8 @@ export class MatchResultsViewComponent implements OnInit {
                 }
               )
             }
+          })
 
-          });
         }
       },
       err=>{

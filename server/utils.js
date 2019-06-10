@@ -1,4 +1,5 @@
 const logger = require('./subroutines/sys-logging-subs');
+const _ = require('lodash');
 
 isNullOrEmpty = function(dat) {
     if (dat == null || dat == undefined) {
@@ -10,12 +11,17 @@ isNullOrEmpty = function(dat) {
         }
     } else if (typeof dat == 'object') {
         var noe = false;
-        var keys = Object.keys(dat);
-        keys.forEach(function(key) {
-            if (isNullOrEmpty(dat[key])) {
+        _.forEach(dat, (value, key) => {
+            if (isNullOrEmpty(value)) {
                 noe = true;
             }
         });
+        // var keys = Object.keys(dat);
+        // keys.forEach(function(key) {
+        //     if (isNullOrEmpty(dat[key])) {
+        //         noe = true;
+        //     }
+        // });
         return noe;
     } else if (typeof dat == "string") {
         return dat.length == 0;

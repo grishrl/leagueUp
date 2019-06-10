@@ -4,6 +4,7 @@ const Team = require('../models/team-models');
 const User = require('../models/user-models');
 const Match = require('../models/match-model');
 const statsMethods = require('./stats-routines');
+const _ = require('lodash');
 
 //connect to mongo db
 mongoose.connect(process.env.mongoURI, {
@@ -148,29 +149,47 @@ async function associationTriage() {
                 replay.match.teams[team2obj.parseIndex].teamId = team2obj.id;
                 delete replay.match.teams[team2obj.parseIndex].id
 
-                let playerKeys = Object.keys(replay.players);
+                // let playerKeys = Object.keys(replay.players);
 
                 team1obj.members.forEach(member => {
-                    playerKeys.forEach(key => {
-                        let playerInf = replay.players[key];
+                    _.forEach(replay.players, (value, key) => {
                         if (member.toonHandle == key) {
-                            playerInf.with.teamName = team1obj.teamName;
-                            playerInf.with.teamId = team1obj.id;
-                            playerInf.against.teamName = team2obj.teamName;
-                            playerInf.against.teamId = team2obj.id;
+                            value.with.teamName = team1obj.teamName;
+                            value.with.teamId = team1obj.id;
+                            value.against.teamName = team2obj.teamName;
+                            value.against.teamId = team2obj.id;
                         }
                     });
+                    // playerKeys.forEach(key => {
+                    //     let playerInf = replay.players[key];
+                    //     if (member.toonHandle == key) {
+                    //         playerInf.with.teamName = team1obj.teamName;
+                    //         playerInf.with.teamId = team1obj.id;
+                    //         playerInf.against.teamName = team2obj.teamName;
+                    //         playerInf.against.teamId = team2obj.id;
+                    //     }
+                    // });
                 });
+
+
                 team2obj.members.forEach(member => {
-                    playerKeys.forEach(key => {
-                        let playerInf = replay.players[key];
+                    _.forEach(replay.players, (value, key) => {
                         if (member.toonHandle == key) {
-                            playerInf.with.teamName = team2obj.teamName;
-                            playerInf.with.teamId = team2obj.id;
-                            playerInf.against.teamName = team1obj.teamName;
-                            playerInf.against.teamId = team1obj.id;
+                            value.with.teamName = team2obj.teamName;
+                            value.with.teamId = team2obj.id;
+                            value.against.teamName = team1obj.teamName;
+                            value.against.teamId = team1obj.id;
                         }
                     });
+                    // playerKeys.forEach(key => {
+                    //     let playerInf = replay.players[key];
+                    //     if (member.toonHandle == key) {
+                    //         playerInf.with.teamName = team2obj.teamName;
+                    //         playerInf.with.teamId = team2obj.id;
+                    //         playerInf.against.teamName = team1obj.teamName;
+                    //         playerInf.against.teamId = team1obj.id;
+                    //     }
+                    // });
                 });
                 replay.markModified('match');
                 replay.markModified('players');
@@ -241,12 +260,17 @@ function buildTeamObj(team, replay, index) {
 function returnPlayerByToon(replay, toon) {
     let retObj = {};
     let players = replay.players;
-    let keys = Object.keys(players);
-    keys.forEach(key => {
+    _.forEach(player, (value, key) => {
         if (key == toon) {
-            retObj = players[key];
+            retObj = value;
         }
-    })
+    });
+    // let keys = Object.keys(players);
+    // keys.forEach(key => {
+    //     if (key == toon) {
+    //         retObj = players[key];
+    //     }
+    // })
     return retObj;
 }
 
@@ -319,19 +343,28 @@ async function asscoatieReplays() {
             // console.log(replay);
             var replayObj = replay.toObject();
             let players = replay.players;
-            let playerKey = Object.keys(replay.players);
             let playerTags = [];
             let playerTagsAndToonHandle = [];
-            playerKey.forEach(key => {
-                let player = players[key];
-                let btag = player.name + '#' + player.tag
-                let tO = {
-                    'btag': btag,
-                    'toonHandle': key
-                };
-                playerTags.push(btag);
-                playerTagsAndToonHandle.push(tO);
-            });
+            _.forEach(players, (value, key) => {
+                    let btag = value.name + '#' + value.tag
+                    let tO = {
+                        'btag': btag,
+                        'toonHandle': key
+                    };
+                    playerTags.push(btag);
+                    playerTagsAndToonHandle.push(tO);
+                })
+                // let playerKey = Object.keys(replay.players);
+                // playerKey.forEach(key => {
+                //     let player = players[key];
+                //     let btag = player.name + '#' + player.tag
+                //     let tO = {
+                //         'btag': btag,
+                //         'toonHandle': key
+                //     };
+                //     playerTags.push(btag);
+                //     playerTagsAndToonHandle.push(tO);
+                // });
             let replayTeams = [];
 
             replayTeams.push(replay.match.teams[0].teamId);

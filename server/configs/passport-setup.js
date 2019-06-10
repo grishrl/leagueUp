@@ -12,6 +12,7 @@ const logger = require('../subroutines/sys-logging-subs');
 const mmrMethods = require('../methods/mmrMethods');
 const util = require('../utils');
 const archive = require('../methods/archivalMethods');
+const _ = require('lodash');
 
 
 var jwtOptions = {
@@ -164,15 +165,7 @@ function generateNewToken(prof, admin) {
     tokenObject.id = prof._id;
     tokenObject.displayName = prof.displayName;
     if (admin) {
-        tokenObject.adminLevel = [];
-        let keys = Object.keys(admin);
-        keys.forEach(key => {
-            if (key == 'adminId' || key == '__v' || key == '_id' || key == 'info') {} else if (admin[key] == true) {
-                let obj = {};
-                obj[key] = admin[key];
-                tokenObject.adminLevel.push(obj);
-            }
-        });
+        tokenObject.adminLevel = compressAdmin(admin);
     }
 
     var token = jwt.sign(tokenObject, process.env.jwtToken, {
@@ -193,15 +186,7 @@ function returnUserToClient(prof, done) {
         adminId: prof._id
     }).then((admin) => {
         if (admin) {
-            tokenObject.adminLevel = [];
-            let keys = Object.keys(admin.toObject());
-            keys.forEach(key => {
-                if (key == 'adminId' || key == '__v' || key == '_id' || key == 'info') {} else if (admin[key] == true) {
-                    let obj = {};
-                    obj[key] = admin[key];
-                    tokenObject.adminLevel.push(obj);
-                }
-            });
+            tokenObject.adminLevel = compressAdmin(admin.toObject());
         }
         var token = jwt.sign(tokenObject, process.env.jwtToken, { expiresIn: '2h' });
         var reply = {
@@ -209,4 +194,18 @@ function returnUserToClient(prof, done) {
         };
         done(null, reply);
     });
+}
+
+function compressAdmin(obj) {
+    let retVal = [];
+    _.forEach(admin, (value, key) => {
+        if (key == 'adminId' || key == '__v' || key == '_id' || key == 'info') {
+
+        } else if (value == true) {
+            let obj = {};
+            obj[key] = value;
+            retVal.push(obj);
+        }
+    });
+    return retVal;
 }

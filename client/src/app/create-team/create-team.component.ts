@@ -22,7 +22,7 @@ export class CreateTeamComponent implements OnInit {
 
   nameContorl = new FormControl();
 
-  tickerControl = new FormControl('',[Validators.maxLength(5), Validators.minLength(3)]);
+  tickerControl = new FormControl('',[Validators.maxLength(5), Validators.minLength(2)]);
 
   timeZoneControl = new FormControl();
 

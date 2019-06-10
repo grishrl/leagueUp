@@ -127,20 +127,21 @@ removeBan(hero, arr){
 
   }
 
-  returnFilteredHeroes(game){
-    let disArr = [];
-    let currentArr = game.value.homeBans.concat(game.value.awayBans);
-    let keys = Object.keys(this.heroes);
-    keys.forEach(element=>{
-      let heroName = this.heroes[element];
-      if(heroName == "Missed"){
-        disArr.push(this.heroes[element]);
-      } else if(currentArr.indexOf(heroName)==-1){
-        disArr.push(this.heroes[element]);
-      }
-    });
-    return disArr;
-  }
+  // depricated will be removed if this goes well
+  // returnFilteredHeroes(game){
+  //   let disArr = [];
+  //   let currentArr = game.value.homeBans.concat(game.value.awayBans);
+  //   let keys = Object.keys(this.heroes);
+  //   keys.forEach(element=>{
+  //     let heroName = this.heroes[element];
+  //     if(heroName == "Missed"){
+  //       disArr.push(this.heroes[element]);
+  //     } else if(currentArr.indexOf(heroName)==-1){
+  //       disArr.push(this.heroes[element]);
+  //     }
+  //   });
+  //   return disArr;
+  // }
 
   heroes = {
     "miss":"Missed",
