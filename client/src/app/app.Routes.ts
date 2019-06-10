@@ -55,6 +55,7 @@ const APP_ROUTES: Routes = [
   { path:'', component: HomeComponent},
   { path: 'login', component: LoginComponent },
   { path: 'rules', component: RulesComponent },
+  { path: 'rulestest' , component:StaticHtmlLoaderComponent, data:{template:'rules', headerText:'Rules'}},
   { path: 'logout', component: LogoutComponent },
   { path: 'faq', component: StaticHtmlLoaderComponent, data: { template: 'faq', headerText: 'Frequently Asked Questions' }},
   { path: 'login/:token', component: LoginComponent},
@@ -104,7 +105,7 @@ const APP_ROUTES: Routes = [
 ]
 
 @NgModule({
-  imports: [ RouterModule.forRoot(APP_ROUTES, {onSameUrlNavigation:'reload', scrollPositionRestoration:'enabled'})],
+  imports: [ RouterModule.forRoot(APP_ROUTES, {onSameUrlNavigation:'reload', scrollPositionRestoration:'enabled', anchorScrolling:'enabled'})],
   exports : [ RouterModule ]
 })
 

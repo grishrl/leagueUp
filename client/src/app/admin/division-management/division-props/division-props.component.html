@@ -56,6 +56,12 @@
                                     Min MMR is required
                                 </mat-error>
                             </mat-form-field>
+                            <mat-form-field>
+                                <input matInput placeholder="Division Moderator" [formControl]="divisionModeratorControl" [(ngModel)]="editDivision.moderator">
+                                <mat-error *ngIf="divisionModeratorControl.hasError('required')">
+                                    Division Moderator is required
+                                </mat-error>
+                            </mat-form-field>
 
                             <mat-checkbox [(ngModel)]="editDivision.public">Visible to Public</mat-checkbox>
                             <mat-checkbox [(ngModel)]="editDivision.cupDiv">Cup Division</mat-checkbox>
