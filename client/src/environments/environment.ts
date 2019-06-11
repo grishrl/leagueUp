@@ -22,7 +22,8 @@ export const environment = {
   heroesProfilePlayer: "https://www.heroesprofile.com/NGS/Profile/?",
   heroesProfile: "https://www.heroesprofile.com/Profile/?",
   heroesProfileTeam: "https://heroesprofile.com/NGS/Team/Single/?team=",
-  season: 6
+  season: 6,
+  seasonStart: 1562572800000
 };
 
 

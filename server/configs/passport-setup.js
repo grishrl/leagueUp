@@ -198,13 +198,13 @@ function returnUserToClient(prof, done) {
 
 function compressAdmin(obj) {
     let retVal = [];
-    _.forEach(admin, (value, key) => {
+    _.forEach(obj, (value, key) => {
         if (key == 'adminId' || key == '__v' || key == '_id' || key == 'info') {
 
         } else if (value == true) {
-            let obj = {};
-            obj[key] = value;
-            retVal.push(obj);
+            let tempObj = {};
+            tempObj[key] = value;
+            retVal.push(tempObj);
         }
     });
     return retVal;

@@ -5,6 +5,7 @@ import { DivisionService } from '../services/division.service';
 import { TeamService } from '../services/team.service';
 import { CountdownService } from '../services/countdown.service';
 import { Iinterval } from '../model/iinterval';
+import { TimeserviceService } from '../services/timeservice.service';
 
 
 @Component({
@@ -14,7 +15,7 @@ import { Iinterval } from '../model/iinterval';
 })
 export class CountdownComponent implements OnInit {
 
-  constructor(private scheduleService:ScheduleService, public util:UtilitiesService, public team: TeamService, private countdownService:CountdownService) { }
+  constructor(private scheduleService:ScheduleService, public util:UtilitiesService, public team: TeamService, private countdownService:CountdownService, private timeService:TimeserviceService) { }
 
   validMatch = false;
   targetMatch = {
@@ -47,6 +48,8 @@ export class CountdownComponent implements OnInit {
 
   startDate;
 
+  preSeason;
+
   initCountdown(){
     this.countdownService.getCountDown(this.targetMatch.scheduledTime.startTime).subscribe(
       tick=>{
@@ -56,32 +59,42 @@ export class CountdownComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.scheduleService.getAllMatchesWithStartTime().subscribe(
-      res=>{
-        let matches = res;
+    if(this.timeService.returnWeekNumber()>0){
+      this.scheduleService.getAllMatchesWithStartTime().subscribe(
+        res => {
+          let matches = res;
 
-        matches = matches.filter( match => {
-          return this.util.returnBoolByPath(match, 'casterName');
-        });
-        let now = Date.now();
-        let nearestMatch = nextDate(now, matches);
+          matches = matches.filter(match => {
+            return this.util.returnBoolByPath(match, 'casterName');
+          });
+          let now = Date.now();
+          let nearestMatch = nextDate(now, matches);
 
-        if (nearestMatch){
-          nearestMatch.scheduledTime.startTime = parseInt(nearestMatch.scheduledTime.startTime);
-          this.startDate = new Date(nearestMatch.scheduledTime.startTime);
-          this.targetMatch = nearestMatch;
-          this.validMatch = true;
-          this.initCountdown();
+          if (nearestMatch) {
+            nearestMatch.scheduledTime.startTime = parseInt(nearestMatch.scheduledTime.startTime);
+            this.startDate = new Date(nearestMatch.scheduledTime.startTime);
+            this.targetMatch = nearestMatch;
+            this.validMatch = true;
+            this.initCountdown();
+          }
+
+        },
+        err => {
+          console.log(err);
         }
+      )
+    }else{
+      this.startDate = this.timeService.returnSeasonStart();
+      this.targetMatch.scheduledTime.startTime = this.timeService.returnSeasonStart();
+      this.validMatch = false;
+      this.preSeason = true;
+      console.log('preseason?')
+      this.initCountdown();
+    }
 
-      },
-      err=>{
-        console.log(err);
-      }
-    )
   }
-
 }
+
 function nextDate(startDate, dates) {
   var startTime = +startDate;
   var nearestDate, nearestDiff = Infinity;

@@ -1,11 +1,14 @@
 <div class="counter-home-wraper">
     <div class="title-color text-center">
-        <h4>Upcoming Match</h4>
-    </div>
+        <h4 *ngIf="preSeason else match">Next Season</h4>
+        <ng-template #match>
+            <h4>Upcoming Match</h4>
+        </ng-template>
 
-    <div class="content-counter content-counter-home" *ngIf="validMatch else noMatch">
+    </div>
+    <div class="content-counter content-counter-home" *ngIf="preSeason else season">
         <p class="text-center">
-            <i class="fa fa-clock-o"></i> Countdown Till Start
+            <i class="fa fa-clock-o"></i> Countdown Till Season Start
         </p>
         <div id="event-one" class="counter">
             <span>{{timeRemaining.days}}<br> <small>days</small></span>
@@ -15,14 +18,15 @@
         </div>
         <ul class="post-options">
             <li><i class="fa fa-calendar"></i>{{util.getFormattedDate(startDate, "DD MMMM, YYYY")}}</li>
-            <li><i class="fa fa-clock-o"></i>Draft Starts, {{util.getFormattedDate(startDate, "hh:mm A zz")}}</li>
+            <!-- <li><i class="fa fa-clock-o"></i>Draft Starts, {{util.getFormattedDate(startDate, "hh:mm A zz")}}</li> -->
         </ul>
 
-        <div class="list-groups">
+        <!-- <div class="list-groups">
             <div class="row align-items-center">
 
                 <div class="col-md-12">
-                    <p>{{targetMatch.divisionDisplayName}}<span *ngIf="targetMatch.casterName">at {{targetMatch.casterName}}'s stream</span></p>
+                    <p>{{targetMatch.divisionDisplayName}}<span *ngIf="targetMatch.casterName">at
+                    {{targetMatch.casterName}}'s stream</span></p>
                 </div>
 
                 <div class="col-md-5">
@@ -39,21 +43,66 @@
                     <span>{{targetMatch.away.teamName}}</span>
                 </div>
             </div>
-        </div>
+        </div> -->
 
-        <a *ngIf="targetMatch.casterUrl" class="btn btn-primary" href="{{util.prePendHttp(targetMatch.casterUrl)}}" target="_blank">
+        <!-- <a *ngIf="targetMatch.casterUrl" class="btn btn-primary" href="{{util.prePendHttp(targetMatch.casterUrl)}}" target="_blank">
+            Watch At
+            <i class="fab fa-twitch"></i>
+          </a> -->
+    </div>
+    <ng-template #season>
+        <div class="content-counter content-counter-home" *ngIf="validMatch else noMatch">
+            <p class="text-center">
+                <i class="fa fa-clock-o"></i> Countdown Till Start
+            </p>
+            <div id="event-one" class="counter">
+                <span>{{timeRemaining.days}}<br> <small>days</small></span>
+                <span>{{timeRemaining.hours}} <br> <small>hr</small> </span>
+                <span>{{timeRemaining.minutes}} <br> <small>min</small> </span>
+                <span>{{timeRemaining.seconds}} <br> <small>sec</small></span>
+            </div>
+            <ul class="post-options">
+                <li><i class="fa fa-calendar"></i>{{util.getFormattedDate(startDate, "DD MMMM, YYYY")}}</li>
+                <li><i class="fa fa-clock-o"></i>Draft Starts, {{util.getFormattedDate(startDate, "hh:mm A zz")}}</li>
+            </ul>
+
+            <div class="list-groups">
+                <div class="row align-items-center">
+
+                    <div class="col-md-12">
+                        <p>{{targetMatch.divisionDisplayName}}<span *ngIf="targetMatch.casterName">at {{targetMatch.casterName}}'s stream</span></p>
+                    </div>
+
+                    <div class="col-md-5">
+                        <img src="{{team.imageFQDN(targetMatch.home.logo)}}" alt="">
+                        <span>{{targetMatch.home.teamName}}</span>
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="vs">Vs</div>
+                    </div>
+
+                    <div class="col-md-5">
+                        <img src="{{team.imageFQDN(targetMatch.away.logo)}}" alt="">
+                        <span>{{targetMatch.away.teamName}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <a *ngIf="targetMatch.casterUrl" class="btn btn-primary" href="{{util.prePendHttp(targetMatch.casterUrl)}}" target="_blank">
       Watch At
       <i class="fab fa-twitch"></i>
     </a>
-    </div>
-    <ng-template #noMatch>
-        <div class="content-counter content-counter-home padding-top-xl padding-bottom-xl">
-            <div class="text-center">
-                <span class="h5">No Casted Upcoming Matches Found!</span><br>
-                <span class="h6">Check back later!</span>
-            </div>
-
         </div>
+        <ng-template #noMatch>
+            <div class="content-counter content-counter-home padding-top-xl padding-bottom-xl">
+                <div class="text-center">
+                    <span class="h5">No Casted Upcoming Matches Found!</span><br>
+                    <span class="h6">Check back later!</span>
+                </div>
+
+            </div>
+        </ng-template>
     </ng-template>
 
 </div>
