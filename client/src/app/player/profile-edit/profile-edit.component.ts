@@ -252,9 +252,9 @@ export class ProfileEditComponent implements OnInit {
       this.timesAvailControl.setErrors({ invalid: true });
     }
     if (event.numdays > 0 && this.isNullOrEmpty(this.returnedProfile.timeZone)) {
-      //  todo: figure out linking these components this.timezoneControl.setErrors({ required: true });
+
     } else {
-      //  todo figure out linking these components this.timezoneControl.setErrors(null);
+
     }
   }
 

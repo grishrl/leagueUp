@@ -107,7 +107,7 @@ export class TeamTickerComponent implements OnInit, ControlValueAccessor {
   }
 
   setDisabledState(){
-    //todo:
+
   }
 
 }

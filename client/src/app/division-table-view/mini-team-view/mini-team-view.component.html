@@ -1,6 +1,5 @@
 <div class="item-group">
     <ul>
-        <!-- todo: route friendly router name -->
         <li *ngFor="let team of teamList">
             <app-team-link [team]="team.teamName">
                 <img src="{{teamService.imageFQDN(team.logo)}}" alt=""> {{team.teamName}}

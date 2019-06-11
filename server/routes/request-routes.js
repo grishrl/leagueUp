@@ -517,13 +517,11 @@ async function getCptId(cptName) {
 }
 
 function deleteOutstandingRequests(user) {
-    //todo add logging
     Message.find({ sender: user }).then(
         found => {
             found.forEach(msg => {
                 Message.findByIdAndDelete(msg._id).exec();
             });
-
         },
         err => {
             console.log(err);

@@ -48,7 +48,6 @@ export class PlayerSmallCardComponent implements OnInit {
         }
         this.player=res;
 
-        //todo: maybe include all matches?
       },
       err=>{
         console.log(err);

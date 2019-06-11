@@ -172,10 +172,6 @@ router.post('/create', passport.authenticate('jwt', {
     session: false
 }), (req, res) => {
     const path = '/team/create';
-    /* 
-    TODO: THERE MAY BE FUTURE NEEDS FOR A CHECK FOR AN ADMIN ROLE TO ALLOW SOMEONE ELSE TO 
-    CREATE A TEAM ON BEHALF OF SOMEONE ELSE, THIS WILL BE HANDLED LATER!!!!
-    */
 
     //log object
     let logObj = {};

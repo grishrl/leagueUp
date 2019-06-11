@@ -13,7 +13,6 @@ const querystring = require('querystring');
 const util = require('../utils');
 const System = require('../models/system-models').system;
 
-//TODO: move string into env. variable
 const postToHotsProfileURL = process.env.heroProfileAPI;
 const config = {
     headers: {
@@ -737,7 +736,6 @@ async function tabulateUserStats() {
 
 //this will run through teams and tabulate stats
 async function tabulateTeamStats() {
-    //TODO: implement
     //connect to mongo db
 
     let teams = await Team.find({ parseStats: true }).then(
@@ -746,7 +744,6 @@ async function tabulateTeamStats() {
     );
 
     if (teams && teams.length > 0) {
-        // console.log('teams.length ', teams.length);
         for (var i = 0; i < teams.length; i++) {
             let thisTeam = teams[i]
             let replays = thisTeam.replays;

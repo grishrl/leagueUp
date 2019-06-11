@@ -260,9 +260,12 @@ router.post('/user/upsertRoles', passport.authenticate('jwt', {
         adminId: req.body.adminId
     }).then((foundAdmin) => {
         if (foundAdmin) {
-            var props = Object.keys(req.body);
-            props.forEach(function(prop) {
-                foundAdmin[prop] = req.body[prop];
+            // var props = Object.keys(req.body);
+            // props.forEach(function(prop) {
+            //     foundAdmin[prop] = req.body[prop];
+            // });
+            _.forEach(req.body, (value, key) => {
+                foundAdmin[key] = value;
             });
             foundAdmin.save().then((savedAdmin) => {
                 res.status(200).send(util.returnMessaging(path, 'Admin saved', false, savedAdmin, null, logObj));

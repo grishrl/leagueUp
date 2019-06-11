@@ -85,13 +85,11 @@ export class PlayerStatsComponent implements OnInit {
 
   toonHandle:string;
   @Input() set playerToon(toon){
-    console.log(toon);
     this.toonHandle = toon;
   }
 
   displayName: string;
   @Input() set playerID(_id){
-    console.log(_id);
     if(!this.util.isNullOrEmpty(_id)){
       this.displayName = _id;
       this.initStats();
@@ -100,7 +98,6 @@ export class PlayerStatsComponent implements OnInit {
 
   hotsLogsPlayerID: string;
   @Input() set hotslogsID(_id) {
-    console.log(_id);
     if (!this.util.isNullOrEmpty(_id)) {
       this.hotsLogsPlayerID = _id;
       this.ngOnInit();

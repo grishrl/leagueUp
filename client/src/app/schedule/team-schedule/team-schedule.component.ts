@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TeamService } from 'src/app/services/team.service';
 import { StandingsService } from 'src/app/services/standings.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-team-schedule',
@@ -65,8 +66,7 @@ export class TeamScheduleComponent implements OnInit {
       this.recTeam = getTeam;
     }
 
-    //TODO: remove hard coded season 6!!!
-    this.scheduleService.getTeamSchedules(6, getTeam).subscribe(
+    this.scheduleService.getTeamSchedules(environment.season, getTeam).subscribe(
       res=>{
         let matches = res;
         //set the nomatches state
