@@ -89,6 +89,10 @@ passport.use(new BnetStrategy({
 
             mmrMethods.comboMmr(profile.battletag).then(
                 processed => {
+                    logObj.deepLogging = [];
+                    logObj.deepLogging.push({
+                        'returnedFromcomboMmr': processed
+                    });
                     if (util.returnBoolByPath(processed, 'hotsLogs')) {
                         userObj.averageMmr = processed.hotsLogs.mmr;
                         userObj.hotsLogsPlayerID = processed.hotsLogs.playerId;
@@ -104,6 +108,9 @@ passport.use(new BnetStrategy({
                     if (util.returnBoolByPath(processed, 'ngsMmr')) {
                         userObj.ngsMmr = processed.ngsMmr;
                     }
+                    logObj.deepLogging.push({
+                        'newUserBeforeSave': userObj
+                    });
                     new User(userObj).save().then((newUser) => {
                         logObj.action = ' new user was created ';
                         logObj.target = newUser.displayName;

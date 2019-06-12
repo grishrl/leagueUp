@@ -16,7 +16,8 @@ const logSchema = new Schema({
     "target": String,
     "timeStamp": Number,
     "error": String,
-    'location': String
+    'location': String,
+    'deepLogging': String
 });
 
 const archiveSchema = new Schema({
