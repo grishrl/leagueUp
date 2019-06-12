@@ -5,6 +5,7 @@ import { TeamService } from 'src/app/services/team.service';
 import { StandingsService } from 'src/app/services/standings.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { environment } from '../../../environments/environment';
+import { TimeserviceService } from 'src/app/services/timeservice.service';
 
 @Component({
   selector: 'app-schedule-view',
@@ -13,11 +14,16 @@ import { environment } from '../../../environments/environment';
 })
 export class ScheduleViewComponent implements OnInit {
 
-  constructor(private divisionService: DivisionService, private standingsService:StandingsService, private scheduleService: ScheduleService, public team: TeamService, public util:UtilitiesService) { }
+  constructor(private divisionService: DivisionService, private standingsService:StandingsService, private scheduleService: ScheduleService, public team: TeamService, public util:UtilitiesService, private timeService:TimeserviceService) { }
   divisions:any=[];
   standings:any[]=[];
 
   ngOnInit() {
+    let week = this.timeService.returnWeekNumber();
+    if (week > 0) {
+      this.selectedRound = week;
+      this.getMatches();
+    }
   }
 
   provDiv
@@ -32,7 +38,7 @@ export class ScheduleViewComponent implements OnInit {
   matches:any[]=[];
   selectedDivision:any
   rounds: number[] = [];
-  
+
   calculateRounds(div) {
     this.provDiv = this.provDiv ? this.provDiv : div;
     let roundNumber = 0;
@@ -42,7 +48,7 @@ export class ScheduleViewComponent implements OnInit {
       }else{
         roundNumber = this.provDiv.teams.length;
       }
-      
+
     } else if (this.selectedDivision != null && this.selectedDivision != undefined && this.selectedDivision.teams != undefined && this.selectedDivision.teams != null){
       roundNumber = this.selectedDivision.teams.length - 1;
     }
@@ -68,7 +74,7 @@ export class ScheduleViewComponent implements OnInit {
     let season = environment.season;
     this.scheduleService.getScheduleMatches(season, div, this.selectedRound).subscribe(
       res=>{
-        this.matches = res; 
+        this.matches = res;
         this.standingsService.getStandings(this.provDiv.divisionConcat).subscribe(
           res => {
             this.standings = res;
@@ -88,13 +94,13 @@ export class ScheduleViewComponent implements OnInit {
                 match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
                 match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
                 match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
-              }             
+              }
             }
           },
           err => {
             console.log(err);
           }
-        ) 
+        )
         });
       },
       err=>{ console.log(err)}

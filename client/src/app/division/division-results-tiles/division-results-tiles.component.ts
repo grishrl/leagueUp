@@ -5,6 +5,7 @@ import { StandingsService } from 'src/app/services/standings.service';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { TeamService } from 'src/app/services/team.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
+import { TimeserviceService } from 'src/app/services/timeservice.service';
 
 @Component({
   selector: 'app-division-results-tiles',
@@ -13,7 +14,8 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 })
 export class DivisionResultsTilesComponent implements OnInit {
 
-  constructor(private divisionService: DivisionService, private standingsService: StandingsService, private scheduleService: ScheduleService, public team: TeamService, public util: UtilitiesService) { }
+  constructor(private divisionService: DivisionService, private standingsService: StandingsService, private scheduleService: ScheduleService, public team: TeamService, public util: UtilitiesService,
+    private timeService:TimeserviceService) { }
   divisions: any = [];
   standings: any[] = [];
 
@@ -53,6 +55,12 @@ export class DivisionResultsTilesComponent implements OnInit {
     }
     for (let i = 0; i < roundNumber; i++) {
       this.rounds.push(i + 1);
+    }
+
+    let week = this.timeService.returnWeekNumber();
+    if (week > 0) {
+      this.selectedRound = week;
+      this.getMatches();
     }
   }
 
