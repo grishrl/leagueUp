@@ -123,7 +123,11 @@ router.post('/user/teamUpdate', passport.authenticate('jwt', {
 
 router.get('/user/update', (req, res) => {
     const path = '/admin/user/update';
-    User.find().then(
+    let query = {};
+    if (req.query.user) {
+        query['displayName'] = btagConvert(req.query.user);
+    }
+    User.find(query).then(
         found => {
             let ammountUpdated = 0;
             found.forEach(user => {
@@ -156,14 +160,18 @@ router.get('/user/update', (req, res) => {
                     }
                 )
             });
-            res.status(200).send(util.returnMessaging(path, 'Update player mmr started successfully', null, null, {}));
-        },
-        err => {
-            res.status(500).send(util.returnMessaging(path, 'Update player mmr started successfully', err, null, null));
         }
     )
+    res.status(200).send(util.returnMessaging(path, 'Update player mmr started successfully', null, null, {}));
 });
 
+function btagConvert(username) {
+    if (username != null && username != undefined) {
+        return username.replace('_', '#');
+    } else {
+        return '';
+    }
+}
 
 //returns all users and acl lists
 router.get('/user/get/usersacl/all', passport.authenticate('jwt', {

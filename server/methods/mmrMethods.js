@@ -51,7 +51,7 @@ let heroesProfileURL = 'https://heroesprofile.com/API/MMR/Player/?api_key=' + pr
 
 
 async function heroesProfile(btag) {
-    let val = 0;
+    let val = null;
 
     try {
         // console.log(url + btag);
@@ -125,7 +125,9 @@ async function heroesProfile(btag) {
     } catch (error) {
         val = null;
     }
-    val = Math.ceil(val);
+    if (val) {
+        val = Math.ceil(val);
+    }
     return val;
 }
 
