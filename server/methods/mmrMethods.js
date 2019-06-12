@@ -51,7 +51,7 @@ let heroesProfileURL = 'https://heroesprofile.com/API/MMR/Player/?api_key=' + pr
 
 
 async function heroesProfile(btag) {
-    let val = 0;
+    let val = null;
 
     try {
         // console.log(url + btag);
@@ -125,7 +125,9 @@ async function heroesProfile(btag) {
     } catch (error) {
         val = null;
     }
-    val = Math.ceil(val);
+    if (val) {
+        val = Math.ceil(val);
+    }
     return val;
 }
 
@@ -133,7 +135,7 @@ let ngsMmrUrL = 'https://heroesprofile.com/API/MMR/NGS/Player/?api_key=' + proce
 
 async function heroesProfileNGS(btag) {
 
-    let reply = 0;
+    let reply = null;
     const response = await axios.get(ngsMmrUrL + encodeURIComponent(btag));
     if (util.returnBoolByPath(response.data, btag.toString())) {
         let data = response.data[btag.toString()];
