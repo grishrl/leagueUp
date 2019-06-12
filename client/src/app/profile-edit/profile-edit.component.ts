@@ -31,7 +31,7 @@ export class ProfileEditComponent implements OnInit {
 
   navigationSubscription
 
-  constructor(public timezone: TimezoneService, private user: UserService, public auth: AuthService, private router: Router, private route: ActivatedRoute, 
+  constructor(public timezone: TimezoneService, private user: UserService, public auth: AuthService, private router: Router, private route: ActivatedRoute,
     public hotsLogsService: HotsLogsService, public dialog: MatDialog, private util:UtilitiesService, public hotsProfile: HotsProfileService, public team:TeamService, private admin:AdminService) {
 
     this.navigationSubscription = this.router.events.subscribe((e: any) => {
@@ -42,7 +42,7 @@ export class ProfileEditComponent implements OnInit {
         this.ngOnInit();
       }
     });
-    
+
   }
 
   showInvite = false;
@@ -186,7 +186,7 @@ formControlledEnable(){
   @Input() set source(_source) {
     this.embedSource = _source;
   }
-  
+
   adminShow(){
     let ret = false;
     if(this.providedProfile && this.embedSource == 'admin'){
@@ -212,7 +212,7 @@ formControlledEnable(){
   confirm: string
 
   openDialog(): void {
-    
+
     const dialogRef = this.dialog.open(DeleteConfrimModalComponent, {
       width: '300px',
       data: { confirm: this.confirm }
@@ -249,7 +249,7 @@ formControlledEnable(){
     { val: 3, display: 'Medium' },
     { val: 5, display: 'High' }
   ]
-  
+
   hideLookingForGroup(){
     if(this.auth.getTeam()){
       return false;
@@ -355,26 +355,11 @@ formControlledEnable(){
    }
 
   private updateUserMMR() {
-    this.hotsLogsService.getMMRdisplayName(this.user.routeFriendlyUsername(this.returnedProfile.displayName)).subscribe(res => {
-      if (res != 'error') {
-        this.returnedProfile.averageMmr = res.avgMMR;
-        this.returnedProfile['hotsLogsPlayerID'] = res.PlayerID;
-        this.user.saveUser(this.returnedProfile).subscribe((res) => {
-          if (res) {
-            this.editOn = true;
-            this.formControlledDisable();
-          }
-          else {
-            alert("error");
-          }
-        });
-      }
-      else {
-        alert('We could not validate your hots logs, please recheck the URL!');
-        this.hotsLogsUrlReq = true;
-        this.cancel();
-      }
-    });
+   this.user.updateUserMmr().subscribe(
+     res=>{
+       merge(this.returnedProfile, res);
+     }
+    );
   }
 
   timezoneUpdate(){
@@ -383,16 +368,16 @@ formControlledEnable(){
     }
   }
 
-  ngOnInit() {   
+  ngOnInit() {
     let getProfile:string;
     if(this.providedProfile){
       getProfile = this.providedProfile;
     }else if(this.displayName){
       getProfile = this.displayName;
     }
-    this.profSub = this.user.getUser(getProfile).subscribe((res) => { 
+    this.profSub = this.user.getUser(getProfile).subscribe((res) => {
       merge(this.returnedProfile, res);
-      this.showInviteToTeamButton() 
+      this.showInviteToTeamButton()
       } )
   }
 
@@ -411,13 +396,13 @@ formControlledEnable(){
     } else {
       this.timezoneControl.setErrors(null);
     }
-  } 
-  
+  }
+
   modifyForm(metal){
     if(metal == 'Unranked'){
       this.heroeLeagueRankControl.setErrors(null);
     }else{
-      
+
     }
   }
 
@@ -432,7 +417,7 @@ formControlledEnable(){
     //validate the hero leauge information
     // if (this.returnedProfile.hlRankMetal == 'Unranked'){
     //   valid = true;
-      
+
     // }else if (this.isNullOrEmpty(this.returnedProfile.hlRankMetal) && this.isNullOrEmpty(this.returnedProfile.hlRankDivision)){
     //   valid = false;
     // }
