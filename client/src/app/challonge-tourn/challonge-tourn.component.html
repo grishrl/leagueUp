@@ -1,5 +1,10 @@
-<div class="tourn-container">
+<div class="tourn-container" *ngIf="!noTournament else noTourn">
     <div class="tournament">
 
     </div>
 </div>
+<ng-template #noTourn>
+    <div class="tourn-container">
+        <h4>No Tournaments Currently!</h4>
+    </div>
+</ng-template>

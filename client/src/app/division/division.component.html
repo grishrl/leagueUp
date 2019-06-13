@@ -56,9 +56,9 @@
                     <ul class="nav nav-tabs" id="myTab">
                         <li [ngClass]="{'active': index==0}"><a href="#standings" data-toggle="tab" (click)="index=0">Standings</a></li>
                         <li [ngClass]="{'active': index==1}"><a href="#teams" data-toggle="tab" (click)="index=1">Teams</a></li>
-                        <li [ngClass]="{'active': index==2}"><a href="#fixtures" data-toggle="tab" (click)="index=2">Schedule</a></li>
+                        <li [ngClass]="{'active': index==2}"><a href="#schedule" data-toggle="tab" (click)="index=2">Schedule</a></li>
                         <li [ngClass]="{'active': index==3}"><a href="#results" data-toggle="tab" (click)="index=3">Results</a></li>
-                        <!-- <li [ngClass]="{'active': index==4}"><a href="#stats" data-toggle="tab" (click)="index=4">STATS</a></li> -->
+                        <li [ngClass]="{'active': index==4}"><a href="#tournament" data-toggle="tab" (click)="index=4">Tournament</a></li>
                     </ul>
                     <!-- End Nav Tabs -->
                 </div>
@@ -80,20 +80,26 @@
                         </div>
                         <!-- End Tab Two - squad -->
 
-                        <!-- Tab Theree - fixtures -->
-                        <div class="tab-pane" id="fixtures">
+                        <!-- Tab Theree - schedule -->
+                        <div class="tab-pane" id="schedule">
                             <ng-container *ngIf="index == 2">
                                 <app-schedule-view [division]="divDisplay"></app-schedule-view>
                             </ng-container>
 
                         </div>
-                        <!-- End Tab Theree - fixtures -->
+                        <!-- End Tab Theree - results -->
 
                         <!-- Tab Theree - results -->
                         <div class="tab-pane" id="results">
                             <app-division-results-tiles [division]="divDisplay"></app-division-results-tiles>
                         </div>
                         <!-- End Tab Theree - results -->
+
+                        <!-- Tab four - results -->
+                        <div class="tab-pane" id="tournament">
+                            <app-challonge-tourn></app-challonge-tourn>
+                        </div>
+                        <!-- End Tab four - results -->
                     </div>
                     <!-- Content Tabs -->
                 </div>
