@@ -938,36 +938,42 @@ router.post('/fetch/tournament', (req, res) => {
     // res.status(200).send(path, 'received this', false, { "hey": "hello" });
 
 
-    Scheduling.findOne(checkObj).then(
+    Scheduling.find(checkObj).then(
         found => {
             if (found) {
-                found = found.toObject();
-                Match.find({
-                    matchId: {
-                        $in: found.matches
-                    }
-                }).lean().then(
-                    matches => {
-                        if (matches) {
-                            let teams = findTeamIds(matches);
-                            addTeamNamesToMatch(teams, matches).then((processed) => {
-                                res.status(200).send(util.returnMessaging(path, 'Found tournament info', false, {
-                                    tournInfo: found,
-                                    tournMatches: processed
-                                }));
-                            }, err => {
-                                res.status(500).send(util.returnMessaging(path, 'Error occured querying tournament matches', err));
-                            })
-                        } else {
-                            //mathces not found
-                            res.status(500).send(util.returnMessaging(path, 'Error occured querying tournament matches', err));
-                        }
-                    },
-                    err => {
-                        //matches query error
-                        res.status(500).send(util.returnMessaging(path, 'Error occured querying tournament matches', err));
-                    }
-                )
+                if (found.hasOwnProperty('toObject')) {
+                    found = found.toObject();
+                }
+                res.status(200).send(util.returnMessaging(path, 'Found tournament info', false, {
+                    tournInfo: found
+                }));
+
+                // Match.find({
+                //     matchId: {
+                //         $in: found.matches
+                //     }
+                // }).lean().then(
+                //     matches => {
+                //         if (matches) {
+                //             let teams = findTeamIds(matches);
+                //             addTeamNamesToMatch(teams, matches).then((processed) => {
+                //                 res.status(200).send(util.returnMessaging(path, 'Found tournament info', false, {
+                //                     tournInfo: found,
+                //                     tournMatches: processed
+                //                 }));
+                //             }, err => {
+                //                 res.status(500).send(util.returnMessaging(path, 'Error occured querying tournament matches', err));
+                //             })
+                //         } else {
+                //             //mathces not found
+                //             res.status(500).send(util.returnMessaging(path, 'Error occured querying tournament matches', err));
+                //         }
+                //     },
+                //     err => {
+                //         //matches query error
+                //         res.status(500).send(util.returnMessaging(path, 'Error occured querying tournament matches', err));
+                //     }
+                // )
             } else {
                 res.status(200).send(util.returnMessaging(path, 'No tournament info found', false, found));
                 //match not found

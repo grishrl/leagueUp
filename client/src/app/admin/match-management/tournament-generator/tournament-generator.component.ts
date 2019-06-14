@@ -26,13 +26,14 @@ export class TournamentGeneratorComponent implements OnInit {
     if(div!=undefined){
       this.reset();
       this.getStandings(div.divisionConcat);
-    }else{
-      this.reset();
-      if(div.cupDiv){
+      this.division = div.divisionConcat;
+      if (div.cupDiv) {
         this.showCups = true;
-      }else{
+      } else {
         this.showCups = false;
       }
+    }else{
+      this.reset();
     }
   }
 
@@ -103,6 +104,7 @@ export class TournamentGeneratorComponent implements OnInit {
     this.name = null;
     this.description=null;
     this.cup = null;
+    this.showCups=false;
   }
 
   filterTeams(filterName) {
@@ -153,6 +155,7 @@ export class TournamentGeneratorComponent implements OnInit {
   }
 
   generateBrackets(){
+
     this.adminService.generateTournament(this.tournamentSeed, this.season, this.name, this.division, this.cup, this.description).subscribe(
       res=>{
         this.ngOnInit();

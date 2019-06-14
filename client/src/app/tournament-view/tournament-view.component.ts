@@ -73,7 +73,7 @@ export class TournamentViewComponent implements OnInit {
       console.warn('Tournament view must be provided input');
       this.hasBracket = false;
     } else {
-      this.scheduleService.getTournamentGames(this._name, this._season, this._division).subscribe(res => {
+      this.scheduleService.getTournamentGames( this._name, this._season, this._division).subscribe(res => {
         this.hasBracket = true;
         if (res['tournMatches']){
           this.matches = res['tournMatches'];

@@ -1,10 +1,22 @@
-<div class="tourn-container" *ngIf="!noTournament else noTourn">
-    <div class="tournament">
-
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <mat-form-field>
+                <mat-select placeholder="Cup:" [(ngModel)]="selectedCup" (ngModelChange)="getTournLink()" disableOptionCentering>
+                    <mat-option *ngFor="let cup of this.localStoreTournaments; let i = index" [value]="i">{{cup.name}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
     </div>
-</div>
-<ng-template #noTourn>
     <div class="tourn-container">
-        <h4>No Tournaments Currently!</h4>
+        <div class="tournament">
+
+        </div>
     </div>
-</ng-template>
+    <ng-template #noTourn>
+        <div class="tourn-container">
+            <h4>No Tournaments Currently!</h4>
+        </div>
+    </ng-template>
+</div>

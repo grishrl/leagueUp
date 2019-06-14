@@ -93,7 +93,7 @@ export class ScheduleService {
   }
 
   //get tournament
-  getTournamentGames(name, season, division){
+  getTournamentGames(name?, season?, division?){
     let url = '/schedule/fetch/tournament';
     let payload = {
 
