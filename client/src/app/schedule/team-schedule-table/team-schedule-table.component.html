@@ -3,57 +3,66 @@
         <h5>Regular Season Schedule</h5>
     </div>
 </div>
-<div class="table-responsive">
-    <table class=" table-striped table-hover">
-        <thead>
-            <tr>
-                <th>R #</th>
-                <th>Home</th>
-                <th class="text-center">VS</th>
-                <th>Away</th>
-                <th>Details</th>
-            </tr>
-        </thead>
-        <tbody>
-
-            <tr *ngFor="let match of matches">
-                <td>
-                    {{match.round}}
-                </td>
-                <td>
-                    <img src="{{teamServ.imageFQDN(match.home.logo)}}" alt="icon">
-                    <strong>{{match.home.teamName}}</strong><br>
-                    <!-- <small class="meta-text">GROUP H.</small> -->
-                </td>
-                <td class="text-center">Vs</td>
-                <td>
-                    <img src="{{teamServ.imageFQDN(match.away.logo)}}" alt="icon1">
-                    <strong>{{match.away.teamName}}</strong><br>
-                    <!-- <small class="meta-text">GROUP H.</small> -->
-                </td>
-                <td>
-                    <span *ngIf="match.scheduledTime && match.scheduledTime.startTime else tbd">{{util.getFormattedDate(match.scheduledTime.startTime, "MMM DD hh:mm A zz")}}<br></span>
-                    <span *ngIf="match.casterName"><small class="meta-text">Caster: {{match.casterName}}, <a
-                href="{{util.prePendHttp(match.casterUrl)}}" target="_blank">{{match.casterUrl}}</a></small></span>
-                </td>
-                <!-- ng-templates -->
-                <ng-template #tbd>
-                    <div class="text-center" *ngIf="userCanSchedule() else userView">
-                        <span>Schedule by: {{util.getFormattedDate(match.scheduleDeadline-604800000, "dddd M/D/YYYY")}}</span><br>
-                        <span>Play by: {{match.friendlyDeadline}}</span><br>
-                        <span><button [disabled]="checkDate(match)" class="btn btn-sm btn-primary"
-                (click)="scheduleMatch(match.matchId)">Schedule this!</button></span>
-                        <span *ngIf="checkDate(match)"><br> <small class="text-danger">Schedule deadline was missed please contact
-                admin!</small> </span>
-
-                    </div>
-
-                    <ng-template #userView>
-                        <span>Not yet scheduled</span>
-                    </ng-template>
-                </ng-template>
-                <!-- end template -->
-            </tr>
-        </tbody>
-    </table>
+<div class="row" *ngIf="noMatches else matchesFound">
+    <div class="col">
+        <h6>No Regular Season Matches Found</h6>
+    </div>
 </div>
+<ng-template #matchesFound>
+    <div class="table-responsive">
+        <table class=" table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>R #</th>
+                    <th>Home</th>
+                    <th class="text-center">VS</th>
+                    <th>Away</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr *ngFor="let match of matches">
+                    <td>
+                        {{match.round}}
+                    </td>
+                    <td>
+                        <img src="{{teamServ.imageFQDN(match.home.logo)}}" alt="icon">
+                        <strong>{{match.home.teamName}}</strong><br>
+                        <!-- <small class="meta-text">GROUP H.</small> -->
+                    </td>
+                    <td class="text-center">Vs</td>
+                    <td>
+                        <img src="{{teamServ.imageFQDN(match.away.logo)}}" alt="icon1">
+                        <strong>{{match.away.teamName}}</strong><br>
+                        <!-- <small class="meta-text">GROUP H.</small> -->
+                    </td>
+                    <td>
+                        <span *ngIf="match.scheduledTime && match.scheduledTime.startTime else tbd">{{util.getFormattedDate(match.scheduledTime.startTime, "MMM DD hh:mm A zz")}}<br></span>
+                        <span *ngIf="match.casterName"><small class="meta-text">Caster: {{match.casterName}}, <a
+                    href="{{util.prePendHttp(match.casterUrl)}}" target="_blank">{{match.casterUrl}}</a></small></span>
+                    </td>
+                    <!-- ng-templates -->
+                    <ng-template #tbd>
+                        <div class="text-center" *ngIf="userCanSchedule() else userView">
+                            <span>Schedule by:
+                  {{util.getFormattedDate(match.scheduleDeadline-604800000, "dddd M/D/YYYY")}}</span><br>
+                            <span>Play by: {{match.friendlyDeadline}}</span><br>
+                            <span><button [disabled]="checkDate(match)" class="btn btn-sm btn-primary"
+                    (click)="scheduleMatch(match.matchId)">Schedule this!</button></span>
+                            <span *ngIf="checkDate(match)"><br> <small class="text-danger">Schedule deadline was missed please
+                    contact
+                    admin!</small> </span>
+
+                        </div>
+
+                        <ng-template #userView>
+                            <span>Not yet scheduled</span>
+                        </ng-template>
+                    </ng-template>
+                    <!-- end template -->
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</ng-template>

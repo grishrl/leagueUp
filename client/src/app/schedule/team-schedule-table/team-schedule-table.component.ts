@@ -23,44 +23,44 @@ export class TeamScheduleTableComponent implements OnInit {
     this.scheduleService.getTeamSchedules(6, teamName).subscribe(
       res => {
         let matches = res;
+        console.log(res);
         //set the nomatches state
         if (matches.length == 0) {
           this.noMatches = true;
         } else {
           this.noMatches = false;
+          let div = matches[0].divisionConcat
+          this.standingsService.getStandings(div).subscribe(
+            res => {
+              let standings = res;
+              matches.forEach(match => {
+                standings.forEach(standing => {
+                  if (match.home.teamName == standing.teamName) {
+                    match.home['losses'] = standing.losses;
+                    match.home['wins'] = standing.wins;
+                  }
+                  if (match.away.teamName == standing.teamName) {
+                    match.away['losses'] = standing.losses;
+                    match.away['wins'] = standing.wins;
+                  }
+                });
+                if (match.scheduleDeadline) {
+                  match['friendlyDeadline'] = this.util.getDateFromMS(match.scheduleDeadline);
+                }
+
+                if (match.scheduledTime) {
+                  match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
+                  match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
+                  match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
+                }
+              })
+            }, err => {
+              console.log(err);
+            });
+          this.matches = matches;
         }
 
-        let div = matches[0].divisionConcat
-        this.standingsService.getStandings(div).subscribe(
-          res => {
-            let standings = res;
-            matches.forEach(match => {
-              standings.forEach(standing => {
-                if (match.home.teamName == standing.teamName) {
-                  match.home['losses'] = standing.losses;
-                  match.home['wins'] = standing.wins;
-                }
-                if (match.away.teamName == standing.teamName) {
-                  match.away['losses'] = standing.losses;
-                  match.away['wins'] = standing.wins;
-                }
-              });
-              if (match.scheduleDeadline) {
-                match['friendlyDeadline'] = this.util.getDateFromMS(match.scheduleDeadline);
-              }
 
-              if (match.scheduledTime) {
-                match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
-                match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
-                match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
-              }
-            })
-          }, err => {
-            console.log(err);
-          });
-
-
-      this.matches = matches;
 
       },
       err => { console.log(err) }

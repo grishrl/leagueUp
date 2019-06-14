@@ -841,6 +841,7 @@ router.post('/generate/tournament', passport.authenticate('jwt', {
 });
 
 
+//this route retuns all tournament matches that a team participates in 
 router.post('/fetch/team/tournament/matches', passport.authenticate('jwt', {
     session: false
 }), (req, res) => {
@@ -873,14 +874,10 @@ router.post('/fetch/team/tournament/matches', passport.authenticate('jwt', {
             divisionConcat: req.body.division
         });
     }
-    if (req.body.name) {
-        queryObj.$and.push({
-            divisionConcat: req.body.name
-        });
-    }
 
     Match.find(queryObj).lean().then(
         (found) => {
+            console.log()
             let teams = findTeamIds(found);
             addTeamNamesToMatch(teams, found).then(
                 processed => {

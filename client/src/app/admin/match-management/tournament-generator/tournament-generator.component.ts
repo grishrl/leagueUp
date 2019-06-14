@@ -100,6 +100,7 @@ export class TournamentGeneratorComponent implements OnInit {
     this.standings = [];
     this.showAll = false;
     this.selectedDivision = null;
+    this.division = null;
     this.season = null;
     this.name = null;
     this.description=null;

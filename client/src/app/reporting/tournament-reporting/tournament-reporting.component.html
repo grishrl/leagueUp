@@ -5,6 +5,7 @@
                 The team is involved in these tournaments:
             </div>
         </div>
+
         <div class="row">
             <div class="col">
                 <mat-form-field>
@@ -16,7 +17,9 @@
                 </mat-form-field>
             </div>
         </div>
-        <app-tournament-view [season]="selectedTournament.season" [name]="selectedTournament.name" [division]="selectedTournament.division"></app-tournament-view>
+
+        <app-challonge-tourn [tournamentLink]="selectedTournament.challonge_url"></app-challonge-tourn>
+        <!-- <app-tournament-view [season]="selectedTournament.season" [name]="selectedTournament.name" [division]="selectedTournament.division"></app-tournament-view> -->
 
         <div class="row mt-4" *ngIf="matches.length>0">
             <div class="col">

@@ -18,7 +18,14 @@ export class ChallongeTournComponent implements OnInit {
   cupDiv=false;
   selectedCup
   localStoreTournaments = [];
-  @Input() tournamentLink;
+  _tournamentLink
+  @Input() set tournamentLink(val){
+    console.log(val);
+    if(val){
+      this._tournamentLink = val;
+      this.challonge();
+    }
+  };
   @Input() theme;
   @Input() multiplier;
   @Input() matchWidthMultiplier;
@@ -45,7 +52,7 @@ export class ChallongeTournComponent implements OnInit {
             this.noTourn = false;
             this.selectedCup = 0;
             this.localStoreTournaments = res.tournInfo;
-            this.tournamentLink = res.tournInfo[0].challonge_url;
+            this._tournamentLink = res.tournInfo[0].challonge_url;
             this.challonge();
           }else{
             this.noTourn = true;
@@ -59,7 +66,7 @@ export class ChallongeTournComponent implements OnInit {
         this.scheduleService.getTournamentGames(null, this.season, this._division.divisionConcat).subscribe(res => {
           if(res.tournInfo.length>0){
             this.noTourn = false;
-              this.tournamentLink = res.tournInfo[0].challonge_url;
+              this._tournamentLink = res.tournInfo[0].challonge_url;
               this.challonge();
           }else{
             this.noTourn = true;
@@ -79,7 +86,7 @@ export class ChallongeTournComponent implements OnInit {
 
   getTournLink(){
     if(this.selectedCup){
-      this.tournamentLink = this.localStoreTournaments[this.selectedCup].challonge_url;
+      this._tournamentLink = this.localStoreTournaments[this.selectedCup].challonge_url;
       this.challonge();
     }
   }
@@ -93,8 +100,9 @@ export class ChallongeTournComponent implements OnInit {
     this.matchWidthMultiplier = this.matchWidthMultiplier ? this.matchWidthMultiplier : '1.5';
     this.showFinalResults = this.showFinalResults ? this.showFinalResults : '0';
     this.showStandings = this.showStandings ? this.showStandings : '1';
-  if(this.tournamentLink){
+  if(this._tournamentLink){
     this.noTournament=false;
+    this.challonge();
   }else{
     //no tournament link provided
     this.noTournament=true;
@@ -105,8 +113,8 @@ export class ChallongeTournComponent implements OnInit {
   }
 
   challonge(){
-    if(this.tournamentLink){
- $('.tournament').challonge(this.tournamentLink, { subdomain: '', theme: this.theme, multiplier: this.multiplier, match_width_multiplier: this.matchWidthMultiplier, show_final_results: this.showFinalResults, show_standings: this.showStandings });
+    if(this._tournamentLink){
+ $('.tournament').challonge(this._tournamentLink, { subdomain: '', theme: this.theme, multiplier: this.multiplier, match_width_multiplier: this.matchWidthMultiplier, show_final_results: this.showFinalResults, show_standings: this.showStandings });
     }
 
   }
