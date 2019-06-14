@@ -236,11 +236,17 @@ function returnTeamInfo(fullTeamsInfo, finalParticipantArray, challongeRef) {
             teamCrossRef = part;
         }
     });
-    fullTeamsInfo.forEach(team => {
-        if (teamCrossRef.id == team._id) {
-            returnTeam = { 'teamName': team.teamName, 'id': team._id }
-        }
-    });
+    if (teamCrossRef) {
+        fullTeamsInfo.forEach(team => {
+            if (teamCrossRef.id == team.misc) {
+                returnTeam = {
+                    'teamName': team.name,
+                    'id': team.misc
+                }
+            }
+        });
+    }
+
     return returnTeam;
 }
 
@@ -398,11 +404,11 @@ async function generateTournamentTwo(teams, season, division, cup, name, descrip
                                 to['challonge_idChildren'] = match.prerequisite_match_ids_csv.split(',');
                             }
                             if (match.player1_id) {
-                                to['home'] = returnTeamInfo(teams, finalParticipantArray, match.player1_id);
+                                to['home'] = returnTeamInfo(participantsArray, finalParticipantArray, match.player1_id);
 
                             }
-                            if (match.player1_id) {
-                                to['away'] = returnTeamInfo(teams, finalParticipantArray, match.player2_id);;
+                            if (match.player2_id) {
+                                to['away'] = returnTeamInfo(participantsArray, finalParticipantArray, match.player2_id);;
                             }
                             brackets.push(to);
                         });

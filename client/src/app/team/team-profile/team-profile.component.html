@@ -319,8 +319,10 @@
                         <div class="tab-pane" id="fixtures">
                             <div *ngIf="index==2">
                                 <app-team-schedule-table [team]="returnedProfile"></app-team-schedule-table>
-                                <app-team-tournament-schedule-table class="mt-3" [team]="returnedProfile">
-                                </app-team-tournament-schedule-table>
+                                <div class="mt-4">
+                                    <app-team-tournament-schedule-table [team]="returnedProfile">
+                                    </app-team-tournament-schedule-table>
+                                </div>
                             </div>
                         </div>
                         <!-- End Tab Theree - fixtures -->

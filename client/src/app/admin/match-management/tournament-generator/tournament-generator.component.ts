@@ -155,7 +155,7 @@ export class TournamentGeneratorComponent implements OnInit {
   }
 
   generateBrackets(){
-
+    // console.log(this.tournamentSeed, this.season, this.name, this.division, this.cup, this.description);
     this.adminService.generateTournament(this.tournamentSeed, this.season, this.name, this.division, this.cup, this.description).subscribe(
       res=>{
         this.ngOnInit();
