@@ -331,6 +331,9 @@
                         <div class="tab-pane" id="results">
                             <div *ngIf="index==3">
                                 <app-team-results-tiles [team]="returnedProfile.teamName"></app-team-results-tiles>
+                                <div class="mt-3">
+                                    <app-team-tournament-results-tiles [teamId]="returnedProfile._id"></app-team-tournament-results-tiles>
+                                </div>
                             </div>
                         </div>
                         <!-- End Tab Theree - results -->

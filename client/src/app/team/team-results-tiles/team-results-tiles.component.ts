@@ -29,6 +29,19 @@ export class TeamResultsTilesComponent implements OnInit {
     )
   }
 
+
+
+  @Input() headerText;
+
+  header = this.headerText ? this.headerText : 'Season Match Results';
+
+  showHead=true;
+  @Input() set showHeader(val){
+    if(val!=null||val!=undefined){
+      this.showHead = val;
+    }
+  }
+
   reportScore(match, side) {
     let ret;
     if (match.forfeit) {
