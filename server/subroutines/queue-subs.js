@@ -25,7 +25,7 @@ function cleanUpPendingQueue(item) {
 }
 
 //method to remove pending queue items via its object ID
-function cleanUpAvatarPendingQueue(displayName, fileName) {
+function cleanUpAvatarPendingQueue(userId, fileName) {
     //log object
     let logObj = {};
     logObj.actor = 'SYSTEM SUBROUTINE cleanUpPendingQueue';
@@ -34,7 +34,7 @@ function cleanUpAvatarPendingQueue(displayName, fileName) {
     logObj.timeStamp = new Date().getTime();
     Admin.PendingAvatarQueue.findOneAndDelete({
         $and: [
-            { displayName: displayName },
+            { userId: userId },
             { fileName: fileName }
         ]
     }).then((deleted) => {

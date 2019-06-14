@@ -183,10 +183,10 @@ export class AdminService {
   }
 
   //returns to the pending member queue the admins approval or declining of a team member add
-  avatarQueuePost(displayName: string, fileName: string, action: boolean) {
+  avatarQueuePost(id: string, fileName: string, action: boolean) {
     let url = 'admin/approveAvatar';
     let payload = {
-      displayName: displayName,
+      userId: id,
       fileName: fileName,
       approved: action
     }

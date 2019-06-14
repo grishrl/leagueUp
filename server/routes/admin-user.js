@@ -299,7 +299,7 @@ router.post('/approveAvatar', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.userLevel, util.appendResHeader, (req, res) => {
     const path = '/admin/approveAvatar';
-    var displayName = req.body.displayName;
+    var userId = req.body.userId;
     var fileName = req.body.fileName;
     var approved = req.body.approved;
 
@@ -307,7 +307,7 @@ router.post('/approveAvatar', passport.authenticate('jwt', {
     let logObj = {};
     logObj.actor = req.user.displayName;
     logObj.action = 'pending avatar approval';
-    logObj.target = displayName + ' : ' + fileName + ' - ' + approved;
+
     logObj.logLevel = 'ADMIN';
 
     let msg = {};
@@ -322,15 +322,12 @@ router.post('/approveAvatar', passport.authenticate('jwt', {
 
     msg.notSeen = true;
 
-    if (approved) {
-
-    }
+    console.log('user id ', userId);
     //find team matching the team in question
-    User.findOne({
-        displayName: displayName
-    }).then((foundUser) => {
+    User.findById(userId).then((foundUser) => {
         //we found the team
         if (foundUser) {
+            logObj.target = foundUser.displayName + ' : ' + fileName + ' - approved: ' + approved;
             msg.recipient = foundUser._id;
             let oldAvatar;
             if (foundUser.avatar) {
@@ -351,16 +348,14 @@ router.post('/approveAvatar', passport.authenticate('jwt', {
                 } else {
                     foundUser.avatar = 'defaultAvatar.png';
                 }
-                //delete the uploaded file
-                Avatar.deleteFile(fileName);
             }
 
             foundUser.save().then(
                 savedUser => {
                     if (savedUser) {
                         messageSub(msg);
-                        QueueSubs.removePendingAvatarQueue(displayName, fileName);
-                        res.status(200).send(util.returnMessaging(path, 'User updated', null, null, savedUser, logObj));
+                        QueueSubs.removePendingAvatarQueue(userId, fileName);
+                        res.status(200).send(util.returnMessaging(path, 'User updated', null, savedUser, null, logObj));
                     }
                 },
                 err => {

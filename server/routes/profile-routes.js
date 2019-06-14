@@ -338,6 +338,7 @@ router.post('/upload/avatar', passport.authenticate('jwt', {
     Avatar.uploadAvatar(path, dataURI, req.user.displayName).then(rep => {
             new PendingAvatarQueue({
                 userId: userId,
+                displayName: req.user.displayName,
                 fileName: rep.fileName,
                 timestamp: Date.now()
             }).save().then(

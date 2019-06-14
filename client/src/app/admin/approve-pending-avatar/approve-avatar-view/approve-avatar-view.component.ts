@@ -30,7 +30,7 @@ export class ApproveAvatarViewComponent implements OnInit {
   }
 
   actionAvatar(act){
-    this.admin.avatarQueuePost(this.queueItem.displayName, this.queueItem.fileName, act).subscribe(
+    this.admin.avatarQueuePost(this.queueItem.userId, this.queueItem.fileName, act).subscribe(
       res=>{
         this.avatarActioner();
       },

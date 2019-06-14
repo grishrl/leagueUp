@@ -50,6 +50,9 @@ returnMessaging = function(route, message, err, obj, additional, logInfo) {
         ret.returnObject = obj;
     }
     if (!isNullorUndefined(additional)) {
+        if (!ret.returnObject) {
+            ret.returnObject = {};
+        }
         ret.returnObject.additional = Object.assign(additional, ret);
     }
 
