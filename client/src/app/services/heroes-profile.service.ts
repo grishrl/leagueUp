@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { UtilitiesService } from './utilities.service';
 import { environment } from '../../environments/environment';
 import { HttpServiceService } from './http-service.service';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 
 @Injectable({
@@ -10,7 +10,7 @@ import { map } from 'rxjs/operators';
 })
 export class HeroesProfileService {
 
-  constructor(private util:UtilitiesService, private http: HttpServiceService, private httpClient:HttpClient) { }
+  constructor(private util:UtilitiesService, private http: HttpServiceService) { }
 
   getTopStats(stat){
     let url = '/user/frontPageStats'
@@ -44,7 +44,7 @@ export class HeroesProfileService {
     }
   }
 
-  getHPPlayerLink(toonHandle, displayName){
+  getNgsHpPlayerLink(toonHandle, displayName){
     //https://www.heroesprofile.com/NGS/Profile/?region=1&blizz_id=2201809&battletag=Mongoose
     if (this.util.isNullOrEmpty(toonHandle)) {
       return '';
@@ -60,10 +60,21 @@ export class HeroesProfileService {
   }
 
 
-  getHPProfileLink(toonHandle, displayName) {
+getHPProfileLink(toonHandle, displayName) {
+    let returnUrl = '';
     //https://www.heroesprofile.com/Profile/?blizz_id=7905329&battletag=wraithling&region=1
     if (this.util.isNullOrEmpty(toonHandle)) {
-      return '';
+
+
+      this.http.httpGet('user/hero-profile/path', [{'displayName':encodeURIComponent(displayName)}]).subscribe(
+        res=>{
+          console.log(res);
+        let blizz_id = res[0].blizz_id;
+        let region = res[0].region;
+        let splitName = displayName.split('#');
+        let battletag = splitName[0];
+        returnUrl = environment.heroesProfile + 'region=' + region + '&blizz_id=' + blizz_id + '&battletag=' + battletag;
+      })
     } else {
       //1-Hero-1-848842
       let splitToonHandle = toonHandle.split('-');
@@ -71,8 +82,9 @@ export class HeroesProfileService {
       let blizz_id = splitToonHandle[3];
       let splitName = displayName.split('#');
       let battletag = splitName[0];
-      return environment.heroesProfile + 'region=' + region + '&blizz_id=' + blizz_id + '&battletag=' + battletag;
+      returnUrl = environment.heroesProfile + 'region=' + region + '&blizz_id=' + blizz_id + '&battletag=' + battletag;
     }
+    return returnUrl;
   }
 
 }

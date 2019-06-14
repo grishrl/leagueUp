@@ -32,7 +32,7 @@ export class CreateTeamComponent implements OnInit {
     timeZone: this.timeZoneControl
   })
 
-
+  timezoneError
 
   ngOnInit() {
     this.markFormGroupTouched(this.createTeamControlGroup);
@@ -124,8 +124,12 @@ export class CreateTeamComponent implements OnInit {
     if (this.availabilityDays > 0 && !this.util.returnBoolByPath(this.returnedProfile,'timeZone') ) {
       this.timeZoneControl.setErrors({required:true});
       valid = false;
+      this.timezoneError = {
+        error: true
+      }
     }else{
       this.timeZoneControl.setErrors(null);
+      this.timezoneError = { error: false };
     }
 
     return valid;

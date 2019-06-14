@@ -640,12 +640,12 @@ router.post('/uploadLogo', passport.authenticate('jwt', {
     logObj.logLevel = 'STD';
 
     uploadTeamLogo(path, dataURI, teamName).then(rep => {
-            res.status(200).send(util.returnMessaging(path, "Image Uploaded.", false, null, rep.eo, logObj))
+            console.log(rep.eo);
+            res.status(200).send(util.returnMessaging(path, "Image Uploaded.", false, rep.eo, null, logObj))
         },
         err => {
             res.status(500).send(util.returnMessaging(path, "err.message", err, null, null, logObj))
         });
-
 });
 
 router.post('/reassignCaptain', passport.authenticate('jwt', {

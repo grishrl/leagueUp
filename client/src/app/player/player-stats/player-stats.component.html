@@ -6,18 +6,19 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <div class="row mt-2" *ngIf="toonHandle && displayName">
+                    <div class="row mt-2">
                         <div class="col">
-                            <div>To see more in depth league stats check this players profile at Heroes Profile
+                            <div>Check out this players profile at Heroes Profile
                             </div>
-                            <a href="{{hotsProfile.getHPPlayerLink(toonHandle,displayName)}}" target="_blank">{{displayName}}</a>
+                            <!-- TODO FIX THIS -->
+                            <a href="{{hpProfileLink}}" target="_blank">{{displayName}}</a>
                         </div>
                     </div>
                     <div class="row mt-2" *ngIf="toonHandle && displayName">
                         <div class="col">
                             <div>To see more in depth league stats check this players profile at Heroes Profile
                             </div>
-                            <a href="{{hotsProfile.getHPPlayerLink(toonHandle,displayName)}}" target="_blank">{{displayName}}</a>
+                            <a href="{{hotsProfile.getNgsHpPlayerLink(toonHandle,displayName)}}" target="_blank">{{displayName}}</a>
                         </div>
                     </div>
                 </div>
