@@ -116,6 +116,15 @@ export class ScheduleService {
     return this.httpService.httpPost(url, payload);
   }
 
+  getTeamTournamentGames(season, teamId){
+    let url = 'schedule/fetch/team/tournament/matches';
+    let payload = {
+      season:season,
+      teamId:teamId
+    };
+    return this.httpService.httpPost(url, payload);
+  }
+
   //accepts an object that contains elements for reporting the match outcome:
   /*
     {

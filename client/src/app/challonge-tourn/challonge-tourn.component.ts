@@ -12,6 +12,7 @@ export class ChallongeTournComponent implements OnInit {
 
   constructor(private utils:UtilitiesService, private scheduleService:ScheduleService) { }
 
+  noTourn=false;
   _team;
   _division;
   cupDiv=false;
@@ -31,35 +32,39 @@ export class ChallongeTournComponent implements OnInit {
     }
   }
   @Input() set division(val) {
-    console.log(val);
+
     if (val && !this._team){
-      console.log('a');
+
       this._division = val;
       if(val.cupDiv){
         this.cupDiv = true;
-        console.log('b');
-        // this is a cup div
-        //do normal stuff
+
         this.scheduleService.getTournamentGames(null, this.season, this._division.divisionConcat).subscribe(res => {
-          console.log(res);
+
           if (res.tournInfo.length > 0) {
+            this.noTourn = false;
             this.selectedCup = 0;
             this.localStoreTournaments = res.tournInfo;
             this.tournamentLink = res.tournInfo[0].challonge_url;
             this.challonge();
+          }else{
+            this.noTourn = true;
           }
         }, err => {
           console.log(err);
         });
       }else{
-        console.log('c');
+        this.cupDiv = false;
         //do normal stuff
         this.scheduleService.getTournamentGames(null, this.season, this._division.divisionConcat).subscribe(res => {
-          console.log(res);
           if(res.tournInfo.length>0){
+            this.noTourn = false;
               this.tournamentLink = res.tournInfo[0].challonge_url;
               this.challonge();
+          }else{
+            this.noTourn = true;
           }
+
 
           // if (res['tournMatches']) {
           //   this.matches = res['tournMatches'];
@@ -89,9 +94,7 @@ export class ChallongeTournComponent implements OnInit {
     this.showFinalResults = this.showFinalResults ? this.showFinalResults : '0';
     this.showStandings = this.showStandings ? this.showStandings : '1';
   if(this.tournamentLink){
-    console.log('hi!');
     this.noTournament=false;
-    console.log('this.tournamentLink ', this.tournamentLink);
   }else{
     //no tournament link provided
     this.noTournament=true;
@@ -102,8 +105,6 @@ export class ChallongeTournComponent implements OnInit {
   }
 
   challonge(){
-    console.log('this.tournamentLink ', this.tournamentLink);
-    console.log('this.noTournament ', this.noTournament);
     if(this.tournamentLink){
  $('.tournament').challonge(this.tournamentLink, { subdomain: '', theme: this.theme, multiplier: this.multiplier, match_width_multiplier: this.matchWidthMultiplier, show_final_results: this.showFinalResults, show_standings: this.showStandings });
     }

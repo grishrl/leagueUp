@@ -152,6 +152,7 @@ import { TeamLinkComponent } from './LinkComponents/team-link/team-link.componen
 import { PlayerLinkComponent } from './LinkComponents/player-link/player-link.component';
 import { DivisionCupResultsTilesComponent } from './division/division-cup-results-tiles/division-cup-results-tiles.component';
 import { DivisionCupScheduleComponent } from './division/division-cup-schedule/division-cup-schedule.component';
+import { TeamTournamentScheduleTableComponent } from './schedule/team-tournament-schedule-table/team-tournament-schedule-table.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -293,7 +294,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     TeamLinkComponent,
     PlayerLinkComponent,
     DivisionCupResultsTilesComponent,
-    DivisionCupScheduleComponent
+    DivisionCupScheduleComponent,
+    TeamTournamentScheduleTableComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

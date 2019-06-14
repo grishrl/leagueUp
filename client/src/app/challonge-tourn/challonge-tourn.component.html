@@ -1,5 +1,5 @@
 <div class="container">
-    <div class="row">
+    <div class="row" *ngIf="cupDiv">
         <div class="col">
             <mat-form-field>
                 <mat-select placeholder="Cup:" [(ngModel)]="selectedCup" (ngModelChange)="getTournLink()" disableOptionCentering>
@@ -9,14 +9,14 @@
             </mat-form-field>
         </div>
     </div>
-    <div class="tourn-container">
+    <div *ngIf="!noTourn" class="tourn-container">
         <div class="tournament">
 
         </div>
     </div>
-    <ng-template #noTourn>
-        <div class="tourn-container">
-            <h4>No Tournaments Currently!</h4>
-        </div>
-    </ng-template>
+
+    <div *ngIf="noTourn">
+        <h4>No Tournaments Currently!</h4>
+    </div>
+
 </div>
