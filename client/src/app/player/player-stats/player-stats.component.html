@@ -4,19 +4,36 @@
             <div class="titles">
                 <h4>External Sources:</h4>
             </div>
-            <div class="row mt-2" *ngIf="toonHandle && displayName">
+            <div class="row">
                 <div class="col">
-                    <div>To see more in depth league stats check this players profile at Heroes Profile</div>
-                    <a href="{{hotsProfile.getHPPlayerLink(toonHandle,displayName)}}" target="_blank">{{displayName}}</a>
+                    <div class="row mt-2" *ngIf="toonHandle && displayName">
+                        <div class="col">
+                            <div>To see more in depth league stats check this players profile at Heroes Profile
+                            </div>
+                            <a href="{{hotsProfile.getHPPlayerLink(toonHandle,displayName)}}" target="_blank">{{displayName}}</a>
+                        </div>
+                    </div>
+                    <div class="row mt-2" *ngIf="toonHandle && displayName">
+                        <div class="col">
+                            <div>To see more in depth league stats check this players profile at Heroes Profile
+                            </div>
+                            <a href="{{hotsProfile.getHPPlayerLink(toonHandle,displayName)}}" target="_blank">{{displayName}}</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row mt-2" *ngIf="hotsLogsPlayerID">
+                        <div class="col">
+                            <div>User Hots Log Profile:</div>
+                            <a href="{{hotsLogsService.returnProfileLink(hotsLogsPlayerID)}}" target="_blank">HOTS
+                                    LOGS
+                                    Url</a>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="row mt-2" *ngIf="hotsLogsPlayerID">
-                <div class="col">
-                    <div>User Hots Log Profile:</div>
-                    <a href="{{hotsLogsService.returnProfileLink(hotsLogsPlayerID)}}" target="_blank">HOTS LOGS
-                                        Url</a>
-                </div>
-            </div>
+
+
         </div>
 
         <div class="stats-info" *ngIf="!noStats">
