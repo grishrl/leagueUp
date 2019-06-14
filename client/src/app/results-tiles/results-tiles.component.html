@@ -1,4 +1,4 @@
-<div class="recent-results results-page">
+<div class="recent-results results-page" *ngIf="provMatches.length>0 else noResults">
     <div class="info-results">
         <ul>
             <li *ngFor="let match of provMatches">
@@ -36,3 +36,10 @@
         </ul>
     </div>
 </div>
+<ng-template #noResults>
+    <div class="row">
+        <div class="col">
+            <h4>No Results Currently!</h4>
+        </div>
+    </div>
+</ng-template>

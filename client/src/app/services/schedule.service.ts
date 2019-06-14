@@ -25,6 +25,12 @@ export class ScheduleService {
     return this.httpService.httpGet(url, []);
   }
 
+  getMatchList(matches){
+    let url = 'schedule/get/match/list';
+    let payload = {matches:matches};
+    return this.httpService.httpPost(url, payload, false);
+  }
+
   //returns matches that match criteria of season, division
   getDivisionScheduleMatches(season, division: string) {
     let url = 'schedule/get/division/matches';

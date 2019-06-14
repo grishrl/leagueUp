@@ -91,13 +91,20 @@
 
                         <!-- Tab Theree - results -->
                         <div class="tab-pane" id="results">
-                            <app-division-results-tiles [division]="divDisplay"></app-division-results-tiles>
+                            <div *ngIf="index==3">
+                                <app-division-results-tiles *ngIf="!divDisplay.cupDiv" [division]="divDisplay"></app-division-results-tiles>
+                                <app-division-cup-results-tiles *ngIf="divDisplay.cupDiv" [division]="divDisplay"></app-division-cup-results-tiles>
+                            </div>
+
                         </div>
                         <!-- End Tab Theree - results -->
 
-                        <!-- Tab four - results -->
+                        <!-- Tab four - tournament -->
                         <div class="tab-pane" id="tournament">
-                            <app-challonge-tourn [season]="7" [division]="divDisplay"></app-challonge-tourn>
+                            <div *ngIf="index == 4">
+                                <app-challonge-tourn [season]="7" [division]="divDisplay"></app-challonge-tourn>
+                            </div>
+
                         </div>
                         <!-- End Tab four - results -->
                     </div>

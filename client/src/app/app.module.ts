@@ -150,6 +150,7 @@ import { ChallongeTournComponent } from './challonge-tourn/challonge-tourn.compo
 import { DivisionLinkComponent } from './LinkComponents/division-link/division-link.component';
 import { TeamLinkComponent } from './LinkComponents/team-link/team-link.component';
 import { PlayerLinkComponent } from './LinkComponents/player-link/player-link.component';
+import { DivisionCupResultsTilesComponent } from './division/division-cup-results-tiles/division-cup-results-tiles.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -289,7 +290,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     ChallongeTournComponent,
     DivisionLinkComponent,
     TeamLinkComponent,
-    PlayerLinkComponent
+    PlayerLinkComponent,
+    DivisionCupResultsTilesComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

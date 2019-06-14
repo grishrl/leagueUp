@@ -341,6 +341,26 @@ router.post('/get/match', (req, res) => {
     });
 });
 
+router.post('/get/match/list', (req, res) => {
+    const path = 'schedule/get/match/list';
+    let matches = req.body.matches;
+
+    Match.find({ matchId: { $in: matches } }).then(
+        found => {
+            let teams = findTeamIds(found);
+            addTeamNamesToMatch(teams, found).then((processed) => {
+                res.status(200).send(util.returnMessaging(path, 'Found matches', false, processed));
+            }, (err) => {
+                res.status(500).send(util.returnMessaging(path, 'Error getting matches', err));
+            })
+        },
+        err => {
+            res.status(500).send(util.returnMessaging(path, 'Error getting match', err));
+        }
+    )
+
+});
+
 
 /*
 for reporting matches and injesting replay files
