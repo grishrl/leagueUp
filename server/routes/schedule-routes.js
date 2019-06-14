@@ -14,6 +14,8 @@ const Scheduling = require('../models/schedule-models');
 const fs = require('fs');
 const n_util = require('util');
 const Division = require('../models/division-models');
+const matchCommon = require('../methods/matchCommon');
+
 
 
 fs.readFileAsync = n_util.promisify(fs.readFile);
@@ -621,7 +623,7 @@ router.post('/report/match', passport.authenticate('jwt', {
                             )
 
                             //if this match was a tournmanet match then we need to promote the winner to the parent match
-                            promoteTournamentMatch(foundMatch);
+                            matchCommon.promoteTournamentMatch(foundMatch);
 
 
 
@@ -1012,39 +1014,6 @@ router.post('/fetch/tournament', (req, res) => {
 
 module.exports = router;
 
-function promoteTournamentMatch(foundMatch) {
-    if (foundMatch.type == 'tournament') {
-        let winner = {};
-        if (foundMatch.home.score > foundMatch.away.score) {
-            winner['id'] = foundMatch.home.id;
-            winner['teamName'] = foundMatch.home.teamName;
-        } else {
-            winner['id'] = foundMatch.away.id;
-            winner['teamName'] = foundMatch.away.teamName;
-        }
-        Match.findOne({
-            matchId: foundMatch.parentId
-        }).then(found => {
-            if (found) {
-                let foundObj = found.toObject();
-                if (util.returnBoolByPath(foundObj, 'away')) {
-                    found.home = winner;
-                } else {
-                    found.away = winner;
-                }
-                found.save().then(saved => {
-                    console.log(saved);
-                }, err => {
-                    console.log(err);
-                });
-            } else {
-                console.log('the parent match was not found');
-            }
-        }, err => {
-            console.log(err);
-        });
-    }
-}
 
 function findTeamIds(found) {
     let teams = [];
