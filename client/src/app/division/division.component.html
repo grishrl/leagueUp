@@ -63,7 +63,7 @@
                     <!-- End Nav Tabs -->
                 </div>
 
-                <div class="col-lg-9 padding-top-mini">
+                <div class="col-lg-9 padding-top-mini pb-5">
                     <!-- Content Tabs -->
                     <div class="tab-content">
                         <!-- Tab One - overview -->
@@ -82,8 +82,9 @@
 
                         <!-- Tab Theree - schedule -->
                         <div class="tab-pane" id="schedule">
-                            <ng-container *ngIf="index == 2">
-                                <app-schedule-view [division]="divDisplay"></app-schedule-view>
+                            <ng-container class="pb-5" *ngIf="index == 2">
+                                <app-schedule-view *ngIf="!divDisplay.cupDiv" [division]="divDisplay"></app-schedule-view>
+                                <app-division-cup-schedule *ngIf="divDisplay.cupDiv" [division]="divDisplay"></app-division-cup-schedule>
                             </ng-container>
 
                         </div>
