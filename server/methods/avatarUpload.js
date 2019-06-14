@@ -85,8 +85,9 @@ async function uploadAvatar(path, dataURI, displayName) {
                 throw error;
             });
             if (foundUser) {
-                if (foundUser.avatar != 'defaultAvatar.png' && foundUser.avatar != 'pendingAvatar') {
-                    foundUser.avatar = foundUser.avatar
+                let userObj = foundUser.toObject();
+                if (userObj.avatar && userObj.avatar != 'defaultAvatar.png' && userObj.avatar != 'pendingAvatar') {
+                    // foundUser.avatar = foundUser.avatar
                 } else {
                     foundUser.avatar = 'pendingAvatar.png';
                 }

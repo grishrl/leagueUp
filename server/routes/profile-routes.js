@@ -293,7 +293,7 @@ router.get('/statistics', (req, res) => {
 
 //post
 // path: /user/upload/avatar
-// requires displayname, and base64 encoded image
+// requires base64 encoded image
 // returns http success or error; json object of updated team if save was successful.
 router.post('/upload/avatar', passport.authenticate('jwt', {
     session: false
@@ -302,27 +302,50 @@ router.post('/upload/avatar', passport.authenticate('jwt', {
     const path = '/user/upload/avatar';
     let uploadedFileName = "";
 
-    let displayName = req.body.displayName;
+
+    let userId = req.user._id;
+    console.log(userId);
     let dataURI = req.body.logo;
 
     //construct log object
     let logObj = {};
     logObj.actor = req.user.displayName;
-    logObj.action = 'upload team logo ';
-    logObj.target = displayName;
+    logObj.action = 'upload user avatar';
+    logObj.target = req.user.displayName;
     logObj.logLevel = 'STD';
-
-    Avatar.uploadAvatar(path, dataURI, displayName).then(rep => {
+    PendingAvatarQueue.find({
+        userId: userId
+    }).then(
+        found => {
+            // console.log('deleting other pending avatar queues ');
+            for (var i = 0; i < found.length; i++) {
+                // console.log(found[i]);
+                Avatar.deleteFile(found[i].fileName);
+                PendingAvatarQueue.findByIdAndDelete(found[i]._id).then(
+                    deleted => {
+                        // console.log(deleted);
+                    },
+                    err => {
+                        console.log(err);
+                    }
+                );
+            }
+        },
+        err => {
+            console.log('err ', err);
+        }
+    );
+    Avatar.uploadAvatar(path, dataURI, req.user.displayName).then(rep => {
             new PendingAvatarQueue({
-                displayName: displayName,
+                userId: userId,
                 fileName: rep.fileName,
                 timestamp: Date.now()
             }).save().then(
                 saved => {
-                    res.status(200).send(util.returnMessaging(path, "Image Sent to Pending Queue.", false, rep.eo, saved, logObj))
+                    res.status(200).send(util.returnMessaging(path, "Image Sent to Pending Queue.", false, rep.eo, saved, logObj));
                 },
                 err => {
-                    res.status(200).send(util.returnMessaging(path, "Error Image not Sent to Pending Queue.", err, false, false, logObj))
+                    res.status(500).send(util.returnMessaging(path, "Error Image not Sent to Pending Queue.", err, false, false, logObj))
                 }
             )
 

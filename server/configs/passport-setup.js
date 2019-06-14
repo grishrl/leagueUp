@@ -105,13 +105,13 @@ passport.use(new BnetStrategy({
                         userObj.replays = found.replays;
                     }
                     logObj.action += ' restored from archive ';
-                    createNewProfile(userObj, logObj);
+                    createNewProfile(userObj, logObj, done);
                 } else {
                     //no archive go ahead and create new
-                    createNewProfile(userObj, logObj);
+                    createNewProfile(userObj, logObj, done);
                 }
             }, err => {
-                createNewProfile(userObj, logObj)
+                createNewProfile(userObj, logObj, done)
             });
 
 
@@ -119,7 +119,7 @@ passport.use(new BnetStrategy({
     })
 }));
 
-function createNewProfile(userObj, logObj) {
+function createNewProfile(userObj, logObj, done) {
     //get the players MMRs!
     mmrMethods.comboMmr(userObj.displayName).then(
         processed => {

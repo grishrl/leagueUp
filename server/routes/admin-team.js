@@ -38,7 +38,6 @@ router.get('/pendingAvatarQueue', passport.authenticate('jwt', {
     query.sort('-timestamp');
     query.limit(20);
     query.exec().then((reply) => {
-
         res.status(200).send(util.returnMessaging(path, 'Found queues', false, reply));
     }, (err) => {
         res.status(500).send(util.returnMessaging(path, 'Couldn\'t get the queues', err));

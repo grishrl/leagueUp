@@ -22,7 +22,7 @@ const pendingMembersSchema = new Schema({
 });
 
 const pendingAvatarSchema = new Schema({
-    'displayName': String,
+    'userId': String,
     'fileName': String,
     'timestamp': Date
 });
