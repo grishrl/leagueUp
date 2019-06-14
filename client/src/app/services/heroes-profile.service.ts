@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { UtilitiesService } from './utilities.service';
 import { environment } from '../../environments/environment';
 import { HttpServiceService } from './http-service.service';
+import { Subject } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 
@@ -59,6 +60,7 @@ export class HeroesProfileService {
     }
   }
 
+  public getHPProfileLinkStream: Subject<string> = new Subject();
 
 getHPProfileLink(toonHandle, displayName) {
     let returnUrl = '';
@@ -68,12 +70,18 @@ getHPProfileLink(toonHandle, displayName) {
 
       this.http.httpGet('user/hero-profile/path', [{'displayName':encodeURIComponent(displayName)}]).subscribe(
         res=>{
-          console.log(res);
-        let blizz_id = res[0].blizz_id;
-        let region = res[0].region;
-        let splitName = displayName.split('#');
-        let battletag = splitName[0];
-        returnUrl = environment.heroesProfile + 'region=' + region + '&blizz_id=' + blizz_id + '&battletag=' + battletag;
+          if(res){
+            console.log(res);
+            let blizz_id = res[0].blizz_id;
+            let region = res[0].region;
+            let splitName = displayName.split('#');
+            let battletag = splitName[0];
+            returnUrl = environment.heroesProfile + 'region=' + region + '&blizz_id=' + blizz_id + '&battletag=' + battletag;
+            this.getHPProfileLinkStream.next(returnUrl);
+          }else{
+            this.getHPProfileLinkStream.next(null);
+          }
+
       })
     } else {
       //1-Hero-1-848842
@@ -83,8 +91,8 @@ getHPProfileLink(toonHandle, displayName) {
       let splitName = displayName.split('#');
       let battletag = splitName[0];
       returnUrl = environment.heroesProfile + 'region=' + region + '&blizz_id=' + blizz_id + '&battletag=' + battletag;
+      this.getHPProfileLinkStream.next(returnUrl);
     }
-    return returnUrl;
   }
 
 }

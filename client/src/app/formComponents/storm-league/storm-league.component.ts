@@ -66,6 +66,14 @@ export class StormLeagueComponent implements OnInit {
     }
   }
 
+  divisionChanged() {
+    this.divisionChange.emit(this.divisionValue);
+  }
+
+  rankChanged(){
+    this.rankChange.emit(this.rankValue);
+  }
+
   ngOnChanges(change) {
 
     if (change.disabled && change.disabled.currentValue == false) {

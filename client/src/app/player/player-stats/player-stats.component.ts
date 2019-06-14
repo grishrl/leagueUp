@@ -17,7 +17,14 @@ export class PlayerStatsComponent implements OnInit {
 
   ngOnInit() {
 
-    this.hpProfileLink = this.hotsProfile.getHPProfileLink(this.toonHandle, this.displayName);
+    this.hotsProfile.getHPProfileLinkStream.subscribe(
+      subj=>{
+
+          this.hpProfileLink = subj;
+
+      }
+    );
+    this.hotsProfile.getHPProfileLink(this.toonHandle, this.displayName);
 
   }
 

@@ -30,7 +30,10 @@
                                     <strong>Team:</strong> <span>{{returnedProfile.teamName}}</span>
                                 </li>
                                 <li><strong>Discord:</strong> <span>{{returnedProfile.discordTag}}</span></li>
-                                <li><strong>MMR:</strong> <span>{{returnedProfile.averageMmr}}</span></li>
+                                <li><strong>Heroes Profile MMR:</strong> <span>{{returnedProfile.heroesProfileMmr}}</span></li>
+                                <li *ngIf="returnedProfile.ngsMmr"><strong>NGS League MMR:</strong>
+                                    <span>{{returnedProfile.ngsMmr}}</span></li>
+                                <li><strong>Hots Logs MMR:</strong> <span>{{returnedProfile.averageMmr}}</span></li>
                                 <li><strong>Matches:</strong> <span>{{estimateGamesPlayed()}}</span></li>
                                 <li><strong>Seasons:</strong> <span>{{returnedProfile.seasonsPlayed}}</span></li>
                                 <!-- <li><strong>Goals:</strong> <span>108</span></li>

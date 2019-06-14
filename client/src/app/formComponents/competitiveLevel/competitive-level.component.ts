@@ -20,23 +20,23 @@ export class TextInputComponent implements OnInit {
     { val: 5, display: 'High' }
   ]
 
-  messageValue: string;
+  competitiveLevelValue: string;
 
   @Output()
-  messageChange = new EventEmitter();
+  competitiveLevelChange = new EventEmitter();
 
   @Input()
   get competitiveLevel() {
-    return this.messageValue;
+    return this.competitiveLevel;
   }
 
   set competitiveLevel(val) {
-    this.messageValue = val;
-    this.messageChange.emit(this.messageValue);
+    this.competitiveLevelValue = val;
+    this.competitiveLevelChange.emit(this.competitiveLevelValue);
   }
 
   updateValue(){
-    this.messageChange.emit(this.messageValue);
+    this.competitiveLevelChange.emit(this.competitiveLevelValue);
   }
 
   getDisplay(val){

@@ -9,12 +9,6 @@ export class PlayHistoryComponent implements OnInit {
 
   constructor() { }
 
-  competitonLevel = [
-    { val: 1, display: 'Low' },
-    { val: 3, display: 'Medium' },
-    { val: 5, display: 'High' }
-  ]
-
   edit: boolean = false;
 
   @Input() set disabled(val) {
