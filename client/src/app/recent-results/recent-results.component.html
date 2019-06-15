@@ -22,5 +22,9 @@
                 </div>
             </li>
         </ul>
+        <div *ngIf="!display || display.length == 0" class="text-center p-5">
+            <h5>No Recent Results!</h5>
+            <h6 class="text-white">Check back later!</h6>
+        </div>
     </div>
 </div>

@@ -15,6 +15,7 @@ export class DivisionStandingsComponent implements OnInit {
 
   standings = [];
   passDiv ;
+  noDivisions=false;
   getStandings(div) {
     this.standingsService.getStandings(div).subscribe(
       (res) => {
@@ -66,12 +67,16 @@ export class DivisionStandingsComponent implements OnInit {
 
   private randomDivision() {
     this.DivisionService.getDivisionInfo().subscribe((res) => {
-      let divisions = res;
-      let randomDivInt = Math.floor(Math.random() * divisions.length);
-      let randomDivision = divisions[randomDivInt];
-      console.log(randomDivision);
-      this.getStandings(randomDivision.divisionConcat);
-      this.passDiv = randomDivision;
+      if(res.length>0){
+        let divisions = res;
+        let randomDivInt = Math.floor(Math.random() * divisions.length);
+        let randomDivision = divisions[randomDivInt];
+        this.getStandings(randomDivision.divisionConcat);
+        this.passDiv = randomDivision;
+      }else{
+        this.noDivisions = true;
+      }
+
     }, (err) => {
       console.log(err);
     });

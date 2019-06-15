@@ -88,7 +88,6 @@ export class CountdownComponent implements OnInit {
       this.targetMatch.scheduledTime.startTime = this.timeService.returnSeasonStart();
       this.validMatch = false;
       this.preSeason = true;
-      console.log('preseason?')
       this.initCountdown();
     }
 
