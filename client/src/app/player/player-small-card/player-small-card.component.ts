@@ -59,8 +59,10 @@ export class PlayerSmallCardComponent implements OnInit {
     if(this._captain){
       if (this._captain == this.displayName) {
         ret = false;
-      } else {
+      } else if(this._captain == this.Auth.getUser()){
         ret = true;
+      }else{
+        ret = false;
       }
     }else{
       ret = false;

@@ -27,7 +27,7 @@
                     <span>
                       <i *ngIf="dominator(match, 'away')" style="position: absolute; top: 70px;" class="fas fa-lg fa-crown"></i>
                       <i *ngIf="forfeit(match, 'away')" style="position: absolute; top: 70px;" class="far fa-lg fa-flag"></i>
-                      <app-team-link [team]="match.away.ticker">
+                      <app-team-link [team]="match.away.teamName">
                           <img src="{{team.imageFQDN(match.away.logo)}}" alt=""> {{match.away.ticker}}
                       </app-team-link>
                     </span>

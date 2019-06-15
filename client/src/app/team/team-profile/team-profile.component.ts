@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material';
 import { DeleteConfrimModalComponent } from '../../modal/delete-confrim-modal/delete-confrim-modal.component'
 import { ChangeCaptainModalComponent } from '../../modal/change-captain-modal/change-captain-modal.component';
 import { TeamService } from '../../services/team.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { merge } from 'lodash';
 import { Team } from '../../classes/team.class';
 import { AuthService } from '../../services/auth.service';
@@ -62,7 +62,16 @@ export class TeamProfileComponent implements OnInit {
   //constructor
   constructor(public auth: AuthService, public user: UserService, private team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router: Router,
     private admin:AdminService, public util:UtilitiesService, private requestService:RequestService, public heroProfile: HeroesProfileService, private divisionServ: DivisionService) {
-    this.teamName = team.realTeamName(this.route.snapshot.params['id']);
+
+      //so that people can manually enter different tags from currently being on a profile page; we can reinitialize the component with the new info
+    this.router.events.subscribe((e: any) => {
+      // If it is a NavigationEnd event re-initalise the component
+      if (e instanceof NavigationEnd) {
+        this.teamName = team.realTeamName(this.route.snapshot.params['id']);
+        this.ngOnInit();
+      }
+    });
+
   }
 
   //methods
