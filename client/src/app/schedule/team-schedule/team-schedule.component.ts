@@ -69,14 +69,12 @@ export class TeamScheduleComponent implements OnInit {
     this.scheduleService.getTeamSchedules(environment.season, getTeam).subscribe(
       res=>{
         let matches = res;
-        console.log('res ', res);
         //set the nomatches state
         if (matches.length == 0 ){
           this.noMatches = true;
         }else{
           this.noMatches = false;
         }
-        console.log('matches[0] ', matches[0]);
         let div = matches[0].divisionConcat
         this.standingsService.getStandings(div).subscribe(
           res => {

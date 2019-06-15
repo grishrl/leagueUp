@@ -22,10 +22,8 @@ export class TeamTournamentScheduleTableComponent implements OnInit {
   roundsArray;
   matches = [];
   initTeamSchedule(teamId) {
-    console.log('teamId ', teamId);
     this.scheduleService.getTeamTournamentGames(7, teamId).subscribe(
       res => {
-        console.log('res ', res);
         let matches = res;
         //set the nomatches state
         if (matches.length == 0) {
@@ -110,7 +108,6 @@ export class TeamTournamentScheduleTableComponent implements OnInit {
   teamObj;
   @Input() set team(val) {
     if (val) {
-      console.log('val ',val);
       this.teamObj = val;
       this.initTeamSchedule(val._id);
     }

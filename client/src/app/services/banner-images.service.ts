@@ -15,7 +15,6 @@ export class BannerImagesService {
     let ind = this.uniqueNumGen();
     let imageName = this.images[ind];
     let url = 'https://s3.amazonaws.com/' + environment.s3bucketGeneralImage + '/' + imageName;
-    console.log(ind, url);
     return url;
 
 

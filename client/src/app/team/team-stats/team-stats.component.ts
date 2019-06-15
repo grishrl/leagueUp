@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { TeamService } from 'src/app/services/team.service';
 import { HeroesProfileService } from 'src/app/services/heroes-profile.service';
+import { forEach as _forEach } from 'lodash';
 
 @Component({
   selector: 'app-team-stats',
@@ -37,17 +38,14 @@ export class TeamStatsComponent implements OnInit {
       res=>{
         if(res && res.length>0){
           res.forEach(stats=>{
-            console.log(stats);
             this.totalGames += stats.stats.totalMatches;
             this.totalWins += stats.stats.wins;
             this.takedowns += stats.stats.takedowns.total;
             let heroPlayedKeys = Object.keys(stats.stats.heroes);
             this.heroesPlayed += heroPlayedKeys.length;
           });
-          // console.log(res[0]);
           this.statistics = res[0];
           this.roundTree(this.statistics);
-          console.log('this.statistics', this.statistics);
         }
       },
       err=>{
@@ -56,22 +54,23 @@ export class TeamStatsComponent implements OnInit {
     )
   }
 
+  //moves recursively through an objects structure rounding numbers it finds.
   roundTree(obj) {
-    if (typeof obj == 'object') {
-      let keys = Object.keys(obj);
-      keys.forEach(key => {
-        let item = obj[key];
-        if (typeof item == 'object') {
-          this.roundTree(item);
-        } else {
-          if (!isNaN(item)) {
-            if (item<1 && item>0){
-              item = item*100;
+    if(obj){
+      if (typeof obj == 'object') {
+        _forEach(obj, (value, key)=>{
+          if (typeof value == 'object') {
+            this.roundTree(value);
+          } else {
+            if (!isNaN(value)) {
+              if (value < 1 && value > 0) {
+                value = value * 100;
+              }
+              obj[key] = Math.round(value);
             }
-            obj[key] = Math.round(item);
           }
-        }
-      })
+        })
+      }
     }
   }
 

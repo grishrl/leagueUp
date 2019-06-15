@@ -17,7 +17,6 @@ export class PlayerSmallCardComponent implements OnInit {
 
   _captain;
   @Input() set captain(val){
-    console.log('PlayerSmallCardComponent ',val)
     if(val){
       this._captain = val;
     }
