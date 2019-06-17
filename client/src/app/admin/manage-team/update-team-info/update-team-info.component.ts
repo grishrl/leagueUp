@@ -30,7 +30,9 @@ export class UpdateTeamInfoComponent implements OnInit {
   adminRefreshMMR() {
     this.admin.refreshTeamMMR(this.returnedProfile.teamName_lower).subscribe(
       (res) => {
-        this.returnedProfile.teamMMRAvg = res.newMMR;
+        this.returnedProfile.teamMMRAvg = res.newMMR.averageMmr;
+        this.returnedProfile.hpMmrAvg = res.newMMR.heroesProfileAvgMmr;
+        this.returnedProfile.ngsMmrAvg = res.newMMR.ngsAvgMmr;
       },
       (err) => {
         console.log(err);

@@ -14,6 +14,7 @@ export class DivisionCupScheduleComponent implements OnInit {
 
   constructor(private scheduleService:ScheduleService, public util:UtilitiesService, public team:TeamService) { }
 
+  totalCups = 0;
   selectedCup;
   localStoreTournaments;
   matches;
@@ -24,6 +25,7 @@ export class DivisionCupScheduleComponent implements OnInit {
         console.log(res);
         if (res.tournInfo.length > 0) {
           this.selectedCup = 0;
+          this.totalCups = res.tournInfo.length;
           this.localStoreTournaments = res.tournInfo;
           this.getMatches();
         }

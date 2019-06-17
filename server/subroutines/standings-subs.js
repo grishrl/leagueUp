@@ -137,6 +137,7 @@ async function cupDivStanding(division, season) {
                 //update and save standing
                 //return standing
         }
+        console.log('tournamentIds ', tournamentIds);
         if (tournamentIds.length > 0) {
             let resolvedTournaments = await challonge.retriveTournaments(tournamentIds).then(response => {
                 return response

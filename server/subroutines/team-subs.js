@@ -209,9 +209,9 @@ async function topMemberMmr(members) {
 
         //fetch all users from the dB
         let returnVal = {
-            'averageMmr': 0,
-            'heroesProfileAvgMmr': 0,
-            'ngsAvgMmr': 0
+            'averageMmr': null,
+            'heroesProfileAvgMmr': null,
+            'ngsAvgMmr': null
         };
         let users = await User.find({
             displayName: {
@@ -243,7 +243,9 @@ async function topMemberMmr(members) {
                     ngsMmrArr.push(user.ngsMmr);
                 }
             });
+            console.log(mmrArr, hpMmrArr, ngsMmrArr);
             //sort mmrs
+            mmrArr = removeZeroIndicies(mmrArr);
             if (mmrArr.length > 0) {
                 mmrArr.sort((a, b) => {
                     if (a > b) {
@@ -272,6 +274,7 @@ async function topMemberMmr(members) {
 
                 returnVal.averageMmr = average;
             }
+            hpMmrArr = removeZeroIndicies(hpMmrArr);
             if (hpMmrArr.length > 0) {
                 hpMmrArr.sort((a, b) => {
                     if (a > b) {
@@ -300,6 +303,8 @@ async function topMemberMmr(members) {
 
                 returnVal.heroesProfileAvgMmr = average;
             }
+            ngsMmrArr = removeZeroIndicies(ngsMmrArr);
+            console.log(ngsMmrArr);
             if (ngsMmrArr.length > 0) {
                 ngsMmrArr.sort((a, b) => {
                     if (a > b) {
@@ -580,6 +585,19 @@ module.exports = {
     updateTeamMmrAsynch: updateTeamMmrAsynch,
     updateTeamMatches: updateTeamMatches,
     updateTeamDivHistory: updateDivisionHistory
+}
+
+function removeZeroIndicies(arr) {
+    let zerosIndicies = [];
+    arr.forEach((val, index) => {
+        if (val == 0) {
+            zerosIndicies.push(index);
+        }
+    });
+    for (var i = zerosIndicies.length; i > 0; i--) {
+        arr.splice(zerosIndicies[i - 1], 1);
+    }
+    return arr;
 }
 
 

@@ -5,7 +5,8 @@
             <div class="col-xl-7">
                 <div class="row">
                     <div class="col-md-3">
-                        <img src="https://placekitten.com/150/150" alt="">
+                        <!-- TODO: revist with div images -->
+                        <!-- <img src="https://placekitten.com/150/150" alt=""> -->
                     </div>
 
                     <div class="col-md-9">
@@ -76,7 +77,7 @@
 
                         <!-- Tab Two - squad -->
                         <div class="tab-pane" id="teams">
-                            <app-team-display [teams]="divDisplay.teams"></app-team-display>
+                            <app-team-display [teams]="teamAggregate"></app-team-display>
                         </div>
                         <!-- End Tab Two - squad -->
 

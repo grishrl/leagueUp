@@ -24,6 +24,7 @@ export class DivisionComponent implements OnInit {
   param: string
   navigationSubscription
   divDisplay = new Division();
+  teamAggregate = [];
 
   season = environment.season;
 
@@ -50,6 +51,12 @@ export class DivisionComponent implements OnInit {
 
       if(res!=undefined&&res!=null){
         this.divDisplay = res;
+        if(this.divDisplay.cupDiv){
+          this.teamAggregate = this.divDisplay.teams.concat(this.divDisplay.participants);
+        }else{
+          this.teamAggregate = this.divDisplay.teams
+        }
+
       }
     }, (err)=>{
       var arr : Team[] = [];

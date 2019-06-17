@@ -51,7 +51,7 @@ export class GenerateSeasonComponent implements OnInit {
           if(third){
             this.admin.generateSeason(this.seasonNumber).subscribe(
               res=>{
-                alert("Schedules for season "+this.seasonNumber+" were generated");
+                alert("Schedules for season "+this.seasonNumber+" were generated!");
                 this.validated = false;
               },
               err=>{

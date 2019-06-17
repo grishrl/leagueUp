@@ -12,9 +12,21 @@ const participantBulkAddAPI = 'https://api.challonge.com/v1/tournaments/{tournam
 
 const matchUpdateAPI = 'https://api.challonge.com/v1/tournaments/{tournament}/matches/{match_id}.json';
 
+const matchGetAPI = 'https://api.challonge.com/v1/tournaments/{tournament}/matches/{match_id}.json'
+
 function replaceTournamentApi(api, param, key) {
     let s = api;
     return s.replace(param, key);
+}
+
+function matchGet(tournamentId, matchId) {
+    let url = replaceTournamentApi(matchUpdateAPI, '{tournament}', tournamentId);
+    url = replaceTournamentApi(url, '{match_id}', matchId);
+    return axios.get(url).then(response => {
+        return response.data;
+    }, err => {
+        return err.response.data
+    });
 }
 
 function matchUpdate(tournamentId, matchId, scores, winner) {
@@ -126,5 +138,6 @@ module.exports = {
     finalizeTournament: finalizeTournament,
     bulkParticpantsAdd: bulkParticpantsAdd,
     matchUpdate: matchUpdate,
-    retriveTournaments: retriveTournaments
+    retriveTournaments: retriveTournaments,
+    matchGet: matchGet
 }

@@ -4,6 +4,7 @@ import { StandingsService } from 'src/app/services/standings.service';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { MatPaginator, PageEvent } from '@angular/material';
 import { FormControl, Validators } from '@angular/forms';
+import { TeamService } from 'src/app/services/team.service';
 
 @Component({
   selector: 'app-tournament-generator',
@@ -18,18 +19,20 @@ export class TournamentGeneratorComponent implements OnInit {
   divisions: any = [];
   selectedDivision: any = null;
   division
-  constructor(private adminService:AdminService, private standingsService:StandingsService, private admin:AdminService) { }
+  constructor(private adminService:AdminService, private standingsService:StandingsService, private admin:AdminService, private team:TeamService) { }
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   selected(div) {
     if(div!=undefined){
       this.reset();
-      this.getStandings(div.divisionConcat);
+
       this.division = div.divisionConcat;
       if (div.cupDiv) {
         this.showCups = true;
+        this.getDivTeams(div);
       } else {
+        this.getStandings(div.divisionConcat);
         this.showCups = false;
       }
     }else{
@@ -56,6 +59,24 @@ export class TournamentGeneratorComponent implements OnInit {
   length: number;
   pageSize: number = 10;
   filteredArray: any = [];
+
+  getDivTeams(div){
+    console.log('a');
+    this.fetching = true;
+    this.team.getTeams(div.teams).subscribe(
+      res=>{
+        console.log('b');
+        this.fetching=false;
+        console.log(res);
+        this.standings = res;
+      },
+      err=>{
+        this.fetching = false;
+        console.log(err);
+      }
+
+    )
+  }
 
   getStandings(div) {
     this.fetching = true;

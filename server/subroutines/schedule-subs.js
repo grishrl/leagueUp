@@ -11,6 +11,7 @@ const {
 } = require('../bracketzadateam/bracketzada.min');
 const logger = require('./sys-logging-subs');
 const challonge = require('../methods/challongeAPI');
+const divSubs = require('./division-subs');
 
 
 
@@ -43,7 +44,15 @@ async function generateSeason(season) {
 
     let divObj = {};
     //get list of divisions
-    let getDivision = await Division.find().then((res) => {
+    let getDivision = await Division.find({
+        $or: [{
+                cupDiv: false
+            },
+            {
+                cupDiv: { $exists: false }
+            }
+        ]
+    }).then((res) => {
         return res;
     });
     //loop through the divisions
@@ -251,6 +260,8 @@ function returnTeamInfo(fullTeamsInfo, finalParticipantArray, challongeRef) {
 }
 
 async function generateTournamentTwo(teams, season, division, cup, name, description) {
+
+    divSubs.cupDivisionAggregator(teams, division);
 
     //the bracket function requires of an array of special team objects, 
     let _teams = [];
@@ -465,6 +476,8 @@ async function generateTournamentTwo(teams, season, division, cup, name, descrip
                             // console.log(err);
                             return err;
                         });
+
+
 
                         return {
                             'matches': matches,
