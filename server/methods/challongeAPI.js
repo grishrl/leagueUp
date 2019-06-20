@@ -22,6 +22,8 @@ function replaceTournamentApi(api, param, key) {
 function matchGet(tournamentId, matchId) {
     let url = replaceTournamentApi(matchUpdateAPI, '{tournament}', tournamentId);
     url = replaceTournamentApi(url, '{match_id}', matchId);
+    console.log('url ', url);
+    url += '?api_key=' + process.env.challongeApiKey;
     return axios.get(url).then(response => {
         return response.data;
     }, err => {
