@@ -5,6 +5,7 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 import { StandingsService } from 'src/app/services/standings.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-team-schedule-table',
@@ -20,30 +21,19 @@ export class TeamScheduleTableComponent implements OnInit {
   roundsArray;
   matches;
   initTeamSchedule(teamName){
-    this.scheduleService.getTeamSchedules(6, teamName).subscribe(
+    this.scheduleService.getTeamSchedules(environment.season, teamName).subscribe(
       res => {
         let matches = res;
         console.log(res);
         //set the nomatches state
+        console.log(matches);
         if (matches.length == 0) {
           this.noMatches = true;
         } else {
+
           this.noMatches = false;
-          let div = matches[0].divisionConcat
-          this.standingsService.getStandings(div).subscribe(
-            res => {
-              let standings = res;
-              matches.forEach(match => {
-                standings.forEach(standing => {
-                  if (match.home.teamName == standing.teamName) {
-                    match.home['losses'] = standing.losses;
-                    match.home['wins'] = standing.wins;
-                  }
-                  if (match.away.teamName == standing.teamName) {
-                    match.away['losses'] = standing.losses;
-                    match.away['wins'] = standing.wins;
-                  }
-                });
+
+          matches.forEach(match => {
                 if (match.scheduleDeadline) {
                   match['friendlyDeadline'] = this.util.getDateFromMS(match.scheduleDeadline);
                 }
@@ -53,16 +43,22 @@ export class TeamScheduleTableComponent implements OnInit {
                   match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
                   match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
                 }
-              })
-            }, err => {
-              console.log(err);
-            });
+
+        });
+        matches =  matches.sort((a,b)=>{
+          if(a.round>b.round){
+            return 1;
+          }else{
+            return -1;
+          }
+        });
           this.matches = matches;
-        }
+        console.log('nomatches ', this.noMatches);
 
 
 
-      },
+      }
+    },
       err => { console.log(err) }
     )
   }

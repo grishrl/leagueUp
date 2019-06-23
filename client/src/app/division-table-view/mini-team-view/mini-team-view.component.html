@@ -2,7 +2,14 @@
     <ul>
         <li *ngFor="let team of teamList">
             <app-team-link [team]="team.teamName">
-                <img src="{{teamService.imageFQDN(team.logo)}}" alt=""> {{team.teamName}}
+                <div class="row">
+                    <div class="col-2">
+                        <img src="{{teamService.imageFQDN(team.logo)}}" alt="">
+                    </div>
+                    <div class="col-10 text-center">
+                        {{team.teamName}}
+                    </div>
+                </div>
             </app-team-link>
         </li>
     </ul>
