@@ -6,6 +6,7 @@ import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { UtilitiesService } from '../services/utilities.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-create-team',
@@ -18,7 +19,7 @@ export class CreateTeamComponent implements OnInit {
   availabilityValid:boolean
   availabilityDays:number=0;
 
-  constructor(private team: TeamService, public timezone:TimezoneService, private auth: AuthService, private route:Router, private util:UtilitiesService) { }
+  constructor(private team: TeamService, public timezone:TimezoneService, private auth: AuthService, private route:Router, private util:UtilitiesService, private user:UserService) { }
 
   nameContorl = new FormControl();
 
@@ -33,9 +34,23 @@ export class CreateTeamComponent implements OnInit {
   })
 
   timezoneError
+  captainDiscordTag
 
   ngOnInit() {
     this.markFormGroupTouched(this.createTeamControlGroup);
+    this.user.getUser(this.auth.getUser()).subscribe(
+      res=>{
+        if(res.discordTag){
+          this.captainDiscordTag = true;
+        }else{
+          this.captainDiscordTag = false;
+        }
+      },
+      err=>{
+        this.captainDiscordTag = false;
+        console.warn("Error getting user data ", err);
+      }
+    )
     this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
   }
 
@@ -88,10 +103,17 @@ export class CreateTeamComponent implements OnInit {
       }
     }
   }
-
+  showError
   validate() {
 
     let valid = true;
+    //validate this user has a discord tag in their profile
+
+    if(!this.captainDiscordTag){
+    valid = false;
+      this.showError = "Discord tag is required for captains please go add it to your profile!"
+    }
+
     //validate team name is there
     if(!this.util.returnBoolByPath(this.returnedProfile, 'teamName')){
       this.nameContorl.setErrors({required:true});

@@ -107,7 +107,6 @@ export class ProfileEditComponent implements OnInit {
   }
 
   discordTagFormControl = new FormControl({ value: '', disabled: false }, [
-    Validators.required,
     this.discordPatternValidator
   ]);
 
