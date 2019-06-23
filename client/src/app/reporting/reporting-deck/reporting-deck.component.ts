@@ -3,7 +3,7 @@ import { ScheduleService } from 'src/app/services/schedule.service';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TeamService } from 'src/app/services/team.service';
-import {merge} from 'lodash';
+import {merge, forEach as _forEach } from 'lodash';
 
 @Component({
   selector: 'app-reporting-deck',
@@ -17,8 +17,10 @@ export class ReportingDeckComponent implements OnInit {
     away:{logo:null,teamName:''},
     home: { logo: null, teamName: ''},
     mapBans: {
-      away: '',
-      home: ''
+      awayOne: '',
+      homeOne: '',
+      awayTwo: '',
+      homeTwo: ''
     },
     other:{},
     reported:false,
@@ -36,6 +38,8 @@ export class ReportingDeckComponent implements OnInit {
   @Input() set match(match){
     if(match!=null && match != undefined){
 
+      console.log('match ', match);
+
       merge( this.recMatch, match);
 
       let teams = [];
@@ -43,7 +47,7 @@ export class ReportingDeckComponent implements OnInit {
       teams.push(match.home.teamName);
       this.team.getTeam(match.home.teamName).subscribe(
         res=>{
-          console.log('home team ', res);
+          // console.log('home team ', res);
           this.homeTeam = res;
         },
         err=>{
@@ -52,7 +56,7 @@ export class ReportingDeckComponent implements OnInit {
       )
       this.team.getTeam(match.away.teamName).subscribe(
         res => {
-          console.log('away team ', res);
+          // console.log('away team ', res);
           this.awayTeam = res;
         },
         err => {
@@ -61,8 +65,14 @@ export class ReportingDeckComponent implements OnInit {
       )
     }
     if(this.recMatch.other != null && this.recMatch.mapBans != undefined){
-      this.games = this.recMatch.other;
+      let obj = this.recMatch.other;
+      _forEach(obj, (value, key)=>{
+        if( key != 'homeTeamPlayer' && key != 'awayTeamPlayer'){
+          this.games[key]=value;
+        }
+      });
     }
+
     if(this.recMatch.mapBans != null && this.recMatch.mapBans != undefined){
       this.mapBans = this.recMatch.mapBans;
     }
@@ -101,8 +111,10 @@ removeBan(hero, arr){
 }
 
   mapBans = {
-    away:'',
-    home:''
+    awayOne:'',
+    homeOne:'',
+    awayTwo: '',
+    homeTwo: ''
   };
   games = {};
   showAdd:boolean = true;
@@ -426,12 +438,22 @@ resetReplay(game){
       }
     });
 
-    if (this.mapBans.away == ''){
+    if (this.mapBans.awayOne == ''){
       submittable = false;
       alert('This match\'s away map ban not filled out, can not submit.');
     }
 
-    if (this.mapBans.home == '') {
+    if (this.mapBans.homeOne == '') {
+      submittable = false;
+      alert('This match\'s home map ban not filled out, can not submit.');
+    }
+
+    if (this.mapBans.awayTwo == '') {
+      submittable = false;
+      alert('This match\'s away map ban not filled out, can not submit.');
+    }
+
+    if (this.mapBans.homeTwo == '') {
       submittable = false;
       alert('This match\'s home map ban not filled out, can not submit.');
     }

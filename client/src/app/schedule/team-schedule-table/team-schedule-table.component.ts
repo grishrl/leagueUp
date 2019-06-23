@@ -24,26 +24,19 @@ export class TeamScheduleTableComponent implements OnInit {
     this.scheduleService.getTeamSchedules(environment.season, teamName).subscribe(
       res => {
         let matches = res;
-        console.log(res);
-        //set the nomatches state
-        console.log(matches);
         if (matches.length == 0) {
           this.noMatches = true;
         } else {
-
           this.noMatches = false;
-
           matches.forEach(match => {
                 if (match.scheduleDeadline) {
                   match['friendlyDeadline'] = this.util.getDateFromMS(match.scheduleDeadline);
                 }
-
                 if (match.scheduledTime) {
                   match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
                   match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
                   match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
                 }
-
         });
         matches =  matches.sort((a,b)=>{
           if(a.round>b.round){
@@ -53,10 +46,6 @@ export class TeamScheduleTableComponent implements OnInit {
           }
         });
           this.matches = matches;
-        console.log('nomatches ', this.noMatches);
-
-
-
       }
     },
       err => { console.log(err) }

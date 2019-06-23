@@ -65,7 +65,7 @@
                             Home Map Ban
                             <div class="row m-t-5">
                                 <div class="col">
-                                    <mat-select placeholder="Map " [(ngModel)]="mapBans.home">
+                                    <mat-select placeholder="Map " [(ngModel)]="mapBans.homeOne">
                                         <mat-option *ngFor="let map of maps | keyvalue" [value]="map.value">{{map.value}}</mat-option>
                                     </mat-select>
 
@@ -79,8 +79,37 @@
                             Away Map Ban
                             <div class="row">
                                 <div class="col">
-                                    <mat-select placeholder="Map " [(ngModel)]="mapBans.away">
+                                    <mat-select placeholder="Map " [(ngModel)]="mapBans.awayOne">
                                         <mat-option *ngFor="let map of maps | keyvalue" [value]="map.value">{{map.value}}</mat-option>
+                                    </mat-select>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col">
+                            Home Map Ban
+                            <div class="row m-t-5">
+                                <div class="col">
+                                    <mat-select placeholder="Map " [(ngModel)]="mapBans.homeTwo">
+                                        <mat-option *ngFor="let map of maps | keyvalue" [value]="map.value">
+                                            {{map.value}}</mat-option>
+                                    </mat-select>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+
+                        </div>
+                        <div class="col">
+                            Away Map Ban
+                            <div class="row">
+                                <div class="col">
+                                    <mat-select placeholder="Map " [(ngModel)]="mapBans.awayTwo">
+                                        <mat-option *ngFor="let map of maps | keyvalue" [value]="map.value">
+                                            {{map.value}}</mat-option>
                                     </mat-select>
 
                                 </div>
