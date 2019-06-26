@@ -21,7 +21,7 @@ export class TournamentGeneratorComponent implements OnInit {
   division
   constructor(private adminService:AdminService, private standingsService:StandingsService, private admin:AdminService, private team:TeamService) { }
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   selected(div) {
     if(div!=undefined){

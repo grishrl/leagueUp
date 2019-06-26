@@ -11,7 +11,7 @@ import { PageEvent, MatPaginator } from '@angular/material';
 })
 export class ManageSelectTeamComponent implements OnInit, AfterViewInit {
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   constructor(private admin: AdminService, private team: TeamService, private router:Router) { }
 

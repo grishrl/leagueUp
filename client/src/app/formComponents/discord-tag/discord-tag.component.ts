@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, SimpleChanges, OnChanges } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { VALID } from '@angular/forms/src/model';
 
 @Component({
   selector: 'app-discord-tag',

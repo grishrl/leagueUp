@@ -14,7 +14,7 @@ import { FilterService } from 'src/app/services/filter.service';
 })
 export class CasterDashboardComponent implements OnInit, AfterViewInit {
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   constructor(public team:TeamService, private scheduleService:ScheduleService, public util:UtilitiesService, private Auth: AuthService,
     private filterService:FilterService) {

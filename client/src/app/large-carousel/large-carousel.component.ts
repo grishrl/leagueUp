@@ -22,7 +22,7 @@ export class LargeCarouselComponent implements OnInit {
   //helper for monitoring time of the carousel
   private reset$: BehaviorSubject<any>;
 
-  @ViewChild('heroSlider') private carouselEl: ElementRef
+  @ViewChild('heroSlider', { static: false }) private carouselEl: ElementRef
 
   //carousel array of article info for slider
   carousel: any = [];

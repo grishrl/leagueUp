@@ -8,7 +8,6 @@ import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 import { EventsService } from '../services/events.service';
 import { UtilitiesService } from '../services/utilities.service';
-import { asElementData } from '@angular/core/src/view';
 
 const colors: any = {
   heroic: {  //navy
@@ -178,7 +177,7 @@ export class CalendarViewComponent implements OnInit {
     )
   }
 
-  @ViewChild('modalContent')
+  @ViewChild('modalContent', { static: false })
   modalContent: TemplateRef<any>;
 
   view: CalendarView = CalendarView.Month;
