@@ -42,8 +42,8 @@ export class NavComponent implements OnInit {
     this.menuAPI.initPanels([document.querySelector('#mobile-nav-list')]);
   }
 
-  @ViewChild('mobileNav') mobileMavElement;
-  @ViewChild('menuList') menuList;
+  @ViewChild('mobileNav', { static: false }) mobileMavElement;
+  @ViewChild('menuList', { static: false }) menuList;
 
   menuVar;
   menuAPI;

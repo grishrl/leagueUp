@@ -11,7 +11,7 @@ import { AdminService } from '../services/admin.service';
   styleUrls: ['./image-upload.component.css']
 })
 export class ImageUploadComponent implements OnInit {
-  @ViewChild('ngxCroppie') ngxCroppie: NgxCroppieComponent;
+  @ViewChild('ngxCroppie', { static: false }) ngxCroppie: NgxCroppieComponent;
 
   _teamName: string
   @Input() set teamName(name) {
