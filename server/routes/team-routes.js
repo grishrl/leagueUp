@@ -194,7 +194,6 @@ router.post('/create', passport.authenticate('jwt', {
 
         recievedTeam.captain = req.user.displayName;
 
-
         recievedTeam.teamMembers.push({
             _id: req.user._id,
             'displayName': req.user.displayName
@@ -204,13 +203,6 @@ router.post('/create', passport.authenticate('jwt', {
             status = 400;
             message.nameError = "Null team name not allowed!";
         }
-        //time zone should be in here.. although not sure if that's even necessary for a minimal creation
-        // if (!util.returnBoolByPath(recievedTeam, 'timeZone')) {
-        //     status = 400;
-        //     message = {
-        //         "message": "Must have a timezone!"
-        //     };
-        // }
 
         if (recievedTeam.hasOwnProperty('_id')) {
             delete recievedTeam._id;
@@ -222,6 +214,7 @@ router.post('/create', passport.authenticate('jwt', {
             logObj.error = 'Missing required data'
             res.status(status).send(util.returnMessaging(path, message, false, null, null, logObj));
         } else {
+            recievedTeam.teamName = recievedTeam.teamName.trim();
             let lowerName = recievedTeam.teamName.toLowerCase();
             Team.findOne({
                 teamName_lower: lowerName

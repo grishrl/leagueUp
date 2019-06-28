@@ -363,6 +363,10 @@ router.post('/teamSave', passport.authenticate('jwt', {
     logObj.target = team;
     logObj.logLevel = 'ADMIN';
 
+    teamLower = teamLower.trim();
+    payload.teamName_lower = payload.teamName_lower.trim();
+    payload.teamName = payload.teamName.trim();
+
     //check if the team was renamed at the client
     if (teamLower != payload.teamName_lower) {
         //team was renamed
