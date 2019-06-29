@@ -2,6 +2,8 @@ import { Component, OnInit, Input } from '@angular/core';
 import { TeamService } from '../services/team.service';
 import { merge, forEach as _forEach, includes as _includes } from 'lodash';
 import { UtilitiesService } from '../services/utilities.service';
+import { AuthService } from '../services/auth.service';
+import { TimeserviceService } from '../services/timeservice.service';
 
 
 @Component({
@@ -14,8 +16,16 @@ export class QuestionnaireComponent implements OnInit {
   passedTeam: any = {};
   responses: any = {};
   pickedMaps: any[] = [];
+  registrationOpen = false;
 
-  constructor(private teamService: TeamService, private util:UtilitiesService) {  }
+  constructor(private teamService: TeamService, private util:UtilitiesService, public auth:AuthService, private timeService:TimeserviceService) {
+    this.timeService.getSesasonInfoStream.subscribe(
+      res=>{
+        this.registrationOpen = res['data'].registrationOpen
+      }
+    );
+    this.timeService.getSesasonInfo();
+   }
 
   @Input() set team(_team){
     if(_team != undefined || _team != null){
@@ -93,6 +103,14 @@ export class QuestionnaireComponent implements OnInit {
       }else{
         return false;
       }
+  }
+
+  showRegisteredQuestionnaire() {
+    if (this.auth.getUser() == this.passedTeam.captain) {
+      return !this.responses['registered'];
+    } else {
+      return false;
+    }
   }
 
   checkValid() {
