@@ -113,6 +113,10 @@ export class UpdateTeamInfoComponent implements OnInit {
     if (teamToGet){
       this.team.getTeam(teamToGet).subscribe(
         res => {
+          if (!res.questionnaire) {
+            res.questionnaire = {};
+            res.questionnaire.registered = false;
+          }
           this.returnedProfile = res;
           this.stratifyTeamMembers()
         },
@@ -170,9 +174,15 @@ export class UpdateTeamInfoComponent implements OnInit {
       let cptRemoved = Object.assign({}, this.returnedProfile);
       delete cptRemoved.captain;
       this.admin.saveTeam(this.originalName, this.returnedProfile).subscribe((res) => {
+        // console.log(res);
         // console.log('team was saved!');
         this.originalName = res.teamName_lower;
+        if (!res.questionnaire){
+          res.questionnaire = {};
+          res.questionnaire.registered = false;
+        }
         this.returnedProfile = res;
+
       }, (err) => {
         console.log(err);
         alert(err.message);

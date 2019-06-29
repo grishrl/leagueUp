@@ -113,7 +113,6 @@ export class QuestionnaireComponent implements OnInit {
   }
 
   showRegisteredQuestionnaire() {
-    console.log('source ', this.source);
     if(this.source){
       if(this.source == 'admin'){
         return true;
