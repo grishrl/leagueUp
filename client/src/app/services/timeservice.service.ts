@@ -32,8 +32,6 @@ export class TimeserviceService {
     }
   }
 
-  public getSesasonInfoStream: Subject<object> = new Subject();
-
   //this is to be used as an external spur to action; if a component loses it's values it can call this method which will fire the next observable
   getSesasonInfo() {
    return this.cacheCall;

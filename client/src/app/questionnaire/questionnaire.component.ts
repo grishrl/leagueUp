@@ -19,7 +19,7 @@ export class QuestionnaireComponent implements OnInit {
   registrationOpen = false;
 
   constructor(private teamService: TeamService, private util:UtilitiesService, public auth:AuthService, private timeService:TimeserviceService) {
-    this.timeService.getSesasonInfoStream.subscribe(
+    this.timeService.getSesasonInfo().subscribe(
       res=>{
         if(this.source == 'admin')
         {

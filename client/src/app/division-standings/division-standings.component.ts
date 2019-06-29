@@ -44,7 +44,8 @@ export class DivisionStandingsComponent implements OnInit {
             this.DivisionService.getDivision(res.divisionConcat).subscribe(
               res=>{
                 if(res.public){
-                  res.divisionConcat;
+                  this.passDiv = res;
+                  this.getStandings(res.divisionConcat);
                 }else{
                   this.randomDivision();
                 }

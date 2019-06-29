@@ -42,7 +42,7 @@ export class DivisionComponent implements OnInit {
       }
     });
 
-    this.timeService.getSesasonInfoStream.subscribe(res => {
+    this.timeService.getSesasonInfo().subscribe(res => {
       this.currentSeason = res['value'];
     });
     this.timeService.getSesasonInfo();

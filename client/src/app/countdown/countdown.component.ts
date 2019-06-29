@@ -17,7 +17,7 @@ export class CountdownComponent implements OnInit {
 
   constructor(private scheduleService:ScheduleService, public util:UtilitiesService, public team: TeamService, private countdownService:CountdownService, private timeService:TimeserviceService) {
 
-    this.timeService.getSesasonInfoStream.subscribe(
+    this.timeService.getSesasonInfo().subscribe(
       res=>{
         // console.log('season info inc: ', res);
         this.seasonStartDate = res['data'].seasonStartDate;

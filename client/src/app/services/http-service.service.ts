@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { map, catchError, share } from 'rxjs/operators';
+import { map, catchError, share, shareReplay } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { NotificationService } from './notification.service';
 
@@ -108,7 +108,7 @@ export class HttpServiceService {
           return returnObjs;
         })
       ),
-      share()
+      shareReplay(1)
     )
   }
 }
