@@ -17,7 +17,7 @@ export class Team {
   teamMMRAvg: number; //added to display
   teamMembers: [{displayName:string}]; //added to display
   pendingMembers: [{displayName:string}];
-  questionnaire:object;
+  questionnaire: questionnaire;
   hpMmrAvg:number;
   ngsMmrAvg:number;
   ticker: string;
@@ -30,7 +30,7 @@ export class Team {
   constructor(id: string, logo:string, teamName: string, lookingForMore: Boolean, availability:schedule,
     competitiveLevel: number, rolesNeeded: roles, descriptionOfTeam: string, timeZone: string,
     teamMembers: [{ displayName: string }], pendingMembers: [{ displayName: string }], captain: string, teamMMRAvg:number,
-    divisionDisplayName: string, divisionConcat: string, questionnaire:object) {
+    divisionDisplayName: string, divisionConcat: string, questionnaire: questionnaire) {
     if (id != null && id != undefined && id.length > 0) {
       this._id = id;
     } else {
@@ -142,6 +142,7 @@ export class Team {
       this.questionnaire = questionnaire;
     } else {
       this.questionnaire = {
+        registered:null,
         pickedMaps:[]
       };
     }
@@ -153,6 +154,11 @@ export class Team {
     this.twitter = null;
     this.youtube = null;
   }
+}
+
+interface questionnaire{
+  registered:boolean,
+  pickedMaps:Array<string>
 }
 
 interface history{

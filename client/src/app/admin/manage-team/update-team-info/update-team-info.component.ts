@@ -27,6 +27,9 @@ export class UpdateTeamInfoComponent implements OnInit {
     return player == this.returnedProfile.captain;
   }
 
+
+  source = 'admin';
+
   adminRefreshMMR() {
     this.admin.refreshTeamMMR(this.returnedProfile.teamName_lower).subscribe(
       (res) => {

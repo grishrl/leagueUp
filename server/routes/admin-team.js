@@ -392,11 +392,13 @@ router.post('/teamSave', passport.authenticate('jwt', {
                             // check the paylaod and update the found team if the originalTeam property if it existed on the payload
                             if (util.returnBoolByPath(payload, 'lookingForMore')) {
                                 originalTeam.lookingForMore = payload.lookingForMore;
+                                originalTeam.markModified('lookingForMore');
                             }
 
                             if (util.returnBoolByPath(payload, 'availability')) {
                                 originalTeam.availability = {};
                                 originalTeam.availability = payload.availability;
+                                originalTeam.markModified('availability');
                             }
 
                             if (util.returnBoolByPath(payload, 'competitiveLevel')) {
@@ -429,6 +431,12 @@ router.post('/teamSave', passport.authenticate('jwt', {
                             if (util.returnBoolByPath(payload, 'ticker')) {
                                 originalTeam.ticker = payload.ticker;
                                 originalTeam.ticker = payload.ticker.toLowerCase();
+                            }
+
+                            if (util.returnBoolByPath(payload, 'questionnaire')) {
+                                originalTeam.questionnaire = {};
+                                originalTeam.questionnaire = payload.questionnaire;
+                                originalTeam.markModified('questionnaire');
                             }
 
                             originalTeam.save().then((savedTeam) => {
@@ -509,6 +517,11 @@ router.post('/teamSave', passport.authenticate('jwt', {
                 if (util.returnBoolByPath(payload, 'ticker')) {
                     foundTeam.ticker = payload.ticker;
                     foundTeam.ticker = payload.ticker.toLowerCase();
+                }
+                if (util.returnBoolByPath(payload, 'questionnaire')) {
+                    foundTeam.questionnaire = {};
+                    foundTeam.questionnaire = payload.questionnaire;
+                    foundTeam.markModified('questionnaire');
                 }
 
                 foundTeam.save().then((savedTeam) => {

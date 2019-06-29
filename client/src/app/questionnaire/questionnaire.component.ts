@@ -21,11 +21,18 @@ export class QuestionnaireComponent implements OnInit {
   constructor(private teamService: TeamService, private util:UtilitiesService, public auth:AuthService, private timeService:TimeserviceService) {
     this.timeService.getSesasonInfoStream.subscribe(
       res=>{
-        this.registrationOpen = res['data'].registrationOpen
+        if(this.source == 'admin')
+        {
+          this.registrationOpen = true;
+        }else{
+          this.registrationOpen = res['data'].registrationOpen;
+        }
       }
     );
     this.timeService.getSesasonInfo();
    }
+
+  @Input() source;
 
   @Input() set team(_team){
     if(_team != undefined || _team != null){
@@ -106,7 +113,12 @@ export class QuestionnaireComponent implements OnInit {
   }
 
   showRegisteredQuestionnaire() {
-    if (this.auth.getUser() == this.passedTeam.captain) {
+    console.log('source ', this.source);
+    if(this.source){
+      if(this.source == 'admin'){
+        return true;
+      }
+    }else if (this.auth.getUser() == this.passedTeam.captain) {
       return !this.responses['registered'];
     } else {
       return false;
@@ -148,7 +160,7 @@ export class QuestionnaireComponent implements OnInit {
 
 
   ngOnInit() {
-
+    console.log('source ', this.source)
   }
 
 }
