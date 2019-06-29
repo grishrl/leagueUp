@@ -27,13 +27,13 @@ router.post('/upsertSeasonInfo', passport.authenticate('jwt', {
         'dataName': 'seasonInfo',
         'value': season,
         'data': {
-            'registrationOpen': req.body.seasonStart,
-            'seasonStartDate': req.body.seasonStart,
-            'seasonEndDate': req.body.seasonEnd
+            'registrationOpen': req.body.registrationOpen,
+            'seasonStartDate': req.body.seasonStartDate,
+            'seasonEndDate': req.body.seasonEndDate
         }
     };
 
-    System.findOneAndUpdate(
+    System.system.findOneAndUpdate(
         scheduleQuery, postedInfo, {
             new: true,
             upsert: true
@@ -51,23 +51,32 @@ router.post('/upsertSeasonInfo', passport.authenticate('jwt', {
 
 router.get('/getSeasonInfo', (req, res) => {
 
-    System.find({
-        'dataName': 'seasonInfo',
-    }).lean().then(
-        found => {
-            found = found.sort((a, b) => {
-                if (a.value > b.value) {
-                    return 1;
-                } else {
-                    return -1;
-                }
-            });
-            res.status(200).send(util.returnMessaging(path, "Found the season schedule.", false, found[0], null, logObj));
-        },
-        err => {
-            res.status(500).send(util.returnMessaging(path, "Error finding season schedule.", err, null, null, logObj));
-        }
-    );
+    const path = '/admin/getSeasonInfo';
+
+    try {
+        System.system.find({
+            'dataName': 'seasonInfo'
+        }).lean().then(
+            found => {
+                found = found.sort((a, b) => {
+                    if (a.value > b.value) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                });
+                res.status(200).send(util.returnMessaging(path, "Found the season schedule.", false, found[0], null));
+            },
+            err => {
+                res.status(500).send(util.returnMessaging(path, "Error finding season schedule.", err, null, null));
+            }
+        );
+    } catch (e) {
+        console.log(e);
+    } finally {
+        res.status(500).send(util.returnMessaging(path, "Error in node", err, null, null));
+    }
+
 
 
 })
