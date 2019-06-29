@@ -154,6 +154,8 @@ import { DivisionCupResultsTilesComponent } from './division/division-cup-result
 import { DivisionCupScheduleComponent } from './division/division-cup-schedule/division-cup-schedule.component';
 import { TeamTournamentScheduleTableComponent } from './schedule/team-tournament-schedule-table/team-tournament-schedule-table.component';
 import { TeamTournamentResultsTilesComponent } from './team/team-tournament-results-tiles/team-tournament-results-tiles.component';
+import { SeasonInfoManagerComponent } from './admin/match-management/season-info-manager/season-info-manager.component';
+import { DatePickerComponent } from './formComponents/date-picker/date-picker.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -297,7 +299,9 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     DivisionCupResultsTilesComponent,
     DivisionCupScheduleComponent,
     TeamTournamentScheduleTableComponent,
-    TeamTournamentResultsTilesComponent
+    TeamTournamentResultsTilesComponent,
+    SeasonInfoManagerComponent,
+    DatePickerComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

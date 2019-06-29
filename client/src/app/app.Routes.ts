@@ -48,6 +48,7 @@ import { ApprovePendingAvatarComponent } from "./admin/approve-pending-avatar/ap
 import { AllTeamsComponent } from "./team/all-teams/all-teams.component";
 import { MatchResultsViewComponent } from './match/match-results-view/match-results-view.component';
 import { ChallongeTournComponent } from "./challonge-tourn/challonge-tourn.component";
+import { SeasonInfoManagerComponent } from "./admin/match-management/season-info-manager/season-info-manager.component";
 
 const APP_ROUTES: Routes = [
   { path: 'challonge', component: ChallongeTournComponent },
@@ -68,6 +69,7 @@ const APP_ROUTES: Routes = [
   { path: 'blog', component:BlogListComponent },
   { path: 'blog/:id', component:BlogViewComponent },
   { path: 'match/view/:id', component:MatchResultsViewComponent },
+  { path: '_admin/seasonInfo', component: SeasonInfoManagerComponent},
   { path: '_admin/approveTeamQueue', component:ApproveMemberComponent, canActivate:[AuthGuardService], data:{role:'team'} },
   { path: '_admin/approveAvatarQueue', component: ApprovePendingAvatarComponent, canActivate: [AuthGuardService], data: { role: 'user' } },
   { path: '_admin/manageUser', component: ManageMemberComponent, canActivate: [AuthGuardService], data: { role: 'user' } },

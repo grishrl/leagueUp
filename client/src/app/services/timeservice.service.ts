@@ -8,6 +8,8 @@ import { Subject } from 'rxjs';
 })
 export class TimeserviceService {
 
+  getSeasonInfoULR = '/admin/getSeasonInfo';
+
   constructor(private httpService:HttpServiceService) {
     this.init();
   }
@@ -38,12 +40,20 @@ export class TimeserviceService {
       //firing the http request one more time.
       this.init();
     }
-
   }
+
+  postInfo(obj){
+    let url = "/admin/upsertSeasonInfo"
+    return this.httpService.httpPost(url,obj,true);
+  }
+
+  getSpecificSeason(value){
+    return this.httpService.httpGet(this.getSeasonInfoULR, [{season:value}], false);
+  }
+
   localInfo = null;
   init() {
-    let url = '/admin/getSeasonInfo';
-    this.httpService.httpGet(url, []).subscribe(
+    this.httpService.httpGet(this.getSeasonInfoULR, []).subscribe(
       res=>{
         this.localInfo = res;
         this.getSesasonInfo();
