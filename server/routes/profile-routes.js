@@ -18,9 +18,18 @@ const axios = require('axios');
 
 router.get('/get', (req, res) => {
     const path = '/user/get';
-    var user = req.query.user;
-    user = decodeURIComponent(user);
-    User.findOne({ displayName: user }).lean().then(
+    let query = {};
+    if (req.query.user) {
+        var user = req.query.user;
+        user = decodeURIComponent(user);
+        query['displayName'] = user;
+    } else if (req.query.userId) {
+        var id = req.query.userId;
+        id = decodeURIComponent(id);
+        query['_id'] = id;
+    }
+
+    User.findOne(query).lean().then(
         (foundUser) => {
             if (foundUser) {
                 var temp = removeUneeded(foundUser);

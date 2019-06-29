@@ -30,6 +30,13 @@ isNullOrEmpty = function(dat) {
     }
 };
 
+returnIdString = function(obj) {
+    if (obj.hasOwnProperty('toString()')) {
+        obj = obj.toString();
+    }
+    return obj + "";
+}
+
 isNullorUndefined = function(dat) {
     if (dat === null || dat === undefined) {
         return true;
@@ -178,5 +185,6 @@ module.exports = {
     returnMessaging: returnMessaging,
     returnByPath: returnByPath,
     returnBoolByPath: returnBoolByPath,
-    appendResHeader: appendResHeader
+    appendResHeader: appendResHeader,
+    returnIdString: returnIdString
 };

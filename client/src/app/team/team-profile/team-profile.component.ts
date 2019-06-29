@@ -88,7 +88,7 @@ export class TeamProfileComponent implements OnInit {
       openConfirmRemove.afterClosed().subscribe(result => {
         if (result != undefined && result != null) {
           if(result == 'confirm'){
-            this.removeMember(player)
+            // this.removeMember(player)
           }
 
         }
@@ -96,36 +96,36 @@ export class TeamProfileComponent implements OnInit {
     }
 
 
-  removeMember(player){
-    //TODO: ADD A CONFIRM HERE
-    if(this.componentEmbedded){
-      this.admin.removeMembers(this.returnedProfile.teamName_lower, player).subscribe(
-        (res) => {
-          // console.log('user removed');
-          this.ngOnInit();
-        },
-        (err) => {
-          console.log(err);
-        }
-      )
-    }else{
-      this.team.removeUser(player, this.returnedProfile.teamName_lower).subscribe(
-        (res) => {
+  // removeMember(player){
+  //   //TODO: ADD A CONFIRM HERE
+  //   if(this.componentEmbedded){
+  //     this.admin.removeMembers(this.returnedProfile.teamName_lower, player).subscribe(
+  //       (res) => {
+  //         // console.log('user removed');
+  //         this.ngOnInit();
+  //       },
+  //       (err) => {
+  //         console.log(err);
+  //       }
+  //     )
+  //   }else{
+  //     this.team.removeUser(player, this.returnedProfile.teamName_lower).subscribe(
+  //       (res) => {
 
-          //if the user left the group, destroy their team local info so they can carry on
-          if(this.auth.getUser()==player){
-            this.auth.destroyTeam();
-            this.auth.destroyTeamId();
-          }
-          this.ngOnInit();
-        },
-        (err) => {
-          console.log(err);
-        }
-      )
-    }
+  //         //if the user left the group, destroy their team local info so they can carry on
+  //         if(this.auth.getUser()==player){
+  //           this.auth.destroyTeam();
+  //           this.auth.destroyTeamId();
+  //         }
+  //         this.ngOnInit();
+  //       },
+  //       (err) => {
+  //         console.log(err);
+  //       }
+  //     )
+  //   }
 
-  }
+  // }
 
   adminRefreshMMR(){
     this.admin.refreshTeamMMR(this.returnedProfile.teamName_lower).subscribe(
@@ -548,17 +548,17 @@ export class TeamProfileComponent implements OnInit {
     }
   }
 
-  leaveTeam(){
-    this.team.removeUser(this.auth.getUser(), this.returnedProfile.teamName_lower).subscribe(
-      (res) => {
-        console.log('team left');
-        this.ngOnInit();
-      },
-      (err) => {
-        console.log(err);
-      }
-    )
-  }
+  // leaveTeam(){
+  //   this.team.removeUser(this.auth.getUser(), this.returnedProfile.teamName_lower).subscribe(
+  //     (res) => {
+  //       console.log('team left');
+  //       this.ngOnInit();
+  //     },
+  //     (err) => {
+  //       console.log(err);
+  //     }
+  //   )
+  // }
 
   imageFQDN(img){
     return this.team.imageFQDN(img);

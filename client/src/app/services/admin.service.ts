@@ -175,8 +175,8 @@ export class AdminService {
   queuePost(teamName:string, memberName:string, action:boolean){
     let url = 'admin/approveMemberAdd';
     let payload = {
-      teamName:teamName,
-      member:memberName,
+      teamId:teamName,
+      memberId:memberName,
       approved:action
     }
     return this.httpService.httpPost(url, payload, true);

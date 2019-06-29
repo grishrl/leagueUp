@@ -23,7 +23,7 @@ export class TeamService {
   }
 
   //returns requested team
-  getTeam(name?:string, ticker?:string):Observable<any>{
+  getTeam(name?:string, ticker?:string, id?:string):Observable<any>{
     let url = 'team/get';
     let params = [];
     if(name){
@@ -32,6 +32,10 @@ export class TeamService {
     }
     if(ticker){
       params.push({ ticker: ticker });
+    }
+    if (id) {
+      let encodededID = encodeURIComponent(id);
+      params.push({ teamId: encodededID });
     }
     return this.httpService.httpGet(url, params);
   };

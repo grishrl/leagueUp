@@ -41,12 +41,14 @@ export class UserDeckComponent implements OnInit {
     if(this.player){
       if(this.player.invited){
         ret = false;
-      }
-      if(this.player.teamName || this.player.teamId){
+      }else if(this.player.teamName || this.player.teamId){
         ret = false;
-      }
-      if (this.player.pendingTeam){
+      }else if (this.player.pendingTeam){
         ret = false;
+      }else if(
+        this.invitedStatus == 'invited'
+      ){
+        return false;
       }
     }
     return ret;
@@ -80,7 +82,6 @@ export class UserDeckComponent implements OnInit {
   invitedStatus:string;
 
   showInviteButton(player) {
-
     if (this.teamInfo) {
       if (this.teamInfo.invitedUsers) {
         if (this.teamInfo.invitedUsers.indexOf(player.displayName) > -1) {
@@ -91,9 +92,11 @@ export class UserDeckComponent implements OnInit {
       }else{
         this.invitedStatus = 'notinvited';
       }
-    } else {
+    } else if (this.invitedStatus == 'invited'){
+    }else{
       this.invitedStatus = 'noteam';
-    }
   }
+  }
+
 
 }

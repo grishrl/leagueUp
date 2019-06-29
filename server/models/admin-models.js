@@ -16,7 +16,9 @@ const adminSchema = new Schema({
 });
 
 const pendingMembersSchema = new Schema({
+    "teamId": String,
     "teamName": String,
+    "userId": String,
     "userName": String,
     "timestamp": Date
 });

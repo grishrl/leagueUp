@@ -13,13 +13,19 @@ import { environment } from '../../environments/environment'
 @Injectable({ providedIn: 'root' })
 
 export class UserService {
-
+  userGetURL = 'user/get';
   //gets the user profile to match
   getUser(id): Observable<Profile>{
     let encodedID = encodeURIComponent(id);
-    let url = 'user/get';
     let params = [{user: encodedID}];
-    return this.httpService.httpGet(url, params);
+    return this.httpService.httpGet(this.userGetURL, params);
+  }
+
+  //gets the user profile to match
+  getUserById(id): Observable<Profile> {
+    let encodedID = encodeURIComponent(id);
+    let params = [{ userId: encodedID }];
+    return this.httpService.httpGet(this.userGetURL, params);
   }
 
     getStatistics(username){

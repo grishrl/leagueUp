@@ -1,10 +1,11 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { UserService } from 'src/app/services/user.service';
 import { Profile } from '../../classes/profile.class';
 import { AuthService } from 'src/app/services/auth.service';
 import { TeamService } from 'src/app/services/team.service';
 import { ConfirmRemoveMemberComponent } from '../../modal/confirm-remove-member/confirm-remove-member.component';
+import { EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-player-small-card',
@@ -54,6 +55,12 @@ export class PlayerSmallCardComponent implements OnInit {
     )
   }
 
+  @Output() playerRemove = new EventEmitter();
+
+  dropEmmiter(x) {
+    this.playerRemove.emit(x);
+  }
+
   showRemove(){
     let ret = false;
     if(this._captain){
@@ -86,6 +93,37 @@ export class PlayerSmallCardComponent implements OnInit {
     });
   }
 
+  // removeMember(player) {
+  //   //TODO: ADD A CONFIRM HERE
+  //   if (this.componentEmbedded) {
+  //     this.admin.removeMembers(this.returnedProfile.teamName_lower, player).subscribe(
+  //       (res) => {
+  //         // console.log('user removed');
+  //         this.ngOnInit();
+  //       },
+  //       (err) => {
+  //         console.log(err);
+  //       }
+  //     )
+  //   } else {
+  //     this.team.removeUser(player, this.returnedProfile.teamName_lower).subscribe(
+  //       (res) => {
+
+  //         //if the user left the group, destroy their team local info so they can carry on
+  //         if (this.auth.getUser() == player) {
+  //           this.auth.destroyTeam();
+  //           this.auth.destroyTeamId();
+  //         }
+  //         this.ngOnInit();
+  //       },
+  //       (err) => {
+  //         console.log(err);
+  //       }
+  //     )
+  //   }
+
+  // }
+
   removeMember(player) {
 
     if(player && this._teamName){
@@ -97,7 +135,7 @@ export class PlayerSmallCardComponent implements OnInit {
             this.Auth.destroyTeam();
             this.Auth.destroyTeamId();
           }
-          this.ngOnInit();
+          this.dropEmmiter(player)
         },
         (err) => {
           console.log(err);
@@ -120,6 +158,18 @@ export class PlayerSmallCardComponent implements OnInit {
     }
     return ret;
   }
+
+  // leaveTeam() {
+  //   this.team.removeUser(this.Auth.getUser(), this._teamName.toLowerCase()).subscribe(
+  //     (res) => {
+  //       console.log('team left');
+  //       this.dropEmmiter(this.Auth.getUser());
+  //     },
+  //     (err) => {
+  //       console.log(err);
+  //     }
+  //   )
+  // }
 
   displayName: string;
   @Input() set playerID(val) {

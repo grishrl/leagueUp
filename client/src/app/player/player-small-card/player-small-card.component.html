@@ -22,12 +22,14 @@
     </app-player-link>
     <div class="row mt-1" *ngIf="showRemove()">
         <div class="col">
-            <button class="btn-remove"><i class="fas fa-ban"></i> Remove From Team </button>
+            <button class="btn-remove" (click)="removeMember(player.displayName)"><i class="fas fa-ban"></i> Remove From
+              Team </button>
         </div>
     </div>
     <div class="row mt-1" *ngIf="showLeave()">
         <div class="col">
-            <button class="btn-remove"><i class="fas fa-user-slash"></i> Leave Team </button>
+            <button class="btn-remove" (click)="removeMember(player.displayName)"><i class="fas fa-user-slash"></i>
+              Leave Team </button>
         </div>
     </div>
 </div>

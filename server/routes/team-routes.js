@@ -41,6 +41,7 @@ router.get('/get', (req, res) => {
     const path = '/team/get';
     var team = req.query.team;
     var ticker = req.query.ticker;
+    var id = req.query.teamId;
 
     if (team) {
         team = decodeURIComponent(team);
@@ -51,8 +52,14 @@ router.get('/get', (req, res) => {
         ticker = ticker.toLowerCase();
     }
 
+    if (id) {
+        id = decodeURIComponent(id);
+    }
+
     let query = {};
-    if (team && ticker) {
+    if (id) {
+        query = { "_id": id }
+    } else if (team && ticker) {
         query['$and'] = [];
         query['$and'].push({ 'teamName_lower': team });
         query['$and'].push({ 'ticker': ticker });
@@ -61,6 +68,7 @@ router.get('/get', (req, res) => {
     } else {
         query['ticker_lower'] = ticker;
     }
+
 
     Team.findOne(query).lean().then(
         (foundTeam) => {
@@ -394,7 +402,7 @@ router.post('/addMember', passport.authenticate('jwt', {
                         foundTeam.save().then((saveOK) => {
                             UserSub.togglePendingTeam(foundUser.displayName);
                             res.status(200).send(util.returnMessaging(path, "User added to pending members", false, saveOK, null, logObj));
-                            QueueSub.addToPendingTeamMemberQueue(foundTeam.teamName_lower, foundUser.displayName);
+                            QueueSub.addToPendingTeamMemberQueue(util.returnIdString(foundTeam._id), foundTeam.teamName_lower, until.returnIdString(foundUser._id), foundUser.displayName);
                         }, (teamSaveErr) => {
                             logObj.logLevel = 'ERROR';
                             res.status(500).send(

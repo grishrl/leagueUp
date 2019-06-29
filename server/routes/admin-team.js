@@ -173,16 +173,14 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
     const path = '/admin/approveMemberAdd';
-    var teamName = req.body.teamName;
-    var member = req.body.member;
+    var teamId = req.body.teamId;
+    var member = req.body.memberId;
     var approved = req.body.approved;
-    teamName = teamName.toLowerCase();
 
     //log object
     let logObj = {};
     logObj.actor = req.user.displayName;
     logObj.action = 'pending team member approval';
-    logObj.target = teamName + ' : ' + member + ' - ' + approved;
     logObj.logLevel = 'ADMIN';
 
     let msg = {};
@@ -199,15 +197,15 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
 
     //find team matching the team in question
     Team.findOne({
-        teamName_lower: teamName
+        _id: teamId
     }).then((foundTeam) => {
         //we found the team
         if (foundTeam) {
             //grab the user associated with this
             User.findOne({
-                displayName: member
+                _id: member
             }).then((foundUser) => {
-
+                logObj.target = foundTeam.teamName + ' : ' + foundUser.displayName + ' - ' + approved;
                 //we found the user
                 if (foundUser) {
                     msg.recipient = foundUser._id.toString();
@@ -218,7 +216,7 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
 
                         var index = null;
                         for (var i = 0; i < foundTeamObject.pendingMembers.length; i++) {
-                            if (foundTeamObject.pendingMembers[i].displayName == member) {
+                            if (foundTeamObject.pendingMembers[i].displayName == foundUser.displayName) {
                                 index = i;
                             }
                         }
@@ -286,11 +284,11 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
                                 res.status(500).send(util.returnMessaging(path, 'Error saving team', teamSaveErr, null, null, logObj));
                             });
                             //this should fire whether the user was approved or denied, clean this item from the queue
-                            QueueSub.removePendingByTeamAndUser(foundTeam.teamName_lower, foundUser.displayName);
+                            QueueSub.removePendingByTeamAndUser(util.returnIdString(foundTeam._id), foundTeam.teamName_lower, util.returnIdString(foundUser._id), foundUser.displayName);
                         } else {
                             logObj.logLevel = 'ERROR';
                             logObj.error = 'User was not found in pending members of team';
-                            res.status(500).send(util.returnMessaging(path, "User \'" + member + "\' was not found in pending members of team \'" + teamName + "\'", false, null, null, logObj));
+                            res.status(500).send(util.returnMessaging(path, "User \'" + foundUser.displayName + "\' was not found in pending members of team \'" + teamName + "\'", false, null, null, logObj));
                         }
                     } else {
                         logObj.logLevel = 'ERROR';
@@ -448,7 +446,7 @@ router.post('/teamSave', passport.authenticate('jwt', {
                                 //this new team name
                                 DivSub.updateTeamNameDivision(originalTeamName, savedTeam.teamName);
                                 OutreachSub.updateOutreachTeamname(originalTeamName, savedTeam.teamName);
-                                QueueSub.updatePendingMembersTeamNameChange(originalTeamName, savedTeam.teamName_lower);
+                                // QueueSub.updatePendingMembersTeamNameChange(originalTeamName, savedTeam.teamName_lower);
                                 //matches ... not existing yet
                                 UserSub.upsertUsersTeamName(savedTeam.teamMembers, savedTeam.teamName, savedTeam._id.toString());
                             }, (err) => {

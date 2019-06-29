@@ -116,7 +116,8 @@ router.post('/inviteResponseComplete', passport.authenticate('jwt', {
                                     }];
                                 }
                                 UserSubs.togglePendingTeam(user);
-                                QueueSub.addToPendingTeamMemberQueue(foundTeam.teamName_lower, user);
+
+                                QueueSub.addToPendingTeamMemberQueue(util.returnIdString(foundTeam._id), foundTeam.teamName_lower, util.returnIdString(user._id), user);
                                 foundTeam.save().then(
                                     saved => {
                                         res.status(200).send(util.returnMessaging(path, "We added the user to pending members", false, null, null, logObj));
