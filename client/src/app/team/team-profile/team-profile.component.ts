@@ -138,14 +138,6 @@ export class TeamProfileComponent implements OnInit {
     )
   }
 
-  showRegisteredQuestionnaire(){
-    if (this.auth.getUser() == this.returnedProfile.captain) {
-      return !this.returnedProfile.questionnaire['registered'];
-    }else{
-      return false;
-    }
-  }
-
   //init implementation
   ngOnInit() {
     this.disabled = true;
