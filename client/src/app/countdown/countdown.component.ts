@@ -15,7 +15,19 @@ import { TimeserviceService } from '../services/timeservice.service';
 })
 export class CountdownComponent implements OnInit {
 
-  constructor(private scheduleService:ScheduleService, public util:UtilitiesService, public team: TeamService, private countdownService:CountdownService, private timeService:TimeserviceService) { }
+  constructor(private scheduleService:ScheduleService, public util:UtilitiesService, public team: TeamService, private countdownService:CountdownService, private timeService:TimeserviceService) {
+
+    this.timeService.getSesasonInfoStream.subscribe(
+      res=>{
+        // console.log('season info inc: ', res);
+        this.seasonStartDate = res['data'].seasonStartDate;
+        this.ngOnInit();
+      }
+    );
+
+   }
+
+   seasonStartDate;
 
   validMatch = false;
   targetMatch = {
@@ -59,7 +71,9 @@ export class CountdownComponent implements OnInit {
   }
 
   ngOnInit() {
-    if(this.timeService.returnWeekNumber()>0){
+    // console.log('oninit ', this.timeService.returnWeekNumber());
+    if (this.timeService.returnWeekNumber() > 0) {
+      this.preSeason = false;
       this.scheduleService.getAllMatchesWithStartTime().subscribe(
         res => {
           let matches = res;
@@ -69,7 +83,7 @@ export class CountdownComponent implements OnInit {
           });
           let now = Date.now();
           let nearestMatch = nextDate(now, matches);
-
+          // console.log('nearestMatch ',nearestMatch);
           if (nearestMatch) {
             nearestMatch.scheduledTime.startTime = parseInt(nearestMatch.scheduledTime.startTime);
             this.startDate = new Date(nearestMatch.scheduledTime.startTime);
@@ -77,15 +91,18 @@ export class CountdownComponent implements OnInit {
             this.validMatch = true;
             this.initCountdown();
           }
+          // console.log('this.validMatch ', this.validMatch);
+          // console.log('this.startDate ', this.startDate);
+          // console.log('this.targetMatch ', this.targetMatch);
 
         },
         err => {
           console.log(err);
         }
       )
-    }else{
-      this.startDate = this.timeService.returnSeasonStart();
-      this.targetMatch.scheduledTime.startTime = this.timeService.returnSeasonStart();
+    } else {
+      this.startDate = this.seasonStartDate;
+      this.targetMatch.scheduledTime.startTime = this.seasonStartDate;
       this.validMatch = false;
       this.preSeason = true;
       this.initCountdown();
