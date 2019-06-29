@@ -8,8 +8,6 @@ router.post('/upsertSeasonInfo', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.scheduleGenerator, (req, res) => {
 
-    console.log(req.body);
-
     const path = '/admin/upsertSeasonInfo';
 
     let season = parseInt(req.body.value);
