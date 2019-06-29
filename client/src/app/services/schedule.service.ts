@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { map } from 'rxjs/operators'
 import { HttpServiceService } from './http-service.service';
-import { environment } from '../../environments/environment';
+import { TimeserviceService } from './timeservice.service';
+import { map, switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ScheduleService {
 
-  constructor(private httpService: HttpServiceService) { }
+  currentSeason;
+  constructor(private httpService: HttpServiceService, private timeService:TimeserviceService) {
+
+   }
 
   //returns all generated matches
   getAllMatches(){
@@ -87,15 +89,24 @@ export class ScheduleService {
 
   getReportedMatches(showSnack?){
     let url = 'schedule/get/reported/matches';
-    let payload = {
-      season:environment.season
-    };
-    if(showSnack != undefined){
+
+
+    if (showSnack != undefined) {
       showSnack = showSnack
-    }else{
+    } else {
       showSnack = true;
     }
-    return this.httpService.httpPost(url, payload, showSnack);
+    return this.timeService.getSesasonInfo().pipe(
+      switchMap(
+        res => {
+          let payload = {
+            season: res['value']
+          };
+          return this.httpService.httpPost(url, payload, showSnack)
+        }
+      )
+
+    );
   }
 
   //get tournament

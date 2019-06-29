@@ -14,8 +14,16 @@ import { TimeserviceService } from 'src/app/services/timeservice.service';
 })
 export class DivisionResultsTilesComponent implements OnInit {
 
-  constructor(private divisionService: DivisionService, private standingsService: StandingsService, private scheduleService: ScheduleService, public team: TeamService, public util: UtilitiesService,
-    private timeService:TimeserviceService) { }
+  constructor(private divisionService: DivisionService, private standingsService: StandingsService,
+    private scheduleService: ScheduleService, public team: TeamService, public util: UtilitiesService,
+    private timeService:TimeserviceService) {
+    this.timeService.getSesasonInfo().subscribe(
+      res => {
+        this.currentSeason = res['value'];
+      }
+    );
+     }
+     currentSeason;
   divisions: any = [];
   standings: any[] = [];
 
@@ -73,7 +81,7 @@ export class DivisionResultsTilesComponent implements OnInit {
       div = this.selectedDivision.divisionConcat;
     }
 
-    let season = environment.season;
+    let season = this.currentSeason;
     this.scheduleService.getScheduleMatches(season, div, this.selectedRound).subscribe(
       res => {
         this.matches = res;

@@ -9,8 +9,11 @@ import { Subject } from 'rxjs';
 export class TimeserviceService {
 
   getSeasonInfoULR = '/admin/getSeasonInfo';
+  cacheCall;
 
   constructor(private httpService:HttpServiceService) {
+    console.log('constructing time service');
+    this.cacheCall = this.httpService.httpGetShareable(this.getSeasonInfoULR,[]);
     this.init();
   }
 
@@ -33,13 +36,7 @@ export class TimeserviceService {
 
   //this is to be used as an external spur to action; if a component loses it's values it can call this method which will fire the next observable
   getSesasonInfo() {
-    //if we don't have cached response data to use we will fire the http request again.
-    if (this.localInfo) {
-      this.getSesasonInfoStream.next(this.localInfo);
-    } else {
-      //firing the http request one more time.
-      this.init();
-    }
+   return this.cacheCall;
   }
 
   postInfo(obj){
@@ -56,7 +53,6 @@ export class TimeserviceService {
     this.httpService.httpGet(this.getSeasonInfoULR, []).subscribe(
       res=>{
         this.localInfo = res;
-        this.getSesasonInfo();
       }
     )
   }

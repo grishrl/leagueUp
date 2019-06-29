@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { UtilitiesService } from '../services/utilities.service';
 import { environment } from '../../environments/environment';
 import { ScheduleService } from '../services/schedule.service';
+import { TimeserviceService } from '../services/timeservice.service';
 
 @Component({
   selector: 'app-challonge-tourn',
@@ -10,7 +11,15 @@ import { ScheduleService } from '../services/schedule.service';
 })
 export class ChallongeTournComponent implements OnInit {
 
-  constructor(private utils:UtilitiesService, private scheduleService:ScheduleService) { }
+  constructor(private utils:UtilitiesService, private scheduleService:ScheduleService, private timeService:TimeserviceService) {
+    this.timeService.getSesasonInfo().subscribe(
+      res=>{
+        this.currentSeason = res['value'];
+      }
+    );
+   }
+
+   currentSeason;
 
   noTourn=false;
   _team;
@@ -94,7 +103,7 @@ export class ChallongeTournComponent implements OnInit {
   noTournament;
 
   ngOnInit() {
-    this.season = this.season ? this.season : environment.season;
+    this.season = this.season ? this.season : this.currentSeason;
     this.theme = this.theme ? this.theme : '1';
     this.multiplier = this.multiplier ? this.multiplier : '2.0';
     this.matchWidthMultiplier = this.matchWidthMultiplier ? this.matchWidthMultiplier : '1.5';

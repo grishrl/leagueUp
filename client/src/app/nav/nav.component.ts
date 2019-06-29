@@ -7,6 +7,7 @@ import { DivisionService } from '../services/division.service';
 import { MessagesService } from '../services/messages.service';
 import { NotificationService } from '../services/notification.service';
 import { Socket } from 'ngx-socket-io';
+import { TimeserviceService } from '../services/timeservice.service';
 
 declare var Mmenu: any;
 
@@ -19,8 +20,9 @@ export class NavComponent implements OnInit {
   divisions
   userMessages:number=0;
 
-  constructor(public Auth:AuthService, private socket:Socket, private router: Router, public team:TeamService, public user:UserService, private divisionService: DivisionService, private messages:MessagesService,
-    private notificationService:NotificationService) {
+  constructor(public Auth:AuthService, private socket:Socket, private router: Router, public team:TeamService,
+    public user:UserService, private divisionService: DivisionService, private messages:MessagesService,
+    private notificationService:NotificationService, private timeService:TimeserviceService) {
       if(this.Auth.isAuthenticated()){
         this.user.heartbeat().subscribe(res=>{
 
@@ -28,12 +30,15 @@ export class NavComponent implements OnInit {
 
         });
       }
-    this.notificationService.updateLogin.subscribe(
-      res => {
-        this.ngOnInit();
-        this.menuAPI.initPanels([document.querySelector('#mobile-nav-list')]);
-      }
-    )
+
+      this.timeService.getSesasonInfo();
+
+      this.notificationService.updateLogin.subscribe(
+        res => {
+          this.ngOnInit();
+          this.menuAPI.initPanels([document.querySelector('#mobile-nav-list')]);
+        }
+      )
      }
 
   logout(){

@@ -1,10 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { DivisionService } from 'src/app/services/division.service';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { TeamService } from 'src/app/services/team.service';
 import { StandingsService } from 'src/app/services/standings.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
-import { environment } from '../../../environments/environment';
 import { TimeserviceService } from 'src/app/services/timeservice.service';
 
 @Component({
@@ -14,7 +12,15 @@ import { TimeserviceService } from 'src/app/services/timeservice.service';
 })
 export class ScheduleViewComponent implements OnInit {
 
-  constructor(private divisionService: DivisionService, private standingsService:StandingsService, private scheduleService: ScheduleService, public team: TeamService, public util:UtilitiesService, private timeService:TimeserviceService) { }
+  currentSeason
+
+  constructor( private standingsService:StandingsService,
+    private scheduleService: ScheduleService, public team: TeamService, public util:UtilitiesService,
+    private timeService:TimeserviceService) {
+      this.timeService.getSesasonInfo().subscribe(res => {
+        this.currentSeason = res['value'];
+      });
+  }
   divisions:any=[];
   standings:any[]=[];
 
@@ -71,7 +77,7 @@ export class ScheduleViewComponent implements OnInit {
       div = this.selectedDivision.divisionConcat;
     }
 
-    let season = environment.season;
+    let season = this.currentSeason;
     this.scheduleService.getScheduleMatches(season, div, this.selectedRound).subscribe(
       res=>{
         this.matches = res;

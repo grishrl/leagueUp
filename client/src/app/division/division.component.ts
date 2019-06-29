@@ -6,6 +6,7 @@ import { Team } from '../classes/team.class';
 import { Division } from '../classes/division';
 import { TeamService } from '../services/team.service';
 import { environment } from '../../environments/environment';
+import { TimeserviceService } from '../services/timeservice.service';
 
 
 
@@ -26,9 +27,10 @@ export class DivisionComponent implements OnInit {
   divDisplay = new Division();
   teamAggregate = [];
 
-  season = environment.season;
 
-  constructor(private division:DivisionService, private teamService:TeamService, private route:ActivatedRoute, private router: Router) {
+
+  constructor(private division:DivisionService, private teamService:TeamService, private route:ActivatedRoute, private router: Router,
+    private timeService:TimeserviceService) {
 
 
     this.navigationSubscription = this.router.events.subscribe((e: any) => {
@@ -40,7 +42,15 @@ export class DivisionComponent implements OnInit {
       }
     });
 
+    this.timeService.getSesasonInfoStream.subscribe(res => {
+      this.currentSeason = res['value'];
+    });
+    this.timeService.getSesasonInfo();
+
    }
+   currentSeason;
+
+  season = this.currentSeason;
 
    index=0;
 
