@@ -18,15 +18,15 @@ export class TimeserviceService {
   }
 
   weekMS = 1000*60*60*24*7;
+  //604800000
 
   returnWeekNumber(){
     if(this.localInfo){
+      console.log(this.localInfo);
       let now = Date.now();
       let difference = now - this.localInfo.data.seasonStartDate;
-      // console.log('now ', now);
-      // console.log('this.localInfo.seasonStartDate ', this.localInfo.data.seasonStartDate);
-      // console.log('difference ',difference);
-      return Math.ceil(difference / this.weekMS);
+      let weeks = difference / this.weekMS;
+      return Math.ceil(weeks);
     }else{
       return 0;
     }
@@ -50,7 +50,7 @@ export class TimeserviceService {
 
   localInfo = null;
   init() {
-    this.httpService.httpGet(this.getSeasonInfoULR, []).subscribe(
+    this.cacheCall.subscribe(
       res=>{
         this.localInfo = res;
       }

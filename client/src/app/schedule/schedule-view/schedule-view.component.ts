@@ -12,20 +12,16 @@ import { TimeserviceService } from 'src/app/services/timeservice.service';
 })
 export class ScheduleViewComponent implements OnInit {
 
-  currentSeason
-
   constructor( private standingsService:StandingsService,
     private scheduleService: ScheduleService, public team: TeamService, public util:UtilitiesService,
     private timeService:TimeserviceService) {
-      this.timeService.getSesasonInfo().subscribe(res => {
-        this.currentSeason = res['value'];
-      });
   }
   divisions:any=[];
   standings:any[]=[];
 
   ngOnInit() {
     let week = this.timeService.returnWeekNumber();
+    console.log(week);
     if (week > 0) {
       this.selectedRound = week;
       this.getMatches();
@@ -70,6 +66,7 @@ export class ScheduleViewComponent implements OnInit {
 
   selectedRound:number
   getMatches(){
+
     let div;
     if(this.provDiv!=undefined&&this.provDiv!=null){
       div=this.provDiv.divisionConcat;
@@ -77,40 +74,45 @@ export class ScheduleViewComponent implements OnInit {
       div = this.selectedDivision.divisionConcat;
     }
 
-    let season = this.currentSeason;
-    this.scheduleService.getScheduleMatches(season, div, this.selectedRound).subscribe(
-      res=>{
-        this.matches = res;
-        this.standingsService.getStandings(this.provDiv.divisionConcat).subscribe(
-          res => {
-            this.standings = res;
-            this.matches.forEach(match => {
-            this.standings.forEach(standing=>{
-              if (match.home.teamName == standing.teamName){
-                match.home['losses']=standing.losses;
-                match.home['wins']=standing.wins;
-              }
-              if(match.away.teamName == standing.teamName){
-                match.away['losses'] = standing.losses;
-                match.away['wins'] = standing.wins;
-              }
+    this.timeService.getSesasonInfo().subscribe(res => {
+      let season = res['value'];
+
+      this.scheduleService.getScheduleMatches(season, div, this.selectedRound).subscribe(
+        res => {
+
+          this.matches = res;
+          this.standingsService.getStandings(this.provDiv.divisionConcat).subscribe(
+            res => {
+              this.standings = res;
+              this.matches.forEach(match => {
+                this.standings.forEach(standing => {
+                  if (match.home.teamName == standing.teamName) {
+                    match.home['losses'] = standing.losses;
+                    match.home['wins'] = standing.wins;
+                  }
+                  if (match.away.teamName == standing.teamName) {
+                    match.away['losses'] = standing.losses;
+                    match.away['wins'] = standing.wins;
+                  }
+                });
+                if (match.scheduledTime) {
+                  if (match.scheduledTime.startTime != null || match.scheduledTime.startTime != undefined) {
+                    match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
+                    match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
+                    match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
+                  }
+                }
+              },
+                err => {
+                  console.log(err);
+                }
+              )
             });
-            if(match.scheduledTime){
-              if (match.scheduledTime.startTime != null || match.scheduledTime.startTime != undefined){
-                match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
-                match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
-                match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
-              }
-            }
-          },
-          err => {
-            console.log(err);
-          }
-        )
-        });
-      },
-      err=>{ console.log(err)}
-    )
+        },
+        err => { console.log(err) }
+      )
+    });
+
   }
 
 }

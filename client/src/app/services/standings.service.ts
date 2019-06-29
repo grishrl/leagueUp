@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpServiceService } from './http-service.service';
-import { environment } from '../../environments/environment';
 import { TimeserviceService } from './timeservice.service';
 import { switchMap } from 'rxjs/operators';
 
