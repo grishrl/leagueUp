@@ -46,6 +46,8 @@ export class ProfileEditComponent implements OnInit {
   //active tab
   index=0;
 
+  errors = [];
+
   //this variable is used in case someone re-routes to profile from a profile
   displayName: string;
   //variable to hold profile returned from server
@@ -259,26 +261,28 @@ export class ProfileEditComponent implements OnInit {
 
   timezoneError;
   discordTagError;
+
   //check the return profile object to make sure it's valid for saving
   validate(){
-
     let valid = true;
-
+    this.errors = [];
     if(this.discordTagFormControl.invalid){
       valid = false;
+      this.errors.push("Discord tag is invalid");
     }
-
     //ensure time zone
     if (this.validAvailDays > 0 && this.isNullOrEmpty(this.returnedProfile.timeZone)) {
       valid = false;
       this.timezoneError = {
         error: true
       }
+      this.errors.push( "You must select timezone with times available");
     } else {
       this.timezoneError = { error: false };
     }
     return valid;
   }
+
 
   //estimate the total games played by this player
   estimateGamesPlayed(){

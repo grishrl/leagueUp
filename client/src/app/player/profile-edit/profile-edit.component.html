@@ -126,22 +126,36 @@
                                     </div>
                                     <div class="row" *ngIf="!disabled">
                                         <div class="col">
-                                            <button type="button" (click)="openDialog()" class="mt-1 btn btn-danger "><span
-                          class="icon-align"><i class="material-icons">delete_forever</i>Delete</span></button>
-                                        </div>
-                                        <div class="col">
-                                            <button type="button" [disabled]="!validate()" (click)="save()" class="mt-1 btn btn-success "><span class="icon-align"><i
-                            class="material-icons">check</i>Save</span></button>
-                                        </div>
-                                        <div class="col">
-                                            <button type="button" (click)="cancel()" class="mt-1 btn btn-danger"><span class="icon-align"><i
-                            class="material-icons">close</i>Cancel</span></button>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="row mt-2">
+                                            <div class="row">
                                                 <div class="col">
-                                                    <button (click)="updateUserMMR()">
-                                                                                    Update MMR </button>
+                                                    <button type="button" (click)="openDialog()" class="mt-1 btn btn-danger "><span class="icon-align"><i
+                                                    class="material-icons">delete_forever</i>Delete</span></button>
+                                                </div>
+                                                <div class="col">
+                                                    <button type="button" [disabled]="!validate()" (click)="save()" class="mt-1 btn btn-success "><span class="icon-align"><i
+                                                    class="material-icons">check</i>Save</span></button>
+                                                </div>
+                                                <div class="col">
+                                                    <button type="button" (click)="cancel()" class="mt-1 btn btn-danger"><span
+                                                  class="icon-align"><i
+                                                    class="material-icons">close</i>Cancel</span></button>
+                                                </div>
+                                            </div>
+                                            <div class="row" *ngIf="errors.length>0">
+                                                <div class="col text-center">
+                                                    <div class="text-danger" *ngFor="let error of errors">{{error}}</div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="col-12">
+                                                        <div class="row mt-2">
+                                                            <div class="col">
+                                                                <button class="btn btn-primary" (click)="updateUserMMR()">Update
+                                                        MMR</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

@@ -31,10 +31,17 @@ isNullOrEmpty = function(dat) {
 };
 
 returnIdString = function(obj) {
-    if (obj.hasOwnProperty('toString()')) {
-        obj = obj.toString();
+    let ret = '';
+    if (!isNullorUndefined(obj)) {
+        if (obj.hasOwnProperty('toString()')) {
+            ret = obj.toString();
+        } else {
+            ret = obj + "";
+        }
+    } else {
+        ret = "nil";
     }
-    return obj + "";
+    return ret;
 }
 
 isNullorUndefined = function(dat) {
