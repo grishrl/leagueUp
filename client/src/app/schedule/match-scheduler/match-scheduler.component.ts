@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { TeamService } from 'src/app/services/team.service';
 import { environment } from '../../../environments/environment';
+import { AuthService } from 'src/app/services/auth.service';
 
 
 @Component({
@@ -26,7 +27,8 @@ export class MatchSchedulerComponent implements OnInit {
   awayScore: number //local prop for scores
   amPm = ['PM', 'AM']; //local propery holds array for the am/pm dropdown
 
-  constructor(public team: TeamService, private route: ActivatedRoute, private scheduleService:ScheduleService, private router:Router) {
+  constructor(public team: TeamService, private route: ActivatedRoute, private scheduleService:ScheduleService, private router:Router,
+    private Auth: AuthService) {
     //get the id provided in the URL route
     this.matchId = this.route.snapshot.params['id'];
    }
@@ -111,7 +113,7 @@ index = 0;
     this.scheduleService.scheduleMatchTime(this.match.matchId, msDate, endDate).subscribe(
       res=>{
         //TODO: will i need to implement a route here?
-        this.router.navigateByUrl('/schedule/teamSchedule');
+        this.router.navigateByUrl('/teamProfile/'+this.team.routeFriendlyTeamName(this.Auth.getTeam()));
       },
       err=>{
         console.log(err)

@@ -34,6 +34,7 @@ export class TeamProfileComponent implements OnInit {
   message: string
   showDivision = false;
 
+  errors=[];
 
   emailControl = new FormControl({ value: '' }, [
     Validators.email,
@@ -500,7 +501,7 @@ export class TeamProfileComponent implements OnInit {
 
   //method to validate the inputs we require.
   validate() {
-
+    this.errors = [];
     let valid = true;
 
     //ensure time zone
@@ -509,6 +510,7 @@ export class TeamProfileComponent implements OnInit {
       this.timezoneError = {
         error:true
       }
+      this.errors.push("Timezone required with time's available.");
     }else{
       this.timezoneError = {error:false};
     }

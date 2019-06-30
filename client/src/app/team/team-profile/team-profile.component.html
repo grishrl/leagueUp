@@ -141,9 +141,14 @@
                                                     <button type="button" (click)="cancel()" class="mt-1 btn btn-danger">Cancel</button>
                                                 </div>
                                             </div>
+                                            <div class="row mt-1" *ngIf="errors.length>0">
+                                                <div class="col text-center">
+                                                    <div class="alert alert-danger" *ngFor="let error of errors">{{error}}</div>
+                                                </div>
+                                            </div>
                                             <div class="row">
                                                 <div class="col">
-                                                    <button type="button" (click)="adminRefreshMMR()" class="mt-1 btn btn-info">Update Team
+                                                    <button type="button" (click)="adminRefreshMMR()" class="mt-1 btn btn-primary">Update Team
                                           MMR</button>
                                                 </div>
                                             </div>

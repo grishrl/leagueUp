@@ -38,7 +38,7 @@ export class ReportingDeckComponent implements OnInit {
   @Input() set match(match){
     if(match!=null && match != undefined){
 
-      console.log('match ', match);
+      // console.log('match ', match);
 
       merge( this.recMatch, match);
 
