@@ -681,13 +681,14 @@ team query
 function createTeamSearchObject(obj, reqUser) {
     let returnObj = {};
     let keys = Object.keys(obj);
+    returnObj = {
+        $and: []
+    }
+
+    returnObj.$and.push({
+        lookingForMore: true
+    })
     if (keys.length > 0) {
-
-        returnObj = {
-            $and: []
-        }
-
-        returnObj.$and.push({ lookingForMore: true })
 
         // add divisions to the query object
         if (util.returnBoolByPath(obj, 'divisions')) {
