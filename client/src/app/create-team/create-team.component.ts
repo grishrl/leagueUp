@@ -71,6 +71,7 @@ export class CreateTeamComponent implements OnInit {
       if(res && res.teamName){
         alert('Team name is taken!');
         this.nameContorl.setErrors({taken:true});
+        this.errors.push("Team name is taken.")
       }else{
         if (this.validate()) {
           this.util.updateAvailabilityToNum(this.returnedProfile);
@@ -105,6 +106,31 @@ export class CreateTeamComponent implements OnInit {
       }
     }
   }
+
+  lastChange = Date.now();
+  checkNameFree(name){
+    if(name){
+      let now = Date.now();
+      if (now - this.lastChange > 1000) {
+        this.lastChange = now;
+        name = name.toLowerCase();
+        this.team.getTeam(name).subscribe(res => {
+          if (res && res.teamName) {
+            this.nameContorl.setErrors({ taken: true });
+            this.errors.push("Team name is taken.")
+          } else {
+            if (this.nameContorl.errors) {
+              let key = Object.keys(this.nameContorl.errors)[0];
+              if (key == 'taken') {
+                this.nameContorl.setErrors(null);
+              }
+            }
+          }
+        });
+      }
+    }
+  }
+
   errors = [];
   validate() {
     if(this.initialized){
@@ -118,7 +144,9 @@ export class CreateTeamComponent implements OnInit {
       }
 
       //validate team name is there
-      if (!this.util.returnBoolByPath(this.returnedProfile, 'teamName')) {
+      if(this.nameContorl.hasError('taken')){
+        //do nothing.
+      }else if (!this.util.returnBoolByPath(this.returnedProfile, 'teamName')) {
         this.nameContorl.setErrors({ required: true });
         valid = false;
         this.errors.push("Team Name is required!")
@@ -134,7 +162,6 @@ export class CreateTeamComponent implements OnInit {
       }
 
       if (this.tickerControl.errors) {
-        console.log(this.tickerControl.errors);
         let key = Object.keys(this.tickerControl.errors)[0];
         valid = false;
         if (key == 'notUnique'){

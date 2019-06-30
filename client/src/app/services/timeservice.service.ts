@@ -12,7 +12,6 @@ export class TimeserviceService {
   cacheCall;
 
   constructor(private httpService:HttpServiceService) {
-    console.log('constructing time service');
     this.cacheCall = this.httpService.httpGetShareable(this.getSeasonInfoULR,[]);
     this.init();
   }
