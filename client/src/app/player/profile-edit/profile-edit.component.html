@@ -141,21 +141,15 @@
                                                     class="material-icons">close</i>Cancel</span></button>
                                                 </div>
                                             </div>
-                                            <div class="row" *ngIf="errors.length>0">
+                                            <div class="row mt-1" *ngIf="errors.length>0">
                                                 <div class="col text-center">
-                                                    <div class="text-danger" *ngFor="let error of errors">{{error}}</div>
+                                                    <div class="text-danger alert alert-danger" *ngFor="let error of errors">{{error}}</div>
                                                 </div>
                                             </div>
-                                            <div class="row">
+                                            <div class="row mt-1 mb-3">
                                                 <div class="col">
-                                                    <div class="col-12">
-                                                        <div class="row mt-2">
-                                                            <div class="col">
-                                                                <button class="btn btn-primary" (click)="updateUserMMR()">Update
+                                                    <button class="btn btn-primary" (click)="updateUserMMR()">Update
                                                         MMR</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

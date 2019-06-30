@@ -69,7 +69,6 @@ router.get('/get', (req, res) => {
         query['ticker_lower'] = ticker;
     }
 
-
     Team.findOne(query).lean().then(
         (foundTeam) => {
             if (foundTeam) {

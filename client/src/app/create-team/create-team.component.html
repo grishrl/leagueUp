@@ -22,9 +22,9 @@
 
 
             </div>
-            <div class="row mt-2" *ngIf="showError && showError.length > 0">
+            <div class="row mt-2" *ngIf="errors && errors.length > 0">
                 <div class="col text-center">
-                    <span class="alert alert-danger">{{showError}}</span>
+                    <div class="alert alert-danger mx-auto" style="width:50%;" *ngFor="let error of errors">{{error}}</div>
                 </div>
             </div>
             <div class="row mt-3">

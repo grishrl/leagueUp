@@ -36,6 +36,7 @@ export class CreateTeamComponent implements OnInit {
   timezoneError
   captainDiscordTag
 
+  initialized = false;
   ngOnInit() {
     this.markFormGroupTouched(this.createTeamControlGroup);
     this.user.getUser(this.auth.getUser()).subscribe(
@@ -45,6 +46,7 @@ export class CreateTeamComponent implements OnInit {
         }else{
           this.captainDiscordTag = false;
         }
+        this.initialized = true;
       },
       err=>{
         this.captainDiscordTag = false;
@@ -103,58 +105,77 @@ export class CreateTeamComponent implements OnInit {
       }
     }
   }
-  showError
+  errors = [];
   validate() {
+    if(this.initialized){
+      this.errors = [];
+      let valid = true;
+      //validate this user has a discord tag in their profile
 
-    let valid = true;
-    //validate this user has a discord tag in their profile
-
-    if(!this.captainDiscordTag){
-    valid = false;
-      this.showError = "Discord tag is required for captains please go add it to your profile!"
-    }
-
-    //validate team name is there
-    if(!this.util.returnBoolByPath(this.returnedProfile, 'teamName')){
-      this.nameContorl.setErrors({required:true});
-      valid = false;
-    }else{
-      let regEx = new RegExp(/[%_\/\\`#]/gm);
-      if (regEx.test(this.returnedProfile.teamName)) {
+      if (!this.captainDiscordTag) {
         valid = false;
-        this.nameContorl.setErrors({ invalidCharacters: true });
+        this.errors.push("Discord tag is required for captains please go add it to your profile!");
+      }
+
+      //validate team name is there
+      if (!this.util.returnBoolByPath(this.returnedProfile, 'teamName')) {
+        this.nameContorl.setErrors({ required: true });
+        valid = false;
+        this.errors.push("Team Name is required!")
       } else {
-        this.nameContorl.setErrors(null);
+        let regEx = new RegExp(/[%_\/\\`#]/gm);
+        if (regEx.test(this.returnedProfile.teamName)) {
+          valid = false;
+          this.nameContorl.setErrors({ invalidCharacters: true });
+          this.errors.push("Team Name contains invalid characters!")
+        } else {
+          this.nameContorl.setErrors(null);
+        }
       }
-    }
 
-    if(this.tickerControl.errors){
-      valid = false;
-    }
-
-    //validate looking for team:
-    if (!this.util.returnBoolByPath(this.returnedProfile, 'lookingForMore')) {
-      valid = false;
-    }
-
-    //validate that there is at least 1 available day
-    if (!this.availabilityValid){
-      valid = false;
-    }
-
-    //ensure time zone
-    if (this.availabilityDays > 0 && !this.util.returnBoolByPath(this.returnedProfile,'timeZone') ) {
-      this.timeZoneControl.setErrors({required:true});
-      valid = false;
-      this.timezoneError = {
-        error: true
+      if (this.tickerControl.errors) {
+        console.log(this.tickerControl.errors);
+        let key = Object.keys(this.tickerControl.errors)[0];
+        valid = false;
+        if (key == 'notUnique'){
+          this.errors.push('Team Ticker is taken!');
+        }
+        if (key == 'invalidTicker'){
+          this.errors.push('Team Ticker is invalid!');
+        }
+        if (key == 'minlength'){
+          this.errors.push('Team Ticker is too short!');
+        }
+        if (key == 'required') {
+          this.errors.push('Team Ticker is required!');
+        }
+        if (key == 'maxlength') {
+          this.errors.push('Team Ticker is too long!');
+        }
       }
+
+      //validate that there is at least 1 available day
+      if (!this.availabilityValid) {
+        valid = false;
+      }
+
+      //ensure time zone
+      if (this.availabilityDays > 0 && !this.util.returnBoolByPath(this.returnedProfile, 'timeZone')) {
+        this.timeZoneControl.setErrors({ required: true });
+        valid = false;
+        this.timezoneError = {
+          error: true
+        }
+        this.errors.push("If time availability is input; time zone is required!")
+      } else {
+        this.timeZoneControl.setErrors(null);
+        this.timezoneError = { error: false };
+      }
+
+      return valid;
     }else{
-      this.timeZoneControl.setErrors(null);
-      this.timezoneError = { error: false };
+      return true;
     }
 
-    return valid;
   }
-
 }

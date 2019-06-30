@@ -17,7 +17,10 @@ export class TeamTickerComponent implements OnInit, ControlValueAccessor {
   filterWords;
   constructor(private team: TeamService, private http: HttpClient,@Optional() @Self() public controlDir:NgControl) {
     this.http.get('../assets/filterWords.json').subscribe(
-      res => { this.filterWords = res['data'] },
+      res => {
+        this.filterWords = res['data']
+        this.ngOnInit();
+      },
       err => { console.log(err) }
     )
     controlDir.valueAccessor = this;
@@ -36,7 +39,6 @@ export class TeamTickerComponent implements OnInit, ControlValueAccessor {
     return (control: FormControl) => {
       let value = control.value;
       if (filterWords && filterWords.length > 0) {
-        console.log('value ', value, ' filterWords.indexOf(value) ', filterWords.indexOf(value));
         return filterWords.indexOf(value) > -1 ? { invalidTicker: true } : null;
       } else {
         return null;
@@ -47,9 +49,10 @@ export class TeamTickerComponent implements OnInit, ControlValueAccessor {
   validateTickerNotTaken(): AsyncValidatorFn {
     return (control: AbstractControl): Observable<{ [key: string]: any } | null> => {
       if (this.originalValue == control.value){
+        this.originalValue = this.controlDir.value;
         return of(null);
       }else{
-        return this.team.getTeam(control.value)
+        return this.team.getTeam(null, control.value, null)
           .pipe(
             map(res => {
               let keys = Object.keys(res);
