@@ -348,6 +348,7 @@ router.post('/approveAvatar', passport.authenticate('jwt', {
                 } else {
                     foundUser.avatar = 'defaultAvatar.png';
                 }
+                Avatar.deleteFile(fileName);
             }
 
             foundUser.save().then(
