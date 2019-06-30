@@ -65,16 +65,21 @@
                         </div>
                         <div class="row mt-3">
                             <div class="col text-center">
-                                Scheduled Time: <span *ngIf="util.returnBoolByPath(match, 'scheduledTime.startTime') else notScheduled">{{displayTime(match.scheduledTime.startTime)}}</span>
+                                <span class="h5">Scheduled Time:</span> <span *ngIf="util.returnBoolByPath(match, 'scheduledTime.startTime') else notScheduled">{{displayTime(match.scheduledTime.startTime)}}</span>
                                 <ng-template #notScheduled>
                                     <span>Not Yet Scheduled</span>
                                 </ng-template>
                             </div>
                         </div>
+                        <div class="row mt-3" *ngIf="match.notes">
+                            <div class="col text-center">
+                                <span class="h5">Admin Notes:</span> {{match.notes}}
+                            </div>
+                        </div>
                         <div class="row mt-1" *ngIf="match.casterName !=undefined && match.casterName !=null">
                             <div class="col text-center">
                                 <div>
-                                    Caster: {{match.casterName}} Url: {{match.casterUrl}}
+                                    <span class="h5">Caster:</span> {{match.casterName}} Url: {{match.casterUrl}}
                                 </div>
                             </div>
                         </div>

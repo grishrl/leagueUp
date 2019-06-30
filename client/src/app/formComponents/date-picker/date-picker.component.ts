@@ -29,8 +29,6 @@ export class DatePickerComponent implements OnInit {
   }
 
   set date(val) {
-    console.log('val ', val);
-    console.log('typeof val ', typeof val);
     if (typeof val == 'string') {
       val = parseInt(val);
       this.dateValue = val;
@@ -41,10 +39,6 @@ export class DatePickerComponent implements OnInit {
       this.dateValue = val;
       this.friendlyDate = tempD;
     }
-    console.log(this.friendlyDate);
-    // else if( val instanceof Date){
-    //   this.dateValue = val;
-    // }
 
     this.dateValueChange.emit(this.dateValue);
   }

@@ -19,17 +19,7 @@ export class QuestionnaireComponent implements OnInit {
   registrationOpen = false;
 
   constructor(private teamService: TeamService, private util:UtilitiesService, public auth:AuthService, private timeService:TimeserviceService) {
-    this.timeService.getSesasonInfo().subscribe(
-      res=>{
-        if(this.source == 'admin')
-        {
-          this.registrationOpen = true;
-        }else{
-          this.registrationOpen = res['data'].registrationOpen;
-        }
-      }
-    );
-    this.timeService.getSesasonInfo();
+
    }
 
   @Input() source;
@@ -159,7 +149,16 @@ export class QuestionnaireComponent implements OnInit {
 
 
   ngOnInit() {
-    console.log('source ', this.source)
+    this.timeService.getSesasonInfo().subscribe(
+      res => {
+        if (this.source == 'admin') {
+          this.registrationOpen = true;
+        } else {
+          this.registrationOpen = res['data'].registrationOpen;
+        }
+        console.log('this.registrationOpen ', this.registrationOpen);
+      }
+    );
   }
 
 }

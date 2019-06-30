@@ -19,7 +19,7 @@ export class AddTeamComponent implements OnInit {
   constructor(private admin: AdminService, public teamService:TeamService) { }
 
   ngOnInit() {
-    //set the local vars to empty / uninitialised 
+    //set the local vars to empty / uninitialised
     this.selectedTeams = [];
     this.selectedDiv = undefined;
     this.undivisionTeams=[];
@@ -38,7 +38,7 @@ export class AddTeamComponent implements OnInit {
       } )
     }, (err) => {
       console.log(err)
-    })
+    });
     this.divisions=[];
     this.admin.getDivisionList().subscribe(res => {
       this.divisions = res;

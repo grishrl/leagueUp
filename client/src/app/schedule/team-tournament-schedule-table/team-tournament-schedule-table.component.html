@@ -40,8 +40,10 @@
                     <!-- ng-templates -->
                     <ng-template #tbd>
                         <div class="text-center" *ngIf="userCanSchedule() else userView">
-                            <span>Schedule by: {{util.getFormattedDate(match.scheduleDeadline-604800000, "dddd M/D/YYYY")}}</span><br>
-                            <span>Play by: {{match.friendlyDeadline}}</span><br>
+                            <span *ngIf="match.scheduleDeadline">Schedule by:
+                              {{util.getFormattedDate(match.scheduleDeadline-604800000, "dddd M/D/YYYY")}}<br></span>
+                            <span *ngIf="match.friendlyDeadline">Play by: {{match.friendlyDeadline}}<br></span>
+                            <span>Schedule this match<br></span>
                             <span><button [disabled]="checkDate(match)" class="btn btn-sm btn-primary"
                 (click)="scheduleMatch(match.matchId)">Schedule this!</button></span>
                             <span *ngIf="checkDate(match)"><br> <small class="text-danger">Schedule deadline was missed please contact

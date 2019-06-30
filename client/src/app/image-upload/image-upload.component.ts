@@ -39,7 +39,6 @@ export class ImageUploadComponent implements OnInit {
   }
 
   @Input() set teamLogo(img){
-    console.log('passed img ', img);
     if (img != null && img != undefined && img.length) {
       this.currentImage = this.teamService.imageFQDN(encodeURIComponent(img));
     } else {
