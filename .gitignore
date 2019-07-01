@@ -63,6 +63,7 @@ typings/
 .env_dev
 .env_prod
 Procfile
+testing.js
 
 # Dev server seeding methods
 server/routes/seeding-route.js
