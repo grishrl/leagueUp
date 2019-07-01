@@ -51,7 +51,12 @@
         "popper.js": "^1.15.0",
         "rxjs": "~6.5.2",
         "typescript": "~3.4.5",
-        "zone.js": "~0.9.1"
+        "zone.js": "~0.9.1",
+        "@types/croppie": "^2.5.4",
+        "@types/jasmine": "^2.8.16",
+        "@types/jasminewd2": "^2.0.6",
+        "@types/marked": "^0.4.2",
+        "@types/node": "~8.9.4"
     },
     "devDependencies": {
         "@angular-devkit/build-angular": "^0.800.6",
