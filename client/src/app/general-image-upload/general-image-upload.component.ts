@@ -12,7 +12,7 @@ import { AdminService } from '../services/admin.service';
 export class GeneralImageUploadComponent implements OnInit {
 
 
-  @ViewChild('ngxCroppie') ngxCroppie: NgxCroppieComponent;
+  @ViewChild('ngxCroppie', { static: false }) ngxCroppie: NgxCroppieComponent;
 
   _objectId: string
   @Input() set objectId(id) {
@@ -73,8 +73,8 @@ export class GeneralImageUploadComponent implements OnInit {
 
   editClicked: boolean = true;
 
-  
-  
+
+
   imageUrl = '';
   currentImage: string;
   croppieImage: string;
@@ -85,12 +85,12 @@ export class GeneralImageUploadComponent implements OnInit {
 
   public get imageToDisplay() {
     let imgRet;
-    
+
     if (this.currentImage) { imgRet = this.currentImage; }
     else if (this.imageUrl) { imgRet = this.imageUrl; } else {
       imgRet = `https://placehold.it/${this.widthPx}x${this.heightPx}`;
     }
-    
+
     return imgRet
   }
 
@@ -117,7 +117,7 @@ export class GeneralImageUploadComponent implements OnInit {
     if (this.util.isNullOrEmpty(this.currentImage)){
       this.currentImage = this.imageUrl;
     }
-  
+
     this.croppieImage = this.imageUrl;
   }
 

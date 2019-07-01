@@ -11,7 +11,7 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 })
 export class AdminAclManagementComponent implements OnInit, AfterViewInit {
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   //component properties
   users: any = [];
@@ -31,7 +31,7 @@ export class AdminAclManagementComponent implements OnInit, AfterViewInit {
       }
       this.displayArray = [];
       this.displayArray = this.filteredArray.slice(i, endSlice)
-    
+
   }
 
   ngAfterViewInit() {
@@ -43,7 +43,7 @@ export class AdminAclManagementComponent implements OnInit, AfterViewInit {
   filterUsers(filterName){
     if(filterName == null || filterName == undefined || filterName.length == 0){
       this.filteredArray = this.users;
-      this.length = this.filteredArray.length; 
+      this.length = this.filteredArray.length;
       this.displayArray = this.filteredArray.slice(0, 10);
       this.paginator.firstPage();
     }else{

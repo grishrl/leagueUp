@@ -19,7 +19,7 @@ export class TournamentGeneratorComponent implements OnInit {
   division
   constructor(private adminService:AdminService, private standingsService:StandingsService, private admin:AdminService) { }
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   selected(div) {
     if(div!=undefined){
@@ -96,7 +96,7 @@ export class TournamentGeneratorComponent implements OnInit {
     this.displayArray = [];
     this.displayArray = this.filteredArray.slice(i, endSlice)
 
-  } 
+  }
 
   disableGenerate(){
     let disable = true;
@@ -123,7 +123,7 @@ export class TournamentGeneratorComponent implements OnInit {
     )
   }
 
-  
+
 
   ngOnInit() {
     this.standings = [];
@@ -137,7 +137,7 @@ export class TournamentGeneratorComponent implements OnInit {
     this.division=null;
     this.name = null;
     this.tournamentSeed = [];
-    
+
   }
 
 

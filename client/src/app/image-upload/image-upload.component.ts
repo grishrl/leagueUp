@@ -11,7 +11,7 @@ import { AdminService } from '../services/admin.service';
   styleUrls: ['./image-upload.component.css']
 })
 export class ImageUploadComponent implements OnInit {
-  @ViewChild('ngxCroppie') ngxCroppie: NgxCroppieComponent;
+  @ViewChild('ngxCroppie', { static: false }) ngxCroppie: NgxCroppieComponent;
 
   _teamName: string
   @Input() set teamName(name) {
@@ -39,7 +39,7 @@ export class ImageUploadComponent implements OnInit {
   }
 
   @Input() set teamLogo(img){
-    if (img != null && img != undefined && img.length) {      
+    if (img != null && img != undefined && img.length) {
       this.currentImage = this.teamService.imageFQDN(encodeURIComponent(img));
     } else {
       this.currentImage = null;
@@ -66,8 +66,8 @@ export class ImageUploadComponent implements OnInit {
       err=>{
         console.log(err);
       }
-      
-      
+
+
     )
   }
 
@@ -116,7 +116,7 @@ export class ImageUploadComponent implements OnInit {
   }
 
   saveImageFromCroppie() {
-    
+
     let input = {
       logo: this.croppieImage,
       teamName: this._teamName
@@ -141,7 +141,7 @@ export class ImageUploadComponent implements OnInit {
       });
     }
 
-   
+
   }
 
   cancelCroppieEdit() {

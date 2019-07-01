@@ -11,7 +11,7 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 })
 export class MatchManagementComponent implements OnInit, AfterViewInit {
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   //component properties
   hideForm = true;
@@ -62,30 +62,30 @@ export class MatchManagementComponent implements OnInit, AfterViewInit {
   pageIndex: number;
 
   pageEventHandler(pageEvent: PageEvent) {
-    
+
     let i = pageEvent.pageIndex * this.pageSize;
     let endSlice = i + this.pageSize
     if (endSlice > this.filterMatches.length) {
       endSlice = this.filterMatches.length;
     }
-    
+
     this.displayArray = [];
     this.displayArray = this.filterMatches.slice(i, endSlice)
 
-  } 
+  }
 
   /*
   div, round, team
-  div, round, 
+  div, round,
   div, team,
   round, team,
-  div, 
-  round, 
+  div,
+  round,
   team
   */
  //filters the matches based on selected criteria
   doFilterMatches(div, round, team) {
-    
+
     this.filterMatches = this.originalMatches.filter(match => {
       let home, away;
       console.log(match);
@@ -102,10 +102,10 @@ export class MatchManagementComponent implements OnInit, AfterViewInit {
       if(team){
         team = team.toLowerCase();
       }
-      
+
       let pass = false;
       if (div && round && team) {
-        if (div == match.divisionConcat && round == match.round && 
+        if (div == match.divisionConcat && round == match.round &&
           (away.indexOf(team) > -1 || home.indexOf(team) >-1 )) {
           pass = true;
         }
