@@ -6,8 +6,11 @@ const log = require('../models/system-models');
 // or
 // lobObj:string - the level of the log, actor:string the - system or user performing the actoun, 
 // action:string - action being performed, target: the object upon which actionw as performed, error:string - errors that occured
-function logger(logObj, actor, action, target, error) {
+function logger(logObj, actor, action, target, error, deepLogging) {
     if (typeof logObj == 'object') {
+        if (logObj.hasOwnProperty('deepLogging')) {
+            logObj.deepLogging = JSON.stringify(logObj.deepLogging);
+        }
         new log.Log(logObj).save();
     } else if (typeof logObj == 'string') {
         new log.Log({
@@ -15,7 +18,8 @@ function logger(logObj, actor, action, target, error) {
             actor: actor,
             action: action,
             target: target,
-            error: error
+            error: error,
+            deepLogging: JSON.stringify(deepLogging)
         }).save();
     } else {
         console.log('logger got bad data');

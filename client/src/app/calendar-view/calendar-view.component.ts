@@ -8,7 +8,6 @@ import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 import { EventsService } from '../services/events.service';
 import { UtilitiesService } from '../services/utilities.service';
-import { asElementData } from '@angular/core/src/view';
 
 const colors: any = {
   heroic: {  //navy
@@ -90,7 +89,7 @@ export class CalendarViewComponent implements OnInit {
     return ret;
   }
 
-  shouldShowTimeInEventTitle() : boolean 
+  shouldShowTimeInEventTitle() : boolean
   {
     return this.view == CalendarView.Month;
   }
@@ -101,7 +100,7 @@ export class CalendarViewComponent implements OnInit {
       res=>{
         let matches = res;
         this._matches = res;
-        
+
         matches = matches.sort((a,b)=>{
           let retVal = 0;
           if (parseInt(a.scheduledTime.startTime) > parseInt(b.scheduledTime.startTime)){
@@ -133,7 +132,7 @@ export class CalendarViewComponent implements OnInit {
           }
 
           event['color']=colors[match.divisionConcat];
-          
+
           this.events.push(event);
         });
 
@@ -149,7 +148,7 @@ export class CalendarViewComponent implements OnInit {
 
               event['color'] = colors.event;
               this.events.push(event);
-              
+
 
             });
 
@@ -170,7 +169,7 @@ export class CalendarViewComponent implements OnInit {
           }
         )
 
-        
+
       },
       err=>{
         console.log(err);
@@ -179,7 +178,7 @@ export class CalendarViewComponent implements OnInit {
     //todo: pull in matches
   }
 
-  @ViewChild('modalContent')
+  @ViewChild('modalContent', { static: false })
   modalContent: TemplateRef<any>;
 
   view: CalendarView = CalendarView.Month;
@@ -257,7 +256,7 @@ export class CalendarViewComponent implements OnInit {
 
     this.eventService.setLocalEvent(event.meta);
     this.router.navigate(['event/']);
-    
+
 
   }
 
