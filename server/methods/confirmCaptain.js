@@ -16,7 +16,11 @@ function confirmCaptain(req, res, next) {
         teamName_lower: lower
     }).then((foundTeam) => {
         if (foundTeam) {
-            if (foundTeam.captain == callingUser.displayName) {
+            let aCindex = -1;
+            if (foundTeam.assistantCaptain) {
+                aCindex = foundTeam.assistantCaptain.indexOf(callingUser.displayName);
+            }
+            if (foundTeam.captain == callingUser.displayName || aCindex > -1) {
                 req.team = foundTeam;
                 next();
             } else {

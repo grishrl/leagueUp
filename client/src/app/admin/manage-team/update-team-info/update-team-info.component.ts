@@ -24,7 +24,7 @@ export class UpdateTeamInfoComponent implements OnInit {
 
   //methods
   deleteUserButtonOn(player) {
-    return player == this.returnedProfile.captain;
+    return this.team.captainLevel(this.returnedProfile, player);
   }
 
 

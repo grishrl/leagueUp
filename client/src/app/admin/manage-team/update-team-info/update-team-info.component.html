@@ -95,7 +95,7 @@
                 <!-- player name -->
                 <div class="col-7 verticalAlign ">
                     <a [routerLink]="[ '/profile/', user.routeFriendlyUsername(player.displayName)] ">
-                        <i *ngIf="player.displayName==returnedProfile.captain " class="fas fa-crown "></i> {{player.displayName}}
+                        <i *ngIf=" team.captainLevel(returnedProfile, player.displayName) " class="fas fa-crown "></i> {{player.displayName}}
                     </a>
                 </div>
                 <!-- remove from team : shows for admin and captain -->
@@ -109,7 +109,7 @@
                 <!-- player name -->
                 <div class="col ">
                     <a [routerLink]="[ '/profile/', user.routeFriendlyUsername(player.displayName)] ">
-                        <i *ngIf="player.displayName==returnedProfile.captain " class="fas fa-crown "></i> {{player.displayName}}
+                        <i *ngIf=" team.captainLevel(returnedProfile , player.displayName)" class="fas fa-crown "></i> {{player.displayName}}
                     </a>
                 </div>
                 <!-- remove from team : shows for admin and captain -->

@@ -1,4 +1,4 @@
-const { confirmCaptain } = require("./confirmCaptain");
+const { confirmCaptain } = require("../methods/confirmCaptain");
 
 const util = require('../utils');
 const router = require('express').Router();
@@ -503,6 +503,38 @@ router.post('/save', passport.authenticate('jwt', {
                 captainRec = true;
             }
 
+            if (util.returnBoolByPath(payload, 'assistantCaptain')) {
+                //this will loop through any current assistant captains and toggle them out of captain status.
+                let toggle = [];
+
+                if (foundTeam.assistantCaptain) {
+                    payload.assistantCaptain.forEach(player => {
+                        if (foundTeam.assistantCaptain.indexOf(player) > -1) {
+                            //player from payload was all ready in the assistantCaptain list;
+                        } else {
+                            //new player;
+                            foundTeam.assistantCaptain.push(player);
+                            toggle.push(player);
+                        }
+                    });
+                    foundTeam.assistantCaptain.forEach(player => {
+                        if (payload.assistantCaptain.indexOf(player) == -1) {
+                            //player was removed;
+                            toggle.push(player);
+                        }
+                    });
+                } else {
+                    //new player
+                    foundTeam.assistantCaptain = [];
+                    foundTeam.assistantCaptain.push(player);
+                    toggle.push(player);
+                }
+                toggle.forEach(ele => {
+                    UserSub.toggleCaptain(ele);
+                })
+
+            }
+
             foundTeam.save().then((savedTeam) => {
                 var message = "";
                 if (captainRec) {
@@ -665,38 +697,44 @@ router.post('/reassignCaptain', passport.authenticate('jwt', {
     Team.findOne({ teamName_lower: team }).then(
         (foundTeam) => {
             if (foundTeam) {
-                let members = util.returnByPath(foundTeam.toObject(), 'teamMembers');
-                let cont = false;
-                if (members) {
-                    members.forEach(element => {
-                        if (element.displayName == newCapt) {
-                            cont = true;
-                        }
-                    });
-                }
-                if (cont) {
-                    let oldCpt = foundTeam.captain;
-                    foundTeam.captain = newCapt;
-                    foundTeam.save().then(
-                        (savedTeam) => {
-                            if (savedTeam) {
-                                UserSub.toggleCaptain(oldCpt);
-                                UserSub.toggleCaptain(savedTeam.captain);
-                                res.status(200).send(util.returnMessaging(path, 'Team captain changed', false, savedTeam, null, logObj));
-                            } else {
-                                logObj.logLevel = 'ERROR';
-                                logObj.error = 'Error occured in save';
-                                res.status(500).send(util.returnMessaging(path, 'Team captain not changed', false, null, null, logObj));
-                            }
-                        }, (err) => {
-                            res.status(500).send(util.returnMessaging(path, 'Error changing team captain', err, null, null, logObj));
-                        });
-
+                if (foundTeam.assistantCaptain && foundTeam.assistantCaptain.indexOf(req.user.displayName) > -1) {
+                    logObj.error = 'Assisstant Captain may not reassign Captain';
+                    res.status(500).send(util.returnMessaging(path, 'Assisstant Captain may not reassign captain; contact an admin', false, null, null, logObj));
                 } else {
-                    logObj.logLevel = 'ERROR';
-                    logObj.error = 'Provided user was not a member of the team';
-                    res.status(400).send(util.returnMessaging(path, 'Provided user was not a member of the team', false, null, null, logObj));
+                    let members = util.returnByPath(foundTeam.toObject(), 'teamMembers');
+                    let cont = false;
+                    if (members) {
+                        members.forEach(element => {
+                            if (element.displayName == newCapt) {
+                                cont = true;
+                            }
+                        });
+                    }
+                    if (cont) {
+                        let oldCpt = foundTeam.captain;
+                        foundTeam.captain = newCapt;
+                        foundTeam.save().then(
+                            (savedTeam) => {
+                                if (savedTeam) {
+                                    UserSub.toggleCaptain(oldCpt);
+                                    UserSub.toggleCaptain(savedTeam.captain);
+                                    res.status(200).send(util.returnMessaging(path, 'Team captain changed', false, savedTeam, null, logObj));
+                                } else {
+                                    logObj.logLevel = 'ERROR';
+                                    logObj.error = 'Error occured in save';
+                                    res.status(500).send(util.returnMessaging(path, 'Team captain not changed', false, null, null, logObj));
+                                }
+                            }, (err) => {
+                                res.status(500).send(util.returnMessaging(path, 'Error changing team captain', err, null, null, logObj));
+                            });
+
+                    } else {
+                        logObj.logLevel = 'ERROR';
+                        logObj.error = 'Provided user was not a member of the team';
+                        res.status(400).send(util.returnMessaging(path, 'Provided user was not a member of the team', false, null, null, logObj));
+                    }
                 }
+
             }
         }, (err) => {
             res.status(500).send(util.returnMessaging(path, 'Error finding team', err, null, null, logObj));
@@ -814,7 +852,11 @@ function confirmCanRemove(req, res, next) {
             teamName_lower: lower
         }).then((foundTeam) => {
             if (foundTeam) {
-                if (foundTeam.captain == callingUser.displayName) {
+                let acIndex = -1;
+                if (foundTeam.assistantCaptain) {
+                    acIndex = foundTeam.assistantCaptain.indexOf(req.user.displayName);
+                }
+                if (foundTeam.captain == callingUser.displayName || acIndex > -1) {
                     req.team = foundTeam;
                     next();
                 } else if (callingUser.displayName == payloadUser || payloadUser.indexOf(callingUser.displayName) > -1) {

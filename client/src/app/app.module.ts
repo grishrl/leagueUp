@@ -156,6 +156,7 @@ import { TeamTournamentScheduleTableComponent } from './schedule/team-tournament
 import { TeamTournamentResultsTilesComponent } from './team/team-tournament-results-tiles/team-tournament-results-tiles.component';
 import { SeasonInfoManagerComponent } from './admin/match-management/season-info-manager/season-info-manager.component';
 import { DatePickerComponent } from './formComponents/date-picker/date-picker.component';
+import { AssistantCaptainMgmtComponent } from './modal/assistant-captain-mgmt/assistant-captain-mgmt.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -301,7 +302,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     TeamTournamentScheduleTableComponent,
     TeamTournamentResultsTilesComponent,
     SeasonInfoManagerComponent,
-    DatePickerComponent
+    DatePickerComponent,
+    AssistantCaptainMgmtComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
@@ -309,7 +311,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     ConfirmRemoveMemberComponent,
     EventModalComponent,
     MatchViewModalComponent,
-    NgsAccordianComponent
+    NgsAccordianComponent,
+    AssistantCaptainMgmtComponent
   ],
   imports: [
     BrowserModule,

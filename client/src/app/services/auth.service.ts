@@ -12,7 +12,7 @@ import { NotificationService } from './notification.service';
 export class AuthService {
 
   constructor(private router:Router, private http: HttpClient, private util:UtilitiesService, private socket:Socket, private notificationService:NotificationService){
-   
+
   }
 
   helper = new JwtHelperService();

@@ -275,12 +275,7 @@ router.post('/update/match/time', passport.authenticate('jwt', {
                     $in: teams
                 }
             }).lean().then((foundTeams) => {
-                let isCapt = false;
-                foundTeams.forEach(team => {
-                    if (team.captain == requester) {
-                        isCapt = true;
-                    }
-                })
+                let isCapt = returnIsCapt(foundTeams, requester);
                 if (isCapt) {
                     if (util.returnBoolByPath(foundMatch.toObject(), 'scheduledTime')) {
                         if (foundMatch.scheduledTime.priorScheduled) {
@@ -452,13 +447,8 @@ router.post('/report/match', passport.authenticate('jwt', {
                             foundMatch.mapBans = JSON.parse(fields.mapBans);
                         }
 
-                        //validate the submitter is a captain of one of the teams
-                        let isCapt = false;
-                        foundTeams.forEach(team => {
-                            if (team.captain == requester) {
-                                isCapt = true;
-                            }
-                        });
+                        //validate the submitter is a captain OR assistantCaptain of one of the teams
+                        let isCapt = returnIsCapt(foundTeams, requester);
                         if (isCapt) {
 
                             let fileKeys = Object.keys(files);
@@ -1011,6 +1001,26 @@ router.post('/fetch/tournament', (req, res) => {
 
 module.exports = router;
 
+
+function returnIsCapt(foundTeams, requester) {
+    let isCapt = false;
+    foundTeams.forEach(team => {
+        if (team.captain == requester) {
+            isCapt = true;
+        }
+    });
+    if (!isCapt) {
+        if (foundTeams[0].assistantCaptain) {
+            isCapt = foundTeams[0].assistantCaptain.indexOf(requester) > -1;
+        }
+    }
+    if (!isCapt) {
+        if (foundTeams[1].assistantCaptain) {
+            isCapt = foundTeams[1].assistantCaptain.indexOf(requester) > -1;
+        }
+    }
+    return isCapt;
+}
 
 function findTeamIds(found) {
     let teams = [];

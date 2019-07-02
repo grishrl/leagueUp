@@ -880,23 +880,23 @@ async function postToHotsProfileHandler(limNum) {
             }
         });
 
-        let divisions = await Division.find({
-            divisionConcat: {
-                $in: divisionList
-            }
-        }).then(
-            reply => {
-                return reply;
-            },
-            err => {
-                console.log(err);
-                return null;
-            }
-        );
+        // let divisions = await Division.find({
+        //     divisionConcat: {
+        //         $in: divisionList
+        //     }
+        // }).then(
+        //     reply => {
+        //         return reply;
+        //     },
+        //     err => {
+        //         console.log(err);
+        //         return null;
+        //     }
+        // );
 
         let savedArray = [];
         for (var i = 0; i < matches.length; i++) {
-            let postedReplays = true;
+            let postedReplays = 0;
             let postObj = {};
             postObj['api_key'] = 'ngs!7583hh';
             let match = matches[i];
@@ -906,13 +906,13 @@ async function postToHotsProfileHandler(limNum) {
 
             postObj['team_one_name'] = matchCopy.home.teamName;
             postObj['team_one_image_url'] = process.env.heroProfileImage + matchCopy.home.logo;
-            postObj['team_one_map_ban'] = matchCopy.mapBans.home;
+            postObj['team_one_map_ban'] = matchCopy.mapBans.homeOne;
             postObj['team_one_player'] = matchCopy.other.homeTeamPlayer;
 
             postObj['team_two_name'] = matchCopy.away.teamName;
             postObj['team_two_player'] = matchCopy.other.awayTeamPlayer;
             postObj['team_two_image_url'] = process.env.heroProfileImage + matchCopy.away.logo;
-            postObj['team_two_map_ban'] = matchCopy.mapBans.away;
+            postObj['team_two_map_ban'] = matchCopy.mapBans.awayOne;
 
             if (match.hasOwnProperty('round')) {
                 postObj['round'] = matchCopy.round.toString();
@@ -924,14 +924,18 @@ async function postToHotsProfileHandler(limNum) {
 
             let replayKeys = Object.keys(matchCopy.replays);
             for (var j = 0; j < replayKeys.length; j++) {
+                let localKey = j + 1;
                 let replayObj = matchCopy.replays[(j + 1).toString()];
                 postObj['replay_url'] = process.env.heroProfileReplay + replayObj.url;
                 let logObj = {};
                 logObj.actor = 'SYSTEM; CRON; Hots-Profile Submit';
-                logObj.target = 'Match Id: ' + matchObj.matchId + ', ReplayID: ' + replayInf.data;
+                logObj.target = 'Match Id: ' + matchObj.matchId
+                if (replayObj.data) {
+                    logObj.target += ', ReplayID: ' + replayObj.data;
+                }
                 logObj.timeStamp = new Date().getTime();
                 logObj.logLevel = 'STD';
-
+                // console.log(postObj);
                 if (screenPostObject(postObj)) {
                     //     // call to hotsprofile
                     let posted = await postToHotsProfile(postObj).then(
@@ -948,7 +952,7 @@ async function postToHotsProfileHandler(limNum) {
 
                     if (posted) {
                         match['replays'][localKey]['parsedUrl'] = posted.data.url;
-                        postedReplays = true;
+                        postedReplays += 1;
                     } else {
                         //if posted fails then do not set the match to fully reported
                         // postedReplays = false;
@@ -961,7 +965,7 @@ async function postToHotsProfileHandler(limNum) {
                 }
             }
 
-            match['postedToHP'] = postedReplays;
+            match['postedToHP'] = postedReplays > 0;
             // console.log('match ', match);
             let saved = await match.save().then(
                 saved => {

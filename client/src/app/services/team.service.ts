@@ -22,6 +22,14 @@ export class TeamService {
     return this.httpService.httpGet(url, []);
   }
 
+  captainLevel(team, user):boolean{
+    let isCapt = false;
+    if(user == team.captain || team.assistantCaptain.indexOf(user)>-1){
+      isCapt = true;
+    }
+    return isCapt;
+  }
+
   //returns requested team
   getTeam(name?:string, ticker?:string, id?:string):Observable<any>{
     let url = 'team/get';

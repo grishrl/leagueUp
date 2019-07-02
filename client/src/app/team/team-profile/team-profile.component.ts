@@ -15,6 +15,7 @@ import { RequestService } from '../../services/request.service';
 import { ConfirmRemoveMemberComponent } from '../../modal/confirm-remove-member/confirm-remove-member.component';
 import { HeroesProfileService } from '../../services/heroes-profile.service';
 import { DivisionService } from '../../services/division.service';
+import { AssistantCaptainMgmtComponent } from 'src/app/modal/assistant-captain-mgmt/assistant-captain-mgmt.component';
 
 
 @Component({
@@ -61,7 +62,7 @@ export class TeamProfileComponent implements OnInit {
   }
 
   //constructor
-  constructor(public auth: AuthService, public user: UserService, private team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router: Router,
+  constructor(public auth: AuthService, public user: UserService, public team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router: Router,
     private admin:AdminService, public util:UtilitiesService, private requestService:RequestService, public heroProfile: HeroesProfileService, private divisionServ: DivisionService) {
 
       //so that people can manually enter different tags from currently being on a profile page; we can reinitialize the component with the new info
@@ -75,9 +76,27 @@ export class TeamProfileComponent implements OnInit {
 
   }
 
+
+  //this method controls the opening of the change captain modal
+  openAssCaptainChangeDialog(): void {
+    console.log("hello");
+    const mgmtAssCpt = this.dialog.open(AssistantCaptainMgmtComponent, {
+      width: '450px',
+      data: { members: this.returnedProfile.teamMembers, captain: this.returnedProfile.captain, assistantCaptain: this.returnedProfile.assistantCaptain }
+    });
+
+    mgmtAssCpt.afterClosed().subscribe(result => {
+      if (result != undefined && result != null) {
+        console.log('hussey ', result);
+        this.returnedProfile.assistantCaptain = result;
+        this.save();
+      }
+    });
+  }
+
   //methods
   deleteUserButtonOn(player){
-    return player==this.returnedProfile.captain;
+    return this.team.captainLevel(this.returnedProfile, player);
   }
 
   openConfirmRemove(player): void {
@@ -418,7 +437,7 @@ export class TeamProfileComponent implements OnInit {
     }else{
       let isteamcpt;
       if (this.auth.getCaptain()) {
-        isteamcpt = this.auth.getUser() === this.returnedProfile.captain;
+        isteamcpt = this.team.captainLevel(this.returnedProfile, this.auth.getUser());
       }
       return isteamcpt;
     }
@@ -535,7 +554,7 @@ export class TeamProfileComponent implements OnInit {
     if(this.componentEmbedded){
       return false;
     }else{
-      if (this.returnedProfile.captain != this.auth.getUser() && playerName == this.auth.getUser()) {
+      if ( this.returnedProfile.captain != this.auth.getUser() && playerName == this.auth.getUser()) {
         return true;
       } else {
         return false;

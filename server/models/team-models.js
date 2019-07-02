@@ -26,6 +26,7 @@ const teamSchema = new Schema({
     "timeZone": String,
     "questionnaire": Object,
     "captain": String,
+    "assistantCaptain": [String],
     "invitedUsers": [String],
     "teamMMRAvg": Number, //added to display
     "hpMmrAvg": Number,

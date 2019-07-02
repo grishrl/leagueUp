@@ -20,6 +20,7 @@ export class Team {
   questionnaire: questionnaire;
   hpMmrAvg:number;
   ngsMmrAvg:number;
+  assistantCaptain:Array<string>;
   ticker: string;
   twitch:string;
   twitter:string;
@@ -146,6 +147,7 @@ export class Team {
         pickedMaps:[]
       };
     }
+    this.assistantCaptain = []
     this.ticker=null;
     this.history=[];
     this.hpMmrAvg = null;

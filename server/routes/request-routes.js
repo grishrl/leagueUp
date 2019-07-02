@@ -1,6 +1,6 @@
 const {
     confirmCaptain
-} = require("./confirmCaptain");
+} = require("../methods/confirmCaptain");
 const util = require('../utils');
 const router = require('express').Router();
 const User = require("../models/user-models");
