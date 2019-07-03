@@ -15,10 +15,10 @@ export class ChangeCaptainModalComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<ChangeCaptainModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: dataModel) {
-    
+
      }
-  
-    
+
+
   onNoClick(): void {
     this.dialogRef.close();
   }
@@ -29,5 +29,6 @@ export class ChangeCaptainModalComponent implements OnInit {
 }
 
 export interface dataModel {
-  members: any
+  members: any,
+  captain: any
 }
