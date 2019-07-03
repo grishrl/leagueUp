@@ -21,15 +21,27 @@ export class BannerImagesService {
   }
 
   images = [
+    "Aba.jpg",
+    "Ad.jpg",
+    "Dh.jpg",
+    "Dic.jpg",
     "DN.jpg",
     "En.jpg",
+    "Fc.jpg",
     "FKC.jpg",
     "Gy.jpg",
+    "Ha.jpg",
+    "Hs.jpg",
     "Ip.jpg",
+    "Ker.jpg",
     "Kt.jpg",
+    "Mal.jpg",
+    "Me.jpg",
     "Ml.jpg",
-    "Mp.jpg"
+    "Mp.jpg",
+    "Pb.jpg"
   ]
+
   uniqueNumGen(val?){
     if(val==null||val==undefined){
       return this.uniqueNumGen(Math.floor(Math.random() * Math.floor(this.images.length)));

@@ -24,9 +24,14 @@ export class TeamService {
 
   captainLevel(team, user):boolean{
     let isCapt = false;
-    if(user == team.captain || team.assistantCaptain.indexOf(user)>-1){
-      isCapt = true;
+    if (team.assistantCaptain){
+      if (user == team.captain || team.assistantCaptain.indexOf(user) > -1) {
+        isCapt = true;
+      }
+    }else{
+      isCapt = user == team.captain
     }
+
     return isCapt;
   }
 
