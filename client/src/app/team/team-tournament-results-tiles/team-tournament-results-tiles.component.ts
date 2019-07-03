@@ -59,7 +59,6 @@ export class TeamTournamentResultsTilesComponent implements OnInit {
   }
 
   @Input() set teamId(val) {
-    console.log('do something');
     if (val) {
       this.getTeamMatches(val);
     }

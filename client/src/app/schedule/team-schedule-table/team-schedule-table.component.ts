@@ -83,7 +83,9 @@ export class TeamScheduleTableComponent implements OnInit {
   @Input() set team(val){
     if(val){
       this.teamObj = val;
-      this.initTeamSchedule(val.teamName)
+      if(val.teamName){
+        this.initTeamSchedule(val.teamName)
+      }
     }
   }
 
