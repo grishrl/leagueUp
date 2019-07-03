@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TeamService } from 'src/app/services/team.service';
 import { StandingsService } from 'src/app/services/standings.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-team-schedule',
@@ -12,7 +13,7 @@ import { StandingsService } from 'src/app/services/standings.service';
   styleUrls: ['./team-schedule.component.css']
 })
 export class TeamScheduleComponent implements OnInit {
-  
+
   //component properties
   recTeam  //holds id received in the url route
   noMatches: boolean; // set to true if there are no matches returned or false if there are, used for displaying certain messages
@@ -40,7 +41,7 @@ export class TeamScheduleComponent implements OnInit {
   todayDate
 
   checkDate(match){
-   
+
     let ret = false;
     if (match['scheduleDeadline']){
       let intDate = parseInt(match['scheduleDeadline']);
@@ -62,9 +63,9 @@ export class TeamScheduleComponent implements OnInit {
       getTeam = this.Auth.getTeam();
       this.recTeam = getTeam;
     }
-    
+
     //TODO: remove hard coded season 6!!!
-    this.scheduleService.getTeamSchedules(6, getTeam).subscribe(
+    this.scheduleService.getTeamSchedules(environment.season, getTeam).subscribe(
       res=>{
         let matches = res;
         //set the nomatches state
@@ -105,11 +106,11 @@ export class TeamScheduleComponent implements OnInit {
 
         //build out the rounds object:
         /*
-        rounds = { 
+        rounds = {
           'roundNubmer':[
                           {matchObject},
                           {matchObject}
-                        ] 
+                        ]
                       }
         */
        let roundsArray = [];
