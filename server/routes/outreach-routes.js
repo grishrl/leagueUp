@@ -98,9 +98,9 @@ router.post('/inviteResponseComplete', passport.authenticate('jwt', {
             res.status(404).send(util.returnMessaging(path, "Reference not found in ref table.", null, null, null, logObj));
         } else {
             User.findOne({ displayName: user }).then(
-                found => {
-                    if (found) {
-                        let foundObj = found.toObject();
+                foundUser => {
+                    if (foundUser) {
+                        let foundObj = foundUser.toObject();
                         if (!util.returnBoolByPath(foundObj, 'teamName') && !util.returnBoolByPath(foundObj, 'teamId')) {
                             let lower = deletedRef.teamName.toLowerCase();
                             Team.findOne({
@@ -108,15 +108,16 @@ router.post('/inviteResponseComplete', passport.authenticate('jwt', {
                             }).then((foundTeam) => {
                                 if (foundTeam.pendingMembers) {
                                     foundTeam.pendingMembers.push({
-                                        "displayName": user
+                                        "displayName": foundUser.displayName
                                     });
                                 } else {
                                     foundTeam.pendingMembers = [{
-                                        "displayName": user
+                                        "displayName": foundUser.displayName
                                     }];
                                 }
-                                UserSubs.togglePendingTeam(user);
-                                QueueSub.addToPendingTeamMemberQueue(foundTeam.teamName_lower, user);
+                                UserSubs.togglePendingTeam(foundUser.displayName);
+
+                                QueueSub.addToPendingTeamMemberQueue(util.returnIdString(foundTeam._id), foundTeam.teamName_lower, util.returnIdString(foundUser._id), foundUser.displayName);
                                 foundTeam.save().then(
                                     saved => {
                                         res.status(200).send(util.returnMessaging(path, "We added the user to pending members", false, null, null, logObj));
@@ -130,7 +131,7 @@ router.post('/inviteResponseComplete', passport.authenticate('jwt', {
                             });
                         } else {
                             res.status(500).send(util.returnMessaging(path, "User was all ready a member of the team", null, null, null, logObj));
-                            message(found._id.toString(), 'Email Invite', 'Your email invite was processed properly but you were all ready on a team.', 'SYSTEM');
+                            message(foundUser._id.toString(), 'Email Invite', 'Your email invite was processed properly but you were all ready on a team.', 'SYSTEM');
                         }
 
 

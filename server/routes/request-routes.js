@@ -1,6 +1,6 @@
 const {
     confirmCaptain
-} = require("./confirmCaptain");
+} = require("../methods/confirmCaptain");
 const util = require('../utils');
 const router = require('express').Router();
 const User = require("../models/user-models");
@@ -174,7 +174,7 @@ router.post('/team/join/response', passport.authenticate('jwt', {
                                     res.status(200).send(util.returnMessaging(path, "User added to pending members", false, saveOK, null, logObj));
                                     deleteOutstandingRequests(foundUser._id);
                                     UserSub.togglePendingTeam(foundUser.displayName);
-                                    QueueSub.addToPendingTeamMemberQueue(foundTeam.teamName_lower, foundUser.displayName);
+                                    QueueSub.addToPendingTeamMemberQueue(util.returnIdString(foundTeam._id), foundTeam.teamName_lower, util.returnIdString(foundUser._id), foundUser.displayName);
 
                                     let msg = {};
                                     msg.sender = req.user._id;
@@ -412,7 +412,7 @@ router.post('/user/join/response', passport.authenticate('jwt', {
                                     res.status(200).send(util.returnMessaging(path, "Team invite accepted!", false, saveOK, null, logObj));
                                     deleteOutstandingRequests(foundUser._id);
                                     UserSub.togglePendingTeam(foundUser.displayName);
-                                    QueueSub.addToPendingTeamMemberQueue(foundTeam.teamName_lower, foundUser.displayName);
+                                    QueueSub.addToPendingTeamMemberQueue(util.returnIdString(foundTeam._id), foundTeam.teamName_lower, util.returnIdString(foundUser._id), foundUser.displayName);
 
                                     getCptId(foundTeam.captain).then(
                                         cpt => {
@@ -517,13 +517,11 @@ async function getCptId(cptName) {
 }
 
 function deleteOutstandingRequests(user) {
-    //todo add logging
     Message.find({ sender: user }).then(
         found => {
             found.forEach(msg => {
                 Message.findByIdAndDelete(msg._id).exec();
             });
-
         },
         err => {
             console.log(err);

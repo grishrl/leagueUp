@@ -83,7 +83,6 @@ export class ManageSelectTeamComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     //returns the teams for displaying in list.
-    //TODO: check into pagination
     this.admin.getTeams().subscribe(
       (res)=>{
         this.teams = res;

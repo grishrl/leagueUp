@@ -3,7 +3,7 @@ import { ScheduleService } from 'src/app/services/schedule.service';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TeamService } from 'src/app/services/team.service';
-import {merge} from 'lodash';
+import {merge, forEach as _forEach } from 'lodash';
 
 @Component({
   selector: 'app-reporting-deck',
@@ -11,14 +11,16 @@ import {merge} from 'lodash';
   styleUrls: ['./reporting-deck.component.css']
 })
 export class ReportingDeckComponent implements OnInit {
-   
+
   hideButton:boolean=false;
   recMatch = {
     away:{logo:null,teamName:''},
     home: { logo: null, teamName: ''},
     mapBans: {
-      away: '',
-      home: ''
+      awayOne: '',
+      homeOne: '',
+      awayTwo: '',
+      homeTwo: ''
     },
     other:{},
     reported:false,
@@ -28,27 +30,61 @@ export class ReportingDeckComponent implements OnInit {
 
   uploading = false;
 
+  homeTeam
+  awayTeam
+  homeTeamPlayer
+  awayTeamPlayer
+
   @Input() set match(match){
     if(match!=null && match != undefined){
-      
+
+      // console.log('match ', match);
+
       merge( this.recMatch, match);
-      
+
+      let teams = [];
+      teams.push(match.away.teamName);
+      teams.push(match.home.teamName);
+      this.team.getTeam(match.home.teamName).subscribe(
+        res=>{
+          // console.log('home team ', res);
+          this.homeTeam = res;
+        },
+        err=>{
+          console.log(err);
+        }
+      )
+      this.team.getTeam(match.away.teamName).subscribe(
+        res => {
+          // console.log('away team ', res);
+          this.awayTeam = res;
+        },
+        err => {
+          console.log(err);
+        }
+      )
     }
     if(this.recMatch.other != null && this.recMatch.mapBans != undefined){
-      this.games = this.recMatch.other;
+      let obj = this.recMatch.other;
+      _forEach(obj, (value, key)=>{
+        if( key != 'homeTeamPlayer' && key != 'awayTeamPlayer'){
+          this.games[key]=value;
+        }
+      });
     }
+
     if(this.recMatch.mapBans != null && this.recMatch.mapBans != undefined){
       this.mapBans = this.recMatch.mapBans;
     }
-    
+
     if(this.recMatch.reported){
       this.hideButton = true;
       this.formControlsDisable();
-      
+
     }
   }
   constructor(private scheduleService: ScheduleService, private util: UtilitiesService, public team:TeamService) { }
-    
+
   maps = {
   ControlPoints: 'Sky Temple',
   TowersOfDoom: 'Towers of Doom',
@@ -73,10 +109,12 @@ removeBan(hero, arr){
     arr = arr.splice(ind, 1);
   }
 }
-  
+
   mapBans = {
-    away:'',
-    home:''
+    awayOne:'',
+    homeOne:'',
+    awayTwo: '',
+    homeTwo: ''
   };
   games = {};
   showAdd:boolean = true;
@@ -101,20 +139,21 @@ removeBan(hero, arr){
 
   }
 
-  returnFilteredHeroes(game){
-    let disArr = [];
-    let currentArr = game.value.homeBans.concat(game.value.awayBans);
-    let keys = Object.keys(this.heroes);
-    keys.forEach(element=>{
-      let heroName = this.heroes[element];
-      if(heroName == "Missed"){
-        disArr.push(this.heroes[element]);
-      } else if(currentArr.indexOf(heroName)==-1){
-        disArr.push(this.heroes[element]);
-      }
-    });
-    return disArr;
-  }
+  // depricated will be removed if this goes well
+  // returnFilteredHeroes(game){
+  //   let disArr = [];
+  //   let currentArr = game.value.homeBans.concat(game.value.awayBans);
+  //   let keys = Object.keys(this.heroes);
+  //   keys.forEach(element=>{
+  //     let heroName = this.heroes[element];
+  //     if(heroName == "Missed"){
+  //       disArr.push(this.heroes[element]);
+  //     } else if(currentArr.indexOf(heroName)==-1){
+  //       disArr.push(this.heroes[element]);
+  //     }
+  //   });
+  //   return disArr;
+  // }
 
   heroes = {
     "miss":"Missed",
@@ -227,7 +266,7 @@ resetReplay(game){
     }else{
       return true;
     }
-    
+
   }
 
   removeGame(game, games){
@@ -242,7 +281,7 @@ resetReplay(game){
   ]);
   replay1Control = new FormControl('', [
     Validators.required
-  ]); 
+  ]);
   replay2Control = new FormControl('', [
     Validators.required
   ]);
@@ -259,6 +298,17 @@ resetReplay(game){
 
   ngOnInit() {
     this.util.markFormGroupTouched(this.reportForm);
+  }
+
+  initGetTeamsInfo(teams){
+    this.team.getTeams(teams).subscribe(
+      res=>{
+        console.log(res);
+      },
+      err=>{
+        console.log(err);
+      }
+    )
   }
 
   homeScore: number
@@ -321,7 +371,7 @@ resetReplay(game){
         disable = true;
       }
     }
-    
+
     return disable;
   }
 
@@ -331,7 +381,7 @@ resetReplay(game){
     this.show = !this.show;
   }
 
-  report() {  
+  report() {
 
     let submittable = true;
 
@@ -342,6 +392,18 @@ resetReplay(game){
     };
     let otherData = {};
 
+    if(!this.homeTeamPlayer){
+      submittable = false;
+      alert('Home team player is not selected, can not submit.');
+    }else{
+      otherData['homeTeamPlayer'] = this.homeTeamPlayer;
+    }
+    if (!this.awayTeamPlayer) {
+      submittable = false;
+      alert('Away team player is not selected, can not submit.');
+    }else{
+      otherData['awayTeamPlayer'] = this.awayTeamPlayer;
+    }
     let keys = Object.keys(this.games);
     keys.forEach(key => {
       let game = this.games[key];
@@ -353,36 +415,45 @@ resetReplay(game){
         submittable = false;
         alert('Game ' + key + ' winner is not selected, can not submit.');
       }
-      
+
       if (game.replay == null && game.replay == undefined){
           submittable = false;
           alert('Game ' + key + ' replay is not attached, can not submit.');
         }
-      
+
       report['replay'+key.toString()]=game.replay;
 
       let gamenum = key.toString();
-      if(game.homeBans.length<3){
-        alert('Game ' + key + ' home bans is not filled, can not submit.');
-        submittable = false
-      }
-      if (game.awayBans.length < 3) {
-        alert('Game ' + key + ' away bans is not filled, can not submit.');
-        submittable = false
-      }
+      // if(game.homeBans.length<3){
+      //   alert('Game ' + key + ' home bans is not filled, can not submit.');
+      //   submittable = false
+      // }
+      // if (game.awayBans.length < 3) {
+      //   alert('Game ' + key + ' away bans is not filled, can not submit.');
+      //   submittable = false
+      // }
       otherData[gamenum]={
-        awayBans:game.awayBans,
-        homeBans:game.homeBans,
+
         winner : game.winner
       }
     });
 
-    if (this.mapBans.away == ''){
+    if (this.mapBans.awayOne == ''){
       submittable = false;
       alert('This match\'s away map ban not filled out, can not submit.');
     }
 
-    if (this.mapBans.home == '') {
+    if (this.mapBans.homeOne == '') {
+      submittable = false;
+      alert('This match\'s home map ban not filled out, can not submit.');
+    }
+
+    if (this.mapBans.awayTwo == '') {
+      submittable = false;
+      alert('This match\'s away map ban not filled out, can not submit.');
+    }
+
+    if (this.mapBans.homeTwo == '') {
       submittable = false;
       alert('This match\'s home map ban not filled out, can not submit.');
     }
@@ -408,7 +479,7 @@ resetReplay(game){
         this.uploading = false
         console.log(err);
       })
-    }  
+    }
 
   }
 

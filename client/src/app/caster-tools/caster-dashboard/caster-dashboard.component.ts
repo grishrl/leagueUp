@@ -35,7 +35,7 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
   rounds=[];
 
   filterTeam:string='';
-  scheduledOnlyFlt:boolean=false;
+  scheduledOnlyFlt:boolean=true;
 
   times: any[] = [];
   suffix;
@@ -53,6 +53,7 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
   roundFlt;
   teamFlt;
   startTimeFlt;
+  today;
 
 
   ngAfterViewInit(){
@@ -73,6 +74,7 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.friendlyDate = new Date();
       this.scheduleService.getAllMatches().subscribe(
         (sched) => {
           // sched = sched.sort((a, b)=>{
@@ -105,7 +107,10 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
             }
           });
           this.rounds = this.rounds.sort();
-          this.displayArray = this.filterMatches.slice(0, 10);
+          // this.displayArray = this.filterMatches.slice(0, 10);
+
+          //set console to be filtered by todays date automatically
+          this.filterByFriendlyDateToMS();
         }
       )
     for (let i = 1; i < 13; i++) {
@@ -118,6 +123,7 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
         this.times.push(time);
       }
     }
+
   }
 
   resetTime(){
@@ -128,7 +134,6 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
   }
 
   timeChanged(){
-
     if (this.friendlyDate && this.friendlyTime) {
       if (this.friendlyTime && this.suffix) {
         let years = this.friendlyDate.getFullYear();
@@ -156,24 +161,28 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
         this.doFilterMatches();
       }
     } else if (this.friendlyDate){
-      let years = this.friendlyDate.getFullYear();
-      let month = this.friendlyDate.getMonth();
-      let day = this.friendlyDate.getDate();
-      let setDate = new Date();
-      setDate.setFullYear(years);
-      setDate.setMonth(month);
-      setDate.setDate(day);
-      setDate.setHours(0);
-      setDate.setMinutes(0);
-      setDate.setMilliseconds(0);
-      this.endTimeFlt = setDate.getTime() + 86400000;
-      let msDate = setDate.getTime();
-      this.startTimeFlt = msDate;
-      this.doFilterMatches();
+      this.filterByFriendlyDateToMS();
     }
 
 
 
+  }
+
+  private filterByFriendlyDateToMS() {
+    let years = this.friendlyDate.getFullYear();
+    let month = this.friendlyDate.getMonth();
+    let day = this.friendlyDate.getDate();
+    let setDate = new Date();
+    setDate.setFullYear(years);
+    setDate.setMonth(month);
+    setDate.setDate(day);
+    setDate.setHours(0);
+    setDate.setMinutes(0);
+    setDate.setMilliseconds(0);
+    this.endTimeFlt = setDate.getTime() + 86400000;
+    let msDate = setDate.getTime();
+    this.startTimeFlt = msDate;
+    this.doFilterMatches();
   }
 
   selected(div){
@@ -233,7 +242,6 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
   removeCaster(match){
           this.scheduleService.addCaster(match.matchId, '', '').subscribe(
             (res) => {
-              console.log(res);
               let i = -1;
               this.originalMatches.forEach(
                 (match, index)=>{

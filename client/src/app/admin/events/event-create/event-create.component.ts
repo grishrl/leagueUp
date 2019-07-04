@@ -3,6 +3,7 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 import { EventsService } from 'src/app/services/events.service';
 import { ActivatedRoute } from '@angular/router';
 import { cloneDeep } from 'lodash';
+import { forEach as _forEach } from 'lodash';
 
 @Component({
   selector: 'app-event-create',
@@ -12,16 +13,16 @@ import { cloneDeep } from 'lodash';
 export class EventCreateComponent implements OnInit {
 
   recId;
-  constructor(private util:UtilitiesService, private eventService:EventsService, private route:ActivatedRoute) { 
+  constructor(private util:UtilitiesService, private eventService:EventsService, private route:ActivatedRoute) {
     if (this.route.snapshot.params['id']) {
       this.recId = this.route.snapshot.params['id'];
     }
   }
 
   event;
-  
+
   eventOrig;
-  
+
   editEvent = false;
 
   suffix;
@@ -85,11 +86,9 @@ export class EventCreateComponent implements OnInit {
         colonSplit[0] += 12;
       }
       let setDate = new Date();
-      setDate.setFullYear(years);
-      setDate.setMonth(month);
-      setDate.setDate(day);
-      setDate.setHours(colonSplit[0]);
-      setDate.setMinutes(colonSplit[1]);
+
+      setDate.setFullYear(years, month, day);
+      setDate.setHours(colonSplit[0], colonSplit[1], 0, 0);
       let msDate = setDate.getTime();
       // let endDate = msDate + 5400000;
       this.event['eventDate'] = msDate;
@@ -103,10 +102,10 @@ export class EventCreateComponent implements OnInit {
     // console.log('AFTER DELETE: this.editEvent', this.editEvent, 'this.eventOrig ', this.eventOrig, 'this.event ', this.event)
 
     //save the event
-    let keys = Object.keys(this.event);
     let submit = true;
-    keys.forEach(key => {
-      if (key != 'eventImage' && this.util.isNullOrEmpty(this.event[key])) {
+
+    _forEach(this.event, (value, key)=>{
+      if (key != 'eventImage' && this.util.isNullOrEmpty(value)) {
         alert(key);
         submit = false;
       }
@@ -118,7 +117,6 @@ export class EventCreateComponent implements OnInit {
         this.eventService.upsertEvent(this.eventOrig, this.event).subscribe(
           res => {
             //saved
-            console.log(res);
             this.event['_id']=res['_id'];
           },
           err => {
@@ -138,7 +136,7 @@ export class EventCreateComponent implements OnInit {
         )
       }
     }
-    
+
   }
 
   getBlankEvent() {

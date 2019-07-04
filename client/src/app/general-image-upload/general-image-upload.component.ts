@@ -14,6 +14,8 @@ export class GeneralImageUploadComponent implements OnInit {
 
   @ViewChild('ngxCroppie', { static: false }) ngxCroppie: NgxCroppieComponent;
 
+  editedImage:string;
+
   _objectId: string
   @Input() set objectId(id) {
     if (!this.util.isNullOrEmpty(id)) {
@@ -108,17 +110,17 @@ export class GeneralImageUploadComponent implements OnInit {
     return opts;
   }
 
-  public get croppieImageG(): string {
-    return this.croppieImage;
-  }
+  // public get croppieImageG(): string {
+  //   return this.croppieImage;
+  // }
 
   ngOnInit() {
-    console.log('oninit')
-    if (this.util.isNullOrEmpty(this.currentImage)){
-      this.currentImage = this.imageUrl;
-    }
+    // console.log('oninit')
+    // if (this.util.isNullOrEmpty(this.currentImage)){
+    //   this.currentImage = this.imageUrl;
+    // }
 
-    this.croppieImage = this.imageUrl;
+    // this.croppieImage = this.imageUrl;
   }
 
   ngOnChanges(changes: any) {
@@ -130,19 +132,19 @@ export class GeneralImageUploadComponent implements OnInit {
   }
 
   newImageResultFromCroppie(img: string) {
-    this.croppieImage = img;
+    this.editedImage = img;
   }
 
   saveImageFromCroppie() {
 
     let input = {
-      image: this.croppieImage,
+      image: this.editedImage,
       id: this._objectId,
       type:this._objectType
     }
 
     this.admin.imageUpload(input).subscribe(res => {
-      this.currentImage = this.croppieImage;
+      this.currentImage = this.editedImage;
       this.croppieImage = null;
       this.editClicked = true;
     }, (err) => {
@@ -153,6 +155,7 @@ export class GeneralImageUploadComponent implements OnInit {
 
   cancelCroppieEdit() {
     this.croppieImage = null;
+    this.editedImage = null;
     this.editClicked = true;
   }
 

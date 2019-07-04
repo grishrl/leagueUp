@@ -37,6 +37,13 @@ export class DivisionService {
     return this.httpService.httpGet(url,parameters);
   }
 
+  //
+  getDivisionAny(divInfo: string): Observable<any> {
+    let url = '/division/get/any';
+    let parameters = [{ 'q': encodeURIComponent(divInfo) }];
+    return this.httpService.httpGet(url, parameters);
+  }
+
   constructor( private httpService:HttpServiceService) {
 
    }
@@ -49,5 +56,5 @@ export class DivisionService {
   //   return this.http.get<any>(url + '?division=' + divisionName).pipe(
   //     map((res) => {
   //       return res.returnObject;
-  //     })); 
+  //     }));
   // }

@@ -7,6 +7,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { RequestService } from 'src/app/services/request.service';
 import { Team } from 'src/app/classes/team.class';
 import { DivisionService } from 'src/app/services/division.service';
+import { forEach as _forEach } from 'lodash';
 
 
 @Component({
@@ -79,10 +80,9 @@ export class TeamMarketComponent implements OnInit {
   }
 
   resetRoles(){
-    let keys = Object.keys(this.searchParameters.rolesNeeded);
-    keys.forEach(key=>{
-      this.searchParameters.rolesNeeded[key]=false;
-    })
+    _forEach(this.searchParameters.rolesNeeded, (value, key)=>{
+      this.searchParameters.rolesNeeded[key] = false;
+    });
   }
 
   resetMMRS(){
@@ -108,7 +108,41 @@ export class TeamMarketComponent implements OnInit {
 
   search(){
     let postObj = {};
-    
+
+    // _forEach(this.searchParameters, (value, key)=>{
+    //   if (key != 'divisions' && key != 'customTime' && key != 'rolesNeeded' && key != 'customAvail' && key != 'customtimeZone'
+    //     && key != 'timezone' && this.searchParameters[key] != null) {
+    //     postObj[key] = this.searchParameters[key];
+    //   } else if (key == 'divisions' && this.searchParameters[key].length > 0) {
+    //     postObj[key] = this.searchParameters[key];
+    //   } else if (this.searchParameters[key] != null && key == 'customTime') {
+    //     if (this.searchParameters[key] == 'profile') {
+    //       postObj['getProfileTime'] = true;
+    //     }
+    //     let cleanTime = this.customTimeValidator(this.searchParameters['customAvail'])
+    //     if (cleanTime != null) {
+    //       postObj['times'] = cleanTime;
+    //     }
+    //   } else if (this.searchParameters[key] != null && key == 'rolesNeeded') {
+    //     let roles = this.searchParameters[key];
+    //     let roleKeys = Object.keys(this.searchParameters[key]);
+    //     roleKeys.forEach(role => {
+    //       if (roles[role]) {
+    //         if (postObj['rolesNeeded'] == null || postObj['rolesNeeded'] == undefined) {
+    //           postObj['rolesNeeded'] = {};
+    //         }
+    //         postObj['rolesNeeded'][role] = roles[role];
+    //       }
+    //     });
+    //   } else if (this.searchParameters[key] != null && key == 'timezone') {
+    //     if (this.searchParameters[key] == 'profile') {
+    //       postObj['getProfileTimezone'] = true;
+    //     } else {
+    //       postObj['timezone'] = this.searchParameters['customtimeZone'];
+    //     }
+    //   }
+    // });
+
     let keys = Object.keys(this.searchParameters);
     keys.forEach(key=>{
       if (key != 'divisions' && key != 'customTime' && key != 'rolesNeeded' && key != 'customAvail' && key != 'customtimeZone'
@@ -152,7 +186,7 @@ export class TeamMarketComponent implements OnInit {
       console.log(err);
     })
   }
-  
+
 
   clear(){
     this.showSearch = !this.showSearch;
@@ -163,7 +197,7 @@ export class TeamMarketComponent implements OnInit {
 
   filterSelected(){
     let divs = [];
-    
+
     this.divisions.forEach(element => {
       let push = true;
       this.searchParameters.divisions.forEach(selDiv=>{
@@ -178,7 +212,7 @@ export class TeamMarketComponent implements OnInit {
     return divs;
   }
 
-  constructor(private divisionService: DivisionService, private auth:AuthService, public timezone: TimezoneService, private util:UtilitiesService, public _team:TeamService, 
+  constructor(private divisionService: DivisionService, private auth:AuthService, public timezone: TimezoneService, private util:UtilitiesService, public _team:TeamService,
     private request:RequestService) { }
 
   filterName: string = '';
@@ -212,13 +246,13 @@ export class TeamMarketComponent implements OnInit {
   }
 
    showRequestToJoin(){
-    
+
       if (this.auth.getTeam() != null && this.auth.getTeam() != undefined ){
         return false;
       }else{
         return true;
       }
-    
+
   }
 
   requestToJoin(team){

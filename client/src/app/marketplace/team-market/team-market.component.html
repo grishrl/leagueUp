@@ -1,17 +1,16 @@
-<div class="container forceFull">
-    <div class="row">
-        <div class="col">
+<!-- Section Title -->
+<app-banner-image [bannerTitle]="'Find Free Agents'"></app-banner-image>
 
-            <div class="row mt-3">
-                <div class="col text-center">
-                    <h4>Find A Team</h4>
-                </div>
-            </div>
+<!-- Section Area - Content Central -->
+<section class="content-info">
 
+    <div class="container paddings-mini">
+        <!-- Content Text-->
+        <div class="panel-box padding-b">
             <div class="row" *ngIf="!showSearch">
-                <div class="col">
-                    <span class="finger showlink badge badge-light badge-pill border border-dark" (click)="showSearch = !showSearch">Show
-  search criteria</span>
+                <div class="col text-center mt-3">
+                    <span class="p-2 finger showlink badge badge-light badge-pill border border-dark" (click)="showSearch = !showSearch">Show
+             search criteria</span>
                 </div>
             </div>
             <div *ngIf="showSearch">
@@ -20,13 +19,15 @@
                         <div>Search by division: <span class="ml-5 finger badge badge-pill pill-shadow badge-light" (click)=" searchParameters.divisions = []; selectedDivision=null;">Reset</span></div>
                         <mat-form-field>
                             <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="selected(selectedDivision)" disableOptionCentering>
-                                <mat-option *ngFor="let division of filterSelected()" [value]="division">{{division.displayName}}</mat-option>
+                                <mat-option *ngFor="let division of filterSelected()" [value]="division">{{division.displayName}}
+                                </mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
                     <div class="col">
                         <div style="border-bottom-style: solid; border-bottom-width: 1px;">Selected Divisions</div>
-                        <div *ngFor="let div of searchParameters.divisions; let ind = index;" [ngClass]="{oddRow : ind%2!=0}">{{div.key}}</div>
+                        <div *ngFor="let div of searchParameters.divisions; let ind = index;" [ngClass]="{oddRow : ind%2!=0}">
+                            {{div.key}}</div>
                     </div>
                 </div>
 
@@ -61,7 +62,8 @@
                                     {{level.display}}
                                 </mat-option>
                             </mat-select>
-                            <mat-hint align="start"><strong>Generally how serious / competitively you're looking to play</strong> </mat-hint>
+                            <mat-hint align="start"><strong>Generally how serious / competitively you're looking to play</strong>
+                            </mat-hint>
                         </mat-form-field>
                     </div>
                 </div>
@@ -71,10 +73,14 @@
                         <div>Team looking for these roles: <span class="ml-5 finger badge badge-pill pill-shadow badge-light" (click)="resetRoles()">Reset</span></div>
                         <section class="mt-2">
                             <mat-checkbox class="role-margin" [(ngModel)]="searchParameters.rolesNeeded.tank">Tank</mat-checkbox>
-                            <mat-checkbox class="role-margin" [(ngModel)]="searchParameters.rolesNeeded.offlane">Offlane</mat-checkbox>
-                            <mat-checkbox class="role-margin" [(ngModel)]="searchParameters.rolesNeeded.meleeassassin">Melee Assassin</mat-checkbox>
-                            <mat-checkbox class="role-margin" [(ngModel)]="searchParameters.rolesNeeded.rangedassassin">Ranged Assassin</mat-checkbox>
-                            <mat-checkbox class="role-margin" [(ngModel)]="searchParameters.rolesNeeded.support">Support</mat-checkbox>
+                            <mat-checkbox class="role-margin" [(ngModel)]="searchParameters.rolesNeeded.offlane">Offlane
+                            </mat-checkbox>
+                            <mat-checkbox class="role-margin" [(ngModel)]="searchParameters.rolesNeeded.meleeassassin">Melee Assassin
+                            </mat-checkbox>
+                            <mat-checkbox class="role-margin" [(ngModel)]="searchParameters.rolesNeeded.rangedassassin">Ranged Assassin
+                            </mat-checkbox>
+                            <mat-checkbox class="role-margin" [(ngModel)]="searchParameters.rolesNeeded.support">Support
+                            </mat-checkbox>
                             <mat-checkbox class="role-margin" [(ngModel)]="searchParameters.rolesNeeded.flex">Flex</mat-checkbox>
                         </section>
                     </div>
@@ -182,7 +188,7 @@
                             </div>
                             <div class="row">
                                 <div class="col text-center">
-                                    <a [routerLink]="['/teamProfile/',_team.routeFriendlyTeamName(team.teamName)]">View Team Profile</a>
+                                    <app-team-link [team]="team.teamName">View Team Profile</app-team-link>
                                 </div>
                                 <div class="col text-center" *ngIf="showRequestToJoin() ">
                                     <button class="btn btn-success" (click)="requestToJoin(team)">Request to Join Team</button>
@@ -193,5 +199,7 @@
                 </div>
             </div>
         </div>
+        <!-- End Content Text-->
     </div>
-</div>
+</section>
+<!-- End Section Area -  Content Central -->

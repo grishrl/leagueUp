@@ -6,6 +6,7 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TeamService } from 'src/app/services/team.service';
 import { StandingsService } from 'src/app/services/standings.service';
 import { environment } from '../../../environments/environment';
+import { TimeserviceService } from 'src/app/services/timeservice.service';
 
 @Component({
   selector: 'app-team-schedule',
@@ -19,12 +20,20 @@ export class TeamScheduleComponent implements OnInit {
   noMatches: boolean; // set to true if there are no matches returned or false if there are, used for displaying certain messages
   rounds: any //local variable to parse received team matches into
   roundsArray:any
+  index = 0;
+  currentSeason;
 
-  constructor(private Auth: AuthService, private route: ActivatedRoute, private router: Router, private scheduleService:ScheduleService, public util:UtilitiesService, public team: TeamService, private standingsService:StandingsService) {
+  constructor(private Auth: AuthService, private route: ActivatedRoute, private router: Router,
+    private scheduleService:ScheduleService, public util:UtilitiesService, public team: TeamService,
+    private standingsService:StandingsService, private timeService:TimeserviceService) {
     //get the ID from the route
     if (this.route.snapshot.params['id']) {
       this.recTeam = this.route.snapshot.params['id'];
     }
+    this.timeService.getSesasonInfo().subscribe(res => {
+      this.currentSeason = res['value'];
+      this.ngOnInit();
+    });;
    }
 
   showDeadlineText(match){
@@ -35,13 +44,14 @@ export class TeamScheduleComponent implements OnInit {
     return ret;
   }
 
+
   scheduleMatch(id){
     this.router.navigate(['schedule/scheduleMatch', id]);
   }
+
   todayDate
 
   checkDate(match){
-
     let ret = false;
     if (match['scheduleDeadline']){
       let intDate = parseInt(match['scheduleDeadline']);
@@ -63,102 +73,102 @@ export class TeamScheduleComponent implements OnInit {
       getTeam = this.Auth.getTeam();
       this.recTeam = getTeam;
     }
-
-    //TODO: remove hard coded season 6!!!
-    this.scheduleService.getTeamSchedules(environment.season, getTeam).subscribe(
-      res=>{
-        let matches = res;
-        //set the nomatches state
-        if (matches.length == 0 ){
-          this.noMatches = true;
-        }else{
-          this.noMatches = false;
-        }
-
-        let div = matches[0].divisionConcat
-        this.standingsService.getStandings(div).subscribe(
-          res => {
-            let standings = res;
-            matches.forEach(match => {
-              standings.forEach(standing => {
-                if (match.home.teamName == standing.teamName) {
-                  match.home['losses'] = standing.losses;
-                  match.home['wins'] = standing.wins;
-                }
-                if (match.away.teamName == standing.teamName) {
-                  match.away['losses'] = standing.losses;
-                  match.away['wins'] = standing.wins;
-                }
-              });
-              if (match.scheduleDeadline){
-                match['friendlyDeadline'] = this.util.getDateFromMS(match.scheduleDeadline);
-              }
-
-              if (match.scheduledTime) {
-                match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
-                match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
-                match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
-              }
-            })
-          },err=>{
-            console.log(err);
-          });
-
-        //build out the rounds object:
-        /*
-        rounds = {
-          'roundNubmer':[
-                          {matchObject},
-                          {matchObject}
-                        ]
-                      }
-        */
-       let roundsArray = [];
-       if(matches.length % 2 == 0){
-         for (var i = 0; i <= matches.length; i++) {
-           if (this.rounds == null || this.rounds == undefined) {
-             this.rounds = {};
-           }
-
-           let realRoundNumber = i + 1;
-           roundsArray.push(realRoundNumber);
-           matches.forEach(match => {
-             if (this.rounds[realRoundNumber] == null || this.rounds[realRoundNumber] == undefined) {
-               this.rounds[realRoundNumber] = [];
-             }
-             if (match.round == realRoundNumber) {
-                // roundsArray.push(realRoundNumber);
-               this.rounds[realRoundNumber].push(match);
-             }
-
-           });
-         }
-       }else if (matches.length % 2 != 0) {
-          for (var i = 0; i < matches.length; i++) {
-            if (this.rounds == null || this.rounds == undefined) {
-              this.rounds = {};
-            }
-            let realRoundNumber = i + 1;
-            roundsArray.push(realRoundNumber);
-            matches.forEach(match => {
-              if (this.rounds[realRoundNumber] == null || this.rounds[realRoundNumber] == undefined) {
-                this.rounds[realRoundNumber] = [];
-              }
-              if (match.round == realRoundNumber) {
-                this.rounds[realRoundNumber].push(match);
-              }
-
-            });
+    if(this.currentSeason && getTeam){
+      this.scheduleService.getTeamSchedules(this.currentSeason, getTeam).subscribe(
+        res => {
+          let matches = res;
+          //set the nomatches state
+          if (matches.length == 0) {
+            this.noMatches = true;
+          } else {
+            this.noMatches = false;
           }
-        }
+          let div = matches[0].divisionConcat
+          this.standingsService.getStandings(div).subscribe(
+            res => {
+              let standings = res;
+              matches.forEach(match => {
+                standings.forEach(standing => {
+                  if (match.home.teamName == standing.teamName) {
+                    match.home['losses'] = standing.losses;
+                    match.home['wins'] = standing.wins;
+                  }
+                  if (match.away.teamName == standing.teamName) {
+                    match.away['losses'] = standing.losses;
+                    match.away['wins'] = standing.wins;
+                  }
+                });
+                if (match.scheduleDeadline) {
+                  match['friendlyDeadline'] = this.util.getDateFromMS(match.scheduleDeadline);
+                }
+
+                if (match.scheduledTime) {
+                  match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
+                  match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
+                  match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
+                }
+              })
+            }, err => {
+              console.log(err);
+            });
+
+          //build out the rounds object:
+          /*
+          rounds = {
+            'roundNubmer':[
+                            {matchObject},
+                            {matchObject}
+                          ]
+                        }
+          */
+          let roundsArray = [];
+          if (matches.length % 2 == 0) {
+            for (var i = 0; i <= matches.length; i++) {
+              if (this.rounds == null || this.rounds == undefined) {
+                this.rounds = {};
+              }
+
+              let realRoundNumber = i + 1;
+              roundsArray.push(realRoundNumber);
+              matches.forEach(match => {
+                if (this.rounds[realRoundNumber] == null || this.rounds[realRoundNumber] == undefined) {
+                  this.rounds[realRoundNumber] = [];
+                }
+                if (match.round == realRoundNumber) {
+                  // roundsArray.push(realRoundNumber);
+                  this.rounds[realRoundNumber].push(match);
+                }
+
+              });
+            }
+          } else if (matches.length % 2 != 0) {
+            for (var i = 0; i < matches.length; i++) {
+              if (this.rounds == null || this.rounds == undefined) {
+                this.rounds = {};
+              }
+              let realRoundNumber = i + 1;
+              roundsArray.push(realRoundNumber);
+              matches.forEach(match => {
+                if (this.rounds[realRoundNumber] == null || this.rounds[realRoundNumber] == undefined) {
+                  this.rounds[realRoundNumber] = [];
+                }
+                if (match.round == realRoundNumber) {
+                  this.rounds[realRoundNumber].push(match);
+                }
+
+              });
+            }
+          }
 
 
 
-        this.rounds;
-        this.roundsArray = roundsArray;
-      },
-      err=>{console.log(err)}
-    )
+          this.rounds;
+          this.roundsArray = roundsArray;
+        },
+        err => { console.log(err) }
+      )
+    }
+
   }
 
   //returns true if there is a scheduled time, and displays the scheduled time

@@ -25,7 +25,9 @@ export class MatchEditComponent implements OnInit {
       score: null
     },
     casterName: null,
-    casterUrl: null
+    casterUrl: null,
+    notes:'',
+    forfeit:false
   }; //match prototype
   homeScore: number;
   awayScore: number;
@@ -34,15 +36,15 @@ export class MatchEditComponent implements OnInit {
   friendlyDate;
   amPm = ['PM', 'AM'];
 
-  
-  constructor(private route: ActivatedRoute, private scheduleService: ScheduleService, private adminService: AdminService, private util:UtilitiesService) { 
+
+  constructor(private route: ActivatedRoute, private scheduleService: ScheduleService, private adminService: AdminService, private util:UtilitiesService) {
     if (this.route.snapshot.params['id']) {
       this.matchId = this.route.snapshot.params['id'];
     }
   }
 
   ngOnInit() {
-    this.scheduleService.getMatchInfo(environment.season, this.matchId).subscribe(res=>{
+    this.scheduleService.getMatchInfo(this.matchId).subscribe(res=>{
       this.match = res;
       if (this.match.away.score || this.match.home.score) {
         this.homeScore = this.match.home.score;
@@ -72,13 +74,13 @@ export class MatchEditComponent implements OnInit {
 
   saveMatch(match){
 
-    
+
     let submittable = true;
 
     if (this.homeScore != undefined && this.homeScore != null){
       match.home.score = this.homeScore;
     }
-    
+
     if (this.awayScore != undefined && this.awayScore != null) {
       match.away.score = this.awayScore;
     }
@@ -95,11 +97,9 @@ export class MatchEditComponent implements OnInit {
         colonSplit[0] += 12;
       }
       let setDate = new Date();
-      setDate.setFullYear(years);
-      setDate.setMonth(month);
-      setDate.setDate(day);
-      setDate.setHours(colonSplit[0]);
-      setDate.setMinutes(colonSplit[1]);
+      setDate.setFullYear(years, month, day);
+      setDate.setHours(colonSplit[0], colonSplit[1], 0, 0);
+
       let msDate = setDate.getTime();
       let endDate = msDate + 5400000;
       match.scheduledTime.startTime = msDate;
@@ -117,8 +117,8 @@ export class MatchEditComponent implements OnInit {
         }
       )
     }
-    
-    
+
+
   }
- 
+
 }

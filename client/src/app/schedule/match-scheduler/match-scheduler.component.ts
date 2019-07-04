@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { TeamService } from 'src/app/services/team.service';
 import { environment } from '../../../environments/environment';
+import { AuthService } from 'src/app/services/auth.service';
 
 
 @Component({
@@ -14,7 +15,7 @@ export class MatchSchedulerComponent implements OnInit {
 
   //component properties
   matchId //local prop to hold match Id recieved from route
-  mydate = new Date();  //local prop that holds the selected date by user from the calendar 
+  mydate = new Date();  //local prop that holds the selected date by user from the calendar
   time: any //local prop that hold the selected time from user
   suffix: any //local prop for selected AM/PM suffix
   times: any[] = [];  //local array that is populated progromatticaly to give users a drop down of times on 15 min interval to select
@@ -26,23 +27,35 @@ export class MatchSchedulerComponent implements OnInit {
   awayScore: number //local prop for scores
   amPm = ['PM', 'AM']; //local propery holds array for the am/pm dropdown
 
-  constructor(public team: TeamService, private route: ActivatedRoute, private scheduleService:ScheduleService, private router:Router) {
+  constructor(public team: TeamService, private route: ActivatedRoute, private scheduleService:ScheduleService, private router:Router,
+    private Auth: AuthService) {
     //get the id provided in the URL route
     this.matchId = this.route.snapshot.params['id'];
    }
 
-  
 
- 
+
+index = 0;
   ngOnInit() {
     //get the match from the ID we receieved
-    this.scheduleService.getMatchInfo(environment.season, this.matchId).subscribe(
-      res=>{ 
+    this.scheduleService.getMatchInfo(this.matchId).subscribe(
+      res=>{
         //assign the result to local prop match
         this.match = res;
+        this.team.getTeam(res.home.teamName).subscribe(homeTeam => {
+          this.homeTeam = homeTeam
+        }, err => {
+          console.log(err);
+        });
+        this.team.getTeam(res.away.teamName).subscribe(awayTeam => {
+          this.awayTeam = awayTeam
+        }, err => {
+          console.log(err);
+        })
        },
       err=>{ console.log(err) }
     )
+
     //build out the selectable times for the user, in 15 min intervals
     for(let i=1; i < 13; i++){
       for(let j=0;j<=3;j++){
@@ -77,30 +90,27 @@ export class MatchSchedulerComponent implements OnInit {
     let years = this.mydate.getFullYear();
     let month = this.mydate.getMonth();
     let day = this.mydate.getDate();
-    
+
     let colonSplit = this.time.split(':');
-    
+
     colonSplit[1]=parseInt(colonSplit[1]);
-    
+
     if(this.suffix == 'PM'){
       colonSplit[0] = parseInt(colonSplit[0]);
       colonSplit[0]+=12;
     }
-    
+
     let setDate = new Date();
-    setDate.setFullYear(years);
-    setDate.setMonth(month);
-    setDate.setDate(day);
-    setDate.setHours(colonSplit[0]);
-    setDate.setMinutes(colonSplit[1]);
-    
+    setDate.setFullYear(years, month, day);
+    setDate.setHours(colonSplit[0], colonSplit[1], 0,0);
+
     let msDate = setDate.getTime();
     let endDate = msDate + 5400000;
-    
+
     this.scheduleService.scheduleMatchTime(this.match.matchId, msDate, endDate).subscribe(
       res=>{
         //TODO: will i need to implement a route here?
-        this.router.navigateByUrl('/schedule/teamSchedule');
+        this.router.navigateByUrl('/teamProfile/'+this.team.routeFriendlyTeamName(this.Auth.getTeam()));
       },
       err=>{
         console.log(err)
@@ -114,18 +124,7 @@ export class MatchSchedulerComponent implements OnInit {
   showSchedules = false;
 
   getTeamSchedules(){
-    
-    this.team.getTeam(this.match.home.teamName).subscribe( homeTeam=>{
-      this.homeTeam = homeTeam
-      this.team.getTeam(this.match.away.teamName).subscribe(awayTeam=>{
-        this.awayTeam = awayTeam
-        this.showSchedules = true;
-      }, err=>{
-        console.log(err);
-      })
-    }, err=>{
-      console.log(err);
-    })
+    this.showSchedules = true;
   }
 
 }

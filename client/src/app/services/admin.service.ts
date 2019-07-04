@@ -27,7 +27,7 @@ export class AdminService {
     }else{
       imgInput = img;
     }
-    return this.httpService.httpPost(url, imgInput, true);  
+    return this.httpService.httpPost(url, imgInput, true);
   }
 
   teamRemoveLogo(team){
@@ -37,7 +37,7 @@ export class AdminService {
     };
     return this.httpService.httpPost(url, payload, true);
   }
-  
+
 
   //returns a list of all teams
   getTeams(){
@@ -60,13 +60,19 @@ export class AdminService {
     return this.httpService.httpPost(url, payload, true);
   }
 
-  generateTournament(teams, season, name, division){
+  /*
+  teams, season, division, cupNumber, tournamentName, description
+  */
+
+  generateTournament(teams, season, name, division, cupNumber, description){
     let url = '/schedule/generate/tournament';
     let payload = {
       teams:teams,
       season:season,
       tournamentName:name,
-      division:division
+      division:division,
+      cupNumber:cupNumber,
+      description: description
     };
     return this.httpService.httpPost(url, payload, true);
   }
@@ -169,9 +175,20 @@ export class AdminService {
   queuePost(teamName:string, memberName:string, action:boolean){
     let url = 'admin/approveMemberAdd';
     let payload = {
-      teamName:teamName,
-      member:memberName,
+      teamId:teamName,
+      memberId:memberName,
       approved:action
+    }
+    return this.httpService.httpPost(url, payload, true);
+  }
+
+  //returns to the pending member queue the admins approval or declining of a team member add
+  avatarQueuePost(id: string, fileName: string, action: boolean) {
+    let url = 'admin/approveAvatar';
+    let payload = {
+      userId: id,
+      fileName: fileName,
+      approved: action
     }
     return this.httpService.httpPost(url, payload, true);
   }

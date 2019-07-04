@@ -3,6 +3,8 @@ const router = require('express').Router();
 const passport = require("passport");
 const levelRestrict = require("../configs/admin-leveling");
 const Match = require('../models/match-model');
+const _ = require('lodash');
+const matchCommon = require('../methods/matchCommon');
 
 router.post('/match/update', passport.authenticate('jwt', {
     session: false
@@ -47,16 +49,21 @@ router.post('/match/update', passport.authenticate('jwt', {
             match.reported = true;
         }
 
+
         Match.findOne({ matchId: match.matchId }).then(
             (found) => {
                 if (found) {
                     // found = match;
-                    let keys = Object.keys(match);
-                    keys.forEach(key => {
-                        found[key] = match[key];
+                    // let keys = Object.keys(match);
+                    // keys.forEach(key => {
+                    //     found[key] = match[key];
+                    // });
+                    _.forEach(match, (value, key) => {
+                        found[key] = value;
                     });
                     found.save().then(
                         (saved) => {
+                            matchCommon.promoteTournamentMatch(saved.toObject());
                             res.status(200).send(util.returnMessaging(path, 'Match Saved', false, saved, null, logInfo));
                         },
                         (err) => {

@@ -11,6 +11,8 @@ const User = require('../models/user-models');
 const logger = require('../subroutines/sys-logging-subs');
 const mmrMethods = require('../methods/mmrMethods');
 const util = require('../utils');
+const archive = require('../methods/archivalMethods');
+const _ = require('lodash');
 
 
 var jwtOptions = {
@@ -83,56 +85,77 @@ passport.use(new BnetStrategy({
 
             var id = profile.id.toString();
             let userObj = {
-                displayName: profile.battletag,
-                bNetId: id
-            }
-
-            mmrMethods.comboMmr(profile.battletag).then(
-                processed => {
-                    logObj.deepLogging = [];
-                    logObj.deepLogging.push({
-                        'returnedFromcomboMmr': processed
-                    });
-                    if (util.returnBoolByPath(processed, 'hotsLogs')) {
-                        userObj.averageMmr = processed.hotsLogs.mmr;
-                        userObj.hotsLogsPlayerID = processed.hotsLogs.playerId;
-                    }
-                    if (util.returnBoolByPath(processed, 'heroesProfile')) {
-                        if (processed.heroesProfile >= 0) {
-                            userObj.heroesProfileMmr = processed.heroesProfile;
-                        } else {
-                            userObj.heroesProfileMmr = -1 * processed.heroesProfile;
-                            userObj.lowReplays = true;
-                        }
-                    }
-                    if (util.returnBoolByPath(processed, 'ngsMmr')) {
-                        userObj.ngsMmr = processed.ngsMmr;
-                    }
-                    logObj.deepLogging.push({
-                        'newUserBeforeSave': userObj
-                    });
-                    new User(userObj).save().then((newUser) => {
-                        logObj.action = ' new user was created ';
-                        logObj.target = newUser.displayName;
-                        logger(logObj);
-                        returnUserToClient(newUser, done);
-                    });
-                },
-                err => {
-                    new User(userObj).save().then((newUser) => {
-                        logObj.action = ' new user was created ';
-                        logObj.target = newUser.displayName;
-                        logObj.error = 'Hots logs error!';
-                        logger(logObj);
-                        returnUserToClient(newUser, done);
-                    });
+                    displayName: profile.battletag,
+                    bNetId: id
                 }
-            )
+                //check to see if this user is in the archive
+            archive.retrieveAndRemoveArchiveUser({
+                bNetId: id
+            }).then(found => {
+                if (found) {
+                    //if there was a user in the archive; we'll pick some data we want to restore
+                    if (found.smurfAccount) {
+                        //dont wanna lose those smurfs!
+                        userObj.smurfAccount = found.smurfAccount;
+                    }
+                    if (found.history) {
+                        userObj.history = found.history;
+                    }
+                    if (found.replays) {
+                        userObj.replays = found.replays;
+                    }
+                    logObj.action += ' restored from archive ';
+                    createNewProfile(userObj, logObj, done);
+                } else {
+                    //no archive go ahead and create new
+                    createNewProfile(userObj, logObj, done);
+                }
+            }, err => {
+                createNewProfile(userObj, logObj, done)
+            });
+
 
         }
     })
 }));
 
+function createNewProfile(userObj, logObj, done) {
+    //get the players MMRs!
+    mmrMethods.comboMmr(userObj.displayName).then(
+        processed => {
+            if (util.returnBoolByPath(processed, 'hotsLogs')) {
+                userObj.averageMmr = processed.hotsLogs.mmr;
+                userObj.hotsLogsPlayerID = processed.hotsLogs.playerId;
+            }
+
+            if (util.returnBoolByPath(processed, 'heroesProfile')) {
+                if (processed.heroesProfile >= 0) {
+                    userObj.heroesProfileMmr = processed.heroesProfile;
+                } else {
+                    userObj.heroesProfileMmr = -1 * processed.heroesProfile;
+                    userObj.lowReplays = true;
+                }
+            }
+
+            if (util.returnBoolByPath(processed, 'ngsMmr')) {
+                userObj.ngsMmr = processed.ngsMmr;
+            }
+            new User(userObj).save().then((newUser) => {
+                logObj.action = ' new user was created ';
+                logObj.target = newUser.displayName;
+                logger(logObj);
+                returnUserToClient(newUser, done);
+            });
+        }, err => {
+            new User(userObj).save().then((newUser) => {
+                logObj.action = ' new user was created ';
+                logObj.target = newUser.displayName;
+                logObj.error = 'mmr gathering errors!';
+                logger(logObj);
+                returnUserToClient(newUser, done);
+            });
+        });
+}
 
 function generateNewToken(prof, admin) {
     let tokenObject = {};
@@ -142,15 +165,7 @@ function generateNewToken(prof, admin) {
     tokenObject.id = prof._id;
     tokenObject.displayName = prof.displayName;
     if (admin) {
-        tokenObject.adminLevel = [];
-        let keys = Object.keys(admin);
-        keys.forEach(key => {
-            if (key == 'adminId' || key == '__v' || key == '_id' || key == 'info') {} else if (admin[key] == true) {
-                let obj = {};
-                obj[key] = admin[key];
-                tokenObject.adminLevel.push(obj);
-            }
-        });
+        tokenObject.adminLevel = compressAdmin(admin);
     }
 
     var token = jwt.sign(tokenObject, process.env.jwtToken, {
@@ -171,15 +186,7 @@ function returnUserToClient(prof, done) {
         adminId: prof._id
     }).then((admin) => {
         if (admin) {
-            tokenObject.adminLevel = [];
-            let keys = Object.keys(admin.toObject());
-            keys.forEach(key => {
-                if (key == 'adminId' || key == '__v' || key == '_id' || key == 'info') {} else if (admin[key] == true) {
-                    let obj = {};
-                    obj[key] = admin[key];
-                    tokenObject.adminLevel.push(obj);
-                }
-            });
+            tokenObject.adminLevel = compressAdmin(admin.toObject());
         }
         var token = jwt.sign(tokenObject, process.env.jwtToken, { expiresIn: '2h' });
         var reply = {
@@ -187,4 +194,18 @@ function returnUserToClient(prof, done) {
         };
         done(null, reply);
     });
+}
+
+function compressAdmin(obj) {
+    let retVal = [];
+    _.forEach(obj, (value, key) => {
+        if (key == 'adminId' || key == '__v' || key == '_id' || key == 'info') {
+
+        } else if (value == true) {
+            let tempObj = {};
+            tempObj[key] = value;
+            retVal.push(tempObj);
+        }
+    });
+    return retVal;
 }

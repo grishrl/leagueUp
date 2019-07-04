@@ -1,0 +1,29 @@
+<div class="panel-box">
+    <div class="titles">
+        <h4><i class="fa fa-calendar"></i>Team Agenda</h4>
+    </div>
+
+    <!-- List Diary -->
+    <ul class="list-diary">
+        <!-- Item List Diary -->
+        <li *ngFor="let match of next4matches">
+            <h6>
+                <!--GROUP A  --><span>
+                {{util.getFormattedDate(match.scheduledTime.startTime, "ddd MMM YYYY - hh:mm A zz")}}</span></h6>
+            <ul class="club-logo">
+                <li>
+                    <img src="{{teamServ.imageFQDN(match.home.logo)}}" alt="">
+                    <span>{{match.home.teamName}}</span>
+                </li>
+                <li>
+                    <img src="{{teamServ.imageFQDN(match.away.logo)}}" alt="">
+                    <span>{{match.away.teamName}}</span>
+                </li>
+            </ul>
+        </li>
+        <!-- End Item List Diary -->
+
+    </ul>
+    <!-- End List Diary -->
+</div>
+<!-- End Diary -->

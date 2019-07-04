@@ -428,53 +428,52 @@ user query
 */
 
 function createUserSearchObject(obj, reqUser) {
-    let returnObj = {};
+    let returnObj = {
+        $and: [{
+                $or: [{
+                        "teamId": null
+                    },
+                    {
+                        "teamId": {
+                            $exists: false
+                        }
+                    },
+                ]
+            },
+            {
+                $or: [{
+                        "teamName": null
+                    },
+                    {
+                        "teamName": {
+                            $exists: false
+                        }
+                    }
+                ]
+            },
+            {
+                $or: [{
+                        "pendingTeam": null
+                    },
+                    {
+                        "pendingTeam": {
+                            $exists: false
+                        }
+                    },
+                    {
+                        "pendingTeam": false
+                    }
+                ]
+            },
+            {
+                lookingForGroup: true
+            }
+        ]
+    }
     let keys = Object.keys(obj);
     if (keys.length > 0) {
 
         //staticly set that the user shall not be on another team and shall be lookingforgroup!
-        returnObj = {
-            $and: [{
-                    $or: [{
-                            "teamId": null
-                        },
-                        {
-                            "teamId": {
-                                $exists: false
-                            }
-                        },
-                    ]
-                },
-                {
-                    $or: [{
-                            "teamName": null
-                        },
-                        {
-                            "teamName": {
-                                $exists: false
-                            }
-                        }
-                    ]
-                },
-                {
-                    $or: [{
-                            "pendingTeam": null
-                        },
-                        {
-                            "pendingTeam": {
-                                $exists: false
-                            }
-                        },
-                        {
-                            "pendingTeam": false
-                        }
-                    ]
-                },
-                {
-                    lookingForGroup: true
-                }
-            ]
-        }
 
         // add divisions to the query object
         if (util.returnBoolByPath(obj, 'divisions')) {
@@ -529,15 +528,22 @@ function createUserSearchObject(obj, reqUser) {
             let roles = {
                 $or: []
             };
-            let keys = Object.keys(obj.rolesNeeded);
-            keys.forEach(key => {
+            lodash.forEach(obj.rolesNeeded, (value, key) => {
                 let searchKey = 'role';
-                let value = obj.rolesNeeded[key];
                 searchKey = searchKey + '.' + key;
                 let tO = {}
                 tO[searchKey] = value;
                 roles['$or'].push(tO);
             });
+            // let keys = Object.keys(obj.rolesNeeded);
+            // keys.forEach(key => {
+            //     let searchKey = 'role';
+            //     let value = obj.rolesNeeded[key];
+            //     searchKey = searchKey + '.' + key;
+            //     let tO = {}
+            //     tO[searchKey] = value;
+            //     roles['$or'].push(tO);
+            // });
             returnObj['$and'].push(roles);
         }
 
@@ -553,6 +559,7 @@ function createUserSearchObject(obj, reqUser) {
             }
 
             if (util.returnBoolByPath(user, 'availability')) {
+                //todo - replace with lodash foreach
                 let keys = Object.keys(user.availability);
                 keys.forEach(key => {
                     let unit = user.availability[key];
@@ -674,13 +681,14 @@ team query
 function createTeamSearchObject(obj, reqUser) {
     let returnObj = {};
     let keys = Object.keys(obj);
+    returnObj = {
+        $and: []
+    }
+
+    returnObj.$and.push({
+        lookingForMore: true
+    })
     if (keys.length > 0) {
-
-        returnObj = {
-            $and: []
-        }
-
-        returnObj.$and.push({ lookingForMore: true })
 
         // add divisions to the query object
         if (util.returnBoolByPath(obj, 'divisions')) {
@@ -727,15 +735,22 @@ function createTeamSearchObject(obj, reqUser) {
         //add roles to the query object
         if (util.returnBoolByPath(obj, 'rolesNeeded')) {
             let roles = { $or: [] };
-            let keys = Object.keys(obj.rolesNeeded);
-            keys.forEach(key => {
+            lodash.forEach(obj.rolesNeeded, (value, key) => {
                 let searchKey = 'rolesNeeded';
-                let value = obj.rolesNeeded[key];
                 searchKey = searchKey + '.' + key;
                 let tO = {}
                 tO[searchKey] = value;
                 roles['$or'].push(tO);
             });
+            // let keys = Object.keys(obj.rolesNeeded);
+            // keys.forEach(key => {
+            //     let searchKey = 'rolesNeeded';
+            //     let value = obj.rolesNeeded[key];
+            //     searchKey = searchKey + '.' + key;
+            //     let tO = {}
+            //     tO[searchKey] = value;
+            //     roles['$or'].push(tO);
+            // });
             returnObj['$and'].push(roles);
         }
 
@@ -754,6 +769,7 @@ function createTeamSearchObject(obj, reqUser) {
                 }
             }
             if (util.returnBoolByPath(user, 'availability')) {
+                //todo: replace with lodash foreach
                 let keys = Object.keys(user.availability);
                 keys.forEach(key => {
                     let unit = user.availability[key];

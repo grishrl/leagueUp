@@ -27,5 +27,31 @@ router.get('/get/all', (req, res) => {
     });
 });
 
+///division/get/any
+router.get('/get/any', (req, res) => {
+    console.log(req.query);
+    var divInfo = decodeURIComponent(req.query.q);
+
+    let query = {
+        '$or': []
+    }
+
+    query["$or"].push({
+        "displayName": divInfo
+    });
+    query["$or"].push({
+        "divisionName": divInfo
+    });
+    query["$or"].push({
+        "divisionConcat": divInfo
+    });
+
+    Division.findOne(query).then((foundDiv) => {
+        res.status(200).send(util.returnMessaging(path, 'Return division info', false, foundDiv));
+    }, (err) => {
+        res.status(500).send(util.returnMessaging(path, 'Error finding division', err));
+    });
+});
+
 
 module.exports = router;

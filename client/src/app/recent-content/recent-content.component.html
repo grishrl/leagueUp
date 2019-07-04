@@ -1,0 +1,46 @@
+<!--Items Club video -->
+<div class="row no-line-height">
+    <div class="col-md-12">
+        <h3 class="clear-title">Recent Content</h3>
+    </div>
+
+    <!--Item Club News -->
+    <div class="col-lg-6 col-xl-4">
+        <!-- Widget Text-->
+        <div class="panel-box">
+            <div class="titles no-margin">
+                <h4><a href="{{createPlaylistUrl(showdownItem)}}" target="_blank">Showdown Match</a></h4>
+            </div>
+            <iframe class="video" [src]="showdownItem.url | safe" frameborder="0" allow="encrypted-media" allowfullscreen></iframe>
+        </div>
+        <!-- End Widget Text-->
+    </div>
+    <!--End Item Club News -->
+
+    <!--Item Club News -->
+    <div class="col-lg-6 col-xl-4">
+        <!-- Widget Text-->
+        <div class="panel-box">
+            <div class="titles no-margin">
+                <h4><a href="{{createPlaylistUrl(edgeItem)}}" target="_blank">Nexus Edge</a></h4>
+            </div>
+            <iframe class="video" [src]="edgeItem.url | safe" frameborder="0" allow="encrypted-media" allowfullscreen></iframe>
+        </div>
+        <!-- End Widget Text-->
+    </div>
+    <!--End Item Club News -->
+
+    <!--Item Club News -->
+    <div class="col-lg-6 col-xl-4">
+        <!-- Widget Text-->
+        <div class="panel-box">
+            <div class="titles no-margin">
+                <h4><a href="{{createPlaylistUrl(podcastItem)}}" target="_blank">Nexus Now Podcast</a></h4>
+            </div>
+            <iframe class="video" [src]="podcastItem.url | safe" frameborder="0" allow="encrypted-media" allowfullscreen></iframe>
+        </div>
+        <!-- End Widget Text-->
+    </div>
+    <!--End Item Club News -->
+</div>
+<!--End Items Club video -->

@@ -1,99 +1,239 @@
-<nav class="navbar fixed-top navbar-expand-lg navbar-dark fixed-top">
-    <div class="container">
-        <a class="finger" routerLink="" (click)="navGo('remove')"><img class="ngsImg" src="/assets/Lettermark.png"></a>
-        <!-- data-toggle="collapse" data-target="#navbarResponsive" -->
-        <button class="navbar-toggler navbar-toggler-right" type="button" (click)="navGo()" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-        <!-- class="collapse navbar-collapse" -->
-        <div [ngClass]="navBarClass" id="navbarResponsive">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <!--   [routerLink]="['/blog','3BLsIya6ZiWQWka4IeUw2']" -->
-                    <a class="nav-link finger" href="https://www.heroesprofile.com/Series" target="_blank">Statistics</a>
-                </li>
-                <li class="nav-item">
-                    <!--   [routerLink]="['/blog','3BLsIya6ZiWQWka4IeUw2']" -->
-                    <a class="nav-link finger" [routerLink]="['/blog','1JtsmWFT5YB9hfDewXMx75']">FAQ</a>
-                </li>
-                <li class="nav-item">
-                    <!--   [routerLink]="['/blog','3BLsIya6ZiWQWka4IeUw2']" -->
-                    <a class="nav-link finger" [routerLink]="['/rules']" (click)="navGo('/rules')">Rules</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle finger" id="divisionDropdown" role="button" data-toggle="dropdown" aria-expanded="false">Divisions</a>
-                    <div class="dropdown-menu">
-                        <!-- [routerLink]="['/division/',division.divisionConcat]" -->
-                        <a class="dropdown-item finger" *ngFor="let division of divisions" [routerLink]="['/division/',division.divisionConcat]" (click)="navGo('/division/',division.divisionConcat)">{{division.displayName}}</a>
+<!-- Header-->
+<header class="header-2">
+    <!-- End headerbox-->
+    <div class="headerbox">
+        <div class="container">
+            <div class="row justify-content-between align-items-center">
+                <!-- Logo-->
+                <div class="col col-xl-2 text-center">
+                    <div class="logo">
+                        <a routerLink="" title="Return Home">
+                            <img src="/assets/Lettermark.png" alt="Logo" class="logo_img">
+                        </a>
                     </div>
-                </li>
-                <li class="nav-item">
-                    <!--  [routerLink]="['/calendar']" -->
-                    <a class="nav-link finger" [routerLink]="['/calendar']" (click)="navGo('/calendar')">Calendar</a>
-                </li>
-                <li class="nav-item">
-                    <!-- [routerLink]="['/blog']" -->
-                    <a class="nav-link finger" [routerLink]="['/blog']" (click)="navGo('/blog')">Blog</a>
-                </li>
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item" *ngIf="!Auth.isAuthenticated() else loggedIn">
-                        <!-- [routerLink]="['/login']" -->
-                        <a class="nav-link finger" [routerLink]="['/login']" (click)="navGo('/login')">Login</a>
-                    </li>
-                    <ng-template #loggedIn>
-                        <li class="nav-item dropdown">
+                    <small appLStat></small>
+                </div>
+                <!-- End Logo-->
 
+                <!-- Adds nav-->
+                <div class="col col-xl-10">
+                    <!-- mainmenu-->
+                    <nav class="mainmenu">
+                        <div class="container">
+                            <!-- Menu-->
+                            <ul class="sf-menu" id="menu">
+                                <li>
+                                    <a [routerLink]="['/rules']">Rules</a>
+                                </li>
+                                <li>
+                                    <a [routerLink]="['/faq']">FAQ</a>
+                                </li>
+                                <li class="current">
+                                    <a class="finger linkColorFix">Statistics</a>
+                                    <ul class="sub-current" appHideMenu>
+                                        <li>
+                                            <a href="https://www.heroesprofile.com/Series" target="_blank">Heroes
+                                              Profile</a>
+                                        </li>
+                                        <li>
+                                            <a href="https://github.com/ebshimizu/stats-of-the-storm" target="_blank">Stats of the
+                                              Storm</a>
+                                        </li>
+                                    </ul>
+                                </li>
 
-                            <div class="nav-link dropdown-toggle finger" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
-                                <span>{{Auth.getUser()}}</span>
-                                <span *ngIf="userMessages>0" class="myFaStack fa" style="line-height:inherit;">
-                                <i class="far fa-envelope fa-stack-1x"></i>
-                                <span class="fa-stack-1x">!</span>
-                                </span>
-                                <!-- <i *ngIf="userMessages>0" class="material-icons">email</i><span>{{userMessages}}</span> -->
-                                <!-- <span style="position: relative; left: -20px; color: black; top: -5px;" *ngIf="userMessages>0">{{userMessages}}</span> -->
-                            </div>
+                                <li class="current">
+                                    <a class="linkColorFix finger">Divisions</a>
+                                    <ul class="sub-current" #dropDownDiv>
+                                        <li *ngFor="let division of divisions">
+                                            <app-division-link [division]="division.divisionConcat">{{division.displayName}}</app-division-link>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <!-- todo : fill in links for past seasons -->
+                                <!-- <li class="current">
+                                    <a class="linkColorFix finger">Past Seasons
+                                    </a>
+                                    <ul class="sub-current" appHideMenu>
+                                        <li>
+                                            <a>Past Seasons</a>
+                                        </li>
+                                        <li>
+                                            <a>Hall of Fame</a>
+                                        </li>
+                                    </ul>
+                                </li> -->
+                                <li>
+                                    <a [routerLink]="['/blog']">Blog</a>
+                                </li>
+                                <li>
+                                    <a [routerLink]="['/allTeams']">Teams</a>
+                                </li>
+                                <li>
+                                    <a [routerLink]="['/calendar']">Calendar</a>
+                                </li>
+                                <li *ngIf="!Auth.isAuthenticated() else loggedIn">
+                                    <a [routerLink]="['/login']">Login</a>
+                                </li>
+                                <ng-template #loggedIn>
+                                    <li>
+                                        <a class="linkColorFix finger">{{Auth.getUser()}}</a>
+                                        <div class="sf-mega" appHideMenu>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <h5>Team</h5>
+                                                    <ul *ngIf="Auth.getTeam(); else noTeam">
+                                                        <li>
+                                                            <app-team-link [team]="Auth.getTeam()">Profile</app-team-link>
+                                                        </li>
+                                                        <!-- <li><a [routerLink]="['/schedule/teamSchedule']">Schedule</a>
+                                                        </li> -->
+                                                        <li><a [routerLink]="['/reporting',team.routeFriendlyTeamName( Auth.getTeam() )]">Result
+                                                            Reporting</a></li>
 
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item finger" [routerLink]="['/profile/',user.routeFriendlyUsername(Auth.getUser())]" (click)="navGo('/profile/',user.routeFriendlyUsername(Auth.getUser()))">Profile</a>
-                                <!-- message center -->
-                                <a class="dropdown-item finger" [routerLink]="['/messageCenter']" (click)="navGo('/messageCenter')">
-                                    <div>
-                                        <span>Message Center</span>
-                                        <span class="badge badge-pill ml-1 badge-success" *ngIf="userMessages>0"> {{userMessages}} </span>
-                                    </div>
-                                </a>
+                                                    </ul>
+                                                    <ng-template #noTeam>
+                                                        <ul>
+                                                            <li>
+                                                                <a [routerLink]="['/teamCreate']">Create Team</a>
+                                                            </li>
+                                                            <li><a [routerLink]="['/findTeams']">Find Team</a>
+                                                            </li>
+                                                        </ul>
 
-                                <div *ngIf="Auth.getTeam(); else noTeam">
-                                    <a class="dropdown-item finger" [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(Auth.getTeam())]" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( Auth.getTeam() ) )">Team</a>
-                                    <!-- [routerLink]="['/schedule/teamSchedule']" -->
-                                    <a class="dropdown-item finger" [routerLink]="['/schedule/teamSchedule']" (click)="navGo('/schedule/teamSchedule')">Schedule</a>
-                                    <div *ngIf="Auth.getCaptain() && Auth.getCaptain() != 'false'">
+                                                    </ng-template>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <h5>Player</h5>
+                                                    <ul>
+                                                        <li>
+                                                            <app-player-link [player]="Auth.getUser()">My Profile
+                                                            </app-player-link>
+                                                        </li>
+                                                        <li><a [routerLink]="['/findPlayers']">Find Free Agents</a></li>
+                                                    </ul>
+                                                </div>
 
-                                        <a class="dropdown-item" [routerLink]="['/findPlayers']" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( Auth.getTeam() ) )">Find Players</a>
-                                        <a class="dropdown-item finger" [routerLink]="['/reporting',team.routeFriendlyTeamName( Auth.getTeam() )]" (click)="navGo('/reporting/',team.routeFriendlyTeamName( Auth.getTeam() ) )">Reporting</a>
-                                    </div>
-
-                                </div>
-                                <ng-template #noTeam>
-                                    <!-- [routerLink]="['/teamCreate']" -->
-                                    <a class="dropdown-item finger" [routerLink]="['/teamCreate']" (click)="navGo('/teamCreate')">Create
-  Team</a>
-
-                                    <a class="dropdown-item finger" [routerLink]="['/findTeams']" (click)="navGo('/teamProfile/',team.routeFriendlyTeamName( teamName ) )">Find Team</a>
+                                                <div class="col-md-4">
+                                                    <h5>System</h5>
+                                                    <ul>
+                                                        <li>
+                                                            <a [routerLink]="['/messageCenter']">
+                                                                <div>
+                                                                    <span>Message Center</span>
+                                                                    <span class="badge badge-pill ml-1 badge-success" *ngIf="userMessages>0">{{userMessages}}</span>
+                                                                </div>
+                                                            </a>
+                                                        </li>
+                                                        <li><a [routerLink]="['/replayBrowser']">Replay Browser</a></li>
+                                                        <li *ngIf="Auth.getCaster()"><a [routerLink]="['/_casterDashboard']">Caster Dashboard</a>
+                                                        </li>
+                                                        <li *ngIf="Auth.getAdmin() && Auth.getAdmin().length>0"><a [routerLink]="['/_admin/dashboard']">Admin Dashboard</a>
+                                                        </li>
+                                                        <li><a class="finger linkColorBigDropDown" (click)="logout()">Logout</a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
                                 </ng-template>
-                                <a class="dropdown-item finger" [routerLink]="['/replayBrowser']" (click)="navGo()">Replay Browser</a>
-                                <a *ngIf="Auth.getAdmin() && Auth.getAdmin().length>0" class="dropdown-item finger" [routerLink]="['/_admin/dashboard']" (click)="navGo('/_admin/dashboard')">Admin Dashboard</a>
-                                <a *ngIf="Auth.getCaster()" class="dropdown-item finger" data-toggle="collapse" [routerLink]="['/_casterDashboard']" (click)="navGo('/_casterDashboard')">Caster
-  Dashboard</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item finger" (click)="logout()">Logout</a>
-                            </div>
-                        </li>
-                    </ng-template>
 
-                </ul>
-            </ul>
+                            </ul>
+                            <!-- End Menu-->
+                        </div>
+                    </nav>
+                    <!-- End mainmenu-->
+
+                    <!-- Call Nav Menu-->
+                    <a class="mobile-nav" href="#mobile-nav"><i class="fa fa-bars"></i></a>
+                    <!-- End Call Nav Menu-->
+                </div>
+                <!-- End nav Header-->
+            </div>
         </div>
     </div>
-</nav>
+</header>
+
+<!-- Mobile Nav-->
+<div id="mobile-nav" #mobileNav>
+    <!-- Menu-->
+    <ul id="mobile-nav-list">
+        <li>
+            <a routerLink="">Home</a>
+        </li>
+
+        <li><a [routerLink]="['/rules']">Rules</a></li>
+        <li><a [routerLink]="['/faq']">FAQ</a></li>
+        <li>
+            <a>Divisions</a>
+            <ul>
+                <li class="mm-listitem" *ngFor="let division of divisions">
+                    <app-division-link [division]="division.divisionConcat">
+                        <span class="mm-listitem__text">{{division.displayName}}</span> </app-division-link>
+                </li>
+            </ul>
+        </li>
+
+        <!-- todo: links for teams -->
+        <li>
+            <a [routerLink]="['/allTeams']">Teams</a>
+        </li>
+
+        <li>
+            <a [routerLink]="['/calendar']">Calendar</a>
+        </li>
+
+        <li [hidden]="Auth.isAuthenticated()">
+            <a [routerLink]="['/login']">Login</a>
+        </li>
+
+
+
+        <li [hidden]="!Auth.isAuthenticated()">
+            <a>
+                <span>{{Auth.getUser()}}</span>
+                <span *ngIf="userMessages>0" class="myFaStack fa" style="line-height:inherit;">
+                <i class="far fa-envelope fa-stack-1x"></i>
+                <span class="fa-stack-1x">!</span>
+                </span>
+            </a>
+            <ul id="logged-in-panel-1">
+                <li>
+                    <a>Team</a>
+                    <ul [hidden]="!Auth.getTeam()">
+                        <li>
+                            <app-team-link team="Auth.getTeam()">Profile</app-team-link>
+                        </li>
+                        <li><a [routerLink]="['/schedule/teamSchedule']">Schedule</a>
+                        </li>
+                        <li><a [routerLink]="['/findPlayers']">Find Players</a></li>
+                    </ul>
+                    <ul [hidden]="Auth.getTeam()">
+                        <li><a [routerLink]="['/findTeams']">Find Team</a></li>
+                    </ul>
+
+                </li>
+                <li>
+                    <a>Player</a>
+                    <ul>
+                        <li>
+                            <app-player-link [player]="Auth.getUser()">Profile</app-player-link>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a>System</a>
+                    <ul>
+                        <li *ngIf="Auth.getCaster()"><a [routerLink]="['/_casterDashboard']">Caster Dashboard</a></li>
+                        <li *ngIf="Auth.getAdmin() && Auth.getAdmin().length>0"><a [routerLink]="['/_admin/dashboard']">Admin Dashboard</a></li>
+                    </ul>
+                </li>
+                <li><a [routerLink]="['/messageCenter']">Messages</a></li>
+                <li>
+                    <a (click)="logout()">Logout</a>
+                </li>
+            </ul>
+        </li>
+
+    </ul>
+</div>

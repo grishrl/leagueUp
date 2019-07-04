@@ -1,5 +1,5 @@
-<div class="container">
-    <div class="row bg-white">
+<div class="container fullHeight" style="margin-bottom: 400px;">
+    <div class="row bg-white p-3">
         <div class="col">
             <div class="row mt-2">
                 <div class="col">
@@ -64,7 +64,13 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row mt-2">
+                <div class="col">
+                    <h3>Forfeit:</h3>
+                    <mat-slide-toggle [(ngModel)]="match.forfeit">Forfeit</mat-slide-toggle>
+                </div>
+            </div>
+            <div class="row mt-3">
                 <div class="col">
                     <h3>Time:</h3>
                 </div>
@@ -96,6 +102,17 @@
                 </div>
             </div>
             <div class="row">
+                <div class="col">
+                    <h3>Admin Notes: <small>Admin only visible</small></h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <textarea class="min-text-area" [(ngModel)]="match.notes" matInput cdkTextareaAutosize></textarea>
+                </div>
+            </div>
+
+            <div class="row mt-3">
                 <div class="col">
                     <h3>Caster Info:</h3>
                 </div>

@@ -1,0 +1,19 @@
+.slider-position {
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+.buttonText {
+    color: white
+}
+
+.btn-cst {
+    background: rgba(242, 106, 47, 0.6);
+}
+
+.background-adj {
+    background-position: center center !important;
+}

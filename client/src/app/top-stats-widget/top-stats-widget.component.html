@@ -1,0 +1,19 @@
+<div class="player-ranking">
+    <h5><span>{{displayStat}}</span></h5>
+    <div class="info-player">
+        <ul>
+            <li *ngFor="let stat of stats; let i = index">
+                <span class="position">
+                      {{i+1}}
+          </span>
+                <span class="name">
+            <!-- <img src="assets/img/players/1.jpg" alt="">  -->
+            <app-player-link [player]="stat.name">{{stat.name}}</app-player-link>
+        </span>
+                <span class="points">
+           {{stat.points}}
+          </span>
+            </li>
+        </ul>
+    </div>
+</div>

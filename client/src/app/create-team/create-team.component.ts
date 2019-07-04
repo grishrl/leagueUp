@@ -6,6 +6,7 @@ import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { UtilitiesService } from '../services/utilities.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-create-team',
@@ -13,32 +14,45 @@ import { UtilitiesService } from '../services/utilities.service';
   styleUrls: ['./create-team.component.css']
 })
 export class CreateTeamComponent implements OnInit {
-  returnedProfile: Team 
+  returnedProfile: Team
 
-  hlMedals = ['Grand Master', 'Master', 'Diamond', 'Platinum', 'Gold', 'Silver', 'Bronze'];
-  hlDivision = [1, 2, 3, 4, 5];
-  competitonLevel = [
-    { val: 1, display: 'Low'},
-    { val: 3, display: 'Medium'},
-    { val: 5, display: 'High'}
-  ]
   availabilityValid:boolean
   availabilityDays:number=0;
-  
-  constructor(private team: TeamService, public timezone:TimezoneService, private auth: AuthService, private route:Router, private util:UtilitiesService) { }
+
+  constructor(private team: TeamService, public timezone:TimezoneService, private auth: AuthService, private route:Router, private util:UtilitiesService, private user:UserService) { }
 
   nameContorl = new FormControl();
+
+  tickerControl = new FormControl('',[Validators.maxLength(5), Validators.minLength(2)]);
+
   timeZoneControl = new FormControl();
 
   createTeamControlGroup = new FormGroup({
     nameControl: this.nameContorl,
+    tickerControl:this.tickerControl,
     timeZone: this.timeZoneControl
   })
 
-  
+  timezoneError
+  captainDiscordTag
 
+  initialized = false;
   ngOnInit() {
     this.markFormGroupTouched(this.createTeamControlGroup);
+    this.user.getUser(this.auth.getUser()).subscribe(
+      res=>{
+        if(res.discordTag){
+          this.captainDiscordTag = true;
+        }else{
+          this.captainDiscordTag = false;
+        }
+        this.initialized = true;
+      },
+      err=>{
+        this.captainDiscordTag = false;
+        console.warn("Error getting user data ", err);
+      }
+    )
     this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
   }
 
@@ -57,6 +71,7 @@ export class CreateTeamComponent implements OnInit {
       if(res && res.teamName){
         alert('Team name is taken!');
         this.nameContorl.setErrors({taken:true});
+        this.errors.push("Team name is taken.")
       }else{
         if (this.validate()) {
           this.util.updateAvailabilityToNum(this.returnedProfile);
@@ -92,42 +107,102 @@ export class CreateTeamComponent implements OnInit {
     }
   }
 
-  validate() {
-    let valid = true;
-    //validate team name is there
-    if(!this.util.returnBoolByPath(this.returnedProfile, 'teamName')){
-      this.nameContorl.setErrors({required:true});
-      valid = false;
-    }else{
-      let regEx = new RegExp(/[%_\/\\`#]/gm);
-      if (regEx.test(this.returnedProfile.teamName)) {
-        valid = false;
-        this.nameContorl.setErrors({ invalidCharacters: true });
-      } else {
-        this.nameContorl.setErrors(null);
+  lastChange = Date.now();
+  checkNameFree(name){
+    if(name){
+      let now = Date.now();
+      if (now - this.lastChange > 1000) {
+        this.lastChange = now;
+        name = name.toLowerCase();
+        this.team.getTeam(name).subscribe(res => {
+          if (res && res.teamName) {
+            this.nameContorl.setErrors({ taken: true });
+            this.errors.push("Team name is taken.")
+          } else {
+            if (this.nameContorl.errors) {
+              let key = Object.keys(this.nameContorl.errors)[0];
+              if (key == 'taken') {
+                this.nameContorl.setErrors(null);
+              }
+            }
+          }
+        });
       }
-
     }
-
-    //validate looking for team:
-    if (!this.util.returnBoolByPath(this.returnedProfile, 'lookingForMore')) {
-      valid = false;
-    }
-
-    //validate that there is at least 1 available day
-    if (!this.availabilityValid){
-      valid = false;
-    }
-
-    //ensure time zone
-    if (this.availabilityDays > 0 && !this.util.returnBoolByPath(this.returnedProfile,'timeZone') ) {
-      this.timeZoneControl.setErrors({required:true});
-      valid = false;
-    }else{
-      this.timeZoneControl.setErrors(null);
-    }
-
-    return valid;
   }
 
+  errors = [];
+  validate() {
+    if(this.initialized){
+      this.errors = [];
+      let valid = true;
+      //validate this user has a discord tag in their profile
+
+      if (!this.captainDiscordTag) {
+        valid = false;
+        this.errors.push("Discord tag is required for captains please go add it to your profile!");
+      }
+
+      //validate team name is there
+      if(this.nameContorl.hasError('taken')){
+        //do nothing.
+      }else if (!this.util.returnBoolByPath(this.returnedProfile, 'teamName')) {
+        this.nameContorl.setErrors({ required: true });
+        valid = false;
+        this.errors.push("Team Name is required!")
+      } else {
+        let regEx = new RegExp(/[%_\/\\`#]/gm);
+        if (regEx.test(this.returnedProfile.teamName)) {
+          valid = false;
+          this.nameContorl.setErrors({ invalidCharacters: true });
+          this.errors.push("Team Name contains invalid characters!")
+        } else {
+          this.nameContorl.setErrors(null);
+        }
+      }
+
+      if (this.tickerControl.errors) {
+        let key = Object.keys(this.tickerControl.errors)[0];
+        valid = false;
+        if (key == 'notUnique'){
+          this.errors.push('Team Ticker is taken!');
+        }
+        if (key == 'invalidTicker'){
+          this.errors.push('Team Ticker is invalid!');
+        }
+        if (key == 'minlength'){
+          this.errors.push('Team Ticker is too short!');
+        }
+        if (key == 'required') {
+          this.errors.push('Team Ticker is required!');
+        }
+        if (key == 'maxlength') {
+          this.errors.push('Team Ticker is too long!');
+        }
+      }
+
+      //validate that there is at least 1 available day
+      if (!this.availabilityValid) {
+        valid = false;
+      }
+
+      //ensure time zone
+      if (this.availabilityDays > 0 && !this.util.returnBoolByPath(this.returnedProfile, 'timeZone')) {
+        this.timeZoneControl.setErrors({ required: true });
+        valid = false;
+        this.timezoneError = {
+          error: true
+        }
+        this.errors.push("If time availability is input; time zone is required!")
+      } else {
+        this.timeZoneControl.setErrors(null);
+        this.timezoneError = { error: false };
+      }
+
+      return valid;
+    }else{
+      return true;
+    }
+
+  }
 }

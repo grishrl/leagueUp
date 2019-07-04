@@ -1,0 +1,80 @@
+<app-banner-image [bannerTitle]="'Match Overview'"></app-banner-image>
+
+<!-- Section Area - Content Central -->
+<section class="content-info">
+
+    <div class="container paddings-mini">
+
+        <div class="row p-5 mb-5">
+            <div class="col text-center my-auto">
+                <span>
+                  <!-- <i *ngIf="dominator(match, 'home')" style="position: absolute;"
+                    class="fas fa-crown"></i> -->
+                    <app-team-link [team]="match.home.teamName">
+                      <img src="{{team.imageFQDN(match.home.logo)}}" alt="">
+                      <div>{{match.home.teamName}}</div>
+                    </app-team-link>
+                  <!-- <div>Record: {{match.home.wins}}-{{match.home.losses}}</div> -->
+                </span>
+            </div>
+            <div class="col text-center my-auto">
+                <span>
+                  <b>{{reportScore(match, 'home')}}</b> - <b>{{reportScore(match, 'away')}}</b>
+                </span>
+            </div>
+            <div class="col text-center my-auto">
+                <span>
+                  <!-- <i *ngIf="dominator(match, 'away')" style="position: absolute;"
+                    class="fas fa-crown"></i> -->
+                    <app-team-link [team]="match.away.teamName">
+                      <img src="{{team.imageFQDN(match.away.logo)}}" alt="">
+                      <div>
+                        {{match.away.teamName}}
+                      </div>
+                    </app-team-link>
+
+                  <!-- <div>Record: {{match.away.wins}}-{{match.away.losses}}</div> -->
+                </span>
+            </div>
+        </div>
+        <!-- Content Text-->
+        <div class="panel-box padding-b">
+            <div class="titles">
+                <h4>Games Information</h4>
+            </div>
+            <div class="info-panel">
+                <div *ngIf="match.forfeit else gamesInfo">
+                    <p> This match was forfeit by <span *ngIf="match.home.score == 2 else otherTeam">{{match.away.teamName}}</span>
+                        <ng-template #otherTeam>
+                            {{match.home.teamName}}
+                        </ng-template> no other information will be available.</p>
+                </div>
+                <ng-template #gamesInfo>
+                    <div class="row mt-4" *ngFor="let replay of resultsArray; let i = index;">
+                        <div class="col-12">
+                            <div class="banner" [ngStyle]="{ 'background': 'url('+ getBackground(replay.map) + '), currentColor' } ">
+                                <div class="winnerText">
+                                    <p>
+                                        <span *ngIf="replay.map else noMap">{{replay.map}}</span>
+                                        <ng-template #noMap>No Map Info</ng-template>
+                                    </p>
+                                    <p>
+                                        Winner: {{getWinner(i)}}
+                                    </p>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="col mt-2">
+                            <div><strong>Replay File:</strong> <a href="{{replay.url}}"> Stored Replay</a></div>
+                            <div><strong>Heroes Profile:</strong> <a href="{{replay.parsedUrl}}"> Match Link</a></div>
+                        </div>
+                    </div>
+                </ng-template>
+            </div>
+        </div>
+        <!-- End Content Text-->
+    </div>
+</section>
+<!-- End Section Area -  Content Central -->

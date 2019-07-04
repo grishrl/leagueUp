@@ -2,7 +2,8 @@
     <div class="col">
         <div class="row">
             <div class="col">
-                Name: <a [routerLink]="['/profile/', user.routeFriendlyUsername(player.displayName)]">{{player.displayName}}</a>
+                Name:
+                <app-player-link [player]="player.displayName">{{player.displayName}}</app-player-link>
             </div>
         </div>
         <div class="row" *ngIf="player.smurfAccount">

@@ -5,8 +5,6 @@ const Match = require('../models/match-model');
 const logger = require('./sys-logging-subs');
 const mmrMethods = require('../methods/mmrMethods');
 
-
-
 //how many members of team we will use to calculate avg-mmr
 const numberOfTopMembersToUse = 4;
 
@@ -106,7 +104,7 @@ async function updateTeamMmrAsynch(team) {
             let member = members[i];
 
 
-            //call out to the hots log API grab the most updated users MMR
+            //call out to the hero profile api grab the most updated users MMR
             // let mmr = await mmrMethods.hotslogs(member);
             // let hpMmr = await mmrMethods.heroesProfileMMR(member);
 
@@ -211,9 +209,9 @@ async function topMemberMmr(members) {
 
         //fetch all users from the dB
         let returnVal = {
-            'averageMmr': 0,
-            'heroesProfileAvgMmr': 0,
-            'ngsAvgMmr': 0
+            'averageMmr': null,
+            'heroesProfileAvgMmr': null,
+            'ngsAvgMmr': null
         };
         let users = await User.find({
             displayName: {
@@ -245,7 +243,9 @@ async function topMemberMmr(members) {
                     ngsMmrArr.push(user.ngsMmr);
                 }
             });
+            console.log(mmrArr, hpMmrArr, ngsMmrArr);
             //sort mmrs
+            mmrArr = removeZeroIndicies(mmrArr);
             if (mmrArr.length > 0) {
                 mmrArr.sort((a, b) => {
                     if (a > b) {
@@ -274,6 +274,7 @@ async function topMemberMmr(members) {
 
                 returnVal.averageMmr = average;
             }
+            hpMmrArr = removeZeroIndicies(hpMmrArr);
             if (hpMmrArr.length > 0) {
                 hpMmrArr.sort((a, b) => {
                     if (a > b) {
@@ -302,6 +303,8 @@ async function topMemberMmr(members) {
 
                 returnVal.heroesProfileAvgMmr = average;
             }
+            ngsMmrArr = removeZeroIndicies(ngsMmrArr);
+            console.log(ngsMmrArr);
             if (ngsMmrArr.length > 0) {
                 ngsMmrArr.sort((a, b) => {
                     if (a > b) {
@@ -496,6 +499,47 @@ function scrubUserFromTeams(username) {
     );
 };
 
+//will update all received teams history that they have been added to a divison once the division has been set to public:
+function updateDivisionHistory(teams, divisonName) {
+
+    let logObj = {};
+    logObj.actor = 'SYSTEM; updateDivisionHistory';
+    logObj.action = ' updating team division history';
+    logObj.timeStamp = new Date().getTime();
+    logObj.logLevel = 'STD';
+
+    Team.find({ teamName: { $in: teams } }).then(
+        foundTeams => {
+            for (var i = 0; i < foundTeams.length; i++) {
+                let teamObj = foundTeams[i].toObject()
+                if (!teamObj.hasOwnProperty('history')) {
+                    foundTeams[i].history = [{
+                        timestamp: Date.now(),
+                        action: 'Added to division',
+                        target: divisonName,
+                        season: process.env.season
+                    }]
+                } else {
+                    foundTeams[i].history.push({
+                        timestamp: Date.now(),
+                        action: 'Added to division',
+                        target: divisonName,
+                        season: process.env.season
+                    })
+                }
+                foundTeams[i].markModified('history');
+                foundTeams[i].save();
+            }
+        },
+        err => {
+            logObj.logLevel = 'ERROR';
+            logObj.error = err;
+            logger(logObj);
+        }
+    )
+
+}
+
 
 //will find all the matches that  team is associated to and will update the team name that is in the 
 //match object
@@ -539,7 +583,21 @@ module.exports = {
     resultantMMR: resultantMMR,
     returnTeamMMR: topMemberMmr,
     updateTeamMmrAsynch: updateTeamMmrAsynch,
-    updateTeamMatches: updateTeamMatches
+    updateTeamMatches: updateTeamMatches,
+    updateTeamDivHistory: updateDivisionHistory
+}
+
+function removeZeroIndicies(arr) {
+    let zerosIndicies = [];
+    arr.forEach((val, index) => {
+        if (val == 0) {
+            zerosIndicies.push(index);
+        }
+    });
+    for (var i = zerosIndicies.length; i > 0; i--) {
+        arr.splice(zerosIndicies[i - 1], 1);
+    }
+    return arr;
 }
 
 
@@ -565,12 +623,14 @@ async function addTeamNamesToMatch(team, found) {
             match.home['teamName'] = team.teamName;
             match.home['logo'] = team.logo;
             match.home['teamName_lower'] = team.teamName_lower;
+            match.home['ticker'] = team.ticker;
             match.markModified('home');
         }
         if (teamid == awayid) {
             match.away['teamName'] = team.teamName;
             match.away['logo'] = team.logo;
             match.away['teamName_lower'] = team.teamName_lower;
+            match.away['ticker'] = team.ticker;
             match.markModified('away');
         }
 

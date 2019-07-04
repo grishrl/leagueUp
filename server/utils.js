@@ -1,4 +1,5 @@
 const logger = require('./subroutines/sys-logging-subs');
+const _ = require('lodash');
 
 isNullOrEmpty = function(dat) {
     if (dat == null || dat == undefined) {
@@ -10,12 +11,17 @@ isNullOrEmpty = function(dat) {
         }
     } else if (typeof dat == 'object') {
         var noe = false;
-        var keys = Object.keys(dat);
-        keys.forEach(function(key) {
-            if (isNullOrEmpty(dat[key])) {
+        _.forEach(dat, (value, key) => {
+            if (isNullOrEmpty(value)) {
                 noe = true;
             }
         });
+        // var keys = Object.keys(dat);
+        // keys.forEach(function(key) {
+        //     if (isNullOrEmpty(dat[key])) {
+        //         noe = true;
+        //     }
+        // });
         return noe;
     } else if (typeof dat == "string") {
         return dat.length == 0;
@@ -23,6 +29,20 @@ isNullOrEmpty = function(dat) {
         return false;
     }
 };
+
+returnIdString = function(obj) {
+    let ret = '';
+    if (!isNullorUndefined(obj)) {
+        if (obj.hasOwnProperty('toString()')) {
+            ret = obj.toString();
+        } else {
+            ret = obj + "";
+        }
+    } else {
+        ret = "nil";
+    }
+    return ret;
+}
 
 isNullorUndefined = function(dat) {
     if (dat === null || dat === undefined) {
@@ -44,7 +64,11 @@ returnMessaging = function(route, message, err, obj, additional, logInfo) {
         ret.returnObject = obj;
     }
     if (!isNullorUndefined(additional)) {
-        ret = Object.assign(additional, ret);
+        if (!ret.returnObject) {
+            ret.returnObject = {};
+        }
+        ret.returnObject.additional = {};
+        Object.assign(ret.returnObject.additional, additional);
     }
 
     let logObj = {};
@@ -168,5 +192,6 @@ module.exports = {
     returnMessaging: returnMessaging,
     returnByPath: returnByPath,
     returnBoolByPath: returnBoolByPath,
-    appendResHeader: appendResHeader
+    appendResHeader: appendResHeader,
+    returnIdString: returnIdString
 };

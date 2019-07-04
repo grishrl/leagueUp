@@ -10,6 +10,9 @@ const {
     Tournament
 } = require('../bracketzadateam/bracketzada.min');
 const logger = require('./sys-logging-subs');
+const challonge = require('../methods/challongeAPI');
+const divSubs = require('./division-subs');
+
 
 
 /* Match report format required for the generator
@@ -41,7 +44,15 @@ async function generateSeason(season) {
 
     let divObj = {};
     //get list of divisions
-    let getDivision = await Division.find().then((res) => {
+    let getDivision = await Division.find({
+        $or: [{
+                cupDiv: false
+            },
+            {
+                cupDiv: { $exists: false }
+            }
+        ]
+    }).then((res) => {
         return res;
     });
     //loop through the divisions
@@ -226,6 +237,264 @@ function generateRoundRobinSchedule(season) {
     });
 }
 
+function returnTeamInfo(fullTeamsInfo, finalParticipantArray, challongeRef) {
+    let returnTeam = null;
+    let teamCrossRef = null;
+    finalParticipantArray.forEach(part => {
+        if (part.challonge_ref == challongeRef) {
+            teamCrossRef = part;
+        }
+    });
+    if (teamCrossRef) {
+        fullTeamsInfo.forEach(team => {
+            if (teamCrossRef.id == team.misc) {
+                returnTeam = {
+                    'teamName': team.name,
+                    'id': team.misc
+                }
+            }
+        });
+    }
+
+    return returnTeam;
+}
+
+async function generateTournamentTwo(teams, season, division, cup, name, description) {
+
+    divSubs.cupDivisionAggregator(teams, division);
+
+    //the bracket function requires of an array of special team objects, 
+    let _teams = [];
+
+    //there are a couple of ways we can get teams and their ids, to make sure we get the ids depening of format
+    //run through teams and grab the id, depending on where it was send to us:  we use this array as the participants 
+    //for the schedule object
+    let teamIds = [];
+    let participantsArray = [];
+    teams.forEach((team, index) => {
+        let teamid = team._id ? team._id : team.id
+        if (teamIds.indexOf(teamid)) {
+            teamIds.push(teamid);
+        }
+
+        participantsArray.push({
+            "name": team.teamName,
+            "seed": index + 1,
+            "misc": teamid
+        });
+    });
+
+    let tournamentId = uniqid();
+
+    name = name ? name : tournamentId
+
+    let url = name + '_link';
+
+    url = url.replace(/\s/g, '_');
+
+    // console.log(url);
+
+    description = description ? description : 'No description provided';
+
+    //create a new tournament in the challonge system and get the response
+    let newTournament = await challonge.createTournament(name, url, description).then(response => {
+        return response;
+    });
+    //check the reply from challonge and make sure it was OK
+    if (newTournament.errors && newTournament.errors.length > 0) {
+        newTournament.errors.forEach(err => {
+            console.log(err);
+            //will probably need some logging or throws to alert client
+        })
+    } else {
+        // console.log('newTournament ', newTournament);
+        //tournamnet create ok
+        /*
+        {
+          tournament:{
+            //info
+          }
+        }
+         */
+        //get the tournament ID; we'll need to save this for a reference;
+        let tournamentId = newTournament.tournament.id;
+
+        //add the participants to the tournament
+        let addParticipants = await challonge.bulkParticpantsAdd(tournamentId, participantsArray).then(response => {
+            return response;
+        });
+
+        //check the return from challonge and make sure that we got no errors
+        if (addParticipants.errors && addParticipants.errors.length > 0) {
+            addParticipants.errors.forEach(err => {
+                console.log(err);
+                //will probably need some logging or throws to alert client 
+            })
+        } else {
+            // console.log('addParticpants ', addParticipants);
+            //partipants add ok
+            /*
+            return as [
+              {
+                participant:{
+                  //info
+                }
+              }
+            ]
+             */
+            let finalParticipantArray = []
+            addParticipants.forEach(part => {
+                participantsArray.forEach(locPart => {
+                    if (part.participant.name == locPart.name) {
+                        finalParticipantArray.push({
+                            "id": locPart.misc,
+                            "challonge_ref": part.participant.id
+                        });
+                    }
+                });
+            });
+            //now we have an array of NGS Team IDs and the challonge participant reference:
+            //[ { id: NGSID, challonge_ref: xxxx } ]
+
+            //start the tournament - this finializes everything and generats the matches
+            let startStatus = await challonge.startTournament(tournamentId).then(response => {
+                return response;
+            });
+
+            //check the start tournament response for errors
+            if (startStatus.errors && startStatus.errors.length > 0) {
+                startStatus.errors.forEach(err => {
+                    console.log(err);
+                })
+            } else {
+                // console.log('startStatus ', startStatus);
+                //tournamnet has been started
+
+                //set a get request for showing the matches generated for the tournament
+                let showTournament = await challonge.showTournament(tournamentId).then(response => {
+                    return response;
+                });
+
+                //check the show tournament response for errors
+                if (showTournament.errors && showTournament.errors.length > 0) {
+                    showTournament.errors.forEach(err => {
+                        console.log(err);
+                    })
+                } else {
+                    // console.log('showTournament ', showTournament);
+                    let chalMatches = showTournament.tournament.matches;
+                    try {
+                        //do stuff with the matches
+                        let matchIDsArray = [];
+                        let brackets = [];
+                        let matchesCrossRef = [];
+                        let finalMatchRef = {};
+
+                        //loop through the matches returned from challonge and create NGS match objects for them
+                        chalMatches.forEach((match) => {
+
+                            match = match.match;
+                            let to = {};
+                            to["challonge_match_ref"] = String(match.id);
+                            to["type"] = "tournament";
+                            to["season"] = season;
+                            to["challonge_tournament_ref"] = String(match.tournament_id);
+                            let ngsID = uniqid();
+                            to["matchId"] = ngsID;
+                            to["round"] = match.round;
+                            matchesCrossRef.push({
+                                id: ngsID,
+                                challonge_ref: match.id
+                            });
+                            let iter = match.suggested_play_order;
+                            if (iter == chalMatches.length) {
+                                finalMatchRef['matchId'] = ngsID;
+                                finalMatchRef['challonge_ref'] = match.id
+                            }
+                            matchIDsArray.push(ngsID);
+                            if (match.prerequisite_match_ids_csv) {
+                                to['challonge_idChildren'] = match.prerequisite_match_ids_csv.split(',');
+                            }
+                            if (match.player1_id) {
+                                to['home'] = returnTeamInfo(participantsArray, finalParticipantArray, match.player1_id);
+
+                            }
+                            if (match.player2_id) {
+                                to['away'] = returnTeamInfo(participantsArray, finalParticipantArray, match.player2_id);;
+                            }
+                            brackets.push(to);
+                        });
+
+                        //loop through the ngs matches and assign children/parents to the matches that have them
+                        brackets.forEach(matchOuter => {
+                            if (matchOuter.hasOwnProperty('challonge_idChildren')) {
+                                matchOuter.idChildren = [];
+                                matchOuter.challonge_idChildren.forEach(challongeIdChild => {
+                                    brackets.forEach(matchInner => {
+                                        if (matchInner.challonge_match_ref == challongeIdChild) {
+                                            matchInner.parentId = matchOuter.matchId;
+                                            matchOuter.idChildren.push(matchInner.matchId);
+                                        }
+                                    });
+                                });
+                            }
+                        });
+
+
+                        //insert the formed up bracked objects into the matches table
+                        let matches = await Match.insertMany(brackets).then(res => {
+                            console.log('matches inserted!');
+                            return res;
+                        }, err => {
+                            console.log('error inserting matches ');
+                            return err;
+                        });
+
+                        //create a schedule object to go along with this tournament
+                        //give it particpants and the matches asscoated with this tournament
+                        let schedObj = {
+                            'type': 'tournament',
+                            'name': name,
+                            'division': division,
+                            'season': season,
+                            'participants': teamIds,
+                            'participantsRef': finalParticipantArray,
+                            'matches': matchIDsArray,
+                            'matchesRef': matchesCrossRef,
+                            'challonge_ref': tournamentId,
+                            'challonge_url': url,
+                            'finalMatch': finalMatchRef
+                        }
+                        if (cup) {
+                            schedObj['cup'] = cup;
+                        }
+                        let schedule = await new Scheduling(
+                            schedObj
+                        ).save().then((saved) => {
+                            // console.log('fin', JSON.stringify(saved));
+                            return saved;
+                        }, (err) => {
+                            // console.log(err);
+                            return err;
+                        });
+
+
+
+                        return {
+                            'matches': matches,
+                            'schedule': schedule
+                        };
+                    } catch (e) {
+                        console.log(e);
+                    }
+                }
+            }
+
+        }
+
+    }
+
+}
 
 //generate tournament schedules
 //accepts 
@@ -234,7 +503,7 @@ function generateRoundRobinSchedule(season) {
 //division: the division info the tournament is for, if it is for one
 //name: name of tournament
 
-async function generateTournament(teams, season, division, name) {
+async function generateTournament(teams, season, division, cup, name) {
     //the bracket function requires of an array of special team objects, 
     let _teams = [];
 
@@ -346,7 +615,8 @@ async function generateTournament(teams, season, division, name) {
         console.log('matches inserted!');
         return res;
     }, err => {
-        console.log('error inserting matches');
+        console.log(err);
+        console.log('error inserting matches ', err);
         return err;
     });
 
@@ -379,7 +649,8 @@ module.exports = {
     generateSeason: generateSeason,
     generateRoundSchedules: generateRoundSchedules,
     generateRoundRobinSchedule: generateRoundRobinSchedule,
-    generateTournament: generateTournament
+    generateTournament: generateTournament,
+    generateTournamentTwo: generateTournamentTwo
 };
 
 //helper method, accpets a match object, 

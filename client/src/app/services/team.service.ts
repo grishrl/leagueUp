@@ -17,11 +17,39 @@ export class TeamService {
     return this.httpService.httpPost(url, payload);
   }
 
+  getRegisteredTeams(){
+    let url = '/team/get/registered';
+    return this.httpService.httpGet(url, []);
+  }
+
+  captainLevel(team, user):boolean{
+    let isCapt = false;
+    if (team.assistantCaptain){
+      if (user == team.captain || team.assistantCaptain.indexOf(user) > -1) {
+        isCapt = true;
+      }
+    }else{
+      isCapt = user == team.captain
+    }
+
+    return isCapt;
+  }
+
   //returns requested team
-  getTeam(name:string):Observable<any>{
-    let encodededID = encodeURIComponent(this.realTeamName(name));
+  getTeam(name?:string, ticker?:string, id?:string):Observable<any>{
     let url = 'team/get';
-    let params = [{team:encodededID}];
+    let params = [];
+    if(name){
+      let encodededID = encodeURIComponent(this.realTeamName(name));
+      params.push({ team: encodededID });
+    }
+    if(ticker){
+      params.push({ ticker: ticker });
+    }
+    if (id) {
+      let encodededID = encodeURIComponent(id);
+      params.push({ teamId: encodededID });
+    }
     return this.httpService.httpGet(url, params);
   };
 
@@ -151,7 +179,7 @@ export class TeamService {
     }
     return this.httpService.httpPost(url, payload);
   }
-  
+
 
 
   //retuns a formatted string that includes the requisite info to retrieve an image from s3 bucket
@@ -162,7 +190,7 @@ export class TeamService {
     }else{
       imgFQDN += 'defaultTeamLogo.png';
     }
-    
+
     return imgFQDN;
   }
 
@@ -191,19 +219,19 @@ export class TeamService {
 
   //returns team name re formatted with spaces
   realTeamName(teamname):string{
-    // var pattern = '_';
-    // var re = new RegExp(pattern, "g");
-    // if (teamname != null && teamname != undefined) {
-    //   return teamname.replace(re, ' ');
-    // }else{
-    //   return '';
-    // }
     if (teamname != null && teamname != undefined) {
       return this.charServ.reverse(teamname)
     } else {
       return '';
     }
-    
+
+  }
+
+    getStatistics(username){
+    let encodedID = encodeURIComponent(username);
+    let url = '/team/statistics';
+    let params = [{ id: encodedID }];
+    return this.httpService.httpGet(url, params);
   }
 
   constructor(private httpService: HttpServiceService, private charServ: SpecialCharactersService) { }

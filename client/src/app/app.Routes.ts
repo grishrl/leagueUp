@@ -3,16 +3,16 @@ import { DirectoryComponent } from "./directory/directory.component";
 import { RouterModule, Routes } from '@angular/router';
 import { NgModule, Component } from "@angular/core";
 import { LoginComponent } from "./login/login.component";
-import { ProfileEditComponent } from "./profile-edit/profile-edit.component";
-import { TeamProfileComponent } from "./team-profile/team-profile.component";
+import { ProfileEditComponent } from "./player/profile-edit/profile-edit.component";
+import { TeamProfileComponent } from "./team/team-profile/team-profile.component";
 import { DivisionComponent } from "./division/division.component";
 import { OutreachEmailResponseComponent } from "./outreach-email-response/outreach-email-response.component";
-import { BlogListComponent } from "./blog-list/blog-list.component";
-import { BlogViewComponent } from "./blog-view/blog-view.component";
+import { BlogListComponent } from "./blog/blog-list/blog-list.component";
+import { BlogViewComponent } from "./blog/blog-view/blog-view.component";
 import { LogoutComponent } from "./logout/logout.component";
 import { CreateTeamComponent } from "./create-team/create-team.component";
 import { ApproveMemberComponent } from "./admin/approve-member/approve-member.component";
-import { DeleteMemberComponent } from "./admin/delete-member/delete-member.component";
+import { ManageMemberComponent } from "./admin/manage-member/manage-member.component";
 import { ManageSelectTeamComponent } from "./admin/manage-team/manage-select-team.component";
 import { DivisionManagementComponent } from "./admin/division-management/division-management.component";
 import { ScheduleViewComponent } from "./schedule/schedule-view/schedule-view.component";
@@ -43,23 +43,36 @@ import { TournamentViewComponent } from "./tournament-view/tournament-view.compo
 import { TeamScheduleComboComponent } from "./schedule/team-schedule-combo/team-schedule-combo.component";
 import { EventCreateComponent } from './admin/events/event-create/event-create.component';
 import { EventListComponent } from './admin/events/event-list/event-list.component';
+import { StaticHtmlLoaderComponent } from './static-html-loader/static-html-loader.component';
+import { ApprovePendingAvatarComponent } from "./admin/approve-pending-avatar/approve-pending-avatar.component";
+import { AllTeamsComponent } from "./team/all-teams/all-teams.component";
+import { MatchResultsViewComponent } from './match/match-results-view/match-results-view.component';
+import { ChallongeTournComponent } from "./challonge-tourn/challonge-tourn.component";
+import { SeasonInfoManagerComponent } from "./admin/match-management/season-info-manager/season-info-manager.component";
 
 const APP_ROUTES: Routes = [
+  { path: 'challonge', component: ChallongeTournComponent },
   { path: 'directory', component: DirectoryComponent},
   { path:'', component: HomeComponent},
   { path: 'login', component: LoginComponent },
   { path: 'rules', component: RulesComponent },
+  { path: 'rulestest' , component:StaticHtmlLoaderComponent, data:{template:'rules', headerText:'Rules'}},
   { path: 'logout', component: LogoutComponent },
+  { path: 'faq', component: StaticHtmlLoaderComponent, data: { template: 'faq', headerText: 'Frequently Asked Questions' }},
   { path: 'login/:token', component: LoginComponent},
   { path: 'profile/:id', component: ProfileEditComponent},
   { path: 'teamProfile/:id', component: TeamProfileComponent},
+  { path: 'allTeams', component:AllTeamsComponent},
   { path: 'teamCreate', component: CreateTeamComponent},
   { path: 'division/:division', component: DivisionComponent, runGuardsAndResolvers:'paramsChange' },
   { path: 'email/invite/:id', component:OutreachEmailResponseComponent },
   { path: 'blog', component:BlogListComponent },
   { path: 'blog/:id', component:BlogViewComponent },
+  { path: 'match/view/:id', component:MatchResultsViewComponent },
+  { path: '_admin/seasonInfo', component: SeasonInfoManagerComponent},
   { path: '_admin/approveTeamQueue', component:ApproveMemberComponent, canActivate:[AuthGuardService], data:{role:'team'} },
-  { path: '_admin/deleteUser', component: DeleteMemberComponent, canActivate: [AuthGuardService], data: { role: 'user' } },
+  { path: '_admin/approveAvatarQueue', component: ApprovePendingAvatarComponent, canActivate: [AuthGuardService], data: { role: 'user' } },
+  { path: '_admin/manageUser', component: ManageMemberComponent, canActivate: [AuthGuardService], data: { role: 'user' } },
   { path: '_admin/manageTeam', component: ManageSelectTeamComponent, canActivate: [AuthGuardService], data: { role: 'team' } },
   { path: '_admin/manageTeam/:id', component: ManageTeamViewComponent, canActivate: [AuthGuardService], data: { role: 'team' } },
   { path: '_admin/divisionMgmt', component: DivisionManagementComponent, canActivate: [AuthGuardService], data: { role: 'division' } },
@@ -73,7 +86,6 @@ const APP_ROUTES: Routes = [
   { path: '_admin/eventMgmt/:id', component: EventCreateComponent, canActivate: [AuthGuardService], data: { role: 'event' } },
   { path: 'schedule/scheduleMatch/:id', component:MatchSchedulerComponent},
   { path: 'schedule/teamSchedule', component: TeamScheduleComboComponent },
-  { path: 'schedule/teamSchedule/:id', component:TeamScheduleComponent}, //accepts team name as url parameter
   { path: 'reporting/:id', component:ReportingComponent}, //accepts team name as url parameter
   { path: '_admin/dashboard', component: DashboardComponent, canActivate: [AuthGuardService]},
   { path: '_casterDashboard', component: CasterDashboardComponent, canActivate: [AuthGuardService], data: { role: 'caster' }},
@@ -87,11 +99,16 @@ const APP_ROUTES: Routes = [
   { path: 'findTeams', component:TeamMarketComponent},
   { path: 'findPlayers', component:UserMarketplaceComponent},
   { path: 'replayBrowser', component:ReplayBrowserComponent},
-  { path: 'tournament', component:TournamentViewComponent }
+  { path: 'tournament', component:TournamentViewComponent },
+  { path: 'page/:id', component: StaticHtmlLoaderComponent },
+  { path: '**', component: StaticHtmlLoaderComponent, data: { template: '404', headerText: 'Not Found' } }
+
 ]
 
+//{ path: 'schedule/teamSchedule/:id', component:TeamScheduleComponent}, //accepts team name as url parameter
+
 @NgModule({
-  imports: [ RouterModule.forRoot(APP_ROUTES, {onSameUrlNavigation:'reload', scrollPositionRestoration:'enabled'})],
+  imports: [ RouterModule.forRoot(APP_ROUTES, {onSameUrlNavigation:'reload', scrollPositionRestoration:'enabled', anchorScrolling:'enabled'})],
   exports : [ RouterModule ]
 })
 

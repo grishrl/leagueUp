@@ -3,8 +3,10 @@ import { DivisionService } from '../services/division.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Team } from '../classes/team.class';
+import { Division } from '../classes/division';
 import { TeamService } from '../services/team.service';
 import { environment } from '../../environments/environment';
+import { TimeserviceService } from '../services/timeservice.service';
 
 
 
@@ -17,17 +19,19 @@ import { environment } from '../../environments/environment';
 export class DivisionComponent implements OnInit {
 
 
- 
+
   teams:Team[]
   divSub: Subscription
   param: string
   navigationSubscription
-  divDisplay = {displayName:'', divisionConcat:''};
+  divDisplay = new Division();
+  teamAggregate = [];
 
-  season = environment.season;
 
-  constructor(private division:DivisionService, private teamService:TeamService, private route:ActivatedRoute, private router: Router) {
-    
+
+  constructor(private division:DivisionService, private teamService:TeamService, private route:ActivatedRoute, private router: Router,
+    private timeService:TimeserviceService) {
+
 
     this.navigationSubscription = this.router.events.subscribe((e: any) => {
 
@@ -38,8 +42,18 @@ export class DivisionComponent implements OnInit {
       }
     });
 
+    this.timeService.getSesasonInfo().subscribe(res => {
+      this.currentSeason = res['value'];
+    });
+    this.timeService.getSesasonInfo();
+
    }
-  
+   currentSeason;
+
+  season = this.currentSeason;
+
+   index=0;
+
   initialise(){
     this.divDisplay;
     this.teams = [];
@@ -47,24 +61,22 @@ export class DivisionComponent implements OnInit {
 
       if(res!=undefined&&res!=null){
         this.divDisplay = res;
-
-        if (res.teams && res.teams.length > 0) {
-          this.teamService.getTeams(res.teams).subscribe((retn) => {
-            this.teams = retn;
-          }, (error) => {
-            console.log(error);
-          });
+        if(this.divDisplay.cupDiv){
+          this.teamAggregate = this.divDisplay.teams.concat(this.divDisplay.participants);
+        }else{
+          this.teamAggregate = this.divDisplay.teams
         }
+
       }
     }, (err)=>{
       var arr : Team[] = [];
-      this.teams = arr; 
+      this.teams = arr;
         });
-  
+
       }
 
   ngOnInit() {
     this.initialise();
-  } 
+  }
 
 }

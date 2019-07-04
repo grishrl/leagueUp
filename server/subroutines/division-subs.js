@@ -3,6 +3,38 @@ const util = require('../utils');
 const logger = require('../subroutines/sys-logging-subs');
 
 
+//this method is for adding any non-regular teams into the particpants list of the cup divisions
+async function cupDivisionAggregator(teams, division) {
+
+    let dbDivision = await Division.findOne({ divisionConcat: division }).then(
+        found => { return found; },
+        err => {
+            return null;
+        }
+    )
+
+    let dbDivisionObject = dbDivision.toObject();
+    if (dbDivisionObject) {
+        if (util.returnBoolByPath(dbDivisionObject, 'cupDiv') && dbDivisionObject.cupDiv) {
+
+            let teamNames = [];
+
+            teams.forEach(team => {
+                if (dbDivisionObject.teams.indexOf(team.teamName) == -1 && dbDivisionObject.participants.indexOf(team.teamName) == -1) {
+                    teamNames.push(team.teamName);
+                }
+            });
+
+            if (teamNames.length > 0) {
+                dbDivision.participants = dbDivision.participants.concat(teamNames);
+                dbDivision.save();
+            }
+
+        }
+    }
+
+}
+
 
 //updates a teams name in the division when the team name has been changed
 function updateTeamNameDivision(oldteamName, newteamName) {
@@ -88,5 +120,6 @@ function removeTeamFromDivision(team) {
 
 module.exports = {
     updateTeamNameDivision: updateTeamNameDivision,
-    removeTeamFromDivision: removeTeamFromDivision
+    removeTeamFromDivision: removeTeamFromDivision,
+    cupDivisionAggregator: cupDivisionAggregator
 }

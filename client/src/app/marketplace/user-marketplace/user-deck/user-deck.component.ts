@@ -36,6 +36,24 @@ export class UserDeckComponent implements OnInit {
     this.showInviteButton(this.player);
   }
 
+  showInvButton(){
+    let ret = true;
+    if(this.player){
+      if(this.player.invited){
+        ret = false;
+      }else if(this.player.teamName || this.player.teamId){
+        ret = false;
+      }else if (this.player.pendingTeam){
+        ret = false;
+      }else if(
+        this.invitedStatus == 'invited'
+      ){
+        return false;
+      }
+    }
+    return ret;
+  }
+
   requestToJoin(player) {
     this.request.inviteToTeamRequest(this.auth.getTeam(), player.displayName).subscribe(
       (res) => {
@@ -61,23 +79,24 @@ export class UserDeckComponent implements OnInit {
     return roster >= 9;
   }
 
-  showInvButton:string;
+  invitedStatus:string;
 
   showInviteButton(player) {
-    
     if (this.teamInfo) {
       if (this.teamInfo.invitedUsers) {
         if (this.teamInfo.invitedUsers.indexOf(player.displayName) > -1) {
-          this.showInvButton = 'invited';
+          this.invitedStatus = 'invited';
         } else {
-          this.showInvButton = 'notinvited';
+          this.invitedStatus = 'notinvited';
         }
       }else{
-        this.showInvButton = 'notinvited';
-      } 
-    } else {
-      this.showInvButton = 'noteam';
-    }
+        this.invitedStatus = 'notinvited';
+      }
+    } else if (this.invitedStatus == 'invited'){
+    }else{
+      this.invitedStatus = 'noteam';
   }
+  }
+
 
 }

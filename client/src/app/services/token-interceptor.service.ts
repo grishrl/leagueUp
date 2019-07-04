@@ -17,7 +17,7 @@ export class ResponseInterceptor implements HttpInterceptor {
   urlBlacklist = [
     'googleapis'
   ]
-  
+
   constructor(public auth: AuthService, private router:Router) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -29,7 +29,7 @@ export class ResponseInterceptor implements HttpInterceptor {
       if(this.checkDomainExistIn(req.url, this.urlBlacklist)){
         //do not append the NGS authorization to this request because the url is blacklisted
       }else{
-        //if the URL 
+        //if the URL
         req = req.clone({
           setHeaders: {
             Authorization: `Bearer ${this.auth.getToken()}`
@@ -54,12 +54,12 @@ export class ResponseInterceptor implements HttpInterceptor {
             (err)=>{
 
               if (err.status == 401 && this.checkDomainExistIn(err.url, this.fourOhOneTimeoutList)){
-                this.auth.destroyAuth('/sessionTimeOut')
+                this.auth.destroyAuth('/')
                 // this.router.navigateByUrl['/sessionTimeOut'];
               }else{
 
               }
-              
+
             }
           )
         )
