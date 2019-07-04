@@ -2,8 +2,8 @@
 <div mat-dialog-content>
     <section class="example-section">
         <div *ngFor="let member of data.members; let i = index">
-            <mat-checkbox class="example-margin" [checked]="data.assistantCaptain.indexOf(member.displayName)>-1" (change)="updateSelected(member.displayName)" [disabled]="member.displayName ==
-              data.captain">{{member.displayName}}
+            <mat-checkbox class="example-margin" [checked]="data.assistantCaptain.indexOf(member.displayName)>-1" (change)="updateSelected(member.displayName)" [disabled]="disableFn(member.displayName)">
+                {{member.displayName}}
             </mat-checkbox>
         </div>
     </section>

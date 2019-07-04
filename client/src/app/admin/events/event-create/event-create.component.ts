@@ -86,11 +86,9 @@ export class EventCreateComponent implements OnInit {
         colonSplit[0] += 12;
       }
       let setDate = new Date();
-      setDate.setFullYear(years);
-      setDate.setMonth(month);
-      setDate.setDate(day);
-      setDate.setHours(colonSplit[0]);
-      setDate.setMinutes(colonSplit[1]);
+
+      setDate.setFullYear(years, month, day);
+      setDate.setHours(colonSplit[0], colonSplit[1], 0, 0);
       let msDate = setDate.getTime();
       // let endDate = msDate + 5400000;
       this.event['eventDate'] = msDate;

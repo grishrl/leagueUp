@@ -506,33 +506,46 @@ router.post('/save', passport.authenticate('jwt', {
             if (util.returnBoolByPath(payload, 'assistantCaptain')) {
                 //this will loop through any current assistant captains and toggle them out of captain status.
                 let toggle = [];
+                let tempAc;
+
 
                 if (foundTeam.assistantCaptain) {
+                    tempAc = foundTeam.assistantCaptain;
                     payload.assistantCaptain.forEach(player => {
-                        if (foundTeam.assistantCaptain.indexOf(player) > -1) {
+
+                        if (tempAc.indexOf(player) > -1) {
+
                             //player from payload was all ready in the assistantCaptain list;
                         } else {
+
                             //new player;
-                            foundTeam.assistantCaptain.push(player);
+                            tempAc.push(player);
                             toggle.push(player);
                         }
                     });
-                    foundTeam.assistantCaptain.forEach(player => {
-                        if (payload.assistantCaptain.indexOf(player) == -1) {
+                    tempAc.forEach((player, delInd) => {
+                        let index = payload.assistantCaptain.indexOf(player);
+
+                        if (index == -1) {
+
                             //player was removed;
                             toggle.push(player);
+                            tempAc.splice(delInd, 1);
                         }
                     });
+
                 } else {
                     //new player
-                    foundTeam.assistantCaptain = [];
-                    foundTeam.assistantCaptain.push(player);
-                    toggle.push(player);
+                    tempAc = [];
+                    tempAc = payload.assistantCaptain;
+                    toggle = payload.assistantCaptain;
                 }
+                foundTeam.assistantCaptain = tempAc;
+
                 toggle.forEach(ele => {
                     UserSub.toggleCaptain(ele);
                 })
-
+                foundTeam.markModified('assistantCaptain');
             }
 
             foundTeam.save().then((savedTeam) => {

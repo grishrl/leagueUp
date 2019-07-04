@@ -37,6 +37,18 @@ export class AssistantCaptainMgmtComponent implements OnInit {
     // }
   }
 
+  disableFn(player){
+    let ret = false;
+    if (this.data.assistantCaptain.indexOf(player)>-1){
+      ret = false;
+    } else if (player == this.data.captain){
+      ret = true;
+    }else{
+      ret = this.data.assistantCaptain.length >= 2
+    }
+    return ret;
+  }
+
   updateSelected(name){
     let ind = this.data.assistantCaptain.indexOf(name);
     if (ind > -1){
