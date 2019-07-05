@@ -5,6 +5,7 @@ import { TeamService } from 'src/app/services/team.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { FilterService } from 'src/app/services/filter.service';
+import { TimeserviceService } from 'src/app/services/timeservice.service';
 
 
 @Component({
@@ -16,9 +17,15 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
+  currentSeason
   constructor(public team:TeamService, private scheduleService:ScheduleService, public util:UtilitiesService, private Auth: AuthService,
-    private filterService:FilterService) {
-
+    private filterService:FilterService, private timeService:TimeserviceService) {
+    this.timeService.getSesasonInfo().subscribe(
+      res => {
+        this.currentSeason = res['value'];
+        this.initSchedule();
+      }
+    );
    }
 
 
@@ -75,44 +82,6 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.friendlyDate = new Date();
-      this.scheduleService.getAllMatches().subscribe(
-        (sched) => {
-          // sched = sched.sort((a, b)=>{
-          //   let ret;
-          //   console.log("this.util.returnBoolByPath(a, 'scheduledTime.startTime') ", this.util.returnBoolByPath(a, 'scheduledTime.startTime'));
-          //   console.log("this.util.returnBoolByPath(b, 'scheduledTime.startTime') ", this.util.returnBoolByPath(b, 'scheduledTime.startTime'));
-          //   if (!this.util.returnBoolByPath(a, 'scheduledTime.startTime')){
-          //     ret = -1;
-          //   } else if (!this.util.returnBoolByPath(b, 'scheduledTime.startTime')){
-          //     ret = -1;
-          //   }else{
-          //     if (parseInt(a.scheduledTime.startTime) > parseInt(b.scheduledTime.startTime)) {
-          //       ret = 1;
-          //     } else {
-          //       ret = -1;
-          //     }
-          //   }
-          //   return ret;
-          // });
-          this.originalMatches = sched;
-          this.length = sched.length;
-          this.filterMatches = sched;
-          this.filterMatches.forEach(match => {
-            match.submitCaster = {
-              "name":'',
-              "URL":''
-            }
-            if (this.rounds.indexOf(match.round) < 0) {
-              this.rounds.push(match.round);
-            }
-          });
-          this.rounds = this.rounds.sort();
-          // this.displayArray = this.filterMatches.slice(0, 10);
-
-          //set console to be filtered by todays date automatically
-          this.filterByFriendlyDateToMS();
-        }
-      )
     for (let i = 1; i < 13; i++) {
       for (let j = 0; j <= 3; j++) {
         let min: any = j * 15;
@@ -123,8 +92,48 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
         this.times.push(time);
       }
     }
-
   }
+
+initSchedule(){
+  this.scheduleService.getScheduleMatches(this.currentSeason, null, null).subscribe(
+    (sched) => {
+      // sched = sched.sort((a, b)=>{
+      //   let ret;
+      //   console.log("this.util.returnBoolByPath(a, 'scheduledTime.startTime') ", this.util.returnBoolByPath(a, 'scheduledTime.startTime'));
+      //   console.log("this.util.returnBoolByPath(b, 'scheduledTime.startTime') ", this.util.returnBoolByPath(b, 'scheduledTime.startTime'));
+      //   if (!this.util.returnBoolByPath(a, 'scheduledTime.startTime')){
+      //     ret = -1;
+      //   } else if (!this.util.returnBoolByPath(b, 'scheduledTime.startTime')){
+      //     ret = -1;
+      //   }else{
+      //     if (parseInt(a.scheduledTime.startTime) > parseInt(b.scheduledTime.startTime)) {
+      //       ret = 1;
+      //     } else {
+      //       ret = -1;
+      //     }
+      //   }
+      //   return ret;
+      // });
+      this.originalMatches = sched;
+      this.length = sched.length;
+      this.filterMatches = sched;
+      this.filterMatches.forEach(match => {
+        match.submitCaster = {
+          "name": '',
+          "URL": ''
+        }
+        if (this.rounds.indexOf(match.round) < 0) {
+          this.rounds.push(match.round);
+        }
+      });
+      this.rounds = this.rounds.sort();
+      // this.displayArray = this.filterMatches.slice(0, 10);
+
+      //set console to be filtered by todays date automatically
+      this.filterByFriendlyDateToMS();
+    }
+  )
+}
 
   resetTime(){
     this.startTimeFlt = null;

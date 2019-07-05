@@ -43,13 +43,25 @@ router.post('/get/matches', (req, res) => {
     let season = req.body.season;
     let division = req.body.division;
     let round = req.body.round;
-    Match.find({
-        $and: [
-            { season: season },
-            { round: round },
-            { divisionConcat: division }
-        ]
-    }).lean().then((found) => {
+
+    let query = { $and: [] };
+
+    if (season) {
+        query.$and.push({
+            season: season
+        });
+    }
+    if (round) {
+        query.$and.push({
+            round: round
+        });
+    }
+    if (division) {
+        query.$and.push({
+            divisionConcat: division
+        });
+    }
+    Match.find(query).lean().then((found) => {
         if (found) {
             let teams = findTeamIds(found);
             addTeamNamesToMatch(teams, found).then((processed) => {
