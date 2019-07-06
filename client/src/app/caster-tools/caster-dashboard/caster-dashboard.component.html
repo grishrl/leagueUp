@@ -84,34 +84,40 @@
                         <div class="col ">
                             <div class="row ">
                                 <div class="col ">
-                                    {{match.divisionDisplayName}}
+                                    <span class="h6">Division: </span>{{match.divisionConcat}}
                                 </div>
                             </div>
-                            <div class="row ">
-                                <div class="col ">
-                                    <span *ngIf="match.home else tbd "><a
+                            <div class="row mt-2">
+                                <div class="col text-center">
+                                    <span class="teamName" *ngIf="match.home else tbd "><a
                       [routerLink]="[ '/teamProfile/',team.routeFriendlyTeamName(match.home.teamName)] ">{{match.home.teamName}}</a></span>
 
                                 </div>
-                                <div class="col ">
+                                <div class="col text-center">
                                     -VS-
                                 </div>
-                                <div class="col ">
-                                    <span *ngIf="match.away else tbd "><a
+                                <div class="col text-center">
+                                    <span class="teamName" *ngIf="match.away else tbd "><a
                       [routerLink]="[ '/teamProfile/',team.routeFriendlyTeamName(match.away.teamName)] ">{{match.away.teamName}}</a></span>
 
 
                                 </div>
                             </div>
+                            <div class="row mt-2">
+                                <div class="col">
+                                    <span class="h6">Match ID: </span><span>{{match.matchId}}</span>
+                                </div>
+                            </div>
                             <div class="row mt-2 ">
                                 <div class="col ">
-                                    Scheduled Time: <span *ngIf="match.scheduledTime !=undefined && match.scheduledTime !=null else notScheduled
+                                    <span class="h6">Scheduled Time: </span><span *ngIf="match.scheduledTime !=undefined && match.scheduledTime !=null else notScheduled
                                   ">{{timeParseAndReturn(match.scheduledTime.startTime)}}</span>
                                     <ng-template #notScheduled>
                                         <span>Not Yet Scheduled</span>
                                     </ng-template>
                                 </div>
                                 <div class="col ">
+                                    <span class="h6">Game Type: </span>
                                     <span *ngIf="match.type && match.type=='tournament' else seasonal ">Tournament Match</span>
                                     <ng-template #seasonal>
                                         <span>Regular Season Game</span>

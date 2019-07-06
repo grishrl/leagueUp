@@ -23,10 +23,13 @@ export class EventLargeComponent implements OnInit {
 
   match
   event
+
+  bannerText = '';
   ngOnInit() {
     let eventInfo = this.EventService.getLocalEvent();
     if(eventInfo['type']){
       if (eventInfo['type'] == 'match'){
+        this.bannerText = "Match Details"
         this.scheduleService.getMatchInfo(eventInfo['id']).subscribe(
           res => {
             this.match = res;
@@ -60,6 +63,7 @@ export class EventLargeComponent implements OnInit {
           }
         )
       } else if (eventInfo['type'] == 'event'){
+        this.bannerText = "Event Details"
         this.EventService.getEventById(eventInfo['id']).subscribe(
           res=>{
             this.event = res;

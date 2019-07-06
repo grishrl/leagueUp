@@ -44,7 +44,7 @@
 
                 </div>
                 <div class="col-7 text-center">
-                    Scheduled Time:
+                    <span class="h6">Scheduled Time: </span>
                     <span *ngIf="match.scheduledTime && match.scheduledTime.startTime != null else tbd">
                         {{util.getFormattedDate(match.scheduledTime.startTime, "dddd M/D/YYYY h:mm A zz")}}
                     </span>

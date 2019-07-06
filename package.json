@@ -21,6 +21,7 @@
         "express": "^4.17.0",
         "express-https-redirect": "^1.0.0",
         "formidable": "^1.2.1",
+        "googleapis": "^39.2.0",
         "hots-parser": "^7.44.2",
         "image-data-uri": "^2.0.0",
         "jsonwebtoken": "^8.5.1",

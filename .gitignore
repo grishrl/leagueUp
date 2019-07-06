@@ -101,3 +101,6 @@ server/parser-test.js
 server/massMMRgetter.js
 server/massMMRgrab.json
 server/replays
+server/methods/sheets/credentials.json
+server/methods/sheets/sheetKeys.json
+server/methods/sheets/sheetKeys2.json
