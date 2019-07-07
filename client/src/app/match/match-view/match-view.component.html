@@ -49,6 +49,7 @@
                         {{util.getFormattedDate(match.scheduledTime.startTime, "dddd M/D/YYYY h:mm A zz")}}
                     </span>
                     <ng-template #tbd><span> TBD </span></ng-template>
+                    <div *ngIf="Auth.isCaster()"><span class="h6">Match ID: </span>{{match.matchId}}</div>
                 </div>
                 <div class="col">
 

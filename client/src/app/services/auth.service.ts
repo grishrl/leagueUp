@@ -26,6 +26,10 @@ export class AuthService {
     }
   }
 
+  isCaster():Boolean{
+    return this.getCaster() == 'true';
+  }
+
   setReferral(token){
      localStorage.setItem('referral', token);
   }

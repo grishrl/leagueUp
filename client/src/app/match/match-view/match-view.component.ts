@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { TeamService } from 'src/app/services/team.service';
 import { UtilitiesService } from '../../services/utilities.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-match-view',
@@ -10,6 +11,7 @@ import { UtilitiesService } from '../../services/utilities.service';
 export class MatchViewComponent implements OnInit {
 
   match = {
+    matchId:'',
     home:{
       teamName:'',
       logo:'',
@@ -61,7 +63,7 @@ export class MatchViewComponent implements OnInit {
     }
   }
 
-  constructor(public team: TeamService, public util: UtilitiesService) { }
+  constructor(public team: TeamService, public util: UtilitiesService, public Auth:AuthService) { }
 
   ngOnInit() {
   }

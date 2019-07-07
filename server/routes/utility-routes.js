@@ -10,6 +10,7 @@ const System = require('../models/system-models');
 const AWS = require('aws-sdk');
 const Replay = require('../models/replay-parsed-models');
 const getTopStats = require('../cron-routines/getTopStats');
+const readInVods = require('../methods/sheets/sheets');
 
 
 AWS.config.update({
@@ -83,6 +84,41 @@ router.post('/update/teams', (req, res) => {
                     logger(logObj);
                 });
                 res.status(200).send(util.returnMessaging(path, 'Update teams started check logs for details', null, null, null))
+            } else {
+                res.status(401).send(util.returnMessaging(path, 'Unauthorized', null, null, null, logObj));
+            }
+        }
+    );
+
+});
+
+router.post('/read-in-vods', (req, res) => {
+    const path = '/utility/read-in-vods';
+
+    let logObj = {};
+    logObj.actor = 'Utility';
+    logObj.action = ' read in vods ';
+    logObj.timeStamp = new Date().getTime();
+    logObj.logLevel = 'STD';
+    logObj.target = 'nightly import of vod links..';
+
+    var apiKey = req.body.apiKey || req.query.apiKey;
+
+    checkApiKey(apiKey).then(
+        validate => {
+            if (validate) {
+                logger(logObj);
+                readInVods.readInVods();
+                // Teamjobs.updateTeamsNotTouched(daysOld, limit).then(reply => {
+                //     logObj.action += 'Update teams completed normally';
+                //     logger(logObj);
+                // }, err => {
+                //     logObj.logLevel = "ERROR";
+                //     logObj.action = 'Update teams Failed';
+                //     logObj.error = err;
+                //     logger(logObj);
+                // });
+                res.status(200).send(util.returnMessaging(path, 'Read in vods started', null, null, null))
             } else {
                 res.status(401).send(util.returnMessaging(path, 'Unauthorized', null, null, null, logObj));
             }
