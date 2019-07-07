@@ -191,7 +191,7 @@ export class TeamService {
       imgFQDN += 'defaultTeamLogo.png';
     }
 
-    return imgFQDN;
+    return encodeURI(imgFQDN);
   }
 
   checkCanInvite(){

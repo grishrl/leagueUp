@@ -14,7 +14,8 @@
                         <ul class="general-info">
                             <li *ngIf="showDivision">
                                 <h6><strong>Division:</strong>
-                                    <app-division-if-public [divisionInfo]="returnedProfile.divisionDisplayName"></app-division-if-public>
+                                    <app-division-if-public [divisionInfo]="returnedProfile.divisionConcat">
+                                    </app-division-if-public>
                                 </h6>
                             </li>
                             <li>
