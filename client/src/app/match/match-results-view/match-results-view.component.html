@@ -71,6 +71,14 @@
                             <div><strong>Heroes Profile:</strong> <a href="{{replay.parsedUrl}}"> Match Link</a></div>
                         </div>
                     </div>
+                    <div class="row mt-3" *ngIf="match.vodLinks">
+                        <div class="col-3">
+                            <div><strong>VOD LINKS:</strong></div>
+                        </div>
+                        <div class="col-5">
+                            <div *ngFor="let vod of match.vodLinks"><a href="{{vod}}">VOD Link</a></div>
+                        </div>
+                    </div>
                 </ng-template>
             </div>
         </div>

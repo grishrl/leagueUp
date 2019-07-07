@@ -8,6 +8,7 @@ export class Match {
   replays: any;
   forfeit: boolean;
   other: any;
+  vodLinks:Array<string>;
 
   constructor() {
     this.home = {
@@ -35,6 +36,7 @@ export class Match {
     this.casterUrl = '';
     this.other = {};
     this.replays = {};
+    this.vodLinks = [];
   }
 }
 

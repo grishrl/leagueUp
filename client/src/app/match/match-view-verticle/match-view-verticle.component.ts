@@ -33,6 +33,7 @@ export class MatchViewVerticleComponent implements OnInit {
       startTime: null,
       endTime: null
     },
+    vodLinks:[],
     casterName: '',
     casterUrl: '',
     replays:null

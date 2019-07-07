@@ -104,6 +104,14 @@
         </div>
         <div class="col"></div>
     </div>
+    <div class="row" *ngIf="match.vodLinks && match.vodLinks.length>0">
+        <div class="col-12 text-center">
+            <span class="h6">VOD LINKS:</span>
+        </div>
+        <div class="col text-center">
+            <div *ngFor="let vod of match.vodLinks"><a href="{{vod}}">VOD Link</a></div>
+        </div>
+    </div>
     <div class="row" *ngIf="match.replays">
         <div class="col text-center">
             <a style="color:#007bff" class="finger" (click)="showReplay = !showReplay"> <span *ngIf="!showReplay else hide">Show</span>
