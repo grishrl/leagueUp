@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TeamService } from 'src/app/services/team.service';
+import { TimeserviceService } from 'src/app/services/timeservice.service';
 
 @Component({
   selector: 'app-team-upcoming-match',
@@ -10,14 +11,21 @@ import { TeamService } from 'src/app/services/team.service';
 })
 export class TeamUpcomingMatchComponent implements OnInit {
 
-  constructor(private scheduleService:ScheduleService, public util:UtilitiesService, public teamServ:TeamService) { }
+  currentSeason;
+  constructor(private scheduleService:ScheduleService, public util:UtilitiesService, public teamServ:TeamService, private timeService:TimeserviceService) {
+    this.timeService.getSesasonInfo().subscribe(
+      res => {
+        this.currentSeason = res['value'];
+      }
+    );
+   }
 
   ngOnInit() {
   }
 
   next4matches = [];
   initTeamSched(id){
-    this.scheduleService.getTeamSchedules(6, id).subscribe(
+    this.scheduleService.getTeamSchedules(this.currentSeason, id).subscribe(
       res => {
         // console.log(res);
         let now = Date.now();

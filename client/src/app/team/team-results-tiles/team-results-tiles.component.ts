@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TeamService } from 'src/app/services/team.service';
+import { TimeserviceService } from 'src/app/services/timeservice.service';
 
 @Component({
   selector: 'app-team-results-tiles',
@@ -10,11 +11,18 @@ import { TeamService } from 'src/app/services/team.service';
 })
 export class TeamResultsTilesComponent implements OnInit {
 
-  constructor(private scheduleService:ScheduleService, public util:UtilitiesService, public teamServ:TeamService) { }
+  currentSeason
+  constructor(private scheduleService:ScheduleService, public util:UtilitiesService, public teamServ:TeamService, private timeService:TimeserviceService) {
+    this.timeService.getSesasonInfo().subscribe(
+      res => {
+        this.currentSeason = res['value'];
+      }
+    );
+   }
 
   displayArray = [];
   getTeamMatches(teamName){
-    this.scheduleService.getTeamSchedules(6, teamName).subscribe(
+    this.scheduleService.getTeamSchedules(this.currentSeason, teamName).subscribe(
       res=>{
         if(res && res.length>0){
 
