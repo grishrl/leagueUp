@@ -51,6 +51,9 @@ export class DivisionPropsComponent implements OnInit {
   minMMRControl = new FormControl('', [
     Validators.required
   ]);
+  divisionModeratorControl = new FormControl('', [
+    Validators.required
+  ]);
 
   sortingControl = new FormControl('', [
     Validators.required,
@@ -62,15 +65,16 @@ export class DivisionPropsComponent implements OnInit {
     divName: this.divisionNameControl,
     maxMMR: this.maxMMRControl,
     minMMR: this.minMMRControl,
-    sorting: this.sortingControl
+    sorting: this.sortingControl,
+    divisionModerator: this.divisionModeratorControl
   })
 
   //creates a new concatinated system id from provided inputs
   calculateNewConcat(){
-    let div = this.editDivision.divisionName?this.editDivision.divisionName.toLowerCase():'' 
-    
+    let div = this.editDivision.divisionName?this.editDivision.divisionName.toLowerCase():''
+
     let coast = this.editDivision.divisionCoast?this.editDivision.divisionCoast.toLowerCase():'';
-    
+
     this.editDivision.divisionConcat = div
     if (coast.length>0){
       this.editDivision.divisionConcat=this.editDivision.divisionConcat+'-'+coast;
@@ -99,7 +103,7 @@ export class DivisionPropsComponent implements OnInit {
   //reverts any changes to a dib object back to the safe source created at selection
   revert(){
     if(this.newDiv){
-      this.editDivision = null;  
+      this.editDivision = null;
     }
     this.editDivision = Object.assign({}, this.safeSource);
   }

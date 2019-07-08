@@ -49,7 +49,6 @@ const replaySchema = new Schema({
 const matchSchema = new Schema({
     "matchId": String,
     "season": Number,
-    "division": String,
     "divisionConcat": String,
     "round": Number,
     "home": team,
@@ -66,7 +65,13 @@ const matchSchema = new Schema({
     "other": Object,
     "postedToHP": Boolean,
     "reported": Boolean,
-    "scheduleDeadline": String
+    "scheduleDeadline": String,
+    "forfeit": Boolean,
+    "notes": String,
+    "vodLinks": [String],
+    "challonge_match_ref": String, //new properties for reference challonge matches
+    "challonge_tournament_ref": String, //new properties for reference challonge matches
+    "challonge_idChildren": [String] //new properties for reference challonge matches
 }, { useNestedStrict: false });
 
 

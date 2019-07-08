@@ -29,7 +29,7 @@ export class ReplayBrowserComponent implements OnInit {
     this.displayArray = [];
     this.displayArray = this.filteredArray.slice(i, endSlice)
 
-  } 
+  }
 
   selectedDiv;
   selectedDivision(div){
@@ -90,7 +90,7 @@ export class ReplayBrowserComponent implements OnInit {
           this.matches.forEach(match=>{
             if(this.util.returnBoolByPath(match,'replays._id')){
               delete match.replays._id;
-            }   
+            }
           });
           this.filteredArray = this.matches;
           this.length = this.filteredArray.length;

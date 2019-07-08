@@ -1,0 +1,11 @@
+<!-- layout-->
+<div id="layout">
+    <!-- Section Title -->
+    <app-banner-image [bannerTitle]="pageHeader"></app-banner-image>
+
+    <!-- Section Area - Content Central -->
+    <div class="mb-5" [innerHTML]="loadedHTML | safeHtml"></div>
+    <!-- End Section Area -  Content Central -->
+
+</div>
+<!-- End layout-->

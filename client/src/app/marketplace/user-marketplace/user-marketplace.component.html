@@ -1,16 +1,16 @@
-<div class="container forceFull">
-    <div class="row">
-        <div class="col">
+<!-- Section Title -->
+<app-banner-image [bannerTitle]="'Find Free Agents'"></app-banner-image>
 
-            <div class="row mt-2">
-                <div class="col text-center">
-                    <h4>Find A Player</h4>
-                </div>
-            </div>
+<!-- Section Area - Content Central -->
+<section class="content-info">
+
+    <div class="container paddings-mini">
+        <!-- Content Text-->
+        <div class="panel-box padding-b">
 
             <div class="row" *ngIf="!showSearch">
-                <div class="col">
-                    <span class="finger showlink badge badge-light badge-pill border border-dark" (click)="showSearch = !showSearch">Show search criteria</span>
+                <div class="col mt-3 text-center">
+                    <span class="p-2 finger showlink badge badge-light badge-pill border border-dark" (click)="showSearch = !showSearch">Show search criteria</span>
                 </div>
             </div>
             <div *ngIf="showSearch">
@@ -166,6 +166,17 @@
                     </div>
                 </div>
             </div>
+
+            <div class="info-panel">
+                <div class="row">
+                    <div class="col-md-12">
+
+                    </div>
+                </div>
+            </div>
+
         </div>
+        <!-- End Content Text-->
     </div>
-</div>
+</section>
+<!-- End Section Area -  Content Central -->

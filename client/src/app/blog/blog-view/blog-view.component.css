@@ -1,0 +1,29 @@
+.breadcrumb {
+    background-color: #F26A2F;
+}
+
+.breadcrumb-item {
+    color: white;
+}
+
+.breadcrumb-item::before {
+    color: white;
+}
+
+.breadcrumb-item>a {
+    color: #482262;
+}
+
+#markedBody>p>img {
+    width: 100%;
+    height: auto;
+}
+
+.centerImage {
+    width: 100%;
+}
+
+.image-size {
+    max-width: 25%;
+    height: auto;
+}

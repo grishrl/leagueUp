@@ -1,0 +1,208 @@
+<div class="row mt-3">
+    <div class="col">
+        {{displayText}}
+        <div class="row" *ngIf="!disabled && errorReply.length>0">
+            <div class="col req-field">
+                {{errorReply}}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div [ngClass]="{'error-avail':errorAvail}">
+    <div class="row mt-3">
+        <div class="col-4">
+            <mat-checkbox [(ngModel)]="availability.monday.available" (ngModelChange)="recalculateCopyDays()" [disabled]="local_disabled">Monday</mat-checkbox>
+            <div class="ml-4" *ngIf="!disabled">
+                <mat-checkbox class="" [(ngModel)]="availability.monday.allDay" (ngModelChange)="toggleAllDay('monday',availability.monday.allDay)">All Day
+                </mat-checkbox>
+                <div>
+                    <mat-form-field>
+                        <mat-select placeholder="Fill from" [(ngModel)]="daySelected.monday" (ngModelChange)="fillFrom('monday',daySelected.monday)" disableOptionCentering>
+                            <mat-option [value]=""></mat-option>
+                            <mat-option *ngFor="let day of populatedDays" [value]="day.value">{{day.key}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col-8">
+            <div class="row">
+                <div class="col">
+                    <app-drop-down-time [placeholder]="'Start time'" [disabled]="local_disabled" [(time)]="availability.monday.startTime"></app-drop-down-time>
+                </div>
+                <div class="col">
+                    <app-drop-down-time [placeholder]="'End time'" [disabled]="local_disabled" [(time)]="availability.monday.endTime"></app-drop-down-time>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <mat-checkbox class="" [(ngModel)]="availability.tuesday.available" (ngModelChange)="recalculateCopyDays()" [disabled]="local_disabled">Tuesday</mat-checkbox>
+            <div class="ml-4" *ngIf="!disabled">
+                <mat-checkbox [(ngModel)]="availability.tuesday.allDay" (ngModelChange)="toggleAllDay('tuesday',availability.tuesday.allDay)">All Day
+                </mat-checkbox>
+                <div>
+                    <mat-form-field>
+                        <mat-select placeholder="Fill from" [(ngModel)]="daySelected.tuesday" (ngModelChange)="fillFrom('tuesday',daySelected.tuesday)" disableOptionCentering>
+                            <mat-option [value]=""></mat-option>
+                            <mat-option *ngFor="let day of populatedDays" [value]="day.value">{{day.key}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="col-8">
+            <div class="row">
+                <div class="col">
+                    <app-drop-down-time [placeholder]="'Start time'" [disabled]="local_disabled" [(time)]="availability.tuesday.startTime"></app-drop-down-time>
+                </div>
+                <div class="col">
+                    <app-drop-down-time [placeholder]="'End time'" [disabled]="local_disabled" [(time)]="availability.tuesday.endTime"></app-drop-down-time>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <mat-checkbox class="" [(ngModel)]="availability.wednesday.available" (ngModelChange)="recalculateCopyDays()" [disabled]="local_disabled">Wednesday</mat-checkbox>
+            <div class="ml-4" *ngIf="!disabled">
+                <mat-checkbox [(ngModel)]="availability.wednesday.allDay" (ngModelChange)="toggleAllDay('wednesday',availability.wednesday.allDay)">All Day
+                </mat-checkbox>
+                <div>
+                    <mat-form-field>
+                        <mat-select placeholder="Fill from" [(ngModel)]="daySelected.wednesday" (ngModelChange)="fillFrom('wednesday',daySelected.wednesday)" disableOptionCentering>
+                            <mat-option [value]=""></mat-option>
+                            <mat-option *ngFor="let day of populatedDays" [value]="day.value">{{day.key}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="row">
+                <div class="col">
+                    <app-drop-down-time [placeholder]="'Start time'" [disabled]="local_disabled" [(time)]="availability.wednesday.startTime"></app-drop-down-time>
+
+                </div>
+                <div class="col">
+                    <app-drop-down-time [placeholder]="'End time'" [disabled]="local_disabled" [(time)]="availability.wednesday.endTime"></app-drop-down-time>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <mat-checkbox class="" [(ngModel)]="availability.thursday.available" (ngModelChange)="recalculateCopyDays()" [disabled]="local_disabled">Thursday</mat-checkbox>
+            <div class="ml-4" *ngIf="!disabled">
+                <mat-checkbox [(ngModel)]="availability.thursday.allDay" (ngModelChange)="toggleAllDay('thursday',availability.thursday.allDay)">All Day
+                </mat-checkbox>
+                <div>
+                    <mat-form-field>
+                        <mat-select placeholder="Fill from" [(ngModel)]="daySelected.thursday" (ngModelChange)="fillFrom('thursday',daySelected.thursday)" disableOptionCentering>
+                            <mat-option [value]=""></mat-option>
+                            <mat-option *ngFor="let day of populatedDays" [value]="day.value">{{day.key}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="row">
+                <div class="col">
+                    <app-drop-down-time [placeholder]="'Start time'" [disabled]="local_disabled" [(time)]="availability.thursday.startTime"></app-drop-down-time>
+                </div>
+                <div class="col">
+                    <app-drop-down-time [placeholder]="'End time'" [disabled]="local_disabled" [(time)]="availability.thursday.endTime"></app-drop-down-time>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <mat-checkbox class="" [(ngModel)]="availability.friday.available" (ngModelChange)="recalculateCopyDays()" [disabled]="local_disabled">Friday</mat-checkbox>
+            <div class="ml-4" *ngIf="!disabled">
+                <mat-checkbox [(ngModel)]="availability.friday.allDay" (ngModelChange)="toggleAllDay('friday',availability.friday.allDay)">All Day
+                </mat-checkbox>
+                <div>
+                    <mat-form-field>
+                        <mat-select placeholder="Fill from" [(ngModel)]="daySelected.friday" (ngModelChange)="fillFrom('friday',daySelected.friday)" disableOptionCentering>
+                            <mat-option [value]=""></mat-option>
+                            <mat-option *ngFor="let day of populatedDays" [value]="day.value">{{day.key}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="row">
+                <div class="col">
+                    <app-drop-down-time [placeholder]="'Start time'" [disabled]="local_disabled" [(time)]="availability.friday.startTime"></app-drop-down-time>
+                </div>
+                <div class="col">
+                    <app-drop-down-time [placeholder]="'End time'" [disabled]="local_disabled" [(time)]="availability.friday.endTime"></app-drop-down-time>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <mat-checkbox class="" [(ngModel)]="availability.saturday.available" (ngModelChange)="recalculateCopyDays()" [disabled]="local_disabled">Saturday</mat-checkbox>
+            <div class="ml-4" *ngIf="!disabled">
+                <mat-checkbox [(ngModel)]="availability.saturday.allDay" (ngModelChange)="toggleAllDay('saturday',availability.saturday.allDay)">All Day
+                </mat-checkbox>
+                <div>
+                    <mat-form-field>
+                        <mat-select placeholder="Fill from" [(ngModel)]="daySelected.saturday" (ngModelChange)="fillFrom('saturday',daySelected.saturday)" disableOptionCentering>
+                            <mat-option [value]=""></mat-option>
+                            <mat-option *ngFor="let day of populatedDays" [value]="day.value">{{day.key}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="row">
+                <div class="col">
+                    <app-drop-down-time [placeholder]="'Start time'" [disabled]="local_disabled" [(time)]="availability.saturday.startTime"></app-drop-down-time>
+                </div>
+                <div class="col">
+                    <app-drop-down-time [placeholder]="'End time'" [disabled]="local_disabled" [(time)]="availability.saturday.endTime"></app-drop-down-time>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <mat-checkbox class="" [(ngModel)]="availability.sunday.available" (ngModelChange)="recalculateCopyDays()" [disabled]="local_disabled">Sunday</mat-checkbox>
+            <div class="ml-4" *ngIf="!disabled">
+                <mat-checkbox [(ngModel)]="availability.sunday.allDay" (ngModelChange)="toggleAllDay('sunday',availability.sunday.allDay)">All Day
+                </mat-checkbox>
+                <div>
+                    <mat-form-field>
+                        <mat-select placeholder="Fill from" [(ngModel)]="daySelected.sunday" (ngModelChange)="fillFrom('sunday',daySelected.sunday)" disableOptionCentering>
+                            <mat-option [value]=""></mat-option>
+                            <mat-option *ngFor="let day of populatedDays" [value]="day.value">{{day.key}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="row">
+                <div class="col">
+                    <app-drop-down-time [placeholder]="'Start time'" [disabled]="local_disabled" [(time)]="availability.sunday.startTime"></app-drop-down-time>
+                </div>
+                <div class="col">
+                    <app-drop-down-time [placeholder]="'End time'" [disabled]="local_disabled" [(time)]="availability.sunday.endTime"></app-drop-down-time>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,25 +1,29 @@
-.container {
+/* .container {
     background-color: #F26A2F;
-}
+} */
 
-.navbar {
+
+/* .navbar {
     background-color: #F26A2F;
     color: white;
-}
+} */
 
-.ngsImg {
+
+/* .ngsImg {
     background-color: white;
     padding: 3px;
     height: 40px;
-}
+} */
 
-.notify-container {
+
+/* .notify-container {
     position: relative;
     display: inline-block;
     margin-top: 10px;
-}
+} */
 
-.notify-bubble {
+
+/* .notify-bubble {
     position: absolute;
     top: -8px;
     right: -7px;
@@ -30,7 +34,7 @@
     border-radius: 50%;
     box-shadow: 1px 1px 1px gray;
     display: none;
-}
+} */
 
 
 /* display: inline-block; */
@@ -38,10 +42,27 @@
 
 /* height: 2em; */
 
-.myFaStack {
+
+/* .myFaStack {
     top: -15px;
     line-height: 2em;
     position: relative;
     vertical-align: middle;
     width: 2.5em;
+} */
+
+.linkColorFix {
+    color: #232323
+}
+
+.linkColorFix:not([href]):not([tabindex]) {
+    color: #232323;
+}
+
+.linkColorBigDropDown {
+    color: #666
+}
+
+.linkColorBigDropDown:not([href]):not([tabindex]) {
+    color: #666;
 }

@@ -8,6 +8,9 @@ const Event = require('../models/event-model');
 const jwt = require('jsonwebtoken');
 const System = require('../models/system-models');
 const AWS = require('aws-sdk');
+const Replay = require('../models/replay-parsed-models');
+const getTopStats = require('../cron-routines/getTopStats');
+const readInVods = require('../methods/sheets/sheets');
 
 
 AWS.config.update({
@@ -20,6 +23,27 @@ const s3Bucket = new AWS.S3({
     params: {
         Bucket: process.env.s3bucketGeneralImages
     }
+});
+
+router.get('/replay/map/name', (req, res) => {
+    const path = '/utility/replay/map/name';
+    var id = decodeURIComponent(req.query.id);
+
+
+    Replay.findOne({ systemId: id }).then(
+        found => {
+            let map = { name: null };
+            if (found) {
+                map.name = found.match.map;
+            }
+            res.status(200).send(util.returnMessaging(path, 'Found replay:', null, map, null, null));
+        },
+        err => {
+            res.status(500).send(util.returnMessaging(path, 'Error qeury replays', err, null, null, null));
+        }
+    )
+
+
 });
 
 
@@ -60,6 +84,41 @@ router.post('/update/teams', (req, res) => {
                     logger(logObj);
                 });
                 res.status(200).send(util.returnMessaging(path, 'Update teams started check logs for details', null, null, null))
+            } else {
+                res.status(401).send(util.returnMessaging(path, 'Unauthorized', null, null, null, logObj));
+            }
+        }
+    );
+
+});
+
+router.post('/read-in-vods', (req, res) => {
+    const path = '/utility/read-in-vods';
+
+    let logObj = {};
+    logObj.actor = 'Utility';
+    logObj.action = ' read in vods ';
+    logObj.timeStamp = new Date().getTime();
+    logObj.logLevel = 'STD';
+    logObj.target = 'nightly import of vod links..';
+
+    var apiKey = req.body.apiKey || req.query.apiKey;
+
+    checkApiKey(apiKey).then(
+        validate => {
+            if (validate) {
+                logger(logObj);
+                readInVods.readInVods();
+                // Teamjobs.updateTeamsNotTouched(daysOld, limit).then(reply => {
+                //     logObj.action += 'Update teams completed normally';
+                //     logger(logObj);
+                // }, err => {
+                //     logObj.logLevel = "ERROR";
+                //     logObj.action = 'Update teams Failed';
+                //     logObj.error = err;
+                //     logger(logObj);
+                // });
+                res.status(200).send(util.returnMessaging(path, 'Read in vods started', null, null, null))
             } else {
                 res.status(401).send(util.returnMessaging(path, 'Unauthorized', null, null, null, logObj));
             }
@@ -178,7 +237,6 @@ router.post('/tabulate-stats/team', (req, res) => {
     );
 
 });
-
 
 //post
 // path: /team/uploadLogo
@@ -336,7 +394,53 @@ router.post('/tabulate-stats/hots-profile', (req, res) => {
 
     );
 
-})
+});
+
+router.post('/grabTopStats', (req, res) => {
+    const path = '/utility/grabTopStats';
+
+    var apiKey = req.body.apiKey || req.query.apiKey;
+
+    checkApiKey(apiKey).then(
+        validate => {
+            if (validate) {
+                //grab top stats from HERO-PROFILE
+                getTopStats().then(
+                    sucuess => {
+                        res.status(200).send(util.returnMessaging(path, 'Get top stats started check logs for more info', false, null, null));
+                    },
+                    err => {
+                        res.status(500).send(util.returnMessaging(path, 'Get top stats failed!', false, null, null));
+                    }
+                )
+            } else {
+                res.status(401).send(util.returnMessaging(path, 'Unauthorized', false, null, null));
+            }
+        });
+});
+
+router.post('/leagueStatRun', (req, res) => {
+    const path = '/utility/leagueStatRun';
+
+    var apiKey = req.body.apiKey || req.query.apiKey;
+
+    checkApiKey(apiKey).then(
+        validate => {
+            if (validate) {
+                //grab top stats from HERO-PROFILE
+                StatsJobs.leagueStatRunner().then(
+                    sucuess => {
+                        res.status(200).send(util.returnMessaging(path, 'League stats runner started check logs for more info', false, null, null));
+                    },
+                    err => {
+                        res.status(500).send(util.returnMessaging(path, 'League stats runner failed!', false, null, null));
+                    }
+                )
+            } else {
+                res.status(401).send(util.returnMessaging(path, 'Unauthorized', false, null, null));
+            }
+        });
+});
 
 module.exports = router;
 

@@ -1,0 +1,32 @@
+.full-width {
+    width: 100%;
+}
+
+.cb-vertival {
+    flex-flow: column;
+}
+
+.cb-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+    flex-flow: row;
+}
+
+.pe-full-width {
+    width: 100%;
+}
+
+.role-margin {
+    margin: 0 10px;
+}
+
+.icon-align {
+    display: inline-flex;
+    vertical-align: middle;
+}
+
+.border-team {
+    border-style: solid;
+    border-color: orange;
+}

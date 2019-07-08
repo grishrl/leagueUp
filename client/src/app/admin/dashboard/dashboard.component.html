@@ -1,61 +1,134 @@
-<div class="container">
-    <div class="forceFull">
-        <div class="row">
-            <div class="col text-center">
-                <h2>Admin dashboard</h2>
+<section class="content-info">
+    <div class="container paddings-mini">
+        <!-- Content Text-->
+        <div class="panel-box padding-b">
+            <div class="titles">
+                <h4>Admin Dashboard</h4>
             </div>
-        </div>
-        <div class="row">
-            <div class="col text-center">
-                <ul>
-                    <li class="mt-1">
-                        <a [routerLink]="['/_admin/approveTeamQueue']">Approve Pending Team Adds</a>
-                    </li>
-                    <li class="mt-1">
-                        <a [routerLink]="['/_admin/deleteUser']">User Management</a>
-                    </li>
-                    <li class="mt-1">
-                        <a [routerLink]="['/_admin/divisionMgmt']">Division Management</a>
-                    </li>
-                    <li class="mt-1">
-                        <a [routerLink]="['/_admin/manageTeam']">Team Management</a>
-                    </li>
-                    <li class="mt-1">
-                        <a [routerLink]="['/_admin/matchMgmt']">Match Management</a>
-                    </li>
-                    <li class="mt-1">
-                        <a [routerLink]="['/_admin/scheduleGenerator']">Generate Season Schedules</a>
-                    </li>
-                    <li class="mt-1">
-                        <a [routerLink]="['/_admin/tournamentGenerator']">Generate Tournaments</a>
-                    </li>
-                    <li class="mt-1">
-                        <a [routerLink]="['/_admin/matchMgmt/weekDeadline']">Match Schedule Deadline Setter</a>
-                    </li>
-                    <li class="mt-1">
-                        <a [routerLink]="['/_admin/eventList']">Event Management</a>
-                    </li>
-                    <li class="mt-1">
-                        <a [routerLink]="['/_admin/userACLMgmt']">User ACL Management</a>
-                    </li>
-                </ul>
-                <!-- <h3>User Management</h3> -->
+
+            <div class="info-panel">
+                <div class="row mt-4">
+                    <div class="col-4 text-center">
+                        <a [routerLink]="['/_admin/approveTeamQueue']">
+                            <div>
+                                <i class="fas fa-9x fa-user-check"></i>
+                            </div>
+                            <span>Approve Pending Team Adds</span></a>
+                    </div>
+                    <div class="col-4 text-center">
+                        <a [routerLink]="['/_admin/approveAvatarQueue']">
+                            <div><i class="fas fa-images fa-9x"></i></div>
+                            <span>Appove Pending Avatars</span>
+                        </a>
+                    </div>
+                    <div class="col-4 text-center">
+                        <a [routerLink]="['/_admin/manageUser']">
+                            <div><i class="fas fa-9x fa-users-cog"></i></div>
+                            <span>User Management</span></a>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-4 text-center">
+                        <a [routerLink]="['/_admin/divisionMgmt']">
+                            <div><i class="fas fa-9x fa-divide"></i></div>
+                            <span>Division Management</span>
+                        </a>
+                    </div>
+                    <div class="col-4 text-center">
+                        <a [routerLink]="['/_admin/manageTeam']">
+                            <div>
+                                <i class="fas fa-9x fa-users"></i>
+                            </div>
+                            <span>Team Management</span></a>
+                    </div>
+                    <div class="col-4 text-center">
+                        <a [routerLink]="['/_admin/matchMgmt']">
+                            <div>
+                                <i class="fas fa-9x fa-crosshairs"></i>
+                            </div>
+                            <span>Match Management</span></a>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-4 text-center">
+                        <a [routerLink]="['/_admin/tournamentGenerator']">
+                            <div class="fa-satck fa-4x">
+                                <i class="hover-test fas fa-stack-2x fa-scroll"></i>
+                                <i style="color:black;" class="fas fa-stack-1x fa-tools"></i>
+                            </div>
+                        </a>
+                        <div style="margin-top: 120px;">
+                            <a [routerLink]="['/_admin/tournamentGenerator']">Generate Tournaments</a>
+                        </div>
+                    </div>
+                    <div class="col-4 text-center">
+                        <a [routerLink]="['/_admin/matchMgmt/weekDeadline']">
+                            <div><i class="fas fa-9x fa-business-time"></i></div>
+                            <span>Match Schedule Deadline Setter</span>
+                        </a>
+                    </div>
+                    <div class="col-4 text-center">
+                        <a [routerLink]="['/_admin/eventList']">
+                            <div class="fa-satck fa-4x">
+                                <i class="far fa-stack-2x fa-calendar"></i>
+                                <i style="padding-top: 20px;" class="fas fa-stack-1x fa-cog"></i>
+                            </div>
+                        </a>
+                        <div style="margin-top: 120px;">
+                            <a [routerLink]="['/_admin/eventList']"><span>Event Management</span></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-4 text-center">
+
+                        <div class="row">
+                            <div class="col">
+                                <div>
+                                    <a [routerLink]="['/_admin/scheduleGenerator']">
+                                        <div class="fa-satck fa-4x">
+                                            <i class="fas fa-stack-2x fa-calendar"></i>
+                                            <i style="padding-top: 25px; color:black;" class="fas fa-stack-1x fa-cogs"></i>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 120px;" class="row">
+                            <div class="col">
+                                <a [routerLink]="['/_admin/scheduleGenerator']">
+                                              Generate Season Schedules
+                                            </a>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-4 text-center">
+                        <a [routerLink]="['/_admin/userACLMgmt']">
+                            <div>
+                                <i class="fas fa-user-tag fa-9x"></i>
+                            </div>
+                            <span>User ACL Management</span></a>
+                    </div>
+                    <div class="col-4 text-center">
+                        <a [routerLink]="['/_admin/seasonInfo']">
+                            <div>
+                                <i class="fab fa-algolia fa-9x"></i>
+                            </div>
+                            <span>Season Info Manager</span>
+                        </a>
+                    </div>
+                    <div class="col-4 text-center">
+
+                    </div>
+                </div>
+
             </div>
+
         </div>
-        <!-- <div class="row">
-        <div class="col">
-            <h3>Division Management</h3>
-        </div>
+        <!-- End Content Text-->
     </div>
-    <div class="row">
-        <div class="col">
-            <h3>Team Management</h3>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <h2>User ACL Management</h2>
-        </div>
-    </div> -->
-    </div>
-</div>
+
+</section>

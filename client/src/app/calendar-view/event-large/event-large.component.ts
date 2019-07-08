@@ -21,13 +21,16 @@ export class EventLargeComponent implements OnInit {
     }
   }
 
-  match 
+  match
   event
+
+  bannerText = '';
   ngOnInit() {
     let eventInfo = this.EventService.getLocalEvent();
     if(eventInfo['type']){
       if (eventInfo['type'] == 'match'){
-        this.scheduleService.getMatchInfo(environment.season, eventInfo['id']).subscribe(
+        this.bannerText = "Match Details"
+        this.scheduleService.getMatchInfo(eventInfo['id']).subscribe(
           res => {
             this.match = res;
             let match = res;
@@ -60,6 +63,7 @@ export class EventLargeComponent implements OnInit {
           }
         )
       } else if (eventInfo['type'] == 'event'){
+        this.bannerText = "Event Details"
         this.EventService.getEventById(eventInfo['id']).subscribe(
           res=>{
             this.event = res;
@@ -72,7 +76,7 @@ export class EventLargeComponent implements OnInit {
     }else{
       this.route.navigate(['calendar']);
     }
-    
+
   }
 
 }

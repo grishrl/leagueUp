@@ -1,0 +1,32 @@
+<div class="col-lg-12">
+    <div class="table-responsive">
+        <table class="table-striped table-hover career">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>
+                        Season
+                    </th>
+                    <th>Action</th>
+                    <th>Team</th>
+                    <!-- <th>Goals</th> -->
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let event of sortHistory">
+                    <td>
+                        {{timewrap(event.timestamp)}}
+                    </td>
+                    <td>
+                        {{event.season}}
+                    </td>
+                    <td>
+                        {{event.action}}
+                    </td>
+                    <td>{{event.target}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>

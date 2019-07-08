@@ -24,9 +24,32 @@ function cleanUpPendingQueue(item) {
     })
 }
 
+//method to remove pending queue items via its object ID
+function cleanUpAvatarPendingQueue(userId, fileName) {
+    //log object
+    let logObj = {};
+    logObj.actor = 'SYSTEM SUBROUTINE cleanUpPendingQueue';
+    logObj.action = ' remove pending avatar queue item ';
+    logObj.logLevel = 'STD';
+    logObj.timeStamp = new Date().getTime();
+    Admin.PendingAvatarQueue.findOneAndDelete({
+        $and: [
+            { userId: userId },
+            { fileName: fileName }
+        ]
+    }).then((deleted) => {
+        logObj.target = deleted;
+        logger(logObj);
+    }, (err) => {
+        logObj.logLevel = 'ERROR';
+        logObj.error = err;
+        logger(logObj)
+    })
+}
+
 //removes a pending memeber queue item of given team and username
 //teamname:string display name of team, username: string battle tag of the user
-function cleanUpPendingQueueTeamnameUsername(teamname, username) {
+function cleanUpPendingQueueTeamnameUsername(teamId, teamname, userId, username) {
 
     //log object
     let logObj = {};
@@ -39,10 +62,10 @@ function cleanUpPendingQueueTeamnameUsername(teamname, username) {
     //find the queue item of specified team/user combo
     Admin.PendingQueue.find({
         $and: [{
-                teamName: teamname
+                teamId: teamId
             },
             {
-                userName: username
+                userId: userId
             }
         ]
     }).then((toDelete) => {
@@ -91,7 +114,7 @@ function removePendingQueueByUsername(username) {
 //this method adds a specified user to the specified team
 //teamLower:string - team name as lower case;
 //user:string battle tag of user
-function addToPendingTeamMemberQueue(teamLower, user) {
+function addToPendingTeamMemberQueue(teamId, teamLower, userId, user) {
     //log object
     let logObj = {};
     logObj.actor = 'SYSTEM SUBROUTINE addToPendingTeamMemberQueue';
@@ -100,12 +123,14 @@ function addToPendingTeamMemberQueue(teamLower, user) {
     logObj.logLevel = 'STD';
     logObj.timeStamp = new Date().getTime();
     teamLower = teamLower.toLowerCase();
-    if (util.isNullorUndefined(teamLower) && util.isNullorUndefined(user)) {
+    if (util.isNullorUndefined(teamLower) && util.isNullorUndefined(user) && util.isNullorUndefined(teamId) && util.isNullorUndefined(userId)) {
         logObj.error = 'addToPendingTeamMemberQueue got emtpy teamname / username '
     } else {
         //create a new queue of the recieved team and username
         Admin.PendingQueue({
+            "teamId": teamId,
             "teamName": teamLower,
+            "userId": userId,
             "userName": user
         }).save().then((savedQueue) => {
             logger(logObj);
@@ -120,40 +145,41 @@ function addToPendingTeamMemberQueue(teamLower, user) {
 //this method updates any pending member queues that exist when a team name is chagned
 //teamnameOld:string, old teamname
 //teamnameNew:string, new teamname
-function updatePendingMembersTeamNameChange(teamnameOld, teamnameNew) {
+// function updatePendingMembersTeamNameChange(teamnameOld, teamnameNew) {
 
-    //log object
-    let logObj = {};
-    logObj.actor = 'SYSTEM SUBROUTINE addToPendingTeamMemberQueue';
-    logObj.action = ' update pending queue teamname ';
-    logObj.logLevel = 'STD';
-    logObj.timeStamp = new Date().getTime();
+//     //log object
+//     let logObj = {};
+//     logObj.actor = 'SYSTEM SUBROUTINE addToPendingTeamMemberQueue';
+//     logObj.action = ' update pending queue teamname ';
+//     logObj.logLevel = 'STD';
+//     logObj.timeStamp = new Date().getTime();
 
-    //find all pending queues for the team
-    Admin.PendingQueue.find({ teamName: teamnameOld }).then((foundQueue) => {
-        if (foundQueue && foundQueue.length > 0) {
-            foundQueue.forEach(queue => {
-                logObj.target = queue._id;
-                queue.teamName = teamnameNew;
-                queue.save().then((saved) => {
-                    logObj.action += ' pending queue team name updated';
-                    logger(logObj);
-                }, (err) => {
-                    logObj.logLevel = "ERROR";
-                    logObj.error = err;
-                    logger(logObj);
-                });
-            })
-        }
-    }, (err) => {
-        console.log('error'); //static logging
-    })
-}
+//     //find all pending queues for the team
+//     Admin.PendingQueue.find({ teamName: teamnameOld }).then((foundQueue) => {
+//         if (foundQueue && foundQueue.length > 0) {
+//             foundQueue.forEach(queue => {
+//                 logObj.target = queue._id;
+//                 queue.teamName = teamnameNew;
+//                 queue.save().then((saved) => {
+//                     logObj.action += ' pending queue team name updated';
+//                     logger(logObj);
+//                 }, (err) => {
+//                     logObj.logLevel = "ERROR";
+//                     logObj.error = err;
+//                     logger(logObj);
+//                 });
+//             })
+//         }
+//     }, (err) => {
+//         console.log('error'); //static logging
+//     })
+// }
 
 module.exports = {
     removePendingQueue: cleanUpPendingQueue,
     removePendingByTeamAndUser: cleanUpPendingQueueTeamnameUsername,
     addToPendingTeamMemberQueue: addToPendingTeamMemberQueue,
     removePendingQueueByUsername: removePendingQueueByUsername,
-    updatePendingMembersTeamNameChange: updatePendingMembersTeamNameChange
+    // updatePendingMembersTeamNameChange: updatePendingMembersTeamNameChange,
+    removePendingAvatarQueue: cleanUpAvatarPendingQueue
 }

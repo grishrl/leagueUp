@@ -9,6 +9,7 @@ import { Router, NavigationEnd } from '@angular/router';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
+
 export class AppComponent {
   constructor(private notificationService:NotificationService, private snackBar:MatSnackBar, private router:Router){
     this.notificationService.subj_notification.subscribe(

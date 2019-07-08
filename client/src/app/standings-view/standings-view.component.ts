@@ -17,14 +17,22 @@ export class StandingsViewComponent implements OnInit {
     if(div!=null&&div!=undefined){
       this.div = div;
       this.getStandings(div.divisionConcat);
-      
+
     }
   }
 
   getStandings(div){
+    this.standings = [];
     this.standingsService.getStandings(div).subscribe(
       (res) => {
-        this.standings = res;
+        if(this.div.cupDiv){
+          let tO = {};
+          // let allTeams = this.div.teams.concat(this.div.participants);
+          // allTeams
+        }else{
+          console.log(res);
+          this.standings = res;
+        }
       },
       (err) => {
         console.log(err);

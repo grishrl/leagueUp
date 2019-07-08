@@ -12,13 +12,13 @@ import { AdminService } from '../../../services/admin.service';
 })
 
 export class ApproveMemberViewComponent implements OnInit {
-  
+
   //component properties
-  player = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null); //local user profile - blank user profile
+  player = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null); //local user profile - blank user profile
   viewTeam = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null); //local team profile - blank team profile
   resultantMmr: number //local var for holding returned resultant MMR calculation
   _info: any  //local var, holds the bindings passed to this component
-  
+
 
   //Input bindings , object that has username and teamname
   @Input() set info(info){
@@ -39,11 +39,14 @@ export class ApproveMemberViewComponent implements OnInit {
 
   //grabs appropriate team and user information based on privided input binding
   ngOnInit() {
-    if(this._info.teamName && this._info.userName){
-      this.user.getUser(this._info.userName).subscribe( res =>{
+    if(this._info.teamId && this._info.userId){
+      this.user.getUserById(this._info.userId).subscribe( res =>{
         this.player = res;
-        this.team.getTeam(this._info.teamName).subscribe(resT => {
+        console.log('this.player ',this.player)
+        console.log('this._info.teamId ', this._info.teamId);
+        this.team.getTeam(null, null, this._info.teamId).subscribe(resT => {
           this.viewTeam = resT;
+          console.log('this.viewTeam ', this.viewTeam);
           this.admin.resultantMmr(this.player.averageMmr, this.viewTeam.teamName_lower).subscribe(
             resmmr => {
               this.resultantMmr = resmmr.resultantMmr;
@@ -61,7 +64,7 @@ export class ApproveMemberViewComponent implements OnInit {
 
   //handles the approval chosen by the admin
   actionAccount(act){
-    this.admin.queuePost(this.viewTeam.teamName, this.player.displayName, act).subscribe( res =>{
+    this.admin.queuePost(this.viewTeam._id, this.player._id, act).subscribe( res =>{
       this.accountActioner();
     }, err=>{
       console.log(err);

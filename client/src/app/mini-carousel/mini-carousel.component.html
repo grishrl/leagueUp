@@ -1,5 +1,5 @@
 <div *ngIf="carousel.length>0">
-    <div id="{{categoryID}}" class="carousel slide bg-dark">
+    <div class="carousel slide bg-dark">
         <ol class="carousel-indicators">
             <li (click)="slideTo(0)" [ngClass]="{'active':0==currentSlide}"></li>
             <li (click)="slideTo(1)" [ngClass]="{'active':1==currentSlide}"></li>

@@ -12,7 +12,7 @@ import { NotificationService } from './notification.service';
 export class AuthService {
 
   constructor(private router:Router, private http: HttpClient, private util:UtilitiesService, private socket:Socket, private notificationService:NotificationService){
-   
+
   }
 
   helper = new JwtHelperService();
@@ -24,6 +24,10 @@ export class AuthService {
     }else{
       return false;
     }
+  }
+
+  isCaster():Boolean{
+    return this.getCaster() == 'true';
   }
 
   setReferral(token){

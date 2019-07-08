@@ -175,7 +175,6 @@ export class CalendarViewComponent implements OnInit {
         console.log(err);
       }
     )
-    //todo: pull in matches
   }
 
   @ViewChild('modalContent', { static: false })

@@ -5,6 +5,7 @@ import { TeamService } from 'src/app/services/team.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { FilterService } from 'src/app/services/filter.service';
+import { TimeserviceService } from 'src/app/services/timeservice.service';
 
 
 @Component({
@@ -16,9 +17,15 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
+  currentSeason
   constructor(public team:TeamService, private scheduleService:ScheduleService, public util:UtilitiesService, private Auth: AuthService,
-    private filterService:FilterService) {
-
+    private filterService:FilterService, private timeService:TimeserviceService) {
+    this.timeService.getSesasonInfo().subscribe(
+      res => {
+        this.currentSeason = res['value'];
+        this.initSchedule();
+      }
+    );
    }
 
 
@@ -35,7 +42,7 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
   rounds=[];
 
   filterTeam:string='';
-  scheduledOnlyFlt:boolean=false;
+  scheduledOnlyFlt:boolean=true;
 
   times: any[] = [];
   suffix;
@@ -53,6 +60,7 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
   roundFlt;
   teamFlt;
   startTimeFlt;
+  today;
 
 
   ngAfterViewInit(){
@@ -73,41 +81,7 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-      this.scheduleService.getAllMatches().subscribe(
-        (sched) => {
-          // sched = sched.sort((a, b)=>{
-          //   let ret;
-          //   console.log("this.util.returnBoolByPath(a, 'scheduledTime.startTime') ", this.util.returnBoolByPath(a, 'scheduledTime.startTime'));
-          //   console.log("this.util.returnBoolByPath(b, 'scheduledTime.startTime') ", this.util.returnBoolByPath(b, 'scheduledTime.startTime'));
-          //   if (!this.util.returnBoolByPath(a, 'scheduledTime.startTime')){
-          //     ret = -1;
-          //   } else if (!this.util.returnBoolByPath(b, 'scheduledTime.startTime')){
-          //     ret = -1;
-          //   }else{
-          //     if (parseInt(a.scheduledTime.startTime) > parseInt(b.scheduledTime.startTime)) {
-          //       ret = 1;
-          //     } else {
-          //       ret = -1;
-          //     }
-          //   }
-          //   return ret;
-          // });
-          this.originalMatches = sched;
-          this.length = sched.length;
-          this.filterMatches = sched;
-          this.filterMatches.forEach(match => {
-            match.submitCaster = {
-              "name":'',
-              "URL":''
-            }
-            if (this.rounds.indexOf(match.round) < 0) {
-              this.rounds.push(match.round);
-            }
-          });
-          this.rounds = this.rounds.sort();
-          this.displayArray = this.filterMatches.slice(0, 10);
-        }
-      )
+    this.friendlyDate = new Date();
     for (let i = 1; i < 13; i++) {
       for (let j = 0; j <= 3; j++) {
         let min: any = j * 15;
@@ -120,6 +94,47 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
     }
   }
 
+initSchedule(){
+  this.scheduleService.getScheduleMatches(this.currentSeason, null, null).subscribe(
+    (sched) => {
+      // sched = sched.sort((a, b)=>{
+      //   let ret;
+      //   console.log("this.util.returnBoolByPath(a, 'scheduledTime.startTime') ", this.util.returnBoolByPath(a, 'scheduledTime.startTime'));
+      //   console.log("this.util.returnBoolByPath(b, 'scheduledTime.startTime') ", this.util.returnBoolByPath(b, 'scheduledTime.startTime'));
+      //   if (!this.util.returnBoolByPath(a, 'scheduledTime.startTime')){
+      //     ret = -1;
+      //   } else if (!this.util.returnBoolByPath(b, 'scheduledTime.startTime')){
+      //     ret = -1;
+      //   }else{
+      //     if (parseInt(a.scheduledTime.startTime) > parseInt(b.scheduledTime.startTime)) {
+      //       ret = 1;
+      //     } else {
+      //       ret = -1;
+      //     }
+      //   }
+      //   return ret;
+      // });
+      this.originalMatches = sched;
+      this.length = sched.length;
+      this.filterMatches = sched;
+      this.filterMatches.forEach(match => {
+        match.submitCaster = {
+          "name": '',
+          "URL": ''
+        }
+        if (this.rounds.indexOf(match.round) < 0) {
+          this.rounds.push(match.round);
+        }
+      });
+      this.rounds = this.rounds.sort();
+      // this.displayArray = this.filterMatches.slice(0, 10);
+
+      //set console to be filtered by todays date automatically
+      this.filterByFriendlyDateToMS();
+    }
+  )
+}
+
   resetTime(){
     this.startTimeFlt = null;
     this.friendlyDate = null;
@@ -128,7 +143,6 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
   }
 
   timeChanged(){
-
     if (this.friendlyDate && this.friendlyTime) {
       if (this.friendlyTime && this.suffix) {
         let years = this.friendlyDate.getFullYear();
@@ -156,24 +170,28 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
         this.doFilterMatches();
       }
     } else if (this.friendlyDate){
-      let years = this.friendlyDate.getFullYear();
-      let month = this.friendlyDate.getMonth();
-      let day = this.friendlyDate.getDate();
-      let setDate = new Date();
-      setDate.setFullYear(years);
-      setDate.setMonth(month);
-      setDate.setDate(day);
-      setDate.setHours(0);
-      setDate.setMinutes(0);
-      setDate.setMilliseconds(0);
-      this.endTimeFlt = setDate.getTime() + 86400000;
-      let msDate = setDate.getTime();
-      this.startTimeFlt = msDate;
-      this.doFilterMatches();
+      this.filterByFriendlyDateToMS();
     }
 
 
 
+  }
+
+  private filterByFriendlyDateToMS() {
+    let years = this.friendlyDate.getFullYear();
+    let month = this.friendlyDate.getMonth();
+    let day = this.friendlyDate.getDate();
+    let setDate = new Date();
+    setDate.setFullYear(years);
+    setDate.setMonth(month);
+    setDate.setDate(day);
+    setDate.setHours(0);
+    setDate.setMinutes(0);
+    setDate.setMilliseconds(0);
+    this.endTimeFlt = setDate.getTime() + 86400000;
+    let msDate = setDate.getTime();
+    this.startTimeFlt = msDate;
+    this.doFilterMatches();
   }
 
   selected(div){
@@ -233,7 +251,6 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
   removeCaster(match){
           this.scheduleService.addCaster(match.matchId, '', '').subscribe(
             (res) => {
-              console.log(res);
               let i = -1;
               this.originalMatches.forEach(
                 (match, index)=>{

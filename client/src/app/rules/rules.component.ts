@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ContentfulService } from '../services/contentful.service';
+import { Entry } from 'contentful'
 import { ActivatedRoute } from '@angular/router';
 import { MarkdownParserService } from '../services/markdown-parser.service';
 import { merge } from 'lodash';
@@ -11,26 +12,16 @@ import { merge } from 'lodash';
 })
 export class RulesComponent implements OnInit {
 
-  displayBlog //local property to hold a fetched blog
-  blogID = '3BLsIya6ZiWQWka4IeUw2';
-
-  constructor(private contentfulService: ContentfulService, private route: ActivatedRoute, public md: MarkdownParserService) {
-    //gets the ID from the url route
-  }
-
-  ngOnInit() {
-    this.displayBlog = {
-      'fields':
-      {
-        'description': '',
-        'body': '',
-        'author': {
-          'fields': {
-            'name': ''
-          }
-        },
-        'title': '',
-        'heroImage': {
+  displayBlog={
+  'fields':
+  {
+    'description': '',
+    'body': '',
+    'author': {
+        'fields':{
+          'name':'',
+        'shortBio': '',
+        'image': {
           'fields': {
             'file': {
               'url': ''
@@ -38,7 +29,27 @@ export class RulesComponent implements OnInit {
           }
         }
       }
-    };
+    },
+    'title': '',
+      'heroImage': {
+      'fields': {
+        'file': {
+          'url': ''
+        }
+      }
+    }
+  }
+
+}
+ //local property to hold a fetched blog
+  blogID = '3BLsIya6ZiWQWka4IeUw2';
+
+  constructor(private contentfulService: ContentfulService, private route: ActivatedRoute, public md: MarkdownParserService) {
+    //gets the ID from the url route
+  }
+
+  ngOnInit() {
+
     //gets provided blog post from received id
     if (this.contentfulService.getCache()) {
       this.displayBlog = this.contentfulService.getCache();

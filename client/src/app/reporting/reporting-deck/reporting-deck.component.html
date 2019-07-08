@@ -16,7 +16,8 @@
                                 </div>
                                 <div class="col vertical-middle">
                                     <div *ngIf="recMatch.home.teamName">
-                                        <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(recMatch.home.teamName)]">{{recMatch.home.teamName}}</a>
+                                        <app-team-link [team]="recMatch.home.teamName">{{recMatch.home.teamName}}
+                                        </app-team-link>
                                     </div>
 
                                 </div>
@@ -33,7 +34,9 @@
                                 </div> -->
                                 <div class="col vertical-middle">
                                     <div *ngIf="recMatch.away.teamName">
-                                        <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(recMatch.away.teamName)]">{{recMatch.away.teamName}}</a>
+                                        <app-team-link [team]="recMatch.away.teamName">
+                                            {{recMatch.away.teamName}}
+                                        </app-team-link>
                                     </div>
                                 </div>
                                 <div class="col-4">
@@ -44,8 +47,7 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col text-center">
-                            <button class="btn btn-info" (click)="showHide()"> <span *ngIf="!show">Open Reporting Deck</span> <span *ngIf="show">Close Reporting Deck</span>
-</button>
+                            <button class="btn btn-info" (click)="showHide()"> <span *ngIf="!show">Open Reporting Deck</span> <span *ngIf="show">Close Reporting Deck</span></button>
                         </div>
                     </div>
                 </div>
@@ -53,14 +55,20 @@
 
             <div class="row reportingDiv" *ngIf="show">
                 <div class="col">
-                    <div class="row m-t-20">
+                    <div class="row  m-t-20">
+                        <div class="col">
+                            <h6> Please select the maps that each team banned: </h6>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col">
                             Home Map Ban
                             <div class="row m-t-5">
                                 <div class="col">
-                                    <mat-select placeholder="Map " [(ngModel)]="mapBans.home">
+                                    <mat-select placeholder="Map " [(ngModel)]="mapBans.homeOne">
                                         <mat-option *ngFor="let map of maps | keyvalue" [value]="map.value">{{map.value}}</mat-option>
                                     </mat-select>
+
                                 </div>
                             </div>
                         </div>
@@ -71,8 +79,71 @@
                             Away Map Ban
                             <div class="row">
                                 <div class="col">
-                                    <mat-select placeholder="Map " [(ngModel)]="mapBans.away">
+                                    <mat-select placeholder="Map " [(ngModel)]="mapBans.awayOne">
                                         <mat-option *ngFor="let map of maps | keyvalue" [value]="map.value">{{map.value}}</mat-option>
+                                    </mat-select>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col">
+                            Home Map Ban
+                            <div class="row m-t-5">
+                                <div class="col">
+                                    <mat-select placeholder="Map " [(ngModel)]="mapBans.homeTwo">
+                                        <mat-option *ngFor="let map of maps | keyvalue" [value]="map.value">
+                                            {{map.value}}</mat-option>
+                                    </mat-select>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+
+                        </div>
+                        <div class="col">
+                            Away Map Ban
+                            <div class="row">
+                                <div class="col">
+                                    <mat-select placeholder="Map " [(ngModel)]="mapBans.awayTwo">
+                                        <mat-option *ngFor="let map of maps | keyvalue" [value]="map.value">
+                                            {{map.value}}</mat-option>
+                                    </mat-select>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row  m-t-20">
+                        <div class="col">
+                            <h6> Please select a player that was in the game from each team: </h6>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            Home Player
+                            <div class="row m-t-5">
+                                <div class="col">
+                                    <mat-select placeholder="Player " [(ngModel)]="homeTeamPlayer">
+                                        <mat-option *ngFor="let player of homeTeam.teamMembers" [value]="player.displayName">{{player.displayName}}
+                                        </mat-option>
+                                    </mat-select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+
+                        </div>
+                        <div class="col">
+                            Away Player
+                            <div class="row">
+                                <div class="col">
+                                    <mat-select placeholder="Player " [(ngModel)]="awayTeamPlayer">
+                                        <mat-option *ngFor="let player of awayTeam.teamMembers" [value]="player.displayName">{{player.displayName}}
+                                        </mat-option>
                                     </mat-select>
                                 </div>
                             </div>
@@ -87,14 +158,14 @@
                                 </div>
                             </div>
                             <!-- report hero bans -->
-                            <div class="row m-t-10">
+                            <!-- <div class="row m-t-10">
                                 <div class="col">
                                     Home Hero Bans: <span *ngIf="game.value.homeBans.length == 3"><i class="material-icons text-success">done</i></span>
 
                                     <div class="row m-t-5" *ngIf="game.value.homeBans.length<3">
                                         <div class=" col ">
                                             <mat-select placeholder="Hero Banned " [(ngModel)]="game.value.tmp.leftSelect" (ngModelChange)="addBan(game.value.tmp.leftSelect, game.value.homeBans)">
-                                                <!-- heroes | keyvalue -->
+
                                                 <mat-option *ngFor="let hero of returnFilteredHeroes(game)" [value]="hero ">{{hero}}</mat-option>
                                             </mat-select>
                                         </div>
@@ -106,7 +177,7 @@
 
                                 </div>
                                 <div class="col ">
-                                    <!-- space holder -->
+
                                 </div>
                                 <div class="col ">
                                     Away Hero Bans: <span *ngIf="game.value.awayBans.length == 3"><i class="material-icons text-success">done</i></span>
@@ -114,7 +185,7 @@
                                     <div class="row m-t-5 " *ngIf="game.value.awayBans.length<3 ">
                                         <div class="col ">
                                             <mat-select placeholder="Hero Banned " [(ngModel)]="game.value.tmp.rightSelect" (ngModelChange)="addBan(game.value.tmp.rightSelect, game.value.awayBans)">
-                                                <!-- heroes | keyvalue -->
+
                                                 <mat-option *ngFor="let hero of returnFilteredHeroes(game)  " [value]="hero ">{{hero}}</mat-option>
                                             </mat-select>
                                         </div>
@@ -125,7 +196,7 @@
                                     </div>
 
                                 </div>
-                            </div>
+                            </div> -->
                             <!-- report match winner -->
                             <div class="row m-t-20 ">
                                 <div class="col ">

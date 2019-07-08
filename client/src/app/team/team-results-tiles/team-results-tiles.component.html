@@ -1,0 +1,14 @@
+<div *ngIf="displayArray.length>0 else noRes">
+    <div class="row" *ngIf="showHead">
+        <div class="col">
+            <h4>{{header}}</h4>
+        </div>
+    </div>
+    <app-results-tiles [matches]="displayArray"></app-results-tiles>
+</div>
+<ng-template #noRes>
+    <div>
+        <h4>Team has no season match results yet!</h4>
+        <hr>
+    </div>
+</ng-template>

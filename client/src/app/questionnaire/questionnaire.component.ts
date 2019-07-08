@@ -1,7 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { TeamService } from '../services/team.service';
-import { merge } from 'lodash';
+import { merge, forEach as _forEach, includes as _includes } from 'lodash';
 import { UtilitiesService } from '../services/utilities.service';
+import { AuthService } from '../services/auth.service';
+import { TimeserviceService } from '../services/timeservice.service';
+
 
 @Component({
   selector: 'app-questionnaire',
@@ -13,8 +16,13 @@ export class QuestionnaireComponent implements OnInit {
   passedTeam: any = {};
   responses: any = {};
   pickedMaps: any[] = [];
+  registrationOpen = false;
 
-  constructor(private teamService: TeamService, private util:UtilitiesService) {  }
+  constructor(private teamService: TeamService, private util:UtilitiesService, public auth:AuthService, private timeService:TimeserviceService) {
+
+   }
+
+  @Input() source;
 
   @Input() set team(_team){
     if(_team != undefined || _team != null){
@@ -94,7 +102,19 @@ export class QuestionnaireComponent implements OnInit {
       }
   }
 
-  checkValid(){
+  showRegisteredQuestionnaire() {
+    if(this.source){
+      if(this.source == 'admin'){
+        return true;
+      }
+    }else if (this.auth.getUser() == this.passedTeam.captain) {
+      return !this.responses['registered'];
+    } else {
+      return false;
+    }
+  }
+
+  checkValid() {
     return this.checkTeamMates() && this.checkQuestionnaire() && this.pickedMaps.length == 9 && this.responses.acknowledge == true;
   }
 
@@ -105,9 +125,9 @@ export class QuestionnaireComponent implements OnInit {
 
   filterMaps(){
     let returnArray = [];
-    let keys = Object.keys(this.maps);
-    keys.forEach(key=>{
-      if(this.pickedMaps.indexOf(this.maps[key])==-1){
+
+    _forEach(this.maps, (value, key)=>{
+      if (!_includes(this.pickedMaps, value) ) {
         returnArray.push(this.maps[key]);
       }
     });
@@ -129,7 +149,16 @@ export class QuestionnaireComponent implements OnInit {
 
 
   ngOnInit() {
-
+    this.timeService.getSesasonInfo().subscribe(
+      res => {
+        if (this.source == 'admin') {
+          this.registrationOpen = true;
+        } else {
+          this.registrationOpen = res['data'].registrationOpen;
+        }
+        console.log('this.registrationOpen ', this.registrationOpen);
+      }
+    );
   }
 
 }

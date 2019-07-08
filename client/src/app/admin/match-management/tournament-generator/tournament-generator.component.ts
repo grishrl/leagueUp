@@ -3,6 +3,8 @@ import { AdminService } from 'src/app/services/admin.service';
 import { StandingsService } from 'src/app/services/standings.service';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { MatPaginator, PageEvent } from '@angular/material';
+import { FormControl, Validators } from '@angular/forms';
+import { TeamService } from 'src/app/services/team.service';
 
 @Component({
   selector: 'app-tournament-generator',
@@ -17,27 +19,38 @@ export class TournamentGeneratorComponent implements OnInit {
   divisions: any = [];
   selectedDivision: any = null;
   division
-  constructor(private adminService:AdminService, private standingsService:StandingsService, private admin:AdminService) { }
+  constructor(private adminService:AdminService, private standingsService:StandingsService, private admin:AdminService, private team:TeamService) { }
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   selected(div) {
     if(div!=undefined){
-      this.tournamentSeed = [];
-      this.standings = [];
-      this.showAll = false;
-      this.division = div.divisionConcat;
-      this.getStandings(div.divisionConcat);
-    }else{
-      this.tournamentSeed = [];
-      this.standings = [];
-      this.showAll = false;
-    }
+      this.reset();
 
+      this.division = div.divisionConcat;
+      if (div.cupDiv) {
+        this.showCups = true;
+        this.getDivTeams(div);
+      } else {
+        this.getStandings(div.divisionConcat);
+        this.showCups = false;
+      }
+    }else{
+      this.reset();
+    }
   }
 
+  tournName = new FormControl('', [
+    Validators.pattern('^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$')
+  ]);
+
+  showCups = false;
+
   name:string;
+  description:string;
   season:string;
+  cup;
+
   fetching=false;
 
   standings:any=[];
@@ -47,12 +60,29 @@ export class TournamentGeneratorComponent implements OnInit {
   pageSize: number = 10;
   filteredArray: any = [];
 
+  getDivTeams(div){
+    console.log('a');
+    this.fetching = true;
+    this.team.getTeams(div.teams).subscribe(
+      res=>{
+        console.log('b');
+        this.fetching=false;
+        console.log(res);
+        this.standings = res;
+      },
+      err=>{
+        this.fetching = false;
+        console.log(err);
+      }
+
+    )
+  }
+
   getStandings(div) {
     this.fetching = true;
     this.standingsService.getStandings(div).subscribe(
       (res) => {
         this.fetching = false;
-        console.log(res);
         this.standings = res;
       },
       (err) => {
@@ -64,7 +94,6 @@ export class TournamentGeneratorComponent implements OnInit {
   showAll=false;
   allTeams = [];
   revealAllTeams(){
-    this.tournamentSeed = [];
     this.standings = [];
     this.fetching = true;
     this.admin.getTeams().subscribe(
@@ -85,6 +114,38 @@ export class TournamentGeneratorComponent implements OnInit {
 
   selectedFromList(team){
     this.tournamentSeed.push(team);
+  }
+
+  reset() {
+    this.tournamentSeed = [];
+    this.standings = [];
+    this.showAll = false;
+    this.selectedDivision = null;
+    this.division = null;
+    this.season = null;
+    this.name = null;
+    this.description=null;
+    this.cup = null;
+    this.showCups=false;
+  }
+
+  filterTeams(filterName) {
+    if (filterName == null || filterName == undefined || filterName.length == 0) {
+      this.filteredArray = this.allTeams;
+      this.length = this.filteredArray.length;
+      this.displayArray = this.filteredArray.slice(0, 10);
+      this.paginator.firstPage();
+    } else {
+      this.filteredArray = [];
+      this.allTeams.forEach(element => {
+        if (element.teamName_lower.toLowerCase().indexOf(filterName.toLowerCase()) > -1) {
+          this.filteredArray.push(element);
+        }
+      });
+      this.length = this.filteredArray.length;
+      this.displayArray = this.filteredArray.slice(0, 10);
+      this.paginator.firstPage();
+    }
   }
 
   pageEventHandler(pageEvent: PageEvent) {
@@ -108,12 +169,16 @@ export class TournamentGeneratorComponent implements OnInit {
           disable = false;
         }
       }
+      if(this.tournName.invalid){
+        disable = true;
+      }
     }
     return disable;
   }
 
   generateBrackets(){
-    this.adminService.generateTournament(this.tournamentSeed, this.season, this.name, this.division).subscribe(
+    // console.log(this.tournamentSeed, this.season, this.name, this.division, this.cup, this.description);
+    this.adminService.generateTournament(this.tournamentSeed, this.season, this.name, this.division, this.cup, this.description).subscribe(
       res=>{
         this.ngOnInit();
       },

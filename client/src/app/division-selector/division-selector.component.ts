@@ -1,6 +1,7 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { DivisionService } from '../services/division.service';
 import { AdminService } from '../services/admin.service';
+import { UtilitiesService } from '../services/utilities.service';
 
 @Component({
   selector: 'app-division-selector',
@@ -9,15 +10,15 @@ import { AdminService } from '../services/admin.service';
 })
 export class DivisionSelectorComponent implements OnInit {
 
-  constructor(private DivisionService:DivisionService, private Admin:AdminService) { }
+  constructor(private DivisionService:DivisionService, private Admin:AdminService, private util:UtilitiesService) { }
 
   divisions=[];
-  selectedDivision;
+  selectedDivision = null;
 
 
   ngOnInit() {
     //gets division list
-    console.log(this.adminLoad);
+    // console.log(this.adminLoad);
     if(this.adminLoad){
       this.Admin.getDivisionList().subscribe((res) => {
         this.divisions = res;
@@ -43,16 +44,32 @@ export class DivisionSelectorComponent implements OnInit {
     }
   }
 
+  @Input() set inputDiv(div){
+    if(div){
+      this.selectedDivision=div._id;
+    }else{
+      this.selectedDivision = null;
+    }
+  }
+
   @Output() selectedDiv = new EventEmitter();
 
   divEmmiter(div) {
     this.selectedDiv.emit(div);
   }
 
-
-  //division selected from dropdown, creates a safe source to cancel back to
-  selected(div) {
-    this.divEmmiter(div);
+  returnMatchDivision(prop, value){
+    let div = null;
+    this.divisions.forEach(division=>{
+      if(division[prop]==value){
+        div = division;
+      }
+    })
+    return div;
   }
+
+divSelected(div){
+  this.divEmmiter(this.returnMatchDivision('_id', div));
+}
 
 }

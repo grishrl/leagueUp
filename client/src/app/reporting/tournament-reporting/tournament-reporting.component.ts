@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { TeamService } from 'src/app/services/team.service';
+import { ScheduleService } from 'src/app/services/schedule.service';
+import { UtilitiesService } from 'src/app/services/utilities.service';
 
 @Component({
   selector: 'app-tournament-reporting',
@@ -9,12 +11,13 @@ import { TeamService } from 'src/app/services/team.service';
 })
 export class TournamentReportingComponent implements OnInit {
 
-  constructor(private auth: AuthService, private team: TeamService) { }
+  constructor(private auth: AuthService, private team: TeamService, private scheduleService:ScheduleService, private util:UtilitiesService) { }
 
   selectedTournament = {
     'season':undefined,
     'name': undefined,
-    'division': undefined
+    'division': undefined,
+    'challonge_url':undefined
   };
 
   involvedTournaments = [];
@@ -36,13 +39,41 @@ export class TournamentReportingComponent implements OnInit {
   }
 
   getTeamTournamentMatches(tournament) {
-    this.team.getTournamentMatches(this.auth.getTeamId(), tournament.name, tournament.season, tournament.division).subscribe(
-      res => {
-        this.matches = res;
+
+    this.scheduleService.getMatchList(tournament.matches).subscribe(
+      res=>{
+        let tempMatches = res;
+
+        tempMatches = tempMatches.filter( a=>{
+          console.log('match ',a);
+          if(this.util.returnBoolByPath(a, 'home.id')){
+            if (a.home.id == this.auth.getTeamId()){
+              return true;
+            }
+          }
+          if(this.util.returnBoolByPath(a, 'away.id')){
+            if (a.away.id == this.auth.getTeamId()) {
+              return true;
+            }
+          }
+          return false;
+        });
+        console.log('tempMatches ',tempMatches);
+        this.matches = tempMatches;
       },
-      err => {
+      err=>{
         console.log(err);
       }
     )
+
+    // this.team.getTournamentMatches(this.auth.getTeamId(), tournament.name, tournament.season, tournament.division).subscribe(
+    //   res => {
+    //     console.log('res ', res);
+    //     this.matches = res;
+    //   },
+    //   err => {
+    //     console.log(err);
+    //   }
+    // )
   }
 }

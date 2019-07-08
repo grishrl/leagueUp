@@ -1,78 +1,84 @@
-<div class="container">
-    <div class="row bg-white">
-        <div class="col">
-            <div class="row text-center mt-3">
-                <div class="col-md-4">
-                    <div class="btn-group">
-                        <div class="btn btn-primary" mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate" (viewDateChange)="activeDayIsOpen = false">
-                            Previous
+<!-- Section Title -->
+<app-banner-image [bannerTitle]="'Calendar'"></app-banner-image>
+
+<!-- Section Area - Content Central -->
+<section class="content-info pb-5">
+
+    <div class="container pb-5">
+        <div class="row bg-white">
+            <div class="col">
+                <div class="row text-center mt-3">
+                    <div class="col-md-4">
+                        <div class="btn-group groupBorder">
+                            <div class="btn btn-outline-secondary " mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate" (viewDateChange)="activeDayIsOpen = false">
+                                Previous
+                            </div>
+                            <div class="btn btn-primary" mwlCalendarToday [(viewDate)]="viewDate">
+                                Today
+                            </div>
+                            <div class="btn btn-outline-secondary" mwlCalendarNextView [view]="view" [(viewDate)]="viewDate" (viewDateChange)="activeDayIsOpen = false">
+                                Next
+                            </div>
                         </div>
-                        <div class="btn btn-outline-secondary" mwlCalendarToday [(viewDate)]="viewDate">
-                            Today
-                        </div>
-                        <div class="btn btn-primary" mwlCalendarNextView [view]="view" [(viewDate)]="viewDate" (viewDateChange)="activeDayIsOpen = false">
-                            Next
+                    </div>
+                    <div class="col-md-4">
+                        <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="btn-group groupBorder">
+                            <div class="btn btn-primary" (click)="view = CalendarView.Month" [class.active]="view === CalendarView.Month">
+                                Month
+                            </div>
+                            <div class="btn btn-outline-secondary" (click)="view = CalendarView.Week" [class.active]="view === CalendarView.Week">
+                                Week
+                            </div>
+                            <div class="btn btn-primary" (click)="view = CalendarView.Day" [class.active]="view === CalendarView.Day">
+                                Day
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+                <br>
+                <div [ngSwitch]="view">
+                    <mwl-calendar-month-view *ngSwitchCase="CalendarView.Month" [viewDate]="viewDate" [events]="events" [refresh]="refresh" [activeDayIsOpen]="activeDayIsOpen" (dayClicked)="dayClicked($event.day)" (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
+                    </mwl-calendar-month-view>
+                    <mwl-calendar-week-view *ngSwitchCase="CalendarView.Week" [viewDate]="viewDate" [events]="events" [refresh]="refresh" (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
+                    </mwl-calendar-week-view>
+                    <mwl-calendar-day-view *ngSwitchCase="CalendarView.Day" [viewDate]="viewDate" [events]="events" [refresh]="refresh" (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
+                    </mwl-calendar-day-view>
                 </div>
-                <div class="col-md-4">
-                    <div class="btn-group">
-                        <div class="btn btn-primary" (click)="view = CalendarView.Month" [class.active]="view === CalendarView.Month">
-                            Month
-                        </div>
-                        <div class="btn btn-primary" (click)="view = CalendarView.Week" [class.active]="view === CalendarView.Week">
-                            Week
-                        </div>
-                        <div class="btn btn-primary" (click)="view = CalendarView.Day" [class.active]="view === CalendarView.Day">
-                            Day
-                        </div>
+
+                <br><br>
+                <div class="row">
+                    <div class="col">
+                        <h4>Event Key</h4>
                     </div>
                 </div>
-            </div>
-            <br>
-            <div [ngSwitch]="view">
-                <mwl-calendar-month-view *ngSwitchCase="CalendarView.Month" [viewDate]="viewDate" [events]="events" [refresh]="refresh" [activeDayIsOpen]="activeDayIsOpen" (dayClicked)="dayClicked($event.day)" (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
-                </mwl-calendar-month-view>
-                <mwl-calendar-week-view *ngSwitchCase="CalendarView.Week" [viewDate]="viewDate" [events]="events" [refresh]="refresh" (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
-                </mwl-calendar-week-view>
-                <mwl-calendar-day-view *ngSwitchCase="CalendarView.Day" [viewDate]="viewDate" [events]="events" [refresh]="refresh" (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
-                </mwl-calendar-day-view>
-            </div>
+                <div class="row mt-2">
+                    <div class="col-3">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Color</th>
+                                    <th scope="col">Division / Event</th>
 
-            <br><br>
-            <div class="row">
-                <div class="col">
-                    <h4>Event Key</h4>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of key|keyvalue:sortOrder">
+                                    <td [style.background-color]="item.value.primary"></td>
+                                    <td>{{item.value.name}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
-            <div class="row mt-2">
-                <div class="col-3">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">Color</th>
-                                <th scope="col">Division / Event</th>
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let item of key|keyvalue:sortOrder">
-                                <td [style.background-color]="item.value.primary"></td>
-                                <td>{{item.value.name}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <!-- <h3>
+                <!-- <h3>
                 Events List
                 <div class="clearfix"></div>
             </h3> -->
 
-            <!-- <table class="table table-bordered">
+                <!-- <table class="table table-bordered">
 
                 <thead>
                     <tr>
@@ -102,6 +108,9 @@
 
             </table> -->
 
+            </div>
         </div>
     </div>
-</div>
+
+</section>
+<!-- End Section Area -  Content Central -->

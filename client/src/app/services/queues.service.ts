@@ -17,5 +17,5 @@ export class QueuesService {
      url += queue;
      return this.httpService.httpGet(url, []);
   }
-   
+
 }

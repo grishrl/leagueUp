@@ -1,0 +1,39 @@
+$font-family-theme: 'Open Sans', sans-serif;
+$font-family-headings: 'Raleway', sans-serif;
+$font-family-alt: 'Roboto', sans-serif;
+$main-skin: #01d099;
+
+@mixin fade($time) {
+	-webkit-transition: all ease $time;
+	-moz-transition: all ease $time;
+	-o-transition: all ease $time;
+	-ms-transition: all ease $time;
+	transition: all ease $time;
+}
+
+body{
+    background: #f8f8f8;
+    font-family: $font-family-theme;
+    -webkit-font-smoothing: antialiased;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: #808080;
+    text-rendering: optimizeLegibility;
+}
+a,.btn{
+    @include fade(0.4s);
+    &:hover{
+        text-decoration: none;
+        @include fade(0.4s);
+        opacity: 0.7;
+    }
+}
+h1,h2,h3,h4,h5,h6,
+.h1,.h2,.h3,.h4,.h5,.h6{
+    font-family: $font-family-headings;
+    color: #151e25;
+    font-weight: 500;
+    a{
+        color: #151e25;
+    }
+}

@@ -1,0 +1,30 @@
+<div class="recent-results">
+    <h5><span>Recent Result</span></h5>
+    <div class="info-results">
+        <ul>
+            <li *ngFor="let match of display">
+                <span class="head" style="overflow: hidden">
+      {{match.home.ticker}} Vs {{match.away.ticker}}
+      <span *ngIf="match.scheduledTime && match.scheduledTime.startTime"
+            class="date">{{util.getFormattedDate(match.scheduledTime.startTime, 'DD MMM YYYY')}}</span>
+                </span>
+                <div class="goals-result">
+                    <app-team-link [team]="match.home.teamName">
+                        {{match.home.ticker}}
+                    </app-team-link>
+
+                    <span class="goals">
+                                   <b>{{match.home.score}}</b> - <b>{{match.away.score}}</b>
+                                 </span>
+                    <app-team-link [team]="match.away.teamName">
+                        {{match.away.ticker}}
+                    </app-team-link>
+                </div>
+            </li>
+        </ul>
+        <div *ngIf="!display || display.length == 0" class="text-center p-5">
+            <h5>No Recent Results!</h5>
+            <h6 class="text-white">Check back later!</h6>
+        </div>
+    </div>
+</div>

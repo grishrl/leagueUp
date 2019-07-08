@@ -1,0 +1,106 @@
+<!-- Section Title -->
+<app-banner-image [bannerTitle]="'Blog'"></app-banner-image>
+<!-- End Section Title -->
+
+<!-- Section Area - Content Central -->
+<section class="content-info">
+
+    <div class="container paddings-mini">
+        <div class="row">
+
+            <!-- Sidebars -->
+            <aside class="col-lg-3">
+
+                <!-- Widget Categories-->
+                <app-blog-categories (currentCategory)="updateDisplay($event)"></app-blog-categories>
+                <!-- End Widget Categories-->
+
+                <!-- Widget Text-->
+                <!-- <div class="panel-box">
+                    <div class="titles no-margin">
+                        <h4>Widget Text</h4>
+                    </div>
+                    <div class="info-panel">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, incididunt ut labore et dolore.</p>
+                    </div>
+                </div> -->
+                <!-- End Widget Text-->
+
+                <!-- Widget img-->
+                <!-- <div class="panel-box">
+                    <div class="titles no-margin">
+                        <h4>Widget Image</h4>
+                    </div>
+                    <img src="img/slide/1.jpg" alt="">
+                    <div class="row">
+                        <div class="info-panel">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, ut sit amet, consectetur adipisicing elit, labore et dolore.</p>
+                        </div>
+                    </div>
+                </div> -->
+                <!-- End Widget img-->
+            </aside>
+            <!-- End Sidebars -->
+
+
+            <div class="col-lg-9">
+                <!-- Content Text-->
+                <div class="panel-box">
+                    <div class="titles">
+                        <h4>Recent Blog Posts</h4>
+                    </div>
+
+                    <!-- Post Item -->
+                    <div class="post-item" *ngFor="let post of posts">
+                        <app-blog-headline [blogObj]="post"></app-blog-headline>
+                    </div>
+                    <!-- End Post Item -->
+                </div>
+                <!-- End Content Text-->
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <!-- <div class="container">
+    <div class="row bg-white forceFull">
+        <div class="col">
+            <div class="row">
+                <div class="col"></div>
+                <div class="col-6">
+                    <mat-form-field class="example-container">
+                        <mat-select placeholder="Filter by Category" (selectionChange)="updateDisplay($event)" disableOptionCentering>
+                            <mat-option [value]="'all'">
+                                All
+                            </mat-option>
+                            <mat-option *ngFor="let category of categories" [value]="category.sys.id">
+                                <span *ngIf="category.fields && category.fields.title">{{category.fields.title}}</span>
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col"></div>
+            </div>
+
+            <div class="row m-t" *ngFor="let row of rows">
+                <div class="col-xs-12 col-md-4 mt-1" *ngFor="let item of row">
+                    <mat-card class="blog-card finger" (click)="goToBlogPage(item)">
+                        <mat-card-header>
+                            <img *ngIf="util.returnBoolByPath(item, 'fields.author.fields.image.fields.file.url')" mat-card-avatar src="{{item.fields.author.fields.image.fields.file.url}}" class="author-image">
+                            <mat-card-title><span class="anchor" *ngIf="util.returnBoolByPath(item, 'fields.title')">{{item.fields.title}}</span></mat-card-title>
+                            <mat-card-subtitle *ngIf="util.returnBoolByPath(item, 'fields.author.fields.name')">{{item.fields.author.fields.name}}</mat-card-subtitle>
+                        </mat-card-header>
+                        <img *ngIf="util.returnBoolByPath(item, 'fields.heroImage.fields.file.url')" mat-card-image src="{{item.fields.heroImage.fields.file.url}}?w=400&h=225&&fit=pad" alt="{{item.fields.heroImage.fields.description}}">
+                        <mat-card-content>
+                            <div *ngIf="item.fields.description" [innerHTML]="md.convertMarkdown(item.fields.description)"></div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->

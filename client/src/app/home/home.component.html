@@ -1,81 +1,121 @@
-<!-- <div class="container nav-padding"> -->
+<!-- section-hero-posts-->
+<app-large-carousel></app-large-carousel>
 
+<!-- Section Area - Content Central -->
+<section class="content-info">
+    <!-- Dark Home -->
+    <div class="dark-home">
+        <div class="container">
+            <div class="row">
+                <!-- Left Content - Tabs and Carousel -->
+                <div class="col-xl-9 col-md-12">
+                    <!-- Nav Tabs -->
+                    <ul class="nav nav-tabs" id="myTab">
+                        <li [ngClass]="{'active': index==0}"><a href="#statistics" data-toggle="tab" (click)="index=0">STATISTICS</a></li>
+                        <li [ngClass]="{'active': index==1}"><a href="#groups" data-toggle="tab" (click)="index=1">GROUPS</a></li>
+                        <li [ngClass]="{'active': index==2}"><a href="#description" (click)="index=2" data-toggle="tab">DESCRIPTION</a></li>
+                    </ul>
+                    <!-- End Nav Tabs -->
 
-<!-- Page Content -->
-<div class="backGround">
-    <div class="container pb-4">
-        <header>
-            <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-                <ol class="carousel-indicators">
-                    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                    <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                    <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-                </ol>
-                <div class="carousel-inner" role="listbox">
-                    <!-- Slide One - Set the background image for this slide in the line below -->
-                    <div (click)="goToBlogPage(jumboSlide)" *ngFor="let jumboSlide of jumboTron let i = index" class="carousel-item finger" [ngClass]="{'active':i==0}" [style.background-image]="'url('+jumboSlide.fields.heroImage.fields.file.url+'?w=1080&h=475&fit=pad)'">
-                        <div class="carousel-caption d-none d-md-block badge-pill carouselBackground">
+                    <!-- Content Tabs -->
+                    <div class="tab-content">
+                        <!-- Tab Theree - statistics -->
+                        <div class="tab-pane" [ngClass]="{'active': index==0}" id="statistics">
+                            <div class="row">
+                                <!-- Club Ranking -->
+                                <div class="col-lg-4">
+                                    <app-division-standings></app-division-standings>
+                                </div>
+                                <!-- End Club Ranking -->
 
-                            <h3>{{jumboSlide.fields.title}}</h3>
-                            <p [innerHTML]="md.convertMarkdown(jumboSlide.fields.description)"></p>
+                                <!-- recent-results -->
+                                <div class="col-lg-4">
+                                    <app-recent-results></app-recent-results>
+                                </div>
+                                <!-- end recent-results -->
+
+                                <!-- Top player -->
+                                <div class="col-lg-4">
+                                    <app-top-stats-widget></app-top-stats-widget>
+                                </div>
+                                <!-- End Top player -->
+                            </div>
                         </div>
+                        <!-- Tab Theree - statistics -->
+
+                        <!-- Tab One - Groups List -->
+                        <div class="tab-pane" id="groups" [ngClass]="{'active': index==1}">
+                            <app-division-table-view></app-division-table-view>
+                        </div>
+                        <!-- End Tab One - Groups List -->
+
+                        <!-- Tab Two - Destinations -->
+                        <div class="tab-pane" id="description" [ngClass]="{'active': index==2}">
+                            <div class="info-general">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <img src="https://ngs-image-storage.s3.amazonaws.com/defaultTeamLogo.png" alt="">
+                                    </div>
+
+                                    <div class="col-md-8">
+                                        <h3>Nexus Gaming Series</h3>
+                                        <p class="lead">The Nexus Gaming Series is a North American based Heroes of the Storm free amateur competitive league. Community members form their own squad of players and do battle in fun and enjoyable pixel-to-pixel combat!
+                                            These teams strive to become champions of their assigned Divisions based on their skill level.</p>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <p>NGS is open to all, so get involved! Enjoy one of the best Heroes of the Storm experiences available. Including organized play, balanced competition, casted matches, written articles and more!</p>
+                                        <h4>By the players; for the players</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End Tab Two - Destinations -->
                     </div>
-
-                    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-                        <div class="badge-pill carouselBackground" style="padding-top:5px;">
-                            <span class="carousel-control-prev-icon" style="opacity: 1;" aria-hidden="true"></span>
-                            <span class="sr-only">Previous</span>
-                        </div>
-
-                    </a>
-                    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-                        <div class="badge-pill carouselBackground" style="padding-top:5px;">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="sr-only">Next</span>
-                        </div>
-
-                    </a>
+                    <!-- Content Tabs -->
                 </div>
-            </div>
-        </header>
+                <!-- Left Content - Tabs and Carousel -->
 
-        <h1 class="my-4 text-center">Welcome to Nexus Gaming Series!</h1>
-
-        <h2>Recent Content:</h2>
-        <div class="row">
-            <div class="col-xs-12 col-md-4 mt-1">
-                <!-- showdown -->
-                <app-mini-carousel playlistId="PLCylT7hBfO1TMCpCxcFVB_n7wZUXU2dKu" byline="Showdown">
-                </app-mini-carousel>
-            </div>
-            <div class="col-xs-12 col-md-4 mt-1">
-                <!-- nexus edge -->
-                <app-mini-carousel playlistId="PLCylT7hBfO1SIMocVH3UWqrCywkKrM8JM" byline="Nexus Edge">
-                </app-mini-carousel>
-            </div>
-            <div class="col-xs-12 col-md-4 mt-1">
-                <!-- podcast -->
-                <app-mini-carousel playlistId="PLCylT7hBfO1TfE4U-kdLMSvksc-nx4stD" byline="Nexus Now Podcast">
-                </app-mini-carousel>
+                <!-- Right Content - Content Counter -->
+                <div class="col-xl-3 col-md-12">
+                    <app-countdown></app-countdown>
+                </div>
+                <!-- End Right Content - Content Counter -->
             </div>
         </div>
+    </div>
+    <!-- Dark Home -->
 
-        <h2 class="mt-4">Recent news</h2>
-        <div class="row m-t" *ngFor="let row of rows">
-            <div class="col-xs-12 col-md-4 mt-1" *ngFor="let item of row">
-                <mat-card (click)="goToBlogPage(item)" class="blog-card finger mx-auto">
-                    <mat-card-header>
-                        <img mat-card-avatar src="{{item.fields.author.fields.image.fields.file.url}}" class="author-image">
-                        <mat-card-title><span class="anchor" (click)="goToBlogPage(item)">{{item.fields.title}}</span></mat-card-title>
-                        <mat-card-subtitle>{{item.fields.author.fields.name}}</mat-card-subtitle>
-                    </mat-card-header>
-                    <img mat-card-image src="{{item.fields.heroImage.fields.file.url}}?w=400&h=225&fit=pad" alt="{{item.fields.heroImage.fields.description}}">
-                    <mat-card-content>
-                        <div [innerHTML]="md.convertMarkdown(item.fields.description)"></div>
-                    </mat-card-content>
-                </mat-card>
+    <!-- Content Central -->
+    <div class="container padding-top padding-bottom">
+        <app-recent-content></app-recent-content>
+        <div class="row">
+            <!-- content Column Left -->
+            <div class="col-lg-9 col-xl-10">
+                <app-recent-news></app-recent-news>
+                <div class="row mb-4">
+                    <div class="col">
+                    </div>
+                    <div class="col">
+                        <div class="text-center h5">NGS Community Has:</div>
+                        <app-league-stats></app-league-stats>
+                    </div>
+                    <div class="col">
+                    </div>
+
+                </div>
             </div>
+            <!-- End content Left -->
+
+            <!-- content Sidebar Right -->
+            <aside class="col-sm-6 col-lg-3 col-xl-2">
+                <app-diary></app-diary>
+            </aside>
+            <!-- End content Sidebar Right -->
+
         </div>
 
     </div>
-</div>
+    <!-- End Content Central -->
+
+</section>

@@ -20,7 +20,6 @@ export class GenerateSeasonComponent implements OnInit {
       this.seasonFull = false;
       this.admin.validateSeason(num).subscribe(
         res => {
-          console.log(res);
           this.validated = res['valid'];
           if (!this.validated) {
             this.seasonFull = true;
@@ -41,7 +40,7 @@ export class GenerateSeasonComponent implements OnInit {
       return true;
     }
   }
-  
+
   generateSeason(){
     if(this.seasonNumber && this.validated){
       let first = confirm("Are you sure?");
@@ -52,8 +51,7 @@ export class GenerateSeasonComponent implements OnInit {
           if(third){
             this.admin.generateSeason(this.seasonNumber).subscribe(
               res=>{
-                console.log(res);
-                alert("Schedules for season "+this.seasonNumber+" were generated");
+                alert("Schedules for season "+this.seasonNumber+" were generated!");
                 this.validated = false;
               },
               err=>{

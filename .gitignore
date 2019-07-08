@@ -94,8 +94,13 @@ server/routes/words
 # Angular client build output
 client/dist
 
+#custom ignore
 server/uuid.js
 matchBlank.JSON
-massMMRgetter.js
-massMMRgrab.json
+server/parser-test.js
+server/massMMRgetter.js
+server/massMMRgrab.json
 server/replays
+server/methods/sheets/credentials.json
+server/methods/sheets/sheetKeys.json
+server/methods/sheets/sheetKeys2.json

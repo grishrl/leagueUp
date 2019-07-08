@@ -1,0 +1,9 @@
+.fullHeight {
+    height: 100vh;
+}
+
+.min-text-area {
+    min-height: 60px;
+    padding: 3px;
+    border: solid;
+}

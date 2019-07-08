@@ -13,6 +13,9 @@ const logger = require('../subroutines/sys-logging-subs');
 const Scheduling = require('../models/schedule-models');
 const fs = require('fs');
 const n_util = require('util');
+const Division = require('../models/division-models');
+const matchCommon = require('../methods/matchCommon');
+
 
 
 fs.readFileAsync = n_util.promisify(fs.readFile);
@@ -40,13 +43,25 @@ router.post('/get/matches', (req, res) => {
     let season = req.body.season;
     let division = req.body.division;
     let round = req.body.round;
-    Match.find({
-        $and: [
-            { season: season },
-            { round: round },
-            { divisionConcat: division }
-        ]
-    }).lean().then((found) => {
+
+    let query = { $and: [] };
+
+    if (season) {
+        query.$and.push({
+            season: season
+        });
+    }
+    if (round) {
+        query.$and.push({
+            round: round
+        });
+    }
+    if (division) {
+        query.$and.push({
+            divisionConcat: division
+        });
+    }
+    Match.find(query).lean().then((found) => {
         if (found) {
             let teams = findTeamIds(found);
             addTeamNamesToMatch(teams, found).then((processed) => {
@@ -71,10 +86,18 @@ router.post('/get/reported/matches', (req, res) => {
     Match.find({
         season: season,
         reported: true
-    }).then(
+    }).lean().then(
         found => {
             if (found) {
-                res.status(200).send(util.returnMessaging(path, 'Found these matches', null, found));
+
+                addTeamNamesToMatch_foundOnly(found).then(
+                    processed => {
+                        res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
+                    },
+                    err => {
+                        res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
+                    }
+                )
             } else {
                 res.status(200).send(util.returnMessaging(path, 'No Matches Found', null, found));
             }
@@ -150,9 +173,7 @@ router.post('/get/matches/all',
  * return matches that fit the criterea
  * 
  */
-router.post('/get/matches/team', passport.authenticate('jwt', {
-    session: false
-}), util.appendResHeader, (req, res) => {
+router.post('/get/matches/team', (req, res) => {
     const path = 'schedule/get/matches/team';
     let team = req.body.team;
     let season = req.body.season;
@@ -214,14 +235,22 @@ router.get('/get/matches/scheduled', (req, res) => {
     }).lean().then((found) => {
         if (found) {
             let teamIds = findTeamIds(found);
-            addTeamNamesToMatch(teamIds, found).then(
+            addTeamAndDivsionNames(found).then(
                 added => {
                     res.status(200).send(util.returnMessaging(path, 'Found scheduled matches', false, added));
                 },
                 err => {
                     res.status(500).send(util.returnMessaging(path, 'Failed to get team matches', err, false));
                 }
-            )
+            );
+            // addTeamNamesToMatch(teamIds, found).then(
+            //     added => {
+            //         res.status(200).send(util.returnMessaging(path, 'Found scheduled matches', false, added));
+            //     },
+            //     err => {
+            //         res.status(500).send(util.returnMessaging(path, 'Failed to get team matches', err, false));
+            //     }
+            // )
 
         } else {
             res.status(400).send(util.returnMessaging(path, 'No matches found'));
@@ -258,12 +287,7 @@ router.post('/update/match/time', passport.authenticate('jwt', {
                     $in: teams
                 }
             }).lean().then((foundTeams) => {
-                let isCapt = false;
-                foundTeams.forEach(team => {
-                    if (team.captain == requester) {
-                        isCapt = true;
-                    }
-                })
+                let isCapt = returnIsCapt(foundTeams, requester);
                 if (isCapt) {
                     if (util.returnBoolByPath(foundMatch.toObject(), 'scheduledTime')) {
                         if (foundMatch.scheduledTime.priorScheduled) {
@@ -308,7 +332,6 @@ for getting a match specified by ID
 */
 router.post('/get/match', (req, res) => {
     const path = 'schedule/get/match';
-    let season = req.body.season;
     let matchId = req.body.matchId;
 
     Match.findOne({ matchId: matchId }).lean().then((foundMatch) => {
@@ -325,6 +348,26 @@ router.post('/get/match', (req, res) => {
     }, (err) => {
         res.status(500).send(util.returnMessaging(path, 'Error getting match', err));
     });
+});
+
+router.post('/get/match/list', (req, res) => {
+    const path = 'schedule/get/match/list';
+    let matches = req.body.matches;
+
+    Match.find({ matchId: { $in: matches } }).then(
+        found => {
+            let teams = findTeamIds(found);
+            addTeamNamesToMatch(teams, found).then((processed) => {
+                res.status(200).send(util.returnMessaging(path, 'Found matches', false, processed));
+            }, (err) => {
+                res.status(500).send(util.returnMessaging(path, 'Error getting matches', err));
+            })
+        },
+        err => {
+            res.status(500).send(util.returnMessaging(path, 'Error getting match', err));
+        }
+    )
+
 });
 
 
@@ -416,19 +459,14 @@ router.post('/report/match', passport.authenticate('jwt', {
                             foundMatch.mapBans = JSON.parse(fields.mapBans);
                         }
 
-                        //validate the submitter is a captain of one of the teams
-                        let isCapt = false;
-                        foundTeams.forEach(team => {
-                            if (team.captain == requester) {
-                                isCapt = true;
-                            }
-                        });
+                        //validate the submitter is a captain OR assistantCaptain of one of the teams
+                        let isCapt = returnIsCapt(foundTeams, requester);
                         if (isCapt) {
 
                             let fileKeys = Object.keys(files);
                             let parsed = [];
 
-                            let parseCounter = 0;
+                            //todo - replace with lodash for each
                             //parse the replays
                             fileKeys.forEach(fileKey => {
                                 try {
@@ -436,29 +474,44 @@ router.post('/report/match', passport.authenticate('jwt', {
                                         useAttributeName: true,
                                         overrideVerifiedBuild: true
                                     });
-                                    parsed.push(parsedReplay);
-                                    if (parsedReplay.status == 1) {
-                                        parseCounter += 1;
+
+                                    if (parsedReplay.status != 1) {
+                                        parsedReplay['failed'] = true;
                                     }
+                                    parsed.push(parsedReplay);
                                 } catch (error) {
                                     parsed.push({ match: { map: 'UNKNOWN-PARSE-ERROR' } })
                                     console.log('caught error :', error);
                                 }
                             });
-                            //new if to check if the replay parser completed, if not return an error to the client instead of falling over dead.
-                            if (parseCounter == fileKeys.length) {
 
-                                let replayfilenames = [];
-                                //loop through the parsed replays to grab some info
-                                parsed.forEach(element => {
+                            let replayfilenames = [];
+                            //loop through the parsed replays to grab some info
+                            parsed.forEach(element => {
+                                //this tie back object is used to tie together the parsed replays, the match objects, and the replay files
+                                let tieBack = {};
+                                let UUID = uniqid();
+                                tieBack.id = UUID;
+                                let timeStamp = '';
+                                if (util.returnBoolByPath(foundMatch.toObject(), 'scheduledTime.startTime')) {
+                                    let date = new Date(parseInt(foundMatch.scheduledTime.startTime));
+                                    let day = date.getDate();
+                                    let year = date.getFullYear();
+                                    let month = date.getMonth();
+                                    month = month + 1;
+                                    timeStamp = month + "-" + day + "-" + year;
+                                }
+                                let composeFilename = 'ngs_' + timeStamp + "_" + teamInfo[0].teamName + '_vs_' + teamInfo[1].teamName;
+
+                                //if the replay does not parse we will still store in the s3 giving it an unknown_map suffix
+                                if (element.hasOwnProperty('failed') && element.failed == true) {
+                                    composeFilename += '_' + 'unknown_map';
+                                } else {
                                     //this object will be pushed into the replayfilenames hold some info we need to save back to the match to tie the two together
-                                    let tieBack = {};
-                                    let UUID = uniqid();
-                                    tieBack.id = UUID;
-
                                     let replayTeamA = element.match.teams["0"];
                                     let replayTeamB = element.match.teams["1"];
 
+                                    //sort through the team members in the replay to assign the proper team names into the parsed replay object
                                     teamInfo.forEach(teamInfo => {
                                         if (_.intersection(replayTeamA.names, teamInfo.players).length > _.intersection(replayTeamB.names, teamInfo.players).length) {
                                             replayTeamA.teamName = teamInfo.teamName;
@@ -471,143 +524,108 @@ router.post('/report/match', passport.authenticate('jwt', {
                                         }
                                     })
 
-                                    let timeStamp = '';
-                                    if (util.returnBoolByPath(foundMatch.toObject(), 'scheduledTime.startTime')) {
-                                        let date = new Date(parseInt(foundMatch.scheduledTime.startTime));
-                                        let day = date.getDate();
-                                        let year = date.getFullYear();
-                                        let month = date.getMonth();
-                                        month = month + 1;
-                                        timeStamp = month + "-" + day + "-" + year;
-                                    }
-                                    let composeFilename = 'ngs_' + timeStamp + teamInfo[0].teamName + '_vs_' + teamInfo[1].teamName + '_' + element.match.map;
-                                    composeFilename = composeFilename.replace(/[^A-Z0-9\-]+/ig, "_");
-                                    tieBack.fileName = composeFilename + '.stormReplay';
+                                    composeFilename += '_' + element.match.map;
 
-                                    replayfilenames.push(tieBack);
                                     element.match['ngsMatchId'] = foundMatch.matchId;
+                                    composeFilename = composeFilename.replace(/[^A-Z0-9\-]+/ig, "_");
                                     element.match.filename = composeFilename;
                                     element.systemId = UUID;
-
-                                });
-
-
-                                //TODO: possibly combining these into a promise array to bring exectuion time into sync so we can report to hots-profile here?
-                                for (var i = 0; i < fileKeys.length; i++) {
-                                    if (foundMatch.replays == undefined || foundMatch.replays == null) {
-                                        foundMatch.replays = {};
-                                    }
-
-                                    if (foundMatch.replays[(i + 1).toString()] == undefined || foundMatch.replays[(i + 1).toString()] == null) {
-                                        foundMatch.replays[(i + 1).toString()] = {};
-                                    }
-                                    foundMatch.replays[(i + 1).toString()].url = replayfilenames[i].fileName;
-                                    foundMatch.replays[(i + 1).toString()].data = replayfilenames[i].id;
-
-                                    let fileName = replayfilenames[i].fileName;
-
-                                    fs.readFileAsync(files[fileKeys[i]].path).then(
-                                        buffer => {
-                                            var data = {
-                                                Key: fileName,
-                                                Body: buffer
-                                            };
-                                            s3replayBucket.putObject(data, function(err, data) {
-                                                if (err) {
-                                                    console.log(err);
-                                                    //log object
-                                                    let sysLog = {};
-                                                    sysLog.actor = 'SYS';
-                                                    sysLog.action = ' upload replay ';
-                                                    sysLog.logLevel = 'ERROR';
-                                                    sysLog.target = data.Key
-                                                    sysLog.timeStamp = new Date().getTime();
-                                                    sysLog.error = err;
-                                                    logger(sysLog);
-                                                } else {
-                                                    //log object
-                                                    let sysLog = {};
-                                                    sysLog.actor = 'SYS';
-                                                    sysLog.action = ' upload replay ';
-                                                    sysLog.logLevel = 'SYSTEM';
-                                                    sysLog.target = data.Key
-                                                    sysLog.timeStamp = new Date().getTime();
-                                                    logger(sysLog);
-                                                }
-                                            });
-                                        },
-                                        err => {
-                                            console.log('error ', err);
-                                        }
-                                    )
                                 }
 
-                                ParsedReplay.collection.insertMany(parsed).then(
-                                    (records) => {
-                                        //log object
-                                        let sysLog = {};
-                                        sysLog.actor = 'SYS';
-                                        sysLog.action = ' parsed replay stored';
-                                        sysLog.logLevel = 'SYSTEM';
-                                        sysLog.target = replayfilenames.toString();
-                                        sysLog.timeStamp = new Date().getTime();
-                                        logger(sysLog);
+                                composeFilename = composeFilename.replace(/[^A-Z0-9\-]+/ig, "_");
+                                tieBack.fileName = composeFilename + '.stormReplay';
+                                replayfilenames.push(tieBack);
 
-                                        foundMatch.reported = true;
-                                        foundMatch.save((saved) => {
-                                            res.status(200).send(util.returnMessaging(path, 'Match reported', false, saved, null, logObj));
-                                        }, (err) => {
-                                            res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
-                                        })
+                            });
+
+
+                            //TODO: possibly combining these into a promise array to bring exectuion time into sync so we can report to hots-profile here?
+                            for (var i = 0; i < fileKeys.length; i++) {
+                                if (foundMatch.replays == undefined || foundMatch.replays == null) {
+                                    foundMatch.replays = {};
+                                }
+
+                                if (foundMatch.replays[(i + 1).toString()] == undefined || foundMatch.replays[(i + 1).toString()] == null) {
+                                    foundMatch.replays[(i + 1).toString()] = {};
+                                }
+                                foundMatch.replays[(i + 1).toString()].url = replayfilenames[i].fileName;
+                                foundMatch.replays[(i + 1).toString()].data = replayfilenames[i].id;
+
+                                let fileName = replayfilenames[i].fileName;
+
+                                fs.readFileAsync(files[fileKeys[i]].path).then(
+                                    buffer => {
+                                        var data = {
+                                            Key: fileName,
+                                            Body: buffer
+                                        };
+                                        s3replayBucket.putObject(data, function(err, data) {
+                                            if (err) {
+                                                console.log(err);
+                                                //log object
+                                                let sysLog = {};
+                                                sysLog.actor = 'SYS';
+                                                sysLog.action = ' upload replay ';
+                                                sysLog.logLevel = 'ERROR';
+                                                sysLog.target = data.Key
+                                                sysLog.timeStamp = new Date().getTime();
+                                                sysLog.error = err;
+                                                logger(sysLog);
+                                            } else {
+                                                //log object
+                                                let sysLog = {};
+                                                sysLog.actor = 'SYS';
+                                                sysLog.action = ' upload replay ';
+                                                sysLog.logLevel = 'SYSTEM';
+                                                sysLog.target = data.Key
+                                                sysLog.timeStamp = new Date().getTime();
+                                                logger(sysLog);
+                                            }
+                                        });
                                     },
-                                    (err) => {
-                                        res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
+                                    err => {
+                                        console.log('error ', err);
                                     }
                                 )
-
-                                //if this match was a tournmanet match then we need to promote the winner to the parent match
-                                if (foundMatch.type == 'tournament') {
-                                    let winner = {};
-                                    if (foundMatch.home.score > foundMatch.away.score) {
-                                        winner['id'] = foundMatch.home.id;
-                                        winner['teamName'] = foundMatch.home.teamName;
-                                    } else {
-                                        winner['id'] = foundMatch.away.id;
-                                        winner['teamName'] = foundMatch.away.teamName;
-                                    }
-                                    Match.findOne({
-                                        matchId: foundMatch.parentId
-                                    }).then(
-                                        found => {
-                                            if (found) {
-                                                let foundObj = found.toObject();
-                                                if (util.returnBoolByPath(foundObj, 'away')) {
-                                                    found.home = winner;
-                                                } else {
-                                                    found.away = winner;
-                                                }
-                                                found.save().then(
-                                                    saved => {
-                                                        console.log(saved);
-                                                    },
-                                                    err => {
-                                                        console.log(err);
-                                                    }
-                                                )
-                                            } else {
-                                                console.log('the parent match was not found');
-                                            }
-                                        },
-                                        err => {
-                                            console.log(err)
-                                        }
-                                    )
-                                }
-
-                            } else {
-                                //parser did not finish properly
-                                res.status(500).send(util.returnMessaging(path, 'Error (1) reporting match result', false, null, null, logObj));
                             }
+
+                            //if we have failed parse - remove those junk objects from the array before inserting them into the database.
+                            indiciesToRemove = [];
+                            parsed.forEach((element, index) => {
+                                if (element.hasOwnProperty('failed') && element.failed == true) {
+                                    indiciesToRemove.push(index);
+                                }
+                            });
+
+                            indiciesToRemove.forEach(index => {
+                                parsed.splice(index, 1);
+                            });
+
+                            ParsedReplay.collection.insertMany(parsed).then(
+                                (records) => {
+                                    //log object
+                                    let sysLog = {};
+                                    sysLog.actor = 'SYS';
+                                    sysLog.action = ' parsed replay stored';
+                                    sysLog.logLevel = 'SYSTEM';
+                                    sysLog.target = replayfilenames.toString();
+                                    sysLog.timeStamp = new Date().getTime();
+                                    logger(sysLog);
+
+                                    foundMatch.reported = true;
+                                    foundMatch.save((saved) => {
+                                        res.status(200).send(util.returnMessaging(path, 'Match reported', false, saved, null, logObj));
+                                    }, (err) => {
+                                        res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
+                                    })
+                                },
+                                (err) => {
+                                    res.status(500).send(util.returnMessaging(path, 'Error (2) reporting match result', err, null, null, logObj));
+                                }
+                            )
+
+                            //if this match was a tournmanet match then we need to promote the winner to the parent match
+                            matchCommon.promoteTournamentMatch(foundMatch);
 
 
 
@@ -753,6 +771,16 @@ router.post('/generate/tournament', passport.authenticate('jwt', {
         });
     }
 
+    let cupNumber;
+    if (req.body.cupNumber) {
+        cupNumber = req.body.cupNumber;
+        target += ' cup Number: ' + cupNumber;
+        checkObj.$and.push({
+            cupNumber: cupNumber
+        });
+    }
+
+
     let tournamentName;
     if (req.body.tournamentName) {
         tournamentName = req.body.tournamentName;
@@ -760,6 +788,12 @@ router.post('/generate/tournament', passport.authenticate('jwt', {
         checkObj.$and.push({
             name: tournamentName
         });
+    }
+
+    let description;
+    if (req.body.description) {
+        description = req.body.description;
+        target += ' description: ' + description;
     }
 
     let teams = req.body.teams;
@@ -785,7 +819,8 @@ router.post('/generate/tournament', passport.authenticate('jwt', {
             if (found) {
                 res.status(500).send(util.returnMessaging(path, 'Tournament previously generated', false, null, null, logObj));
             } else {
-                scheduleGenerator.generateTournament(teams, season, division, tournamentName).then((process) => {
+                //generateTournamentTwo(teams, season, division, cup, name, description)
+                scheduleGenerator.generateTournamentTwo(teams, season, division, cupNumber, tournamentName, description).then((process) => {
                     if (process) {
                         res.status(200).send(util.returnMessaging(path, 'Tournament generated', false, process, null, logObj));
                     } else {
@@ -807,6 +842,8 @@ router.post('/generate/tournament', passport.authenticate('jwt', {
 
 });
 
+
+//this route retuns all tournament matches that a team participates in 
 router.post('/fetch/team/tournament/matches', passport.authenticate('jwt', {
     session: false
 }), (req, res) => {
@@ -839,14 +876,10 @@ router.post('/fetch/team/tournament/matches', passport.authenticate('jwt', {
             divisionConcat: req.body.division
         });
     }
-    if (req.body.name) {
-        queryObj.$and.push({
-            divisionConcat: req.body.name
-        });
-    }
 
     Match.find(queryObj).lean().then(
         (found) => {
+            console.log()
             let teams = findTeamIds(found);
             addTeamNamesToMatch(teams, found).then(
                 processed => {
@@ -927,36 +960,42 @@ router.post('/fetch/tournament', (req, res) => {
     // res.status(200).send(path, 'received this', false, { "hey": "hello" });
 
 
-    Scheduling.findOne(checkObj).then(
+    Scheduling.find(checkObj).then(
         found => {
             if (found) {
-                found = found.toObject();
-                Match.find({
-                    matchId: {
-                        $in: found.matches
-                    }
-                }).lean().then(
-                    matches => {
-                        if (matches) {
-                            let teams = findTeamIds(matches);
-                            addTeamNamesToMatch(teams, matches).then((processed) => {
-                                res.status(200).send(util.returnMessaging(path, 'Found tournament info', false, {
-                                    tournInfo: found,
-                                    tournMatches: processed
-                                }));
-                            }, err => {
-                                res.status(500).send(util.returnMessaging(path, 'Error occured querying tournament matches', err));
-                            })
-                        } else {
-                            //mathces not found
-                            res.status(500).send(util.returnMessaging(path, 'Error occured querying tournament matches', err));
-                        }
-                    },
-                    err => {
-                        //matches query error
-                        res.status(500).send(util.returnMessaging(path, 'Error occured querying tournament matches', err));
-                    }
-                )
+                if (found.hasOwnProperty('toObject')) {
+                    found = found.toObject();
+                }
+                res.status(200).send(util.returnMessaging(path, 'Found tournament info', false, {
+                    tournInfo: found
+                }));
+
+                // Match.find({
+                //     matchId: {
+                //         $in: found.matches
+                //     }
+                // }).lean().then(
+                //     matches => {
+                //         if (matches) {
+                //             let teams = findTeamIds(matches);
+                //             addTeamNamesToMatch(teams, matches).then((processed) => {
+                //                 res.status(200).send(util.returnMessaging(path, 'Found tournament info', false, {
+                //                     tournInfo: found,
+                //                     tournMatches: processed
+                //                 }));
+                //             }, err => {
+                //                 res.status(500).send(util.returnMessaging(path, 'Error occured querying tournament matches', err));
+                //             })
+                //         } else {
+                //             //mathces not found
+                //             res.status(500).send(util.returnMessaging(path, 'Error occured querying tournament matches', err));
+                //         }
+                //     },
+                //     err => {
+                //         //matches query error
+                //         res.status(500).send(util.returnMessaging(path, 'Error occured querying tournament matches', err));
+                //     }
+                // )
             } else {
                 res.status(200).send(util.returnMessaging(path, 'No tournament info found', false, found));
                 //match not found
@@ -974,14 +1013,36 @@ router.post('/fetch/tournament', (req, res) => {
 
 module.exports = router;
 
+
+function returnIsCapt(foundTeams, requester) {
+    let isCapt = false;
+    foundTeams.forEach(team => {
+        if (team.captain == requester) {
+            isCapt = true;
+        }
+    });
+    if (!isCapt) {
+        if (foundTeams[0].assistantCaptain) {
+            isCapt = foundTeams[0].assistantCaptain.indexOf(requester) > -1;
+        }
+    }
+    if (!isCapt) {
+        if (foundTeams[1].assistantCaptain) {
+            isCapt = foundTeams[1].assistantCaptain.indexOf(requester) > -1;
+        }
+    }
+    return isCapt;
+}
+
 function findTeamIds(found) {
     let teams = [];
+
     //type checking make sure we have array
     if (!Array.isArray(found)) {
         found = [found];
     }
-    found.forEach(match => {
 
+    found.forEach(match => {
         if (util.returnBoolByPath(match, 'home.id')) {
             if (match.home.id != 'null' && teams.indexOf(match.home.id.toString()) == -1) {
                 teams.push(match.home.id.toString());
@@ -996,6 +1057,60 @@ function findTeamIds(found) {
 
     return teams;
 }
+
+async function addTeamNamesToMatch_foundOnly(found) {
+    //typechecking
+    if (!Array.isArray(found)) {
+        found = [found];
+    }
+
+    let teams = findTeamIds(found);
+
+    let teamInfo = await Team.find({
+        _id: {
+            $in: teams
+        }
+    }).then((foundTeams) => {
+        if (foundTeams) {
+            return foundTeams;
+        } else {
+            return [];
+        }
+    }, (err) => {
+        return err;
+    });
+    if (teamInfo) {
+        teamInfo.forEach(team => {
+            let teamid = team._id.toString();
+            found.forEach(match => {
+                let homeid, awayid;
+                if (util.returnBoolByPath(match, 'home.id')) {
+                    homeid = match.home.id.toString();
+                }
+                if (util.returnBoolByPath(match, 'away.id')) {
+                    awayid = match.away.id.toString();
+                }
+                if (teamid == homeid) {
+
+                    match.home['teamName'] = team.teamName;
+                    match.home['logo'] = team.logo;
+                    match.home['teamName_lower'] = team.teamName_lower;
+                    match.home['ticker'] = team.ticker;
+                }
+                if (teamid == awayid) {
+
+                    match.away['teamName'] = team.teamName;
+                    match.away['logo'] = team.logo;
+                    match.away['teamName_lower'] = team.teamName_lower;
+                    match.away['ticker'] = team.ticker;
+                }
+            });
+        });
+    }
+
+    return found
+
+};
 
 async function addTeamNamesToMatch(teams, found) {
     //typechecking
@@ -1020,11 +1135,13 @@ async function addTeamNamesToMatch(teams, found) {
                         match.home['teamName'] = team.teamName;
                         match.home['logo'] = team.logo;
                         match.home['teamName_lower'] = team.teamName_lower;
+                        match.home['ticker'] = team.ticker;
                     }
                     if (teamid == awayid) {
                         match.away['teamName'] = team.teamName;
                         match.away['logo'] = team.logo;
                         match.away['teamName_lower'] = team.teamName_lower;
+                        match.away['ticker'] = team.ticker;
                     }
                 });
             });
@@ -1036,3 +1153,50 @@ async function addTeamNamesToMatch(teams, found) {
         return err;
     });
 };
+
+function findDivs(found) {
+    let divs = [];
+
+    //type checking make sure we have array
+    if (!Array.isArray(found)) {
+        found = [found];
+    }
+
+    found.forEach(match => {
+        if (divs.indexOf(match.divisionConcat) == -1) {
+            divs.push(match.divisionConcat);
+        }
+    });
+
+    return divs;
+}
+
+async function addTeamAndDivsionNames(found) {
+    let divs = await getDivisionNames(found);
+    let completed = await addTeamNamesToMatch_foundOnly(found).then(
+        nameProcess => {
+            nameProcess.forEach(match => {
+                divs.forEach(div => {
+                    if (match.divisionConcat == div.divisionConcat) {
+                        match.divisionDisplayName = div.displayName;
+                    }
+                });
+            });
+            return nameProcess;
+        },
+        err => {
+            return err;
+        }
+    );
+
+    return completed;
+}
+
+async function getDivisionNames(found) {
+    let div = findDivs(found);
+    let divInfo = await Division.find({ divisionConcat: { $in: div } }).lean().then(
+        found => { return found; },
+        err => { return null; }
+    );
+    return divInfo;
+}
