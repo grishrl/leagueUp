@@ -33,7 +33,7 @@ export class TeamScheduleComponent implements OnInit {
     this.timeService.getSesasonInfo().subscribe(res => {
       this.currentSeason = res['value'];
       this.ngOnInit();
-    });;
+    });
    }
 
   showDeadlineText(match){
