@@ -65,7 +65,6 @@ export class TeamResultsTilesComponent implements OnInit {
   }
 
   @Input() set team(val){
-    console.log('do something');
     if(val){
       this.getTeamMatches(val);
     }
