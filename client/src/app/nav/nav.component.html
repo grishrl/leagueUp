@@ -201,11 +201,14 @@
                 <li>
                     <a>Team</a>
                     <ul [hidden]="!Auth.getTeam()">
-                        <li>
-                            <app-team-link team="Auth.getTeam()">Profile</app-team-link>
-                        </li>
-                        <li><a [routerLink]="['/schedule/teamSchedule']">Schedule</a>
-                        </li>
+                        <app-team-link [team]="Auth.getTeam()">
+                            <li>
+                                Profile
+                            </li>
+                        </app-team-link>
+
+                        <!-- <li><a [routerLink]="['/schedule/teamSchedule']">Schedule</a> -->
+                        <!-- </li> -->
                         <li><a [routerLink]="['/findPlayers']">Find Players</a></li>
                     </ul>
                     <ul [hidden]="Auth.getTeam()">
