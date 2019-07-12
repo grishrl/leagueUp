@@ -202,9 +202,14 @@
                     <a>Team</a>
                     <ul [hidden]="!Auth.getTeam()">
 
-                        <li>
-                            <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(Auth.getTeam())]">Profile</a>
-                        </li>
+
+                        <!-- <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(Auth.getTeam())]">Profile</a> -->
+                        <app-team-link [team]="team.routeFriendlyTeamName(Auth.getTeam())">
+                            <li>
+                                Profile
+                            </li>
+
+                        </app-team-link>
 
 
                         <!-- <li><a [routerLink]="['/schedule/teamSchedule']">Schedule</a> -->
@@ -219,10 +224,12 @@
                 <li>
                     <a>Player</a>
                     <ul>
-                        <li>
-                            <a [routerLink]="['/profile/', user.routeFriendlyUsername(Auth.getUser())]">Profile</a>
-                            <!-- <app-player-link [player]="Auth.getUser()">Profile</app-player-link> -->
-                        </li>
+
+                        <!-- <a [routerLink]="['/profile/', user.routeFriendlyUsername(Auth.getUser())]">Profile</a> -->
+                        <app-player-link [player]="Auth.getUser()">
+                            <li>Profile</li>
+                        </app-player-link>
+
                     </ul>
                 </li>
                 <li>
