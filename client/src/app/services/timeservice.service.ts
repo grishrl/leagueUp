@@ -21,7 +21,6 @@ export class TimeserviceService {
 
   returnWeekNumber(){
     if(this.localInfo){
-      console.log(this.localInfo);
       let now = Date.now();
       let difference = now - this.localInfo.data.seasonStartDate;
       let weeks = difference / this.weekMS;

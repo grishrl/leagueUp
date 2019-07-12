@@ -11,12 +11,13 @@ import { TimeserviceService } from 'src/app/services/timeservice.service';
 })
 export class TeamResultsTilesComponent implements OnInit {
 
-  currentSeason;
+  currentSeason
   constructor(private scheduleService:ScheduleService, public util:UtilitiesService, public teamServ:TeamService, private timeService:TimeserviceService) {
-    this.timeService.getSesasonInfo().subscribe(res => {
-      this.currentSeason = res['value'];
-      this.ngOnInit();
-    });
+    this.timeService.getSesasonInfo().subscribe(
+      res => {
+        this.currentSeason = res['value'];
+      }
+    );
    }
 
   displayArray = [];
@@ -64,7 +65,6 @@ export class TeamResultsTilesComponent implements OnInit {
   }
 
   @Input() set team(val){
-    console.log('do something');
     if(val){
       this.getTeamMatches(val);
     }

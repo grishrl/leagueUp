@@ -11,12 +11,13 @@ import { TimeserviceService } from 'src/app/services/timeservice.service';
 })
 export class TeamUpcomingMatchComponent implements OnInit {
 
-  currentSeason
+  currentSeason;
   constructor(private scheduleService:ScheduleService, public util:UtilitiesService, public teamServ:TeamService, private timeService:TimeserviceService) {
-    this.timeService.getSesasonInfo().subscribe(res => {
-      this.currentSeason = res['value'];
-      this.ngOnInit();
-    });
+    this.timeService.getSesasonInfo().subscribe(
+      res => {
+        this.currentSeason = res['value'];
+      }
+    );
    }
 
   ngOnInit() {

@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { TeamService } from 'src/app/services/team.service';
 import { UtilitiesService } from '../../services/utilities.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { DivisionService } from 'src/app/services/division.service';
 
 @Component({
   selector: 'app-match-view',
@@ -10,8 +11,10 @@ import { AuthService } from 'src/app/services/auth.service';
 })
 export class MatchViewComponent implements OnInit {
 
+  divisionDisplayName;
   match = {
     matchId:'',
+    divisionConcat:'',
     home:{
       teamName:'',
       logo:'',
@@ -60,10 +63,15 @@ export class MatchViewComponent implements OnInit {
           this.match.away.logo = null;
         }
       }
+      this.divisionService.getDivision(this.match.divisionConcat).subscribe(
+        res=>{
+          this.divisionDisplayName=res.displayName;
+        }
+      )
     }
   }
 
-  constructor(public team: TeamService, public util: UtilitiesService, public Auth:AuthService) { }
+  constructor(public team: TeamService, public util: UtilitiesService, public Auth:AuthService, private divisionService:DivisionService) { }
 
   ngOnInit() {
   }

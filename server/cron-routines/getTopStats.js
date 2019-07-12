@@ -7,16 +7,20 @@ const logger = require('../subroutines/sys-logging-subs');
 //     console.log('connected to mongodb');
 // });
 
-const statusURL = 'https://heroesprofile.com/API/NGS/MostStat/?api_key=hc544!0&stat='
+const statusURL = 'https://heroesprofile.com/API/NGS/MostStat/?api_key=hc544!0&stat={stat}&season={season}'
 const config = {
     headers: {
         'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
     }
 }
-async function getTopHotsProfile(stat) {
+async function getTopHotsProfile(stat, season) {
     let returnUrl = 'null';
+    let callUrl = statusURL;
+    season = season ? season : process.env.season;
     try {
-        returnUrl = await axios.get(statusURL + stat, config);
+        callUrl = callUrl.replace('{stat}', stat);
+        callUrl = callUrl.replace('{season}', season);
+        returnUrl = await axios.get(callUrl, config);
     } catch (error) {
         console.log(error);
     }
@@ -71,7 +75,7 @@ getTopStats = async function() {
     //loop through the stats array to call each stat to update
     stats.forEach(stat => {
         promArr.push(
-            getTopHotsProfile(stat)
+            getTopHotsProfile(stat, process.env.season)
         );
     });
     //resolve each promise in the array
@@ -85,7 +89,7 @@ getTopStats = async function() {
         )
         //loop through each returned promise and save the result
     if (rtval) {
-
+        // console.log(rtval);
         for (var i = 0; i < rtval.length; i++) {
             //check to make sure that data was returned from the call before continuing;
             if (rtval[i].data != undefined) {
@@ -93,7 +97,8 @@ getTopStats = async function() {
                 let fromIndex = stat.indexOf('stat=');
                 stat = stat.substring(fromIndex, stat.length);
                 fromIndex = stat.indexOf('=');
-                stat = stat.substring(fromIndex + 1, stat.length);
+                let endIndex = stat.indexOf('&', fromIndex);
+                stat = stat.substring(fromIndex + 1, endIndex);
                 let query = {
                     '$and': [{
                             'dataName': 'TopStatList'
