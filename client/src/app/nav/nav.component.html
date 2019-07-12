@@ -201,11 +201,11 @@
                 <li>
                     <a>Team</a>
                     <ul [hidden]="!Auth.getTeam()">
-                        <app-team-link [team]="Auth.getTeam()">
-                            <li>
-                                Profile
-                            </li>
-                        </app-team-link>
+
+                        <li>
+                            <a [routerLink]="['/teamProfile/',team.routeFriendlyTeamName(Auth.getTeam())]">Profile</a>
+                        </li>
+
 
                         <!-- <li><a [routerLink]="['/schedule/teamSchedule']">Schedule</a> -->
                         <!-- </li> -->
@@ -220,7 +220,8 @@
                     <a>Player</a>
                     <ul>
                         <li>
-                            <app-player-link [player]="Auth.getUser()">Profile</app-player-link>
+                            <a [routerLink]="['/profile/', user.routeFriendlyUsername(Auth.getUser())]">Profile</a>
+                            <!-- <app-player-link [player]="Auth.getUser()">Profile</app-player-link> -->
                         </li>
                     </ul>
                 </li>
