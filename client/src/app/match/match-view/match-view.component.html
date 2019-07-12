@@ -39,17 +39,24 @@
                     </div>
                 </div>
             </div>
+            <div class="row" *ngIf="match.casterName && match.casterUrl">
+                <div class="col"></div>
+                <div class="col-7 text-center">
+                    <strong> Division:</strong> {{divisionDisplayName}}
+                </div>
+                <div class="col"></div>
+            </div>
             <div class="row">
                 <div class="col">
 
                 </div>
                 <div class="col-7 text-center">
-                    <span class="h6">Scheduled Time: </span>
+                    <strong>Scheduled Time: </strong>
                     <span *ngIf="match.scheduledTime && match.scheduledTime.startTime != null else tbd">
                         {{util.getFormattedDate(match.scheduledTime.startTime, "dddd M/D/YYYY h:mm A zz")}}
                     </span>
                     <ng-template #tbd><span> TBD </span></ng-template>
-                    <div *ngIf="Auth.isCaster()"><span class="h6">Match ID: </span>{{match.matchId}}</div>
+                    <div *ngIf="Auth.isCaster()"><strong>Match ID: </strong>{{match.matchId}}</div>
                 </div>
                 <div class="col">
 
@@ -58,7 +65,7 @@
             <div class="row" *ngIf="match.casterName && match.casterUrl">
                 <div class="col"></div>
                 <div class="col-7 text-center">
-                    <span> Casted by:</span> {{match.casterName}} : <a href="{{util.prePendHttp(match.casterUrl)}}" target="_blank">{{match.casterUrl}}</a>
+                    <strong> Casted by:</strong> {{match.casterName}} : <a href="{{util.prePendHttp(match.casterUrl)}}" target="_blank">{{match.casterUrl}}</a>
                 </div>
                 <div class="col"></div>
             </div>
