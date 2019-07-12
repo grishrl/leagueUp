@@ -49,7 +49,6 @@ export class EventCreateComponent implements OnInit {
         res=>{
           this.event = cloneDeep(res);
           this.eventOrig = cloneDeep(res);
-          console.log('res ',res);
           this.friendlyDate = this.util.getDatePickerFormatFromMS(this.event['eventDate']);
           this.friendlyTime = this.util.getTimeFromMS(this.event['eventDate']);
           this.suffix = this.util.getSuffixFromMS(this.event['eventDate']);
@@ -95,11 +94,8 @@ export class EventCreateComponent implements OnInit {
       // match.scheduledTime.endDate = endDate;
     }
 
-    // console.log(this.event);
-    // console.log('this.editEvent', this.editEvent, 'this.eventOrig ', this.eventOrig, 'this.event ', this.event)
     delete this.eventOrig['_id'];
     delete this.event['_id'];
-    // console.log('AFTER DELETE: this.editEvent', this.editEvent, 'this.eventOrig ', this.eventOrig, 'this.event ', this.event)
 
     //save the event
     let submit = true;
@@ -111,7 +107,7 @@ export class EventCreateComponent implements OnInit {
       }
     });
 
-    // console.log('submit ',submit)
+
     if(submit){
       if (this.editEvent) {
         this.eventService.upsertEvent(this.eventOrig, this.event).subscribe(

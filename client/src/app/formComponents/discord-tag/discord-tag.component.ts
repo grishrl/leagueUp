@@ -75,7 +75,6 @@ ngOnChanges(change){
 }
 
   update(){
-    console.log(this.discordTagFormControl.status, this.discordTagFormControl.status == 'VALID')
     if(this.discordTagValue.length == 0 ){
       this.discordTagFormControl.setErrors({ required: true });
       this.errorValue = { error: true, type: 'required' }
