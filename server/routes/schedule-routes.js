@@ -487,11 +487,9 @@ router.post('/report/match', passport.authenticate('jwt', {
 
                             let replayfilenames = [];
                             //loop through the parsed replays to grab some info
-                            parsed.forEach(element => {
+                            parsed.forEach((element, index) => {
                                 //this tie back object is used to tie together the parsed replays, the match objects, and the replay files
                                 let tieBack = {};
-                                let UUID = uniqid();
-                                tieBack.id = UUID;
                                 let timeStamp = '';
                                 if (util.returnBoolByPath(foundMatch.toObject(), 'scheduledTime.startTime')) {
                                     let date = new Date(parseInt(foundMatch.scheduledTime.startTime));
@@ -505,8 +503,10 @@ router.post('/report/match', passport.authenticate('jwt', {
 
                                 //if the replay does not parse we will still store in the s3 giving it an unknown_map suffix
                                 if (element.hasOwnProperty('failed') && element.failed == true) {
-                                    composeFilename += '_' + 'unknown_map';
+                                    composeFilename += '_' + 'unknown_map-' + index;
                                 } else {
+                                    let UUID = uniqid();
+                                    tieBack.id = UUID;
                                     //this object will be pushed into the replayfilenames hold some info we need to save back to the match to tie the two together
                                     let replayTeamA = element.match.teams["0"];
                                     let replayTeamB = element.match.teams["1"];
@@ -549,7 +549,10 @@ router.post('/report/match', passport.authenticate('jwt', {
                                     foundMatch.replays[(i + 1).toString()] = {};
                                 }
                                 foundMatch.replays[(i + 1).toString()].url = replayfilenames[i].fileName;
-                                foundMatch.replays[(i + 1).toString()].data = replayfilenames[i].id;
+
+                                if (replayfilenames[i].id) {
+                                    foundMatch.replays[(i + 1).toString()].data = replayfilenames[i].id;
+                                }
 
                                 let fileName = replayfilenames[i].fileName;
 
