@@ -357,7 +357,7 @@ router.post('/image/upload', passport.authenticate('jwt', {
 
 router.post('/tabulate-stats/hots-profile', (req, res) => {
 
-    const path = '/utility/tabulate-stats/team';
+    const path = '/utility/tabulate-stats/hots-profile';
 
     var apiKey = req.body.apiKey || req.query.apiKey;
     var limit = req.body.limit || req.query.limit;
