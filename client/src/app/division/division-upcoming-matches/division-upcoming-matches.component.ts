@@ -22,6 +22,7 @@ export class DivisionUpcomingMatchesComponent implements OnInit {
   initSched(filter){
     this.scheduleService.getAllMatchesWithStartTime().subscribe(
       res => {
+        this.next4matches = [];
         let matches = res;
         let now = Date.now();
 
