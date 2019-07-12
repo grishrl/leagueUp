@@ -844,9 +844,7 @@ router.post('/generate/tournament', passport.authenticate('jwt', {
 
 
 //this route retuns all tournament matches that a team participates in 
-router.post('/fetch/team/tournament/matches', passport.authenticate('jwt', {
-    session: false
-}), (req, res) => {
+router.post('/fetch/team/tournament/matches', (req, res) => {
 
     const path = '/schedule/fetch/team/tournament/matches';
 
