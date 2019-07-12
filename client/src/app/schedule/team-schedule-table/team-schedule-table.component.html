@@ -24,7 +24,7 @@
                 <tr *ngFor="let match of matches">
                     <td>
                         <span *ngIf="match.round < 8 else free">{{match.round}}</span>
-                        <ng-template #free>Free</ng-template>
+                        <ng-template #free>FLEX</ng-template>
                     </td>
                     <td>
                         <img src="{{teamServ.imageFQDN(match.home.logo)}}" alt="icon">
