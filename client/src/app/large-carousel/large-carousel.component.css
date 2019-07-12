@@ -17,3 +17,11 @@
 .background-adj {
     background-position: center center !important;
 }
+
+.carousel-control-prev {
+    width: 10%;
+}
+
+.carousel-control-next {
+    width: 10%;
+}
