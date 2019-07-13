@@ -4,7 +4,22 @@ const Team = require('../models/team-models');
 const User = require('../models/user-models');
 const Match = require('../models/match-model');
 const statsMethods = require('./stats-routines');
+const parser = require('hots-parser-fallback');
 const _ = require('lodash');
+const axios = require('axios');
+const AWS = require('aws-sdk');
+
+AWS.config.update({
+    accessKeyId: process.env.S3accessKeyId,
+    secretAccessKey: process.env.S3secretAccessKey,
+    region: process.env.S3region
+});
+
+const s3replayBucket = new AWS.S3({
+    params: {
+        Bucket: process.env.s3bucketReplays
+    }
+});
 
 //connect to mongo db
 mongoose.connect(process.env.mongoURI, {
@@ -13,14 +28,99 @@ mongoose.connect(process.env.mongoURI, {
     console.log('connected to mongodb');
 });
 
-// associationTriage().then(
-//     reply => {
-//         console.log(reply);
-//     },
-//     err => {
-//         console.log(err);
-//     }
-// )
+async function reparseReplays() {
+    let matches = await Match.find({
+        $and: [{
+            reported: true
+        }, {
+            season: 7
+        }, {
+            replays: {
+                $exists: true
+            }
+        }]
+    }).then(
+        found => {
+            return found;
+        },
+        err => {
+            return null;
+        }
+    );
+    if (matches) {
+        for (var i = 0; i < matches.length; i++) {
+            let match = matches[i];
+            let matchObj = match.toObject();
+            let replays = matchObj.replays;
+            let replayKeys = Object.keys(replays);
+            for (var j = 0; j < replayKeys.length; j++) {
+                let replayInfo = replays[replayKeys[j]];
+                if (replayInfo.hasOwnProperty('data')) {
+                    console.log('has data ', replayInfo);
+                    let replayData = await Replay.findOne({ systemId: replayInfo.data }).then(
+                        found => { return found; },
+                        err => { return null; }
+                    );
+                    if (replayData) {
+                        replayData = replayData.toObject();
+                        if (replayData.hasOwnProperty('match')) {
+                            // console.log('data looks good...');
+                        } else {
+                            console.log('data looks bad!');
+                        }
+                    }
+
+                } else {
+                    if (replayInfo.hasOwnProperty('url')) {
+                        let url = process.env.heroProfileReplay + replayInfo.url;
+                        let params = {
+                            Key: replayInfo.url
+                        }
+                        s3replayBucket.getObject(params, function(err, data) {
+                                if (err) {
+                                    console.log(err);
+                                } else {
+                                    console.log(data);
+                                    var fs = require('fs');
+                                    // var b = data.Body;
+                                    // var readStream = fs.createReadStream({
+                                    //     path: b
+                                    // });
+                                    // let filename = 'test-' + Date.now().toString();
+                                    // fs.writeFileSync(filename, data.Body);
+                                    let parsed = parser.processReplay(data.Body.toString(), {
+                                        useAttributeName: true,
+                                        overrideVerifiedBuild: true
+                                    });
+                                    console.log('parsed ', parsed);
+                                }
+
+                            })
+                            // let replayFile = await axios.get(url, { responseType: 'blob' }).then(
+                            //         reply => {
+                            //             return reply.data;
+                            //         },
+                            //         err => {
+                            //             return null;
+                            //         }
+                            //     )
+                            // console.log(typeof replayFile);
+                            // replayFile = new File(replayFile, 'file', { type: '.stormReplay' });
+                            // parser.processReplay()
+
+
+                    }
+                }
+            }
+        }
+    }
+}
+
+reparseReplays().then(
+    reply => {
+        console.log(reply);
+    }
+)
 
 async function testLeagueStats() {
     let replays = await Replay.find({
@@ -54,14 +154,14 @@ async function testLeagueStats() {
     }
 }
 
-testLeagueStats().then(
-    reply => {
-        console.log(reply);
-    },
-    err => {
-        console.log(err);
-    }
-);
+// testLeagueStats().then(
+//     reply => {
+//         console.log(reply);
+//     },
+//     err => {
+//         console.log(err);
+//     }
+// );
 
 // asscoatieReplays().then(
 //     reply => {
@@ -76,7 +176,7 @@ async function associationTriage() {
 
     /*
     
-    */
+        */
 
     let replays = await Replay.find({
         $or: [{
