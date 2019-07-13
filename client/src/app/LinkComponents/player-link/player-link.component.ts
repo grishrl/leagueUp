@@ -17,7 +17,6 @@ export class PlayerLinkComponent implements OnInit {
 
   playerVal:string;
   @Input() set player(val){
-    console.log(val);
     if(val){
       this.playerVal=val;
       this.profileLink = this.userService.routeFriendlyUsername(this.playerVal);
