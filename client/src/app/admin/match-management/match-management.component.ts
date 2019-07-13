@@ -88,7 +88,6 @@ export class MatchManagementComponent implements OnInit, AfterViewInit {
 
     this.filterMatches = this.originalMatches.filter(match => {
       let home, away;
-      console.log(match);
       if(!this.util.returnBoolByPath(match, 'away.teamName')){
         away = '';
       }else{

@@ -61,13 +61,13 @@ export class TournamentGeneratorComponent implements OnInit {
   filteredArray: any = [];
 
   getDivTeams(div){
-    console.log('a');
+
     this.fetching = true;
     this.team.getTeams(div.teams).subscribe(
       res=>{
-        console.log('b');
+
         this.fetching=false;
-        console.log(res);
+
         this.standings = res;
       },
       err=>{

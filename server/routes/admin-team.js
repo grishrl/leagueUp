@@ -428,7 +428,7 @@ router.post('/teamSave', passport.authenticate('jwt', {
 
                             if (util.returnBoolByPath(payload, 'ticker')) {
                                 originalTeam.ticker = payload.ticker;
-                                originalTeam.ticker = payload.ticker.toLowerCase();
+                                originalTeam.ticker_lower = payload.ticker.toLowerCase();
                             }
 
                             if (util.returnBoolByPath(payload, 'questionnaire')) {

@@ -494,7 +494,7 @@ router.post('/save', passport.authenticate('jwt', {
 
             if (util.returnBoolByPath(payload, 'ticker')) {
                 foundTeam.ticker = payload.ticker;
-                foundTeam.ticker = payload.ticker.toLowerCase();
+                foundTeam.ticker_lower = payload.ticker.toLowerCase();
             }
 
             if (util.returnBoolByPath(payload, 'captain')) {
