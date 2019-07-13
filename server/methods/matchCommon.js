@@ -2,6 +2,7 @@ const challoneAPI = require('../methods/challongeAPI');
 const Scheduling = require('../models/schedule-models');
 const Match = require('../models/match-model');
 const util = require('../utils');
+const Team = require('../models/team-models');
 
 async function promoteTournamentMatch(foundMatch) {
     let winnerID
@@ -180,6 +181,80 @@ async function reportToChallonge(match, winner, winnerID) {
     return returnVal;
 }
 
+function findTeamIds(found) {
+    let teams = [];
+
+    //type checking make sure we have array
+    if (!Array.isArray(found)) {
+        found = [found];
+    }
+
+    found.forEach(match => {
+        if (util.returnBoolByPath(match, 'home.id')) {
+            if (match.home.id != 'null' && teams.indexOf(match.home.id.toString()) == -1) {
+                teams.push(match.home.id.toString());
+            }
+        }
+        if (util.returnBoolByPath(match, 'away.id')) {
+            if (match.away.id != 'null' && teams.indexOf(match.away.id.toString()) == -1) {
+                teams.push(match.away.id.toString());
+            }
+        }
+    });
+
+    return teams;
+}
+
+
+async function addTeamInfoToMatch(found) {
+    //typechecking
+    if (!Array.isArray(found)) {
+        found = [found];
+    }
+
+    let teams = findTeamIds(found);
+
+    return Team.find({
+        _id: {
+            $in: teams
+        }
+    }).then((foundTeams) => {
+        if (foundTeams) {
+
+            foundTeams.forEach(team => {
+                let teamid = team._id.toString();
+                found.forEach(match => {
+                    let homeid, awayid;
+                    if (util.returnBoolByPath(match, 'home.id')) {
+                        homeid = match.home.id.toString();
+                    }
+                    if (util.returnBoolByPath(match, 'away.id')) {
+                        awayid = match.away.id.toString();
+                    }
+                    if (teamid == homeid) {
+                        match.home['teamName'] = team.teamName;
+                        match.home['logo'] = team.logo;
+                        match.home['teamName_lower'] = team.teamName_lower;
+                        match.home['ticker'] = team.ticker;
+                    }
+                    if (teamid == awayid) {
+                        match.away['teamName'] = team.teamName;
+                        match.away['logo'] = team.logo;
+                        match.away['teamName_lower'] = team.teamName_lower;
+                        match.away['ticker'] = team.ticker;
+                    }
+                });
+            });
+            return found;
+        } else {
+            return [];
+        }
+    }, (err) => {
+        return err;
+    });
+};
+
 module.exports = {
-    promoteTournamentMatch: promoteTournamentMatch
+    promoteTournamentMatch: promoteTournamentMatch,
+    addTeamInfoToMatch: addTeamInfoToMatch
 };
