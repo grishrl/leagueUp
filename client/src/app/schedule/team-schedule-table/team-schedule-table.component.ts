@@ -66,6 +66,10 @@ export class TeamScheduleTableComponent implements OnInit {
 
   }
 
+  hasDeadline(match){
+    return match.hasOwnProperty("scheduleDeadline");
+  }
+
   checkDate(match) {
 
     let ret = false;

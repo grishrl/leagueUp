@@ -23,7 +23,7 @@
             <tbody>
                 <tr *ngFor="let match of matches">
                     <td>
-                        <span *ngIf="match.round < 8 else free">{{match.round}}</span>
+                        <span *ngIf="hasDeadline(match) else free">{{match.round}}</span>
                         <ng-template #free>FLEX</ng-template>
                     </td>
                     <td>
@@ -48,9 +48,12 @@
                     <!-- ng-templates -->
                     <ng-template #tbd>
                         <div class="text-center" *ngIf="userCanSchedule() else userView">
-                            <span>Schedule by:
+                            <span *ngIf="hasDeadline(match)">
+                          <span>Schedule by:
                   {{util.getFormattedDate(match.scheduleDeadline-604800000, "dddd M/D/YYYY")}}</span><br>
-                            <span>Play by: {{match.friendlyDeadline}}</span><br>
+                            <span>Play by: {{match.friendlyDeadline}}</span>
+                            </span>
+                            <br>
                             <span><button [disabled]="checkDate(match)" class="btn btn-sm btn-primary"
                     (click)="scheduleMatch(match.matchId)">Schedule this!</button></span>
                             <span *ngIf="checkDate(match)"><br> <small class="text-danger">Schedule deadline was missed please
