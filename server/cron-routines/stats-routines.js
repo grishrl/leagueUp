@@ -51,6 +51,7 @@ async function asscoatieReplays() {
     logObj.timeStamp = new Date().getTime();
     logObj.logLevel = 'STD';
 
+    //select replays that are not fully associated
     let parsedReplays = await Replay.find({
         $or: [{
             fullyAssociated: false
@@ -66,137 +67,143 @@ async function asscoatieReplays() {
         err => { return null; }
     );
 
+    //make sure we have some replays selected
     if (parsedReplays.length > 0) {
         for (var i = 0; i < parsedReplays.length; i++) {
+            //iterater
             var replay = parsedReplays[i];
-            var replayObj = replay.toObject();
-            let players = replay.players;
-            let playerTags = [];
-            let playerTagsAndToonHandle = [];
-            _.forEach(players, (value, key) => {
-                // let player = players[key];
-                let btag = value.name + '#' + value.tag
-                let tO = {
-                    'btag': btag,
-                    'toonHandle': key
-                };
-                playerTags.push(btag);
-                playerTagsAndToonHandle.push(tO);
-            });
-            // let playerKey = Object.keys(replay.players);
-            // playerKey.forEach(key => {
-            //     let player = players[key];
-            //     let btag = player.name + '#' + player.tag
-            //     let tO = {
-            //         'btag': btag,
-            //         'toonHandle': key
-            //     };
-            //     playerTags.push(btag);
-            //     playerTagsAndToonHandle.push(tO);
-            // });
-            let replayTeams = [];
+            //make sure this is a good replay...
+            if (replay.status == 1) {
+                //give me a real object to work with
+                var replayObj = replay.toObject();
 
-            replayTeams.push(replay.match.teams[0].teamId);
-            replayTeams.push(replay.match.teams[1].teamId);
+                //create a arrays of player battle tags, another array that has their battle tags and toon handles
+                let players = replayObj.players;
+                let playerTags = [];
+                let playerTagsAndToonHandle = [];
+                _.forEach(players, (value, key) => {
+                    let btag = value.name + '#' + value.tag
+                    let tO = {
+                        'btag': btag,
+                        'toonHandle': key
+                    };
+                    playerTags.push(btag);
+                    playerTagsAndToonHandle.push(tO);
+                });
 
-            let users = await User.find({
-                displayName: {
-                    $in: playerTags
-                }
-            }).then(
-                players => {
-                    return players;
-                },
-                err => {
-                    return null;
-                }
-            );
+                //gather the teams from the replay info:
+                let replayTeams = [];
 
-            let associatedCount = 0;
-            if (users && users.length > 0) {
-                for (var j = 0; j < users.length; j++) {
-                    let thisUser = users[j];
-                    if (!thisUser.toonHandle) {
-                        thisUser.toonHandle = getToonHandle(playerTagsAndToonHandle, thisUser.displayName);
+                replayTeams.push(replay.match.teams[0].teamId);
+                replayTeams.push(replay.match.teams[1].teamId);
+
+                let users = await User.find({
+                    displayName: {
+                        $in: playerTags
                     }
-                    // console.log('replay.systemId ', replayObj.systemId);
-                    if (thisUser.replays.indexOf(replayObj.systemId) == -1) {
-                        thisUser.replays.push(replayObj.systemId);
-                        thisUser.parseStats = true;
-                        associatedCount += 1;
-                        thisUser.save().then(
-                            saved => {
-                                // console.log('saved user!')
-                            },
-                            err => {
-                                // console.log('err!');
-                            })
-                    } else {
-                        associatedCount += 1;
+                }).then(
+                    players => {
+                        return players;
+                    },
+                    err => {
+                        return null;
                     }
+                );
 
+                let associatedCount = 0;
+                if (users && users.length > 0) {
+                    for (var j = 0; j < users.length; j++) {
+                        let thisUser = users[j];
+                        if (!thisUser.toonHandle) {
+                            thisUser.toonHandle = getToonHandle(playerTagsAndToonHandle, thisUser.displayName);
+                        }
+                        // console.log('replay.systemId ', replayObj.systemId);
+                        if (thisUser.replays.indexOf(replayObj.systemId) == -1) {
+                            thisUser.replays.push(replayObj.systemId);
+                            thisUser.parseStats = true;
+                            associatedCount += 1;
+                            thisUser.save().then(
+                                saved => {
+                                    // console.log('saved user!')
+                                },
+                                err => {
+                                    // console.log('err!');
+                                })
+                        } else {
+                            associatedCount += 1;
+                        }
+
+                    }
                 }
-            }
 
-            let teams = await Team.find({
-                _id: { $in: replayTeams }
-            }).then(
-                found => { return found; },
-                err => { return null; }
-            )
+                let teams = await Team.find({
+                    _id: {
+                        $in: replayTeams
+                    }
+                }).then(
+                    found => {
+                        return found;
+                    },
+                    err => {
+                        return null;
+                    }
+                )
 
-            if (teams && teams.length > 0) {
-                for (var k = 0; k < teams.length; k++) {
-                    let team = teams[k];
-                    if (team.replays.indexOf(replayObj.systemId) == -1) {
-                        team.replays.push(replayObj.systemId);
-                        team.parseStats = true;
-                        associatedCount += 1;
-                        team.save().then(
+                if (teams && teams.length > 0) {
+                    for (var k = 0; k < teams.length; k++) {
+                        let team = teams[k];
+                        if (team.replays.indexOf(replayObj.systemId) == -1) {
+                            team.replays.push(replayObj.systemId);
+                            team.parseStats = true;
+                            associatedCount += 1;
+                            team.save().then(
+                                saved => {
+                                    // console.log('team saved!');
+                                },
+                                err => {
+                                    // console.log('err');
+                                }
+                            )
+                        } else {
+                            associatedCount += 1;
+                        }
+                    }
+                }
+
+                    let replayToSave = await Replay.findById(replay._id).then(
+                        found => {
+                            return found;
+                        },
+                        err => {
+                            return null;
+                        }
+                    )
+
+                    if (replayToSave) {
+
+                        if (users.length + 2 == 12) {
+                            replayToSave.fullyAssociated = true;
+                            replayToSave.futureAssociated = false;
+                        } else {
+                            replayToSave.fullyAssociated = true;
+                            replayToSave.futureAssociated = true;
+                        }
+
+                        replayToSave.fullyAssociated = true;
+                        replayToSave.markModified('fullyAssociated');
+                        replayToSave.markModified('futureAssociated');
+                        replayToSave.save().then(
                             saved => {
-                                // console.log('team saved!');
+                                // console.log('replay saved');
                             },
                             err => {
                                 // console.log('err');
                             }
                         )
-                    } else {
-                        associatedCount += 1;
-                    }
-                }
-            }
-            // console.log('associatedCount ', associatedCount)
-            if (associatedCount == asscoatieReplays) {
-                let replayToSave = await Replay.findById(replay._id).then(
-                    found => { return found; },
-                    err => { return null; }
-                )
-
-                if (replayToSave) {
-
-                    if (users.length + 2 == 12) {
-                        replayToSave.fullyAssociated = true;
-                        replayToSave.futureAssociated = false;
-                    } else {
-                        replayToSave.fullyAssociated = true;
-                        replayToSave.futureAssociated = true;
                     }
 
-                    replayToSave.fullyAssociated = true;
-                    replayToSave.markModified('fullyAssociated');
-                    replayToSave.markModified('futureAssociated');
-                    replayToSave.save().then(
-                        saved => {
-                            // console.log('replay saved');
-                        },
-                        err => {
-                            // console.log('err');
-                        }
-                    )
-                }
-
+                
             }
-
         }
     } else {
 
