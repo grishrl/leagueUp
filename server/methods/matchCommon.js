@@ -256,5 +256,6 @@ async function addTeamInfoToMatch(found) {
 
 module.exports = {
     promoteTournamentMatch: promoteTournamentMatch,
-    addTeamInfoToMatch: addTeamInfoToMatch
+    addTeamInfoToMatch: addTeamInfoToMatch,
+    findTeamIds: findTeamIds
 };

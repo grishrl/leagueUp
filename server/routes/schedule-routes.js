@@ -379,7 +379,7 @@ router.post('/report/match', passport.authenticate('jwt', {
 }), util.appendResHeader, (req, res) => {
     const path = '/schedule/report/match';
     const formidable = require('formidable');
-    const parser = require('hots-parser');
+    const parser = require('hots-parser-fallback');
     let form = new formidable.IncomingForm();
 
     let requester = req.user.displayName;
@@ -595,6 +595,7 @@ router.post('/report/match', passport.authenticate('jwt', {
                             //if we have failed parse - remove those junk objects from the array before inserting them into the database.
                             indiciesToRemove = [];
                             parsed.forEach((element, index) => {
+                                element.season = process.env.season;
                                 if (element.hasOwnProperty('failed') && element.failed == true) {
                                     indiciesToRemove.push(index);
                                 }
