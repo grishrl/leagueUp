@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TeamService } from 'src/app/services/team.service';
 import { DivisionService } from 'src/app/services/division.service';
+import { UtilitiesService } from 'src/app/services/utilities.service';
 
 @Component({
   selector: 'app-all-teams',
@@ -9,7 +10,7 @@ import { DivisionService } from 'src/app/services/division.service';
 })
 export class AllTeamsComponent implements OnInit {
 
-  constructor(public TeamService:TeamService, private DivisionService:DivisionService) { }
+  constructor(public TeamService:TeamService, private DivisionService:DivisionService, private util:UtilitiesService) { }
 
   allTeams = [];
   displayTeams = [];
@@ -20,6 +21,7 @@ export class AllTeamsComponent implements OnInit {
   ngOnInit() {
     this.TeamService.getRegisteredTeams().subscribe(
       res=>{
+        res = this.util.sortTeams(res);
         this.allTeams = res;
         this.displayTeams = res;
         this.loading = false;
@@ -28,8 +30,6 @@ export class AllTeamsComponent implements OnInit {
         console.log(err);
       }
     )
-
-
 
     this.DivisionService.getDivisionInfo().subscribe(
       res=>{
@@ -53,6 +53,7 @@ export class AllTeamsComponent implements OnInit {
           return true;
         }
       });
+      this.displayTeams = this.util.sortTeams(this.displayTeams);
     }
   }
 
