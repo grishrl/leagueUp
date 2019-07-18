@@ -23,13 +23,23 @@
                     </td>
                     <td>
                         <img src="{{teamServ.imageFQDN(match.home.logo)}}" alt="icon">
-                        <strong>{{match.home.teamName}}</strong><br>
+                        <strong>
+                          <app-team-link [team]="match.home.teamName">
+                            {{match.home.teamName}}
+                          </app-team-link>
+
+                        </strong><br>
                         <!-- <small class="meta-text">GROUP H.</small> -->
                     </td>
                     <td class="text-center">Vs</td>
                     <td>
                         <img src="{{teamServ.imageFQDN(match.away.logo)}}" alt="icon1">
-                        <strong>{{match.away.teamName}}</strong><br>
+                        <strong>
+                          <app-team-link [team]="match.away.teamName">
+                              {{match.away.teamName}}
+                          </app-team-link>
+
+                        </strong><br>
                         <!-- <small class="meta-text">GROUP H.</small> -->
                     </td>
                     <td>

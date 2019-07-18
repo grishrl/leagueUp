@@ -26,14 +26,21 @@
                 <tr *ngFor="let match of matches">
                     <td>
                         <img src="{{team.imageFQDN(match.home.logo)}}" alt="icon">
-                        <strong>{{match.home.teamName}}</strong><br>
-                        <!-- <small class="meta-text">GROUP H.</small> -->
+                        <strong>
+                          <app-team-link [team]="match.home.teamName">
+                            {{match.home.teamName}}
+                          </app-team-link>
+
+                        </strong><br>
                     </td>
                     <td class="text-center">Vs</td>
                     <td>
                         <img src="{{team.imageFQDN(match.away.logo)}}" alt="icon1">
-                        <strong>{{match.away.teamName}}</strong><br>
-                        <!-- <small class="meta-text">GROUP H.</small> -->
+                        <strong>
+                          <app-team-link [team]="match.away.teamName">
+                            {{match.away.teamName}}
+                          </app-team-link>
+                        </strong><br>
                     </td>
                     <td>
                         <span *ngIf="match.scheduledTime && match.scheduledTime.startTime else tbd">{{util.getFormattedDate(match.scheduledTime.startTime, "MMM DD hh:mm A zz")}}</span><br>
@@ -41,9 +48,6 @@
                 href="{{util.prePendHttp(match.casterUrl)}}" target="_blank">{{match.casterUrl}}</a></small></span>
                     </td>
                 </tr>
-                <!-- <ng-container *ngFor="let match of matches">
-                <app-schedule-table-row [match]="match"></app-schedule-table-row>
-            </ng-container> -->
             </tbody>
         </table>
     </div>
