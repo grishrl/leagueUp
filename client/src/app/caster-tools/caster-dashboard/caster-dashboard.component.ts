@@ -97,23 +97,6 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
 initSchedule(){
   this.scheduleService.getScheduleMatches(this.currentSeason, null, null).subscribe(
     (sched) => {
-      // sched = sched.sort((a, b)=>{
-      //   let ret;
-      //   console.log("this.util.returnBoolByPath(a, 'scheduledTime.startTime') ", this.util.returnBoolByPath(a, 'scheduledTime.startTime'));
-      //   console.log("this.util.returnBoolByPath(b, 'scheduledTime.startTime') ", this.util.returnBoolByPath(b, 'scheduledTime.startTime'));
-      //   if (!this.util.returnBoolByPath(a, 'scheduledTime.startTime')){
-      //     ret = -1;
-      //   } else if (!this.util.returnBoolByPath(b, 'scheduledTime.startTime')){
-      //     ret = -1;
-      //   }else{
-      //     if (parseInt(a.scheduledTime.startTime) > parseInt(b.scheduledTime.startTime)) {
-      //       ret = 1;
-      //     } else {
-      //       ret = -1;
-      //     }
-      //   }
-      //   return ret;
-      // });
       this.originalMatches = sched;
       this.length = sched.length;
       this.filterMatches = sched;
@@ -133,6 +116,25 @@ initSchedule(){
       this.filterByFriendlyDateToMS();
     }
   )
+}
+
+sortMatches(matches){
+  matches.sort((a, b) => {
+    let ret;
+    if (!this.util.returnBoolByPath(a, 'scheduledTime.startTime')) {
+      ret = -1;
+    } else if (!this.util.returnBoolByPath(b, 'scheduledTime.startTime')) {
+      ret = -1;
+    } else {
+      if (parseInt(a.scheduledTime.startTime) > parseInt(b.scheduledTime.startTime)) {
+        ret = 1;
+      } else {
+        ret = -1;
+      }
+    }
+    return ret;
+  });
+  return matches;
 }
 
   resetTime(){
@@ -233,6 +235,7 @@ initSchedule(){
         return this.filterService.testTime(match, this.startTimeFlt, this.endTimeFlt);
       });
     }
+    this.filterMatches = this.sortMatches(this.filterMatches);
     this.length=this.filterMatches.length;
     this.displayArray = this.filterMatches.slice(0,this.pageSize>this.length? this.length:this.pageSize);
     this.paginator.firstPage();
