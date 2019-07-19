@@ -64,6 +64,7 @@
     },
     "devDependencies": {
         "@angular-devkit/build-angular": "^0.13.9",
+        "@angular/animations": "^8.0.3",
         "@types/croppie": "^2.5.4",
         "@types/jasmine": "^2.8.16",
         "@types/jasminewd2": "^2.0.6",

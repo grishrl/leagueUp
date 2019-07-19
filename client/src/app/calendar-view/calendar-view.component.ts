@@ -1,7 +1,7 @@
 import { Component,ChangeDetectionStrategy,ViewChild,TemplateRef, OnInit} from '@angular/core';
 import { startOfDay, endOfDay, subDays,addDays,endOfMonth, isSameDay, isSameMonth, addHours } from 'date-fns';
 import { Subject } from 'rxjs';
-import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarView } from 'angular-calendar';
+import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarView, collapseAnimation } from 'angular-calendar';
 import { ScheduleService } from '../services/schedule.service';
 import { EventModalComponent } from './event-modal/event-modal.component';
 import { MatDialog } from '@angular/material';
@@ -61,7 +61,8 @@ const colors: any = {
 @Component({
   selector: 'app-calendar-view',
   templateUrl: './calendar-view.component.html',
-  styleUrls: ['./calendar-view.component.css']
+  styleUrls: ['./calendar-view.component.css'],
+  animations: [collapseAnimation]
 })
 export class CalendarViewComponent implements OnInit {
 
@@ -117,13 +118,13 @@ export class CalendarViewComponent implements OnInit {
           let event: CalendarEvent = {
             'start': startDate,
             'end': endDate,
-            'title': match.home.teamName + ' vs ' + match.away.teamName,
+            'title': colors[match.divisionConcat].name + ': ' + match.home.teamName + ' vs ' + match.away.teamName,
             'meta':{ id: match.matchId, 'type':'match'}
           };
 
 
           if (this.showCasterNameUrl(match)){
-            event['title']+=' Casted! '
+            event['meta'].casted = true;
           }
 
           if (this.shouldShowTimeInEventTitle())
