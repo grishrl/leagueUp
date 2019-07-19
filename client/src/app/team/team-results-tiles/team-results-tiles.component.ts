@@ -19,11 +19,14 @@ export class TeamResultsTilesComponent implements OnInit {
       }
     );
    }
-
+  fetching=false;
   displayArray = [];
   getTeamMatches(teamName){
+    this.fetching = true;
+    this.displayArray = [];
     this.scheduleService.getTeamSchedules(this.currentSeason, teamName).subscribe(
       res=>{
+        this.fetching = false;
         if(res && res.length>0){
 
           res.forEach( match => {

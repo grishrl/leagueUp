@@ -1,11 +1,21 @@
-<div *ngIf="displayArray.length>0 else noRes">
+<div *ngIf="fetching else doneFetching">
     <div class="row" *ngIf="showHead">
         <div class="col">
-            <h4>{{header}}</h4>
+            <h6><i class="fas fa-spin fa-spinner"></i> Results Loading... </h6>
         </div>
     </div>
-    <app-results-tiles [matches]="displayArray"></app-results-tiles>
+
 </div>
+<ng-template #doneFetching>
+    <div *ngIf="displayArray.length>0 else noRes">
+        <div class="row" *ngIf="showHead">
+            <div class="col">
+                <h4>{{header}}</h4>
+            </div>
+        </div>
+        <app-results-tiles [matches]="displayArray"></app-results-tiles>
+    </div>
+</ng-template>
 <ng-template #noRes>
     <div>
         <h4>Team has no season match results yet!</h4>
