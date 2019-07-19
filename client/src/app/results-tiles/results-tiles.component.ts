@@ -23,6 +23,7 @@ export class ResultsTilesComponent implements OnInit {
   provMatches = [];
 
   @Input() set matches(val) {
+    this.provMatches = [];
     if (val != undefined && val != null) {
       this.provMatches = val;
     }
