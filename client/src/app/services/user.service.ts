@@ -174,6 +174,5 @@ export class UserService {
     return this.httpService.httpGet(url, [], true);
   }
 
-
   constructor(private httpService: HttpServiceService) { }
 }
