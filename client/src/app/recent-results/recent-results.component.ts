@@ -24,17 +24,9 @@ export class RecentResultsComponent implements OnInit {
             match.scheduledTime.startTime = parseInt(match.scheduledTime.startTime);
           }
         });
-        matches = matches.sort((a,b)=>{
-          if (!this.util.returnBoolByPath(a, 'scheduledTime.startTime')){
-            return 1;
-          } else if (!this.util.returnBoolByPath(b, 'scheduledTime.startTime')){
-            return 1;
-          } else if (a.scheduledTime.startTime >= b.scheduledTime.startTime){
-            return -1;
-          }else{
-            return 1;
-          }
-        });
+        matches = this.util.sortMatchesByTime(matches);
+        matches.reverse();
+        console.log(matches);
         let arrayBounds = matches.length > 3 ? 3 : matches.length;
         for (let i = 0; i < arrayBounds; i++){
           this.display.push(matches[i])

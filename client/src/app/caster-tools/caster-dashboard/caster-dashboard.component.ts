@@ -118,24 +118,7 @@ initSchedule(){
   )
 }
 
-sortMatches(matches){
-  matches.sort((a, b) => {
-    let ret;
-    if (!this.util.returnBoolByPath(a, 'scheduledTime.startTime')) {
-      ret = -1;
-    } else if (!this.util.returnBoolByPath(b, 'scheduledTime.startTime')) {
-      ret = -1;
-    } else {
-      if (parseInt(a.scheduledTime.startTime) > parseInt(b.scheduledTime.startTime)) {
-        ret = 1;
-      } else {
-        ret = -1;
-      }
-    }
-    return ret;
-  });
-  return matches;
-}
+
 
   resetTime(){
     this.startTimeFlt = null;
@@ -235,7 +218,7 @@ sortMatches(matches){
         return this.filterService.testTime(match, this.startTimeFlt, this.endTimeFlt);
       });
     }
-    this.filterMatches = this.sortMatches(this.filterMatches);
+    this.filterMatches = this.util.sortMatchesByTime(this.filterMatches);
     this.length=this.filterMatches.length;
     this.displayArray = this.filterMatches.slice(0,this.pageSize>this.length? this.length:this.pageSize);
     this.paginator.firstPage();
