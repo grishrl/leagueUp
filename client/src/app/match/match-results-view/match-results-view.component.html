@@ -67,8 +67,8 @@
 
                         </div>
                         <div class="col mt-2">
-                            <div><strong>Replay File:</strong> <a href="{{replay.url}}"> Stored Replay</a></div>
-                            <div><strong>Heroes Profile:</strong> <a href="{{replay.parsedUrl}}"> Match Link</a></div>
+                            <div><strong>Replay File:</strong> <a href="{{util.replayFQDN(replay.url)}}">Stored Replay</a></div>
+                            <div><strong>Heroes Profile:</strong> <a href="{{replay.parsedUrl}}" target="_blank"> Match Link</a></div>
                         </div>
                     </div>
                     <div class="row mt-3" *ngIf="match.vodLinks">
@@ -76,7 +76,7 @@
                             <div><strong>VOD LINKS:</strong></div>
                         </div>
                         <div class="col-5">
-                            <div *ngFor="let vod of match.vodLinks"><a href="{{vod}}">VOD Link</a></div>
+                            <div *ngFor="let vod of match.vodLinks"><a href="{{vod}}" target="_blank">VOD Link</a></div>
                         </div>
                     </div>
                 </ng-template>

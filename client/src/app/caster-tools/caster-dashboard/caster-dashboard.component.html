@@ -89,16 +89,26 @@
                             </div>
                             <div class="row mt-2">
                                 <div class="col text-center">
-                                    <span class="teamName" *ngIf="match.home else tbd "><a
-                      [routerLink]="[ '/teamProfile/',team.routeFriendlyTeamName(match.home.teamName)] ">{{match.home.teamName}}</a></span>
+                                    <span class="teamName" *ngIf="match.home else tbd ">
+                                      <app-team-link [team]="match.home.teamName">
+                                        {{match.home.teamName}}
+                                      </app-team-link>
+                                      <!-- <a
+                      [routerLink]="[ '/teamProfile/',team.routeFriendlyTeamName(match.home.teamName)] ">{{match.home.teamName}}</a> -->
+                    </span>
 
                                 </div>
                                 <div class="col text-center">
                                     -VS-
                                 </div>
                                 <div class="col text-center">
-                                    <span class="teamName" *ngIf="match.away else tbd "><a
-                      [routerLink]="[ '/teamProfile/',team.routeFriendlyTeamName(match.away.teamName)] ">{{match.away.teamName}}</a></span>
+                                    <span class="teamName" *ngIf="match.away else tbd ">
+                                      <!-- <a
+                      [routerLink]="[ '/teamProfile/',team.routeFriendlyTeamName(match.away.teamName)] ">{{match.away.teamName}}</a> -->
+                                                            <app-team-link [team]="match.away.teamName">
+                                                              {{match.away.teamName}}
+                                                            </app-team-link>
+                    </span>
 
 
                                 </div>

@@ -9,11 +9,20 @@
             <ul class="club-logo">
                 <li>
                     <img src="{{team.imageFQDN(match.home.logo)}}" alt="">
-                    <span class="obnoxious-long-name-band-aid">{{match.home.ticker}}</span>
+                    <app-team-link [team]="match.home.teamName">
+                        <span class="obnoxious-long-name-band-aid">
+                                            {{match.home.teamName}}
+                                          </span>
+                    </app-team-link>
+
                 </li>
                 <li>
                     <img src="{{team.imageFQDN(match.away.logo)}}" alt="">
-                    <span class="obnoxious-long-name-band-aid">{{match.away.ticker}}</span>
+                    <app-team-link [team]="match.away.teamName">
+                        <span class="obnoxious-long-name-band-aid">
+                                            {{match.away.teamName}}
+                                          </span>
+                    </app-team-link>
                 </li>
             </ul>
         </li>

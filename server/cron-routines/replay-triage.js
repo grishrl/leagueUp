@@ -4,7 +4,7 @@ const Team = require('../models/team-models');
 const User = require('../models/user-models');
 const Match = require('../models/match-model');
 const statsMethods = require('./stats-routines');
-const parser = require('hots-parser-fallback');
+const parser = require('hots-parser');
 const _ = require('lodash');
 const axios = require('axios');
 const AWS = require('aws-sdk');
@@ -215,35 +215,35 @@ async function testLeagueStats() {
     }
 }
 
-async function validateTeamReplays(){
-  let teams = await Team.find().then( found =>{ return found }, err=>{ return err;});
-  if(teams && teams.length>0){
-    for(var i = 0; i<teams.length; i++){
-      console.log('triaging team ', i+1 , ' of ', teams.length);
-      let teamIter = teams[i];
-      let teamObj = teamIter.toObject();
-      if(teamObj.hasOwnProperty('replays') && teamObj.replays.length>0){
-        let replays = teamObj.replays;
-        let removeIndex = [];
-        for(var j=0;j<replays.length; j++){
-          let foundReplay = await ParsedReplay.findOne({systemId:replays[j]}).then(found=>{ return found;}, err=>{return null;});
-          if(!foundReplay || foundReplay.status != 1){
-            removeIndex.push(j);
-          }
+async function validateTeamReplays() {
+    let teams = await Team.find().then(found => { return found }, err => { return err; });
+    if (teams && teams.length > 0) {
+        for (var i = 0; i < teams.length; i++) {
+            console.log('triaging team ', i + 1, ' of ', teams.length);
+            let teamIter = teams[i];
+            let teamObj = teamIter.toObject();
+            if (teamObj.hasOwnProperty('replays') && teamObj.replays.length > 0) {
+                let replays = teamObj.replays;
+                let removeIndex = [];
+                for (var j = 0; j < replays.length; j++) {
+                    let foundReplay = await ParsedReplay.findOne({ systemId: replays[j] }).then(found => { return found; }, err => { return null; });
+                    if (!foundReplay || foundReplay.status != 1) {
+                        removeIndex.push(j);
+                    }
+                }
+                let removed = false;
+                removeIndex.forEach(ind => {
+                    removed = true;
+                    replays.splice(ind, 1);
+                });
+                if (removed) {
+                    console.log('cleaned up some dead links..');
+                }
+                teamIter.replays = replays;
+                teamIter.save();
+            }
         }
-        let removed = false;
-        removeIndex.forEach(ind=>{
-          removed = true;
-          replays.splice(ind, 1);
-        });
-        if(removed){
-          console.log('cleaned up some dead links..');
-        }
-        teamIter.replays = replays;
-        teamIter.save();
-      }
     }
-  }
 }
 
 // validateTeamReplays().then(
@@ -252,35 +252,35 @@ async function validateTeamReplays(){
 //   }
 // )
 
-async function validatePlayerReplays(){
-  let users = await User.find().then( found =>{ return found }, err=>{ return err;});
-  if(users && users.length>0){
-    for(var i = 0; i<users.length; i++){
-      console.log('triaging user ', i+1 , ' of ', users.length);
-      let userIter = users[i];
-      let userObj = userIter.toObject();
-      if(userObj.hasOwnProperty('replays') && userObj.replays.length>0){
-        let replays = userObj.replays;
-        let removeIndex = [];
-        for(var j=0;j<replays.length; j++){
-          let foundReplay = await ParsedReplay.findOne({systemId:replays[j]}).then(found=>{ return found;}, err=>{return null;});
-          if(!foundReplay || foundReplay.status != 1){
-            removeIndex.push(j);
-          }
+async function validatePlayerReplays() {
+    let users = await User.find().then(found => { return found }, err => { return err; });
+    if (users && users.length > 0) {
+        for (var i = 0; i < users.length; i++) {
+            console.log('triaging user ', i + 1, ' of ', users.length);
+            let userIter = users[i];
+            let userObj = userIter.toObject();
+            if (userObj.hasOwnProperty('replays') && userObj.replays.length > 0) {
+                let replays = userObj.replays;
+                let removeIndex = [];
+                for (var j = 0; j < replays.length; j++) {
+                    let foundReplay = await ParsedReplay.findOne({ systemId: replays[j] }).then(found => { return found; }, err => { return null; });
+                    if (!foundReplay || foundReplay.status != 1) {
+                        removeIndex.push(j);
+                    }
+                }
+                let removed = false;
+                removeIndex.forEach(ind => {
+                    removed = true;
+                    replays.splice(ind, 1);
+                });
+                if (removed) {
+                    console.log('cleaned up some dead links..');
+                }
+                userIter.replays = replays;
+                userIter.save();
+            }
         }
-        let removed = false;
-        removeIndex.forEach(ind=>{
-          removed = true;
-          replays.splice(ind, 1);
-        });
-        if(removed){
-          console.log('cleaned up some dead links..');
-        }
-        userIter.replays = replays;
-        userIter.save();
-      }
     }
-  }
 }
 
 // validatePlayerReplays().then(

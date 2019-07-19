@@ -170,39 +170,39 @@ async function asscoatieReplays() {
                     }
                 }
 
-                    let replayToSave = await Replay.findById(replay._id).then(
-                        found => {
-                            return found;
-                        },
-                        err => {
-                            return null;
-                        }
-                    )
+                let replayToSave = await Replay.findById(replay._id).then(
+                    found => {
+                        return found;
+                    },
+                    err => {
+                        return null;
+                    }
+                )
 
-                    if (replayToSave) {
+                if (replayToSave) {
 
-                        if (users.length + 2 == 12) {
-                            replayToSave.fullyAssociated = true;
-                            replayToSave.futureAssociated = false;
-                        } else {
-                            replayToSave.fullyAssociated = true;
-                            replayToSave.futureAssociated = true;
-                        }
-
+                    if (users.length + 2 == 12) {
                         replayToSave.fullyAssociated = true;
-                        replayToSave.markModified('fullyAssociated');
-                        replayToSave.markModified('futureAssociated');
-                        replayToSave.save().then(
-                            saved => {
-                                // console.log('replay saved');
-                            },
-                            err => {
-                                // console.log('err');
-                            }
-                        )
+                        replayToSave.futureAssociated = false;
+                    } else {
+                        replayToSave.fullyAssociated = true;
+                        replayToSave.futureAssociated = true;
                     }
 
-                
+                    replayToSave.fullyAssociated = true;
+                    replayToSave.markModified('fullyAssociated');
+                    replayToSave.markModified('futureAssociated');
+                    replayToSave.save().then(
+                        saved => {
+                            // console.log('replay saved');
+                        },
+                        err => {
+                            // console.log('err');
+                        }
+                    )
+                }
+
+
             }
         }
     } else {
@@ -248,15 +248,27 @@ async function leagueStatRunner() {
         for (var i = 0; i < replays.length; i++) {
             console.log('calculating fun stats ', i + 1, ' of ', replays.length);
             let replay = replays[i];
-            let finishUpdate = await statsMethods.calcLeagueStats(replay);
-            if (finishUpdate) {
-                replay.leagueStats = true;
-                replay.save().then(
-                    saved => {
-                        console.log('done with ', i + 1, ' of ', replays.length);
-                    }
-                )
+            try {
+                let finishUpdate = await calcLeagueStats(replay);
+                if (finishUpdate) {
+                    replay.leagueStats = true;
+                    replay.save().then(
+                        saved => {
+                            console.log('done with ', i + 1, ' of ', replays.length);
+                        }
+                    )
+                }
+            } catch (error) {
+                console.log(error);
+                let logObj = {};
+                logObj.actor = 'SYSTEM; CRON; leagueStatRunner';
+                logObj.target = replays[i].systemId;
+                logObj.timeStamp = new Date().getTime();
+                logObj.logLevel = 'ERROR';
+                logObj.error = error;
+                logger(logObj);
             }
+
 
         }
     }
@@ -454,7 +466,7 @@ async function calcLeagueStats(replay) {
             dataName: "leagueRunningFunStats",
             data: {}
         }
-        _.forEach(objectiveInf, (value, key) => {
+        _.forEach(objectiveInfo, (value, key) => {
             newObj.data[key] = value;
         });
         // let keys = Object.keys(objectiveInfo);

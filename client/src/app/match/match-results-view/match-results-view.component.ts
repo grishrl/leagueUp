@@ -16,7 +16,7 @@ import { forEach as _forEach } from 'lodash';
 export class MatchResultsViewComponent implements OnInit {
 
   recId;
-  constructor(private util: UtilitiesService, private sheduleService:ScheduleService, private route: ActivatedRoute, public team: TeamService, private hp:HeroesProfileService) {
+  constructor(public util: UtilitiesService, private sheduleService:ScheduleService, private route: ActivatedRoute, public team: TeamService, private hp:HeroesProfileService) {
     if (this.route.snapshot.params['id']) {
       this.recId = this.route.snapshot.params['id'];
     }

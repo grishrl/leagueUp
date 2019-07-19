@@ -21,34 +21,6 @@
             <!-- <li><i class="fa fa-clock-o"></i>Draft Starts, {{util.getFormattedDate(startDate, "hh:mm A zz")}}</li> -->
         </ul>
 
-        <!-- <div class="list-groups">
-            <div class="row align-items-center">
-
-                <div class="col-md-12">
-                    <p>{{targetMatch.divisionDisplayName}}<span *ngIf="targetMatch.casterName">at
-                    {{targetMatch.casterName}}'s stream</span></p>
-                </div>
-
-                <div class="col-md-5">
-                    <img src="{{team.imageFQDN(targetMatch.home.logo)}}" alt="">
-                    <span>{{targetMatch.home.teamName}}</span>
-                </div>
-
-                <div class="col-md-2">
-                    <div class="vs">Vs</div>
-                </div>
-
-                <div class="col-md-5">
-                    <img src="{{team.imageFQDN(targetMatch.away.logo)}}" alt="">
-                    <span>{{targetMatch.away.teamName}}</span>
-                </div>
-            </div>
-        </div> -->
-
-        <!-- <a *ngIf="targetMatch.casterUrl" class="btn btn-primary" href="{{util.prePendHttp(targetMatch.casterUrl)}}" target="_blank">
-            Watch At
-            <i class="fab fa-twitch"></i>
-          </a> -->
     </div>
     <ng-template #season>
         <div class="content-counter content-counter-home" *ngIf="validMatch else noMatch">

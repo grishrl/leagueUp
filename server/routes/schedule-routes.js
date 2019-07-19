@@ -379,7 +379,7 @@ router.post('/report/match', passport.authenticate('jwt', {
 }), util.appendResHeader, (req, res) => {
     const path = '/schedule/report/match';
     const formidable = require('formidable');
-    const parser = require('hots-parser-fallback');
+    const parser = require('hots-parser');
     let form = new formidable.IncomingForm();
 
     let requester = req.user.displayName;

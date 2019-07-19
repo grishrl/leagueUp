@@ -217,6 +217,17 @@ export class UtilitiesService {
     return imgFQDN;
   }
 
+  sortTeams(teams) {
+    teams = teams.sort((a, b) => {
+      if (a.teamName_lower > b.teamName_lower) {
+        return 1;
+      } else {
+        return -1;
+      }
+    });
+    return teams;
+  }
+
 
   replayFQDN(replay) {
     let url = 'https://s3.amazonaws.com/' + environment.s3bucketReplays + '/' + replay;

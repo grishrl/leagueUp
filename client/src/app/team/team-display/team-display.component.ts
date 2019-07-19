@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Team } from '../../classes/team.class';
 import { TeamService } from '../../services/team.service';
+import { UtilitiesService } from 'src/app/services/utilities.service';
 
 @Component({
   selector: 'app-team-display',
@@ -30,6 +31,7 @@ export class TeamDisplayComponent implements OnInit {
   initTeam(val){
     if (val && val.length > 0) {
       this.team.getTeams(val).subscribe((retn) => {
+        retn = this.util.sortTeams(retn);
         this._teams = retn;
       }, (error) => {
         console.log(error);
@@ -49,7 +51,7 @@ export class TeamDisplayComponent implements OnInit {
 
   rows: Array<any> = [];
 
-  constructor(public team:TeamService) { }
+  constructor(public team:TeamService, private util:UtilitiesService) { }
 
   // createMyDisplay(){
   //   if(!this.perColumn){

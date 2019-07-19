@@ -8,7 +8,9 @@
                 <div class="item-team">
                     <div class="head-team">
                         <img src="{{teamImage(item.logo)}}" alt="location-team">
-                        <div class="overlay"><a href="single-team.html">+</a></div>
+                        <div class="overlay">
+                            <app-team-link [team]="item.teamName">+</app-team-link>
+                        </div>
                     </div>
                     <div class="info-team">
                         <span class="logo-team">
