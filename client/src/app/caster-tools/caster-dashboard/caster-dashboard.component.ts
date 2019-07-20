@@ -81,7 +81,7 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.friendlyDate = new Date();
+    this.friendlyDate = Date.now();
     for (let i = 1; i < 13; i++) {
       for (let j = 0; j <= 3; j++) {
         let min: any = j * 15;
@@ -130,9 +130,9 @@ initSchedule(){
   timeChanged(){
     if (this.friendlyDate && this.friendlyTime) {
       if (this.friendlyTime && this.suffix) {
-        let years = this.friendlyDate.getFullYear();
-        let month = this.friendlyDate.getMonth();
-        let day = this.friendlyDate.getDate();
+        // let years = this.friendlyDate.getFullYear();
+        // let month = this.friendlyDate.getMonth();
+        // let day = this.friendlyDate.getDate();
 
         let colonSplit = this.friendlyTime.split(':');
         colonSplit[1] = parseInt(colonSplit[1]);
@@ -140,14 +140,15 @@ initSchedule(){
           colonSplit[0] = parseInt(colonSplit[0]);
           colonSplit[0] += 12;
         }
-        let setDate = new Date();
-        setDate.setFullYear(years);
-        setDate.setMonth(month);
-        setDate.setDate(day);
-        setDate.setHours(0);
-        setDate.setMinutes(0);
-        setDate.setMilliseconds(0);
-        this.endTimeFlt = setDate.getTime() + 86400000;
+        let setDate = new Date(this.friendlyDate);
+        // setDate.setFullYear(years);
+        // setDate.setMonth(month);
+        // setDate.setDate(day);
+        // setDate.setHours(0);
+        // setDate.setMinutes(0);
+        // setDate.setMilliseconds(0);
+
+        this.endTimeFlt = this.friendlyDate + 86400000;
         setDate.setHours(colonSplit[0]);
         setDate.setMinutes(colonSplit[1]);
         let msDate = setDate.getTime();
@@ -163,19 +164,8 @@ initSchedule(){
   }
 
   private filterByFriendlyDateToMS() {
-    let years = this.friendlyDate.getFullYear();
-    let month = this.friendlyDate.getMonth();
-    let day = this.friendlyDate.getDate();
-    let setDate = new Date();
-    setDate.setFullYear(years);
-    setDate.setMonth(month);
-    setDate.setDate(day);
-    setDate.setHours(0);
-    setDate.setMinutes(0);
-    setDate.setMilliseconds(0);
-    this.endTimeFlt = setDate.getTime() + 86400000;
-    let msDate = setDate.getTime();
-    this.startTimeFlt = msDate;
+    this.endTimeFlt = this.friendlyDate + 86400000;
+    this.startTimeFlt = this.friendlyDate;
     this.doFilterMatches();
   }
 
@@ -188,40 +178,43 @@ initSchedule(){
    endTimeFlt;
   doFilterMatches() {
     this.filterMatches = this.originalMatches;
-    if(!this.util.isNullOrEmpty(this.divFlt)){
-      this.filterMatches = this.filterMatches.filter(match => {
-        return this.filterService.testDivision(match, this.divFlt);
-      });
+    if (this.filterMatches && this.filterMatches.length>0){
+      if (!this.util.isNullOrEmpty(this.divFlt)) {
+        this.filterMatches = this.filterMatches.filter(match => {
+          return this.filterService.testDivision(match, this.divFlt);
+        });
+      }
+      if (!this.util.isNullOrEmpty(this.roundFlt)) {
+        this.filterMatches = this.filterMatches.filter(match => {
+          return this.filterService.testRound(match, this.roundFlt);
+        });
+      }
+      if (!this.util.isNullOrEmpty(this.teamFlt)) {
+        this.filterMatches = this.filterMatches.filter(match => {
+          return this.filterService.testName(match, this.teamFlt);
+        });
+      }
+      if (!this.util.isNullOrEmpty(this.scheduledOnlyFlt) && this.scheduledOnlyFlt) {
+        this.filterMatches = this.filterMatches.filter(match => {
+          return this.filterService.testScheduled(match);
+        });
+      }
+      if (!this.util.isNullOrEmpty(this.tournamentOnlyFlt) && this.tournamentOnlyFlt) {
+        this.filterMatches = this.filterMatches.filter(match => {
+          return this.filterService.testTournament(match);
+        });
+      }
+      if (!this.util.isNullOrEmpty(this.startTimeFlt)) {
+        this.filterMatches = this.filterMatches.filter(match => {
+          return this.filterService.testTime(match, this.startTimeFlt, this.endTimeFlt);
+        });
+      }
+      this.filterMatches = this.util.sortMatchesByTime(this.filterMatches);
+      this.length = this.filterMatches.length;
+      this.displayArray = this.filterMatches.slice(0, this.pageSize > this.length ? this.length : this.pageSize);
+      this.paginator.firstPage();
     }
-    if (!this.util.isNullOrEmpty(this.roundFlt)) {
-      this.filterMatches = this.filterMatches.filter(match => {
-        return this.filterService.testRound(match, this.roundFlt);
-      });
-    }
-    if(!this.util.isNullOrEmpty(this.teamFlt)){
-      this.filterMatches = this.filterMatches.filter(match => {
-        return this.filterService.testName(match, this.teamFlt);
-      });
-    }
-    if(!this.util.isNullOrEmpty(this.scheduledOnlyFlt)&&this.scheduledOnlyFlt){
-      this.filterMatches = this.filterMatches.filter(match => {
-        return this.filterService.testScheduled(match);
-      });
-    }
-    if (!this.util.isNullOrEmpty(this.tournamentOnlyFlt)&&this.tournamentOnlyFlt) {
-      this.filterMatches = this.filterMatches.filter(match => {
-        return this.filterService.testTournament(match);
-      });
-    }
-    if (!this.util.isNullOrEmpty(this.startTimeFlt)) {
-      this.filterMatches = this.filterMatches.filter(match => {
-        return this.filterService.testTime(match, this.startTimeFlt, this.endTimeFlt);
-      });
-    }
-    this.filterMatches = this.util.sortMatchesByTime(this.filterMatches);
-    this.length=this.filterMatches.length;
-    this.displayArray = this.filterMatches.slice(0,this.pageSize>this.length? this.length:this.pageSize);
-    this.paginator.firstPage();
+
   }
 
 
