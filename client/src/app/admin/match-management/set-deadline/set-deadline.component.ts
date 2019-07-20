@@ -34,11 +34,11 @@ export class SetDeadlineComponent implements OnInit {
 
   createDeadline(){
 
+    let date = new Date(this.friendlyDate);
+    date.setHours(23);
+    date.setMinutes(59);
 
-    this.friendlyDate.setHours(23);
-    this.friendlyDate.setMinutes(59);
-
-    let time = this.friendlyDate.getTime();
+    let time = date.getTime();
 
 
     if (this.selectedDivision.divisionConcat && time && this.selectedWeek){

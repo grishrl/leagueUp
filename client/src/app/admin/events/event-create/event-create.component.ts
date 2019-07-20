@@ -49,7 +49,7 @@ export class EventCreateComponent implements OnInit {
         res=>{
           this.event = cloneDeep(res);
           this.eventOrig = cloneDeep(res);
-          this.friendlyDate = this.util.getDatePickerFormatFromMS(this.event['eventDate']);
+          // this.friendlyDate = this.util.getDatePickerFormatFromMS(this.event['eventDate']);
           this.friendlyTime = this.util.getTimeFromMS(this.event['eventDate']);
           this.suffix = this.util.getSuffixFromMS(this.event['eventDate']);
         },
@@ -73,7 +73,8 @@ export class EventCreateComponent implements OnInit {
   saveEvent(){
 
 
-    if (this.friendlyDate && this.friendlyTime) {
+    if (this.event['eventDate'] && this.friendlyTime) {
+      this.friendlyDate = new Date(this.event['eventDate']);
       let years = this.friendlyDate.getFullYear();
       let month = this.friendlyDate.getMonth();
       let day = this.friendlyDate.getDate();
@@ -84,10 +85,11 @@ export class EventCreateComponent implements OnInit {
         colonSplit[0] = parseInt(colonSplit[0]);
         colonSplit[0] += 12;
       }
-      let setDate = new Date();
 
+      let setDate = new Date();
       setDate.setFullYear(years, month, day);
       setDate.setHours(colonSplit[0], colonSplit[1], 0, 0);
+
       let msDate = setDate.getTime();
       // let endDate = msDate + 5400000;
       this.event['eventDate'] = msDate;
@@ -106,7 +108,6 @@ export class EventCreateComponent implements OnInit {
         submit = false;
       }
     });
-
 
     if(submit){
       if (this.editEvent) {

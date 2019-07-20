@@ -45,11 +45,7 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <mat-form-field class="mat-FullWidth">
-                                <input matInput [matDatepicker]="picker" placeholder="Choose a date" [(ngModel)]="friendlyDate" (ngModelChange)="timeChanged()">
-                                <mat-datepicker-toggle matSuffix [for]=" picker "></mat-datepicker-toggle>
-                                <mat-datepicker #picker></mat-datepicker>
-                            </mat-form-field>
+                            <app-date-picker [(date)]="friendlyDate" (dateChange)="timeChanged()"></app-date-picker>
                         </div>
                         <div class="col ">
                             <mat-form-field class="mat-FullWidth ">
