@@ -29,12 +29,12 @@ export class DatePickerComponent implements OnInit {
 
   set date(val) {
     if(val == null || val == undefined){
-      let now = Date.now();
-      let jsDate = new Date(now);
-      jsDate.setHours(0,0,0,0);
-      let msDate = jsDate.getTime();
-      this.friendlyDate = new Date(msDate);
-      this.dateValue = msDate;
+      // let now = Date.now();
+      // let jsDate = new Date(now);
+      // jsDate.setHours(0,0,0,0);
+      // let msDate = jsDate.getTime();
+      // this.friendlyDate = new Date(msDate);
+      // this.dateValue = msDate;
     }else if (typeof val == 'string') {
       val = parseInt(val);
       this.dateValue = val;
