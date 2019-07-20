@@ -14,13 +14,13 @@ export class SeasonInfoManagerComponent implements OnInit {
 
    editSeason
 
+
    showWarning=false;
   selectedSeason
   getSpecificSeason(){
 
     this.timeservice.getSpecificSeason(this.selectedSeason).subscribe(
       res=>{
-        console.log(res);
           if(res){
             this.showWarning = false;
             this.editSeason = res;
@@ -31,7 +31,7 @@ export class SeasonInfoManagerComponent implements OnInit {
             data:{
               'seasonStartDate':null,
               'seasonEndDate':null,
-              'registrationOpen':null
+              'registrationOpen':false
             }
           }
           this.showWarning = true;
@@ -49,6 +49,10 @@ export class SeasonInfoManagerComponent implements OnInit {
   }
 
   save(){
+
+    if(this.editSeason.data.registrationOpen === null){
+      this.editSeason.data.registrationOpen = false;
+    }
     if(this.showWarning){
       let pass =confirm('You might be over-riding the current active season! \n Are you sure?');
       if(pass){
