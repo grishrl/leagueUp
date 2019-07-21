@@ -15,10 +15,17 @@ import { environment } from '../../../environments/environment';
 export class EventLargeComponent implements OnInit {
 
   id:string;
+  type:string;
   constructor(private EventService : EventsService,  private router: ActivatedRoute, private scheduleService:ScheduleService, public team:TeamService, public util:UtilitiesService, private standingsService:StandingsService, private route: Router) {
     if(this.router.snapshot.params['id']){
       this.id = this.router.snapshot.params['id'];
+
     }
+    if (this.router.snapshot.params['type']) {
+      this.type = this.router.snapshot.params['type'];
+
+    }
+
   }
 
   match
@@ -26,11 +33,12 @@ export class EventLargeComponent implements OnInit {
 
   bannerText = '';
   ngOnInit() {
-    let eventInfo = this.EventService.getLocalEvent();
-    if(eventInfo['type']){
-      if (eventInfo['type'] == 'match'){
+    let eventType = this.type ? this.type : this.EventService.getLocalEvent()['type'];
+    let eventId = this.id ? this.id : this.EventService.getLocalEvent()['id'];
+    if (eventType){
+      if (eventType == 'match'){
         this.bannerText = "Match Details"
-        this.scheduleService.getMatchInfo(eventInfo['id']).subscribe(
+        this.scheduleService.getMatchInfo(eventId).subscribe(
           res => {
             this.match = res;
             let match = res;
@@ -62,9 +70,9 @@ export class EventLargeComponent implements OnInit {
             console.log(err);
           }
         )
-      } else if (eventInfo['type'] == 'event'){
+      } else if (eventType == 'event'){
         this.bannerText = "Event Details"
-        this.EventService.getEventById(eventInfo['id']).subscribe(
+        this.EventService.getEventById(eventId).subscribe(
           res=>{
             this.event = res;
           },
