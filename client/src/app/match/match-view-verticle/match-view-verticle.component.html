@@ -104,6 +104,19 @@
         </div>
         <div class="col"></div>
     </div>
+    <div class="row" *ngIf="match.mapBans.homeOne && match.mapBans.homeTwo && match.mapBans.awayOne && match.mapBans.awayTwo">
+        <div class="col-12 text-center">
+            <span class="h6">Map Bans:</span>
+        </div>
+        <div class="col-12 text-center">
+            <strong>Home Ban 1:</strong> {{match.mapBans.homeOne}}
+            <strong>Home Ban 2:</strong> {{match.mapBans.homeTwo}}
+        </div>
+        <div class="col-12 text-center">
+            <strong>Away Ban 1:</strong> {{match.mapBans.awayOne}}
+            <strong>Away Ban 2:</strong> {{match.mapBans.awayTwo}}
+        </div>
+    </div>
     <div class="row" *ngIf="match.vodLinks && match.vodLinks.length>0">
         <div class="col-12 text-center">
             <span class="h6">VOD LINKS:</span>

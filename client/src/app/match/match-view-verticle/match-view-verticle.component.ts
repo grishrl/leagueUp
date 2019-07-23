@@ -29,6 +29,12 @@ export class MatchViewVerticleComponent implements OnInit {
       score: null,
       dominator:null
     },
+    mapBans:{
+      homeOne: null,
+      homeTwo: null,
+      awayOne: null,
+      awayTwo: null
+    },
     scheduledTime: {
       startTime: null,
       endTime: null
