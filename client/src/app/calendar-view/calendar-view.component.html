@@ -88,13 +88,13 @@
                 </ng-template>
                 <ng-template #eventTitleTemplate let-event="event" let-view="month" let-mwlClick="mwlClick">
                     <span class="finger"> {{event.title}}
-                      <!-- TODO: decide the proper icon -->
-                      <!-- <span *ngIf="event.meta.casted">
+
+                      <span *ngIf="event.meta.casted">
                       &nbsp;<i style="color:#F2692E" class="fab fa-twitch"></i>&nbsp;
-                      <i style="color:#F2692E" class="fas fa-film"></i>&nbsp;
+                      <!-- <i style="color:#F2692E" class="fas fa-film"></i>&nbsp;
                       <i style="color:#F2692E" class="fas fa-broadcast-tower"></i>&nbsp;
-                      <i style="color:#F2692E" class="fas fa-video"></i>
-                    </span> -->
+                      <i style="color:#F2692E" class="fas fa-video"></i> -->
+                    </span>
                     </span>
                 </ng-template>
 

@@ -82,13 +82,13 @@
             </ng-template>
         </div>
     </div>
-
+    <hr>
     <div class="row">
         <div class="col">
 
         </div>
         <div class="col-7 text-center">
-            <span>Scheduled Time: </span><span *ngIf="match.scheduledTime && match.scheduledTime.startTime != null else tbd">
+            <strong>Scheduled Time: </strong><span *ngIf="match.scheduledTime && match.scheduledTime.startTime != null else tbd">
             {{util.getFormattedDate(match.scheduledTime.startTime, "dddd M/D/YYYY h:mm A zz")}}
           </span>
             <ng-template #tbd><span> TBD </span></ng-template>
@@ -100,21 +100,23 @@
     <div class="row" *ngIf="match.casterName && match.casterUrl">
         <div class="col"></div>
         <div class="col-7 text-center">
-            <span> Casted by:</span> {{match.casterName}} : <a href="{{util.prePendHttp(match.casterUrl)}}" target="_blank">{{match.casterUrl}}</a>
+            <strong> Casted by:</strong> {{match.casterName}} : <a href="{{util.prePendHttp(match.casterUrl)}}" target="_blank">{{match.casterUrl}}</a>
         </div>
         <div class="col"></div>
     </div>
-    <div class="row" *ngIf="match.mapBans.homeOne && match.mapBans.homeTwo && match.mapBans.awayOne && match.mapBans.awayTwo">
+    <div class="row" *ngIf="match.mapBans && match.mapBans.homeOne && match.mapBans.homeTwo && match.mapBans.awayOne && match.mapBans.awayTwo">
         <div class="col-12 text-center">
             <span class="h6">Map Bans:</span>
         </div>
         <div class="col-12 text-center">
             <strong>Home Ban 1:</strong> {{match.mapBans.homeOne}}
-            <strong>Home Ban 2:</strong> {{match.mapBans.homeTwo}}
+            <div><strong>Home Ban 2:</strong> {{match.mapBans.homeTwo}}</div>
+
         </div>
         <div class="col-12 text-center">
             <strong>Away Ban 1:</strong> {{match.mapBans.awayOne}}
-            <strong>Away Ban 2:</strong> {{match.mapBans.awayTwo}}
+            <div><strong>Away Ban 2:</strong> {{match.mapBans.awayTwo}}</div>
+
         </div>
     </div>
     <div class="row" *ngIf="match.vodLinks && match.vodLinks.length>0">
