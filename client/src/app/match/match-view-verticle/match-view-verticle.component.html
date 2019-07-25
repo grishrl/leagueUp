@@ -124,7 +124,7 @@
             <span class="h6">VOD LINKS:</span>
         </div>
         <div class="col text-center">
-            <div *ngFor="let vod of match.vodLinks"><a href="{{vod}}">VOD Link</a></div>
+            <div *ngFor="let vod of match.vodLinks"><a href="{{vod}}" target="_blank">VOD Link</a></div>
         </div>
     </div>
     <div class="row" *ngIf="match.replays">
@@ -144,7 +144,7 @@
             </div>
             <div class="row" *ngFor="let replay of match.replays | keyvalue">
                 <div class="col text-center">
-                    <a href="{{util.replayFQDN(replay.value.url)}}"> Replay {{replay.key}}</a>
+                    <a href="{{util.replayFQDN(replay.value.url)}}" target="_blank"> Replay {{replay.key}}</a>
                 </div>
             </div>
             <div class="row">
@@ -154,7 +154,7 @@
             </div>
             <div class="row" *ngFor="let replay of match.replays | keyvalue">
                 <div class="col text-center">
-                    <a href="{{replay.value.parsedUrl}}"> Match {{replay.key}}</a>
+                    <a href="{{replay.value.parsedUrl}}" target="_blank"> Match {{replay.key}}</a>
                 </div>
             </div>
         </div>
