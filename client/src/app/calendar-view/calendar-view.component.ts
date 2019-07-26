@@ -125,8 +125,8 @@ export class CalendarViewComponent implements OnInit {
 
           if (this.showCasterNameUrl(match)){
             // todo: add this back once we settle on ICON
-            // event['meta'].casted = true;
-            event.title += ', Casted! ';
+            event['meta'].casted = true;
+            // event.title += ', Casted! ';
           }
 
           if (this.shouldShowTimeInEventTitle())

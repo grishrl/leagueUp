@@ -92,7 +92,7 @@ const APP_ROUTES: Routes = [
   { path: 'noAccess/:id', component:NoAccessComponent},
   { path: 'sessionTimeOut', component: SessionTimeoutComponent},
   { path: 'calendar' , component:CalendarViewComponent },
-  { path: 'event/:id' , component:EventLargeComponent},
+  { path: 'event/:type/:id' , component:EventLargeComponent},
   { path: 'event', component: EventLargeComponent },
   { path: '_admin/matchMgmt/weekDeadline', component: SetDeadlineComponent, canActivate: [AuthGuardService], data: { role: 'match' }},
   { path: 'messageCenter', component:UserMessageCenterComponent},

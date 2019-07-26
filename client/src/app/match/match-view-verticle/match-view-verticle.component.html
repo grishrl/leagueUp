@@ -82,13 +82,13 @@
             </ng-template>
         </div>
     </div>
-
+    <hr>
     <div class="row">
         <div class="col">
 
         </div>
         <div class="col-7 text-center">
-            <span>Scheduled Time: </span><span *ngIf="match.scheduledTime && match.scheduledTime.startTime != null else tbd">
+            <strong>Scheduled Time: </strong><span *ngIf="match.scheduledTime && match.scheduledTime.startTime != null else tbd">
             {{util.getFormattedDate(match.scheduledTime.startTime, "dddd M/D/YYYY h:mm A zz")}}
           </span>
             <ng-template #tbd><span> TBD </span></ng-template>
@@ -100,16 +100,31 @@
     <div class="row" *ngIf="match.casterName && match.casterUrl">
         <div class="col"></div>
         <div class="col-7 text-center">
-            <span> Casted by:</span> {{match.casterName}} : <a href="{{util.prePendHttp(match.casterUrl)}}" target="_blank">{{match.casterUrl}}</a>
+            <strong> Casted by:</strong> {{match.casterName}} : <a href="{{util.prePendHttp(match.casterUrl)}}" target="_blank">{{match.casterUrl}}</a>
         </div>
         <div class="col"></div>
+    </div>
+    <div class="row" *ngIf="match.mapBans && match.mapBans.homeOne && match.mapBans.homeTwo && match.mapBans.awayOne && match.mapBans.awayTwo">
+        <div class="col-12 text-center">
+            <span class="h6">Map Bans:</span>
+        </div>
+        <div class="col-12 text-center">
+            <strong>Home Ban 1:</strong> {{match.mapBans.homeOne}}
+            <div><strong>Home Ban 2:</strong> {{match.mapBans.homeTwo}}</div>
+
+        </div>
+        <div class="col-12 text-center">
+            <strong>Away Ban 1:</strong> {{match.mapBans.awayOne}}
+            <div><strong>Away Ban 2:</strong> {{match.mapBans.awayTwo}}</div>
+
+        </div>
     </div>
     <div class="row" *ngIf="match.vodLinks && match.vodLinks.length>0">
         <div class="col-12 text-center">
             <span class="h6">VOD LINKS:</span>
         </div>
         <div class="col text-center">
-            <div *ngFor="let vod of match.vodLinks"><a href="{{vod}}">VOD Link</a></div>
+            <div *ngFor="let vod of match.vodLinks"><a href="{{vod}}" target="_blank">VOD Link</a></div>
         </div>
     </div>
     <div class="row" *ngIf="match.replays">
@@ -129,7 +144,7 @@
             </div>
             <div class="row" *ngFor="let replay of match.replays | keyvalue">
                 <div class="col text-center">
-                    <a href="{{util.replayFQDN(replay.value.url)}}"> Replay {{replay.key}}</a>
+                    <a href="{{util.replayFQDN(replay.value.url)}}" target="_blank"> Replay {{replay.key}}</a>
                 </div>
             </div>
             <div class="row">
@@ -139,7 +154,7 @@
             </div>
             <div class="row" *ngFor="let replay of match.replays | keyvalue">
                 <div class="col text-center">
-                    <a href="{{replay.value.parsedUrl}}"> Match {{replay.key}}</a>
+                    <a href="{{replay.value.parsedUrl}}" target="_blank"> Match {{replay.key}}</a>
                 </div>
             </div>
         </div>

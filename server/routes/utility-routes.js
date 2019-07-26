@@ -442,6 +442,29 @@ router.post('/leagueStatRun', (req, res) => {
         });
 });
 
+router.post('/discord/post/matches', (req, res) => {
+    const path = '/utility/discord/post/matches';
+
+    var apiKey = req.body.apiKey || req.query.apiKey;
+
+    checkApiKey(apiKey).then(
+        validate => {
+            if (validate) {
+                //grab top stats from HERO-PROFILE
+                StatsJobs.leagueStatRunner().then(
+                    sucuess => {
+                        res.status(200).send(util.returnMessaging(path, 'League stats runner started check logs for more info', false, null, null));
+                    },
+                    err => {
+                        res.status(500).send(util.returnMessaging(path, 'League stats runner failed!', false, null, null));
+                    }
+                )
+            } else {
+                res.status(401).send(util.returnMessaging(path, 'Unauthorized', false, null, null));
+            }
+        });
+});
+
 module.exports = router;
 
 function deleteFile(path) {
