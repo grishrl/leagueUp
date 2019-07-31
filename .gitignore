@@ -105,3 +105,4 @@ server/methods/sheets/credentials.json
 server/methods/sheets/sheetKeys.json
 server/methods/sheets/sheetKeys2.json
 replays/
+.vscode/
