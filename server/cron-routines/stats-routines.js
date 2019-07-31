@@ -956,6 +956,7 @@ async function postToHotsProfileHandler(limNum) {
                 } else {
 
                     try {
+                        // console.log('matchCopy ', matchCopy);
                         postObj['division'] = getDivisionNameFromConcat(divisions, matchCopy.divisionConcat);
 
                         postObj['team_one_name'] = matchCopy.home.teamName;

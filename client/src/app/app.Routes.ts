@@ -56,6 +56,7 @@ const APP_ROUTES: Routes = [
   { path:'', component: HomeComponent},
   { path: 'login', component: LoginComponent },
   { path: 'rules', component: RulesComponent },
+  { path: 'volunteers', component: BlogViewComponent, data: { blogId:'jD08IdJ41F3MvwJffm0a1'}},
   { path: 'rulestest' , component:StaticHtmlLoaderComponent, data:{template:'rules', headerText:'Rules'}},
   { path: 'logout', component: LogoutComponent },
   { path: 'faq', component: StaticHtmlLoaderComponent, data: { template: 'faq', headerText: 'Frequently Asked Questions' }},
