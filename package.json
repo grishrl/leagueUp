@@ -26,7 +26,7 @@
         "hots-parser-fallback": "^7.46.1",
         "image-data-uri": "^2.0.0",
         "jsonwebtoken": "^8.5.1",
-        "lodash": "^4.17.11",
+        "lodash": "^4.17.15",
         "mongoose": "^5.5.11",
         "nodemailer": "^4.7.0",
         "passport": "^0.4.0",
