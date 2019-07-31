@@ -22,6 +22,15 @@ export class BlogViewComponent implements OnInit {
     if(this.route.snapshot.params['id']){
       this.recId = this.route.snapshot.params['id'];
     }
+
+    this.route.data.subscribe(
+      res=>{
+        console.log(res);
+        if(res.blogId){
+          this.recId = res.blogId;
+        }
+      }
+    )
    }
 
   ngOnInit() {
