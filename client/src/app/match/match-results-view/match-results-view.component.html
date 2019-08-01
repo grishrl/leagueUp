@@ -53,38 +53,44 @@
                 </div>
                 <ng-template #gamesInfo>
                     <div class="row" *ngIf="util.hasMapBans(match)">
-                        <div class="row no-gutter justify-content-md-center">
-                            <div class="col-sm">
-                                <div class="row no-gutter justify-content-md-center">
-                                    <h4>
-                                        {{match.home.teamName}} Bans
-                                    </h4>
-                                </div>
-                                <div class="row no-gutter">
-                                    <div class="col-sm">
-                                        <img src="{{getBackground(match.mapBans.homeOne)}}"
-                                            title="{{match.mapBans.homeOne}}" />
+                        <div class="col-sm">
+                            <div class="row no-gutter justify-content-md-center">
+                                <h4>
+                                    {{match.home.teamName}} Bans
+                                </h4>
+                            </div>
+                            <div class="row no-gutter">
+                                <div class="col-sm">
+                                    <div class="banner"
+                                        [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.homeOne) + ')' } ">
+                                        <span class="mapBanText">{{match.mapBans.homeOne}}</span>
                                     </div>
-                                    <div class="col-sm">
-                                        <img src="{{getBackground(match.mapBans.homeTwo)}}"
-                                            title="{{match.mapBans.homeTwo}}" />
+                                </div>
+                                <div class="col-sm">
+                                    <div class="banner"
+                                        [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.homeTwo) + ')' } ">
+                                        <span class="mapBanText">{{match.mapBans.homeTwo}}</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm">
-                                <div class="row no-gutter justify-content-md-center">
-                                    <h4>
-                                        {{match.away.teamName}} Bans
-                                    </h4>
-                                </div>
-                                <div class="row no-gutter">
-                                    <div class="col-sm">
-                                        <img src="{{getBackground(match.mapBans.awayOne)}}"
-                                            title="{{match.mapBans.homeOne}}" />
+                        </div>
+                        <div class="col-sm">
+                            <div class="row no-gutter justify-content-md-center">
+                                <h4>
+                                    {{match.away.teamName}} Bans
+                                </h4>
+                            </div>
+                            <div class="row no-gutter">
+                                <div class="col-sm">
+                                    <div class="banner"
+                                        [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.awayOne) + ')' } ">
+                                        <span class="mapBanText">{{match.mapBans.awayOne}}</span>
                                     </div>
-                                    <div class="col-sm">
-                                        <img src="{{getBackground(match.mapBans.awayTwo)}}"
-                                            title="{{match.mapBans.homeTwo}}" />
+                                </div>
+                                <div class="col-sm">
+                                    <div class="banner"
+                                        [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.awayTwo) + ')' } ">
+                                        <span class="mapBanText">{{match.mapBans.awayTwo}}</span>
                                     </div>
                                 </div>
                             </div>

@@ -17,6 +17,20 @@
     background-blend-mode: multiply; */
 }
 
+.mapBanText
+{
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 85px;
+    line-height: 85px;
+    background-color: #0000007a;
+    font-size: 1.1em;
+    text-align: center;
+    vertical-align: middle;
+    display: inline-block;
+    color: white;
+}
 
 /* .banner:before {
     content: '';
