@@ -49,8 +49,7 @@ export class EventCreateComponent implements OnInit {
         res=>{
           this.event = cloneDeep(res);
           this.eventOrig = cloneDeep(res);
-          console.log('res ',res);
-          this.friendlyDate = this.util.getDatePickerFormatFromMS(this.event['eventDate']);
+          // this.friendlyDate = this.util.getDatePickerFormatFromMS(this.event['eventDate']);
           this.friendlyTime = this.util.getTimeFromMS(this.event['eventDate']);
           this.suffix = this.util.getSuffixFromMS(this.event['eventDate']);
         },
@@ -74,7 +73,8 @@ export class EventCreateComponent implements OnInit {
   saveEvent(){
 
 
-    if (this.friendlyDate && this.friendlyTime) {
+    if (this.event['eventDate'] && this.friendlyTime) {
+      this.friendlyDate = new Date(this.event['eventDate']);
       let years = this.friendlyDate.getFullYear();
       let month = this.friendlyDate.getMonth();
       let day = this.friendlyDate.getDate();
@@ -85,21 +85,19 @@ export class EventCreateComponent implements OnInit {
         colonSplit[0] = parseInt(colonSplit[0]);
         colonSplit[0] += 12;
       }
-      let setDate = new Date();
 
+      let setDate = new Date();
       setDate.setFullYear(years, month, day);
       setDate.setHours(colonSplit[0], colonSplit[1], 0, 0);
+
       let msDate = setDate.getTime();
       // let endDate = msDate + 5400000;
       this.event['eventDate'] = msDate;
       // match.scheduledTime.endDate = endDate;
     }
 
-    // console.log(this.event);
-    // console.log('this.editEvent', this.editEvent, 'this.eventOrig ', this.eventOrig, 'this.event ', this.event)
     delete this.eventOrig['_id'];
     delete this.event['_id'];
-    // console.log('AFTER DELETE: this.editEvent', this.editEvent, 'this.eventOrig ', this.eventOrig, 'this.event ', this.event)
 
     //save the event
     let submit = true;
@@ -111,7 +109,6 @@ export class EventCreateComponent implements OnInit {
       }
     });
 
-    // console.log('submit ',submit)
     if(submit){
       if (this.editEvent) {
         this.eventService.upsertEvent(this.eventOrig, this.event).subscribe(

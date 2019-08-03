@@ -21,7 +21,7 @@ export class TopStatsWidgetComponent implements OnInit {
     {stat:'assists',displayText:'Top Assists'},
     { stat: 'takedowns', displayText: 'Top Takedowns' },
     { stat: 'deaths', displayText: 'Top Deaths' },
-    { stat: 'highest_kill_streak', displayText: 'Highest Kill Streak' },
+    { stat: 'highest_kill_streak', displayText: 'Total Kill Streak Count' },
     { stat: 'hero_damage',displayText:'Top Hero Damage'},
     { stat: 'siege_damage', displayText: 'Top Siege Damage' },
     { stat: 'structure_damage', displayText: 'Top Structure Damage'},

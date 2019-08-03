@@ -27,7 +27,11 @@
                             </h4>
                             <ul>
                                 <li>
-                                    <strong>Team:</strong> <span>{{returnedProfile.teamName}}</span>
+                                    <strong>Team:</strong> <span>
+                                      <app-team-link [team]="returnedProfile.teamName">
+                                        {{returnedProfile.teamName}}
+                                      </app-team-link>
+                                    </span>
                                 </li>
                                 <li><strong>Discord:</strong> <span>{{returnedProfile.discordTag}}</span></li>
                                 <li><strong>Heroes Profile MMR:</strong> <span>{{returnedProfile.heroesProfileMmr}}</span></li>

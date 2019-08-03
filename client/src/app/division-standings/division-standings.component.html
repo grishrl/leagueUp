@@ -12,7 +12,10 @@
                 <span class="position">
           {{standing.standing}}
         </span>
-                <app-team-link [team]="standing.teamName">{{standing.teamName}}</app-team-link>
+                <div style="width: 200px; display: inline-flex;" class="obnoxious-long-name-band-aid">
+                    <app-team-link [team]="standing.teamName">
+                        {{standing.teamName}}</app-team-link>
+                </div>
                 <span class="points">
           {{standing.points}}
         </span>

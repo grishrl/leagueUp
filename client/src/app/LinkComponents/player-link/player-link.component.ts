@@ -12,9 +12,15 @@ export class PlayerLinkComponent implements OnInit {
 
   profileLink;
   ngOnInit() {
-    this.profileLink = this.userService.routeFriendlyUsername(this.player);
+
   }
 
-  @Input() player:string;
+  playerVal:string;
+  @Input() set player(val){
+    if(val){
+      this.playerVal=val;
+      this.profileLink = this.userService.routeFriendlyUsername(this.playerVal);
+    }
+  }
 
 }

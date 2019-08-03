@@ -12,6 +12,7 @@ const _ = require('lodash');
 const querystring = require('querystring');
 const util = require('../utils');
 const System = require('../models/system-models').system;
+const MatchMethods = require('../methods/matchCommon');
 
 const postToHotsProfileURL = process.env.heroProfileAPI;
 const config = {
@@ -50,6 +51,7 @@ async function asscoatieReplays() {
     logObj.timeStamp = new Date().getTime();
     logObj.logLevel = 'STD';
 
+    //select replays that are not fully associated
     let parsedReplays = await Replay.find({
         $or: [{
             fullyAssociated: false
@@ -65,110 +67,116 @@ async function asscoatieReplays() {
         err => { return null; }
     );
 
+    //make sure we have some replays selected
     if (parsedReplays.length > 0) {
         for (var i = 0; i < parsedReplays.length; i++) {
+            //iterater
             var replay = parsedReplays[i];
-            var replayObj = replay.toObject();
-            let players = replay.players;
-            let playerTags = [];
-            let playerTagsAndToonHandle = [];
-            _.forEach(players, (value, key) => {
-                // let player = players[key];
-                let btag = value.name + '#' + value.tag
-                let tO = {
-                    'btag': btag,
-                    'toonHandle': key
-                };
-                playerTags.push(btag);
-                playerTagsAndToonHandle.push(tO);
-            });
-            // let playerKey = Object.keys(replay.players);
-            // playerKey.forEach(key => {
-            //     let player = players[key];
-            //     let btag = player.name + '#' + player.tag
-            //     let tO = {
-            //         'btag': btag,
-            //         'toonHandle': key
-            //     };
-            //     playerTags.push(btag);
-            //     playerTagsAndToonHandle.push(tO);
-            // });
-            let replayTeams = [];
+            //make sure this is a good replay...
+            if (replay.status == 1) {
+                //give me a real object to work with
+                var replayObj = replay.toObject();
 
-            replayTeams.push(replay.match.teams[0].teamId);
-            replayTeams.push(replay.match.teams[1].teamId);
+                //create a arrays of player battle tags, another array that has their battle tags and toon handles
+                let players = replayObj.players;
+                let playerTags = [];
+                let playerTagsAndToonHandle = [];
+                _.forEach(players, (value, key) => {
+                    let btag = value.name + '#' + value.tag
+                    let tO = {
+                        'btag': btag,
+                        'toonHandle': key
+                    };
+                    playerTags.push(btag);
+                    playerTagsAndToonHandle.push(tO);
+                });
 
-            let users = await User.find({
-                displayName: {
-                    $in: playerTags
-                }
-            }).then(
-                players => {
-                    return players;
-                },
-                err => {
-                    return null;
-                }
-            );
+                //gather the teams from the replay info:
+                let replayTeams = [];
 
-            let associatedCount = 0;
-            if (users && users.length > 0) {
-                for (var j = 0; j < users.length; j++) {
-                    let thisUser = users[j];
-                    if (!thisUser.toonHandle) {
-                        thisUser.toonHandle = getToonHandle(playerTagsAndToonHandle, thisUser.displayName);
+                replayTeams.push(replay.match.teams[0].teamId);
+                replayTeams.push(replay.match.teams[1].teamId);
+
+                let users = await User.find({
+                    displayName: {
+                        $in: playerTags
                     }
-                    // console.log('replay.systemId ', replayObj.systemId);
-                    if (thisUser.replays.indexOf(replayObj.systemId) == -1) {
-                        thisUser.replays.push(replayObj.systemId);
-                        thisUser.parseStats = true;
-                        associatedCount += 1;
-                        thisUser.save().then(
-                            saved => {
-                                // console.log('saved user!')
-                            },
-                            err => {
-                                // console.log('err!');
-                            })
-                    } else {
-                        associatedCount += 1;
+                }).then(
+                    players => {
+                        return players;
+                    },
+                    err => {
+                        return null;
                     }
+                );
 
-                }
-            }
+                let associatedCount = 0;
+                if (users && users.length > 0) {
+                    for (var j = 0; j < users.length; j++) {
+                        let thisUser = users[j];
+                        if (!thisUser.toonHandle) {
+                            thisUser.toonHandle = getToonHandle(playerTagsAndToonHandle, thisUser.displayName);
+                        }
+                        // console.log('replay.systemId ', replayObj.systemId);
+                        if (thisUser.replays.indexOf(replayObj.systemId) == -1) {
+                            thisUser.replays.push(replayObj.systemId);
+                            thisUser.parseStats = true;
+                            associatedCount += 1;
+                            thisUser.save().then(
+                                saved => {
+                                    // console.log('saved user!')
+                                },
+                                err => {
+                                    // console.log('err!');
+                                })
+                        } else {
+                            associatedCount += 1;
+                        }
 
-            let teams = await Team.find({
-                _id: { $in: replayTeams }
-            }).then(
-                found => { return found; },
-                err => { return null; }
-            )
-
-            if (teams && teams.length > 0) {
-                for (var k = 0; k < teams.length; k++) {
-                    let team = teams[k];
-                    if (team.replays.indexOf(replayObj.systemId) == -1) {
-                        team.replays.push(replayObj.systemId);
-                        team.parseStats = true;
-                        associatedCount += 1;
-                        team.save().then(
-                            saved => {
-                                // console.log('team saved!');
-                            },
-                            err => {
-                                // console.log('err');
-                            }
-                        )
-                    } else {
-                        associatedCount += 1;
                     }
                 }
-            }
-            // console.log('associatedCount ', associatedCount)
-            if (associatedCount == asscoatieReplays) {
+
+                let teams = await Team.find({
+                    _id: {
+                        $in: replayTeams
+                    }
+                }).then(
+                    found => {
+                        return found;
+                    },
+                    err => {
+                        return null;
+                    }
+                )
+
+                if (teams && teams.length > 0) {
+                    for (var k = 0; k < teams.length; k++) {
+                        let team = teams[k];
+                        if (team.replays.indexOf(replayObj.systemId) == -1) {
+                            team.replays.push(replayObj.systemId);
+                            team.parseStats = true;
+                            associatedCount += 1;
+                            team.save().then(
+                                saved => {
+                                    // console.log('team saved!');
+                                },
+                                err => {
+                                    // console.log('err');
+                                }
+                            )
+                        } else {
+                            associatedCount += 1;
+                        }
+                    }
+                }
+
                 let replayToSave = await Replay.findById(replay._id).then(
-                    found => { return found; },
-                    err => { return null; }
+                    found => {
+                        return found;
+                    },
+                    err => {
+                        return null;
+                    }
                 )
 
                 if (replayToSave) {
@@ -194,8 +202,8 @@ async function asscoatieReplays() {
                     )
                 }
 
-            }
 
+            }
         }
     } else {
 
@@ -240,15 +248,27 @@ async function leagueStatRunner() {
         for (var i = 0; i < replays.length; i++) {
             console.log('calculating fun stats ', i + 1, ' of ', replays.length);
             let replay = replays[i];
-            let finishUpdate = await statsMethods.calcLeagueStats(replay);
-            if (finishUpdate) {
-                replay.leagueStats = true;
-                replay.save().then(
-                    saved => {
-                        console.log('done with ', i + 1, ' of ', replays.length);
-                    }
-                )
+            try {
+                let finishUpdate = await calcLeagueStats(replay);
+                if (finishUpdate) {
+                    replay.leagueStats = true;
+                    replay.save().then(
+                        saved => {
+                            console.log('done with ', i + 1, ' of ', replays.length);
+                        }
+                    )
+                }
+            } catch (error) {
+                console.log(error);
+                let logObj = {};
+                logObj.actor = 'SYSTEM; CRON; leagueStatRunner';
+                logObj.target = replays[i].systemId;
+                logObj.timeStamp = new Date().getTime();
+                logObj.logLevel = 'ERROR';
+                logObj.error = error;
+                logger(logObj);
             }
+
 
         }
     }
@@ -446,7 +466,7 @@ async function calcLeagueStats(replay) {
             dataName: "leagueRunningFunStats",
             data: {}
         }
-        _.forEach(objectiveInf, (value, key) => {
+        _.forEach(objectiveInfo, (value, key) => {
             newObj.data[key] = value;
         });
         // let keys = Object.keys(objectiveInfo);
@@ -870,7 +890,7 @@ async function postToHotsProfileHandler(limNum) {
         }
     );
 
-    console.log('matches.length ', matches.length);
+    // console.log('matches.length ', matches.length);
     if (matches) {
 
         let divisionList = [];
@@ -894,7 +914,7 @@ async function postToHotsProfileHandler(limNum) {
             }
         );
 
-
+        // console.log(matches);
 
         let savedArray = [];
         for (var i = 0; i < matches.length; i++) {
@@ -902,102 +922,153 @@ async function postToHotsProfileHandler(limNum) {
             let postObj = {};
             postObj['api_key'] = 'ngs!7583hh';
             let match = matches[i];
+            // console.log('match ', match);
+
             let matchObj = match.toObject();
 
+            // console.log('matchObj ', matchObj);
+
             let matchCopy = _.cloneDeep(matchObj);
+            matchCopy = await MatchMethods.addTeamInfoToMatch(matchCopy).then(fufilled => { return fufilled }, err => { return null });
 
-            postObj['division'] = getDivisionNameFromConcat(divisions, matchCopy.divisionConcat);
+            if (matchCopy) {
 
-            postObj['team_one_name'] = matchCopy.home.teamName;
-            postObj['team_one_image_url'] = process.env.heroProfileImage + matchCopy.home.logo;
-            postObj['team_one_map_ban'] = matchCopy.mapBans.homeOne;
-            postObj['team_one_map_ban_2'] = matchCopy.mapBans.homeTwo;
-            postObj['team_one_player'] = matchCopy.other.homeTeamPlayer;
+                matchCopy = matchCopy[0];
+                //check to make sure this match was not forfeit
+                if (matchCopy.hasOwnProperty('forfeit') && matchCopy.forfeit) {
 
-            postObj['team_two_name'] = matchCopy.away.teamName;
-            postObj['team_two_player'] = matchCopy.other.awayTeamPlayer;
-            postObj['team_two_image_url'] = process.env.heroProfileImage + matchCopy.away.logo;
-            postObj['team_two_map_ban'] = matchCopy.mapBans.awayOne;
-            postObj['team_two_map_ban_2'] = matchCopy.mapBans.awayTwo;
-
-            if (matchCopy.hasOwnProperty('round')) {
-                postObj['round'] = matchCopy.round.toString();
-            } else {
-                postObj['round'] = 'T-1';
-            }
-
-            postObj['season'] = process.env.season.toString();
-
-            let replayKeys = Object.keys(matchCopy.replays);
-
-            for (var j = 0; j < replayKeys.length; j++) {
-                let localKey = j + 1;
-
-                postObj['game'] = (j + 1).toString();
-
-                let replayObj = matchCopy.replays[(j + 1).toString()];
-
-                if (!util.isNullorUndefined(replayObj)) {
-
-                    postObj['replay_url'] = process.env.heroProfileReplay + replayObj.url;
-                    let logObj = {};
-                    logObj.actor = 'SYSTEM; CRON; Hots-Profile Submit';
-                    logObj.target = 'Match Id: ' + matchObj.matchId
-                    if (replayObj.data) {
-                        logObj.target += ', ReplayID: ' + replayObj.data;
-                    }
-                    logObj.timeStamp = new Date().getTime();
-                    logObj.logLevel = 'STD';
-
-                    if (screenPostObject(postObj)) {
-                        // if (false) {
-
-
-                        //     // call to hotsprofile
-                        let posted = await postToHotsProfile(postObj).then(
-                            reply => {
-                                return reply;
-                            },
-                            err => {
-                                return null;
-                            }
-                        );
-                        //     // console.log('POSTED!')
-                        logObj.action = ' logging reply from hots-profile ' + JSON.stringify(posted.data);
-                        logger(logObj);
-
-                        if (posted) {
-                            match['replays'][localKey]['parsedUrl'] = posted.data.url;
-                            postedReplays += 1;
-                        } else {
-                            //if posted fails then do not set the match to fully reported
-                            // postedReplays = false;
+                    match['postedToHP'] = true;
+                    // console.log('match ', match);
+                    let saved = await match.save().then(
+                        saved => {
+                            return saved;
+                        },
+                        err => {
+                            console.log(err);
+                            return null;
                         }
-                    } else {
-                        // console.log('NOT POSTED!')
-                        logObj.logLevel = "ERROR";
-                        logObj.error = "This replay failed the screen, NOT SENT TO HEROSPROFILE!!";
-                        logger(logObj);
+                    )
+                    savedArray.push(saved);
+                    if (savedArray.length == matches.length) {
+                        success = true;
                     }
+
+                } else {
+
+                    try {
+                        // console.log('matchCopy ', matchCopy);
+                        postObj['division'] = getDivisionNameFromConcat(divisions, matchCopy.divisionConcat);
+
+                        postObj['team_one_name'] = matchCopy.home.teamName;
+                        postObj['team_one_image_url'] = process.env.heroProfileImage + matchCopy.home.logo;
+
+                        postObj['team_one_player'] = matchCopy.other.homeTeamPlayer;
+
+                        postObj['team_two_name'] = matchCopy.away.teamName;
+                        postObj['team_two_player'] = matchCopy.other.awayTeamPlayer;
+                        postObj['team_two_image_url'] = process.env.heroProfileImage + matchCopy.away.logo;
+
+                        if (matchCopy.hasOwnProperty('mapBans')) {
+                            postObj['team_one_map_ban'] = matchCopy.mapBans.homeOne;
+                            postObj['team_one_map_ban_2'] = matchCopy.mapBans.homeTwo;
+                            postObj['team_two_map_ban'] = matchCopy.mapBans.awayOne;
+                            postObj['team_two_map_ban_2'] = matchCopy.mapBans.awayTwo;
+                        }
+
+
+                        if (matchCopy.hasOwnProperty('round')) {
+                            postObj['round'] = matchCopy.round.toString();
+                        } else {
+                            postObj['round'] = 'T-1';
+                        }
+
+                        postObj['season'] = process.env.season.toString();
+
+                    } catch (e) {
+                        console.log(e);
+                    }
+
+
+                    let replayKeys = Object.keys(matchCopy.replays);
+
+                    // console.log('replayKeys ', replayKeys);
+                    for (var j = 0; j < replayKeys.length; j++) {
+                        let localKey = j + 1;
+
+                        postObj['game'] = (j + 1).toString();
+
+                        let replayObj = matchCopy.replays[(j + 1).toString()];
+
+                        if (!util.isNullorUndefined(replayObj)) {
+
+                            postObj['replay_url'] = process.env.heroProfileReplay + replayObj.url;
+                            let logObj = {};
+                            logObj.actor = 'SYSTEM; CRON; Hots-Profile Submit';
+                            logObj.target = 'Match Id: ' + matchObj.matchId
+                            if (replayObj.data) {
+                                logObj.target += ', ReplayID: ' + replayObj.data;
+                            }
+                            logObj.timeStamp = new Date().getTime();
+                            logObj.logLevel = 'STD';
+
+                            // console.log(postObj);
+                            if (screenPostObject(postObj)) {
+
+                                // if (false) {
+
+
+                                //     // call to hotsprofile
+                                let posted = await postToHotsProfile(postObj).then(
+                                    reply => {
+                                        return reply;
+                                    },
+                                    err => {
+                                        return null;
+                                    }
+                                );
+                                //     // console.log('POSTED!')
+                                logObj.action = ' logging reply from hots-profile ' + JSON.stringify(posted.data);
+                                logger(logObj);
+
+                                if (posted) {
+                                    match['replays'][localKey]['parsedUrl'] = posted.data.url;
+                                    postedReplays += 1;
+                                } else {
+                                    //if posted fails then do not set the match to fully reported
+                                    // postedReplays = false;
+                                }
+                            } else {
+                                // console.log('NOT POSTED!')
+                                logObj.logLevel = "ERROR";
+                                logObj.error = "This replay failed the screen, NOT SENT TO HEROSPROFILE!!";
+                                logger(logObj);
+                            }
+                        }
+
+                    }
+
+                    match['postedToHP'] = postedReplays > 0;
+                    // console.log('match ', match);
+                    let saved = await match.save().then(
+                        saved => {
+                            return saved;
+                        },
+                        err => {
+                            console.log(err);
+                            return null;
+                        }
+                    )
+                    savedArray.push(saved);
+                    if (savedArray.length == matches.length) {
+                        success = true;
+                    }
+
                 }
+            } else {
+
 
             }
 
-            match['postedToHP'] = postedReplays > 0;
-            // console.log('match ', match);
-            let saved = await match.save().then(
-                saved => {
-                    return saved;
-                },
-                err => {
-                    console.log(err);
-                    return null;
-                }
-            )
-            savedArray.push(saved);
-            if (savedArray.length == matches.length) {
-                success = true;
-            }
 
         }
 
@@ -1057,3 +1128,9 @@ function getDivisionNameFromConcat(divisionList, divConcat) {
     });
     return returnDiv;
 }
+
+// async function returnTeamData(match){
+//   let teamIds = [];
+//   teamIds.push(match.home.id);
+//   teamIds.push(match.away.id);
+// }

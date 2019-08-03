@@ -24,6 +24,9 @@ export class MatchEditComponent implements OnInit {
       teamName: '',
       score: null
     },
+    scheduledTime:{
+      startTime:null
+    },
     casterName: null,
     casterUrl: null,
     notes:'',
@@ -50,10 +53,12 @@ export class MatchEditComponent implements OnInit {
         this.homeScore = this.match.home.score;
         this.awayScore = this.match.away.score;
       }
-      if(!this.match.scheduledTime){
-        this.match.scheduledTime = {};
+      if( !this.match.hasOwnProperty('scheduledTime') ){
+        this.match.scheduledTime = {
+          startTime:null
+        }
       }else{
-        this.friendlyDate = this.util.getDatePickerFormatFromMS(this.match.scheduledTime.startTime);
+        // this.friendlyDate = this.util.getDatePickerFormatFromMS(this.match.scheduledTime.startTime);
         this.friendlyTime = this.util.getTimeFromMS(this.match.scheduledTime.startTime);
         this.suffix = this.util.getSuffixFromMS(this.match.scheduledTime.startTime);
       }
@@ -85,7 +90,8 @@ export class MatchEditComponent implements OnInit {
       match.away.score = this.awayScore;
     }
 
-    if(this.friendlyDate && this.friendlyTime){
+    if (this.match.scheduledTime.startTime && this.friendlyTime){
+      this.friendlyDate = new Date(this.match.scheduledTime.startTime);
       let years = this.friendlyDate.getFullYear();
       let month = this.friendlyDate.getMonth();
       let day = this.friendlyDate.getDate();

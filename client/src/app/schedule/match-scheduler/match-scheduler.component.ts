@@ -15,7 +15,7 @@ export class MatchSchedulerComponent implements OnInit {
 
   //component properties
   matchId //local prop to hold match Id recieved from route
-  mydate = new Date();  //local prop that holds the selected date by user from the calendar
+  matchDate = Date.now();  //local prop that holds the selected date by user from the calendar
   time: any //local prop that hold the selected time from user
   suffix: any //local prop for selected AM/PM suffix
   times: any[] = [];  //local array that is populated progromatticaly to give users a drop down of times on 15 min interval to select
@@ -87,9 +87,6 @@ index = 0;
   saveSched(){
     //calculate the millisecond date of the scheduled start of the match cause that's easy to save.
     //TODO: this might go into a service because I think it's used other places
-    let years = this.mydate.getFullYear();
-    let month = this.mydate.getMonth();
-    let day = this.mydate.getDate();
 
     let colonSplit = this.time.split(':');
 
@@ -100,8 +97,7 @@ index = 0;
       colonSplit[0]+=12;
     }
 
-    let setDate = new Date();
-    setDate.setFullYear(years, month, day);
+    let setDate = new Date(this.matchDate);
     setDate.setHours(colonSplit[0], colonSplit[1], 0,0);
 
     let msDate = setDate.getTime();

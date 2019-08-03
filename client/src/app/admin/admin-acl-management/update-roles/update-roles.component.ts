@@ -68,7 +68,6 @@ export class UpdateRolesComponent implements OnInit {
 
     });
     resultantACL['adminId'] = this.user['_id'];
-    console.log('resultantACL ',resultantACL)
     this.adminService.upsertUserAcls(resultantACL).subscribe(res=>{
       this.router.navigate(['/_admin/userACLMgmt']);
     },err=>{

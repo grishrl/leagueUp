@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { UtilitiesService } from 'src/app/services/utilities.service';
-import { type } from 'os';
 
 @Component({
   selector: 'app-date-picker',
@@ -21,7 +20,7 @@ export class DatePickerComponent implements OnInit {
 
 
   @Output()
-  dateValueChange = new EventEmitter();
+  dateChange = new EventEmitter();
 
   @Input()
   get date() {
@@ -29,7 +28,14 @@ export class DatePickerComponent implements OnInit {
   }
 
   set date(val) {
-    if (typeof val == 'string') {
+    if(val == null || val == undefined){
+      // let now = Date.now();
+      // let jsDate = new Date(now);
+      // jsDate.setHours(0,0,0,0);
+      // let msDate = jsDate.getTime();
+      // this.friendlyDate = new Date(msDate);
+      // this.dateValue = msDate;
+    }else if (typeof val == 'string') {
       val = parseInt(val);
       this.dateValue = val;
       let tempD = new Date(val);
@@ -40,7 +46,7 @@ export class DatePickerComponent implements OnInit {
       this.friendlyDate = tempD;
     }
 
-    this.dateValueChange.emit(this.dateValue);
+    this.dateChange.emit(this.dateValue);
   }
 
   ngOnInit() {
@@ -58,8 +64,7 @@ export class DatePickerComponent implements OnInit {
       setDate.setHours(0,0,0,0);
       let msDate = setDate.getTime();
       this.dateValue = msDate;
-      // this.outDateActioner(msDate);
-
+      this.dateChange.emit(this.dateValue);
     }
   }
 }

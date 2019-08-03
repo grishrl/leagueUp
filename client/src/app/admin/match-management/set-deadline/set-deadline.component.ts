@@ -19,7 +19,6 @@ export class SetDeadlineComponent implements OnInit {
   }
 
   selected(selectedDivision){
-    console.log('selectedDivision ', selectedDivision)
     let number;
     this.weeks = [];
     this.selectedDivision = selectedDivision;
@@ -34,14 +33,14 @@ export class SetDeadlineComponent implements OnInit {
   }
 
   createDeadline(){
-    
 
-    this.friendlyDate.setHours(23);
-    this.friendlyDate.setMinutes(59);
+    let date = new Date(this.friendlyDate);
+    date.setHours(23);
+    date.setMinutes(59);
 
-    let time = this.friendlyDate.getTime();
+    let time = date.getTime();
 
-    
+
     if (this.selectedDivision.divisionConcat && time && this.selectedWeek){
       this.admin.setScheduleDeadline(this.selectedDivision.divisionConcat, time, this.selectedWeek).subscribe( res=>{
       console.log(res)
@@ -50,7 +49,7 @@ export class SetDeadlineComponent implements OnInit {
     })
     }else{
       alert('Input missing');
-    } 
+    }
 
 
   }

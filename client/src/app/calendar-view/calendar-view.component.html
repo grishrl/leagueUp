@@ -40,7 +40,8 @@
                 </div>
                 <br>
                 <div [ngSwitch]="view">
-                    <mwl-calendar-month-view *ngSwitchCase="CalendarView.Month" [viewDate]="viewDate" [events]="events" [refresh]="refresh" [activeDayIsOpen]="activeDayIsOpen" (dayClicked)="dayClicked($event.day)" (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
+                    <mwl-calendar-month-view *ngSwitchCase="CalendarView.Month" [viewDate]="viewDate" [events]="events" [refresh]="refresh" [activeDayIsOpen]="activeDayIsOpen" (dayClicked)="dayClicked($event.day)" (eventClicked)="handleEvent('Clicked', $event.event)" [openDayEventsTemplate]="customOpenDayEventsTemplate"
+                        (eventTimesChanged)="eventTimesChanged($event)">
                     </mwl-calendar-month-view>
                     <mwl-calendar-week-view *ngSwitchCase="CalendarView.Week" [viewDate]="viewDate" [events]="events" [refresh]="refresh" (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
                     </mwl-calendar-week-view>
@@ -73,40 +74,29 @@
                         </table>
                     </div>
                 </div>
-                <!-- <h3>
-                Events List
-                <div class="clearfix"></div>
-            </h3> -->
 
-                <!-- <table class="table table-bordered">
+                <ng-template #customOpenDayEventsTemplate let-events="events" let-eventClicked="eventClicked" let-isOpen="isOpen">
+                    <div class="cal-open-day-events" [@collapse] *ngIf="isOpen">
+                        <div *ngFor="let event of events;  trackBy:event;" [ngClass]="event?.cssClass" mwlDraggable [dropData]="{event: event}" [dragAxis]="{x: event.draggable, y: event.draggable}">
+                            <span class="cal-event" [style.background-color]="event.color.primary"></span>
+                            <mwl-calendar-event-title [event]="event" [customTemplate]="eventTitleTemplate" view="month" (mwlClick)="eventClicked.emit({event: event})">
+                            </mwl-calendar-event-title>
 
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Primary color</th>
-                        <th>Starts at</th>
-                        <th>Ends at</th>
-                    </tr>
-                </thead>
+                        </div>
+                    </div>
 
-                <tbody>
-                    <tr *ngFor="let event of events; let index = index">
-                        <td>
-                            <input type="text" disabled="true" class="form-control" [(ngModel)]="event.title" (keyup)="refresh.next()">
-                        </td>
-                        <td>
-                            <input type="color" disabled="true" [(ngModel)]="event.color.primary">
-                        </td>
-                        <td>
-                            <input class="form-control" disabled="true" type="text" mwlFlatpickr [(ngModel)]="event.start" dateFormat="Y-m-dTH:i" altFormat="F j, Y H:i">
-                        </td>
-                        <td>
-                            <input class="form-control" disabled="true" type="text" mwlFlatpickr [(ngModel)]="event.end" dateFormat="Y-m-dTH:i" altFormat="F j, Y H:i">
-                        </td>
-                    </tr>
-                </tbody>
+                </ng-template>
+                <ng-template #eventTitleTemplate let-event="event" let-view="month" let-mwlClick="mwlClick">
+                    <span class="finger"> {{event.title}}
 
-            </table> -->
+                      <span *ngIf="event.meta.casted">
+                      &nbsp;<i style="color:#F2692E" class="fab fa-twitch"></i>&nbsp;
+                      <!-- <i style="color:#F2692E" class="fas fa-film"></i>&nbsp;
+                      <i style="color:#F2692E" class="fas fa-broadcast-tower"></i>&nbsp;
+                      <i style="color:#F2692E" class="fas fa-video"></i> -->
+                    </span>
+                    </span>
+                </ng-template>
 
             </div>
         </div>

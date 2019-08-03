@@ -9,15 +9,28 @@
         <li *ngFor="let match of next4matches">
             <h6>
                 <!--GROUP A  --><span>
-                {{util.getFormattedDate(match.scheduledTime.startTime, "ddd MMM YYYY - hh:mm A zz")}}</span></h6>
+                {{util.getFormattedDate(match.scheduledTime.startTime, "ddd MMM DD YYYY - hh:mm A zz")}}</span></h6>
             <ul class="club-logo">
                 <li>
                     <img src="{{teamServ.imageFQDN(match.home.logo)}}" alt="">
-                    <span>{{match.home.teamName}}</span>
+
+                    <app-team-link [team]="match.home.teamName">
+                        <span class="obnoxious-long-name-band-aid">
+                        {{match.home.teamName}}
+                            </span>
+                    </app-team-link>
+
+
                 </li>
                 <li>
                     <img src="{{teamServ.imageFQDN(match.away.logo)}}" alt="">
-                    <span>{{match.away.teamName}}</span>
+
+                    <app-team-link [team]="match.away.teamName">
+                        <span class="obnoxious-long-name-band-aid">
+                                            {{match.away.teamName}}
+                                          </span>
+                    </app-team-link>
+
                 </li>
             </ul>
         </li>

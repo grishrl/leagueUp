@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { environment } from '../../environments/environment';
 import * as moment from 'moment-timezone';
+import { Match } from '../classes/match.class';
 
 @Injectable({
   providedIn: 'root'
@@ -215,6 +216,48 @@ export class UtilitiesService {
 
     }
     return imgFQDN;
+  }
+
+  sortTeams(teams) {
+    teams = teams.sort((a, b) => {
+      if (a.teamName_lower > b.teamName_lower) {
+        return 1;
+      } else {
+        return -1;
+      }
+    });
+    return teams;
+  }
+
+  sortMatchesByTime(matches) {
+    matches.sort((a, b) => {
+      let ret;
+      if (!this.returnBoolByPath(a, 'scheduledTime.startTime')) {
+        ret = -1;
+      } else if (!this.returnBoolByPath(b, 'scheduledTime.startTime')) {
+        ret = -1;
+      } else {
+        if (parseInt(a.scheduledTime.startTime) > parseInt(b.scheduledTime.startTime)) {
+          ret = 1;
+        } else {
+          ret = -1;
+        }
+      }
+      return ret;
+    });
+    return matches;
+  }
+
+  hasMapBans(match: Match) : boolean {
+      if (match.mapBans.awayOne &&
+        match.mapBans.awayTwo &&
+        match.mapBans.homeOne &&
+        match.mapBans.homeTwo)
+        {
+          return true;
+        }
+
+      return false;
   }
 
 

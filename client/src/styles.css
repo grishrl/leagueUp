@@ -25368,3 +25368,7 @@ table.career tr td img {
         display: visible;
     }
 }
+
+.obnoxious-long-name-band-aid {
+    overflow: hidden;
+}

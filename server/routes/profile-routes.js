@@ -303,14 +303,13 @@ router.get('/statistics', (req, res) => {
 router.get('/hero-profile/path', (req, res) => {
 
     let url = 'http://www.heroesprofile.com/API/Profile/?battletag=$profile$&region=1&api_key=ngs!7583hh'
-    url = url.replace('$profile$', req.query.displayName);
+    url = url.replace('$profile$', encodeURIComponent(req.query.displayName));
     const path = 'user/hero-profile/path'
-    console.log(url);
     axios.get(url).then(
         rep => {
             res.status(200).send(util.returnMessaging(path, 'Found.', null, rep.data));
         }, err => {
-            res.status(500).send(util.returnMessaging(path, 'Found.', err));
+            res.status(500).send(util.returnMessaging(path, 'Not Found.', err));
         }
     )
 

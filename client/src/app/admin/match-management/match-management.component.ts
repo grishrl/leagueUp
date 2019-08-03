@@ -3,6 +3,7 @@ import { ScheduleService } from 'src/app/services/schedule.service';
 import { AdminService } from 'src/app/services/admin.service';
 import { MatPaginator, PageEvent } from '@angular/material';
 import { UtilitiesService } from 'src/app/services/utilities.service';
+import { TimeserviceService } from 'src/app/services/timeservice.service';
 
 @Component({
   selector: 'app-match-management',
@@ -23,33 +24,41 @@ export class MatchManagementComponent implements OnInit, AfterViewInit {
   rounds = [];
   divisions = []
 
-  constructor(private scheduleService: ScheduleService, private adminService: AdminService, public util: UtilitiesService) { }
+  constructor(private scheduleService: ScheduleService, private adminService: AdminService,
+    public util: UtilitiesService, private timeService:TimeserviceService) { }
 
   ngAfterViewInit() {
     this.paginator.pageIndex = 0;
   }
 
+  currentSeason;
   ngOnInit() {
     this.adminService.getDivisionList().subscribe((res) => {
       this.divisions = res;
-      this.scheduleService.getAllMatches().subscribe(
-        (sched) => {
-          this.originalMatches = sched;
-          this.filterMatches = sched;
-          this.filterMatches.forEach(match => {
-            match.submitCaster = {
-              "name": '',
-              "URL": ''
+      this.timeService.getSesasonInfo().subscribe(
+        res => {
+          this.currentSeason = res['value'];
+          this.scheduleService.getScheduleMatches(this.currentSeason, null, null).subscribe(
+            (sched) => {
+              this.originalMatches = sched;
+              this.filterMatches = sched;
+              this.filterMatches.forEach(match => {
+                match.submitCaster = {
+                  "name": '',
+                  "URL": ''
+                }
+                if (this.rounds.indexOf(match.round) < 0) {
+                  this.rounds.push(match.round);
+                }
+              });
+              this.rounds.sort();
+              this.length = this.filterMatches.length;
+              this.displayArray = this.filterMatches.slice(0, this.pageSize);
             }
-            if (this.rounds.indexOf(match.round) < 0) {
-              this.rounds.push(match.round);
-            }
-          });
-          this.rounds.sort();
-          this.length = this.filterMatches.length;
-          this.displayArray = this.filterMatches.slice(0, this.pageSize);
+          )
         }
-      )
+      );
+
     }, (err) => {
       console.log(err);
     });
@@ -88,7 +97,6 @@ export class MatchManagementComponent implements OnInit, AfterViewInit {
 
     this.filterMatches = this.originalMatches.filter(match => {
       let home, away;
-      console.log(match);
       if(!this.util.returnBoolByPath(match, 'away.teamName')){
         away = '';
       }else{

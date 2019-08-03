@@ -21,7 +21,7 @@ export class ScheduleViewComponent implements OnInit {
 
   ngOnInit() {
     let week = this.timeService.returnWeekNumber();
-    console.log(week);
+    console.log('week ',week);
     if (week > 0) {
       this.selectedRound = week;
       this.getMatches();

@@ -15,9 +15,15 @@ export class TeamLinkComponent implements OnInit {
   routeFriendlyName;
 
   ngOnInit() {
-    this.routeFriendlyName=this.teamService.routeFriendlyTeamName(this.team);
+
   }
 
-  @Input() team:string;
+  teamVal:string
+  @Input() set team(val){
+    if(val){
+      this.teamVal = val;
+      this.routeFriendlyName = this.teamService.routeFriendlyTeamName(this.teamVal);
+    }
+  }
 
 }

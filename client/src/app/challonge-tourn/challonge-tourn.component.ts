@@ -29,7 +29,6 @@ export class ChallongeTournComponent implements OnInit {
   localStoreTournaments = [];
   _tournamentLink
   @Input() set tournamentLink(val){
-    console.log(val);
     if(val){
       this._tournamentLink = val;
       this.challonge();
