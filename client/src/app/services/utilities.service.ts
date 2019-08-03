@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { environment } from '../../environments/environment';
 import * as moment from 'moment-timezone';
+import { Match } from '../classes/match.class';
 
 @Injectable({
   providedIn: 'root'
@@ -245,6 +246,18 @@ export class UtilitiesService {
       return ret;
     });
     return matches;
+  }
+
+  hasMapBans(match: Match) : boolean {
+      if (match.mapBans.awayOne &&
+        match.mapBans.awayTwo &&
+        match.mapBans.homeOne &&
+        match.mapBans.homeTwo)
+        {
+          return true;
+        }
+
+      return false;
   }
 
 

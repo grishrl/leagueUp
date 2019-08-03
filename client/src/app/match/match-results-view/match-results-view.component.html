@@ -8,32 +8,32 @@
         <div class="row p-5 mb-5">
             <div class="col text-center my-auto">
                 <span>
-                  <!-- <i *ngIf="dominator(match, 'home')" style="position: absolute;"
+                    <!-- <i *ngIf="dominator(match, 'home')" style="position: absolute;"
                     class="fas fa-crown"></i> -->
                     <app-team-link [team]="match.home.teamName">
-                      <img src="{{team.imageFQDN(match.home.logo)}}" alt="">
-                      <div>{{match.home.teamName}}</div>
+                        <img src="{{team.imageFQDN(match.home.logo)}}" alt="">
+                        <div>{{match.home.teamName}}</div>
                     </app-team-link>
-                  <!-- <div>Record: {{match.home.wins}}-{{match.home.losses}}</div> -->
+                    <!-- <div>Record: {{match.home.wins}}-{{match.home.losses}}</div> -->
                 </span>
             </div>
             <div class="col text-center my-auto">
                 <span>
-                  <b>{{reportScore(match, 'home')}}</b> - <b>{{reportScore(match, 'away')}}</b>
+                    <b>{{reportScore(match, 'home')}}</b> - <b>{{reportScore(match, 'away')}}</b>
                 </span>
             </div>
             <div class="col text-center my-auto">
                 <span>
-                  <!-- <i *ngIf="dominator(match, 'away')" style="position: absolute;"
+                    <!-- <i *ngIf="dominator(match, 'away')" style="position: absolute;"
                     class="fas fa-crown"></i> -->
                     <app-team-link [team]="match.away.teamName">
-                      <img src="{{team.imageFQDN(match.away.logo)}}" alt="">
-                      <div>
-                        {{match.away.teamName}}
-                      </div>
+                        <img src="{{team.imageFQDN(match.away.logo)}}" alt="">
+                        <div>
+                            {{match.away.teamName}}
+                        </div>
                     </app-team-link>
 
-                  <!-- <div>Record: {{match.away.wins}}-{{match.away.losses}}</div> -->
+                    <!-- <div>Record: {{match.away.wins}}-{{match.away.losses}}</div> -->
                 </span>
             </div>
         </div>
@@ -44,15 +44,62 @@
             </div>
             <div class="info-panel">
                 <div *ngIf="match.forfeit else gamesInfo">
-                    <p> This match was forfeit by <span *ngIf="match.home.score == 2 else otherTeam">{{match.away.teamName}}</span>
+                    <p> This match was forfeit by <span
+                            *ngIf="match.home.score == 2 else otherTeam">{{match.away.teamName}}</span>
                         <ng-template #otherTeam>
                             {{match.home.teamName}}
-                        </ng-template> no other information will be available.</p>
+                        </ng-template> no other information will be available.
+                    </p>
                 </div>
                 <ng-template #gamesInfo>
+                    <div class="row" *ngIf="util.hasMapBans(match)">
+                        <div class="col-sm">
+                            <div class="row no-gutter justify-content-md-center">
+                                <h4>
+                                    {{match.home.teamName}} Bans
+                                </h4>
+                            </div>
+                            <div class="row no-gutter">
+                                <div class="col-sm">
+                                    <div class="banner"
+                                        [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.homeOne) + ')' } ">
+                                        <span class="mapBanText">{{match.mapBans.homeOne}}</span>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="banner"
+                                        [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.homeTwo) + ')' } ">
+                                        <span class="mapBanText">{{match.mapBans.homeTwo}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm">
+                            <div class="row no-gutter justify-content-md-center">
+                                <h4>
+                                    {{match.away.teamName}} Bans
+                                </h4>
+                            </div>
+                            <div class="row no-gutter">
+                                <div class="col-sm">
+                                    <div class="banner"
+                                        [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.awayOne) + ')' } ">
+                                        <span class="mapBanText">{{match.mapBans.awayOne}}</span>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <div class="banner"
+                                        [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.awayTwo) + ')' } ">
+                                        <span class="mapBanText">{{match.mapBans.awayTwo}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="row mt-4" *ngFor="let replay of resultsArray; let i = index;">
                         <div class="col-12">
-                            <div class="banner" [ngStyle]="{ 'background': 'url('+ getBackground(replay.map) + '), currentColor' } ">
+                            <div class="banner"
+                                [ngStyle]="{ 'background': 'url('+ getBackground(replay.map) + '), currentColor' } ">
                                 <div class="winnerText">
                                     <p>
                                         <span *ngIf="replay.map else noMap">{{replay.map}}</span>
@@ -67,8 +114,10 @@
 
                         </div>
                         <div class="col mt-2">
-                            <div><strong>Replay File:</strong> <a href="{{util.replayFQDN(replay.url)}}">Stored Replay</a></div>
-                            <div><strong>Heroes Profile:</strong> <a href="{{replay.parsedUrl}}" target="_blank"> Match Link</a></div>
+                            <div><strong>Replay File:</strong> <a href="{{util.replayFQDN(replay.url)}}">Stored
+                                    Replay</a></div>
+                            <div><strong>Heroes Profile:</strong> <a href="{{replay.parsedUrl}}" target="_blank"> Match
+                                    Link</a></div>
                         </div>
                     </div>
                     <div class="row mt-3" *ngIf="match.vodLinks">
