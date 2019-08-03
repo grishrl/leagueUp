@@ -9,6 +9,7 @@ export class Match {
   forfeit: boolean;
   other: any;
   vodLinks:Array<string>;
+  mapBans: mapBans;
 
   constructor() {
     this.home = {
@@ -37,6 +38,12 @@ export class Match {
     this.other = {};
     this.replays = {};
     this.vodLinks = [];
+    this.mapBans = {
+      awayOne: '',
+      awayTwo: '',
+      homeOne: '',
+      homeTwo: ''
+    };
   }
 }
 
@@ -54,4 +61,11 @@ export interface teamInfo {
 export interface schedule {
   startTime: string,
   endTime: string
+}
+
+export interface mapBans {
+  awayOne: string,
+  awayTwo: string,
+  homeOne: string,
+  homeTwo: string
 }
