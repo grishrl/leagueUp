@@ -6,11 +6,12 @@ const Schedules = require('../models/schedule-models');
 const challonge = require('../methods/challongeAPI');
 const Division = require('../models/division-models');
 const _ = require('lodash');
+const MatchCommon = require('../methods/matchCommon');
 
 
 //takes the provided division and season and calcuates the current standings of the teams
 //division:string division concat name, season:string or number, season number to check the standings of
-async function calulateStandings(division, season) {
+async function calulateStandings(division, season, pastSeason) {
     let standings;
     try {
 
@@ -22,7 +23,7 @@ async function calulateStandings(division, season) {
                     return answer;
                 });
             } else {
-                standings = await stdDivStanding(division, season).then(answer => {
+                standings = await stdDivStanding(division, season, pastSeason).then(answer => {
                     return answer;
                 });
             }
@@ -228,7 +229,7 @@ async function cupDivStanding(division, season) {
 }
  */
 
-async function stdDivStanding(division, season) {
+async function stdDivStanding(division, season, pastSeason) {
     let teams;
 
     //grab all amtches that match the season and division and are not tournament matches
@@ -245,17 +246,29 @@ async function stdDivStanding(division, season) {
     }).lean().then(
         (matches) => {
             if (matches) {
-                //grab all the team information associated with each team
-                teams = findTeamIds(matches);
-                //add names and logos to matches
-                return addTeamNamesToMatch(teams, matches).then(
-                    (processed) => {
-                        return processed;
-                    },
-                    (err) => {
-                        return false;
-                    }
-                )
+                teams = MatchCommon.findTeamIds(matches);
+                if (pastSeason) {
+                    return MatchCommon.addTeamInfoFromArchiveToMatch(matches, season).then(
+                        (processed) => {
+                            return processed;
+                        },
+                        (err) => {
+                            return false;
+                        }
+                    )
+                } else {
+                    //grab all the team information associated with each team
+                    //add names and logos to matches
+                    return MatchCommon.addTeamInfoToMatch(matches).then(
+                        (processed) => {
+                            return processed;
+                        },
+                        (err) => {
+                            return false;
+                        }
+                    )
+                }
+
             } else {
                 return false;
             }
@@ -374,49 +387,49 @@ function findTeamIds(found) {
 
 //this takes an array of ids and grabs all the team info for them, adds it to the 
 // home/away object of the match so they are available on the client
-async function addTeamNamesToMatch(teams, found) {
-    //typechecking
-    if (!Array.isArray(found)) {
-        found = [found];
-    }
-    return Team.find({
-        _id: {
-            $in: teams
-        }
-    }).then((foundTeams) => {
-        if (foundTeams) {
-            foundTeams.forEach(team => {
-                let teamid = team._id.toString();
-                found.forEach(match => {
-                    let homeid, awayid;
-                    if (util.returnBoolByPath(match, 'home.id')) {
-                        homeid = match.home.id.toString();
-                    }
-                    if (util.returnBoolByPath(match, 'away.id')) {
-                        awayid = match.away.id.toString();
-                    }
-                    if (teamid == homeid) {
-                        match.home['teamName'] = team.teamName;
-                        match.home['logo'] = team.logo;
-                        match.home['teamName_lower'] = team.teamName_lower;
-                        match.home['ticker'] = team.ticker;
-                    }
-                    if (teamid == awayid) {
-                        match.away['teamName'] = team.teamName;
-                        match.away['logo'] = team.logo;
-                        match.away['teamName_lower'] = team.teamName_lower;
-                        match.away['ticker'] = team.ticker;
-                    }
-                });
-            });
-            return found;
-        } else {
-            return [];
-        }
-    }, (err) => {
-        return err;
-    });
-}
+// async function addTeamNamesToMatch(teams, found) {
+//     //typechecking
+//     if (!Array.isArray(found)) {
+//         found = [found];
+//     }
+//     return Team.find({
+//         _id: {
+//             $in: teams
+//         }
+//     }).then((foundTeams) => {
+//         if (foundTeams) {
+//             foundTeams.forEach(team => {
+//                 let teamid = team._id.toString();
+//                 found.forEach(match => {
+//                     let homeid, awayid;
+//                     if (util.returnBoolByPath(match, 'home.id')) {
+//                         homeid = match.home.id.toString();
+//                     }
+//                     if (util.returnBoolByPath(match, 'away.id')) {
+//                         awayid = match.away.id.toString();
+//                     }
+//                     if (teamid == homeid) {
+//                         match.home['teamName'] = team.teamName;
+//                         match.home['logo'] = team.logo;
+//                         match.home['teamName_lower'] = team.teamName_lower;
+//                         match.home['ticker'] = team.ticker;
+//                     }
+//                     if (teamid == awayid) {
+//                         match.away['teamName'] = team.teamName;
+//                         match.away['logo'] = team.logo;
+//                         match.away['teamName_lower'] = team.teamName_lower;
+//                         match.away['ticker'] = team.ticker;
+//                     }
+//                 });
+//             });
+//             return found;
+//         } else {
+//             return [];
+//         }
+//     }, (err) => {
+//         return err;
+//     });
+// }
 
 module.exports = {
     calulateStandings: calulateStandings

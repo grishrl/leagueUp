@@ -1,14 +1,6 @@
 const util = require('../utils');
 const router = require('express').Router();
-const User = require('../models/user-models');
-const TeamSub = require('../subroutines/team-subs');
-const System = require('../models/system-models').system;
-const passport = require("passport");
-const mmrMethods = require('../methods/mmrMethods');
-const Stats = require('../models/stats-model');
-const Avatar = require('../methods/avatarUpload');
-const PendingAvatarQueue = require('../models/admin-models').PendingAvatarQueue;
-const archiveUser = require('../methods/archivalMethods').archiveUser;
+const Archive = require('../models/system-models').archive;
 const Schedule = require('../models/schedule-models');
 const axios = require('axios');
 
@@ -26,6 +18,55 @@ router.get('/seasons', (req, res) => {
             res.status(500).send(util.returnMessaging(path, 'Error finding seasons:', err));
         }
     );
+});
+
+router.get('/season/divisions', (req, res) => {
+
+    const path = '/history/season/divisions';
+
+    let season = req.query.season;
+    if (season) {
+        let query = {
+            season: season,
+            type: 'division'
+        };
+        Archive.find(query).then(
+            found => {
+                res.status(200).send(util.returnMessaging(path, 'Found divisions for season ' + season + ':', false, found));
+            },
+            err => {
+                res.status(500).send(util.returnMessaging(path, 'Error finding divisions:', err));
+            }
+        );
+    } else {
+        res.status(400).send(util.returnMessaging(path, 'Season not provided'));
+    }
+
+});
+
+router.get('/season/division', (req, res) => {
+
+    const path = '/history/season/division';
+
+    let season = req.query.season;
+    let division = req.query.division;
+    if (season && division) {
+        let query = {
+            season: season,
+            type: 'division'
+        };
+        Archive.find(query).then(
+            found => {
+                res.status(200).send(util.returnMessaging(path, 'Found division for season ' + season + ':', false, found));
+            },
+            err => {
+                res.status(500).send(util.returnMessaging(path, 'Error finding division:', err));
+            }
+        );
+    } else {
+        res.status(400).send(util.returnMessaging(path, 'Parameters not provided See required params:', { 'season': season, 'division': division }));
+    }
+
 });
 
 module.exports = router;
