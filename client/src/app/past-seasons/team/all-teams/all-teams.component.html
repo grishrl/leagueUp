@@ -1,0 +1,55 @@
+<!-- Section Area - Content Central -->
+<section class="content-info">
+
+    <!-- Nav Filters -->
+    <div class="portfolioFilter">
+        <div class="container">
+            <h5><i class="fa fa-filter" aria-hidden="true"></i>Filter By:</h5>
+            <a class="finger" [ngClass]="{'current': index=='*'}" (click)="filterTeams('*')">Show All</a>
+            <a class="finger" [ngClass]="{'current': index==division.divisionConcat}" (click)="filterTeams(division.divisionConcat)" *ngFor="let division of divisions">{{division.displayName}}</a>
+            <div *ngIf="displayTeams.length>0" class="mt-4">Count: {{displayTeams.length}}</div>
+        </div>
+    </div>
+    <!-- End Nav Filters -->
+
+    <div class="container padding-top">
+        <div class="row portfolioContainer mb-5">
+
+            <div class="col text-center" *ngIf="loading">
+                <div class="loading-box mx-auto mt-5">
+                    <div class="loading-text"><i class="fas fa-spin fa-spinner"></i> Loading..</div>
+                </div>
+            </div>
+
+            <!-- Item Team Group A-->
+            <div class="col-md-6 col-lg-4 col-xl-3 group-a" *ngFor="let team of displayTeams">
+                <div class="item-team">
+                    <div class="head-team">
+                        <img src="{{TeamService.imageFQDN(team.logo)}}" alt="location-team">
+                        <div class="overlay">
+                            <app-team-link [team]="team.teamName">+</app-team-link>
+                        </div>
+                    </div>
+                    <div class="info-team">
+                        <span class="logo-team">
+                  <img src="{{TeamService.imageFQDN(team.logo)}}" alt="logo-team">
+                </span>
+                        <h4>{{team.teamName}}</h4>
+                        <span class="location-team">
+                  <i class="fa fa-map-marker" aria-hidden="true"></i>
+                  Nexus
+                </span>
+                        <span class="group-team">
+                  <i class="fa fa-trophy" aria-hidden="true"></i>
+                  <app-division-if-public [divisionInfo]="team.divisionConcat"></app-division-if-public>
+                </span>
+                    </div>
+
+                    <app-team-link [team]="team.teamName"><span class="btn">Team Profile <i class="fa fa-angle-right"
+                          aria-hidden="true"></i></span></app-team-link>
+                </div>
+            </div>
+            <!-- End Item Team Group A-->
+
+        </div>
+    </div>
