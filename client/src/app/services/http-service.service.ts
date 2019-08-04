@@ -41,15 +41,18 @@ export class HttpServiceService {
     /*
     [{parameter:query}]
     */
-   parameters.forEach((element, index) => {
-      let key = Object.keys(element);
-      if(index==0){
-        url+='?'+key[0]+ '=' + element[key[0]];
-      }else{
-        url += '&' + key[0] + '=' + element[key[0]];
-      }
+   if(parameters){
+     parameters.forEach((element, index) => {
+       let key = Object.keys(element);
+       if (index == 0) {
+         url += '?' + key[0] + '=' + element[key[0]];
+       } else {
+         url += '&' + key[0] + '=' + element[key[0]];
+       }
 
-   });
+     });
+   }
+
     if (showNotification) {
       this.notificationService.subj_notification.next('Working..');
     }

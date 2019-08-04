@@ -49,6 +49,7 @@ import { AllTeamsComponent } from "./team/all-teams/all-teams.component";
 import { MatchResultsViewComponent } from './match/match-results-view/match-results-view.component';
 import { ChallongeTournComponent } from "./challonge-tourn/challonge-tourn.component";
 import { SeasonInfoManagerComponent } from "./admin/match-management/season-info-manager/season-info-manager.component";
+import { PastSeasonsComponent } from "./past-seasons/past-seasons.component";
 
 const APP_ROUTES: Routes = [
   { path: 'challonge', component: ChallongeTournComponent },
@@ -64,6 +65,7 @@ const APP_ROUTES: Routes = [
   { path: 'profile/:id', component: ProfileEditComponent},
   { path: 'teamProfile/:id', component: TeamProfileComponent},
   { path: 'allTeams', component:AllTeamsComponent},
+  { path: 'pastSeasons', component: PastSeasonsComponent },
   { path: 'teamCreate', component: CreateTeamComponent},
   { path: 'division/:division', component: DivisionComponent, runGuardsAndResolvers:'paramsChange' },
   { path: 'email/invite/:id', component:OutreachEmailResponseComponent },

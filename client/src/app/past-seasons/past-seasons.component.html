@@ -6,11 +6,43 @@
         <div class="panel-box padding-b">
             <div class="row pt-5 pb-3">
                 <div class="col">
-                    <h5>Select Past Season To View</h5>
+                    <h5>Select Previous Season To View</h5>
+                </div>
+                <div class="col">
+                    <mat-form-field class="mat-FullWidth">
+                        <mat-select placeholder="Previous Seasons" [(ngModel)]="selectedSeason" (ngModelChange)="seasonSelected()">
+                            <mat-option *ngFor="let season of seasonsList" [value]="season">
+                                {{season}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
                 </div>
             </div>
-            
+            <div class="row pt-5 pb-3">
+                <div class="col">
+                    <h5>Select Previous Season Division To View</h5>
+                </div>
+                <div class="col">
+                    <div *ngIf="selectedSeason">
+                        <mat-form-field class="mat-FullWidth">
+                            <mat-select placeholder="Season {{selectedSeason}} Divisions" [(ngModel)]="selectedDivision" (ngModelChange)="divisionSelected()">
+                                <mat-option *ngFor="let division of divisionList" [value]="division">
+                                    {{division.displayName}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+
             <!-- End Content Text-->
         </div>
     </div>
+
+    <pre>{{selectedDivision | json}}  </pre>
+    <div *ngIf="selectedDivision">
+        <span>xxxx</span>
+        <app-past-division [passSeason]="selectedSeason" [passDivision]="selectedDivision"></app-past-division>
+    </div>
+
 </section>
