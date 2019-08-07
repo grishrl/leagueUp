@@ -77,14 +77,14 @@
 
                         <!-- Tab Two - squad -->
                         <div class="tab-pane" id="teams">
-                            <app-team-display [teamObj]="{teams:teamAggregate, season:6, pastSeason:true}"></app-team-display>
+                            <app-team-display [teamObj]="{teams:teamAggregate, season:currentSeason, pastSeason:true}"></app-team-display>
                         </div>
                         <!-- End Tab Two - squad -->
 
                         <!-- Tab Theree - schedule -->
                         <div class="tab-pane" id="schedule">
                             <ng-container class="pb-5" *ngIf="index == 2">
-                                <app-schedule-view *ngIf="!divDisplay.cupDiv" [division]="divDisplay"></app-schedule-view>
+                                <app-schedule-view *ngIf="!divDisplay.cupDiv" [division]="divDisplay" [divObj]="{division:divDisplay, season:currentSeason, pastSeason:true}"></app-schedule-view>
                                 <app-division-cup-schedule *ngIf="divDisplay.cupDiv" [division]="divDisplay"></app-division-cup-schedule>
                             </ng-container>
 
