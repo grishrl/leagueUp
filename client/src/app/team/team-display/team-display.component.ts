@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Team } from '../../classes/team.class';
 import { TeamService } from '../../services/team.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
+import { HistoryService } from 'src/app/services/history.service';
 
 @Component({
   selector: 'app-team-display',
@@ -12,13 +13,12 @@ export class TeamDisplayComponent implements OnInit {
   _teams: Team[] = [];
   MemberRows: Array<any> = [];
 
-  @Input() perColumn:any
+  _teamList;
   @Input() set teams(teams:Team[]){
     if(teams != null && teams != undefined){
-      this.initTeam(teams);
-      // this.createMyDisplay();
+      this._teamList = teams;
+      this.initComponent();
     }else{
-
       this._teams = [];
       this.rows = [];
     }
@@ -28,16 +28,42 @@ export class TeamDisplayComponent implements OnInit {
     return this._teams;
   }
 
-  initTeam(val){
-    if (val && val.length > 0) {
-      this.team.getTeams(val).subscribe((retn) => {
+  _season
+  _pastSeason
+
+  @Input() set teamObj(val){
+    console.log('team obj ', val);
+    if(!this.util.isNullOrEmpty(val)){
+      this._teamList = val.teams;
+      this._season = val.season;
+      this._pastSeason = val.pastSeason;
+      this.initComponent();
+    }
+  }
+
+  initComponent(){
+    //blank out display array
+    this._teams=[];
+
+    if (this._pastSeason){
+      this.history.getPastTeamsViaSeason(this._teamList, this._season).subscribe(
+        res => {
+          res.forEach(element => {
+            this._teams.push(element.object);
+          });
+          this._teams = this.util.sortTeams(this._teams);
+        },
+        err => {
+          console.log(err);
+        }
+      )
+    }else{
+      this.team.getTeams(this._teamList).subscribe((retn) => {
         retn = this.util.sortTeams(retn);
         this._teams = retn;
       }, (error) => {
         console.log(error);
       });
-    }else{
-      this._teams = [];
     }
   }
 
@@ -51,7 +77,7 @@ export class TeamDisplayComponent implements OnInit {
 
   rows: Array<any> = [];
 
-  constructor(public team:TeamService, private util:UtilitiesService) { }
+  constructor(public team:TeamService, private util:UtilitiesService, private history:HistoryService) { }
 
   // createMyDisplay(){
   //   if(!this.perColumn){

@@ -52,8 +52,11 @@ router.get('/season/division', (req, res) => {
     let division = req.query.division;
     if (season && division) {
         let query = {
-            season: season,
-            type: 'division'
+            '$and': [{
+                season: season
+            }, {
+                type: 'division'
+            }]
         };
         Archive.find(query).then(
             found => {
@@ -65,6 +68,41 @@ router.get('/season/division', (req, res) => {
         );
     } else {
         res.status(400).send(util.returnMessaging(path, 'Parameters not provided See required params:', { 'season': season, 'division': division }));
+    }
+
+});
+
+router.post('/season/teams', (req, res) => {
+
+    const path = '/history/season/teams';
+
+    let season = req.body.season;
+    let teams = req.body.teams;
+    if (season && teams) {
+        let query = {
+            '$and': [
+                { season: season },
+                { type: 'team' },
+                {
+                    'object.teamName': {
+                        $in: teams
+                    }
+                }
+            ]
+        };
+        Archive.find(query).then(
+            found => {
+                res.status(200).send(util.returnMessaging(path, 'Found ' + found.length + ' of ' + teams.length + ' teams for season ' + season + ':', false, found));
+            },
+            err => {
+                res.status(500).send(util.returnMessaging(path, 'Error finding teams:', err));
+            }
+        );
+    } else {
+        res.status(400).send(util.returnMessaging(path, 'Parameters not provided See required params:', {
+            'season': season,
+            'teams': teams
+        }));
     }
 
 });

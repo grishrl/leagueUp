@@ -20,4 +20,15 @@ export class HistoryService {
     ]
     return this.httpService.httpGet(url, param, false);
   }
+
+  getPastTeamsViaSeason(teams, season){
+    let url = '/history/season/teams';
+    let param =
+      {
+        'season': season,
+        'teams':teams
+      }
+
+    return this.httpService.httpPost(url, param, false);
+  }
 }
