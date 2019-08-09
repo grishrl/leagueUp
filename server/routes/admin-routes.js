@@ -3,6 +3,7 @@ const router = require('express').Router();
 const passport = require("passport");
 const System = require("../models/system-models");
 const levelRestrict = require("../configs/admin-leveling");
+const seasonInfoCommon = require("../methods/seasonInfoMethods");
 
 router.post('/upsertSeasonInfo', passport.authenticate('jwt', {
     session: false
@@ -57,64 +58,35 @@ router.get('/getSeasonInfo', (req, res) => {
     let specificSeason = parseInt(req.query.season);
 
     if (specificSeason) {
-        let query = {
-            $and: [{
-                    'dataName': 'seasonInfo'
-                },
-                {
-                    'value': specificSeason
-                }
-            ]
-        }
         try {
-            System.system.find(
-                query
-            ).lean().then(
-                found => {
-                    found = found.sort((a, b) => {
-                        if (a.value > b.value) {
-                            return 1;
-                        } else {
-                            return -1;
-                        }
-                    });
-                    res.status(200).send(util.returnMessaging(path, "Found the season schedule.", false, found[0], null));
-                },
-                err => {
-                    res.status(500).send(util.returnMessaging(path, "Error finding season schedule.", err, null, null));
+            seasonInfoCommon.getSeasonInfo(specificSeason).then(
+                process => {
+                    if (process) {
+                        res.status(200).send(util.returnMessaging(path, "Found the season schedule.", false, process, null));
+                    } else {
+                        res.status(500).send(util.returnMessaging(path, "Error finding season schedule.", err, null, null));
+                    }
                 }
-            );
+            )
         } catch (e) {
             console.log(e);
             res.status(500).send(util.returnMessaging(path, "Error in node", err, null, null));
         }
     } else {
         try {
-            System.system.find({
-                'dataName': 'seasonInfo'
-            }).lean().then(
-                found => {
-                    found = found.sort((a, b) => {
-                        if (a.value > b.value) {
-                            return 1;
-                        } else {
-                            return -1;
-                        }
-                    });
-                    res.status(200).send(util.returnMessaging(path, "Found the season schedule.", false, found[0], null));
-                },
-                err => {
-                    res.status(500).send(util.returnMessaging(path, "Error finding season schedule.", err, null, null));
+            seasonInfoCommon.getSeasonInfo().then(
+                process => {
+                    if (process) {
+                        res.status(200).send(util.returnMessaging(path, "Found the season schedule.", false, process, null));
+                    } else {
+                        res.status(500).send(util.returnMessaging(path, "Error finding season schedule.", err, null, null));
+                    }
                 }
-            );
+            )
         } catch (e) {
             console.log(e);
         }
     }
-
-
-
-
 
 })
 
