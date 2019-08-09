@@ -84,7 +84,7 @@
                         <!-- Tab Theree - schedule -->
                         <div class="tab-pane" id="schedule">
                             <ng-container class="pb-5" *ngIf="index == 2">
-                                <app-schedule-view *ngIf="!divDisplay.cupDiv" [division]="divDisplay" [divObj]="{division:divDisplay, season:currentSeason, pastSeason:true}"></app-schedule-view>
+                                <app-schedule-view *ngIf="!divDisplay.cupDiv" [divObj]="{division:divDisplay, season:currentSeason, pastSeason:true}"></app-schedule-view>
                                 <app-division-cup-schedule *ngIf="divDisplay.cupDiv" [division]="divDisplay"></app-division-cup-schedule>
                             </ng-container>
 
@@ -94,7 +94,7 @@
                         <!-- Tab Theree - results -->
                         <div class="tab-pane" id="results">
                             <div *ngIf="index==3">
-                                <app-division-results-tiles *ngIf="!divDisplay.cupDiv" [division]="divDisplay"></app-division-results-tiles>
+                                <app-division-results-tiles *ngIf="!divDisplay.cupDiv" [divObj]="{division:divDisplay, season:currentSeason, pastSeason:true}"></app-division-results-tiles>
                                 <app-division-cup-results-tiles *ngIf="divDisplay.cupDiv" [division]="divDisplay"></app-division-cup-results-tiles>
                             </div>
 
@@ -104,7 +104,15 @@
                         <!-- Tab four - tournament -->
                         <div class="tab-pane" id="tournament">
                             <div *ngIf="index == 4">
-                                <app-challonge-tourn [season]="currentSeason" [division]="divDisplay"></app-challonge-tourn>
+                                <div *ngIf="currentSeason>6 else oldBracket">
+                                    <app-challonge-tourn [season]="currentSeason" [division]="divDisplay">
+                                    </app-challonge-tourn>
+                                </div>
+                                <ng-template #oldBracket>
+                                    <app-tournament-view [season]="currentSeason" [division]="divDisplay.divisionConcat">
+                                    </app-tournament-view>
+                                </ng-template>
+
                             </div>
 
                         </div>
