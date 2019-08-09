@@ -39,9 +39,7 @@
         </div>
     </div>
 
-    <pre>{{selectedDivision | json}}  </pre>
     <div *ngIf="selectedDivision">
-        <span>xxxx</span>
         <app-past-division [passSeason]="selectedSeason" [passDivision]="selectedDivision"></app-past-division>
     </div>
 
