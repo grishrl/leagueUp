@@ -15,6 +15,7 @@ const fs = require('fs');
 const n_util = require('util');
 const Division = require('../models/division-models');
 const matchCommon = require('../methods/matchCommon');
+const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 
 
 
@@ -38,7 +39,7 @@ const s3replayBucket = new AWS.S3({
  * return matches that fit the criterea
  * 
  */
-router.post('/get/matches', (req, res) => {
+router.post('/get/matches', async(req, res) => {
     const path = 'schedule/get/matches';
     let season = req.body.season;
     let division = req.body.division;
@@ -61,14 +62,30 @@ router.post('/get/matches', (req, res) => {
             divisionConcat: division
         });
     }
+
+    let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+    let pastSeason = season != currentSeasonInfo.value;
+
     Match.find(query).lean().then((found) => {
         if (found) {
-            let teams = findTeamIds(found);
-            addTeamNamesToMatch(teams, found).then((processed) => {
-                res.status(200).send(util.returnMessaging(path, 'Found matches', false, processed));
-            }, (err) => {
-                res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
-            });
+            if (pastSeason) {
+                matchCommon.addTeamInfoFromArchiveToMatch(found).then(
+                    processed => {
+                        res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
+                    },
+                    err => {
+                        res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
+                    })
+            } else {
+                matchCommon.addTeamInfoToMatch(found).then(
+                    processed => {
+                        res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
+                    },
+                    err => {
+                        res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
+                    })
+            }
+
         } else {
             res.status(400).send(util.returnMessaging(path, 'No matches found for criteria', false, found));
         }
@@ -77,27 +94,51 @@ router.post('/get/matches', (req, res) => {
     });
 });
 
-router.post('/get/reported/matches', (req, res) => {
+router.post('/get/reported/matches', async(req, res) => {
 
     const path = 'schedule/get/reported/matches';
     let season = req.body.season;
+    let division = req.body.division;
 
+    let query = {
+        $and: [{
+                season: season
+            },
+            {
+                reported: true
+            }
+        ]
+    }
 
-    Match.find({
-        season: season,
-        reported: true
-    }).lean().then(
+    let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+    let pastSeason = season != currentSeasonInfo.value;
+
+    if (division) {
+        query.$and.push({ divisionConcat: division });
+    }
+
+    Match.find(query).lean().then(
         found => {
             if (found) {
-
-                addTeamNamesToMatch_foundOnly(found).then(
-                    processed => {
-                        res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
-                    },
-                    err => {
-                        res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
-                    }
-                )
+                if (pastSeason) {
+                    matchCommon.addTeamInfoFromArchiveToMatch(found).then(
+                        processed => {
+                            res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
+                        },
+                        err => {
+                            res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
+                        }
+                    )
+                } else {
+                    matchCommon.addTeamInfoToMatch(found).then(
+                        processed => {
+                            res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
+                        },
+                        err => {
+                            res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
+                        }
+                    )
+                }
             } else {
                 res.status(200).send(util.returnMessaging(path, 'No Matches Found', null, found));
             }
@@ -350,18 +391,37 @@ router.post('/get/match', (req, res) => {
     });
 });
 
-router.post('/get/match/list', (req, res) => {
+router.post('/get/match/list', async(req, res) => {
     const path = 'schedule/get/match/list';
     let matches = req.body.matches;
+    let season = req.body.season;
+    let pastSeason = false;
+
+    if (season) {
+        let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+        pastSeason = season != currentSeasonInfo.value;
+    }
+
 
     Match.find({ matchId: { $in: matches } }).then(
         found => {
-            let teams = findTeamIds(found);
-            addTeamNamesToMatch(teams, found).then((processed) => {
-                res.status(200).send(util.returnMessaging(path, 'Found matches', false, processed));
-            }, (err) => {
-                res.status(500).send(util.returnMessaging(path, 'Error getting matches', err));
-            })
+            if (pastSeason) {
+                matchCommon.addTeamInfoFromArchiveToMatch(found).then(
+                    processed => {
+                        res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
+                    },
+                    err => {
+                        res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
+                    })
+            } else {
+                matchCommon.addTeamInfoToMatch(found).then(
+                    processed => {
+                        res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
+                    },
+                    err => {
+                        res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
+                    })
+            }
         },
         err => {
             res.status(500).send(util.returnMessaging(path, 'Error getting match', err));
