@@ -28,7 +28,7 @@ export class TournamentViewComponent implements OnInit {
      this._division = _division;
     //  if(!this.util.isNullOrEmpty(_division)){
     //    this._division = _division;
-    //    this.ngOnInit();
+       this.ngOnInit();
     //  }
    }
 
@@ -37,7 +37,7 @@ export class TournamentViewComponent implements OnInit {
      this._season=_season;
     //  if(!this.util.isNullOrEmpty(_season)){
     //    this._season = _season;
-    //    this.ngOnInit();
+       this.ngOnInit();
     //  }
    }
 
@@ -67,22 +67,25 @@ export class TournamentViewComponent implements OnInit {
 
   private getTournamentBrackets() {
     console.log(this._name, this._season, this._division);
-    this._season = 6;
-    this._division = "replay-division";
-    if (this.util.isNullOrEmpty(this._name) && this.util.isNullOrEmpty(this._season) && this.util.isNullOrEmpty(this._division)) {
-      console.warn('Tournament view must be provided input');
-      this.hasBracket = false;
-    } else {
+    this.hasBracket = false;
       this.scheduleService.getTournamentGames( this._name, this._season, this._division).subscribe(res => {
-        this.hasBracket = true;
-        if (res['tournMatches']){
-          this.matches = res['tournMatches'];
-          this.tournamentObject = this.arrangeMatches();
+        if (res['tournInfo'][0]['matches']){
+          this.matches = res['tournInfo'][0]['matches'];
+          this.scheduleService.getMatchList(this.matches, this._season).subscribe(
+            res=>{
+              this.matches = res;
+              this.tournamentObject = this.arrangeMatches();
+              this.hasBracket = true;
+            },
+            err=>{
+              console.log(err);
+            }
+          )
         }
       }, err => {
         this.hasBracket = false;
       });
-    }
+    // }
   }
 
   winner(obj, pos){
