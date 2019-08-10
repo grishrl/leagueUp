@@ -16,6 +16,7 @@ import { ConfirmRemoveMemberComponent } from '../../modal/confirm-remove-member/
 import { HeroesProfileService } from '../../services/heroes-profile.service';
 import { DivisionService } from '../../services/division.service';
 import { AssistantCaptainMgmtComponent } from 'src/app/modal/assistant-captain-mgmt/assistant-captain-mgmt.component';
+import { HistoryService } from 'src/app/services/history.service';
 
 
 @Component({
@@ -34,6 +35,7 @@ export class TeamProfileComponent implements OnInit {
   tempProfile
   message: string
   showDivision = false;
+  season = null;
 
   errors=[];
 
@@ -63,13 +65,15 @@ export class TeamProfileComponent implements OnInit {
 
   //constructor
   constructor(public auth: AuthService, public user: UserService, public team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router: Router,
-    private admin:AdminService, public util:UtilitiesService, private requestService:RequestService, public heroProfile: HeroesProfileService, private divisionServ: DivisionService) {
+    private admin:AdminService, public util:UtilitiesService, private requestService:RequestService, public heroProfile: HeroesProfileService, private divisionServ: DivisionService,
+    private history:HistoryService) {
 
       //so that people can manually enter different tags from currently being on a profile page; we can reinitialize the component with the new info
     this.router.events.subscribe((e: any) => {
       // If it is a NavigationEnd event re-initalise the component
       if (e instanceof NavigationEnd) {
         this.teamName = team.realTeamName(this.route.snapshot.params['id']);
+        this.season = this.route.snapshot.params['season'];
         this.ngOnInit();
       }
     });
@@ -168,21 +172,39 @@ export class TeamProfileComponent implements OnInit {
     let getProfile: string;
     // console.log('typeof this.providedProfile: ', typeof this.providedProfile);
     // console.log('his.providedProfile: ', this.providedProfile);
-    if (this.providedProfile != null && this.providedProfile != undefined) {
-      if (typeof this.providedProfile == 'string') {
-        getProfile = this.providedProfile;
-        this.getTeamByString(getProfile);
+    if(this.season){
 
+      this.history.getPastTeamsViaSeason([this.teamName], this.season).subscribe(
+        res=>{
+          merge(this.returnedProfile, res[0].object);
+          this.setUpTeamMemberFilter(this.returnedProfile);
+          this.checkDivision(this.returnedProfile.divisionConcat);
+      // console.log('team ', this.returnedProfile);
+      // this.cleanUpDivision();
+        },
+        err=>{
+          console.log(err);
+        }
+      )
+
+    }else{
+      if (this.providedProfile != null && this.providedProfile != undefined) {
+        if (typeof this.providedProfile == 'string') {
+          getProfile = this.providedProfile;
+          this.getTeamByString(getProfile);
+
+        } else {
+          merge(this.returnedProfile, this.providedProfile);
+          this.setUpTeamMemberFilter(this.returnedProfile);
+          this.checkDivision(this.returnedProfile.divisionConcat);
+          // this.cleanUpDivision();
+        }
       } else {
-        merge(this.returnedProfile, this.providedProfile);
-        this.setUpTeamMemberFilter(this.returnedProfile);
-        this.checkDivision(this.returnedProfile.divisionConcat);
-        // this.cleanUpDivision();
+        getProfile = this.teamName;
+        this.getTeamByString(getProfile);
       }
-    } else {
-      getProfile = this.teamName;
-      this.getTeamByString(getProfile);
     }
+
   }
 
   checkRosterSize()
@@ -434,6 +456,8 @@ export class TeamProfileComponent implements OnInit {
   showEditDialog(){
     if(this.embedSource == 'admin'){
       return false;
+    }else if(this.season){
+      return false;
     }else{
       let isteamcpt;
       if (this.auth.getCaptain()) {
@@ -474,6 +498,8 @@ export class TeamProfileComponent implements OnInit {
   //method determines whether a division is marked public so as to show the division info in team profile or not, prevents peeking division placement preseason
   checkDivision(div){
     if(this.embedSource == 'admin'){
+      this.showDivision = true;
+    }else if(this.season){
       this.showDivision = true;
     }else{
       if (!this.util.isNullOrEmpty(div)) {
