@@ -831,7 +831,7 @@ router.get('/statistics', (req, res) => {
                     }
                 )
             } else {
-                res.status(400).send(util.returnMessaging(path, 'User ID not found.', false, null, null, logObj));
+                res.status(400).send(util.returnMessaging(path, 'User ID not found.', false, null, null));
             }
         },
         err => {

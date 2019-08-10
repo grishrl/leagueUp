@@ -16,6 +16,7 @@ const n_util = require('util');
 const Division = require('../models/division-models');
 const matchCommon = require('../methods/matchCommon');
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
+const archiveMethods = require('../methods/archivalMethods');
 
 
 
@@ -214,45 +215,79 @@ router.post('/get/matches/all',
  * return matches that fit the criterea
  * 
  */
-router.post('/get/matches/team', (req, res) => {
+router.post('/get/matches/team', async(req, res) => {
     const path = 'schedule/get/matches/team';
     let team = req.body.team;
     let season = req.body.season;
+
+    let pastSeason = false;
+
+    let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+    pastSeason = season != currentSeasonInfo.value;
+
     team = team.toLowerCase();
-    Team.findOne({ teamName_lower: team }).then((foundTeam) => {
-        if (foundTeam) {
-            let teamId = foundTeam._id;
-            Match.find({
-                $and: [{
-                        $or: [{
-                            'away.id': teamId
-                        }, {
-                            'home.id': teamId
-                        }]
-                    },
-                    {
-                        season: season
-                    },
-                    {
-                        type: { $ne: "tournament" }
+    let foundTeam;
+    if (pastSeason) {
+        foundTeam = await archiveMethods.getTeamFromArchiveByNameSesaon(team, season);
+    } else {
+        foundTeam = await Team.findOne({
+            teamName_lower: team
+        }).then((foundTeam) => {
+            if (foundTeam) {
+                return foundTeam;
+
+            } else {
+                return null;
+            }
+        }, (err) => {
+            return null;
+        });
+    }
+
+    if (foundTeam) {
+        let teamId = foundTeam._id;
+        Match.find({
+            $and: [{
+                    $or: [{
+                        'away.id': teamId
+                    }, {
+                        'home.id': teamId
+                    }]
+                },
+                {
+                    season: season
+                },
+                {
+                    type: {
+                        $ne: "tournament"
                     }
-                ]
-            }).lean().then((foundMatches) => {
-                let teams = findTeamIds(foundMatches);
-                addTeamNamesToMatch(teams, foundMatches).then((processed) => {
-                    res.status(200).send(util.returnMessaging(path, 'Found matches', false, processed));
-                }, (err) => {
-                    res.status(500).send(util.returnMessaging(path, 'Failed to get team matches', err));
-                })
-            }, (err) => {
-                res.status(500).send(util.returnMessaging(path, 'Failed to get team matches', err));
-            });
-        } else {
-            res.status(400).send(util.returnMessaging(path, 'Failed to get team matches'));
-        }
-    }, (err) => {
+                }
+            ]
+        }).lean().then((foundMatches) => {
+            if (pastSeason) {
+                matchCommon.addTeamInfoFromArchiveToMatch(foundMatches).then(
+                    processed => {
+                        res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
+                    },
+                    err => {
+                        res.status(400).send(util.returnMessaging(path, 'Failed to get team matches', err));
+                    })
+            } else {
+                matchCommon.addTeamInfoToMatch(foundMatches).then(
+                    processed => {
+                        res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
+                    },
+                    err => {
+                        res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
+                    })
+            }
+        }, (err) => {
+            res.status(500).send(util.returnMessaging(path, 'Failed to get team matches', err));
+        });
+    } else {
         res.status(500).send(util.returnMessaging(path, 'Failed to get team matches', err));
-    })
+    }
+
 })
 
 /*
@@ -284,14 +319,6 @@ router.get('/get/matches/scheduled', (req, res) => {
                     res.status(500).send(util.returnMessaging(path, 'Failed to get team matches', err, false));
                 }
             );
-            // addTeamNamesToMatch(teamIds, found).then(
-            //     added => {
-            //         res.status(200).send(util.returnMessaging(path, 'Found scheduled matches', false, added));
-            //     },
-            //     err => {
-            //         res.status(500).send(util.returnMessaging(path, 'Failed to get team matches', err, false));
-            //     }
-            // )
 
         } else {
             res.status(400).send(util.returnMessaging(path, 'No matches found'));
@@ -908,7 +935,7 @@ router.post('/generate/tournament', passport.authenticate('jwt', {
 
 
 //this route retuns all tournament matches that a team participates in 
-router.post('/fetch/team/tournament/matches', (req, res) => {
+router.post('/fetch/team/tournament/matches', async(req, res) => {
 
     const path = '/schedule/fetch/team/tournament/matches';
 
@@ -930,7 +957,9 @@ router.post('/fetch/team/tournament/matches', (req, res) => {
         ]
     };
 
+    let season;
     if (req.body.season) {
+        season = req.body.season;
         queryObj.$and.push({ season: req.body.season });
     }
     if (req.body.division) {
@@ -939,18 +968,28 @@ router.post('/fetch/team/tournament/matches', (req, res) => {
         });
     }
 
+    let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+    let pastSeason = season != currentSeasonInfo.value;
+
     Match.find(queryObj).lean().then(
         (found) => {
-            console.log()
-            let teams = findTeamIds(found);
-            addTeamNamesToMatch(teams, found).then(
-                processed => {
-                    res.status(200).send(util.returnMessaging(path, 'Found tournament info', false, processed));
-                },
-                err => {
-                    res.status(500).send(util.returnMessaging(path, 'Error occured querying schedules', err));
-                }
-            )
+            if (pastSeason) {
+                matchCommon.addTeamInfoFromArchiveToMatch(found).then(
+                    processed => {
+                        res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
+                    },
+                    err => {
+                        res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
+                    })
+            } else {
+                matchCommon.addTeamInfoToMatch(found).then(
+                    processed => {
+                        res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
+                    },
+                    err => {
+                        res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
+                    })
+            }
 
         },
         (err) => {

@@ -239,9 +239,39 @@ async function retrieveAndRemoveArchiveUser(user) {
 }
 
 
+async function getTeamFromArchiveByNameSesaon(teamName, season) {
+    teamName = teamName.toLowerCase();
+    let query = {
+        $and: [{
+                season: season
+            },
+
+            {
+                type: 'team'
+            },
+
+            {
+                'object.teamName_lower': teamName
+            }
+        ]
+    };
+    return Archive.findOne(
+        query
+    ).lean().then(found => {
+            if (found) {
+                return found.object;
+            } else {
+                return null;
+            }
+        },
+        err => {
+            throw err;
+        });
+}
 
 module.exports = {
     archiveDivisions: archiveDivisions,
     archiveUser: archiveUser,
-    retrieveAndRemoveArchiveUser: retrieveAndRemoveArchiveUser
+    retrieveAndRemoveArchiveUser: retrieveAndRemoveArchiveUser,
+    getTeamFromArchiveByNameSesaon: getTeamFromArchiveByNameSesaon
 };
