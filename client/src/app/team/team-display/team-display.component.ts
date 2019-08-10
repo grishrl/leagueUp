@@ -17,7 +17,7 @@ export class TeamDisplayComponent implements OnInit {
   @Input() set teams(teams:Team[]){
     if(teams != null && teams != undefined){
       this._teamList = teams;
-      this.initComponent();
+      this.ngOnInit();
     }else{
       this._teams = [];
       this.rows = [];
@@ -29,23 +29,18 @@ export class TeamDisplayComponent implements OnInit {
   }
 
   _season
-  _pastSeason
 
-  @Input() set teamObj(val){
-    console.log('team obj ', val);
-    if(!this.util.isNullOrEmpty(val)){
-      this._teamList = val.teams;
-      this._season = val.season;
-      this._pastSeason = val.pastSeason;
-      this.initComponent();
+  @Input() set season(val) {
+    if (val) {
+      this._season = val;
     }
   }
 
   initComponent(){
     //blank out display array
     this._teams=[];
-
-    if (this._pastSeason){
+    console.log('bbbb ',this._teamList, this._season);
+    if (this._season){
       this.history.getPastTeamsViaSeason(this._teamList, this._season).subscribe(
         res => {
           res.forEach(element => {
@@ -79,36 +74,9 @@ export class TeamDisplayComponent implements OnInit {
 
   constructor(public team:TeamService, private util:UtilitiesService, private history:HistoryService) { }
 
-  // createMyDisplay(){
-  //   if(!this.perColumn){
-  //     this.perColumn = 3;
-  //   }
-  //   this.rows = [];
-  //   if (this._teams != undefined && this._teams.length > 0) {
-  //     if (this._teams.length > this.perColumn) {
-  //       let temparr = [];
-  //       for (var i = 0; i < this._teams.length; i++) {
-  //         if (i>0 && i % this.perColumn == 0) {
-  //           this.rows.push(temparr);
-  //           temparr = [];
-  //         }
-  //         temparr.push(this._teams[i]);
-  //         //if this is the last element add the row to the display
-  //         if(i == ((this._teams.length-1))){
-  //           if(temparr.length>0){
-  //             this.rows.push(temparr);
-  //           }
-  //         }
-  //       }
-  //     } else {
-  //       this.rows.push(this._teams);
-  //     }
-  //   } else {
-  //     this.rows = [];
-  //   }
-  // }
-
   ngOnInit() {
+
+    this.initComponent();
 
   }
 

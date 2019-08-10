@@ -13,42 +13,27 @@ export class StandingsViewComponent implements OnInit {
 
   div:any;
   standings:any[]=[];
+
   @Input() set division(div){
     if(div!=null&&div!=undefined){
       this.div = div;
-      this.getStandings(div.divisionConcat);
-
+      this.ngOnInit();
     }
   }
 
   customSeason;
   @Input() set season(season){
-    console.log('season xx', season);
     if(season){
       this.customSeason=season;
-      this.pastStandingsIntialise();
+      // this.pastStandingsIntialise();
     }
-  }
-
-  previousDivision;
-  @Input() set pastDivision(division) {
-    if(division){
-      console.log('division ', division)
-      this.div = division;
-      this.previousDivision = division.divisionConcat;
-      this.pastStandingsIntialise();
-    }
-
-
   }
 
   pastStandingsIntialise(){
-    console.log(this.customSeason , this.previousDivision)
-    if(this.customSeason && this.previousDivision){
+
       //do something
-      this.standingsService.getPastStandings(this.previousDivision, this.customSeason).subscribe(
+      this.standingsService.getPastStandings(this.div.divisionConcat, this.customSeason).subscribe(
         (res) => {
-          console.log('zzzzz ' ,res)
           if (this.div.cupDiv) {
             let tO = {};
             // let allTeams = this.div.teams.concat(this.div.participants);
@@ -62,7 +47,7 @@ export class StandingsViewComponent implements OnInit {
           console.log(err);
         }
       )
-    }
+
   }
 
   getStandings(div){
@@ -85,6 +70,12 @@ export class StandingsViewComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log('aaa ', this.div, this.customSeason);
+    if(this.customSeason){
+      this.pastStandingsIntialise();
+    }else{
+      this.getStandings(this.div.divisionConcat);
+    }
 
   }
 
