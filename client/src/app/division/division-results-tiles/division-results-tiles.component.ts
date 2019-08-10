@@ -17,25 +17,20 @@ export class DivisionResultsTilesComponent implements OnInit {
   constructor(private divisionService: DivisionService, private standingsService: StandingsService,
     private scheduleService: ScheduleService, public team: TeamService, public util: UtilitiesService,
     private timeService:TimeserviceService) {
-    this.timeService.getSesasonInfo().subscribe(
-      res => {
-        this.currentSeason = res['value'];
-      }
-    );
+
      }
      currentSeason;
   divisions: any = [];
   standings: any[] = [];
 
-  ngOnInit() {
-  }
+
 
   provDiv
 
   @Input() set division(div) {
     if (div != undefined && div != null) {
       this.provDiv = div;
-      this.calculateRounds(this.provDiv);
+
     }
   }
 
@@ -47,9 +42,32 @@ export class DivisionResultsTilesComponent implements OnInit {
     this.provDiv = div.division;
     this.currentSeason = div.season;
     this.pastSeason = div.pastSeason;
-    this.calculateRounds(this.provDiv);
+
   }
 }
+
+seasonVal
+  @Input() set season(val) {
+    if (val != undefined && val != null) {
+      this.seasonVal = val;
+    }
+  }
+
+  ngOnInit() {
+    console.log(this.seasonVal);
+
+    if (this.seasonVal) {
+      this.currentSeason = this.seasonVal;
+      this.calculateRounds(this.provDiv);
+    } else {
+      this.timeService.getSesasonInfo().subscribe(
+        res => {
+          this.currentSeason = res['value'];
+          this.calculateRounds(this.provDiv);
+        }
+      );
+    }
+  }
 
 
 
@@ -79,15 +97,22 @@ export class DivisionResultsTilesComponent implements OnInit {
       this.rounds.push(i + 1);
     }
 
-    let week = this.timeService.returnWeekNumber();
+    let week
+    if(this.seasonVal){
+      week=1;
+    }else{
+      week = this.timeService.returnWeekNumber();
+    }
     if (week > 0) {
       this.selectedRound = week;
-      this.getMatches();
     }
+    this.getMatches();
+
   }
 
   selectedRound: number
   getMatches() {
+    console.log('getmatches res tiles', this.currentSeason);
     this.matches = [];
     let div;
     if (this.provDiv != undefined && this.provDiv != null) {
@@ -103,7 +128,7 @@ export class DivisionResultsTilesComponent implements OnInit {
         this.matches = this.matches.filter( match=>{
           return match.reported;
         })
-        if(this.pastSeason){
+        if(this.seasonVal){
           this.standingsService.getPastStandings(this.provDiv.divisionConcat, this.currentSeason).subscribe(
             res => {
               this.standings = res;
