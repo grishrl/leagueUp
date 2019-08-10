@@ -13,22 +13,19 @@ export class TeamResultsTilesComponent implements OnInit {
 
   currentSeason
   constructor(private scheduleService:ScheduleService, public util:UtilitiesService, public teamServ:TeamService, private timeService:TimeserviceService) {
-    this.timeService.getSesasonInfo().subscribe(
-      res => {
-        this.currentSeason = res['value'];
-      }
-    );
    }
+
+
   fetching=false;
   displayArray = [];
-  getTeamMatches(teamName){
+
+  getTeamMatches(season,teamName){
     this.fetching = true;
     this.displayArray = [];
-    this.scheduleService.getTeamSchedules(this.currentSeason, teamName).subscribe(
+    this.scheduleService.getTeamSchedules(season, teamName).subscribe(
       res=>{
         this.fetching = false;
         if(res && res.length>0){
-
           res.forEach( match => {
             if(match.reported){
               this.displayArray.push(match);
@@ -67,13 +64,31 @@ export class TeamResultsTilesComponent implements OnInit {
     return ret;
   }
 
+  teamVal;
   @Input() set team(val){
     if(val){
-      this.getTeamMatches(val);
+      this.teamVal = val;
+    }
+  }
+
+  seasonVal
+  @Input() set season(val) {
+    if (val) {
+      this.seasonVal = val;
     }
   }
 
   ngOnInit() {
+    if(this.seasonVal){
+      this.getTeamMatches(this.seasonVal, this.teamVal);
+    }else{
+      this.timeService.getSesasonInfo().subscribe(
+        res => {
+          let currentSeason = res['value'];
+          this.getTeamMatches(currentSeason, this.teamVal);
+        }
+      );
+    }
   }
 
 }
