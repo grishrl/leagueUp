@@ -158,8 +158,6 @@ import { DatePickerComponent } from './formComponents/date-picker/date-picker.co
 import { AssistantCaptainMgmtComponent } from './modal/assistant-captain-mgmt/assistant-captain-mgmt.component';
 import { PastSeasonsComponent } from './past-seasons/past-seasons.component';
 
-import { PastDivisionComponent } from './past-seasons/division/past-division.component';
-
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
 @NgModule({
@@ -305,8 +303,7 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     SeasonInfoManagerComponent,
     DatePickerComponent,
     AssistantCaptainMgmtComponent,
-    PastSeasonsComponent,
-    PastDivisionComponent
+    PastSeasonsComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
