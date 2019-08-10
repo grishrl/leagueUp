@@ -70,22 +70,22 @@
                         <!-- Tab One - overview -->
                         <div class="tab-pane active" id="standings">
 
-                            <app-standings-view [division]="divDisplay"></app-standings-view>
+                            <app-standings-view [division]="divDisplay" [season]="passSeasonVal"></app-standings-view>
 
                         </div>
                         <!-- Tab One - overview -->
 
                         <!-- Tab Two - squad -->
                         <div class="tab-pane" id="teams">
-                            <app-team-display [teams]="teamAggregate"></app-team-display>
+                            <app-team-display [teams]="teamAggregate" [season]="passSeasonVal"></app-team-display>
                         </div>
                         <!-- End Tab Two - squad -->
 
                         <!-- Tab Theree - schedule -->
                         <div class="tab-pane" id="schedule">
                             <ng-container class="pb-5" *ngIf="index == 2">
-                                <app-schedule-view *ngIf="!divDisplay.cupDiv" [division]="divDisplay"></app-schedule-view>
-                                <app-division-cup-schedule *ngIf="divDisplay.cupDiv" [division]="divDisplay"></app-division-cup-schedule>
+                                <app-schedule-view *ngIf="!divDisplay.cupDiv" [division]="divDisplay" [season]="passSeasonVal"></app-schedule-view>
+                                <app-division-cup-schedule *ngIf="divDisplay.cupDiv" [division]="divDisplay" [season]="passSeasonVal"></app-division-cup-schedule>
                             </ng-container>
 
                         </div>
@@ -94,7 +94,7 @@
                         <!-- Tab Theree - results -->
                         <div class="tab-pane" id="results">
                             <div *ngIf="index==3">
-                                <app-division-results-tiles *ngIf="!divDisplay.cupDiv" [division]="divDisplay"></app-division-results-tiles>
+                                <app-division-results-tiles *ngIf="!divDisplay.cupDiv" [division]="divDisplay" [season]="passSeasonVal"></app-division-results-tiles>
                                 <app-division-cup-results-tiles *ngIf="divDisplay.cupDiv" [division]="divDisplay"></app-division-cup-results-tiles>
                             </div>
 
@@ -104,7 +104,15 @@
                         <!-- Tab four - tournament -->
                         <div class="tab-pane" id="tournament">
                             <div *ngIf="index == 4">
-                                <app-challonge-tourn [season]="currentSeason" [division]="divDisplay"></app-challonge-tourn>
+                                <div *ngIf="currentSeason>6 else oldBracket">
+                                    <app-challonge-tourn [season]="passSeasonVal? passSeasonVal : currentSeason" [division]="divDisplay">
+                                    </app-challonge-tourn>
+                                </div>
+                                <ng-template #oldBracket>
+                                    <app-tournament-view [season]="passSeasonVal ? passSeasonVal : currentSeason" [division]="divDisplay.divisionConcat">
+                                    </app-tournament-view>
+                                </ng-template>
+
                             </div>
 
                         </div>
@@ -115,7 +123,10 @@
 
                 <!-- Side info single team-->
                 <div class="col-lg-3 padding-top-mini">
-                    <app-division-upcoming-matches [division]="divDisplay.divisionConcat"></app-division-upcoming-matches>
+                    <div *ngIf="!_passSeason">
+                        <app-division-upcoming-matches [division]="divDisplay.divisionConcat">
+                        </app-division-upcoming-matches>
+                    </div>
                 </div>
                 <!-- end Side info single team-->
 
