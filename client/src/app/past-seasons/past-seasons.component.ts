@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HistoryService } from '../services/history.service';
 import { TimeserviceService } from '../services/timeservice.service';
-import { element } from 'protractor';
 
 @Component({
   selector: 'app-past-seasons',
