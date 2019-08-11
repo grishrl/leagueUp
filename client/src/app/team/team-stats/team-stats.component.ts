@@ -33,6 +33,7 @@ export class TeamStatsComponent implements OnInit {
   totalWins = 0;
   takedowns = 0;
   heroesPlayed = 0;
+  uniqueHeros = [];
   initTeamStats(id){
     this.teamServ.getStatistics(id).subscribe(
       res=>{
@@ -42,8 +43,13 @@ export class TeamStatsComponent implements OnInit {
             this.totalWins += stats.stats.wins;
             this.takedowns += stats.stats.takedowns.total;
             let heroPlayedKeys = Object.keys(stats.stats.heroes);
-            this.heroesPlayed += heroPlayedKeys.length;
+            heroPlayedKeys.forEach(element=>{
+              if(this.uniqueHeros.indexOf(element)==-1){
+                this.uniqueHeros.push(element);
+              }
+            })
           });
+          this.heroesPlayed = this.uniqueHeros.length;
           this.statistics = res[0];
           this.roundTree(this.statistics);
         }

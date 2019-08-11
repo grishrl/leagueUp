@@ -21,7 +21,6 @@ export class ScheduleViewComponent implements OnInit {
   seasonVal;
 
   ngOnInit() {
-    console.log('sesaonVal ', this.seasonVal);
     if (this.seasonVal) {
 
       this.selectedRound = 1;

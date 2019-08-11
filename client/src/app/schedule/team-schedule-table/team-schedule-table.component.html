@@ -29,14 +29,14 @@
                     <td>
                         <img src="{{teamServ.imageFQDN(match.home.logo)}}" alt="icon">
                         <strong>
-                        <app-team-link [team]="match.home.teamName">{{match.home.teamName}}</app-team-link></strong><br>
+                        <app-team-link [team]="match.home.teamName" [season]="seasonVal">{{match.home.teamName}}</app-team-link></strong><br>
                         <!-- <small class="meta-text">GROUP H.</small> -->
                     </td>
                     <td class="text-center">Vs</td>
                     <td>
                         <img src="{{teamServ.imageFQDN(match.away.logo)}}" alt="icon1">
                         <strong>
-                          <app-team-link [team]="match.away.teamName">{{match.away.teamName}}</app-team-link>
+                          <app-team-link [team]="match.away.teamName" [season]="seasonVal">{{match.away.teamName}}</app-team-link>
                         </strong><br>
                         <!-- <small class="meta-text">GROUP H.</small> -->
                     </td>

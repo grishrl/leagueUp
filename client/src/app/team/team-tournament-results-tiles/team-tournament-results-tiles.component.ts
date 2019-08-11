@@ -3,7 +3,7 @@ import { ScheduleService } from 'src/app/services/schedule.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TeamService } from 'src/app/services/team.service';
 import { TimeserviceService } from 'src/app/services/timeservice.service';
-import { isThursday } from 'date-fns';
+
 
 @Component({
   selector: 'app-team-tournament-results-tiles',

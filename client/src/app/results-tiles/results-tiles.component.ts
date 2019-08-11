@@ -22,6 +22,13 @@ export class ResultsTilesComponent implements OnInit {
 
   provMatches = [];
 
+  seasonVal;
+  @Input() set season(val){
+    if(val){
+      this.seasonVal = val;
+    }
+  }
+
   @Input() set matches(val) {
     this.provMatches = [];
     if (val != undefined && val != null) {

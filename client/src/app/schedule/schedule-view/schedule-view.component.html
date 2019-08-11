@@ -29,7 +29,7 @@
             <tbody>
                 <tr *ngFor="let match of matches">
                     <td>
-                        <app-team-link [team]="match.home.teamName">
+                        <app-team-link [team]="match.home.teamName" [season]="seasonVal">
                             <img src="{{team.imageFQDN(match.home.logo)}}" alt="icon">
                             <strong>
                           {{match.home.teamName}}
@@ -41,7 +41,7 @@
                     </td>
                     <td class="text-center">Vs</td>
                     <td>
-                        <app-team-link [team]="match.away.teamName">
+                        <app-team-link [team]="match.away.teamName" [season]="seasonVal">
                             <img src="{{team.imageFQDN(match.away.logo)}}" alt="icon1">
                             <strong>
                          {{match.away.teamName}}

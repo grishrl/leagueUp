@@ -21,10 +21,10 @@ export class StandingsViewComponent implements OnInit {
     }
   }
 
-  customSeason;
+  seasonVal;
   @Input() set season(season){
     if(season){
-      this.customSeason=season;
+      this.seasonVal=season;
       // this.pastStandingsIntialise();
     }
   }
@@ -32,7 +32,7 @@ export class StandingsViewComponent implements OnInit {
   pastStandingsIntialise(){
 
       //do something
-      this.standingsService.getPastStandings(this.div.divisionConcat, this.customSeason).subscribe(
+      this.standingsService.getPastStandings(this.div.divisionConcat, this.seasonVal).subscribe(
         (res) => {
           if (this.div.cupDiv) {
             let tO = {};
@@ -70,8 +70,7 @@ export class StandingsViewComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('aaa ', this.div, this.customSeason);
-    if(this.customSeason){
+    if(this.seasonVal){
       this.pastStandingsIntialise();
     }else{
       this.getStandings(this.div.divisionConcat);
