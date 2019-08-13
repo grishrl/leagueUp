@@ -607,8 +607,4 @@ export class TeamProfileComponent implements OnInit {
   //   )
   // }
 
-  imageFQDN(img){
-    return this.team.imageFQDN(img);
-  }
-
 }
