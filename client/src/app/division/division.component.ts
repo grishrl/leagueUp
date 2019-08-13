@@ -69,12 +69,12 @@ export class DivisionComponent implements OnInit {
 
   //this initialise shall be ran if the division component is loaded via a route; or in best estimation ... via current season loading a division...
   initialise(){
+    this.teamAggregate=[];
     this.divDisplay = new Division();
     this.timeService.getSesasonInfo().subscribe(res => {
       this.currentSeason = res['value'];
     });
     this.divSub = this.division.getDivision(this.param).subscribe((res) => {
-
       if(res!=undefined&&res!=null){
         this.divDisplay = res;
         if(this.divDisplay.cupDiv){
@@ -91,6 +91,7 @@ export class DivisionComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.teamAggregate = [];
     if (this._passDivision){
       this.divDisplay = this._passDivision;
       if (this._passDivision.cupDiv) {

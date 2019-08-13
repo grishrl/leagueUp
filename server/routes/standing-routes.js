@@ -11,7 +11,6 @@ router.post('/get/division', (req, res) => {
     let division = req.body.division;
     let season = req.body.season;
     let pastSeason = req.body.pastSeason;
-    console.log(division, season, pastSeason)
     Standings.calulateStandings(division, season, pastSeason).then(
         (processed) => {
             res.status(200).send(util.returnMessaging(path, 'Calculated Standings', false, processed));

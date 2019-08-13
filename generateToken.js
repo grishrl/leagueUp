@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const System = require('./server/models/system-models');
 const mongoose = require('mongoose')
 const teamSubs = require('./server/subroutines/team-subs');
+const Archive = require('./server/models/system-models').archive;
 
 let tokenObject = {};
 // set this ID to the _id that the API key will be tied to
@@ -30,6 +31,7 @@ mongoose.connect(process.env.mongoURI, () => {
     console.log('connected to mongodb');
 });
 
+
 // new System.system({
 //     'dataName': 'apiKey',
 //     'value': token
@@ -43,3 +45,30 @@ mongoose.connect(process.env.mongoURI, () => {
 //         process.exit(0);
 //     }
 // );
+
+let query = {
+
+
+    type: 'team'
+
+};
+
+Archive.find(query).then(found => {
+    let ind = 0;
+
+    for (let x = 0; x < found.length; x++) {
+        console.log('updating ', x + 1, ' of ', found.length);
+        let obj = found[x];
+
+        obj['object']['teamId'] = obj['object']['_id'].toString();
+
+        obj.markModified('object');
+
+        obj.save().then(
+            saved => {
+                console.log('saved ', x + 1, ' of ', found.length);
+            }
+        )
+
+    }
+})

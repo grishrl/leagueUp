@@ -70,7 +70,7 @@ router.post('/get/matches', async(req, res) => {
     Match.find(query).lean().then((found) => {
         if (found) {
             if (pastSeason) {
-                matchCommon.addTeamInfoFromArchiveToMatch(found).then(
+                matchCommon.addTeamInfoFromArchiveToMatch(found, season).then(
                     processed => {
                         res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
                     },
@@ -122,7 +122,7 @@ router.post('/get/reported/matches', async(req, res) => {
         found => {
             if (found) {
                 if (pastSeason) {
-                    matchCommon.addTeamInfoFromArchiveToMatch(found).then(
+                    matchCommon.addTeamInfoFromArchiveToMatch(found, season).then(
                         processed => {
                             res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
                         },
@@ -265,7 +265,7 @@ router.post('/get/matches/team', async(req, res) => {
             ]
         }).lean().then((foundMatches) => {
             if (pastSeason) {
-                matchCommon.addTeamInfoFromArchiveToMatch(foundMatches).then(
+                matchCommon.addTeamInfoFromArchiveToMatch(foundMatches, season).then(
                     processed => {
                         res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
                     },
@@ -433,7 +433,7 @@ router.post('/get/match/list', async(req, res) => {
     Match.find({ matchId: { $in: matches } }).then(
         found => {
             if (pastSeason) {
-                matchCommon.addTeamInfoFromArchiveToMatch(found).then(
+                matchCommon.addTeamInfoFromArchiveToMatch(found, season).then(
                     processed => {
                         res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
                     },
@@ -974,7 +974,7 @@ router.post('/fetch/team/tournament/matches', async(req, res) => {
     Match.find(queryObj).lean().then(
         (found) => {
             if (pastSeason) {
-                matchCommon.addTeamInfoFromArchiveToMatch(found).then(
+                matchCommon.addTeamInfoFromArchiveToMatch(found, season).then(
                     processed => {
                         res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
                     },

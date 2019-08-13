@@ -264,19 +264,21 @@ async function addTeamInfoFromArchiveToMatch(found, season) {
     let teams = findTeamIds(found);
     let query = {
         $and: [{
-                season: season
+                "season": season
             },
-
-            { type: 'team' },
-
-            { 'object._id': { $in: teams } }
+            {
+                type: 'team'
+            },
+            {
+                'object.teamId': { $in: teams }
+            }
         ]
     }
 
     return Archive.find(query).then((foundTeams) => {
         if (foundTeams) {
             foundTeams.forEach(team => {
-                let teamid = team._id.toString();
+                let teamid = team.object.teamId;
                 found.forEach(match => {
                     let homeid, awayid;
                     if (util.returnBoolByPath(match, 'home.id')) {
@@ -286,16 +288,16 @@ async function addTeamInfoFromArchiveToMatch(found, season) {
                         awayid = match.away.id.toString();
                     }
                     if (teamid == homeid) {
-                        match.home['teamName'] = team.teamName;
-                        match.home['logo'] = team.logo;
-                        match.home['teamName_lower'] = team.teamName_lower;
-                        match.home['ticker'] = team.ticker;
+                        match.home['teamName'] = team.object.teamName;
+                        match.home['logo'] = team.object.logo;
+                        match.home['teamName_lower'] = team.object.teamName_lower;
+                        match.home['ticker'] = team.object.ticker;
                     }
                     if (teamid == awayid) {
-                        match.away['teamName'] = team.teamName;
-                        match.away['logo'] = team.logo;
-                        match.away['teamName_lower'] = team.teamName_lower;
-                        match.away['ticker'] = team.ticker;
+                        match.away['teamName'] = team.object.teamName;
+                        match.away['logo'] = team.object.logo;
+                        match.away['teamName_lower'] = team.object.teamName_lower;
+                        match.away['ticker'] = team.object.ticker;
                     }
                 });
             });

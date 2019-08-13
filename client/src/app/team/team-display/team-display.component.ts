@@ -17,7 +17,6 @@ export class TeamDisplayComponent implements OnInit {
   @Input() set teams(teams:Team[]){
     if(teams != null && teams != undefined){
       this._teamList = teams;
-      this.ngOnInit();
     }else{
       this._teams = [];
       this.rows = [];
@@ -43,6 +42,7 @@ export class TeamDisplayComponent implements OnInit {
     if (this._season){
       this.history.getPastTeamsViaSeason(this._teamList, this._season).subscribe(
         res => {
+          console.log('zzzzz',res);
           res.forEach(element => {
             this._teams.push(element.object);
           });
@@ -59,14 +59,6 @@ export class TeamDisplayComponent implements OnInit {
       }, (error) => {
         console.log(error);
       });
-    }
-  }
-
-  teamImage(img){
-    if(img == null || img == undefined){
-      return this.team.imageFQDN('defaultTeamLogo.png');
-    }else{
-      return this.team.imageFQDN(img);
     }
   }
 

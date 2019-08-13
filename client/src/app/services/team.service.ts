@@ -4,6 +4,7 @@ import { environment } from '../../environments/environment';
 import { HttpServiceService } from './http-service.service';
 import { Team } from '../classes/team.class';
 import { SpecialCharactersService } from './special-characters.service';
+import { TimeserviceService } from 'src/app/services/timeservice.service';
 
 @Injectable({
   providedIn: 'root'
@@ -183,14 +184,32 @@ export class TeamService {
 
 
   //retuns a formatted string that includes the requisite info to retrieve an image from s3 bucket
-  imageFQDN(img) {
-    let imgFQDN = 'https://s3.amazonaws.com/' + environment.s3bucketImages + '/'
-    if(img){
-      imgFQDN += img;
+  imageFQDN(img, season?) {
+    if(season){
+      let imgFQDN = 'https://s3.amazonaws.com/' + environment.s3bucketArchiveImage + '/';
+      console.log('IMG string ', img);
+            if (img) {
+              imgFQDN += img;
+            }
+            else {
+              imgFQDN = 'https://s3.amazonaws.com/' + environment.s3bucketImages + '/';
+              imgFQDN += 'defaultTeamLogo.png';
+            }
+            return encodeURI(imgFQDN);
+
     }else{
+      return this.returnCurrentFQDN(img);
+    }
+  }
+
+  private returnCurrentFQDN(img: any) {
+    let imgFQDN = 'https://s3.amazonaws.com/' + environment.s3bucketImages + '/';
+    if (img) {
+      imgFQDN += img;
+    }
+    else {
       imgFQDN += 'defaultTeamLogo.png';
     }
-
     return encodeURI(imgFQDN);
   }
 
@@ -234,5 +253,5 @@ export class TeamService {
     return this.httpService.httpGet(url, params);
   }
 
-  constructor(private httpService: HttpServiceService, private charServ: SpecialCharactersService) { }
+  constructor(private httpService: HttpServiceService, private charServ: SpecialCharactersService, private timeService:TimeserviceService) { }
 }
