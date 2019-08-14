@@ -50,7 +50,6 @@ export class DivisionComponent implements OnInit {
 
    _passDivision;
   @Input() set passDivision(info) {
-    console.log('xxx ', info);
     if (info != null && info != undefined) {
       this._passDivision = info;
     }
@@ -59,7 +58,6 @@ export class DivisionComponent implements OnInit {
   _passSeason;
   passSeasonVal;
   @Input() set passSeason(info) {
-    console.log('past-division season', info);
     if (info != null && info != undefined) {
       this._passSeason = true;
       this.passSeasonVal = info;

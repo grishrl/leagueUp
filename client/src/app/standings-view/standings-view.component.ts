@@ -30,7 +30,6 @@ export class StandingsViewComponent implements OnInit {
   }
 
   pastStandingsIntialise(){
-
       //do something
       this.standingsService.getPastStandings(this.div.divisionConcat, this.seasonVal).subscribe(
         (res) => {
@@ -39,7 +38,6 @@ export class StandingsViewComponent implements OnInit {
             // let allTeams = this.div.teams.concat(this.div.participants);
             // allTeams
           } else {
-            console.log(res);
             this.standings = res;
           }
         },
@@ -59,7 +57,6 @@ export class StandingsViewComponent implements OnInit {
           // let allTeams = this.div.teams.concat(this.div.participants);
           // allTeams
         }else{
-          console.log(res);
           this.standings = res;
         }
       },

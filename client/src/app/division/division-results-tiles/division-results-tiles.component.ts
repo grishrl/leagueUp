@@ -54,8 +54,6 @@ seasonVal
   }
 
   ngOnInit() {
-    console.log(this.seasonVal);
-
     if (this.seasonVal) {
       this.currentSeason = this.seasonVal;
       this.calculateRounds(this.provDiv);
@@ -112,7 +110,6 @@ seasonVal
 
   selectedRound: number
   getMatches() {
-    console.log('getmatches res tiles', this.currentSeason);
     this.matches = [];
     let div;
     if (this.provDiv != undefined && this.provDiv != null) {

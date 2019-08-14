@@ -187,7 +187,6 @@ export class TeamService {
   imageFQDN(img, season?) {
     if(season){
       let imgFQDN = 'https://s3.amazonaws.com/' + environment.s3bucketArchiveImage + '/';
-      console.log('IMG string ', img);
             if (img) {
               imgFQDN += img;
             }

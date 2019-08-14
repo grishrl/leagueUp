@@ -46,8 +46,6 @@ export class PastSeasonsComponent implements OnInit {
         res.forEach(element=>{
           this.divisionList.push(element.object);
         });
-        console.log(this.divisionList);
-
       },
       err=>{
         console.log(err);

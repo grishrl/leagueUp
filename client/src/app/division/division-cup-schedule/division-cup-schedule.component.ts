@@ -99,7 +99,7 @@ export class DivisionCupScheduleComponent implements OnInit {
 
   getTournMatches(season){
     this.scheduleService.getTournamentGames(null, season, this.divsionVal.divisionConcat).subscribe(res => {
-      console.log(res);
+      // console.log(res);
       if (res.tournInfo.length > 0) {
         this.selectedCup = 0;
         this.totalCups = res.tournInfo.length;
