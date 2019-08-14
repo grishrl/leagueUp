@@ -19,6 +19,7 @@ export class ScheduleViewComponent implements OnInit {
   divisions:any=[];
   standings:any[]=[];
   seasonVal;
+  currentSeason
 
   ngOnInit() {
     if (this.seasonVal) {
@@ -29,7 +30,7 @@ export class ScheduleViewComponent implements OnInit {
     }else{
 
       this.timeService.getSesasonInfo().subscribe(res => {
-        this.seasonVal = res['value'];
+        this.currentSeason = res['value'];
 
       let week = this.timeService.returnWeekNumber();
 
@@ -106,8 +107,8 @@ export class ScheduleViewComponent implements OnInit {
     }else{
       div = this.selectedDivision.divisionConcat;
     }
-
-      this.scheduleService.getScheduleMatches(this.seasonVal, div, this.selectedRound).subscribe(
+      let season = this.seasonVal ? this.seasonVal : this.currentSeason;
+      this.scheduleService.getScheduleMatches(season, div, this.selectedRound).subscribe(
         res => {
 
           this.matches = res;
