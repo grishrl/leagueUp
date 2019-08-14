@@ -28,6 +28,9 @@
                                 <li>
                                     <a [routerLink]="['/faq']">FAQ</a>
                                 </li>
+                                <li>
+                                    <a [routerLink]="['/volunteers']">Volunteers</a>
+                                </li>
                                 <li class="current">
                                     <a class="finger linkColorFix">Statistics</a>
                                     <ul class="sub-current" appHideMenu>
@@ -52,16 +55,18 @@
                                 </li>
                                 <!-- todo : fill in links for past seasons -->
                                 <li class="current">
-                                    <a class="linkColorFix finger">Past Seasons
+                                    <a [routerLink]="['/pastSeasons']">Past Seasons</a>
+
+                                    <!--<a class="linkColorFix finger">Past Seasons
                                     </a>
                                     <ul class="sub-current" appHideMenu>
                                         <li>
                                             <a [routerLink]="['/pastSeasons']">Past Seasons</a>
                                         </li>
-                                        <!-- <li>
+                                         <li>
                                             <a>Hall of Fame</a>
-                                        </li> -->
-                                    </ul>
+                                        </li>
+                                    </ul> -->
                                 </li>
                                 <li>
                                     <a [routerLink]="['/blog']">Blog</a>
@@ -164,6 +169,7 @@
 
         <li><a [routerLink]="['/rules']">Rules</a></li>
         <li><a [routerLink]="['/faq']">FAQ</a></li>
+        <li><a [routerLink]="['/volunteers']">Volunteers</a></li>
         <li>
             <a>Divisions</a>
             <ul>
@@ -172,6 +178,10 @@
                         <span class="mm-listitem__text">{{division.displayName}}</span> </app-division-link>
                 </li>
             </ul>
+        </li>
+
+        <li>
+            <a [routerLink]="['/pastSeasons']">Past Seasons</a>
         </li>
 
         <!-- todo: links for teams -->
