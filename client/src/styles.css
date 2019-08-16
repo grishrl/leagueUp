@@ -18899,7 +18899,8 @@ iframe.big-video {
 /* line 1204, ../sass/main.scss */
 
 .breadcrumbs ul li:after {
-    font-family: fontawesome;
+    font-weight: 900;
+    font-family: Font Awesome\ 5 Free;
     content: "\f101";
     padding: 0 5px 0 7px;
 }
@@ -19328,7 +19329,7 @@ iframe.big-video {
 /* line 1470, ../sass/main.scss */
 
 .nav-tabs li {
-    margin-right: 10px;
+    margin-right: 9px;
     border: 0;
     color: #fff;
 }
