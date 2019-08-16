@@ -50,6 +50,7 @@ import { MatchResultsViewComponent } from './match/match-results-view/match-resu
 import { ChallongeTournComponent } from "./challonge-tourn/challonge-tourn.component";
 import { SeasonInfoManagerComponent } from "./admin/match-management/season-info-manager/season-info-manager.component";
 import { PastSeasonsComponent } from "./past-seasons/past-seasons.component";
+import { AuthorPageComponent } from "./blog/author-page/author-page.component";
 
 const APP_ROUTES: Routes = [
   { path: 'challonge', component: ChallongeTournComponent },
@@ -72,6 +73,7 @@ const APP_ROUTES: Routes = [
   { path: 'email/invite/:id', component:OutreachEmailResponseComponent },
   { path: 'blog', component:BlogListComponent },
   { path: 'blog/:id', component:BlogViewComponent },
+  { path: 'blog/author/:id', component: AuthorPageComponent },
   { path: 'match/view/:id', component:MatchResultsViewComponent },
   { path: '_admin/seasonInfo', component: SeasonInfoManagerComponent},
   { path: '_admin/approveTeamQueue', component:ApproveMemberComponent, canActivate:[AuthGuardService], data:{role:'team'} },

@@ -12,6 +12,25 @@ export class BlogCommonService {
     this.router.navigate(['/blog', blog.sys.id]);
   }
 
+  authorObj(){
+    return{
+      fields:{
+        'shortBio':'',
+        'name':'',
+        image:{
+          fields:{
+            file:{
+              'url':''
+            }
+          }
+        }
+      },
+      sys:{
+        id:''
+      }
+    }
+  }
+
   blogObj() {
     return {
   'fields':

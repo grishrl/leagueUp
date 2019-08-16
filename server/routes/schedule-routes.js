@@ -295,7 +295,10 @@ router.post('/get/matches/team', async(req, res) => {
 */
 router.get('/get/matches/scheduled', (req, res) => {
     const path = 'schedule/get/matches/scheduled';
-    Match.find({
+
+    let season = req.query.season;
+
+    let query = {
         $and: [{
                 'scheduledTime.startTime': {
                     $exists: true
@@ -308,7 +311,13 @@ router.get('/get/matches/scheduled', (req, res) => {
             }
         ]
 
-    }).lean().then((found) => {
+    }
+
+    if (season) {
+        query.$and.push({ season: season });
+    }
+
+    Match.find().lean().then((found) => {
         if (found) {
             let teamIds = findTeamIds(found);
             addTeamAndDivsionNames(found).then(
