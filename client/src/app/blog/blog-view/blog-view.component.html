@@ -10,7 +10,9 @@
                 <!-- Widget img-->
                 <div class="panel-box">
                     <div class="titles no-margin">
-                        <h4>{{displayBlog.fields.author.fields.name}}</h4>
+                        <h4>
+                            <a [routerLink]="['/blog/author/',displayBlog.fields.author.fields.name]">{{displayBlog.fields.author.fields.name}}</a>
+                        </h4>
                     </div>
                     <img src="{{displayBlog.fields.author.fields.image.fields.file.url}}" alt="">
                     <div class="row">

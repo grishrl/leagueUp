@@ -45,7 +45,7 @@ export class AuthorPageComponent implements OnInit {
           merge(this.authorInf, res[0]);
 
           //get authors posts now
-          this.contentfulService.getBlogs({ 'links_to_entry': this.authorInf.sys.id }).then(
+          this.contentfulService.getBlogs({ 'links_to_entry': this.authorInf.sys.id, order: '-sys.createdAt' }).then(
             res => {
               this.posts = res;
             }
