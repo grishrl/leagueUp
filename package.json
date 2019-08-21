@@ -1,6 +1,6 @@
 {
     "name": "ngsMeanCore",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "description": "Large package encompassing several capabilities for e-sports leagues",
     "main": "server.js",
     "scripts": {
