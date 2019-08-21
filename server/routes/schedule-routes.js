@@ -321,7 +321,7 @@ router.get('/get/matches/scheduled', (req, res) => {
         query.$and.push({ season: season });
     }
 
-    Match.find().lean().then((found) => {
+    Match.find(query).lean().then((found) => {
         if (found) {
             let teamIds = findTeamIds(found);
             addTeamAndDivsionNames(found).then(
