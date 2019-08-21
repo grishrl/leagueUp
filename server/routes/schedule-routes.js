@@ -285,7 +285,7 @@ router.post('/get/matches/team', async(req, res) => {
             res.status(500).send(util.returnMessaging(path, 'Failed to get team matches', err));
         });
     } else {
-        res.status(500).send(util.returnMessaging(path, 'Failed to get team matches', err));
+        res.status(500).send(util.returnMessaging(path, 'Failed to get team matches'));
     }
 
 })
