@@ -24,7 +24,18 @@ export class ScheduleService {
   //schedule/get/matches/scheduled
   getAllMatchesWithStartTime(){
     let url = 'schedule/get/matches/scheduled';
-    return this.httpService.httpGet(url, []);
+    return this.timeService.getSesasonInfo().pipe(
+      switchMap(
+        res => {
+          let payload = {
+            season: res['value']
+          };
+          return this.httpService.httpGet(url, [payload]);
+        }
+      )
+
+    );
+
   }
 
   getMatchList(matches, season?){
