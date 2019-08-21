@@ -31,7 +31,7 @@ export class ProfileEditComponent implements OnInit {
   navigationSubscription
 
   constructor(public user: UserService, public auth: AuthService, private router: Router, private route: ActivatedRoute,
-    public hotsLogsService: HotsLogsService, public dialog: MatDialog, private util:UtilitiesService, public hotsProfile: HeroesProfileService, public team:TeamService, private admin:AdminService) {
+    public hotsLogsService: HotsLogsService, public dialog: MatDialog, public util:UtilitiesService, public hotsProfile: HeroesProfileService, public team:TeamService, private admin:AdminService) {
 
       //so that people can manually enter different tags from currently being on a profile page; we can reinitialize the component with the new info
     this.navigationSubscription = this.router.events.subscribe((e: any) => {

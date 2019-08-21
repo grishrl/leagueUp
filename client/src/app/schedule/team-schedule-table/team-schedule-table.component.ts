@@ -28,6 +28,7 @@ export class TeamScheduleTableComponent implements OnInit {
   rounds;
   roundsArray;
   matches;
+
   initTeamSchedule(teamName){
     this.timeService.getSesasonInfo().subscribe(
         res => {
@@ -87,11 +88,54 @@ export class TeamScheduleTableComponent implements OnInit {
   @Input() set team(val){
     if(val){
       this.teamObj = val;
-      if(val.teamName){
-        this.initTeamSchedule(val.teamName)
-      }
+      // if(val.teamName){
+      //   this.initTeamSchedule(val.teamName)
+      // }
     }
   }
+
+  seasonVal;
+  @Input() set season(val) {
+    if (val) {
+      this.seasonVal = val;
+      // if (val) {
+      //   this.initWithSeason();
+      // }
+    }
+  }
+
+  initWithSeason(){
+    this.scheduleService.getTeamSchedules(this.seasonVal, this.teamObj.teamName).subscribe(
+      res => {
+        let matches = res;
+        if (matches.length == 0) {
+          this.noMatches = true;
+        } else {
+          this.noMatches = false;
+          matches.forEach(match => {
+            if (match.scheduleDeadline) {
+              match['friendlyDeadline'] = this.util.getDateFromMS(match.scheduleDeadline);
+            }
+            if (match.scheduledTime) {
+              match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
+              match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
+              match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
+            }
+          });
+          matches = matches.sort((a, b) => {
+            if (a.round > b.round) {
+              return 1;
+            } else {
+              return -1;
+            }
+          });
+          this.matches = matches;
+        }
+      },
+      err => { console.log(err) }
+    )
+  }
+
 
   userCanSchedule() {
     if (this.teamObj.teamName == this.Auth.getTeam() && this.Auth.getCaptain() != 'false') {
@@ -103,6 +147,12 @@ export class TeamScheduleTableComponent implements OnInit {
 
   todayDate;
   ngOnInit() {
+    console.log(this.seasonVal, this.teamObj);
+    if (this.seasonVal){
+      this.initWithSeason();
+    }else{
+      this.initTeamSchedule(this.teamObj.teamName);
+    }
     this.todayDate = new Date().getTime();
   }
 

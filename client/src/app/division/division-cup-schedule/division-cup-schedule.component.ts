@@ -4,6 +4,7 @@ import { environment } from '../../../environments/environment';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TeamService } from 'src/app/services/team.service';
+import { TimeserviceService } from 'src/app/services/timeservice.service';
 
 @Component({
   selector: 'app-division-cup-schedule',
@@ -12,26 +13,24 @@ import { TeamService } from 'src/app/services/team.service';
 })
 export class DivisionCupScheduleComponent implements OnInit {
 
-  constructor(private scheduleService:ScheduleService, public util:UtilitiesService, public team:TeamService) { }
+  constructor(private scheduleService:ScheduleService, public util:UtilitiesService, public team:TeamService, private timeService:TimeserviceService) { }
 
   totalCups = 0;
   selectedCup;
   localStoreTournaments;
   matches;
 
+  divsionVal;
   @Input() set division(val){
     if(val){
-      this.scheduleService.getTournamentGames(null, 7, val.divisionConcat).subscribe(res => {
-        console.log(res);
-        if (res.tournInfo.length > 0) {
-          this.selectedCup = 0;
-          this.totalCups = res.tournInfo.length;
-          this.localStoreTournaments = res.tournInfo;
-          this.getMatches();
-        }
-      }, err => {
-        console.log(err);
-      });
+      this.divsionVal = val;
+    }
+  };
+
+  seasonVal;
+  @Input() set season(val) {
+    if (val) {
+      this.seasonVal = val;
     }
   };
 
@@ -98,7 +97,32 @@ export class DivisionCupScheduleComponent implements OnInit {
 
   }
 
+  getTournMatches(season){
+    this.scheduleService.getTournamentGames(null, season, this.divsionVal.divisionConcat).subscribe(res => {
+      // console.log(res);
+      if (res.tournInfo.length > 0) {
+        this.selectedCup = 0;
+        this.totalCups = res.tournInfo.length;
+        this.localStoreTournaments = res.tournInfo;
+        this.getMatches();
+      }
+    }, err => {
+      console.log(err);
+    });
+  }
+
+
   ngOnInit() {
+
+    if(this.seasonVal){
+      this.getTournMatches(this.seasonVal);
+    }else{
+      this.timeService.getSesasonInfo().subscribe(res => {
+        this.seasonVal = res['value'];
+        this.getTournMatches(this.seasonVal);
+      });
+
+    }
 
   }
 

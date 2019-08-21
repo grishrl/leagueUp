@@ -18,6 +18,7 @@ export const environment = {
   s3bucketImages: 'dev-ngs-image-storage',
   s3bucketReplays: 'dev-ngs-replay-storage',
   s3bucketGeneralImage:'dev-ngs-general-image',
+  s3bucketArchiveImage: 'dev-ngs-archive-image',
   socketURL:'localhost:5000',
   heroesProfilePlayer:"https://www.heroesprofile.com/NGS/Profile/?",
   heroesProfile: "https://www.heroesprofile.com/Profile/?",

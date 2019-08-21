@@ -46,10 +46,12 @@ async function archiveDivisions() {
                 for (var j = 0; j < dbTeams.eo.length; j++) {
                     let team = dbTeams.eo[j];
                     console.log('archiving ' + team.teamName);
+                    let teamObject = team.toLowerCase();
+                    teamObject.teamId = team._id.toString();
                     new Archive({
                         type: 'team',
                         season: process.env.season,
-                        object: team.toObject(),
+                        object: teamObject,
                         timeStamp: Date.now()
                     }).save();
                     if (team.logo) {
@@ -239,9 +241,39 @@ async function retrieveAndRemoveArchiveUser(user) {
 }
 
 
+async function getTeamFromArchiveByNameSesaon(teamName, season) {
+    teamName = teamName.toLowerCase();
+    let query = {
+        $and: [{
+                season: season
+            },
+
+            {
+                type: 'team'
+            },
+
+            {
+                'object.teamName_lower': teamName
+            }
+        ]
+    };
+    return Archive.findOne(
+        query
+    ).lean().then(found => {
+            if (found) {
+                return found.object;
+            } else {
+                return null;
+            }
+        },
+        err => {
+            throw err;
+        });
+}
 
 module.exports = {
     archiveDivisions: archiveDivisions,
     archiveUser: archiveUser,
-    retrieveAndRemoveArchiveUser: retrieveAndRemoveArchiveUser
+    retrieveAndRemoveArchiveUser: retrieveAndRemoveArchiveUser,
+    getTeamFromArchiveByNameSesaon: getTeamFromArchiveByNameSesaon
 };

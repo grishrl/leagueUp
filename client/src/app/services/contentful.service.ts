@@ -14,8 +14,18 @@ export class ContentfulService {
   });
   localCategories: any[] = [];
 
-  constructor() { 
-    
+  constructor() {
+
+  }
+
+  async getAuthors(query): Promise<Entry<any>[]> {
+    try {
+      const res = await this.client.getEntries((Object.assign({ content_type: 'person' }, query)));
+      return res.items;
+    }
+    catch (err) {
+      console.log(err);
+    }
   }
 
   async getCategories():Promise<Entry<any>[] >{
@@ -55,7 +65,7 @@ export class ContentfulService {
   }
   getCache(){
     if (this.tempBlog == undefined || this.tempBlog == null){
-     return null; 
+     return null;
     }
     var prop = Object.keys(this.tempBlog);
     if(prop.length == 0){
@@ -63,7 +73,7 @@ export class ContentfulService {
     }else{
       return this.tempBlog;
     }
-    
+
   }
 
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { DivisionService } from '../services/division.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -34,7 +34,6 @@ export class DivisionComponent implements OnInit {
 
 
     this.navigationSubscription = this.router.events.subscribe((e: any) => {
-
       // If it is a NavigationEnd event re-initalise the component
       if (e instanceof NavigationEnd) {
         this.param = this.route.snapshot.params['division'];
@@ -42,23 +41,38 @@ export class DivisionComponent implements OnInit {
       }
     });
 
-    this.timeService.getSesasonInfo().subscribe(res => {
-      this.currentSeason = res['value'];
-    });
-    this.timeService.getSesasonInfo();
-
    }
-   currentSeason;
 
-  season = this.currentSeason;
+   currentSeason;
 
    index=0;
 
-  initialise(){
-    this.divDisplay;
-    this.teams = [];
-    this.divSub = this.division.getDivision(this.param).subscribe((res) => {
 
+   _passDivision;
+  @Input() set passDivision(info) {
+    if (info != null && info != undefined) {
+      this._passDivision = info;
+    }
+  }
+
+  _passSeason;
+  passSeasonVal;
+  @Input() set passSeason(info) {
+    if (info != null && info != undefined) {
+      this._passSeason = true;
+      this.passSeasonVal = info;
+    }
+  }
+
+
+  //this initialise shall be ran if the division component is loaded via a route; or in best estimation ... via current season loading a division...
+  initialise(){
+    this.teamAggregate=[];
+    this.divDisplay = new Division();
+    this.timeService.getSesasonInfo().subscribe(res => {
+      this.currentSeason = res['value'];
+    });
+    this.divSub = this.division.getDivision(this.param).subscribe((res) => {
       if(res!=undefined&&res!=null){
         this.divDisplay = res;
         if(this.divDisplay.cupDiv){
@@ -69,14 +83,22 @@ export class DivisionComponent implements OnInit {
 
       }
     }, (err)=>{
-      var arr : Team[] = [];
-      this.teams = arr;
+
         });
 
-      }
+  }
 
   ngOnInit() {
-    this.initialise();
+    this.teamAggregate = [];
+    if (this._passDivision){
+      this.divDisplay = this._passDivision;
+      if (this._passDivision.cupDiv) {
+        this.teamAggregate = this._passDivision.teams.concat(this._passDivision.participants);
+      } else {
+        this.teamAggregate = this._passDivision.teams
+      }
+    }
+
   }
 
 }

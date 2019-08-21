@@ -17,27 +17,57 @@ export class DivisionResultsTilesComponent implements OnInit {
   constructor(private divisionService: DivisionService, private standingsService: StandingsService,
     private scheduleService: ScheduleService, public team: TeamService, public util: UtilitiesService,
     private timeService:TimeserviceService) {
-    this.timeService.getSesasonInfo().subscribe(
-      res => {
-        this.currentSeason = res['value'];
-      }
-    );
+
      }
      currentSeason;
   divisions: any = [];
   standings: any[] = [];
 
-  ngOnInit() {
-  }
+
 
   provDiv
 
   @Input() set division(div) {
     if (div != undefined && div != null) {
       this.provDiv = div;
-      this.calculateRounds(this.provDiv);
+
     }
   }
+
+  pastSeason=false;
+
+
+@Input() set divObj(div) {
+  if (div != undefined && div != null) {
+    this.provDiv = div.division;
+    this.currentSeason = div.season;
+    this.pastSeason = div.pastSeason;
+
+  }
+}
+
+seasonVal
+  @Input() set season(val) {
+    if (val != undefined && val != null) {
+      this.seasonVal = val;
+    }
+  }
+
+  ngOnInit() {
+    if (this.seasonVal) {
+      this.currentSeason = this.seasonVal;
+      this.calculateRounds(this.provDiv);
+    } else {
+      this.timeService.getSesasonInfo().subscribe(
+        res => {
+          this.currentSeason = res['value'];
+          this.calculateRounds(this.provDiv);
+        }
+      );
+    }
+  }
+
+
 
   matches: any[] = [];
   selectedDivision: any
@@ -65,15 +95,22 @@ export class DivisionResultsTilesComponent implements OnInit {
       this.rounds.push(i + 1);
     }
 
-    let week = this.timeService.returnWeekNumber();
+    let week
+    if(this.seasonVal){
+      week=1;
+    }else{
+      week = this.timeService.returnWeekNumber();
+    }
     if (week > 0) {
       this.selectedRound = week;
-      this.getMatches();
     }
+    this.getMatches();
+
   }
 
   selectedRound: number
   getMatches() {
+    this.matches = [];
     let div;
     if (this.provDiv != undefined && this.provDiv != null) {
       div = this.provDiv.divisionConcat;
@@ -88,33 +125,64 @@ export class DivisionResultsTilesComponent implements OnInit {
         this.matches = this.matches.filter( match=>{
           return match.reported;
         })
-        this.standingsService.getStandings(this.provDiv.divisionConcat).subscribe(
-          res => {
-            this.standings = res;
-            this.matches.forEach(match => {
-              this.standings.forEach(standing => {
-                if (match.home.teamName == standing.teamName) {
-                  match.home['losses'] = standing.losses;
-                  match.home['wins'] = standing.wins;
+        if(this.seasonVal){
+          this.standingsService.getPastStandings(this.provDiv.divisionConcat, this.currentSeason).subscribe(
+            res => {
+              this.standings = res;
+              this.matches.forEach(match => {
+                this.standings.forEach(standing => {
+                  if (match.home.teamName == standing.teamName) {
+                    match.home['losses'] = standing.losses;
+                    match.home['wins'] = standing.wins;
+                  }
+                  if (match.away.teamName == standing.teamName) {
+                    match.away['losses'] = standing.losses;
+                    match.away['wins'] = standing.wins;
+                  }
+                });
+                if (match.scheduledTime) {
+                  if (match.scheduledTime.startTime != null || match.scheduledTime.startTime != undefined) {
+                    match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
+                    match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
+                    match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
+                  }
                 }
-                if (match.away.teamName == standing.teamName) {
-                  match.away['losses'] = standing.losses;
-                  match.away['wins'] = standing.wins;
+              },
+                err => {
+                  console.log(err);
                 }
-              });
-              if (match.scheduledTime) {
-                if (match.scheduledTime.startTime != null || match.scheduledTime.startTime != undefined) {
-                  match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
-                  match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
-                  match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
+              )
+            });
+        }else{
+          this.standingsService.getStandings(this.provDiv.divisionConcat).subscribe(
+            res => {
+              this.standings = res;
+              this.matches.forEach(match => {
+                this.standings.forEach(standing => {
+                  if (match.home.teamName == standing.teamName) {
+                    match.home['losses'] = standing.losses;
+                    match.home['wins'] = standing.wins;
+                  }
+                  if (match.away.teamName == standing.teamName) {
+                    match.away['losses'] = standing.losses;
+                    match.away['wins'] = standing.wins;
+                  }
+                });
+                if (match.scheduledTime) {
+                  if (match.scheduledTime.startTime != null || match.scheduledTime.startTime != undefined) {
+                    match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
+                    match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
+                    match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
+                  }
                 }
-              }
-            },
-              err => {
-                console.log(err);
-              }
-            )
-          });
+              },
+                err => {
+                  console.log(err);
+                }
+              )
+            });
+        }
+
       },
       err => { console.log(err) }
     )

@@ -36,6 +36,7 @@ const passport = require('passport');
 const passportSetup = require('./server/configs/passport-setup');
 const express = require("express");
 const path = require('path');
+const history = require('./server/routes/historical-routes');
 
 
 app.use(bodyParser.json({
@@ -72,6 +73,7 @@ app.use('/messageCenter', messageRoutes);
 app.use('/request', requestRoutes);
 app.use('/utility', utilityRoutes);
 app.use('/events', eventRoutes);
+app.use('/history', history);
 
 // const seeding = require('./server/routes/seeding-route');
 // app.use('/dev', seeding);

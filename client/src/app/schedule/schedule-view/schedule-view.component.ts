@@ -18,17 +18,47 @@ export class ScheduleViewComponent implements OnInit {
   }
   divisions:any=[];
   standings:any[]=[];
+  seasonVal;
+  currentSeason
 
   ngOnInit() {
-    let week = this.timeService.returnWeekNumber();
-    console.log('week ',week);
-    if (week > 0) {
-      this.selectedRound = week;
+    if (this.seasonVal) {
+
+      this.selectedRound = 1;
       this.getMatches();
+
+    }else{
+
+      this.timeService.getSesasonInfo().subscribe(res => {
+        this.currentSeason = res['value'];
+
+      let week = this.timeService.returnWeekNumber();
+
+      if (week > 0) {
+        this.selectedRound = week;
+        this.getMatches();
+      }
+
+    });
+
+  }
+}
+
+  provDiv
+  provSeason
+  pastSeason
+  @Input() set divObj(val){
+    if(!this.util.isNullOrEmpty(val)){
+      this.provDiv = val.division;
+      this.provSeason = val.season;
+      this.pastSeason = val.pastSeason;
+      this.calculateRounds(this.provDiv);
     }
   }
 
-  provDiv
+  @Input() set season(val){
+    this.seasonVal = val;
+  }
 
   @Input() set division(div){
     if(div!=undefined && div != null){
@@ -65,7 +95,11 @@ export class ScheduleViewComponent implements OnInit {
   }
 
   selectedRound:number
+
   getMatches(){
+
+    console.log('getMatches()');
+
 
     let div;
     if(this.provDiv!=undefined&&this.provDiv!=null){
@@ -73,10 +107,7 @@ export class ScheduleViewComponent implements OnInit {
     }else{
       div = this.selectedDivision.divisionConcat;
     }
-
-    this.timeService.getSesasonInfo().subscribe(res => {
-      let season = res['value'];
-
+      let season = this.seasonVal ? this.seasonVal : this.currentSeason;
       this.scheduleService.getScheduleMatches(season, div, this.selectedRound).subscribe(
         res => {
 
@@ -111,7 +142,7 @@ export class ScheduleViewComponent implements OnInit {
         },
         err => { console.log(err) }
       )
-    });
+
 
   }
 

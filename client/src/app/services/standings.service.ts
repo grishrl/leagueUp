@@ -25,9 +25,18 @@ export class StandingsService {
 
   }
 
-  currentSeason;
-  constructor(private httpService: HttpServiceService, private timeService:TimeserviceService) {
+  getPastStandings(div: string, season) {
+    let url = 'standings/get/division';
+    let payload = {
+      division: div,
+      season: season,
+      pastSeason:true
+    };
+    return this.httpService.httpPost(url, payload);
 
-    this.timeService.getSesasonInfo();
+  }
+
+
+  constructor(private httpService: HttpServiceService, private timeService:TimeserviceService) {
    }
 }

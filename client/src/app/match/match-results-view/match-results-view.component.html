@@ -11,7 +11,7 @@
                     <!-- <i *ngIf="dominator(match, 'home')" style="position: absolute;"
                     class="fas fa-crown"></i> -->
                     <app-team-link [team]="match.home.teamName">
-                        <img src="{{team.imageFQDN(match.home.logo)}}" alt="">
+                        <img src="{{team.imageFQDN(match.home.logo, seasonVal)}}" alt="">
                         <div>{{match.home.teamName}}</div>
                     </app-team-link>
                     <!-- <div>Record: {{match.home.wins}}-{{match.home.losses}}</div> -->
@@ -27,7 +27,7 @@
                     <!-- <i *ngIf="dominator(match, 'away')" style="position: absolute;"
                     class="fas fa-crown"></i> -->
                     <app-team-link [team]="match.away.teamName">
-                        <img src="{{team.imageFQDN(match.away.logo)}}" alt="">
+                        <img src="{{team.imageFQDN(match.away.logo, seasonVal)}}" alt="">
                         <div>
                             {{match.away.teamName}}
                         </div>
@@ -44,8 +44,7 @@
             </div>
             <div class="info-panel">
                 <div *ngIf="match.forfeit else gamesInfo">
-                    <p> This match was forfeit by <span
-                            *ngIf="match.home.score == 2 else otherTeam">{{match.away.teamName}}</span>
+                    <p> This match was forfeit by <span *ngIf="match.home.score == 2 else otherTeam">{{match.away.teamName}}</span>
                         <ng-template #otherTeam>
                             {{match.home.teamName}}
                         </ng-template> no other information will be available.
@@ -61,14 +60,12 @@
                             </div>
                             <div class="row no-gutter">
                                 <div class="col-sm">
-                                    <div class="banner"
-                                        [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.homeOne) + ')' } ">
+                                    <div class="banner" [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.homeOne) + ')' } ">
                                         <span class="mapBanText">{{match.mapBans.homeOne}}</span>
                                     </div>
                                 </div>
                                 <div class="col-sm">
-                                    <div class="banner"
-                                        [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.homeTwo) + ')' } ">
+                                    <div class="banner" [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.homeTwo) + ')' } ">
                                         <span class="mapBanText">{{match.mapBans.homeTwo}}</span>
                                     </div>
                                 </div>
@@ -82,14 +79,12 @@
                             </div>
                             <div class="row no-gutter">
                                 <div class="col-sm">
-                                    <div class="banner"
-                                        [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.awayOne) + ')' } ">
+                                    <div class="banner" [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.awayOne) + ')' } ">
                                         <span class="mapBanText">{{match.mapBans.awayOne}}</span>
                                     </div>
                                 </div>
                                 <div class="col-sm">
-                                    <div class="banner"
-                                        [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.awayTwo) + ')' } ">
+                                    <div class="banner" [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.awayTwo) + ')' } ">
                                         <span class="mapBanText">{{match.mapBans.awayTwo}}</span>
                                     </div>
                                 </div>
@@ -98,8 +93,7 @@
                     </div>
                     <div class="row mt-4" *ngFor="let replay of resultsArray; let i = index;">
                         <div class="col-12">
-                            <div class="banner"
-                                [ngStyle]="{ 'background': 'url('+ getBackground(replay.map) + '), currentColor' } ">
+                            <div class="banner" [ngStyle]="{ 'background': 'url('+ getBackground(replay.map) + '), currentColor' } ">
                                 <div class="winnerText">
                                     <p>
                                         <span *ngIf="replay.map else noMap">{{replay.map}}</span>

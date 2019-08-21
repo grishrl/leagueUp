@@ -13,12 +13,39 @@ export class StandingsViewComponent implements OnInit {
 
   div:any;
   standings:any[]=[];
+
   @Input() set division(div){
     if(div!=null&&div!=undefined){
       this.div = div;
-      this.getStandings(div.divisionConcat);
-
+      this.ngOnInit();
     }
+  }
+
+  seasonVal;
+  @Input() set season(season){
+    if(season){
+      this.seasonVal=season;
+      // this.pastStandingsIntialise();
+    }
+  }
+
+  pastStandingsIntialise(){
+      //do something
+      this.standingsService.getPastStandings(this.div.divisionConcat, this.seasonVal).subscribe(
+        (res) => {
+          if (this.div.cupDiv) {
+            let tO = {};
+            // let allTeams = this.div.teams.concat(this.div.participants);
+            // allTeams
+          } else {
+            this.standings = res;
+          }
+        },
+        (err) => {
+          console.log(err);
+        }
+      )
+
   }
 
   getStandings(div){
@@ -30,7 +57,6 @@ export class StandingsViewComponent implements OnInit {
           // let allTeams = this.div.teams.concat(this.div.participants);
           // allTeams
         }else{
-          console.log(res);
           this.standings = res;
         }
       },
@@ -41,6 +67,11 @@ export class StandingsViewComponent implements OnInit {
   }
 
   ngOnInit() {
+    if(this.seasonVal){
+      this.pastStandingsIntialise();
+    }else{
+      this.getStandings(this.div.divisionConcat);
+    }
 
   }
 

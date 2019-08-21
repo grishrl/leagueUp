@@ -27,9 +27,12 @@ export class ScheduleService {
     return this.httpService.httpGet(url, []);
   }
 
-  getMatchList(matches){
+  getMatchList(matches, season?){
     let url = 'schedule/get/match/list';
     let payload = {matches:matches};
+    if(season){
+      payload['season']=season
+    };
     return this.httpService.httpPost(url, payload, false);
   }
 
@@ -107,6 +110,44 @@ export class ScheduleService {
       )
 
     );
+  }
+
+  getReportedMatchesByDivision(division, showSnack?) {
+    let url = 'schedule/get/reported/matches';
+
+    if (showSnack != undefined) {
+      showSnack = showSnack
+    } else {
+      showSnack = true;
+    }
+    return this.timeService.getSesasonInfo().pipe(
+      switchMap(
+        res => {
+          let payload = {
+            season: res['value'],
+            division:division
+          };
+          return this.httpService.httpPost(url, payload, showSnack)
+        }
+      )
+
+    );
+  }
+
+  getReportedMatchesByDivisionAndSeason(division, season, showSnack?) {
+    let url = 'schedule/get/reported/matches';
+
+    if (showSnack != undefined) {
+      showSnack = showSnack
+    } else {
+      showSnack = true;
+    }
+    let payload = {
+      division:division,
+      season:season
+    }
+          return this.httpService.httpPost(url, payload, showSnack)
+
   }
 
   //get tournament

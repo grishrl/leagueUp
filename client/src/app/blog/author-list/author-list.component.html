@@ -1,0 +1,14 @@
+<div class="panel-box">
+    <div class="titles no-margin">
+        <h4>Authors</h4>
+    </div>
+    <div class="info-panel">
+        <ul class="list">
+            <li><i *ngIf="selectedAuthor == 'all'" class="fa fa-check"></i><a (click)="selectAuthor('all')">All</a></li>
+            <li *ngFor="let author of authors">
+                <i *ngIf="selectedAuthor == 'all' || selectedAuthor == author.sys.id" class="fa fa-check"></i>
+                <a (click)="selectAuthor(author.sys.id)">{{author.fields.name}}</a>
+            </li>
+        </ul>
+    </div>
+</div>

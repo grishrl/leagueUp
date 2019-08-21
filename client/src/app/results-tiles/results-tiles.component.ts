@@ -1,8 +1,4 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { environment } from 'src/environments/environment';
-import { DivisionService } from 'src/app/services/division.service';
-import { StandingsService } from 'src/app/services/standings.service';
-import { ScheduleService } from 'src/app/services/schedule.service';
 import { TeamService } from 'src/app/services/team.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 
@@ -13,7 +9,7 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 })
 export class ResultsTilesComponent implements OnInit {
 
-  constructor(private divisionService: DivisionService, private standingsService: StandingsService, private scheduleService: ScheduleService, public team: TeamService, public util: UtilitiesService) { }
+  constructor(public team: TeamService, public util: UtilitiesService) { }
   divisions: any = [];
   standings: any[] = [];
 
@@ -21,6 +17,13 @@ export class ResultsTilesComponent implements OnInit {
   }
 
   provMatches = [];
+
+  seasonVal;
+  @Input() set season(val){
+    if(val){
+      this.seasonVal = val;
+    }
+  }
 
   @Input() set matches(val) {
     this.provMatches = [];

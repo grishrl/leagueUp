@@ -156,6 +156,9 @@ import { TeamTournamentResultsTilesComponent } from './team/team-tournament-resu
 import { SeasonInfoManagerComponent } from './admin/match-management/season-info-manager/season-info-manager.component';
 import { DatePickerComponent } from './formComponents/date-picker/date-picker.component';
 import { AssistantCaptainMgmtComponent } from './modal/assistant-captain-mgmt/assistant-captain-mgmt.component';
+import { PastSeasonsComponent } from './past-seasons/past-seasons.component';
+import { AuthorListComponent } from './blog/author-list/author-list.component';
+import { AuthorPageComponent } from './blog/author-page/author-page.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -301,7 +304,10 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     TeamTournamentResultsTilesComponent,
     SeasonInfoManagerComponent,
     DatePickerComponent,
-    AssistantCaptainMgmtComponent
+    AssistantCaptainMgmtComponent,
+    PastSeasonsComponent,
+    AuthorListComponent,
+    AuthorPageComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
@@ -311,6 +317,7 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     MatchViewModalComponent,
     NgsAccordianComponent,
     AssistantCaptainMgmtComponent
+
   ],
   imports: [
     BrowserModule,

@@ -5,7 +5,7 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 import { StandingsService } from 'src/app/services/standings.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
-import { environment } from 'src/environments/environment';
+import { TimeserviceService } from 'src/app/services/timeservice.service';
 
 @Component({
   selector: 'app-team-tournament-schedule-table',
@@ -15,81 +15,82 @@ import { environment } from 'src/environments/environment';
 export class TeamTournamentScheduleTableComponent implements OnInit {
 
 
-  constructor(public teamServ: TeamService, private scheduleService: ScheduleService, public util: UtilitiesService, private standingsService: StandingsService, private Auth: AuthService, private router: Router) { }
+  constructor(public teamServ: TeamService, private scheduleService: ScheduleService, public util: UtilitiesService, private standingsService: StandingsService, private Auth: AuthService, private router: Router, private timeService:TimeserviceService) { }
 
   noMatches;
   rounds;
   roundsArray;
   matches = [];
-  initTeamSchedule(teamId) {
-    this.scheduleService.getTeamTournamentGames(7, teamId).subscribe(
-      res => {
-        let matches = res;
-        //set the nomatches state
-        if (matches.length == 0) {
-          this.noMatches = true;
-        } else {
-          this.noMatches = false;
-        }
+  initTeamSchedule(teamId, providedSeason) {
 
-        matches.forEach(match=>{
-          if (match.scheduleDeadline) {
-            match['friendlyDeadline'] = this.util.getDateFromMS(match.scheduleDeadline);
-          }
-
-          if (match.scheduledTime) {
-            match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
-            match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
-            match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
-          }
-
-          if (!this.util.returnBoolByPath(match, 'home') && !this.util.returnBoolByPath(match, 'home.name')) {
-            match.home = {
-              teamName: "TBD"
+    this.scheduleService.getTeamTournamentGames(providedSeason, teamId).subscribe(
+          res => {
+            let matches = res;
+            //set the nomatches state
+            if (matches.length == 0) {
+              this.noMatches = true;
+            } else {
+              this.noMatches = false;
             }
-          }
-          if (!this.util.returnBoolByPath(match, 'away') && !this.util.returnBoolByPath(match, 'away.name')) {
-            match.away = {
-              teamName: "TBD"
-            }
-          }
-        });
 
-        // let div = matches[0].divisionConcat
-        // this.standingsService.getStandings(div).subscribe(
-        //   res => {
-        //     let standings = res;
-        //     matches.forEach(match => {
-        //       standings.forEach(standing => {
-        //         if (match.home.teamName == standing.teamName) {
-        //           match.home['losses'] = standing.losses;
-        //           match.home['wins'] = standing.wins;
-        //         }
-        //         if (match.away.teamName == standing.teamName) {
-        //           match.away['losses'] = standing.losses;
-        //           match.away['wins'] = standing.wins;
-        //         }
-        //       });
-        //       if (match.scheduleDeadline) {
-        //         match['friendlyDeadline'] = this.util.getDateFromMS(match.scheduleDeadline);
-        //       }
+            matches.forEach(match => {
+              if (match.scheduleDeadline) {
+                match['friendlyDeadline'] = this.util.getDateFromMS(match.scheduleDeadline);
+              }
 
-        //       if (match.scheduledTime) {
-        //         match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
-        //         match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
-        //         match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
-        //       }
-        //     })
-        //   }, err => {
-        //     console.log(err);
-        //   });
+              if (match.scheduledTime) {
+                match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
+                match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
+                match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
+              }
+
+              if (!this.util.returnBoolByPath(match, 'home') && !this.util.returnBoolByPath(match, 'home.name')) {
+                match.home = {
+                  teamName: "TBD"
+                }
+              }
+              if (!this.util.returnBoolByPath(match, 'away') && !this.util.returnBoolByPath(match, 'away.name')) {
+                match.away = {
+                  teamName: "TBD"
+                }
+              }
+            });
+
+            // let div = matches[0].divisionConcat
+            // this.standingsService.getStandings(div).subscribe(
+            //   res => {
+            //     let standings = res;
+            //     matches.forEach(match => {
+            //       standings.forEach(standing => {
+            //         if (match.home.teamName == standing.teamName) {
+            //           match.home['losses'] = standing.losses;
+            //           match.home['wins'] = standing.wins;
+            //         }
+            //         if (match.away.teamName == standing.teamName) {
+            //           match.away['losses'] = standing.losses;
+            //           match.away['wins'] = standing.wins;
+            //         }
+            //       });
+            //       if (match.scheduleDeadline) {
+            //         match['friendlyDeadline'] = this.util.getDateFromMS(match.scheduleDeadline);
+            //       }
+
+            //       if (match.scheduledTime) {
+            //         match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
+            //         match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
+            //         match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
+            //       }
+            //     })
+            //   }, err => {
+            //     console.log(err);
+            //   });
 
 
-        this.matches = matches;
+            this.matches = matches;
 
-      },
-      err => { console.log(err) }
-    )
+          },
+          err => { console.log(err) }
+        )
   }
 
   checkDate(match) {
@@ -109,7 +110,15 @@ export class TeamTournamentScheduleTableComponent implements OnInit {
   @Input() set team(val) {
     if (val) {
       this.teamObj = val;
-      this.initTeamSchedule(val._id);
+      // this.initTeamSchedule(val._id);
+    }
+  }
+
+  seasonVal;
+  @Input() set season(val) {
+    if (val) {
+      this.seasonVal = val;
+      // this.initTeamSchedule(val._id);
     }
   }
 
@@ -124,6 +133,20 @@ export class TeamTournamentScheduleTableComponent implements OnInit {
   todayDate;
   ngOnInit() {
     this.todayDate = new Date().getTime();
+    console.log('this.teamObj', this.teamObj, ' seasonVal ', this.seasonVal)
+    if(this.seasonVal){
+      this.initTeamSchedule(this.teamObj._id, this.seasonVal);
+    }else{
+      this.timeService.getSesasonInfo().subscribe(
+        res => {
+          let currentSeason = res['value'];
+          this.initTeamSchedule(this.teamObj._id, currentSeason);
+        },
+        err=>{
+
+        })
+
+    }
   }
 
   scheduleMatch(id) {

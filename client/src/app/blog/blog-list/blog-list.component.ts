@@ -20,31 +20,65 @@ export class BlogListComponent implements OnInit {
     this.contentfulService.getBlogs({ order: '-sys.createdAt'}).then(
       res => {
         // this.createMyDisplay(res);
+        console.log(res);
         this.posts = res;
       });
   }
 
-  selection:string = '';
+  categorySelection:string;
 
   updateDisplay(val){
-    if(val == 'all'){
-      this.selection = val;
-      this.contentfulService.getBlogs({order: '-sys.createdAt'}).then(
-        res => {
-          // this.createMyDisplay(res);
-          this.posts = res;
-        });
-    }else if (val !== this.selection){
-      this.selection = val;
-      this.contentfulService.getBlogs({ 'links_to_entry': this.selection, order: '-sys.createdAt'}).then(
-      res => {
-        // this.createMyDisplay(res);
-        this.posts = res;
-      });
-    }else{
-      //do nothing
+    this.categorySelection = val;
+    this.getBlogsOfVal();
+
+  }
+
+  lastCat;
+  lastAuth;
+
+  private getBlogsOfVal() {
+    console.log(this.authorSelection);
+    let query = {
+      order: '-sys.createdAt'
+    };
+
+    if(this.authorSelection && this.authorSelection != 'all'){
+      query['fields.author.sys.id']=this.authorSelection;
+      //call query of both...
+    }
+    if(this.categorySelection && this.categorySelection != 'all'){
+      query['fields.category.sys.id']=this.categorySelection;
     }
 
+      this.contentfulService.getBlogs(query).then(res => {
+        this.posts = res;
+      });
+    // }
+
+
+    // if (val == 'all') {
+    //   this. = val;
+    //   this.contentfulService.getBlogs({ order: '-sys.createdAt' }).then(res => {
+    //     // this.createMyDisplay(res);
+    //     this.posts = res;
+    //   });
+    // }
+    // else if (val !== this.selection) {
+    //   this.selection = val;
+    //   this.contentfulService.getBlogs({ 'links_to_entry': this.selection, '', order: '-sys.createdAt' }).then(res => {
+    //     // this.createMyDisplay(res);
+    //     this.posts = res;
+    //   });
+    // }
+    // else {
+    //   //do nothing
+    // }
+  }
+
+  authorSelection;
+  updateDisplayAuthor(val){
+    this.authorSelection = val;
+    this.getBlogsOfVal();
   }
 
   createMyDisplay(dat) {

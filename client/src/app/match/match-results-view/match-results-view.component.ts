@@ -7,6 +7,7 @@ import { Match } from 'src/app/classes/match.class';
 import { HeroesProfileService } from 'src/app/services/heroes-profile.service';
 import { environment } from 'src/environments/environment';
 import { forEach as _forEach } from 'lodash';
+import { TimeserviceService } from 'src/app/services/timeservice.service';
 
 @Component({
   selector: 'app-match-results-view',
@@ -16,7 +17,7 @@ import { forEach as _forEach } from 'lodash';
 export class MatchResultsViewComponent implements OnInit {
 
   recId;
-  constructor(public util: UtilitiesService, private sheduleService:ScheduleService, private route: ActivatedRoute, public team: TeamService, private hp:HeroesProfileService) {
+  constructor(public util: UtilitiesService, private sheduleService:ScheduleService, private route: ActivatedRoute, public team: TeamService, private hp:HeroesProfileService, private timeService:TimeserviceService) {
     if (this.route.snapshot.params['id']) {
       this.recId = this.route.snapshot.params['id'];
     }
@@ -25,37 +26,43 @@ export class MatchResultsViewComponent implements OnInit {
   match: Match = new Match();
   resultsArray = [];
 
+  seasonVal;
+
   ngOnInit() {
-    console.log('asdf');
-    this.sheduleService.getMatchInfo(this.recId).subscribe(
-      res=>{
-        console.log(res);
-        this.match = res;
-        if(res.hasOwnProperty('replays')){
-
-          _forEach(res.replays, (value, key)=>{
-            if (key != '_id') {
-              let item = value;
-              this.hp.getReplay(item.data).subscribe(
-                reply => {
-                  console.log(reply);
-                  if (reply && reply.name) {
-                    item['map'] = reply.name;
-                  }
-                  this.resultsArray.push(
-                    item
-                  );
-                }
-              )
+    this.timeService.getSesasonInfo().subscribe(
+      time => {
+        let currentSeason = time.value;
+        this.sheduleService.getMatchInfo(this.recId).subscribe(
+          res => {
+            this.match = res;
+            if(this.match.season != currentSeason){
+              this.seasonVal = this.match.season;
             }
-          })
+            if (res.hasOwnProperty('replays')) {
+              _forEach(res.replays, (value, key) => {
+                if (key != '_id') {
+                  let item = value;
+                  this.hp.getReplay(item.data).subscribe(
+                    reply => {
+                      if (reply && reply.name) {
+                        item['map'] = reply.name;
+                      }
+                      this.resultsArray.push(
+                        item
+                      );
+                    }
+                  )
+                }
+              })
 
-        }
-      },
-      err=>{
+            }
+          },
+          err => {
 
-      }
-    )
+          }
+        )
+      })
+
   }
   //test
 

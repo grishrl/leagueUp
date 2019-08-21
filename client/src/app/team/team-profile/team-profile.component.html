@@ -75,7 +75,7 @@
             </div>
         </div>
     </div>
-    <div class="bg-image-team" [style.background-image]="'url('+ imageFQDN(returnedProfile.logo) +')'"></div>
+    <div class="bg-image-team" [style.background-image]="'url('+ team.imageFQDN(returnedProfile.logo, season) +')'"></div>
 </div>
 <!-- End Section Title -->
 
@@ -329,9 +329,9 @@
                         <!-- Tab Theree - fixtures -->
                         <div class="tab-pane" id="fixtures">
                             <div *ngIf="index==2">
-                                <app-team-schedule-table [team]="returnedProfile"></app-team-schedule-table>
+                                <app-team-schedule-table [team]="returnedProfile" [season]="season"></app-team-schedule-table>
                                 <div class="mt-4">
-                                    <app-team-tournament-schedule-table [team]="returnedProfile">
+                                    <app-team-tournament-schedule-table [team]="returnedProfile" [season]="season">
                                     </app-team-tournament-schedule-table>
                                 </div>
                             </div>
@@ -341,9 +341,9 @@
                         <!-- Tab Theree - results -->
                         <div class="tab-pane" id="results">
                             <div *ngIf="index==3">
-                                <app-team-results-tiles [team]="returnedProfile.teamName"></app-team-results-tiles>
+                                <app-team-results-tiles [team]="returnedProfile.teamName" [season]="season"></app-team-results-tiles>
                                 <div class="mt-3">
-                                    <app-team-tournament-results-tiles [teamId]="returnedProfile._id"></app-team-tournament-results-tiles>
+                                    <app-team-tournament-results-tiles [teamId]="returnedProfile._id" [season]="season"></app-team-tournament-results-tiles>
                                 </div>
                             </div>
                         </div>
@@ -361,7 +361,7 @@
                 </div>
 
                 <!-- Side info single team-->
-                <div class="col-lg-3 padding-top-mini">
+                <div class="col-lg-3 padding-top-mini" *ngIf="!season">
                     <!-- Diary -->
                     <app-team-upcoming-match [team]="returnedProfile.teamName"></app-team-upcoming-match>
 

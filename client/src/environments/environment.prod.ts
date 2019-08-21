@@ -14,6 +14,7 @@ export const environment = {
   s3bucketImages:'ngs-image-storage',
   s3bucketReplays:'ngs-replay-storage',
   s3bucketGeneralImage: 'ngs-general-image',
+  s3bucketArchiveImage: 'ngs-archive-image',
   socketURL: 'https://www.nexusgamingseries.org',
   heroesProfilePlayer: "https://www.heroesprofile.com/NGS/Profile/?",
   heroesProfile: "https://www.heroesprofile.com/Profile/?",

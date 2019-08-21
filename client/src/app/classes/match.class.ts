@@ -10,6 +10,7 @@ export class Match {
   other: any;
   vodLinks:Array<string>;
   mapBans: mapBans;
+  season: number;
 
   constructor() {
     this.home = {
@@ -44,6 +45,7 @@ export class Match {
       homeOne: '',
       homeTwo: ''
     };
+    this.season=null;
   }
 }
 
