@@ -160,6 +160,8 @@ import { PastSeasonsComponent } from './past-seasons/past-seasons.component';
 import { AuthorListComponent } from './blog/author-list/author-list.component';
 import { AuthorPageComponent } from './blog/author-page/author-page.component';
 
+import { DivisionTournamentScheduleTableComponent } from './division/division-tournament-schedule-table/division-tournament-schedule-table.component';
+
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
 @NgModule({
@@ -307,7 +309,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     AssistantCaptainMgmtComponent,
     PastSeasonsComponent,
     AuthorListComponent,
-    AuthorPageComponent
+    AuthorPageComponent,
+    DivisionTournamentScheduleTableComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

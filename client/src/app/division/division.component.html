@@ -87,6 +87,8 @@
                         <div class="tab-pane" id="schedule">
                             <ng-container class="pb-5" *ngIf="index == 2">
                                 <app-schedule-view *ngIf="!divDisplay.cupDiv" [division]="divDisplay" [season]="passSeasonVal"></app-schedule-view>
+                                <br>
+                                <app-division-tournament-schedule-table *ngIf="!divDisplay.cupDiv" [division]="divDisplay" [season]="passSeasonVal"></app-division-tournament-schedule-table>
                                 <app-division-cup-schedule *ngIf="divDisplay.cupDiv" [division]="divDisplay" [season]="passSeasonVal"></app-division-cup-schedule>
                             </ng-container>
 

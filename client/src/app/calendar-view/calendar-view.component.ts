@@ -115,10 +115,12 @@ export class CalendarViewComponent implements OnInit {
         matches.forEach(match => {
           let startDate: Date = new Date(parseInt(match.scheduledTime.startTime));
           let endDate: Date = new Date(parseInt(match.scheduledTime.startTime)+1);
+          // console.log('match ',match)
+          // console.log((colors[match.divisionConcat] ? colors[match.divisionConcat].name : 'div err' ) + ': ' + match.home.teamName + ' vs ' + match.away.teamName);
           let event: CalendarEvent = {
             'start': startDate,
             'end': endDate,
-            'title': colors[match.divisionConcat].name + ': ' + match.home.teamName + ' vs ' + match.away.teamName,
+            'title': (colors[match.divisionConcat] ? colors[match.divisionConcat].name : 'matchErr' )+ ': ' + match.home.teamName + ' vs ' + match.away.teamName,
             'meta':{ id: match.matchId, 'type':'match'}
           };
 
@@ -134,7 +136,7 @@ export class CalendarViewComponent implements OnInit {
             event['title'] = this.util.getFormattedDate(startDate, "hh:mm A zz") + ': ' + event['title'];
           }
 
-          event['color']=colors[match.divisionConcat];
+          event['color'] = colors[match.divisionConcat] ? colors[match.divisionConcat] : { primary: '#FFFFFF'} ;
 
           this.events.push(event);
         });

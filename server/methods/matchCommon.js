@@ -202,7 +202,6 @@ function findTeamIds(found) {
             }
         }
     });
-
     return teams;
 }
 

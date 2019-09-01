@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { TeamService } from 'src/app/services/team.service';
 import { StandingsService } from 'src/app/services/standings.service';
@@ -10,7 +10,7 @@ import { TimeserviceService } from 'src/app/services/timeservice.service';
   templateUrl: './schedule-view.component.html',
   styleUrls: ['./schedule-view.component.css']
 })
-export class ScheduleViewComponent implements OnInit {
+export class ScheduleViewComponent implements OnInit, OnChanges {
 
   constructor( private standingsService:StandingsService,
     private scheduleService: ScheduleService, public team: TeamService, public util:UtilitiesService,
@@ -22,27 +22,25 @@ export class ScheduleViewComponent implements OnInit {
   currentSeason
 
   ngOnInit() {
-    if (this.seasonVal) {
+    this.initialize();
+}
 
+  private initialize() {
+    if (this.seasonVal) {
       this.selectedRound = 1;
       this.getMatches();
-
-    }else{
-
+    }
+    else {
       this.timeService.getSesasonInfo().subscribe(res => {
         this.currentSeason = res['value'];
-
-      let week = this.timeService.returnWeekNumber();
-
-      if (week > 0) {
-        this.selectedRound = week;
-        this.getMatches();
-      }
-
-    });
-
+        let week = this.timeService.returnWeekNumber();
+        if (week > 0) {
+          this.selectedRound = week;
+          this.getMatches();
+        }
+      });
+    }
   }
-}
 
   provDiv
   provSeason
@@ -63,7 +61,7 @@ export class ScheduleViewComponent implements OnInit {
   @Input() set division(div){
     if(div!=undefined && div != null){
       this.provDiv = div;
-      this.calculateRounds(this.provDiv);
+      // this.calculateRounds(this.provDiv);
     }
   }
 
@@ -143,6 +141,34 @@ export class ScheduleViewComponent implements OnInit {
         err => { console.log(err) }
       )
 
+
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log('changes ', changes);
+    if (changes.division) {
+      if ((changes.division.currentValue && changes.division.currentValue['divisionConcat'] != null)) {
+        if (changes.division.previousValue && changes.division.currentValue['divisionConcat'] != changes.division.previousValue['divisionConcat'] || !changes.division.previousValue) {
+          //do something
+          console.log('different value');
+          this.provDiv = changes.division.currentValue;
+          this.calculateRounds(this.provDiv);
+          this.initialize();
+        }
+      }
+    }
+
+    //would season change?
+    // if (changes.season) {
+    //   if ((changes.season.currentValue && changes.season.currentValue != null)) {
+    //     if (changes.season.previousValue && changes.season.currentValue != changes.season.previousValue || !changes.season.previousValue) {
+    //       //do something
+    //       console.log('different season value');
+    //       this.seasonVal = changes.season.currentValue;
+    //       this.initialize();
+    //     }
+    //   }
+    // }
 
   }
 

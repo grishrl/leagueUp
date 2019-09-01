@@ -29,7 +29,6 @@ export class TeamLinkComponent implements OnInit {
 
   teamVal:string
   @Input() set team(val){
-    console.log('team val ', val);
     if(val){
       // this.teamVal = val;
       this.routeFriendlyName = this.teamService.routeFriendlyTeamName(val);

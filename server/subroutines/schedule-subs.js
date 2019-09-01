@@ -402,6 +402,9 @@ async function generateTournamentTwo(teams, season, division, cup, name, descrip
                             let ngsID = uniqid();
                             to["matchId"] = ngsID;
                             to["round"] = match.round;
+                            if (division) {
+                                to["divisionConcat"] = division;
+                            }
                             matchesCrossRef.push({
                                 id: ngsID,
                                 challonge_ref: match.id
