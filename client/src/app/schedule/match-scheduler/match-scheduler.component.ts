@@ -88,30 +88,38 @@ index = 0;
     //calculate the millisecond date of the scheduled start of the match cause that's easy to save.
     //TODO: this might go into a service because I think it's used other places
 
-    let colonSplit = this.time.split(':');
+    if(!this.time){
+      alert("Please select a date / time");
+    }else{
+      let colonSplit = this.time.split(':');
 
-    colonSplit[1]=parseInt(colonSplit[1]);
+      colonSplit[1] = parseInt(colonSplit[1]);
 
-    if(this.suffix == 'PM'){
-      colonSplit[0] = parseInt(colonSplit[0]);
-      colonSplit[0]+=12;
-    }
-
-    let setDate = new Date(this.matchDate);
-    setDate.setHours(colonSplit[0], colonSplit[1], 0,0);
-
-    let msDate = setDate.getTime();
-    let endDate = msDate + 5400000;
-
-    this.scheduleService.scheduleMatchTime(this.match.matchId, msDate, endDate).subscribe(
-      res=>{
-        //TODO: will i need to implement a route here?
-        this.router.navigateByUrl('/teamProfile/'+this.team.routeFriendlyTeamName(this.Auth.getTeam()));
-      },
-      err=>{
-        console.log(err)
+      if (this.suffix == 'PM') {
+        colonSplit[0] = parseInt(colonSplit[0]);
+        colonSplit[0] += 12;
       }
-    )
+
+      let setDate = new Date(this.matchDate);
+      setDate.setHours(colonSplit[0], colonSplit[1], 0, 0);
+
+      let msDate = setDate.getTime();
+      let endDate = msDate + 5400000;
+
+      if (msDate) {
+        this.scheduleService.scheduleMatchTime(this.match.matchId, msDate, endDate).subscribe(
+          res=>{
+            //TODO: will i need to implement a route here?
+            this.router.navigateByUrl('/teamProfile/'+this.team.routeFriendlyTeamName(this.Auth.getTeam()));
+          },
+          err=>{
+            console.log(err)
+          }
+        )
+      } else {
+        alert("Please select a date / time");
+      }
+    }
 
   }
 

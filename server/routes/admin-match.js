@@ -63,7 +63,9 @@ router.post('/match/update', passport.authenticate('jwt', {
                     });
                     found.save().then(
                         (saved) => {
-                            matchCommon.promoteTournamentMatch(saved.toObject());
+                            if (saved.reported) {
+                                matchCommon.promoteTournamentMatch(saved.toObject());
+                            }
                             res.status(200).send(util.returnMessaging(path, 'Match Saved', false, saved, null, logInfo));
                         },
                         (err) => {

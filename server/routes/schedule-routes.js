@@ -454,7 +454,7 @@ router.post('/get/match/list', async(req, res) => {
     }
 
 
-    Match.find({ matchId: { $in: matches } }).then(
+    Match.find({ matchId: { $in: matches } }).lean().then(
         found => {
             if (pastSeason) {
                 matchCommon.addTeamInfoFromArchiveToMatch(found, season).then(

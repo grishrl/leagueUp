@@ -90,7 +90,9 @@ export class MatchEditComponent implements OnInit {
       match.away.score = this.awayScore;
     }
 
+    // console.log(this.match.scheduledTime.startTime , this.friendlyTime)
     if (this.match.scheduledTime.startTime && this.friendlyTime){
+
       this.friendlyDate = new Date(this.match.scheduledTime.startTime);
       let years = this.friendlyDate.getFullYear();
       let month = this.friendlyDate.getMonth();
@@ -107,6 +109,7 @@ export class MatchEditComponent implements OnInit {
       setDate.setHours(colonSplit[0], colonSplit[1], 0, 0);
 
       let msDate = setDate.getTime();
+      // console.log('msDate ', msDate);
       let endDate = msDate + 5400000;
       match.scheduledTime.startTime = msDate;
       match.scheduledTime.endTime = endDate;
