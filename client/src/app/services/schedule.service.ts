@@ -101,7 +101,7 @@ export class ScheduleService {
     return this.httpService.httpPost(url, payload, true);
   }
 
-  getReportedMatches(showSnack?){
+  getReportedMatches(sort?, limit?, showSnack?){
     let url = 'schedule/get/reported/matches';
 
 
@@ -110,12 +110,19 @@ export class ScheduleService {
     } else {
       showSnack = true;
     }
+
     return this.timeService.getSesasonInfo().pipe(
       switchMap(
         res => {
           let payload = {
             season: res['value']
           };
+          if(sort){
+            payload['sortOrder'] = sort;
+          }
+          if(limit){
+            payload['limit']=limit;
+          }
           return this.httpService.httpPost(url, payload, showSnack)
         }
       )
