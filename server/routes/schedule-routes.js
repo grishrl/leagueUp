@@ -104,6 +104,8 @@ router.post('/get/reported/matches', async(req, res) => {
     const path = 'schedule/get/reported/matches';
     let season = req.body.season;
     let division = req.body.division;
+    let sortOrder = util.isNullorUndefined(req.body.sortOrder) ? false : req.body.sortOrder;
+    let limit = util.isNullorUndefined(req.body.limit) ? false : req.body.limit;
 
     let query = {
         $and: [{
@@ -125,6 +127,18 @@ router.post('/get/reported/matches', async(req, res) => {
     Match.find(query).lean().then(
         found => {
             if (found) {
+                if (sortOrder == 'des') {
+                    found = util.sortMatchesByTime(found);
+                    found.reverse();
+                } else if (sortOrder == 'asc') {
+                    found = util.sortMatchesByTime(found);
+                }
+
+                if (limit) {
+                    limit = limit > found.length ? found.length : limit;
+                    found = found.slice(0, limit);
+                }
+
                 if (pastSeason) {
                     matchCommon.addTeamInfoFromArchiveToMatch(found, season).then(
                         processed => {

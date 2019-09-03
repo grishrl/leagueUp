@@ -138,6 +138,10 @@ returnByPath = function(obj, path) {
 }
 
 returnBoolByPath = function(obj, path) {
+
+    if (obj.hasOwnProperty('toObject')) {
+        obj = obj.toObject();
+    }
     //path is a string representing a dot notation object path;
     //create an array of the string for easier manipulation
     let pathArr = path.split('.');
@@ -186,6 +190,25 @@ function appendResHeader(request, response, next) {
     next();
 }
 
+function sortMatchesByTime(matches) {
+    matches.sort((a, b) => {
+        let ret;
+        if (!returnBoolByPath(a, 'scheduledTime.startTime')) {
+            ret = -1;
+        } else if (!returnBoolByPath(b, 'scheduledTime.startTime')) {
+            ret = -1;
+        } else {
+            if (parseInt(a.scheduledTime.startTime) > parseInt(b.scheduledTime.startTime)) {
+                ret = 1;
+            } else {
+                ret = -1;
+            }
+        }
+        return ret;
+    });
+    return matches;
+}
+
 module.exports = {
     isNullOrEmpty: isNullOrEmpty,
     isNullorUndefined: isNullorUndefined,
@@ -193,5 +216,6 @@ module.exports = {
     returnByPath: returnByPath,
     returnBoolByPath: returnBoolByPath,
     appendResHeader: appendResHeader,
-    returnIdString: returnIdString
+    returnIdString: returnIdString,
+    sortMatchesByTime: sortMatchesByTime
 };
