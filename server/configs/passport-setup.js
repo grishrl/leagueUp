@@ -169,7 +169,7 @@ function generateNewToken(prof, admin) {
     }
 
     var token = jwt.sign(tokenObject, process.env.jwtToken, {
-        expiresIn: '24h'
+        expiresIn: '78h'
     });
     return token;
 }
@@ -188,7 +188,7 @@ function returnUserToClient(prof, done) {
         if (admin) {
             tokenObject.adminLevel = compressAdmin(admin.toObject());
         }
-        var token = jwt.sign(tokenObject, process.env.jwtToken, { expiresIn: '2h' });
+        var token = jwt.sign(tokenObject, process.env.jwtToken, { expiresIn: '78h' });
         var reply = {
             token: token
         };
