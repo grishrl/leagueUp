@@ -83,8 +83,6 @@ ngOnChanges(change){
         this.discordTagChange.emit(this.discordTagValue);
         this.errorValue = { error: false };
       } else {
-        console.log('asdf?')
-
         this.discordTagFormControl.setErrors({ invalidTag: true });
         this.errorValue = { error: true, type: 'invalidTag' }
       }

@@ -24,7 +24,6 @@ export class AuthorPageComponent implements OnInit {
 
     this.route.data.subscribe(
       res => {
-        // console.log(res);
         if (res.blogId) {
           this.recId = res.blogId;
         }
@@ -33,12 +32,7 @@ export class AuthorPageComponent implements OnInit {
    }
 
   ngOnInit() {
-    // this.displayBlog = this.blogCommon.blogObj();
-    //gets provided blog post from received id
-    // if (this.contentfulService.getCache()) {
-    //   this.displayBlog = this.contentfulService.getCache();
-    //   this.contentfulService.getCache();
-    // } else {
+
       this.contentfulService.getAuthors( {'fields.name':this.recId} ).then(
         res => {
 

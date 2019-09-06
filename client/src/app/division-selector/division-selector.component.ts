@@ -17,8 +17,6 @@ export class DivisionSelectorComponent implements OnInit {
 
 
   ngOnInit() {
-    //gets division list
-    // console.log(this.adminLoad);
     if(this.adminLoad){
       this.Admin.getDivisionList().subscribe((res) => {
         this.divisions = res;
@@ -38,7 +36,6 @@ export class DivisionSelectorComponent implements OnInit {
 
   adminLoad=false;
   @Input() set admin(_admin){
-    console.log('_admin ',_admin)
     if(_admin!=null||_admin!=undefined){
       this.adminLoad = !!_admin;
     }

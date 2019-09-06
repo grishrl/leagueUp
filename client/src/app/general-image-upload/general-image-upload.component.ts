@@ -44,11 +44,8 @@ export class GeneralImageUploadComponent implements OnInit {
   }
 
   @Input() set existingImage(img) {
-    console.log('input')
     if (img != null && img != undefined && img.length) {
-      console.log('img ', img)
       this.currentImage = this.util.generalImageFQDN(img);
-      console.log('this.currentImage ', this.currentImage);
     } else {
       this.currentImage = null;
     }

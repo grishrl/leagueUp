@@ -270,8 +270,6 @@ initSchedule(){
               if(i>-1){
                 this.displayArray[i] = res;
               }
-              console.log(this.originalMatches[i]);
-              // match = res;
             },
             (err) => {
               console.log(err);

@@ -45,7 +45,6 @@ export class TournamentReportingComponent implements OnInit {
         let tempMatches = res;
 
         tempMatches = tempMatches.filter( a=>{
-          console.log('match ',a);
           if(this.util.returnBoolByPath(a, 'home.id')){
             if (a.home.id == this.auth.getTeamId()){
               return true;
@@ -58,22 +57,11 @@ export class TournamentReportingComponent implements OnInit {
           }
           return false;
         });
-        console.log('tempMatches ',tempMatches);
         this.matches = tempMatches;
       },
       err=>{
         console.log(err);
       }
     )
-
-    // this.team.getTournamentMatches(this.auth.getTeamId(), tournament.name, tournament.season, tournament.division).subscribe(
-    //   res => {
-    //     console.log('res ', res);
-    //     this.matches = res;
-    //   },
-    //   err => {
-    //     console.log(err);
-    //   }
-    // )
   }
 }

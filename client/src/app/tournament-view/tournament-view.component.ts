@@ -66,7 +66,6 @@ export class TournamentViewComponent implements OnInit {
   }
 
   private getTournamentBrackets() {
-    console.log(this._name, this._season, this._division);
     this.hasBracket = false;
       this.scheduleService.getTournamentGames( this._name, this._season, this._division).subscribe(res => {
         if (res['tournInfo'][0]['matches']){

@@ -38,7 +38,6 @@ export class ReportingDeckComponent implements OnInit {
   @Input() set match(match){
     if(match!=null && match != undefined){
 
-      // console.log('match ', match);
 
       merge( this.recMatch, match);
 
@@ -47,7 +46,6 @@ export class ReportingDeckComponent implements OnInit {
       teams.push(match.home.teamName);
       this.team.getTeam(match.home.teamName).subscribe(
         res=>{
-          // console.log('home team ', res);
           this.homeTeam = res;
         },
         err=>{
@@ -56,7 +54,6 @@ export class ReportingDeckComponent implements OnInit {
       )
       this.team.getTeam(match.away.teamName).subscribe(
         res => {
-          // console.log('away team ', res);
           this.awayTeam = res;
         },
         err => {

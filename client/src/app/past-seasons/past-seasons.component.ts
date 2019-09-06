@@ -41,7 +41,6 @@ export class PastSeasonsComponent implements OnInit {
   seasonSelected(){
     this.HS.getSeasonDivisions(this.selectedSeason).subscribe(
       res=>{
-        // console.log(res);
         this.divisionList = [];
         res.forEach(element=>{
           this.divisionList.push(element.object);

@@ -53,14 +53,7 @@ export class AvatarUploadComponent implements OnInit {
   }
 
   removeImage(){
-    // this.admin.teamRemoveLogo(this._playerName).subscribe(
-    //   res=>{
-    //     this.currentImage = `https://placehold.it/${this.widthPx}x${this.heightPx}`;
-    //   },
-    //   err=>{
-    //     console.log(err);
-    //   }
-    // )
+
   }
 
   public get imageToDisplay() {
