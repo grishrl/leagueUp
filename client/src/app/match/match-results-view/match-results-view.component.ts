@@ -28,7 +28,11 @@ export class MatchResultsViewComponent implements OnInit {
 
   seasonVal;
 
+  resultsMap = new Map<string, object>();
+
   ngOnInit() {
+    this.resultsMap = new Map<string, object>();
+
     this.timeService.getSesasonInfo().subscribe(
       time => {
         let currentSeason = time.value;
@@ -47,9 +51,8 @@ export class MatchResultsViewComponent implements OnInit {
                       if (reply && reply.name) {
                         item['map'] = reply.name;
                       }
-                      this.resultsArray.push(
-                        item
-                      );
+                        item['winner'] = res['other'][key]['winner'];
+                        this.resultsMap.set(key, item);
                     }
                   )
                 }
@@ -118,9 +121,9 @@ ControlPoints: 'Sky Temple',
   }
 
   getWinner(ind){
-    ind = ind+1;
-    let arg = this.match.other[ind.toString()].winner;
-    return this.match[arg].teamName;
+    // ind = ind+1;
+    // let arg = this.match.other[ind.toString()].winner;
+    return this.match[ind].teamName;
   }
 
   dominator(match, side) {
