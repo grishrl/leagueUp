@@ -3,6 +3,7 @@ const {
 } = require('googleapis');
 const Match = require('../../models/match-model');
 const logger = require('../../subroutines/sys-logging-subs');
+// const mongoose = require('mongoose');
 
 // mongoose.connect(process.env.mongoURI, () => {
 //     console.log('connected to mongodb');
@@ -29,6 +30,8 @@ function readInVods() {
     });
 
 }
+
+// readInVods();
 
 
 
@@ -98,6 +101,8 @@ async function gsRun(client) {
                 if (obj.vod2) {
                     match.vodLinks.push(obj.vod2);
                 }
+
+                match.markModified('vodLinks');
 
                 let saveResult = await match.save().then(
                     saved => {

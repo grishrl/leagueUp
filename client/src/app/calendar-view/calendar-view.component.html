@@ -75,6 +75,73 @@
                     </div>
                 </div>
 
+                <!-- TODO: uncomment -->
+                <!-- <div class="row mt-2">
+                    <div class="col">
+                        <h4>Upcoming Matches:</h4>
+                        <div class="panel-box padding-b" *ngFor="let day of list | keyvalue: asIsOrder">
+                            <div class="titles">
+                                <h4>{{day.key}}</h4>
+                            </div>
+                            <div class="info-panel">
+
+                                <div class="table-responsive">
+                                    <table class=" table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Home</th>
+                                                <th class="text-center">VS</th>
+                                                <th>Away</th>
+                                                <th>Details</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let match of day.value">
+
+                                                <td>
+                                                    <img src="{{teamServ.imageFQDN(match.home.logo, seasonVal)}}" alt="icon">
+                                                    <strong>
+                                         <app-team-link [team]="match.home.teamName" [season]="seasonVal">
+                                           {{match.home.teamName}}
+                                         </app-team-link>
+                                       </strong><br>
+
+                                                </td>
+                                                <td class="text-center">Vs</td>
+                                                <td>
+                                                    <img src="{{teamServ.imageFQDN(match.away.logo, seasonVal)}}" alt="icon1">
+                                                    <strong>
+                                         <app-team-link [team]="match.away.teamName" [season]="seasonVal">
+                                           {{match.away.teamName}}
+                                         </app-team-link>
+                                       </strong><br>
+
+                                                </td>
+                                                <td>
+                                                    <span *ngIf="match.scheduledTime && match.scheduledTime.startTime">{{util.getFormattedDate(match.scheduledTime.startTime, "MMM DD YYYY hh:mm A zz")}}<br></span>
+                                                    <span *ngIf="match.casterName else casterButton"><br><small class="meta-text">Caster:
+                                           {{match.casterName}}, <a href="{{util.prePendHttp(match.casterUrl)}}"
+                                             target="_blank">{{match.casterUrl}}</a></small></span>
+                                                </td>
+                                                <ng-template #casterButton>
+                                                    <div *ngIf="auth.isCaster()">
+                                                        <button class="btn btn-success" (click)="claimMatch(match.matchId)">One
+                                                                                                        Click
+                                                                                                        Claim</button>
+                                                    </div>
+                                                </ng-template>
+
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+
                 <ng-template #customOpenDayEventsTemplate let-events="events" let-eventClicked="eventClicked" let-isOpen="isOpen">
                     <div class="cal-open-day-events" [@collapse] *ngIf="isOpen">
                         <div *ngFor="let event of events;  trackBy:event;" [ngClass]="event?.cssClass" mwlDraggable [dropData]="{event: event}" [dragAxis]="{x: event.draggable, y: event.draggable}">

@@ -40,6 +40,7 @@ const userSchema = new Schema({
     "history": [Object], //history of player in NGS
     "avatar": String,
     "twitch": String,
+    "casterName": String,
     "twitter": String,
     "youtube": String
 });

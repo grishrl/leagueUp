@@ -144,6 +144,9 @@ router.post('/save', passport.authenticate('jwt', {
                     if (util.returnBoolByPath(sentUser, 'youtube')) {
                         found.youtube = sentUser.youtube;
                     }
+                    if (util.returnBoolByPath(sentUser, 'casterName')) {
+                        found.casterName = sentUser.casterName;
+                    }
 
                     sendRes = false;
 

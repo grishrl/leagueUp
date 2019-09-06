@@ -86,12 +86,11 @@
                             <div class="row mt-2">
                                 <div class="col text-center">
                                     <span class="teamName" *ngIf="match.home else tbd ">
-                                      <app-team-link [team]="match.home.teamName">
-                                        {{match.home.teamName}}
-                                      </app-team-link>
-                                      <!-- <a
-                      [routerLink]="[ '/teamProfile/',team.routeFriendlyTeamName(match.home.teamName)] ">{{match.home.teamName}}</a> -->
-                    </span>
+                    <app-team-link [team]="match.home.teamName">
+                      {{match.home.teamName}}
+                    </app-team-link>
+
+                  </span>
 
                                 </div>
                                 <div class="col text-center">
@@ -99,12 +98,11 @@
                                 </div>
                                 <div class="col text-center">
                                     <span class="teamName" *ngIf="match.away else tbd ">
-                                      <!-- <a
-                      [routerLink]="[ '/teamProfile/',team.routeFriendlyTeamName(match.away.teamName)] ">{{match.away.teamName}}</a> -->
-                                                            <app-team-link [team]="match.away.teamName">
-                                                              {{match.away.teamName}}
-                                                            </app-team-link>
-                    </span>
+
+                    <app-team-link [team]="match.away.teamName">
+                      {{match.away.teamName}}
+                    </app-team-link>
+                  </span>
 
 
                                 </div>
@@ -141,7 +139,7 @@
                                                 </div>
                                             </div>
                                             <div class="col ">
-                                                <span *ngIf="checkRights() ">
+                                                <span *ngIf="checkRights()">
                           <button class="btn btn-danger" (click)="removeCaster(match) "><i class="fas fa-ban"></i>
                             Remove caster</button>
                         </span>
@@ -151,7 +149,19 @@
 
                                     </div>
                                     <ng-template #addCasterButton>
-                                        <app-caster-inputs [(match)]="match " [matchId]="match.matchId "></app-caster-inputs>
+                                        <div class="row">
+                                            <div class="col">
+                                                <app-caster-inputs [(match)]="match " [matchId]="match.matchId ">
+                                                </app-caster-inputs>
+                                            </div>
+                                            <!-- TODO: uncomment -->
+                                            <!-- <div class="col">
+                                                <button class="btn btn-success" (click)="claimMatch(match.matchId)">One Click
+                                                Claim</button>
+                                            </div> -->
+                                        </div>
+
+
                                     </ng-template>
                                 </div>
                             </div>

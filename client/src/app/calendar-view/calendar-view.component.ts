@@ -8,6 +8,8 @@ import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 import { EventsService } from '../services/events.service';
 import { UtilitiesService } from '../services/utilities.service';
+import { TeamService } from '../services/team.service';
+import { AuthService } from '../services/auth.service';
 
 const colors: any = {
   heroic: {  //navy
@@ -57,7 +59,6 @@ const colors: any = {
   }
 };
 
-
 @Component({
   selector: 'app-calendar-view',
   templateUrl: './calendar-view.component.html',
@@ -70,9 +71,12 @@ export class CalendarViewComponent implements OnInit {
     return a.value.sortOrder > b.value.sortOrder ? 1 : 0;
   }
 
+  seasonVal;
+  list = new Map<String, [object]>();
+
   key = colors;
 
-  constructor(private matches: ScheduleService, public dialog: MatDialog, private router:Router, private eventService:EventsService, private util: UtilitiesService) { }
+  constructor(private matches: ScheduleService, public dialog: MatDialog, private router:Router, private eventService:EventsService, private util: UtilitiesService, public teamServ:TeamService, public auth:AuthService, private scheduleService:ScheduleService) { }
 
   showCasterNameUrl(match) {
     // console.log(this.util.returnBoolByPath(match, 'casterName'), match.casterName.length > 0, match.casterName.length)
@@ -90,27 +94,63 @@ export class CalendarViewComponent implements OnInit {
     return ret;
   }
 
+  claimMatch(match) {
+
+    this.scheduleService.addCasterOcc(match).subscribe(
+      res => {
+        this.ngOnInit();
+      },
+      err => {
+        console.log(err);
+      }
+    )
+
+  }
+
   shouldShowTimeInEventTitle() : boolean
   {
     return this.view == CalendarView.Month;
   }
 
+  asIsOrder(a,b){
+    return 1;
+  }
+
   _matches = [];
   ngOnInit(){
+    this.list = new Map<String, [object]>();
     this.matches.getAllMatchesWithStartTime().subscribe(
       res=>{
         let matches = res;
         this._matches = res;
 
-        matches = matches.sort((a,b)=>{
-          let retVal = 0;
-          if (parseInt(a.scheduledTime.startTime) > parseInt(b.scheduledTime.startTime)){
-            retVal = 1;
-          }else{
-            retVal = -1;
-          }
-          return retVal;
-        });
+        // matches = matches.sort((a,b)=>{
+        //   let retVal = 0;
+        //   if (parseInt(a.scheduledTime.startTime) > parseInt(b.scheduledTime.startTime)){
+        //     retVal = 1;
+        //   }else{
+        //     retVal = -1;
+        //   }
+        //   return retVal;
+        // });
+
+        matches = this.util.sortMatchesByTime(matches);
+        // matches.reverse();
+
+
+        // let now = Date.now()
+        // res.forEach(match => {
+        //   if (now <= match.scheduledTime.startTime) {
+        //     let formatDate = this.util.getFormattedDate(match.scheduledTime.startTime, 'dddd MMM D');
+        //     if (this.list.hasOwnProperty(formatDate)) {
+        //       this.list[formatDate].push(match);
+        //     } else {
+        //       this.list[formatDate] = [match];
+        //     }
+        //   }
+        // });
+
+        let now = Date.now()
 
         matches.forEach(match => {
           let startDate: Date = new Date(parseInt(match.scheduledTime.startTime));
@@ -139,7 +179,23 @@ export class CalendarViewComponent implements OnInit {
           event['color'] = colors[match.divisionConcat] ? colors[match.divisionConcat] : { primary: '#FFFFFF'} ;
 
           this.events.push(event);
+
+          if (now <= match.scheduledTime.startTime) {
+            let formatDate = this.util.getFormattedDate(match.scheduledTime.startTime, 'dddd MMM D');
+            console.log(formatDate);
+            if (this.list.has(formatDate)) {
+              let tempArr = this.list.get(formatDate);
+              tempArr.push(match);
+              this.list.set(formatDate, tempArr);
+              // this.list[formatDate].push(match);
+            } else {
+              this.list.set(formatDate, [match]);
+            }
+          }
+
         });
+
+        console.log(this.list);
 
         this.eventService.getAll().subscribe(
           reply=>{
