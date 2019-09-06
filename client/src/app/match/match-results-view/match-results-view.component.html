@@ -91,35 +91,35 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row mt-4" *ngFor="let replay of resultsArray; let i = index;">
-                        <div class="col-12">
-                            <div class="banner" [ngStyle]="{ 'background': 'url('+ getBackground(replay.map) + '), currentColor' } ">
-                                <div class="winnerText">
+                    <div class="row mt-4" *ngFor="let replay of resultsMap| keyvalue">
+                        <div class=" col-12 ">
+                            <div class="banner " [ngStyle]="{ 'background': 'url('+ getBackground(replay.value.map) + '), currentColor' } ">
+                                <div class="winnerText ">
                                     <p>
-                                        <span *ngIf="replay.map else noMap">{{replay.map}}</span>
+                                        <span *ngIf="replay.value.map else noMap ">{{replay.value.map}}</span>
                                         <ng-template #noMap>No Map Info</ng-template>
                                     </p>
                                     <p>
-                                        Winner: {{getWinner(i)}}
+                                        Winner: {{getWinner(replay.value.winner)}}
                                     </p>
                                 </div>
                             </div>
 
 
                         </div>
-                        <div class="col mt-2">
-                            <div><strong>Replay File:</strong> <a href="{{util.replayFQDN(replay.url)}}">Stored
+                        <div class="col mt-2 ">
+                            <div><strong>Replay File:</strong> <a href="{{util.replayFQDN(replay.value.url)}} ">Stored
                                     Replay</a></div>
-                            <div><strong>Heroes Profile:</strong> <a href="{{replay.parsedUrl}}" target="_blank"> Match
+                            <div><strong>Heroes Profile:</strong> <a href="{{replay.value.parsedUrl}} " target="_blank "> Match
                                     Link</a></div>
                         </div>
                     </div>
-                    <div class="row mt-3" *ngIf="match.vodLinks">
-                        <div class="col-3">
+                    <div class="row mt-3 " *ngIf="match.vodLinks ">
+                        <div class="col-3 ">
                             <div><strong>VOD LINKS:</strong></div>
                         </div>
-                        <div class="col-5">
-                            <div *ngFor="let vod of match.vodLinks"><a href="{{vod}}" target="_blank">VOD Link</a></div>
+                        <div class="col-5 ">
+                            <div *ngFor="let vod of match.vodLinks "><a href="{{vod}} " target="_blank ">VOD Link</a></div>
                         </div>
                     </div>
                 </ng-template>

@@ -53,7 +53,7 @@
                                         </li>
                                     </ul>
                                 </li>
-                                <!-- todo : fill in links for past seasons -->
+
                                 <li class="current">
                                     <a [routerLink]="['/pastSeasons']">Past Seasons</a>
 
@@ -133,6 +133,7 @@
                                                         <li><a [routerLink]="['/replayBrowser']">Replay Browser</a></li>
                                                         <li *ngIf="Auth.getCaster()"><a [routerLink]="['/_casterDashboard']">Caster Dashboard</a>
                                                         </li>
+                                                        <!-- NOTE: caster changes -->
                                                         <!-- <li *ngIf="Auth.getCaster()"><a [routerLink]="['/_casterPage']">My Casts</a>
                                                         </li> -->
                                                         <li *ngIf="Auth.getAdmin() && Auth.getAdmin().length>0"><a [routerLink]="['/_admin/dashboard']">Admin Dashboard</a>
@@ -186,7 +187,6 @@
             <a [routerLink]="['/pastSeasons']">Past Seasons</a>
         </li>
 
-        <!-- todo: links for teams -->
         <li>
             <a [routerLink]="['/allTeams']">Teams</a>
         </li>
@@ -248,6 +248,7 @@
                     <a>System</a>
                     <ul>
                         <li *ngIf="Auth.getCaster()"><a [routerLink]="['/_casterDashboard']">Caster Dashboard</a></li>
+                        <!-- NOTE: caster changes -->
                         <!-- <li *ngIf="Auth.getCaster()"><a [routerLink]="['/_casterPage']">My Casts</a>
                         </li> -->
                         <li *ngIf="Auth.getAdmin() && Auth.getAdmin().length>0"><a [routerLink]="['/_admin/dashboard']">Admin Dashboard</a></li>

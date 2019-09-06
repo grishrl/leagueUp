@@ -76,7 +76,7 @@ export class CalendarViewComponent implements OnInit {
 
   key = colors;
 
-  constructor(private matches: ScheduleService, public dialog: MatDialog, private router:Router, private eventService:EventsService, private util: UtilitiesService, public teamServ:TeamService, public auth:AuthService, private scheduleService:ScheduleService) { }
+  constructor(private matches: ScheduleService, public dialog: MatDialog, private router:Router, private eventService:EventsService, public util: UtilitiesService, public teamServ:TeamService, public auth:AuthService, private scheduleService:ScheduleService) { }
 
   showCasterNameUrl(match) {
     let ret = false;
@@ -138,9 +138,7 @@ export class CalendarViewComponent implements OnInit {
 
 
           if (this.showCasterNameUrl(match)){
-            // todo: add this back once we settle on ICON
             event['meta'].casted = true;
-            // event.title += ', Casted! ';
           }
 
           if (this.shouldShowTimeInEventTitle())
