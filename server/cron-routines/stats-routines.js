@@ -286,7 +286,6 @@ async function calcLeagueStats(replay) {
         'secondsPlayed': 0
     };
 
-    console.log(replay.match.map);
     switch (replay.match.map) {
         case 'Braxis Holdout':
             objectiveInfo['zergWaves'] = braxCalc(replay);
@@ -914,7 +913,7 @@ async function postToHotsProfileHandler(limNum) {
             }
         );
 
-        // console.log(matches);
+        // console.log(matches.length);
 
         let savedArray = [];
         for (var i = 0; i < matches.length; i++) {
@@ -959,13 +958,20 @@ async function postToHotsProfileHandler(limNum) {
                         // console.log('matchCopy ', matchCopy);
                         postObj['division'] = getDivisionNameFromConcat(divisions, matchCopy.divisionConcat);
 
+                        console.log(matchCopy);
+
                         postObj['team_one_name'] = matchCopy.home.teamName;
                         postObj['team_one_image_url'] = process.env.heroProfileImage + matchCopy.home.logo;
 
-                        postObj['team_one_player'] = matchCopy.other.homeTeamPlayer;
+
 
                         postObj['team_two_name'] = matchCopy.away.teamName;
-                        postObj['team_two_player'] = matchCopy.other.awayTeamPlayer;
+
+                        if (match.other) {
+                            postObj['team_one_player'] = matchCopy.other.homeTeamPlayer;
+                            postObj['team_two_player'] = matchCopy.other.awayTeamPlayer;
+                        }
+
                         postObj['team_two_image_url'] = process.env.heroProfileImage + matchCopy.away.logo;
 
                         if (matchCopy.hasOwnProperty('mapBans')) {
@@ -976,94 +982,96 @@ async function postToHotsProfileHandler(limNum) {
                         }
 
 
-                        if (matchCopy.hasOwnProperty('round')) {
-                            postObj['round'] = matchCopy.round.toString();
+                        if (matchCopy.type == 'tournament') {
+                            postObj['round'] = 'T-' + matchCopy.round.toString();
                         } else {
-                            postObj['round'] = 'T-1';
+                            postObj['round'] = matchCopy.round.toString();
                         }
 
                         postObj['season'] = process.env.season.toString();
 
                     } catch (e) {
                         console.log(e);
-                    }
+                    } finally {
 
+                        let replayKeys = Object.keys(matchCopy.replays);
 
-                    let replayKeys = Object.keys(matchCopy.replays);
+                        // console.log('replayKeys ', replayKeys);
+                        for (var j = 0; j < replayKeys.length; j++) {
+                            let localKey = j + 1;
 
-                    // console.log('replayKeys ', replayKeys);
-                    for (var j = 0; j < replayKeys.length; j++) {
-                        let localKey = j + 1;
+                            postObj['game'] = (j + 1).toString();
 
-                        postObj['game'] = (j + 1).toString();
+                            let replayObj = matchCopy.replays[(j + 1).toString()];
 
-                        let replayObj = matchCopy.replays[(j + 1).toString()];
+                            if (!util.isNullorUndefined(replayObj)) {
 
-                        if (!util.isNullorUndefined(replayObj)) {
-
-                            postObj['replay_url'] = process.env.heroProfileReplay + replayObj.url;
-                            let logObj = {};
-                            logObj.actor = 'SYSTEM; CRON; Hots-Profile Submit';
-                            logObj.target = 'Match Id: ' + matchObj.matchId
-                            if (replayObj.data) {
-                                logObj.target += ', ReplayID: ' + replayObj.data;
-                            }
-                            logObj.timeStamp = new Date().getTime();
-                            logObj.logLevel = 'STD';
-
-                            // console.log(postObj);
-                            if (screenPostObject(postObj)) {
-
-                                // if (false) {
-
-
-                                //     // call to hotsprofile
-                                let posted = await postToHotsProfile(postObj).then(
-                                    reply => {
-                                        return reply;
-                                    },
-                                    err => {
-                                        return null;
-                                    }
-                                );
-                                //     // console.log('POSTED!')
-                                logObj.action = ' logging reply from hots-profile ' + JSON.stringify(posted.data);
-                                logger(logObj);
-
-                                if (posted) {
-                                    match['replays'][localKey]['parsedUrl'] = posted.data.url;
-                                    postedReplays += 1;
-                                } else {
-                                    //if posted fails then do not set the match to fully reported
-                                    // postedReplays = false;
+                                postObj['replay_url'] = process.env.heroProfileReplay + replayObj.url;
+                                let logObj = {};
+                                logObj.actor = 'SYSTEM; CRON; Hots-Profile Submit';
+                                logObj.target = 'Match Id: ' + matchObj.matchId
+                                if (replayObj.data) {
+                                    logObj.target += ', ReplayID: ' + replayObj.data;
                                 }
-                            } else {
-                                // console.log('NOT POSTED!')
-                                logObj.logLevel = "ERROR";
-                                logObj.error = "This replay failed the screen, NOT SENT TO HEROSPROFILE!!";
-                                logger(logObj);
+                                logObj.timeStamp = new Date().getTime();
+                                logObj.logLevel = 'STD';
+
+                                // console.log(postObj);
+                                if (screenPostObject(postObj)) {
+
+                                    // if (false) {
+
+
+                                    //     // call to hotsprofile
+                                    let posted = await postToHotsProfile(postObj).then(
+                                        reply => {
+                                            return reply;
+                                        },
+                                        err => {
+                                            return null;
+                                        }
+                                    );
+                                    //     // console.log('POSTED!')
+                                    logObj.action = ' logging reply from hots-profile ' + JSON.stringify(posted.data);
+                                    logger(logObj);
+
+                                    if (posted) {
+                                        match['replays'][localKey]['parsedUrl'] = posted.data.url;
+                                        postedReplays += 1;
+                                    } else {
+                                        //if posted fails then do not set the match to fully reported
+                                        // postedReplays = false;
+                                    }
+                                } else {
+                                    // console.log('NOT POSTED!')
+                                    logObj.logLevel = "ERROR";
+                                    logObj.error = "This replay failed the screen, NOT SENT TO HEROSPROFILE!!";
+                                    logger(logObj);
+                                }
                             }
+
                         }
 
-                    }
-
-                    match['postedToHP'] = postedReplays > 0;
-                    // console.log('match ', match);
-                    let saved = await match.save().then(
-                        saved => {
-                            return saved;
-                        },
-                        err => {
-                            console.log(err);
-                            return null;
+                        match['postedToHP'] = postedReplays > 0;
+                        // console.log('match ', match);
+                        let saved = await match.save().then(
+                            saved => {
+                                return saved;
+                            },
+                            err => {
+                                console.log(err);
+                                return null;
+                            }
+                        )
+                        savedArray.push(saved);
+                        if (savedArray.length == matches.length) {
+                            success = true;
                         }
-                    )
-                    savedArray.push(saved);
-                    if (savedArray.length == matches.length) {
-                        success = true;
+
                     }
 
                 }
+
             } else {
 
 
