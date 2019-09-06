@@ -79,8 +79,6 @@ export class CalendarViewComponent implements OnInit {
   constructor(private matches: ScheduleService, public dialog: MatDialog, private router:Router, private eventService:EventsService, private util: UtilitiesService, public teamServ:TeamService, public auth:AuthService, private scheduleService:ScheduleService) { }
 
   showCasterNameUrl(match) {
-    // console.log(this.util.returnBoolByPath(match, 'casterName'), match.casterName.length > 0, match.casterName.length)
-    // console.log();
     let ret = false;
     if (this.util.returnBoolByPath(match, 'casterName')) {
       if (match.casterName.length > 0) {
@@ -124,39 +122,13 @@ export class CalendarViewComponent implements OnInit {
         let matches = res;
         this._matches = res;
 
-        // matches = matches.sort((a,b)=>{
-        //   let retVal = 0;
-        //   if (parseInt(a.scheduledTime.startTime) > parseInt(b.scheduledTime.startTime)){
-        //     retVal = 1;
-        //   }else{
-        //     retVal = -1;
-        //   }
-        //   return retVal;
-        // });
-
         matches = this.util.sortMatchesByTime(matches);
-        // matches.reverse();
-
-
-        // let now = Date.now()
-        // res.forEach(match => {
-        //   if (now <= match.scheduledTime.startTime) {
-        //     let formatDate = this.util.getFormattedDate(match.scheduledTime.startTime, 'dddd MMM D');
-        //     if (this.list.hasOwnProperty(formatDate)) {
-        //       this.list[formatDate].push(match);
-        //     } else {
-        //       this.list[formatDate] = [match];
-        //     }
-        //   }
-        // });
 
         let now = Date.now()
 
         matches.forEach(match => {
           let startDate: Date = new Date(parseInt(match.scheduledTime.startTime));
           let endDate: Date = new Date(parseInt(match.scheduledTime.startTime)+1);
-          // console.log('match ',match)
-          // console.log((colors[match.divisionConcat] ? colors[match.divisionConcat].name : 'div err' ) + ': ' + match.home.teamName + ' vs ' + match.away.teamName);
           let event: CalendarEvent = {
             'start': startDate,
             'end': endDate,
@@ -182,7 +154,6 @@ export class CalendarViewComponent implements OnInit {
 
           if (now <= match.scheduledTime.startTime) {
             let formatDate = this.util.getFormattedDate(match.scheduledTime.startTime, 'dddd MMM D');
-            console.log(formatDate);
             if (this.list.has(formatDate)) {
               let tempArr = this.list.get(formatDate);
               tempArr.push(match);
@@ -194,8 +165,6 @@ export class CalendarViewComponent implements OnInit {
           }
 
         });
-
-        console.log(this.list);
 
         this.eventService.getAll().subscribe(
           reply=>{

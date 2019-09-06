@@ -25,7 +25,6 @@ export class DivisionTournamentScheduleTableComponent implements OnInit, OnChang
 
     this.scheduleService.getTournamentGames(null, providedSeason, division.divisionConcat).subscribe(
           res => {
-            console.log(res);
             let matches = [];
             if(res.tournInfo.length>0){
               matches = res.tournInfo[0].matches;
@@ -130,11 +129,7 @@ export class DivisionTournamentScheduleTableComponent implements OnInit, OnChang
 
   // todayDate;
   ngOnInit() {
-    // this.todayDate = new Date().getTime();
-    // console.log('this.teamObj', this.teamObj, ' seasonVal ', this.seasonVal)
-    //only run this if the new values are different from the priors..?
 
-    // this.initialize();
   }
 
   private initialize() {
@@ -151,7 +146,7 @@ export class DivisionTournamentScheduleTableComponent implements OnInit, OnChang
   }
 
   ngOnChanges( changes: SimpleChanges){
-    console.log('changes ', changes);
+
     if(changes.division){
       if ((changes.division.currentValue && changes.division.currentValue['divisionConcat'] != null)) {
         if (changes.division.previousValue && changes.division.currentValue['divisionConcat'] != changes.division.previousValue['divisionConcat'] || !changes.division.previousValue) {

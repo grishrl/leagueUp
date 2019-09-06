@@ -18,7 +18,6 @@ export class AuthorListComponent implements OnInit {
   ngOnInit() {
     this.contentfulService.getAuthors({}).then(
       res=>{
-        console.log('authors ', res);
         this.authors = res;
       }
     )

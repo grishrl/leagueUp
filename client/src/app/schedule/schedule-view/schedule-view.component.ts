@@ -96,9 +96,6 @@ export class ScheduleViewComponent implements OnInit, OnChanges {
 
   getMatches(){
 
-    console.log('getMatches()');
-
-
     let div;
     if(this.provDiv!=undefined&&this.provDiv!=null){
       div=this.provDiv.divisionConcat;
@@ -145,7 +142,7 @@ export class ScheduleViewComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log('changes ', changes);
+
     if (changes.division) {
       if ((changes.division.currentValue && changes.division.currentValue['divisionConcat'] != null)) {
         if (changes.division.previousValue && changes.division.currentValue['divisionConcat'] != changes.division.previousValue['divisionConcat'] || !changes.division.previousValue) {

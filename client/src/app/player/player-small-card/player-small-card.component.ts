@@ -93,37 +93,6 @@ export class PlayerSmallCardComponent implements OnInit {
     });
   }
 
-  // removeMember(player) {
-  //   //TODO: ADD A CONFIRM HERE
-  //   if (this.componentEmbedded) {
-  //     this.admin.removeMembers(this.returnedProfile.teamName_lower, player).subscribe(
-  //       (res) => {
-  //         // console.log('user removed');
-  //         this.ngOnInit();
-  //       },
-  //       (err) => {
-  //         console.log(err);
-  //       }
-  //     )
-  //   } else {
-  //     this.team.removeUser(player, this.returnedProfile.teamName_lower).subscribe(
-  //       (res) => {
-
-  //         //if the user left the group, destroy their team local info so they can carry on
-  //         if (this.auth.getUser() == player) {
-  //           this.auth.destroyTeam();
-  //           this.auth.destroyTeamId();
-  //         }
-  //         this.ngOnInit();
-  //       },
-  //       (err) => {
-  //         console.log(err);
-  //       }
-  //     )
-  //   }
-
-  // }
-
   removeMember(player) {
 
     if(player && this._teamName){
@@ -159,17 +128,6 @@ export class PlayerSmallCardComponent implements OnInit {
     return ret;
   }
 
-  // leaveTeam() {
-  //   this.team.removeUser(this.Auth.getUser(), this._teamName.toLowerCase()).subscribe(
-  //     (res) => {
-  //       console.log('team left');
-  //       this.dropEmmiter(this.Auth.getUser());
-  //     },
-  //     (err) => {
-  //       console.log(err);
-  //     }
-  //   )
-  // }
 
   displayName: string;
   @Input() set playerID(val) {

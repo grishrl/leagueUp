@@ -152,7 +152,6 @@ export class UserMarketplaceComponent implements OnInit {
         }
       }
     });
-    console.log(postObj);
     this._userService.userMarketSearch(postObj).subscribe( res =>{
       this.localResults = res;
       this.displayArray = res.slice(0, 10);
@@ -206,7 +205,7 @@ export class UserMarketplaceComponent implements OnInit {
           this.length = res;
         },
         err=>{
-          console.log();
+          console.log(err);
         }
       )
     }else{
@@ -234,21 +233,6 @@ export class UserMarketplaceComponent implements OnInit {
     }
       return roster >= 9;
   }
-
-  // showInviteButton(player){
-  //   console.log(this.teamInfo)
-  //   if(this.teamInfo){
-  //     if (this.teamInfo.invitedUsers){
-  //       return 'notinvited';
-  //     }else if (this.teamInfo.invitedUsers.indexOf(player.displayName) > -1) {
-  //       return 'notinvited';
-  //     } else {
-  //       return 'invited';
-  //     }
-  //   }else{
-  //     return 'noteam';
-  //   }
-  // }
 
   getNextPage(filter, page, showMsg) {
     if(filter){
@@ -281,18 +265,6 @@ export class UserMarketplaceComponent implements OnInit {
       this.searchParameters.rolesNeeded[key] = false;
     })
   }
-
-  // requestToJoin(player){
-  //   this.request.inviteToTeamRequest(this.auth.getTeam(), player.displayName).subscribe(
-  //     (res)=>{
-  //       this.teamInfo.invitedUsers.push(player.displayName);
-  //       this.showInviteButton(player);
-  //       //filter by pending invites?
-  //     },err=>{
-  //       console.log(err);
-  //     }
-  //   )
-  // }
 
   filterSelected() {
     let divs = [];

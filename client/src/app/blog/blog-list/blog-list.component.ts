@@ -19,8 +19,6 @@ export class BlogListComponent implements OnInit {
   ngOnInit() {
     this.contentfulService.getBlogs({ order: '-sys.createdAt'}).then(
       res => {
-        // this.createMyDisplay(res);
-        console.log(res);
         this.posts = res;
       });
   }
@@ -37,7 +35,6 @@ export class BlogListComponent implements OnInit {
   lastAuth;
 
   private getBlogsOfVal() {
-    console.log(this.authorSelection);
     let query = {
       order: '-sys.createdAt'
     };
@@ -53,26 +50,6 @@ export class BlogListComponent implements OnInit {
       this.contentfulService.getBlogs(query).then(res => {
         this.posts = res;
       });
-    // }
-
-
-    // if (val == 'all') {
-    //   this. = val;
-    //   this.contentfulService.getBlogs({ order: '-sys.createdAt' }).then(res => {
-    //     // this.createMyDisplay(res);
-    //     this.posts = res;
-    //   });
-    // }
-    // else if (val !== this.selection) {
-    //   this.selection = val;
-    //   this.contentfulService.getBlogs({ 'links_to_entry': this.selection, '', order: '-sys.createdAt' }).then(res => {
-    //     // this.createMyDisplay(res);
-    //     this.posts = res;
-    //   });
-    // }
-    // else {
-    //   //do nothing
-    // }
   }
 
   authorSelection;

@@ -25,7 +25,6 @@ export class BlogViewComponent implements OnInit {
 
     this.route.data.subscribe(
       res=>{
-        // console.log(res);
         if(res.blogId){
           this.recId = res.blogId;
         }

@@ -42,7 +42,6 @@ export class RequestService {
       approval: act,
       messageId: id
     }
-    console.log('payload ',payload);
     return this.httpService.httpPost(url, payload, true);
   }
 

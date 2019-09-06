@@ -46,21 +46,11 @@ export class CasterPageComponent implements OnInit {
     this.list = new Map<String, [object]>();
     this.scheduleService.getMyCastedMatches().subscribe(
       res=>{
-        console.log(res);
         let now = Date.now()
         res.forEach(match=>{
 
-          // if (now <= match.scheduledTime.startTime){
-          //   let formatDate = this.util.getFormattedDate(match.scheduledTime.startTime, 'dddd MMM D');
-          //   if (this.list.hasOwnProperty(formatDate)) {
-          //     this.list[formatDate].push(match);
-          //   } else {
-          //     this.list[formatDate] = [match];
-          //   }
-          // }
           if (now <= match.scheduledTime.startTime) {
             let formatDate = this.util.getFormattedDate(match.scheduledTime.startTime, 'dddd MMM D');
-            console.log(formatDate);
             if (this.list.has(formatDate)) {
               let tempArr = this.list.get(formatDate);
               tempArr.push(match);
@@ -72,7 +62,6 @@ export class CasterPageComponent implements OnInit {
           }
 
         });
-        console.log(this.list);
       },
       err=>{
         console.log(err);

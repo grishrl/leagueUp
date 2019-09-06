@@ -56,7 +56,6 @@ export class DropDownTimeComponent implements OnInit {
   calcTime(){
     let colonSplit = this._time.split(':');
 
-    // colonSplit[1] = parseInt(colonSplit[1]);
     if(this._suffix != undefined && this._suffix != null){
       colonSplit[0] = parseInt(colonSplit[0]);
       if (this._suffix == 'PM'  && colonSplit[0] != 12) {
@@ -65,7 +64,6 @@ export class DropDownTimeComponent implements OnInit {
         colonSplit[0] = parseInt(colonSplit[0]);
         colonSplit[0] = 0;
       }
-      // console.log(colonSplit);
       let strTime = colonSplit[0].toString() + ':' + colonSplit[1];
 
       this.timeChange.emit(strTime);

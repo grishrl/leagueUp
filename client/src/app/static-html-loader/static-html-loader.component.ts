@@ -35,7 +35,6 @@ export class StaticHtmlLoaderComponent implements OnInit {
       this.route.data.subscribe(
         data => {
           this.pageHeader = data.headerText;
-          console.log('data: ', data);
           this.templateLoader(data.template);
         },err=>{
             console.log(err);
@@ -54,7 +53,6 @@ export class StaticHtmlLoaderComponent implements OnInit {
               this.templateLoader('404');
             }else{
               this.loadedHTML = res;
-              // console.log(res);
             }
           },
           err => {

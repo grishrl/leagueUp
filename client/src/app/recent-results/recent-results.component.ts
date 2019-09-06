@@ -19,14 +19,7 @@ export class RecentResultsComponent implements OnInit {
     this.schedule.getReportedMatches('des', 10, false).subscribe(
       res=>{
         let matches = res;
-        // matches.forEach(match=>{
-        //   if(this.util.returnBoolByPath(match, 'scheduledTime.startTime')){
-        //     match.scheduledTime.startTime = parseInt(match.scheduledTime.startTime);
-        //   }
-        // });
-        // matches = this.util.sortMatchesByTime(matches);
-        // matches.reverse();
-        console.log(matches);
+
         let arrayBounds = matches.length > 3 ? 3 : matches.length;
         for (let i = 0; i < arrayBounds; i++){
           this.display.push(matches[i])

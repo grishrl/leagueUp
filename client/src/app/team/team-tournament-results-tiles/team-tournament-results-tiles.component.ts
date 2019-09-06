@@ -21,7 +21,6 @@ export class TeamTournamentResultsTilesComponent implements OnInit {
   getTeamMatches(season, teamId) {
     this.scheduleService.getTeamTournamentGames(season, teamId).subscribe(
       res => {
-        console.log('res ', res);
         if (res && res.length > 0) {
 
           res.forEach(match => {
@@ -29,7 +28,6 @@ export class TeamTournamentResultsTilesComponent implements OnInit {
               this.displayArray.push(match);
             }
           })
-          console.log('this.displayArray ',this.displayArray);
         }
       },
       err => { }

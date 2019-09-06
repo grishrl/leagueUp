@@ -38,11 +38,9 @@ export class TeamDisplayComponent implements OnInit {
   initComponent(){
     //blank out display array
     this._teams=[];
-    console.log('bbbb ',this._teamList, this._season);
     if (this._season){
       this.history.getPastTeamsViaSeason(this._teamList, this._season).subscribe(
         res => {
-          console.log('zzzzz',res);
           res.forEach(element => {
             this._teams.push(element.object);
           });

@@ -23,7 +23,6 @@ export class AssistantCaptainMgmtComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.data);
     if(!this.data.assistantCaptain){
       this.data.assistantCaptain = [];
     }

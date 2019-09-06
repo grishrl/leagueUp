@@ -83,7 +83,6 @@ export class TeamProfileComponent implements OnInit {
 
   //this method controls the opening of the change captain modal
   openAssCaptainChangeDialog(): void {
-    console.log("hello");
     const mgmtAssCpt = this.dialog.open(AssistantCaptainMgmtComponent, {
       width: '450px',
       data: { members: this.returnedProfile.teamMembers, captain: this.returnedProfile.captain, assistantCaptain: this.returnedProfile.assistantCaptain }
@@ -91,7 +90,6 @@ export class TeamProfileComponent implements OnInit {
 
     mgmtAssCpt.afterClosed().subscribe(result => {
       if (result != undefined && result != null) {
-        console.log('hussey ', result);
         this.returnedProfile.assistantCaptain = result;
         this.save();
       }
@@ -120,37 +118,6 @@ export class TeamProfileComponent implements OnInit {
     }
 
 
-  // removeMember(player){
-  //   //TODO: ADD A CONFIRM HERE
-  //   if(this.componentEmbedded){
-  //     this.admin.removeMembers(this.returnedProfile.teamName_lower, player).subscribe(
-  //       (res) => {
-  //         // console.log('user removed');
-  //         this.ngOnInit();
-  //       },
-  //       (err) => {
-  //         console.log(err);
-  //       }
-  //     )
-  //   }else{
-  //     this.team.removeUser(player, this.returnedProfile.teamName_lower).subscribe(
-  //       (res) => {
-
-  //         //if the user left the group, destroy their team local info so they can carry on
-  //         if(this.auth.getUser()==player){
-  //           this.auth.destroyTeam();
-  //           this.auth.destroyTeamId();
-  //         }
-  //         this.ngOnInit();
-  //       },
-  //       (err) => {
-  //         console.log(err);
-  //       }
-  //     )
-  //   }
-
-  // }
-
   adminRefreshMMR(){
     this.admin.refreshTeamMMR(this.returnedProfile.teamName_lower).subscribe(
       (res)=>{
@@ -170,8 +137,7 @@ export class TeamProfileComponent implements OnInit {
     }
     this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     let getProfile: string;
-    // console.log('typeof this.providedProfile: ', typeof this.providedProfile);
-    // console.log('his.providedProfile: ', this.providedProfile);
+
     if(this.season){
 
       this.history.getPastTeamsViaSeason([this.teamName], this.season).subscribe(
@@ -179,8 +145,7 @@ export class TeamProfileComponent implements OnInit {
           merge(this.returnedProfile, res[0].object);
           this.setUpTeamMemberFilter(this.returnedProfile);
           this.checkDivision(this.returnedProfile.divisionConcat);
-      // console.log('team ', this.returnedProfile);
-      // this.cleanUpDivision();
+
         },
         err=>{
           console.log(err);
@@ -234,7 +199,6 @@ export class TeamProfileComponent implements OnInit {
         this.filterUsers.push(element);
       });
     }
-    // console.log('teamProfile ',teamProfile);
     if (teamProfile.pendingMembers && teamProfile.pendingMembers.length > 0) {
       teamProfile.pendingMembers.forEach(element => {
         this.filterUsers.push(element['displayName']);
@@ -411,8 +375,6 @@ export class TeamProfileComponent implements OnInit {
 
   //method for inviting users to join this team
   invite(user) {
-    // console.log(user);
-
     if (this.returnedProfile.teamName && user) {
       if (this.checkUserInPending(user)) {
         this.message = "User is all ready invited to your team!";
@@ -567,10 +529,7 @@ export class TeamProfileComponent implements OnInit {
     this.team.getTeam(getProfile).subscribe((res) => {
       merge(this.returnedProfile, res);
       this.setUpTeamMemberFilter(this.returnedProfile);
-
       this.checkDivision(this.returnedProfile.divisionConcat);
-      // console.log('team ', this.returnedProfile);
-      // this.cleanUpDivision();
     });
   }
 
@@ -594,17 +553,5 @@ export class TeamProfileComponent implements OnInit {
       this.timeValid = $event.valid
     }
   }
-
-  // leaveTeam(){
-  //   this.team.removeUser(this.auth.getUser(), this.returnedProfile.teamName_lower).subscribe(
-  //     (res) => {
-  //       console.log('team left');
-  //       this.ngOnInit();
-  //     },
-  //     (err) => {
-  //       console.log(err);
-  //     }
-  //   )
-  // }
 
 }

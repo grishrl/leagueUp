@@ -79,12 +79,6 @@ export class ChallongeTournComponent implements OnInit {
           }else{
             this.noTourn = true;
           }
-
-
-          // if (res['tournMatches']) {
-          //   this.matches = res['tournMatches'];
-          //   this.tournamentObject = this.arrangeMatches();
-          // }
         }, err => {
           console.log(err);
         });

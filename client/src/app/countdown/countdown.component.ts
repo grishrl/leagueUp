@@ -19,7 +19,6 @@ export class CountdownComponent implements OnInit {
 
     this.timeService.getSesasonInfo().subscribe(
       res=>{
-        // console.log('season info inc: ', res);
         this.seasonStartDate = res['data'].seasonStartDate;
         this.ngOnInit();
       }
@@ -71,19 +70,17 @@ export class CountdownComponent implements OnInit {
   }
 
   ngOnInit() {
-    // console.log('oninit ', this.timeService.returnWeekNumber());
     if (this.timeService.returnWeekNumber() > 0) {
       this.preSeason = false;
       this.scheduleService.getAllMatchesWithStartTime().subscribe(
         res => {
           let matches = res;
-
           matches = matches.filter(match => {
             return this.util.returnBoolByPath(match, 'casterName');
           });
           let now = Date.now();
           let nearestMatch = nextDate(now, matches);
-          // console.log('nearestMatch ',nearestMatch);
+
           if (nearestMatch) {
             nearestMatch.scheduledTime.startTime = parseInt(nearestMatch.scheduledTime.startTime);
             this.startDate = new Date(nearestMatch.scheduledTime.startTime);
@@ -91,9 +88,6 @@ export class CountdownComponent implements OnInit {
             this.validMatch = true;
             this.initCountdown();
           }
-          // console.log('this.validMatch ', this.validMatch);
-          // console.log('this.startDate ', this.startDate);
-          // console.log('this.targetMatch ', this.targetMatch);
 
         },
         err => {
