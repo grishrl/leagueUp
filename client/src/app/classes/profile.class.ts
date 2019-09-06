@@ -32,6 +32,7 @@ export class Profile {  //addition of stats for future plans
   twitch: string;
   twitter: string;
   youtube: string;
+  casterName:string;
   __v: string;//useless
 
 
@@ -168,7 +169,7 @@ export class Profile {  //addition of stats for future plans
     }else{
       this.history = [];
     }
-    
+
     this.seasonsPlayed = 0;
     this.replayArchive = [];
     this.replays = [];
@@ -176,7 +177,7 @@ export class Profile {  //addition of stats for future plans
     this.twitch = null;
     this.twitter = null;
     this.youtube = null;
-    
+    this.casterName = null;
 }
 }
 

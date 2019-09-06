@@ -133,6 +133,7 @@ export class ProfileEditComponent implements OnInit {
 
   //admin method for adding a team to a player profile
   newTeam(team){
+
     this.admin.manualTeamAdd(this.returnedProfile.displayName, team).subscribe(
       res=>{
         // console.log(res);

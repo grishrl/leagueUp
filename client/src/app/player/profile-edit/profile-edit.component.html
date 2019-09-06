@@ -171,6 +171,12 @@
                                         <h4>NOTE: These avatars must be approved by admin before taking affect</h4>
                                         {{returnedProfile.avatar}}
                                         <app-avatar-upload [playerName]="returnedProfile.displayName" [showEdit]="disabled" [avatarImage]="returnedProfile.avatar"></app-avatar-upload>
+                                        <div class="mt-3 p-3" *ngIf="auth.isCaster()">
+                                            <mat-form-field class="mt-3 full-width">
+                                                <input matInput placeholder="Caster Name" [(ngModel)]="returnedProfile.casterName">
+                                                <mat-hint>If you are a caster you must enter this; it will be displayed with all matches you elect to cast.</mat-hint>
+                                            </mat-form-field>
+                                        </div>
                                         <div class="mt-3">
                                             <app-twitch [(twitch)]="returnedProfile.twitch">
                                             </app-twitch>
