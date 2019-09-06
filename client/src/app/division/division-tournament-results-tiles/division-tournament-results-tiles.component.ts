@@ -1,53 +1,96 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges, SimpleChange } from '@angular/core';
 import { StandingsService } from 'src/app/services/standings.service';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { TeamService } from 'src/app/services/team.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
+import { TimeserviceService } from 'src/app/services/timeservice.service';
 
 @Component({
   selector: 'app-division-tournament-results-tiles',
   templateUrl: './division-tournament-results-tiles.component.html',
   styleUrls: ['./division-tournament-results-tiles.component.css']
 })
-export class DivisionTournamentResultsTilesComponent implements OnInit {
+export class DivisionTournamentResultsTilesComponent implements OnInit, OnChanges {
 
 
-  constructor(private standingsService: StandingsService, private scheduleService: ScheduleService, public team: TeamService, public util: UtilitiesService) { }
+  constructor(private standingsService: StandingsService, private scheduleService: ScheduleService, private timeService:TimeserviceService, public team: TeamService, public util: UtilitiesService) { }
   divisions: any = [];
   standings: any[] = [];
 
   ngOnInit() {
   }
 
-  provDiv
+  ngOnChanges(changes:SimpleChanges){
+
+    this.displayMatches = new Map<string, [object]>();
+
+    if(changes.hasOwnProperty('division')){
+      let currentDivConcat = changes.division.currentValue ? changes.division.currentValue['divisionConcat'] : null ;
+      let previousDivConcat = changes.division.previousValue ? changes.division.previousValue['divisionConcat'] : null;
+      if (currentDivConcat != null && currentDivConcat != previousDivConcat){
+        this.initialise();
+      }
+    }
+    if (changes.hasOwnProperty('season')) {
+      let currentSea = changes.season.currentValue ? changes.season.currentValue : null;
+      let previousSea = changes.season.previousValue ? changes.season.previousValue : null;
+      if (currentSea != null && currentSea != previousSea) {
+        this.initialise();
+      }
+    }
+  }
 
   selectedCup;
   localStoreTournaments;
 
 
+  divVal;
   @Input() set division(div) {
-    if (div != undefined && div != null) {
-      this.provDiv=div;
-      this.scheduleService.getTournamentGames(null, 7, div.divisionConcat).subscribe(res => {
-        if (res.tournInfo.length > 0) {
-          this.selectedCup = 0;
-          this.localStoreTournaments = res.tournInfo;
-          this.getMatches();
-        }
-      }, err => {
-        console.log(err);
-      });
-    }
+
+    this.divVal = div;
+
+  }
+
+  seasonVal;
+  @Input() set season(val){
+
+    this.seasonVal = val;
+
   }
 
   matches: any[] = [];
   selectedDivision: any
   rounds: number[] = [];
 
+  getTournamentInfo(){
+    this.scheduleService.getTournamentGames(null, this.seasonVal, this.divVal.divisionConcat).subscribe(res => {
+      if (res.tournInfo.length > 0) {
+        this.selectedCup = 0;
+        this.localStoreTournaments = res.tournInfo;
+        this.getMatches();
+      }
+    }, err => {
+      console.log(err);
+    });
+
+  }
+
+  initialise(){
+    if (!this.seasonVal) {
+      this.timeService.getSesasonInfo().subscribe(
+        res => {
+          this.seasonVal = res['value'];
+          this.getTournamentInfo();
+        }
+      );
+    }else{
+      this.getTournamentInfo();
+    }
+  }
+
   selectedRound: number
-  displayMatches : Map<string,[object]>;
+  displayMatches = new Map<string, [object]>();
   getMatches() {
-    this.displayMatches = new Map<string, [object]>();
     let matches = this.localStoreTournaments[this.selectedCup].matches;
 
     if(matches.length>0){

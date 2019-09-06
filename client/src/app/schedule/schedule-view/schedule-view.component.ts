@@ -149,8 +149,6 @@ export class ScheduleViewComponent implements OnInit, OnChanges {
     if (changes.division) {
       if ((changes.division.currentValue && changes.division.currentValue['divisionConcat'] != null)) {
         if (changes.division.previousValue && changes.division.currentValue['divisionConcat'] != changes.division.previousValue['divisionConcat'] || !changes.division.previousValue) {
-          //do something
-          console.log('different value');
           this.provDiv = changes.division.currentValue;
           this.calculateRounds(this.provDiv);
           this.initialize();

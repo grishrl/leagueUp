@@ -155,8 +155,6 @@ export class DivisionTournamentScheduleTableComponent implements OnInit, OnChang
     if(changes.division){
       if ((changes.division.currentValue && changes.division.currentValue['divisionConcat'] != null)) {
         if (changes.division.previousValue && changes.division.currentValue['divisionConcat'] != changes.division.previousValue['divisionConcat'] || !changes.division.previousValue) {
-          //do something
-          console.log('different value');
           this.divisionObj = changes.division.currentValue;
           this.initialize();
         }
@@ -166,8 +164,6 @@ export class DivisionTournamentScheduleTableComponent implements OnInit, OnChang
     if(changes.season){
       if ((changes.season.currentValue && changes.season.currentValue != null)) {
         if (changes.season.previousValue && changes.season.currentValue != changes.season.previousValue || !changes.season.previousValue) {
-          //do something
-          console.log('different season value');
           this.seasonVal = changes.season.currentValue;
           this.initialize();
         }
