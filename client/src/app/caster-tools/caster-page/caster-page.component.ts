@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TeamService } from 'src/app/services/team.service';
+import { UserService } from 'src/app/services/user.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { Profile } from 'src/app/classes/profile.class';
 
 @Component({
   selector: 'app-caster-page',
@@ -10,7 +13,7 @@ import { TeamService } from 'src/app/services/team.service';
 })
 export class CasterPageComponent implements OnInit {
 
-  constructor(private scheduleService: ScheduleService, public util: UtilitiesService, public teamServ:TeamService ) { }
+  constructor(private scheduleService: ScheduleService, public util: UtilitiesService, public teamServ:TeamService, private user:UserService, private auth:AuthService ) { }
 
   list = new Map<String, [object]>();
   seasonVal;
@@ -19,7 +22,27 @@ export class CasterPageComponent implements OnInit {
     return 1;
   }
 
+  returnedProfile = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+
+  edit=false;
+
+  save(){
+    this.user.saveUser(this.returnedProfile).subscribe(
+      res=>{
+        this.edit = false;
+      },
+      err=>{
+        console.log(err);
+      }
+    )
+
+  }
+
   ngOnInit() {
+    this.user.getUser(this.auth.getUser()).subscribe((res) => {
+      this.returnedProfile = res;
+    });
+
     this.list = new Map<String, [object]>();
     this.scheduleService.getMyCastedMatches().subscribe(
       res=>{
