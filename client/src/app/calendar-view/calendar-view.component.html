@@ -75,7 +75,8 @@
                     </div>
                 </div>
 
-                <div class="row mt-2">
+                <!-- NOTE: caster changes -->
+                <!-- <div class="row mt-2">
                     <div class="col">
                         <h4>Upcoming Matches:</h4>
                         <div class="panel-box padding-b" *ngFor="let day of list | keyvalue: asIsOrder">
@@ -139,7 +140,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
                 <ng-template #customOpenDayEventsTemplate let-events="events" let-eventClicked="eventClicked" let-isOpen="isOpen">
                     <div class="cal-open-day-events" [@collapse] *ngIf="isOpen">

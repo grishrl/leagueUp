@@ -133,8 +133,9 @@
                                                         <li><a [routerLink]="['/replayBrowser']">Replay Browser</a></li>
                                                         <li *ngIf="Auth.getCaster()"><a [routerLink]="['/_casterDashboard']">Caster Dashboard</a>
                                                         </li>
-                                                        <li *ngIf="Auth.getCaster()"><a [routerLink]="['/_casterPage']">My Casts</a>
-                                                        </li>
+                                                        <!-- NOTE: caster changes -->
+                                                        <!-- <li *ngIf="Auth.getCaster()"><a [routerLink]="['/_casterPage']">My Casts</a>
+                                                        </li> -->
                                                         <li *ngIf="Auth.getAdmin() && Auth.getAdmin().length>0"><a [routerLink]="['/_admin/dashboard']">Admin Dashboard</a>
                                                         </li>
                                                         <li><a class="finger linkColorBigDropDown" (click)="logout()">Logout</a></li>
@@ -247,8 +248,9 @@
                     <a>System</a>
                     <ul>
                         <li *ngIf="Auth.getCaster()"><a [routerLink]="['/_casterDashboard']">Caster Dashboard</a></li>
-                        <li *ngIf="Auth.getCaster()"><a [routerLink]="['/_casterPage']">My Casts</a>
-                        </li>
+                        <!-- NOTE: caster changes -->
+                        <!-- <li *ngIf="Auth.getCaster()"><a [routerLink]="['/_casterPage']">My Casts</a>
+                        </li> -->
                         <li *ngIf="Auth.getAdmin() && Auth.getAdmin().length>0"><a [routerLink]="['/_admin/dashboard']">Admin Dashboard</a></li>
                     </ul>
                 </li>
