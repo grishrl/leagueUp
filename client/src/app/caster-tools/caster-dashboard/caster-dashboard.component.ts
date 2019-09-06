@@ -81,7 +81,15 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.friendlyDate = Date.now();
+    // this.friendlyDate = Date.now();
+    let zeroHour = new Date(Date.now());
+
+    zeroHour.setHours(0);
+    zeroHour.setMinutes(0);
+    zeroHour.setMilliseconds(0);
+
+    this.friendlyDate = zeroHour.getTime();
+
     for (let i = 1; i < 13; i++) {
       for (let j = 0; j <= 3; j++) {
         let min: any = j * 15;
