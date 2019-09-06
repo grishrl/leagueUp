@@ -27,7 +27,6 @@ export class TeamUpcomingMatchComponent implements OnInit {
   initTeamSched(id){
     this.scheduleService.getTeamSchedules(this.currentSeason, id).subscribe(
       res => {
-        // console.log(res);
         let now = Date.now();
         let matches = res;
         matches = matches.filter(a => {
