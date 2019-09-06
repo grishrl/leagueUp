@@ -51,6 +51,7 @@ import { ChallongeTournComponent } from "./challonge-tourn/challonge-tourn.compo
 import { SeasonInfoManagerComponent } from "./admin/match-management/season-info-manager/season-info-manager.component";
 import { PastSeasonsComponent } from "./past-seasons/past-seasons.component";
 import { AuthorPageComponent } from "./blog/author-page/author-page.component";
+import { CasterPageComponent } from "./caster-tools/caster-page/caster-page.component";
 
 const APP_ROUTES: Routes = [
   { path: 'challonge', component: ChallongeTournComponent },
@@ -95,6 +96,7 @@ const APP_ROUTES: Routes = [
   { path: 'reporting/:id', component:ReportingComponent}, //accepts team name as url parameter
   { path: '_admin/dashboard', component: DashboardComponent, canActivate: [AuthGuardService]},
   { path: '_casterDashboard', component: CasterDashboardComponent, canActivate: [AuthGuardService], data: { role: 'caster' }},
+  { path: '_casterPage', component: CasterPageComponent, canActivate: [AuthGuardService], data: { role: 'caster' } },
   { path: 'noAccess/:id', component:NoAccessComponent},
   { path: 'sessionTimeOut', component: SessionTimeoutComponent},
   { path: 'calendar' , component:CalendarViewComponent },
