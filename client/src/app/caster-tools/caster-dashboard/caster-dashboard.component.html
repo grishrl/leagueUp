@@ -141,7 +141,7 @@
                                                 </div>
                                             </div>
                                             <div class="col ">
-                                                <span *ngIf="checkRights() ">
+                                                <span *ngIf="checkRights()">
                           <button class="btn btn-danger" (click)="removeCaster(match) "><i class="fas fa-ban"></i>
                             Remove caster</button>
                         </span>
@@ -151,7 +151,18 @@
 
                                     </div>
                                     <ng-template #addCasterButton>
-                                        <app-caster-inputs [(match)]="match " [matchId]="match.matchId "></app-caster-inputs>
+                                        <div class="row">
+                                            <div class="col">
+                                                <app-caster-inputs [(match)]="match " [matchId]="match.matchId ">
+                                                </app-caster-inputs>
+                                            </div>
+                                            <div class="col">
+                                                <button class="btn btn-success" (click)="claimMatch(match.matchId)">One Click
+                                                Claim</button>
+                                            </div>
+                                        </div>
+
+
                                     </ng-template>
                                 </div>
                             </div>

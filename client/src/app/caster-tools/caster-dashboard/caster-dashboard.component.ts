@@ -118,7 +118,18 @@ initSchedule(){
   )
 }
 
+  claimMatch(match){
 
+    this.scheduleService.addCasterOcc(match).subscribe(
+      res=>{
+        this.ngOnInit();
+      },
+      err=>{
+        console.log(err);
+      }
+    )
+
+  }
 
   resetTime(){
     this.startTimeFlt = null;
