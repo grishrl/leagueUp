@@ -75,7 +75,8 @@
                     </div>
                 </div>
 
-                <div class="row mt-2">
+                <!-- TODO: uncomment -->
+                <!-- <div class="row mt-2">
                     <div class="col">
                         <h4>Upcoming Matches:</h4>
                         <div class="panel-box padding-b" *ngFor="let day of list | keyvalue: asIsOrder">
@@ -104,7 +105,7 @@
                                            {{match.home.teamName}}
                                          </app-team-link>
                                        </strong><br>
-                                                    <!-- <small class="meta-text">GROUP H.</small> -->
+
                                                 </td>
                                                 <td class="text-center">Vs</td>
                                                 <td>
@@ -114,7 +115,7 @@
                                            {{match.away.teamName}}
                                          </app-team-link>
                                        </strong><br>
-                                                    <!-- <small class="meta-text">GROUP H.</small> -->
+
                                                 </td>
                                                 <td>
                                                     <span *ngIf="match.scheduledTime && match.scheduledTime.startTime">{{util.getFormattedDate(match.scheduledTime.startTime, "MMM DD YYYY hh:mm A zz")}}<br></span>
@@ -139,7 +140,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
                 <ng-template #customOpenDayEventsTemplate let-events="events" let-eventClicked="eventClicked" let-isOpen="isOpen">
                     <div class="cal-open-day-events" [@collapse] *ngIf="isOpen">
