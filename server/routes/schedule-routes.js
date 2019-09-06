@@ -754,7 +754,7 @@ router.post('/report/match', passport.authenticate('jwt', {
                             )
 
                             //if this match was a tournmanet match then we need to promote the winner to the parent match
-                            matchCommon.promoteTournamentMatch(foundMatch);
+                            matchCommon.promoteTournamentMatch(foundMatch.toObject());
 
 
 

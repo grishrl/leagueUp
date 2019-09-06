@@ -6,6 +6,10 @@ const util = require('../utils');
 const Team = require('../models/team-models');
 
 async function promoteTournamentMatch(foundMatch) {
+    //make sure the received is plain old object
+    if (foundMatch.hasOwnProperty('toObject')) {
+        foundMatch = foundMatch.toObject();
+    }
     let winnerID
         //grab the winner score and their position from the match
     if (foundMatch.type == 'tournament') {
@@ -69,12 +73,16 @@ async function promoteTournamentMatch(foundMatch) {
                         }
                     );
 
+                    console.log(parentChallongeMatch);
+
                     //match up the challonge parent match ID with the winner match
                     //this will allow us to have proper teams always promoted into a matching position to challonge
                     if (parentChallongeMatch.match.player1_id == winnerID) {
                         parentMatch.home = winner;
+                        parentMatch.markModified('home');
                     } else {
                         parentMatch.away = winner;
+                        parentMatch.markModified('away');
                     }
 
                     parentMatch.save().then(saved => {
