@@ -819,6 +819,108 @@ router.post('/match/add/caster', passport.authenticate('jwt', {
 });
 
 /*
+this is to add a caster to a match
+*/
+router.post('/match/fetch/mycasted', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.casterLevel, util.appendResHeader, async(req, res) => {
+    let path = 'schedule/match/fetch/mycasted';
+
+    if (req.user.hasOwnProperty('twitch') && req.user.hasOwnProperty('casterName')) {
+        //log object
+        //comeback
+        let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+
+        let query = {
+            $and: [{
+                    season: currentSeasonInfo.value
+                },
+                {
+                    $or: [{
+                            casterUrl: req.user.twitch
+                        },
+                        {
+                            casterName: req.user.casterName
+                        }
+                    ]
+                }
+            ]
+        };
+
+
+
+
+
+        Match.find(query).lean().then((found) => {
+
+            if (found) {
+                matchCommon.addTeamInfoToMatch(found).then(
+                    processed => {
+                        res.status(200).send(util.returnMessaging(path, 'Found match', false, processed, null));
+                    },
+                    err => {
+                        res.stutus(500).send(util.returnMessaging(path, 'Error finding match', err, null, null));
+                    }
+                )
+            } else {
+                res.status(200).send(util.returnMessaging(path, 'Could not find match', false, found, null));
+            }
+        }, (err) => {
+            res.stutus(500).send(util.returnMessaging(path, 'Error finding match', err, null, null));
+        });
+    } else {
+        res.stutus(500).send(util.returnMessaging(path, 'No Twitch On Profile', null, null, null));
+    }
+
+});
+
+/*
+this is for casters to one click claim a match
+*/
+router.post('/match/add/caster/occ', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.casterLevel, util.appendResHeader, (req, res) => {
+    let path = 'schedule/match/add/caster/occ';
+    let matchid = req.body.matchId;
+
+    if (req.user.hasOwnProperty('twitch') && req.user.hasOwnProperty('casterName')) {
+        //log object
+        let logObj = {};
+        logObj.actor = req.user.displayName;
+        logObj.action = ' add caster ';
+        logObj.logLevel = 'STD';
+        logObj.target = matchid;
+
+        Match.findOne({
+            matchId: matchid
+        }).then((found) => {
+            if (found) {
+                found.casterName = req.user.casterName;
+                found.casterUrl = req.user.twitch;
+                found.save().then(
+                    (saved) => {
+                        res.status(200).send(util.returnMessaging(path, 'Match updated', false, saved, null, logObj));
+                    },
+                    (err) => {
+                        res.stutus(500).send(util.returnMessaging(path, 'Error updating match', err, null, null, logObj));
+                    }
+                )
+            } else {
+                logObj.logLevel = 'ERROR';
+                logObj.error = 'Could not find match';
+                res.status(400).send(util.returnMessaging(path, 'Could not find match', false, found, null, logObj));
+            }
+        }, (err) => {
+            res.stutus(500).send(util.returnMessaging(path, 'Error updating match', err, null, null, logObj));
+        });
+    } else {
+        res.stutus(500).send(util.returnMessaging(path, 'No Twitch On Profile', null, null, null));
+    }
+
+});
+
+
+/*
 generates the schedules
 */
 router.post('/generate/schedules', passport.authenticate('jwt', {

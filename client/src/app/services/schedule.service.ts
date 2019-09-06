@@ -227,4 +227,22 @@ export class ScheduleService {
     let url = 'schedule/match/add/caster';
     return this.httpService.httpPost(url, payload, true);
   }
+
+  // /match/add / caster oneclickclaim
+  addCasterOcc(matchId:string) {
+    let payload = {
+      matchId: matchId
+    }
+    let url = 'schedule/match/add/caster/occ';
+    return this.httpService.httpPost(url, payload, true);
+  }
+
+  // my casted matches
+  getMyCastedMatches() {
+    let payload = {
+
+    }
+    let url = 'schedule/match/fetch/mycasted';
+    return this.httpService.httpPost(url, payload, false);
+  }
 }
