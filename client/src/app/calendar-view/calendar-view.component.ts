@@ -133,8 +133,8 @@ export class CalendarViewComponent implements OnInit {
             'start': startDate,
             'end': endDate,
             'title': (colors[match.divisionConcat] ? colors[match.divisionConcat].name : 'matchErr' )+ ': ' +
-            this.util.returnBoolByPath(match, 'home.teamName') ? match.home.teamName : 'TBD' + ' vs ' +
-            this.util.returnBoolByPath(match, 'away.teamName') ? match.away.teamName : 'TBD',
+            (this.util.returnBoolByPath(match, 'home.teamName') ? match.home.teamName : 'TBD') + ' vs ' +
+            (this.util.returnBoolByPath(match, 'away.teamName') ? match.away.teamName : 'TBD'),
             'meta':{ id: match.matchId, 'type':'match'}
           };
 
