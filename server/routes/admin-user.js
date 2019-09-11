@@ -322,7 +322,6 @@ router.post('/approveAvatar', passport.authenticate('jwt', {
 
     msg.notSeen = true;
 
-    console.log('user id ', userId);
     //find team matching the team in question
     User.findById(userId).then((foundUser) => {
         //we found the team

@@ -147,6 +147,9 @@ router.post('/save', passport.authenticate('jwt', {
                     if (util.returnBoolByPath(sentUser, 'casterName')) {
                         found.casterName = sentUser.casterName;
                     }
+                    if (util.returnBoolByPath(sentUser, 'groupMaker')) {
+                        found.groupMaker = sentUser.groupMaker;
+                    }
 
                     sendRes = false;
 
