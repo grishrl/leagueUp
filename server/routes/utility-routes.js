@@ -11,6 +11,7 @@ const AWS = require('aws-sdk');
 const Replay = require('../models/replay-parsed-models');
 const getTopStats = require('../cron-routines/getTopStats');
 const readInVods = require('../methods/sheets/sheets');
+const groupMaker = require('../cron-routines/groupMaker');
 
 
 AWS.config.update({
@@ -459,6 +460,42 @@ router.post('/discord/post/matches', (req, res) => {
                         res.status(500).send(util.returnMessaging(path, 'League stats runner failed!', false, null, null));
                     }
                 )
+            } else {
+                res.status(401).send(util.returnMessaging(path, 'Unauthorized', false, null, null));
+            }
+        });
+});
+
+router.post('/groupmaker', (req, res) => {
+    const path = '/utility/groupmaker';
+
+    var apiKey = req.body.apiKey || req.query.apiKey;
+
+    checkApiKey(apiKey).then(
+        validate => {
+            if (validate) {
+
+                res.status(200).send(util.returnMessaging(path, 'Group Maker Started Successfully', false, null, null));
+
+                groupMaker.suggestUserToUser().then(
+                    res => {
+
+                    },
+                    err => {
+                        console.log(err);
+                    }
+                );
+
+                groupMaker.suggestUserToTeam().then(
+                    res => {
+
+                    },
+                    err => {
+                        console.log(err);
+                    }
+                );
+
+
             } else {
                 res.status(401).send(util.returnMessaging(path, 'Unauthorized', false, null, null));
             }

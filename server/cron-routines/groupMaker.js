@@ -32,7 +32,7 @@ async function suggestUserToUser() {
 
             userBreakOut1(userObj).then(
                 ret => {
-                    console.log('ret ', ret);
+                    // console.log('ret ', ret);
                 }
             );
         }
@@ -208,7 +208,7 @@ async function userBreakOut1(userObj) {
         }
     }
 
-    console.log('possible ', possible)
+    // console.log('possible ', possible)
     if (possible >= 2) {
         messageSub(userMsg);
     }
@@ -314,7 +314,7 @@ async function suggestUserToTeam() {
 
             breakout1(team, teamObj).then(
                 ret => {
-                    console.log('ret ', ret);
+                    // console.log('ret ', ret);
                 }
             );
         }
@@ -453,12 +453,78 @@ async function breakout1(team, teamObj) {
         });
     });
 
-    _.forEach(overall, (val, key) => {
-        if (val.hits >= 3) {
-            breakout2(team, key, val.hits);
-        } else {
+    let keys = Object.keys(overall);
 
+    let userMessages = {};
+    let teamCaptMessages = {};
+
+    for (var i = 0; i < keys.length; i++) {
+        let key = keys[i];
+        let val = overall[key];
+        if (val.hits >= 3) {
+
+            let conf = await breakout2(team, key, val.hits).then(
+                rep => { return rep; },
+                err => { return null; }
+            )
+
+            // console.log('conf ', conf);
+
+            if (conf && conf.conf >= 6) {
+                if (userMessages.hasOwnProperty(conf.userId)) {
+
+                    userMessages[conf.userId].request.teams.push(conf.teamName);
+
+                } else {
+
+                    let userMsg = {};
+                    userMsg.recipient = conf.userId;
+                    userMsg.sender = 'Mr. Fisky';
+                    userMsg.subject = 'NGS Group Finder';
+                    userMsg.timeStamp = new Date().getTime()
+                    userMsg.content = 'Hello!  Mr. Fisky here.  I was just looking through the list of teams looking for more and I thought that these teams might be a good fit for you!  If you\'re still on the hunt for a team check out their profile!';
+                    userMsg.request = { teams: [conf.teamName] };
+                    userMsg.notSeen = true;
+                    userMessages[conf.userId] = userMsg;
+                }
+
+                let capt = await getCptId(teamObj.captain).then(
+                    capt => {
+                        return capt;
+                    },
+                    err => {
+                        return null;
+                    }
+                );
+                if (capt) {
+                    if (teamCaptMessages.hasOwnProperty(capt._id.toString())) {
+                        teamCaptMessages[capt._id.toString()].request.players.push(conf.userName);
+                    } else {
+                        let teamMsg = {};
+                        teamMsg.notSeen = true;
+                        teamMsg.recipient = capt._id.toString();
+                        teamMsg.sender = 'Mr. Fisky';
+                        teamMsg.subject = 'NGS Group Finder';
+                        teamMsg.timeStamp = new Date().getTime()
+                        teamMsg.content = 'Hello!  Mr. Fisky here.  I was just looking through the roster of free agents and I thought that these players might be a good fit for your team!  If you\'re still on the hunt for a player check out their profile!';
+                        teamMsg.request = {
+                            players: [conf.userName]
+                        };
+                        teamCaptMessages[capt._id.toString()] = teamMsg;
+                    }
+                }
+            }
         }
+
+    }
+
+
+    _.forEach(userMessages, (val, key) => {
+        messageSub(val);
+    })
+
+    _.forEach(teamCaptMessages, (val, key) => {
+        messageSub(val);
     })
 
     return true;
@@ -527,33 +593,12 @@ async function breakout2(team, candidateId, hits) {
 
     confidenceLevel = confidenceLevel * confidenceMultiplier;
 
-    if (confidenceLevel >= 6) {
-        let userMsg = {};
-        userMsg.recipient = userObj._id;
-        userMsg.sender = 'Mr. Fisky';
-        userMsg.subject = 'NGS Group Finder';
-        userMsg.timeStamp = new Date().getTime()
-        userMsg.content = 'Hello!  Mr. Fisky here.  I was just looking through the list of teams looking for more and I thought that ' + teamObj.teamName +
-            ' might be a good fit for you!  If you\'re still on the hunt for a team check out their profile!';
-        userMsg.notSeen = true;
-        messageSub(userMsg);
-
-        getCptId(teamObj.captain).then(
-            capt => {
-                if (capt) {
-                    let teamMsg = {};
-                    teamMsg.notSeen = true;
-                    teamMsg.recipient = capt._id.toString();
-                    teamMsg.sender = 'Mr. Fisky';
-                    teamMsg.subject = 'NGS Group Finder';
-                    teamMsg.timeStamp = new Date().getTime()
-                    teamMsg.content = 'Hello!  Mr. Fisky here.  I was just looking through the roster of free agents and I thought that ' + userObj.displayName +
-                        ' might be a good fit for your team!  If you\'re still on the hunt for a player check out their profile!';
-                    messageSub(teamMsg);
-                }
-            }
-        )
-
+    return {
+        conf: confidenceLevel,
+        teamName: teamObj.teamName,
+        captain: teamObj.captain,
+        userId: userObj._id,
+        userName: userObj.displayName
     }
 
 }

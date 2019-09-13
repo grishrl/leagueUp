@@ -170,11 +170,11 @@ mongoose.connect(process.env.mongoURI, () => {
 //     }
 // )
 
-groupMakerTest.suggestUserToUser().then(
-    res => {
-        console.log(res);
-    },
-    err => {
-        console.log(err);
-    }
-);
+// groupMakerTest.suggestUserToUser().then(
+//     res => {
+//         console.log(res);
+//     },
+//     err => {
+//         console.log(err);
+//     }
+// );
