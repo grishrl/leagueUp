@@ -191,6 +191,7 @@ async function userBreakOut1(userObj) {
     userMsg.timeStamp = new Date().getTime()
     userMsg.content = 'Hello!  Mr. Fisky here.  I was just looking through the list of free agents looking for a team.  Have you considered making your own team?' + ' I think the following players might be a good fit for a team!';
     userMsg.notSeen = true;
+    userMsg.request = {};
 
     let possible = 0;
 
@@ -203,7 +204,16 @@ async function userBreakOut1(userObj) {
             return res;
         });
         if (conf['conf'] >= 5) {
-            possible += 1;
+            if (userMsg.request.hasOwnProperty('players')) {
+                userMsg.request.players.push(conf['displayName']);
+                possible += 1;
+            } else {
+                userMsg.request = {
+                    players: [conf['displayName']]
+                };
+                possible += 1;
+            }
+
             userMsg.content += ' \n' + conf['displayName'];
         }
     }
