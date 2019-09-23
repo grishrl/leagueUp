@@ -2,6 +2,9 @@
 export class Match {
   home: teamInfo;
   away: teamInfo;
+  matchId: string;
+  round:string;
+  divisionConcat:string;
   scheduledTime: schedule;
   casterName: string;
   casterUrl: string;
@@ -11,6 +14,9 @@ export class Match {
   vodLinks:Array<string>;
   mapBans: mapBans;
   season: number;
+  boX:number;
+  reported:boolean;
+  notes:string;
 
   constructor() {
     this.home = {
@@ -32,7 +38,10 @@ export class Match {
     this.scheduledTime = {
       startTime: null,
       endTime: null
-    }
+    },
+    this.matchId=null;
+    this.round = null;
+    this.divisionConcat = null;
     this.forfeit = null;
     this.casterName = '';
     this.casterUrl = '';
@@ -46,6 +55,9 @@ export class Match {
       homeTwo: ''
     };
     this.season=null;
+    this.boX = null;
+    this.reported = false;
+    this.notes = null;
   }
 }
 
