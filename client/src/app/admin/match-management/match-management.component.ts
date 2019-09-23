@@ -4,6 +4,7 @@ import { AdminService } from 'src/app/services/admin.service';
 import { MatPaginator, PageEvent } from '@angular/material';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TimeserviceService } from 'src/app/services/timeservice.service';
+import { FilterService } from 'src/app/services/filter.service';
 
 @Component({
   selector: 'app-match-management',
@@ -21,11 +22,12 @@ export class MatchManagementComponent implements OnInit, AfterViewInit {
   originalMatches: any
   filterMatches: any
   filterTeam: any
+  filterTeam2:string
   rounds = [];
   divisions = []
 
   constructor(private scheduleService: ScheduleService, private adminService: AdminService,
-    public util: UtilitiesService, private timeService:TimeserviceService) { }
+    public util: UtilitiesService, private timeService:TimeserviceService, private filterServ: FilterService) { }
 
   ngAfterViewInit() {
     this.paginator.pageIndex = 0;
@@ -151,6 +153,14 @@ export class MatchManagementComponent implements OnInit, AfterViewInit {
     this.length = this.filterMatches.length;
     this.displayArray = this.filterMatches.slice(0, this.pageSize > this.length ? this.length : this.pageSize);
     this.paginator.firstPage();
+  }
+
+  filterOtherTeam(teamName){
+    if(this.filterTeam){
+      let showing = this.displayArray;
+      showing = showing.filter((a) => { return this.filterServ.testName(a, teamName)}  );
+      this.displayArray = showing;
+    }
   }
 
   displayTime(ms) {

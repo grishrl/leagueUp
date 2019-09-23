@@ -30,9 +30,17 @@
                             </mat-select>
                         </mat-form-field>
                     </div>
+
+                </div>
+                <div class="row mt-2">
                     <div class="col">
                         <mat-form-field class="mat-FullWidth">
                             <input matInput placeholder="Team Name" [(ngModel)]="filterTeam" (ngModelChange)="doFilterMatches(selectedDivision, selectedRound, filterTeam)">
+                        </mat-form-field>
+                    </div>
+                    <div class="col" *ngIf="filterTeam">
+                        <mat-form-field class="mat-FullWidth">
+                            <input matInput placeholder="Other Team Name" [(ngModel)]="filterTeam2" (ngModelChange)="filterOtherTeam(filterTeam2)">
                         </mat-form-field>
                     </div>
                 </div>
