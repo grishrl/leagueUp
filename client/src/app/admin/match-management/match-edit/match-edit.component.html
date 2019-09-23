@@ -43,6 +43,7 @@
                                     <mat-option [value]="0">0</mat-option>
                                     <mat-option [value]="1">1</mat-option>
                                     <mat-option [value]="2">2</mat-option>
+                                    <mat-option [value]="3">3</mat-option>
                                 </mat-select>
                             </mat-form-field>
                         </div>
@@ -58,10 +59,19 @@
                                     <mat-option [value]="0">0</mat-option>
                                     <mat-option [value]="1">1</mat-option>
                                     <mat-option [value]="2">2</mat-option>
+                                    <mat-option [value]="3">3</mat-option>
                                 </mat-select>
                             </mat-form-field>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col">
+                    <h3>Best Of:</h3>
+                    <mat-form-field class="mat-FullWidth">
+                        <input matInput type="number" placeholder="Best Of:" [(ngModel)]="match.boX">
+                    </mat-form-field>
                 </div>
             </div>
             <div class="row mt-2">
