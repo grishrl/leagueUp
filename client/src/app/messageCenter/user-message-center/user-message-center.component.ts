@@ -15,7 +15,7 @@ import { Socket } from 'ngx-socket-io';
 })
 export class UserMessageCenterComponent implements OnInit {
 
-  constructor(public util:UtilitiesService, public user:UserService, public team:TeamService, private request:RequestService, private auth:AuthService, private messageCenter:MessagesService, 
+  constructor(public util:UtilitiesService, public user:UserService, public team:TeamService, private request:RequestService, private auth:AuthService, private messageCenter:MessagesService,
     private notificationService:NotificationService, private socket:Socket) {
     this.socket.fromEvent('newMessage').subscribe(
       res => {
@@ -51,9 +51,11 @@ export class UserMessageCenterComponent implements OnInit {
   }
 
   deleteMessage(message){
+    console.log('xxx ', message);
     if (this.util.returnBoolByPath(message,'request')){
       this.actionRequest(false, message);
     }else{
+      console.log('a');
       this.messageCenter.deleteMessage(message._id).subscribe(res => {
         let ind = -1;
         this.messages.forEach((element, index) => {
@@ -61,6 +63,7 @@ export class UserMessageCenterComponent implements OnInit {
             ind = index;
           }
         });
+        console.log(ind);
         if (ind > -1) {
           this.messages.splice(ind, 1);
           if (this.selectedMessage._id == message._id) {
@@ -87,6 +90,27 @@ export class UserMessageCenterComponent implements OnInit {
       }, (err) => {
         this.ngOnInit();
       });
+    } else if (msg.request.hasOwnProperty('players') || msg.request.hasOwnProperty('teams')){
+
+      this.messageCenter.deleteMessage(msg._id).subscribe(res => {
+        let ind = -1;
+        this.messages.forEach((element, index) => {
+          if (element._id == msg._id) {
+            ind = index;
+          }
+        });
+        console.log(ind);
+        if (ind > -1) {
+          this.messages.splice(ind, 1);
+          if (this.selectedMessage && this.selectedMessage._id == msg._id) {
+            this.selectedMessage = null;
+          }
+        }
+      }, err => {
+        console.log(err);
+      })
+
+
     }
 
   }
