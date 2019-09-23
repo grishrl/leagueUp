@@ -66,7 +66,7 @@
                             <div class="row m-t-5">
                                 <div class="col">
                                     <mat-select placeholder="Map " [(ngModel)]="mapBans.homeOne">
-                                        <mat-option *ngFor="let map of maps | keyvalue" [value]="map.value">{{map.value}}</mat-option>
+                                        <mat-option *ngFor="let map of returnMaps(mapBans.homeTwo, mapBans.awayOne, mapBans.awayTwo)" [value]="map">{{map}}</mat-option>
                                     </mat-select>
 
                                 </div>
@@ -80,7 +80,8 @@
                             <div class="row">
                                 <div class="col">
                                     <mat-select placeholder="Map " [(ngModel)]="mapBans.awayOne">
-                                        <mat-option *ngFor="let map of maps | keyvalue" [value]="map.value">{{map.value}}</mat-option>
+                                        <mat-option *ngFor="let map of returnMaps(mapBans.homeTwo, mapBans.homeOne, mapBans.awayTwo)" [value]="map">{{map}}
+                                        </mat-option>
                                     </mat-select>
 
                                 </div>
@@ -93,8 +94,8 @@
                             <div class="row m-t-5">
                                 <div class="col">
                                     <mat-select placeholder="Map " [(ngModel)]="mapBans.homeTwo">
-                                        <mat-option *ngFor="let map of maps | keyvalue" [value]="map.value">
-                                            {{map.value}}</mat-option>
+                                        <mat-option *ngFor="let map of returnMaps(mapBans.homeOne, mapBans.awayOne, mapBans.awayTwo)" [value]="map">
+                                            {{map}}</mat-option>
                                     </mat-select>
 
                                 </div>
@@ -108,8 +109,8 @@
                             <div class="row">
                                 <div class="col">
                                     <mat-select placeholder="Map " [(ngModel)]="mapBans.awayTwo">
-                                        <mat-option *ngFor="let map of maps | keyvalue" [value]="map.value">
-                                            {{map.value}}</mat-option>
+                                        <mat-option *ngFor="let map of returnMaps(mapBans.homeTwo, mapBans.homeOne, mapBans.awayOne)" [value]="map">
+                                            {{map}}</mat-option>
                                     </mat-select>
 
                                 </div>
@@ -241,12 +242,11 @@
                         </div>
                     </div>
                     <div class="row m-t-20">
-
                         <div class="col" *ngIf="showAdd && !recMatch.reported">
                             <button class="btn btn-primary" (click)="addGame() ">Add Game</button>
                         </div>
 
-                        <div class="col" *ngIf="showReport">
+                        <div class="col" *ngIf="showReportButton()">
                             <button [disabled]="uploading" class="btn btn-success" (click)="report() ">Report Match!</button>
                         </div>
                     </div>
