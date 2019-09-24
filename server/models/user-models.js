@@ -43,7 +43,8 @@ const userSchema = new Schema({
     "twitch": String,
     "casterName": String,
     "twitter": String,
-    "youtube": String
+    "youtube": String,
+    "patron": String
 });
 
 
