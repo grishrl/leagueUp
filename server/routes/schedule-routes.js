@@ -591,7 +591,6 @@ router.post('/report/match', passport.authenticate('jwt', {
                             let fileKeys = Object.keys(files);
                             let parsed = [];
 
-                            //todo - replace with lodash for each
                             //parse the replays
                             fileKeys.forEach(fileKey => {
                                 try {
