@@ -37,6 +37,8 @@ async function calulateStandings(division, season, pastSeason) {
 
 }
 
+
+//these points are awarded to placements of a tournament for cup divisions
 const points = [{
         "rank": 1,
         "points": 3
@@ -51,6 +53,10 @@ const points = [{
     }
 ];
 
+//helper function that returns objects that match given, 
+// array of objects, 
+// matchKey: string of property to check;
+// matchValue: the value of the property to match against
 function returnObjectForKeyMatch(arrayOfObjects, matchKey, matchValue) {
     let arr = arrayOfObjects;
     let returnObj = null;
@@ -60,17 +66,12 @@ function returnObjectForKeyMatch(arrayOfObjects, matchKey, matchValue) {
                 returnObj = iter;
             }
         });
-        // let keys = Object.keys(iter);
-        // keys.forEach(keyIter => {
-        //     if (keyIter == key && iter[keyIter] == value) {
-        //         returnObj = iter;
-        //     }
-        // });
     });
     return returnObj;
 }
 
 
+//method for calculating the standings of a cup division... if such a thing ever exists.
 async function cupDivStanding(division, season) {
     let returnStanding = [];
     let standingsQuery = {
@@ -86,7 +87,8 @@ async function cupDivStanding(division, season) {
         ]
     }
 
-    let standingsData = await System.findOne(standingsQuery).then(found => { return found; }, err => { return null; })
+    //find the cup division object
+    let standingsData = await System.findOne(standingsQuery).then(found => { return found; }, err => { return null; });
 
     let schedQuery = {
         '$and': [{
@@ -100,16 +102,19 @@ async function cupDivStanding(division, season) {
             }
         ]
     };
+
+    //find the schedules of the division
     let cups = await Schedules.find(schedQuery).then(found => { return found; }, err => { return null; });
-    // console.log(cups);
+
     if (cups && cups.length > 0) {
         let tournamentIds = [];
+        //get the challonge tournament id of each schedule item found
         cups.forEach(cup => {
             cup = cup.toObject();
             tournamentIds.push(cup.challonge_ref);
         });
-        // console.log(standingsData);
         if (standingsData) {
+            //go through the standings data all ready compiled; //if the tournament has been compiled all ready remove it from the list to check now
             if (standingsData.data.parsedTournaments) {
                 standingsData.data.parsedTournaments.forEach(parsed => {
                     if (tournamentIds.indexOf(parsed) > -1) {
@@ -117,49 +122,44 @@ async function cupDivStanding(division, season) {
                     }
                 });
             }
-            //this set of actions
-            //remove any tournments that are in parsed list
-            //pull remaining tournaments
-            //parse finished
-            //update and save standing
-            //return standing
+
         } else {
+            //we didnt have any current standings data so create new
             standingsData = {
-                    'dataName': 'cupDivStandings',
-                    'data': {
-                        'points': [],
-                        'season': season,
-                        'divisionConcat': division
-                    }
+                'dataName': 'cupDivStandings',
+                'data': {
+                    'points': [],
+                    'season': season,
+                    'divisionConcat': division
                 }
-                //another set of actions
-                //pull remaining tournaments
-                //parse finished
-                //update and save standing
-                //return standing
+            }
         }
-        console.log('tournamentIds ', tournamentIds);
+
+        //if we have tournmanets that need to be compiled .. cont
         if (tournamentIds.length > 0) {
+            //get the tournament info from challonge...
             let resolvedTournaments = await challonge.retriveTournaments(tournamentIds).then(response => {
                 return response
             });
-            console.log('resolvedTournaments ', resolvedTournaments);
+
+            //loop through each tournament we fetched
             resolvedTournaments.forEach(tourn => {
 
                 tourn = tourn.tournament;
-
+                //check if the tournament is closed and complete..
                 if (tourn.state == 'complete') {
+                    //add this tournament id to our standings info object so it wont be compiled next time
                     if (standingsData.data.parsedTournaments) {
                         standingsData.data.parsedTournaments.push(tourn.id)
                     } else {
                         standingsData.data.parsedTournaments = [tourn.id];
                     }
 
+                    //loop through the participants; if the participant earned rank points; calculate them and add them to the standings
                     let partipants = tourn.participants;
                     partipants.forEach(part => {
                         part = part.participant;
                         if (part != undefined && part != null) {
-                            //loop through the participants; if the participant earned rank points; calculate them and add them to the standings
                             //if this participants rank, matches a rank in our point array -
                             let finishRank = returnObjectForKeyMatch(points, 'rank', part.final_rank);
                             if (finishRank) {
@@ -185,10 +185,12 @@ async function cupDivStanding(division, season) {
                 }
             });
 
+            //if we had some points from compilation assign them to the return value
             if (standingsData.data.points) {
                 returnStanding = standingsData.data.points;
             }
 
+            //update the standings info object
             System.findOneAndUpdate(
                 standingsQuery, standingsData, {
                     new: true,
@@ -246,6 +248,7 @@ async function stdDivStanding(division, season, pastSeason) {
     }).lean().then(
         (matches) => {
             if (matches) {
+                //get an array of team ids
                 teams = MatchCommon.findTeamIds(matches);
                 if (pastSeason) {
                     return MatchCommon.addTeamInfoFromArchiveToMatch(matches, season).then(
@@ -281,7 +284,9 @@ async function stdDivStanding(division, season, pastSeason) {
     let standings = [];
     //calcualte the standings of the teams
     if (matchesForDivision != false) {
+        //loop through the list of team ids
         teams.forEach(team => {
+            //create a response object per team..
             let standing = {};
             standing['wins'] = 0;
             standing['points'] = 0;
@@ -289,56 +294,92 @@ async function stdDivStanding(division, season, pastSeason) {
             standing['dominations'] = 0;
             standing['id'] = team;
             standing['matchesPlayed'] = 0;
-
+            //loop through the matches et all for division
             matchesForDivision.forEach(match => {
+                //match the team id
                 if (match.away.id == team) {
+                    //get team info from here
                     standing['teamName'] = match.away.teamName;
                     standing['logo'] = match.away.logo;
+                    //score from this game if team id was away
                     let score = match.away.score
+                        //dominator variable
                     let dominator = match.away.dominator;
+
                     if (match.reported) {
                         standing['matchesPlayed'] += 1;
                     }
+
                     if (score != undefined && score != null) {
+                        //if the score was 2 
                         if (score == 2) {
+                            //add 2 wins
                             standing['wins'] += 2;
+                            //add 2 points
                             standing['points'] += 2;
+                            //if you scored 2 but not a dominator then you won 2-1
                             if (!dominator) {
                                 standing['losses'] += 1;
                             }
                         } else if (score == 1) {
+                            //if you scored 1
+                            //add 1 pt
                             standing['points'] += 1;
+                            //add 1 win
                             standing['wins'] += 1;
+                            //add 2 losses
                             standing['losses'] += 2;
                         } else {
+                            //else case score is zero, 
+                            //add 2 losses
                             standing['losses'] += 2;
                         }
                     }
+                    //dominator bonus;
+                    //add 1 pt
+                    //add 1 dominations
                     if (dominator) {
                         standing['dominations'] += 1;
                         standing['points'] += 1;
                     }
                 } else if (match.home.id == team) {
+                    //get team info from here
                     standing['teamName'] = match.home.teamName;
+                    standing['logo'] = match.home.logo;
+                    //score from this game if team id was home
                     let score = match.home.score
+                        //dominator variable
                     let dominator = match.home.dominator;
                     if (match.reported) {
                         standing['matchesPlayed'] += 1;
                     }
                     if (score != undefined && score != null) {
+                        //if the score was 2 
                         if (score == 2) {
+                            //add 2 pts
                             standing['points'] += 2;
+                            // add 2 wins
                             standing['wins'] += 2;
+                            //if you scored 2 but not a dominator then you won 2-1
                             if (!dominator) {
                                 standing['losses'] += 1;
                             }
                         } else if (score == 1) {
+                            //score was 1, you lost 1-2
+                            //add 1 pts
                             standing['points'] += 1;
+                            //add 1 wins
                             standing['wins'] += 1;
+                            //add 2 losses
                             standing['losses'] += 2;
                         } else {
+                            //score was zero, 
+                            //add 2 losses
                             standing['losses'] += 2;
                         }
+                        //dominator bonus
+                        //add 1 dominations
+                        //add 1 pts
                         if (dominator) {
                             standing['dominations'] += 1;
                             standing['points'] += 1;
@@ -349,6 +390,7 @@ async function stdDivStanding(division, season, pastSeason) {
             standings.push(standing);
         });
     }
+    //sort resultant standings by points
     standings.sort((a, b) => {
         if (a.points > b.points) {
             return -1;
@@ -356,80 +398,12 @@ async function stdDivStanding(division, season, pastSeason) {
             return 1;
         }
     });
+    //add a position property 1st,....
     for (var i = 0; i < standings.length; i++) {
         standings[i]['standing'] = i + 1;
     }
     return standings;
 }
-
-//this loops through an array of matches from the db and adds the teams ids to an array
-function findTeamIds(found) {
-    let teams = [];
-    //type checking make sure we have array
-    if (!Array.isArray(found)) {
-        found = [found];
-    }
-
-    found.forEach(match => {
-        if (util.returnBoolByPath(match, 'home.id')) {
-            if (match.home.id != 'null' && teams.indexOf(match.home.id.toString()) == -1) {
-                teams.push(match.home.id.toString());
-            }
-        }
-        if (util.returnBoolByPath(match, 'away.id')) {
-            if (match.away.id != 'null' && teams.indexOf(match.away.id.toString()) == -1) {
-                teams.push(match.away.id.toString());
-            }
-        }
-    });
-    return teams;
-}
-
-//this takes an array of ids and grabs all the team info for them, adds it to the 
-// home/away object of the match so they are available on the client
-// async function addTeamNamesToMatch(teams, found) {
-//     //typechecking
-//     if (!Array.isArray(found)) {
-//         found = [found];
-//     }
-//     return Team.find({
-//         _id: {
-//             $in: teams
-//         }
-//     }).then((foundTeams) => {
-//         if (foundTeams) {
-//             foundTeams.forEach(team => {
-//                 let teamid = team._id.toString();
-//                 found.forEach(match => {
-//                     let homeid, awayid;
-//                     if (util.returnBoolByPath(match, 'home.id')) {
-//                         homeid = match.home.id.toString();
-//                     }
-//                     if (util.returnBoolByPath(match, 'away.id')) {
-//                         awayid = match.away.id.toString();
-//                     }
-//                     if (teamid == homeid) {
-//                         match.home['teamName'] = team.teamName;
-//                         match.home['logo'] = team.logo;
-//                         match.home['teamName_lower'] = team.teamName_lower;
-//                         match.home['ticker'] = team.ticker;
-//                     }
-//                     if (teamid == awayid) {
-//                         match.away['teamName'] = team.teamName;
-//                         match.away['logo'] = team.logo;
-//                         match.away['teamName_lower'] = team.teamName_lower;
-//                         match.away['ticker'] = team.ticker;
-//                     }
-//                 });
-//             });
-//             return found;
-//         } else {
-//             return [];
-//         }
-//     }, (err) => {
-//         return err;
-//     });
-// }
 
 module.exports = {
     calulateStandings: calulateStandings
