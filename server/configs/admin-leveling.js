@@ -1,3 +1,8 @@
+/*
+These wrappers ostensibly simplify the admin checking we want to do by
+wrapping the whole function
+ */
+
 const adminCheck = require("../adminCheck");
 
 function teamLevel(req, res, next) {
