@@ -1,3 +1,4 @@
+//import the config of socket IO
 const socketIo = require('./socket-io-config');
 
 //accepts string: system user ID
@@ -5,14 +6,15 @@ const socketIo = require('./socket-io-config');
 //the client uses this to request current new and pending messages to update the message notification in real time.
 function dispatchMessage(recepient) {
 
+    //check that there are clients
     if (socketIo.clients.length > 0) {
         let dispatchToId = null;
-        //todo: can probably replace this with the indexoffunctions
-        socketIo.clients.forEach((clientIt) => {
-            if (clientIt.userId == recepient) {
-                dispatchToId = clientIt.clientId;
-            }
-        });
+
+        //if this recipient is in the socket IO memory; get it's client ID
+        if (socketIo.indexOfUser(socketIo.clients, recepient) > -1) {
+            dispatchToId = socketIo.clients[socketIo.indexOfUser(socketIo.clients, recepient)].clientId;
+        }
+        //if we found the client ID dispatch message to it
         if (dispatchToId) {
             let namespace = null;
             let ns = socketIo.socketIo.of(namespace || "/");

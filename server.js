@@ -1,18 +1,7 @@
-//Load HTTP module
-// const express = require("express");
-
-
-
-// const io = require('socket.io');
-// const http = require('http');
-
-
-
-// const hostname = process.env.hostname;
-// const port = process.env.PORT;
-
-// const app = express();
+//import the express server from file
 const app = require('./serverConf')['app'];
+
+//load route files
 const authRoutes = require('./server/routes/auth-routes');
 const searchRoutes = require('./server/routes/search-routes');
 const teamRoutes = require('./server/routes/team-routes');
@@ -30,25 +19,23 @@ const messageRoutes = require('./server/routes/message-routes');
 const requestRoutes = require('./server/routes/request-routes');
 const utilityRoutes = require('./server/routes/utility-routes');
 const eventRoutes = require('./server/routes/event-routes');
+const history = require('./server/routes/historical-routes');
+
+//load mongoose and other utilities 
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const passportSetup = require('./server/configs/passport-setup');
 const express = require("express");
 const path = require('path');
-const history = require('./server/routes/historical-routes');
 
-
+//configs...
 app.use(bodyParser.json({
     limit: '2.5mb',
     extended: true
 }));
 
 app.use(bodyParser.urlencoded({ extended: false }));
-
-
-// //initialize passport
-// app.use(passport.initialize());
 
 //connect to mongo db
 mongoose.connect(process.env.mongoURI, { useNewUrlParser: true }, () => {
@@ -75,6 +62,7 @@ app.use('/utility', utilityRoutes);
 app.use('/events', eventRoutes);
 app.use('/history', history);
 
+//this is a special route that can be used for seeding teams and users into a dev env when needed
 // const seeding = require('./server/routes/seeding-route');
 // app.use('/dev', seeding);
 
