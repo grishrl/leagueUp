@@ -10,6 +10,7 @@ const Avatar = require('../methods/avatarUpload');
 const PendingAvatarQueue = require('../models/admin-models').PendingAvatarQueue;
 const archiveUser = require('../methods/archivalMethods').archiveUser;
 const axios = require('axios');
+const hpAPI = require('../methods/heroesProfileAPI');
 /*
 /get
 /delete
@@ -308,14 +309,12 @@ router.get('/statistics', (req, res) => {
 
 router.get('/hero-profile/path', (req, res) => {
 
-    //todo replace with hpAPI methods
-    let url = 'http://www.heroesprofile.com/API/Profile/?battletag=$profile$&region=1&api_key=ngs!7583hh'
-    url = url.replace('$profile$', encodeURIComponent(req.query.displayName));
-    const path = 'user/hero-profile/path'
-    axios.get(url).then(
-        rep => {
-            res.status(200).send(util.returnMessaging(path, 'Found.', null, rep.data));
-        }, err => {
+    const path = 'user/hero-profile/path';
+    hpAPI.playerProfile(req.query.displayName).then(
+        (resp) => {
+            res.status(200).send(util.returnMessaging(path, 'Found.', null, resp));
+        },
+        (err) => {
             res.status(500).send(util.returnMessaging(path, 'Not Found.', err));
         }
     )
