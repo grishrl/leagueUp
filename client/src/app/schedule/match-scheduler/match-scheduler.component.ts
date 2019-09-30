@@ -109,7 +109,6 @@ index = 0;
       if (msDate) {
         this.scheduleService.scheduleMatchTime(this.match.matchId, msDate, endDate).subscribe(
           res=>{
-            //TODO: will i need to implement a route here?
             this.router.navigateByUrl('/teamProfile/'+this.team.routeFriendlyTeamName(this.Auth.getTeam()));
           },
           err=>{
