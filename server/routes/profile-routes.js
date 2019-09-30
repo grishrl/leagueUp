@@ -9,8 +9,8 @@ const Stats = require('../models/stats-model');
 const Avatar = require('../methods/avatarUpload');
 const PendingAvatarQueue = require('../models/admin-models').PendingAvatarQueue;
 const archiveUser = require('../methods/archivalMethods').archiveUser;
-const axios = require('axios');
 const hpAPI = require('../methods/heroesProfileAPI');
+
 /*
 /get
 /delete

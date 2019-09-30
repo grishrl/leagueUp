@@ -6,7 +6,6 @@ const Match = require('../models/match-model');
 const statsMethods = require('./stats-routines');
 const parser = require('hots-parser');
 const _ = require('lodash');
-const axios = require('axios');
 const AWS = require('aws-sdk');
 const uniqid = require('uniqid');
 const ParsedReplay = require('../models/replay-parsed-models');

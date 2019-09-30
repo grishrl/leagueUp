@@ -1,34 +1,7 @@
 const System = require('../models/system-models').system;
-const axios = require('axios');
 const logger = require('../subroutines/sys-logging-subs');
 const hpAPI = require('../methods/heroesProfileAPI');
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
-// const mongoose = require('mongoose');
-
-// mongoose.connect(process.env.mongoURI, () => {
-//     console.log('connected to mongodb');
-// });
-
-// const statusURL = 'https://heroesprofile.com/API/NGS/MostStat/?api_key=hc544!0&stat={stat}&season={season}'
-// const config = {
-//     headers: {
-//         'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
-//     }
-// }
-// async function getTopHotsProfile(stat, season) {
-//     let returnUrl = 'null';
-//     let callUrl = statusURL;
-//     season = season ? season : process.env.season;
-//     try {
-//         callUrl = callUrl.replace('{stat}', stat);
-//         callUrl = callUrl.replace('{season}', season);
-//         returnUrl = await axios.get(callUrl, config);
-//     } catch (error) {
-//         console.log(error);
-//     }
-
-//     return returnUrl;
-// }
 
 const stats = [
     'kills',
