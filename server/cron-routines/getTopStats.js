@@ -2,6 +2,7 @@ const System = require('../models/system-models').system;
 const axios = require('axios');
 const logger = require('../subroutines/sys-logging-subs');
 const hpAPI = require('../methods/heroesProfileAPI');
+const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 // const mongoose = require('mongoose');
 
 // mongoose.connect(process.env.mongoURI, () => {

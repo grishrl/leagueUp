@@ -13,6 +13,7 @@ const levelRestrict = require("../configs/admin-leveling");
 const messageSub = require('../subroutines/message-subs');
 const uploadTeamLogo = require('../methods/teamLogoUpload').uploadTeamLogo;
 const deleteFile = require('../methods/teamLogoUpload').deleteFile;
+const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 
 //returns the lists of users who are awaiting admin attention to complete the team join process
 router.get('/pendingMemberQueue', passport.authenticate('jwt', {
@@ -171,7 +172,11 @@ router.post('/reassignCaptain', passport.authenticate('jwt', {
 //updates the members profile to now be part of the team
 router.post('/approveMemberAdd', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
+}), levelRestrict.teamLevel, util.appendResHeader, async(req, res) => {
+
+    let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+    let seasonNum = currentSeasonInfo.value;
+
     const path = '/admin/approveMemberAdd';
     var teamId = req.body.teamId;
     var member = req.body.memberId;
@@ -232,14 +237,14 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
                                         timestamp: Date.now(),
                                         action: 'Joined team',
                                         target: foundUser.displayName,
-                                        season: process.env.season
+                                        season: seasonNum
                                     });
                                 } else {
                                     foundTeam.history = [{
                                         timestamp: Date.now(),
                                         action: 'Joined team',
                                         target: foundUser.displayName,
-                                        season: process.env.season
+                                        season: seasonNum
                                     }];
                                 }
                                 //update the user with the team info
@@ -252,14 +257,14 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
                                         timestamp: Date.now(),
                                         action: 'Joined team',
                                         target: foundTeam.teamName,
-                                        season: process.env.season
+                                        season: seasonNum
                                     });
                                 } else {
                                     foundUser.history = [{
                                         timestamp: Date.now(),
                                         action: 'Joined team',
                                         target: foundTeam.teamName,
-                                        season: process.env.season
+                                        season: seasonNum
                                     }];
                                 }
                             } else {
@@ -647,7 +652,9 @@ router.get('/get/teams/all', passport.authenticate('jwt', {
 router.post('/team/memberAdd',
     passport.authenticate('jwt', {
         session: false
-    }), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
+    }), levelRestrict.teamLevel, util.appendResHeader, async(req, res) => {
+        let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+        let seasonNum = currentSeasonInfo.value;
         const path = 'admin/team/memberAdd';
         let user = req.body.user;
         let team = req.body.teamName;
@@ -687,14 +694,14 @@ router.post('/team/memberAdd',
                                 timestamp: Date.now(),
                                 action: 'Joined team',
                                 target: user,
-                                season: process.env.season
+                                season: seasonNum
                             });
                         } else {
                             found.history = [{
                                 timestamp: Date.now(),
                                 action: 'Joined team',
                                 target: user,
-                                season: process.env.season
+                                season: seasonNum
                             }];
                         }
 

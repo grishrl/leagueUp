@@ -13,6 +13,7 @@ const util = require('../utils');
 const System = require('../models/system-models').system;
 const MatchMethods = require('../methods/matchCommon');
 const hpAPI = require('../methods/heroesProfileAPI');
+const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 
 // const postToHotsProfileURL = process.env.heroProfileAPI;
 // const config = {
@@ -277,6 +278,9 @@ async function leagueStatRunner() {
 
 async function calcLeagueStats(replay) {
 
+    let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+    let seasonNum = currentSeasonInfo.value;
+
     let seasonSave;
     let overallSave;
 
@@ -422,7 +426,7 @@ async function calcLeagueStats(replay) {
                 dataName: "leagueRunningFunStats"
             },
             {
-                span: process.env.season
+                span: seasonNum
             }
         ]
     };
@@ -461,7 +465,7 @@ async function calcLeagueStats(replay) {
         )
     } else {
         let newObj = {
-            span: process.env.season,
+            span: seasonNum,
             dataName: "leagueRunningFunStats",
             data: {}
         }
@@ -650,6 +654,8 @@ function boeCalc(replay) {
 //this will run through players with toon handles and tabulate their stats from replays
 async function tabulateUserStats() {
 
+    let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+    let seasonNum = currentSeasonInfo.value;
 
     //grab users who have been marked for tabulation (this is a flag on the user model set after a replay is associated to a user)
     let players = await User.find({ parseStats: true }).then(
@@ -697,7 +703,7 @@ async function tabulateUserStats() {
                             associateId: player._id.toString()
                         },
                         {
-                            season: process.env.season
+                            season: seasonNum
                         }
                     ]
                 }).then(
@@ -717,7 +723,7 @@ async function tabulateUserStats() {
                     let statObj = {
                         stats: playerData,
                         associateId: player._id.toString(),
-                        season: process.env.season
+                        season: seasonNum
                     }
                     statResult = await new Stats(statObj).save().then(
                         saved => { return saved },
@@ -852,6 +858,9 @@ async function tabulateTeamStats() {
 }
 
 async function postToHotsProfileHandler(limNum) {
+
+    let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+    let seasonNum = currentSeasonInfo.value;
 
     //TODO:
     /*
@@ -997,7 +1006,7 @@ async function postToHotsProfileHandler(limNum) {
                             postObj['round'] = matchCopy.round.toString();
                         }
 
-                        postObj['season'] = process.env.season.toString();
+                        postObj['season'] = seasonNum.toString();
 
                     } catch (e) {
                         console.log(e);

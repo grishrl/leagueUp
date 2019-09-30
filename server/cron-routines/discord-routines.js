@@ -4,6 +4,7 @@ const Standings = require('../subroutines/standings-subs');
 const axios = require('axios');
 const matchCom = require('../methods/matchCommon');
 const Division = require('../models/division-models');
+const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 
 // connect to mongo db
 mongoose.connect(process.env.mongoURI, () => {
@@ -75,8 +76,11 @@ async function getTodaysMatchesLean() {
 }
 
 async function associateStandingsWithTeams(matches) {
-    standings = {};
-    divisions = [];
+
+    let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+    let season = currentSeasonInfo.value;
+    let standings = {};
+    let divisions = [];
     matches.forEach(match => {
         if (divisions.indexOf(match.divisionConcat) == -1) {
             divisions.push(match.divisionConcat);
@@ -84,7 +88,7 @@ async function associateStandingsWithTeams(matches) {
     });
     for (var i = 0; i < divisions.length; i++) {
         let thisDiv = divisions[i];
-        let standing = await Standings.calulateStandings(thisDiv, process.env.season).then(
+        let standing = await Standings.calulateStandings(thisDiv, season).then(
             res => {
                 return res;
             },

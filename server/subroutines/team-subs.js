@@ -4,6 +4,7 @@ const User = require('../models/user-models');
 const Match = require('../models/match-model');
 const logger = require('./sys-logging-subs');
 const mmrMethods = require('../methods/mmrMethods');
+const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 
 //how many members of team we will use to calculate avg-mmr
 const numberOfTopMembersToUse = 4;
@@ -507,36 +508,46 @@ function updateDivisionHistory(teams, divisonName) {
     logObj.action = ' updating team division history';
     logObj.timeStamp = new Date().getTime();
     logObj.logLevel = 'STD';
+    SeasonInfoCommon.getSeasonInfo().then(
+        rep => {
+            let seasonNum = rep.value;
 
-    Team.find({ teamName: { $in: teams } }).then(
-        foundTeams => {
-            for (var i = 0; i < foundTeams.length; i++) {
-                let teamObj = foundTeams[i].toObject()
-                if (!teamObj.hasOwnProperty('history')) {
-                    foundTeams[i].history = [{
-                        timestamp: Date.now(),
-                        action: 'Added to division',
-                        target: divisonName,
-                        season: process.env.season
-                    }]
-                } else {
-                    foundTeams[i].history.push({
-                        timestamp: Date.now(),
-                        action: 'Added to division',
-                        target: divisonName,
-                        season: process.env.season
-                    })
+            Team.find({
+                teamName: {
+                    $in: teams
                 }
-                foundTeams[i].markModified('history');
-                foundTeams[i].save();
-            }
-        },
-        err => {
-            logObj.logLevel = 'ERROR';
-            logObj.error = err;
-            logger(logObj);
+            }).then(
+                foundTeams => {
+                    for (var i = 0; i < foundTeams.length; i++) {
+                        let teamObj = foundTeams[i].toObject()
+                        if (!teamObj.hasOwnProperty('history')) {
+                            foundTeams[i].history = [{
+                                timestamp: Date.now(),
+                                action: 'Added to division',
+                                target: divisonName,
+                                season: seasonNum
+                            }]
+                        } else {
+                            foundTeams[i].history.push({
+                                timestamp: Date.now(),
+                                action: 'Added to division',
+                                target: divisonName,
+                                season: seasonNum
+                            })
+                        }
+                        foundTeams[i].markModified('history');
+                        foundTeams[i].save();
+                    }
+                },
+                err => {
+                    logObj.logLevel = 'ERROR';
+                    logObj.error = err;
+                    logger(logObj);
+                }
+            )
         }
     )
+
 
 }
 

@@ -718,39 +718,45 @@ router.post('/report/match', passport.authenticate('jwt', {
 
                             //if we have failed parse - remove those junk objects from the array before inserting them into the database.
                             indiciesToRemove = [];
-                            parsed.forEach((element, index) => {
-                                element.season = process.env.season;
-                                if (element.hasOwnProperty('failed') && element.failed == true) {
-                                    indiciesToRemove.push(index);
+                            SeasonInfoCommon.getSeasonInfo().then(
+                                rep => {
+                                    let seasonNum = rep.value;
+                                    parsed.forEach((element, index) => {
+                                        element.season = seasonNum;
+                                        if (element.hasOwnProperty('failed') && element.failed == true) {
+                                            indiciesToRemove.push(index);
+                                        }
+                                    });
+
+                                    indiciesToRemove.forEach(index => {
+                                        parsed.splice(index, 1);
+                                    });
+
+                                    ParsedReplay.collection.insertMany(parsed).then(
+                                        (records) => {
+                                            //log object
+                                            let sysLog = {};
+                                            sysLog.actor = 'SYS';
+                                            sysLog.action = ' parsed replay stored';
+                                            sysLog.logLevel = 'SYSTEM';
+                                            sysLog.target = replayfilenames.toString();
+                                            sysLog.timeStamp = new Date().getTime();
+                                            logger(sysLog);
+
+                                            foundMatch.reported = true;
+                                            foundMatch.save((saved) => {
+                                                res.status(200).send(util.returnMessaging(path, 'Match reported', false, saved, null, logObj));
+                                            }, (err) => {
+                                                res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
+                                            })
+                                        },
+                                        (err) => {
+                                            res.status(500).send(util.returnMessaging(path, 'Error (2) reporting match result', err, null, null, logObj));
+                                        }
+                                    )
                                 }
-                            });
+                            );
 
-                            indiciesToRemove.forEach(index => {
-                                parsed.splice(index, 1);
-                            });
-
-                            ParsedReplay.collection.insertMany(parsed).then(
-                                (records) => {
-                                    //log object
-                                    let sysLog = {};
-                                    sysLog.actor = 'SYS';
-                                    sysLog.action = ' parsed replay stored';
-                                    sysLog.logLevel = 'SYSTEM';
-                                    sysLog.target = replayfilenames.toString();
-                                    sysLog.timeStamp = new Date().getTime();
-                                    logger(sysLog);
-
-                                    foundMatch.reported = true;
-                                    foundMatch.save((saved) => {
-                                        res.status(200).send(util.returnMessaging(path, 'Match reported', false, saved, null, logObj));
-                                    }, (err) => {
-                                        res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
-                                    })
-                                },
-                                (err) => {
-                                    res.status(500).send(util.returnMessaging(path, 'Error (2) reporting match result', err, null, null, logObj));
-                                }
-                            )
 
                             //if this match was a tournmanet match then we need to promote the winner to the parent match
                             matchCommon.promoteTournamentMatch(foundMatch.toObject());
