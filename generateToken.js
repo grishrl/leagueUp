@@ -2,11 +2,12 @@ const jwt = require('jsonwebtoken');
 const System = require('./server/models/system-models');
 const mongoose = require('mongoose')
 const teamSubs = require('./server/subroutines/team-subs');
-const Archive = require('./server/models/system-models').archive;
+// const Archive = require('./server/models/system-models').archive;
 const Match = require('./server/models/match-model');
 const util = require('./server/utils');
 const matchCommon = require('./server/methods/matchCommon');
 const groupMakerTest = require('./server/cron-routines/groupMaker');
+const Archive = require('./server/methods/archivalMethods');
 
 let tokenObject = {};
 // set this ID to the _id that the API key will be tied to
@@ -34,6 +35,15 @@ console.log('token ', token);
 mongoose.connect(process.env.mongoURI, () => {
     console.log('connected to mongodb');
 });
+
+Archive.archiveDivisions().then(
+    res => {
+        console.log(res);
+    },
+    err => {
+        console.log(err);
+    }
+)
 
 
 // new System.system({
