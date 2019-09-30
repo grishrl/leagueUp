@@ -7,29 +7,29 @@ const Match = require('../models/match-model');
 const logger = require('../subroutines/sys-logging-subs');
 const summarizePlayerData = require('../summarizeData/summarize-player-data');
 const summarizeTeamData = require('../summarizeData/summarize-team-data');
-const axios = require('axios');
+// const axios = require('axios');
 const _ = require('lodash');
-const querystring = require('querystring');
 const util = require('../utils');
 const System = require('../models/system-models').system;
 const MatchMethods = require('../methods/matchCommon');
+const hpAPI = require('../methods/heroesProfileAPI');
 
-const postToHotsProfileURL = process.env.heroProfileAPI;
-const config = {
-    headers: {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
-    }
-}
-async function postToHotsProfile(postObj) {
-    let returnUrl = 'null';
-    try {
-        returnUrl = await axios.get(postToHotsProfileURL + '?' + querystring.stringify(postObj), config);
-    } catch (error) {
-        console.log(error);
-    }
+// const postToHotsProfileURL = process.env.heroProfileAPI;
+// const config = {
+//     headers: {
+//         'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+//     }
+// }
+// async function postToHotsProfile(postObj) {
+//     let returnUrl = 'null';
+//     try {
+//         returnUrl = await axios.get(postToHotsProfileURL + '?' + querystring.stringify(postObj), config);
+//     } catch (error) {
+//         console.log(error);
+//     }
 
-    return returnUrl;
-}
+//     return returnUrl;
+// }
 
 function getToonHandle(obj, name) {
     let handle = null;
@@ -928,7 +928,7 @@ async function postToHotsProfileHandler(limNum) {
         for (var i = 0; i < matches.length; i++) {
             let postedReplays = 0;
             let postObj = {};
-            postObj['api_key'] = 'ngs!7583hh';
+            // postObj['api_key'] = 'ngs!7583hh';
             let match = matches[i];
             // console.log('match ', match);
 
@@ -1032,7 +1032,7 @@ async function postToHotsProfileHandler(limNum) {
 
 
                                     //     // call to hotsprofile
-                                    let posted = await postToHotsProfile(postObj).then(
+                                    let posted = await hpAPI.matchUpload(postObj).then(
                                         reply => {
                                             return reply;
                                         },
