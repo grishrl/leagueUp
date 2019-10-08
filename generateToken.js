@@ -49,12 +49,32 @@ mongoose.connect(process.env.mongoURI, () => {
 hpAPI.playerMmrAPI('wraithling#1178').then(
     res => {
 
-        console.log('ret', res);
+        console.log('ret 1', res);
     },
     err => {
         console.log(err);
     }
-)
+);
+
+hpAPI.playerProfile('wraithling#1178').then(
+    res => {
+
+        console.log('ret 2', res);
+    },
+    err => {
+        console.log(err);
+    }
+);
+
+hpAPI.highestStat('kills', '7').then(
+    res => {
+
+        console.log('ret 3', res);
+    },
+    err => {
+        console.log(err);
+    }
+);
 
 
 // new System.system({
