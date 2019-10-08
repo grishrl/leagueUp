@@ -82,6 +82,7 @@
                                         <!-- <small class="meta-text">GROUP H.</small> -->
                                     </td>
                                     <td>
+                                        <strong>Match ID:</strong><span>{{match.matchId}}</span><br>
                                         <span *ngIf="match.scheduledTime && match.scheduledTime.startTime else tbd">{{util.getFormattedDate(match.scheduledTime.startTime, "MMM DD hh:mm A zz")}}<br></span>
                                         <span *ngIf="match.casterName"><br><small class="meta-text">Caster: {{match.casterName}}, <a
                        href="{{util.prePendHttp(match.casterUrl)}}"

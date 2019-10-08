@@ -4,6 +4,7 @@ import { ScheduleService } from 'src/app/services/schedule.service';
 import { AdminService } from 'src/app/services/admin.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { environment } from '../../../../environments/environment';
+import { Match } from '../../../classes/match.class';
 
 @Component({
   selector: 'app-match-edit',
@@ -15,23 +16,24 @@ export class MatchEditComponent implements OnInit {
   //component properties
   matchId;
   times: any[] = [];
-  match: any = {
-    home: {
-      teamName: '',
-      score: null
-    },
-    away: {
-      teamName: '',
-      score: null
-    },
-    scheduledTime:{
-      startTime:null
-    },
-    casterName: null,
-    casterUrl: null,
-    notes:'',
-    forfeit:false
-  }; //match prototype
+  // match: any = {
+  //   home: {
+  //     teamName: '',
+  //     score: null
+  //   },
+  //   away: {
+  //     teamName: '',
+  //     score: null
+  //   },
+  //   scheduledTime:{
+  //     startTime:null
+  //   },
+  //   casterName: null,
+  //   casterUrl: null,
+  //   notes:'',
+  //   forfeit:false
+  // }; //match prototype
+  match = new Match();
   homeScore: number;
   awayScore: number;
   suffix;
@@ -55,7 +57,8 @@ export class MatchEditComponent implements OnInit {
       }
       if( !this.match.hasOwnProperty('scheduledTime') ){
         this.match.scheduledTime = {
-          startTime:null
+          startTime:null,
+          endTime:null
         }
       }else{
         // this.friendlyDate = this.util.getDatePickerFormatFromMS(this.match.scheduledTime.startTime);

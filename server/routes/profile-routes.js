@@ -147,6 +147,9 @@ router.post('/save', passport.authenticate('jwt', {
                     if (util.returnBoolByPath(sentUser, 'casterName')) {
                         found.casterName = sentUser.casterName;
                     }
+                    if (util.returnBoolByPath(sentUser, 'groupMaker')) {
+                        found.groupMaker = sentUser.groupMaker;
+                    }
 
                     sendRes = false;
 
@@ -305,6 +308,7 @@ router.get('/statistics', (req, res) => {
 
 router.get('/hero-profile/path', (req, res) => {
 
+    //todo replace with hpAPI methods
     let url = 'http://www.heroesprofile.com/API/Profile/?battletag=$profile$&region=1&api_key=ngs!7583hh'
     url = url.replace('$profile$', encodeURIComponent(req.query.displayName));
     const path = 'user/hero-profile/path'

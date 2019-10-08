@@ -3,18 +3,12 @@
 
 <!-- Section Area - Content Central -->
 <section class="content-info">
-
     <div class="container paddings-mini">
         <!-- Content Text-->
         <div class="panel-box padding-b">
             <div class="titles">
                 <h4>Inbox</h4>
             </div>
-            <!-- <div class="row mt-3">
-                <div class="col text-center">
-                    <h3>User Message Center</h3>
-                </div>
-            </div> -->
             <div class="row mt-3">
                 <div class="col" *ngIf="messages.length>0 else noMessages">
                     <div class="list-group">
@@ -22,19 +16,22 @@
                             <div class="row">
                                 <div class="col-10 finger" (click)="selectMessage(message)">
                                     <div class="row">
-                                        <div class="col">Sender: {{message.sender}}</div>
-                                        <div class="col">Time: {{util.getDateFromMS(message.timeStamp)}} {{util.getTimeFromMS(message.timeStamp)}} {{util.getSuffixFromMS(message.timeStamp)}}
+                                        <div class="col"><strong>Sender:</strong> {{message.sender}}</div>
+                                        <div class="col"><strong>Time:</strong> {{util.getDateFromMS(message.timeStamp)}} {{util.getTimeFromMS(message.timeStamp)}} {{util.getSuffixFromMS(message.timeStamp)}}
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col">
-                                            Subject: {{message.subject}}
+                                            <strong>Subject:</strong> {{message.subject}}
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-2">
-                                    <div><span class="icon-align finger" (click)="deleteMessage(message)"><i
-                              class="material-icons">delete_forever</i>Delete</span></div>
+                                    <div>
+                                        <span class="icon-align finger" (click)="deleteMessage(message)">
+                                          <i class="material-icons">delete_forever</i> Delete
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -42,12 +39,11 @@
                 </div>
                 <ng-template #noMessages>
                     <div class="col p-5 text-center">
-                        <div>No messages!</div>
+                        <div><strong>No messages!</strong></div>
                         No news is good news!
                     </div>
                 </ng-template>
             </div>
-            <!-- <div style="height:100px"></div> -->
         </div>
         <!-- End Content Text-->
         <div class="panel-box padding-b" *ngIf="selectedMessage">
@@ -58,53 +54,74 @@
                 <div class="col">
                     <div class="row mt-1">
                         <div class="col">
-                            Sender: {{selectedMessage.sender}}
+                            <strong>Sender:</strong> {{selectedMessage.sender}}
                         </div>
                         <div class="col">
-                            Time: {{util.getDateFromMS(selectedMessage.timeStamp)}} {{util.getTimeFromMS(selectedMessage.timeStamp)}} {{util.getSuffixFromMS(selectedMessage.timeStamp)}}
+                            <strong>Time:</strong> {{util.getDateFromMS(selectedMessage.timeStamp)}} {{util.getTimeFromMS(selectedMessage.timeStamp)}} {{util.getSuffixFromMS(selectedMessage.timeStamp)}}
                         </div>
                     </div>
                     <div class="row mt-2">
                         <div class="col">
-                            Subject: {{selectedMessage.subject}}
+                            <strong>Subject:</strong> {{selectedMessage.subject}}
                         </div>
                     </div>
                     <div class="row mt-1">
                         <div class="col">
-                            Content: {{selectedMessage.content}}
+                            <strong>Content:</strong> {{selectedMessage.content}}
                         </div>
                     </div>
                     <!-- action -->
                     <div *ngIf="selectedMessage.request">
-                        <div class="row p-4">
-                            <div class="col" *ngIf="selectedMessage.request.instance=='team'">
-                                <span>This message requires your attention! Please see below:</span>
-                                <div class="mt-2">You can review this users profile and Accept or Decline this request.</div>
-                                <div class="mt-1">If you approve the user will be added to the pending member queue and an admin will review the team join.</div>
-                                <div>If you decline this request nothing further will occur.</div>
+                        <div *ngIf="selectedMessage.request.instance=='team' || selectedMessage.request.instance=='user'">
+                            <div class="row p-4">
+                                <div class="col" *ngIf="selectedMessage.request.instance=='team'">
+                                    <span>This message requires your attention! Please see below:</span>
+                                    <div class="mt-2">You can review this users profile and Accept or Decline this request.</div>
+                                    <div class="mt-1">If you approve the user will be added to the pending member queue and an admin will review the team join.</div>
+                                    <div>If you decline this request nothing further will occur.</div>
+                                </div>
+                                <div class="col" *ngIf="selectedMessage.request.instance=='user'">
+                                    <span>This message requires your attention! Please see below:</span>
+                                    <div class="mt-2">You can review this teams profile and Accept or Decline this request.</div>
+                                    <div class="mt-1">If you accept the invite you will be added to the pending member queue and an admin will review the team join.</div>
+                                    <div>If you decline this request nothing further will occur.</div>
+                                </div>
                             </div>
-                            <div class="col" *ngIf="selectedMessage.request.instance=='user'">
-                                <span>This message requires your attention! Please see below:</span>
-                                <div class="mt-2">You can review this teams profile and Accept or Decline this request.</div>
-                                <div class="mt-1">If you accept the invite you will be added to the pending member queue and an admin will review the team join.</div>
-                                <div>If you decline this request nothing further will occur.</div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <span *ngIf="selectedMessage.request.instance=='team'"> View User Profile
+                            <div class="row">
+                                <div class="col">
+                                    <span *ngIf="selectedMessage.request.instance=='team'"> View User Profile
                                   <app-player-link [player]="selectedMessage.request.requester">
                                     {{selectedMessage.request.requester}}</app-player-link>
                                   </span>
-                                <span *ngIf="selectedMessage.request.instance=='user'"> View Team Profile
+                                    <span *ngIf="selectedMessage.request.instance=='user'"> View Team Profile
                                   <app-team-link [team]="selectedMessage.request.requester">
                                     {{selectedMessage.request.requester}}</app-team-link>
                                   </span>
+                                </div>
+                                <div class="col text-center">
+                                    <button (click)="actionRequest(true, selectedMessage)" class="btn btn-success">Accept</button>
+                                    <button (click)="actionRequest(false, selectedMessage)" class="ml-2 btn btn-danger">Decline</button>
+                                </div>
                             </div>
-                            <div class="col text-center">
-                                <button (click)="actionRequest(true, selectedMessage)" class="btn btn-success">Accept</button>
-                                <button (click)="actionRequest(false, selectedMessage)" class="ml-2 btn btn-danger">Decline</button>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col">
+                                <div *ngIf="selectedMessage.request.players && selectedMessage.request.players.length>0">
+                                    <div class="mt-2" *ngFor="let player of selectedMessage.request.players">
+                                        <app-player-link [player]="player">
+                                            {{player}}
+                                        </app-player-link>
+                                    </div>
+                                </div>
+                                <div *ngIf="selectedMessage.request.teams && selectedMessage.request.teams.length>0">
+                                    <div class="mt-2" *ngFor="let team of selectedMessage.request.teams">
+                                        <app-team-link [team]="team">
+                                            {{team}}
+                                        </app-team-link>
+                                    </div>
+                                </div>
                             </div>
+
                         </div>
                     </div>
 
@@ -112,6 +129,4 @@
             </div>
         </div>
     </div>
-
 </section>
-<!-- End Section Area -  Content Central -->

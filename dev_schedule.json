@@ -1,0 +1,25 @@
+[{
+    "id": "VhWjuxrQQi2NwBXeyFDMyA",
+    "desctiption": "Update teams not touched in 5 days",
+    "url": "https://dev-ngs.herokuapp.com/utility/update/teams?apiKey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjNjMzYjhlYTU1YTE0N2NlMDhjOTZiYyIsImlhdCI6MTU1MTY0MzkzNX0.fFPD9-bRmTG44JpILU5nHlSrOnCuF32AHkX1JPnHHFc&daysOld=5"
+}, {
+    "id": "Tee5qiBkRLan-hOMVhLQoQ",
+    "desctiption": "Read in vod reports from caster spreadsheet",
+    "url": "https://dev-ngs.herokuapp.com/utility/read-in-vods?apiKey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjNjMzYjhlYTU1YTE0N2NlMDhjOTZiYyIsImlhdCI6MTU1MTY0MzkzNX0.fFPD9-bRmTG44JpILU5nHlSrOnCuF32AHkX1JPnHHFc"
+}, {
+    "id": "b5yJEhdiTbm91mBWPOuyRw",
+    "desctiption": "Tabulate teams stats",
+    "url": "https://dev-ngs.herokuapp.com/utility/tabulate-stats/team?apiKey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjNjMzYjhlYTU1YTE0N2NlMDhjOTZiYyIsImlhdCI6MTU1MTY0MzkzNX0.fFPD9-bRmTG44JpILU5nHlSrOnCuF32AHkX1JPnHHFc"
+}, {
+    "id": "kw1ela-_RHqBd9j0PYfuAw",
+    "desctiption": "Tabulate user stats",
+    "url": "https://dev-ngs.herokuapp.com/utility/tabulate-stats/user?apiKey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjNjMzYjhlYTU1YTE0N2NlMDhjOTZiYyIsImlhdCI6MTU1MTY0MzkzNX0.fFPD9-bRmTG44JpILU5nHlSrOnCuF32AHkX1JPnHHFc"
+}, {
+    "id": "7ksij3TbTKaojBtzr4WAeg",
+    "desctiption": "Associate replays to the teams an users",
+    "url": "https://dev-ngs.herokuapp.com/utility/associate-replays?apiKey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjNjMzYjhlYTU1YTE0N2NlMDhjOTZiYyIsImlhdCI6MTU1MTY0MzkzNX0.fFPD9-bRmTG44JpILU5nHlSrOnCuF32AHkX1JPnHHFc"
+}, {
+    "id": "drzU0TyjQjub94_IyWjNRQ",
+    "desctiption": "Routine to find user/team and user/user matches",
+    "url": "https://dev-ngs.herokuapp.com/utility/groupmaker?apiKey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjNjMzYjhlYTU1YTE0N2NlMDhjOTZiYyIsImlhdCI6MTU1MTY0MzkzNX0.fFPD9-bRmTG44JpILU5nHlSrOnCuF32AHkX1JPnHHFc"
+}]

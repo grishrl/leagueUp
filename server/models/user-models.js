@@ -23,6 +23,7 @@ const userSchema = new Schema({
     "role": Object, //form input added
     "timeZone": String, //form input added
     "hotsLogsURL": String, //form input added
+    "groupMaker": Boolean,
     "hotsLogsPlayerID": String,
     "averageMmr": Number,
     "heroesProfileMmr": Number,
@@ -42,7 +43,8 @@ const userSchema = new Schema({
     "twitch": String,
     "casterName": String,
     "twitter": String,
-    "youtube": String
+    "youtube": String,
+    "patron": String
 });
 
 

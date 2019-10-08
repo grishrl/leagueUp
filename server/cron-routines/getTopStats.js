@@ -7,6 +7,7 @@ const logger = require('../subroutines/sys-logging-subs');
 //     console.log('connected to mongodb');
 // });
 
+//todo replace with hpAPI methods
 const statusURL = 'https://heroesprofile.com/API/NGS/MostStat/?api_key=hc544!0&stat={stat}&season={season}'
 const config = {
     headers: {

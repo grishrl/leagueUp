@@ -8,7 +8,7 @@ async function getSeasonInfo(season) {
                 'dataName': 'seasonInfo'
             },
             {
-                'value': specificSeason
+                'value': season
             }
         ];
     } else {
@@ -18,9 +18,9 @@ async function getSeasonInfo(season) {
         found => {
             found = found.sort((a, b) => {
                 if (a.value > b.value) {
-                    return 1;
-                } else {
                     return -1;
+                } else {
+                    return 1;
                 }
             });
             return found[0]

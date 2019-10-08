@@ -47,6 +47,7 @@ async function hotslogs(btag) {
     return { playerId: id, mmr: val };
 };
 
+//todo replace with hpAPI methods
 let heroesProfileURL = 'https://heroesprofile.com/API/MMR/Player/?api_key=' + process.env.heroProfileAPIkey + '&region=1&p_b=';
 
 
@@ -131,6 +132,7 @@ async function heroesProfile(btag) {
     return val;
 }
 
+//todo replace with hpAPI methods
 let ngsMmrUrL = 'https://heroesprofile.com/API/MMR/NGS/Player/?api_key=' + process.env.heroProfileAPIkey + '&p_b=';
 
 async function heroesProfileNGS(btag) {

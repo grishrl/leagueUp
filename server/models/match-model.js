@@ -68,6 +68,7 @@ const matchSchema = new Schema({
     "scheduleDeadline": String,
     "forfeit": Boolean,
     "notes": String,
+    "boX": Number,
     "vodLinks": [String],
     "challonge_match_ref": String, //new properties for reference challonge matches
     "challonge_tournament_ref": String, //new properties for reference challonge matches

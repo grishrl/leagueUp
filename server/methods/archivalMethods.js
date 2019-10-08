@@ -46,7 +46,7 @@ async function archiveDivisions() {
                 for (var j = 0; j < dbTeams.eo.length; j++) {
                     let team = dbTeams.eo[j];
                     console.log('archiving ' + team.teamName);
-                    let teamObject = team.toLowerCase();
+                    let teamObject = team.toObject();
                     teamObject.teamId = team._id.toString();
                     new Archive({
                         type: 'team',

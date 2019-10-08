@@ -853,6 +853,15 @@ async function tabulateTeamStats() {
 
 async function postToHotsProfileHandler(limNum) {
 
+    //TODO:
+    /*
+     return "Replay did not save, unknown issue"
+
+     If a player was provided that did not exist in the game I provide "Invalid parameter. A player provided was not in the game"
+
+     If a game mode is not custom i provide "Game mode is not custom.  Invalid replay sent"
+    */
+
     let success = false;
 
     if (!limNum) {
