@@ -209,6 +209,17 @@ function sortMatchesByTime(matches) {
     return matches;
 }
 
+function objectify(obj) {
+    if (typeof obj == 'object' && !Array.isArray(obj)) {
+        if (obj.hasOwnProperty('toObject')) {
+            obj = obj.toObject();
+        }
+        return obj;
+    } else {
+        return null;
+    }
+}
+
 module.exports = {
     isNullOrEmpty: isNullOrEmpty,
     isNullorUndefined: isNullorUndefined,
@@ -217,5 +228,6 @@ module.exports = {
     returnBoolByPath: returnBoolByPath,
     appendResHeader: appendResHeader,
     returnIdString: returnIdString,
-    sortMatchesByTime: sortMatchesByTime
+    sortMatchesByTime: sortMatchesByTime,
+    objectify: objectify
 };

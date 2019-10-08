@@ -12,14 +12,13 @@ const numberOfTopMembersToUse = 4;
 //subroutine to update teams division
 // teams: array of teams,
 //division: object division object
-
 function upsertTeamsDivision(teams, division) {
     teams.forEach(team => {
         upsertTeamDivision(team, division);
     });
 }
 
-//update teams division info with that of the provided division
+//update team's division info with that of the provided division
 //team: object or string
 //division : object, division obhect
 function upsertTeamDivision(team, division) {
@@ -29,8 +28,11 @@ function upsertTeamDivision(team, division) {
 
     logObj.timeStamp = new Date().getTime();
     logObj.logLevel = 'STD';
+
     let fteam;
+    //if we got an object; lets get the teamname out of the object to call the database
     if (typeof team == 'object') {
+        team = util.objectify(team);
         fteam = team.teamName_lower.toLowerCase();
     } else {
         fteam = team.toLowerCase();
@@ -44,19 +46,16 @@ function upsertTeamDivision(team, division) {
             foundTeam.divisionConcat = division.divisionConcat;
             foundTeam.save((success) => {
                 logger(logObj);
-                // console.log('team division updated');
             }, (err) => {
                 logObj.logLevel = 'ERROR';
                 logObj.error = err;
                 logger(logObj);
-                // console.log('team saving error');
             })
         }
     }, (err) => {
         logObj.logLevel = 'ERROR';
         logObj.error = err;
         logger(logObj)
-            // console.log('found team error')
     })
 }
 
@@ -70,12 +69,14 @@ async function updateTeamMmrAsynch(team) {
     logObj.timeStamp = new Date().getTime();
     logObj.logLevel = 'STD';
 
+    //if we got a string team name then convert team to object with teamname_lower
     if (typeof team == 'string') {
         team = team.toLowerCase();
         team = {
             teamName_lower: team
         }
     }
+
     logObj.target += team.teamName_lower + ' ';
     //grab the specified team
     let retrievedTeam = await Team.findOne({
@@ -96,19 +97,14 @@ async function updateTeamMmrAsynch(team) {
     retrievedTeam.teamMembers.forEach(element => {
         members.push(element.displayName);
     });
-    //
+
     let processMembersMMR;
     if (members.length > 0) {
         //loop through the members of each team
         for (var i = 0; i < members.length; i++) {
             //grab a specific member
             let member = members[i];
-
-
-            //call out to the hero profile api grab the most updated users MMR
-            // let mmr = await mmrMethods.hotslogs(member);
-            // let hpMmr = await mmrMethods.heroesProfileMMR(member);
-
+            //call out to the external sources grab the most updated users MMR
             let mmrInfo = await mmrMethods.comboMmr(member);
 
             //grab the player from db
@@ -125,7 +121,6 @@ async function updateTeamMmrAsynch(team) {
                     player.heroesProfileMmr = mmrInfo.heroesProfile;
                 } else {
                     player.heroesProfileMmr = -1 * mmrInfo.heroesProfile;
-                    player.lowReplays = true;
                 }
                 player.ngsMmr = mmrInfo.ngsMmr;
                 player.averageMmr = mmrInfo.hotsLogs.mmr;
@@ -244,7 +239,7 @@ async function topMemberMmr(members) {
                     ngsMmrArr.push(user.ngsMmr);
                 }
             });
-            console.log(mmrArr, hpMmrArr, ngsMmrArr);
+
             //sort mmrs
             mmrArr = removeZeroIndicies(mmrArr);
             if (mmrArr.length > 0) {
