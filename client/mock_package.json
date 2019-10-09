@@ -48,7 +48,7 @@
         "jquery": "^3.4.1",
         "lodash": "^4.17.15",
         "marked": "^0.7.0",
-        "mmenu-js": "^8.4.0",
+        "mmenu-js": "8.0.6",
         "moment-timezone": "^0.5.26",
         "ngx-croppie": "^3.0.0",
         "ngx-drag-scroll": "^8.0.0-beta.2",
