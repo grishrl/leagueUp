@@ -210,13 +210,10 @@ function sortMatchesByTime(matches) {
 }
 
 function objectify(obj) {
-    if (typeof obj == 'object' && !Array.isArray(obj)) {
-        if (obj.hasOwnProperty('toObject')) {
-            obj = obj.toObject();
-        }
+    try {
+        return obj.toObject();
+    } catch {
         return obj;
-    } else {
-        return null;
     }
 }
 

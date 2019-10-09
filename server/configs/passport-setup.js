@@ -180,6 +180,8 @@ function generateNewToken(prof, admin) {
     tokenObject.teamInfo.teamId = prof.teamId;
     tokenObject.id = prof._id;
     tokenObject.displayName = prof.displayName;
+    admin = util.objectify(admin);
+
     if (admin) {
         tokenObject.adminLevel = compressAdmin(admin);
     }
@@ -195,9 +197,7 @@ function returnUserToClient(prof, done) {
     Admin.AdminLevel.findOne({
         adminId: prof._id
     }).then((admin) => {
-        if (admin) {
-            admin = compressAdmin(admin.toObject());
-        }
+
         var token = generateNewToken(prof, admin);
         var reply = {
             token: token
@@ -210,6 +210,7 @@ function returnUserToClient(prof, done) {
 function compressAdmin(obj) {
     let retVal = [];
     _.forEach(obj, (value, key) => {
+
         if (key == 'adminId' || key == '__v' || key == '_id' || key == 'info') {
 
         } else if (value == true) {
@@ -218,5 +219,6 @@ function compressAdmin(obj) {
             retVal.push(tempObj);
         }
     });
+
     return retVal;
 }
