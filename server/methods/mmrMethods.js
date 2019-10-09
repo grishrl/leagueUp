@@ -1,6 +1,7 @@
 const axios = require('axios');
 const https = require('https');
 const util = require('../utils');
+const hpAPI = require('./heroesProfileAPI');
 //helper function to return compatible user name for hotslogs
 //replaces the # in a battle tag with _
 function routeFriendlyUsername(username) {
@@ -47,16 +48,11 @@ async function hotslogs(btag) {
     return { playerId: id, mmr: val };
 };
 
-//todo replace with hpAPI methods
-let heroesProfileURL = 'https://heroesprofile.com/API/MMR/Player/?api_key=' + process.env.heroProfileAPIkey + '&region=1&p_b=';
-
-
 async function heroesProfile(btag) {
     let val = null;
 
     try {
-        // console.log(url + btag);
-        const response = await axios.get(heroesProfileURL + encodeURIComponent(btag));
+        const response = await hpAPI.playerMmrAPI(btag);
         let data = response.data[btag.toString()];
 
         let slMMR = 0;

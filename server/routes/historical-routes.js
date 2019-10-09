@@ -2,7 +2,6 @@ const util = require('../utils');
 const router = require('express').Router();
 const Archive = require('../models/system-models').archive;
 const Schedule = require('../models/schedule-models');
-const axios = require('axios');
 
 router.get('/seasons', (req, res) => {
 

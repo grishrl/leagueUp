@@ -429,20 +429,6 @@ export class TeamProfileComponent implements OnInit {
     }
   }
 
-  // requestToJoin(){
-  //   //TODO: request to join team
-  // }
-
-  // showRequestToJoin(){
-  //   if(!this.showEditDialog()){
-  //     if (this.auth.getTeam() != null && this.auth.getTeam() != undefined ){
-  //       return false;
-  //     }else{
-  //       return true;
-  //     }
-  //   }
-  // }
-
 
   //method hides or shows days based on whether the team is available or not, and shows all in edit mode.
   hideDay(editSwitch, dayAvailabilty): boolean {

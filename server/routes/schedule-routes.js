@@ -17,10 +17,6 @@ const Division = require('../models/division-models');
 const matchCommon = require('../methods/matchCommon');
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 const archiveMethods = require('../methods/archivalMethods');
-const {
-    performance,
-    PerformanceObserver
-} = require('perf_hooks');
 
 
 
@@ -500,14 +496,6 @@ router.post('/get/match/list', async(req, res) => {
 });
 
 
-
-const obs = new PerformanceObserver((item) => {
-    console.log('Submit timer ', item.getEntries()[0].duration / 1000 + ' s');
-    performance.clearMarks();
-});
-
-obs.observe({ entryTypes: ['measure'] });
-
 /*
 for reporting matches and injesting replay files
 */
@@ -520,8 +508,6 @@ router.post('/report/match', passport.authenticate('jwt', {
     let form = new formidable.IncomingForm();
 
     let requester = req.user.displayName;
-
-    performance.mark('Start Report');
 
     //log object
     let logObj = {};
@@ -605,7 +591,6 @@ router.post('/report/match', passport.authenticate('jwt', {
                             let fileKeys = Object.keys(files);
                             let parsed = [];
 
-                            //todo - replace with lodash for each
                             //parse the replays
                             fileKeys.forEach(fileKey => {
                                 try {
@@ -733,45 +718,45 @@ router.post('/report/match', passport.authenticate('jwt', {
 
                             //if we have failed parse - remove those junk objects from the array before inserting them into the database.
                             indiciesToRemove = [];
-                            parsed.forEach((element, index) => {
-                                element.season = process.env.season;
-                                if (element.hasOwnProperty('failed') && element.failed == true) {
-                                    indiciesToRemove.push(index);
+                            SeasonInfoCommon.getSeasonInfo().then(
+                                rep => {
+                                    let seasonNum = rep.value;
+                                    parsed.forEach((element, index) => {
+                                        element.season = seasonNum;
+                                        if (element.hasOwnProperty('failed') && element.failed == true) {
+                                            indiciesToRemove.push(index);
+                                        }
+                                    });
+
+                                    indiciesToRemove.forEach(index => {
+                                        parsed.splice(index, 1);
+                                    });
+
+                                    ParsedReplay.collection.insertMany(parsed).then(
+                                        (records) => {
+                                            //log object
+                                            let sysLog = {};
+                                            sysLog.actor = 'SYS';
+                                            sysLog.action = ' parsed replay stored';
+                                            sysLog.logLevel = 'SYSTEM';
+                                            sysLog.target = replayfilenames.toString();
+                                            sysLog.timeStamp = new Date().getTime();
+                                            logger(sysLog);
+
+                                            foundMatch.reported = true;
+                                            foundMatch.save((saved) => {
+                                                res.status(200).send(util.returnMessaging(path, 'Match reported', false, saved, null, logObj));
+                                            }, (err) => {
+                                                res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
+                                            })
+                                        },
+                                        (err) => {
+                                            res.status(500).send(util.returnMessaging(path, 'Error (2) reporting match result', err, null, null, logObj));
+                                        }
+                                    )
                                 }
-                            });
+                            );
 
-                            indiciesToRemove.forEach(index => {
-                                parsed.splice(index, 1);
-                            });
-
-                            ParsedReplay.collection.insertMany(parsed).then(
-                                (records) => {
-                                    //log object
-                                    let sysLog = {};
-                                    sysLog.actor = 'SYS';
-                                    sysLog.action = ' parsed replay stored';
-                                    sysLog.logLevel = 'SYSTEM';
-                                    sysLog.target = replayfilenames.toString();
-                                    sysLog.timeStamp = new Date().getTime();
-                                    logger(sysLog);
-
-                                    foundMatch.reported = true;
-                                    foundMatch.save((saved) => {
-                                        performance.mark('End Report');
-                                        performance.measure('Report Time', 'Start Report', 'End Report');
-                                        res.status(200).send(util.returnMessaging(path, 'Match reported', false, saved, null, logObj));
-                                    }, (err) => {
-                                        performance.mark('End Report');
-                                        performance.measure('Report Time', 'Start Report', 'End Report');
-                                        res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
-                                    })
-                                },
-                                (err) => {
-                                    performance.mark('End Report');
-                                    performance.measure('Report Time', 'Start Report', 'End Report');
-                                    res.status(500).send(util.returnMessaging(path, 'Error (2) reporting match result', err, null, null, logObj));
-                                }
-                            )
 
                             //if this match was a tournmanet match then we need to promote the winner to the parent match
                             matchCommon.promoteTournamentMatch(foundMatch.toObject());
@@ -781,30 +766,21 @@ router.post('/report/match', passport.authenticate('jwt', {
 
                         } else {
                             logObj.logLevel = 'ERROR';
-                            logObj.error = 'Unauthorized to report';
-                            performance.mark('End Report');
-                            performance.measure('Report Time', 'Start Report', 'End Report');
+                            logObj.error = 'Unauthorized to report'
                             res.status(403).send(path, 'Unauthorized', false, null, null, logObj);
                         }
                     }, (err) => {
-                        performance.mark('End Report');
-                        performance.measure('Report Time', 'Start Report', 'End Report');
                         res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
                     })
                 } else {
-                    performance.mark('End Report');
-                    performance.measure('Report Time', 'Start Report', 'End Report');
                     res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
                 }
             },
             (err) => {
-                performance.mark('End Report');
-                performance.measure('Report Time', 'Start Report', 'End Report');
                 res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
             }
         )
     });
-
 });
 
 /*
@@ -1079,7 +1055,6 @@ router.post('/generate/tournament', passport.authenticate('jwt', {
             if (found) {
                 res.status(500).send(util.returnMessaging(path, 'Tournament previously generated', false, null, null, logObj));
             } else {
-                //generateTournamentTwo(teams, season, division, cup, name, description)
                 scheduleGenerator.generateTournamentTwo(teams, season, division, cupNumber, tournamentName, description).then((process) => {
                     if (process) {
                         res.status(200).send(util.returnMessaging(path, 'Tournament generated', false, process, null, logObj));

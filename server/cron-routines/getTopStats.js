@@ -1,33 +1,7 @@
 const System = require('../models/system-models').system;
-const axios = require('axios');
 const logger = require('../subroutines/sys-logging-subs');
-// const mongoose = require('mongoose');
-
-// mongoose.connect(process.env.mongoURI, () => {
-//     console.log('connected to mongodb');
-// });
-
-//todo replace with hpAPI methods
-const statusURL = 'https://heroesprofile.com/API/NGS/MostStat/?api_key=hc544!0&stat={stat}&season={season}'
-const config = {
-    headers: {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
-    }
-}
-async function getTopHotsProfile(stat, season) {
-    let returnUrl = 'null';
-    let callUrl = statusURL;
-    season = season ? season : process.env.season;
-    try {
-        callUrl = callUrl.replace('{stat}', stat);
-        callUrl = callUrl.replace('{season}', season);
-        returnUrl = await axios.get(callUrl, config);
-    } catch (error) {
-        console.log(error);
-    }
-
-    return returnUrl;
-}
+const hpAPI = require('../methods/heroesProfileAPI');
+const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 
 const stats = [
     'kills',
@@ -73,10 +47,13 @@ getTopStats = async function() {
     //create an array to hold promises of returns from hp api
     let promArr = [];
 
+    let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+    let season = currentSeasonInfo.value;
+
     //loop through the stats array to call each stat to update
     stats.forEach(stat => {
         promArr.push(
-            getTopHotsProfile(stat, process.env.season)
+            hpAPI.highestStat(stat, season)
         );
     });
     //resolve each promise in the array

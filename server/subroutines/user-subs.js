@@ -4,6 +4,7 @@ const TeamSubs = require('./team-subs');
 const Team = require('../models/team-models');
 const QueueSubs = require('./queue-subs');
 const logger = require('./sys-logging-subs');
+const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 
 //sub to handle complete removal of user from data locations:
 //pendingqueue, teams - pending members and members.
@@ -30,47 +31,53 @@ function clearUserTeam(user) {
     logObj.timeStamp = new Date().getTime();
     logObj.logLevel = 'STD';
     //get the user from the db associated with this user
-    User.findOne({
-        displayName: user.displayName
-    }).then((foundUser) => {
-        //update the fetched users info
-        if (foundUser) {
-            foundUser.teamId = null;
-            let teamname = foundUser.teamName;
-            foundUser.teamName = null;
-            foundUser.isCaptain = null;
-            if (foundUser.history) {
-                foundUser.history.push({
-                    timestamp: Date.now(),
-                    action: 'Left team',
-                    target: teamname,
-                    season: process.env.season
-                });
-            } else {
-                foundUser.history = [{
-                    timestamp: Date.now(),
-                    action: 'Left team',
-                    target: teamname,
-                    season: process.env.season
-                }];
-            }
-            foundUser.save().then((savedUser) => {
-                logger(logObj);
+    SeasonInfoCommon.getSeasonInfo().then(
+        (rep) => {
+            let seasonNum = rep.value;
+            User.findOne({
+                displayName: user.displayName
+            }).then((foundUser) => {
+                //update the fetched users info
+                if (foundUser) {
+                    foundUser.teamId = null;
+                    let teamname = foundUser.teamName;
+                    foundUser.teamName = null;
+                    foundUser.isCaptain = null;
+                    if (foundUser.history) {
+                        foundUser.history.push({
+                            timestamp: Date.now(),
+                            action: 'Left team',
+                            target: teamname,
+                            season: seasonNum
+                        });
+                    } else {
+                        foundUser.history = [{
+                            timestamp: Date.now(),
+                            action: 'Left team',
+                            target: teamname,
+                            season: seasonNum
+                        }];
+                    }
+                    foundUser.save().then((savedUser) => {
+                        logger(logObj);
+                    }, (err) => {
+                        logObj.logLevel = 'ERROR';
+                        logObj.error = err;
+                        logger(logObj);
+                    });
+                } else {
+                    logObj.logLevel = 'ERROR';
+                    logObj.error = 'user not found';
+                    logger(logObj);
+                }
             }, (err) => {
                 logObj.logLevel = 'ERROR';
                 logObj.error = err;
                 logger(logObj);
             });
-        } else {
-            logObj.logLevel = 'ERROR';
-            logObj.error = 'user not found';
-            logger(logObj);
         }
-    }, (err) => {
-        logObj.logLevel = 'ERROR';
-        logObj.error = err;
-        logger(logObj);
-    });
+    )
+
 }
 
 //update an array of users team info
@@ -88,44 +95,50 @@ function upsertUserTeamName(user, team, teamid) {
     logObj.target = user.displayName;
     logObj.timeStamp = new Date().getTime();
     logObj.logLevel = 'STD';
-    User.findOne({
-        displayName: user.displayName
-    }).then((foundUser) => {
-        if (foundUser) {
-            foundUser.teamName = team;
-            foundUser.teamId = teamid;
-            if (foundUser.history) {
-                foundUser.history.push({
-                    timestamp: Date.now(),
-                    action: 'Joined team',
-                    target: team,
-                    season: process.env.season
-                });
-            } else {
-                foundUser.history = [{
-                    timestamp: Date.now(),
-                    action: 'Joined team',
-                    target: team,
-                    season: process.env.season
-                }];
-            }
-            foundUser.save().then((savedUser) => {
-                logger(logObj);
+    SeasonInfoCommon.getSeasonInfo().then(
+        (rep) => {
+            let seasonNum = rep.value;
+            User.findOne({
+                displayName: user.displayName
+            }).then((foundUser) => {
+                if (foundUser) {
+                    foundUser.teamName = team;
+                    foundUser.teamId = teamid;
+                    if (foundUser.history) {
+                        foundUser.history.push({
+                            timestamp: Date.now(),
+                            action: 'Joined team',
+                            target: team,
+                            season: seasonNum
+                        });
+                    } else {
+                        foundUser.history = [{
+                            timestamp: Date.now(),
+                            action: 'Joined team',
+                            target: team,
+                            season: seasonNum
+                        }];
+                    }
+                    foundUser.save().then((savedUser) => {
+                        logger(logObj);
+                    }, (err) => {
+                        logObj.logLevel = 'ERROR';
+                        logObj.error = err;
+                        logger(logObj);
+                    });
+                } else {
+                    logObj.logLevel = 'ERROR';
+                    logObj.error = 'User was not found.';
+                    logger(logObj);
+                }
             }, (err) => {
                 logObj.logLevel = 'ERROR';
                 logObj.error = err;
                 logger(logObj);
             });
-        } else {
-            logObj.logLevel = 'ERROR';
-            logObj.error = 'User was not found.';
-            logger(logObj);
         }
-    }, (err) => {
-        logObj.logLevel = 'ERROR';
-        logObj.error = err;
-        logger(logObj);
-    });
+    )
+
 }
 
 

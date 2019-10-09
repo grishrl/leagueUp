@@ -14,6 +14,7 @@ const sysModels = require('../models/system-models');
 const uploadTeamLogo = require('../methods/teamLogoUpload').uploadTeamLogo;
 const Stats = require('../models/stats-model');
 const logger = require('../subroutines/sys-logging-subs');
+const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 
 /*
 routes for team management --
@@ -177,8 +178,11 @@ router.post('/delete', passport.authenticate('jwt', {
 // returns success or error HTTP plus the json object of the created team
 router.post('/create', passport.authenticate('jwt', {
     session: false
-}), (req, res) => {
+}), async(req, res) => {
     const path = '/team/create';
+
+    let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+    let seasonNum = currentSeasonInfo.value;
 
     //log object
     let logObj = {};
@@ -234,7 +238,7 @@ router.post('/create', passport.authenticate('jwt', {
                     recievedTeam.teamName_lower = recievedTeam.teamName.toLowerCase();
                     recievedTeam.history = [{
                         timestamp: Date.now(),
-                        season: process.env.season,
+                        season: seasonNum,
                         action: 'Team Created',
                         target: recievedTeam.teamName
                     }];
@@ -254,7 +258,7 @@ router.post('/create', passport.authenticate('jwt', {
                                     found["isCaptain"] = true;
                                 let userHistoryUpdate = {
                                     timestamp: Date.now(),
-                                    season: process.env.season,
+                                    season: seasonNum,
                                     action: 'Created Team',
                                     target: recievedTeam.teamName
                                 }

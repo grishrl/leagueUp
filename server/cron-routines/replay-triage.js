@@ -6,11 +6,11 @@ const Match = require('../models/match-model');
 const statsMethods = require('./stats-routines');
 const parser = require('hots-parser');
 const _ = require('lodash');
-const axios = require('axios');
 const AWS = require('aws-sdk');
 const uniqid = require('uniqid');
 const ParsedReplay = require('../models/replay-parsed-models');
 const matchCommon = require('../methods/matchCommon');
+const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 
 AWS.config.update({
     accessKeyId: process.env.S3accessKeyId,
@@ -97,6 +97,9 @@ async function reparseReplays() {
 // )
 
 async function retrieveFromS3andParse(replayInfo, match, thisKey) {
+    let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+    //or assign desired season for override
+    let season = currentSeasonInfo.value;
     if (replayInfo.hasOwnProperty('url')) {
         let url = process.env.heroProfileReplay + replayInfo.url;
         let params = {
@@ -117,7 +120,7 @@ async function retrieveFromS3andParse(replayInfo, match, thisKey) {
             });
             if (parsed.status == 1) {
                 let UUID = uniqid();
-                parsed.season = parseInt(process.env.season);
+                parsed.season = parseInt(season);
                 parsed.systemId = UUID;
                 let teamIds = matchCommon.findTeamIds(match);
                 let foundTeams = await Team.find({

@@ -559,7 +559,6 @@ function createUserSearchObject(obj, reqUser) {
             }
 
             if (util.returnBoolByPath(user, 'availability')) {
-                //todo - replace with lodash foreach
                 let keys = Object.keys(user.availability);
                 keys.forEach(key => {
                     let unit = user.availability[key];
@@ -769,7 +768,6 @@ function createTeamSearchObject(obj, reqUser) {
                 }
             }
             if (util.returnBoolByPath(user, 'availability')) {
-                //todo: replace with lodash foreach
                 let keys = Object.keys(user.availability);
                 keys.forEach(key => {
                     let unit = user.availability[key];

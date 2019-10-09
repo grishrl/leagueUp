@@ -21,20 +21,20 @@ export class EventListComponent implements OnInit {
         console.log(err);
       }
     )
-    
+
   }
 
   delete(event){
     this.eventService.deleteEvent(event._id).subscribe(
       res=>{
-        
+
         let index = -1;
         this.events.forEach((event,ind)=>{
           if(event._id == event._id){
             index = ind;
           }
         });
-        
+
         if(index>-1){
           this.events.splice(index, 1);
         }
@@ -46,6 +46,6 @@ export class EventListComponent implements OnInit {
   }
 
   openEvent(){
-    //todo
+
   }
 }

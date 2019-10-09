@@ -5,8 +5,11 @@ const Archive = require('../models/system-models').archive;
 const archiveTeamLogo = require('./teamLogoUpload').archiveTeamLogo;
 const CustomError = require('./customError');
 const _ = require('lodash');
+const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 
 async function archiveDivisions() {
+    let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+    let seasonNum = currentSeasonInfo.value;
     console.log('finding divisions for archival...')
     let divisions = await Division.find().then(
         foundDiv => {
@@ -28,7 +31,7 @@ async function archiveDivisions() {
             console.log('archiving division ' + division.displayName);
             new Archive({
                 type: 'division',
-                season: process.env.season,
+                season: seasonNum,
                 object: division.toObject(),
                 timeStamp: Date.now()
             }).save();
@@ -50,7 +53,7 @@ async function archiveDivisions() {
                     teamObject.teamId = team._id.toString();
                     new Archive({
                         type: 'team',
-                        season: process.env.season,
+                        season: seasonNum,
                         object: teamObject,
                         timeStamp: Date.now()
                     }).save();
@@ -80,14 +83,16 @@ async function archiveDivisions() {
 
 //go through each player and if they have replays; archive them into an object noted by the season;
 //if they have replays OR they were a member of a team when this is run, increment their season counter
-function playerSeasonFinalize() {
+async function playerSeasonFinalize() {
+    let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+    let seasonNum = currentSeasonInfo.value;
     User.find().then(
         found => {
             found.forEach(player => {
                 let save = false;
                 if (player.replays && player.replays.length > 0) {
                     let tO = {
-                        season: process.env.season,
+                        season: seasonNum,
                         replays: player.replays
                     }
                     if (player.replayArchive) {

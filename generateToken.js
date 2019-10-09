@@ -8,6 +8,7 @@ const util = require('./server/utils');
 const matchCommon = require('./server/methods/matchCommon');
 const groupMakerTest = require('./server/cron-routines/groupMaker');
 const Archive = require('./server/methods/archivalMethods');
+const hpAPI = require('./server/methods/heroesProfileAPI');
 
 let tokenObject = {};
 // set this ID to the _id that the API key will be tied to
@@ -36,14 +37,44 @@ mongoose.connect(process.env.mongoURI, () => {
     console.log('connected to mongodb');
 });
 
-Archive.archiveDivisions().then(
+// Archive.archiveDivisions().then(
+//     res => {
+//         console.log(res);
+//     },
+//     err => {
+//         console.log(err);
+//     }
+// )
+
+hpAPI.playerMmrAPI('wraithling#1178').then(
     res => {
-        console.log(res);
+
+        console.log('ret 1', res);
     },
     err => {
         console.log(err);
     }
-)
+);
+
+hpAPI.playerProfile('wraithling#1178').then(
+    res => {
+
+        console.log('ret 2', res);
+    },
+    err => {
+        console.log(err);
+    }
+);
+
+hpAPI.highestStat('kills', '7').then(
+    res => {
+
+        console.log('ret 3', res);
+    },
+    err => {
+        console.log(err);
+    }
+);
 
 
 // new System.system({

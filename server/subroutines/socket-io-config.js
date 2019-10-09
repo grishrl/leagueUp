@@ -1,4 +1,11 @@
+//import the socketIO server
 const socketIo = require('../../serverConf')['socketIo'];
+
+/* 
+
+This creates in memory storage for the clients that connect to keep track of the user / client ID relation ship and allow us to send messages back to the client if needed
+
+*/
 
 
 //memory storage for connected clients
@@ -48,4 +55,9 @@ function indexOfUser(clients, user) {
     return ind;
 }
 
-module.exports = { socketIo: socketIo, clients: clients };
+module.exports = {
+    socketIo: socketIo,
+    clients: clients,
+    indexOfClient: indexOfClient,
+    indexOfUser: indexOfClient
+};
