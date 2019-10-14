@@ -810,7 +810,7 @@ router.post('/match/add/caster', passport.authenticate('jwt', {
                     res.status(200).send(util.returnMessaging(path, 'Match updated', false, saved, null, logObj));
                 },
                 (err) => {
-                    res.stutus(500).send(util.returnMessaging(path, 'Error updating match', err, null, null, logObj));
+                    res.status(500).send(util.returnMessaging(path, 'Error updating match', err, null, null, logObj));
                 }
             )
         } else {
@@ -819,7 +819,7 @@ router.post('/match/add/caster', passport.authenticate('jwt', {
             res.status(400).send(util.returnMessaging(path, 'Could not find match', false, found, null, logObj));
         }
     }, (err) => {
-        res.stutus(500).send(util.returnMessaging(path, 'Error updating match', err, null, null, logObj));
+        res.status(500).send(util.returnMessaging(path, 'Error updating match', err, null, null, logObj));
     });
 });
 
@@ -864,17 +864,17 @@ router.post('/match/fetch/mycasted', passport.authenticate('jwt', {
                         res.status(200).send(util.returnMessaging(path, 'Found match', false, processed, null));
                     },
                     err => {
-                        res.stutus(500).send(util.returnMessaging(path, 'Error finding match', err, null, null));
+                        res.status(500).send(util.returnMessaging(path, 'Error finding match', err, null, null));
                     }
                 )
             } else {
                 res.status(200).send(util.returnMessaging(path, 'Could not find match', false, found, null));
             }
         }, (err) => {
-            res.stutus(500).send(util.returnMessaging(path, 'Error finding match', err, null, null));
+            res.status(500).send(util.returnMessaging(path, 'Error finding match', err, null, null));
         });
     } else {
-        res.stutus(500).send(util.returnMessaging(path, 'No Twitch On Profile', null, null, null));
+        res.status(500).send(util.returnMessaging(path, 'No Twitch On Profile', null, null, null));
     }
 
 });
@@ -907,7 +907,7 @@ router.post('/match/add/caster/occ', passport.authenticate('jwt', {
                         res.status(200).send(util.returnMessaging(path, 'Match updated', false, saved, null, logObj));
                     },
                     (err) => {
-                        res.stutus(500).send(util.returnMessaging(path, 'Error updating match', err, null, null, logObj));
+                        res.status(500).send(util.returnMessaging(path, 'Error updating match', err, null, null, logObj));
                     }
                 )
             } else {
@@ -916,10 +916,10 @@ router.post('/match/add/caster/occ', passport.authenticate('jwt', {
                 res.status(400).send(util.returnMessaging(path, 'Could not find match', false, found, null, logObj));
             }
         }, (err) => {
-            res.stutus(500).send(util.returnMessaging(path, 'Error updating match', err, null, null, logObj));
+            res.status(500).send(util.returnMessaging(path, 'Error updating match', err, null, null, logObj));
         });
     } else {
-        res.stutus(500).send(util.returnMessaging(path, 'No Twitch On Profile', null, null, null));
+        res.status(500).send(util.returnMessaging(path, 'No Twitch On Profile', null, null, null));
     }
 
 });
