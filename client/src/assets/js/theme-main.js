@@ -18,9 +18,6 @@ $(document).ready(function($) {
     //=========== Sticky nav ===========//
     $(".mainmenu").sticky({ topSpacing: 0 });
 
-    //======== Nav Superfish ===========//
-    $('ul.sf-menu').superfish();
-
     $().UItoTop({
         scrollSpeed: 500,
         easingType: 'linear'
