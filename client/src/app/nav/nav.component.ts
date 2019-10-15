@@ -54,6 +54,7 @@ export class NavComponent implements OnInit {
   menuAPI;
   ngAfterViewInit(){
     this.createMobileNav();
+    $('ul.sf-menu').superfish();
 }
 
 createMobileNav(){
