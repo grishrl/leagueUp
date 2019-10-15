@@ -13,7 +13,7 @@ const avgStat = 'NGS/Leaderboard/Highest/Average/Stat?stat={stat}&season={season
 
 const playerProfile = 'Player?battletag={btag}&region=1';
 
-const playerHeroStat = 'NGS/Player/Hero/Stat?battletag={btag}&region=1&hero={hero}&season={season}&division={division}';
+const playerHeroStat = 'NGS/Hero/Stat?battletag={btag}&region=1&hero={hero}&season={season}&division={division}';
 
 const ngsPlayerProfile = 'NGS/Player/Profile?battletag={btag}&region=1';
 

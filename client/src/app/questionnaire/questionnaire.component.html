@@ -3,7 +3,7 @@
         <div class="questionnaireWrapper" *ngIf="showRegisteredQuestionnaire() else registered">
             <div class="row">
                 <div class="col">
-                    <h3>Season 7 Registration / Questionnaire</h3>
+                    <h3>Season {{seasonNumber}} Registration / Questionnaire</h3>
                     <span>* Denotes required field</span>
                 </div>
                 <div class="col">
@@ -86,7 +86,7 @@
                 </div>
                 <div class="row mt-3">
                     <div class="col">
-                        <h5>How many returning players do you have? Based on Season 6 NGS divisions, what level were they?*</h5>
+                        <h5>How many returning players do you have? Based on NGS divisions last season, what division were they?*</h5>
                     </div>
                 </div>
                 <div class="row">
@@ -120,7 +120,7 @@
                 </div>
                 <div class="row mt-3">
                     <div class="col">
-                        <h5>Based on Season 6 divisions, what division do you think you belong in?</h5>
+                        <h5>Based on last season's divisions, what division do you think you belong in?</h5>
                     </div>
                 </div>
                 <div class="row">
@@ -212,7 +212,7 @@
 
             <div class="row mt-3">
                 <div class="col">
-                    <h5>Pick 9 maps for the NGS season 7 map pool.*</h5>
+                    <h5>Pick 9 maps for the NGS season {{seasonNumber}} map pool.*</h5>
                 </div>
             </div>
             <div class="row" *ngIf="pickedMaps.length<9">
@@ -256,7 +256,7 @@
                             </mat-checkbox>
                         </div>
                         <div class="col-11">
-                            I understand that my team members will need to use the HotsAPI uploader in order to allow NGS access to accurate MMR information for my team's season 7 placement.
+                            I understand that my team members will need to use the HotsAPI uploader in order to allow NGS access to accurate MMR information for my team's season {{seasonNumber}} placement.
                         </div>
                     </div>
                 </div>
@@ -265,7 +265,7 @@
 
             <div class="row mt-3">
                 <div class="col">
-                    <h5>Season 7 Registration Check List</h5>
+                    <h5>Season {{seasonNumber}} Registration Check List</h5>
                     <div>
                         <table>
                             <tr>
@@ -285,7 +285,7 @@
                                 <td><span *ngIf="!responses.acknowledge"><i class="material-icons text-danger">close</i></span><span *ngIf="responses.acknowledge" class="material-icons text-success">check</span></td>
                             </tr>
                             <tr>
-                                <td>Season 7 Questionnaire Completed </td>
+                                <td>Season {{seasonNumber}} Questionnaire Completed </td>
                                 <td><span *ngIf="!checkQuestionnaire()"><i class="material-icons text-danger">close</i></span><span *ngIf="checkQuestionnaire()" class="material-icons text-success">check</span></td>
                             </tr>
 
@@ -294,15 +294,14 @@
                     </div>
                 </div>
                 <div class="col vertCentButton">
-                    <button [disabled]="!checkValid()" (click)="completeRegistration()" class="btn btn-info">Register for Season
-            7!</button>
+                    <button [disabled]="!checkValid()" (click)="completeRegistration()" class="btn btn-info">Register for Season {{seasonNumber}}!</button>
                 </div>
             </div>
         </div>
 
         <ng-template #registered>
             <div *ngIf="auth.getUser()==passedTeam.captain">
-                <div class="text-center text-success p-5"> Thanks for registering for NGS Season 7! Good Luck and We'll see you in the Nexus</div>
+                <div class="text-center text-success p-5"> Thanks for registering for NGS Season {{seasonNumber}}! Good Luck and We'll see you in the Nexus</div>
             </div>
 
         </ng-template>

@@ -17,6 +17,7 @@ export class QuestionnaireComponent implements OnInit {
   responses: any = {};
   pickedMaps: any[] = [];
   registrationOpen = false;
+  seasonNumber;
 
   constructor(private teamService: TeamService, private util:UtilitiesService, public auth:AuthService, private timeService:TimeserviceService) {
 
@@ -151,6 +152,7 @@ export class QuestionnaireComponent implements OnInit {
   ngOnInit() {
     this.timeService.getSesasonInfo().subscribe(
       res => {
+        this.seasonNumber = res['value'];
         if (this.source == 'admin') {
           this.registrationOpen = true;
         } else {
