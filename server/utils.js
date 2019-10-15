@@ -30,6 +30,20 @@ isNullOrEmpty = function(dat) {
     }
 };
 
+removeInactiveTeams = function(teams) {
+    let indexToRemove = [];
+    teams.forEach((team, ind) => {
+        if (team.teamName.includes('inactive') || team.teamName.includes('withdrawn')) {
+            indexToRemove.push(ind);
+        }
+    });
+    while (indexToRemove.length > 0) {
+        let indToRem = indexToRemove.pop();
+        teams.splice(indToRem, 1);
+    }
+    return teams;
+}
+
 returnIdString = function(obj) {
     let ret = '';
     if (!isNullorUndefined(obj)) {
@@ -226,5 +240,6 @@ module.exports = {
     appendResHeader: appendResHeader,
     returnIdString: returnIdString,
     sortMatchesByTime: sortMatchesByTime,
-    objectify: objectify
+    objectify: objectify,
+    removeInactiveTeams: removeInactiveTeams
 };

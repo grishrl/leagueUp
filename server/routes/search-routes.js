@@ -266,9 +266,7 @@ router.post('/user/paginate', passport.authenticate('jwt', {
 //get teams total number
 router.get('/teams/total', (req, res) => {
     const path = '/search/teams/total';
-    let teamNum = Team.countDocuments({
-        lookingForMore: true
-    });
+    let teamNum = Team.countDocuments(teamQueryObject());
     teamNum.exec().then(
         ret => {
             res.status(200).send(util.returnMessaging(path, 'Teams count', null, ret));
@@ -279,6 +277,21 @@ router.get('/teams/total', (req, res) => {
 
 });
 
+teamQueryObject = function() {
+    return {
+        $and: [{
+                lookingForMore: true
+            },
+            {
+                teamName: /^((?!inactive).)*$/gmi
+            },
+            {
+                teamName: /^((?!withdrawn).)*$/gmi
+            }
+        ]
+    }
+}
+
 //paginate teams
 router.post('/team/paginate', passport.authenticate('jwt', {
     session: false
@@ -286,7 +299,8 @@ router.post('/team/paginate', passport.authenticate('jwt', {
     const path = '/search/team/paginate';
     let page = req.body.page;
     let perPage = 10;
-    let query = Team.find({ lookingForMore: true }).skip(page * perPage).limit(perPage);
+    const queryObj = teamQueryObject();
+    let query = Team.find(queryObj).skip(page * perPage).limit(perPage);
     query.exec().then(
         found => {
             res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, found));
@@ -678,15 +692,9 @@ team query
 */
 
 function createTeamSearchObject(obj, reqUser) {
-    let returnObj = {};
+    let returnObj = teamQueryObject();
     let keys = Object.keys(obj);
-    returnObj = {
-        $and: []
-    }
 
-    returnObj.$and.push({
-        lookingForMore: true
-    })
     if (keys.length > 0) {
 
         // add divisions to the query object
