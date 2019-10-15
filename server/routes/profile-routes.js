@@ -189,10 +189,19 @@ router.get('/update/mmr', passport.authenticate('jwt', {
                 mmrResponse => {
                     User.findOne({ displayName: req.user.displayName }).then(found => {
                         if (found) {
-                            found.hotsLogsPlayerID = mmrResponse.hotsLogs.playerId;
-                            found.averageMmr = mmrResponse.hotsLogs.mmr;
-                            found.heroesProfileMmr = mmrResponse.heroesProfile;
-                            found.ngsMmr = mmrResponse.ngsMmr;
+                            if (mmrResponse.hotsLogs && mmrResponse.hotsLogs.playerId) {
+                                found.hotsLogsPlayerID = mmrResponse.hotsLogs.playerId;
+                            }
+                            if (mmrResponse.hotsLogs && mmrResponse.hotsLogs.mmr) {
+                                found.averageMmr = mmrResponse.hotsLogs.mmr;
+                            }
+                            if (mmrResponse.heroesProfile) {
+                                found.heroesProfileMmr = mmrResponse.heroesProfile;
+                            }
+                            if (mmrResponse.ngsMmr) {
+                                found.ngsMmr = mmrResponse.ngsMmr;
+                            }
+
                             if (mmrResponse.heroesProfile < 0) {
                                 found.lowReplays = true;
                             } else {
