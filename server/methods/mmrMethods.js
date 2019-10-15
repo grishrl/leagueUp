@@ -27,7 +27,9 @@ async function hotslogs(btag) {
         const response = await axios.get(hotslogsURL + routeFriendlyUsername(btag), {
             httpsAgent: agent
         });
+        console.log(response);
         let data = response.data;
+        console.log(data);
         if (data['PlayerID']) {
             id = data.PlayerID
         }
@@ -53,7 +55,8 @@ async function heroesProfile(btag) {
 
     try {
         const response = await hpAPI.playerMmrAPI(btag);
-        let data = response.data[btag.toString()];
+
+        let data = response;
 
         let slMMR = 0;
         let tlMMR = 0;
@@ -120,6 +123,7 @@ async function heroesProfile(btag) {
             }
         }
     } catch (error) {
+        console.log(error);
         val = null;
     }
     if (val) {
@@ -148,13 +152,18 @@ async function heroesProfileNGS(btag) {
 }
 
 async function comboMmr(btag) {
+
     let hp = await heroesProfile(btag);
-    let hl = await hotslogs(btag);
-    let ngs = await heroesProfileNGS(btag);
+    // let hl = await hotslogs(btag);
+    // let ngs = await heroesProfileNGS(btag);
+
+    // return {
+    //     'heroesProfile': hp,
+    //     'hotsLogs': hl,
+    //     'ngsMmr': ngs
+    // };
     return {
-        'heroesProfile': hp,
-        'hotsLogs': hl,
-        'ngsMmr': ngs
+        'heroesProfile': hp
     };
 }
 
