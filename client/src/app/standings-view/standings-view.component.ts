@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { StandingsService } from '../services/standings.service';
 import { TeamService } from '../services/team.service';
+import { UtilitiesService } from '../services/utilities.service';
 
 @Component({
   selector: 'app-standings-view',
@@ -9,7 +10,7 @@ import { TeamService } from '../services/team.service';
 })
 export class StandingsViewComponent implements OnInit {
 
-  constructor(public team: TeamService,private standingsService:StandingsService) { }
+  constructor(public team: TeamService,private standingsService:StandingsService, private Utl:UtilitiesService) { }
 
   div:any;
   standings:any[]=[];
@@ -31,6 +32,7 @@ export class StandingsViewComponent implements OnInit {
 
   pastStandingsIntialise(){
       //do something
+    if (this.Utl.isNullOrEmpty(this.div.divisionConcat) == false && this.Utl.isNullOrEmpty(this.seasonVal)==false){
       this.standingsService.getPastStandings(this.div.divisionConcat, this.seasonVal).subscribe(
         (res) => {
           if (this.div.cupDiv) {
@@ -45,25 +47,28 @@ export class StandingsViewComponent implements OnInit {
           console.log(err);
         }
       )
-
+    }
   }
 
   getStandings(div){
     this.standings = [];
-    this.standingsService.getStandings(div).subscribe(
-      (res) => {
-        if(this.div.cupDiv){
-          let tO = {};
-          // let allTeams = this.div.teams.concat(this.div.participants);
-          // allTeams
-        }else{
-          this.standings = res;
+    if(this.Utl.isNullOrEmpty(div)==false){
+      this.standingsService.getStandings(div).subscribe(
+        (res) => {
+          if (this.div.cupDiv) {
+            let tO = {};
+            // let allTeams = this.div.teams.concat(this.div.participants);
+            // allTeams
+          } else {
+            this.standings = res;
+          }
+        },
+        (err) => {
+          console.log(err);
         }
-      },
-      (err) => {
-        console.log(err);
-      }
-    )
+      )
+    }
+
   }
 
   ngOnInit() {

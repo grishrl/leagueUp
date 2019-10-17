@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpServiceService } from './http-service.service';
+import { FilterService } from '../services/filter.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,15 +16,7 @@ export class DivisionService {
       map(
         res => {
           let divisionArr = res;
-          divisionArr.sort((a, b) => {
-            if (a.sorting < b.sorting) {
-              return -1;
-            }
-            if (a.sorting > b.sorting) {
-              return 1
-            }
-            return 0;
-          });
+          divisionArr.sort( (a, b) => {this.fs.arrangeDivisions(a,b)});
           return divisionArr;
         }
       )
@@ -44,7 +37,7 @@ export class DivisionService {
     return this.httpService.httpGet(url, parameters);
   }
 
-  constructor( private httpService:HttpServiceService) {
+  constructor( private httpService:HttpServiceService, private fs:FilterService) {
 
    }
 }

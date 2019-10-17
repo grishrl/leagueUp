@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HistoryService } from '../services/history.service';
 import { TimeserviceService } from '../services/timeservice.service';
+import { FilterService } from '../services/filter.service';
 
 @Component({
   selector: 'app-past-seasons',
@@ -9,7 +10,7 @@ import { TimeserviceService } from '../services/timeservice.service';
 })
 export class PastSeasonsComponent implements OnInit {
 
-  constructor(private HS: HistoryService, private timeService: TimeserviceService) { }
+  constructor(private HS: HistoryService, private timeService: TimeserviceService, private FS:FilterService) { }
 
   seasonsList = [];
   selectedSeason;
@@ -44,6 +45,7 @@ export class PastSeasonsComponent implements OnInit {
         this.divisionList = [];
         res.forEach(element=>{
           this.divisionList.push(element.object);
+          this.divisionList.sort((a, b) => { return this.FS.arrangeDivisions(a,b)});
         });
       },
       err=>{

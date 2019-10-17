@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { HttpServiceService } from './http-service.service';
 import { Team } from '../classes/team.class';
+import { FilterService } from '../services/filter.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminService {
 
-  constructor(private httpService: HttpServiceService) { }
+  constructor(private httpService: HttpServiceService, private FS:FilterService) { }
 
   //uploads team logo
   imageUpload(imgInput) {
@@ -156,15 +157,7 @@ export class AdminService {
     return this.httpService.httpGet(url, []).pipe(
       map(res=>{
           let divisionArr = res;
-          divisionArr.sort((a, b) => {
-            if (a.sorting < b.sorting) {
-              return -1;
-            }
-            if (a.sorting > b.sorting) {
-              return 1
-            }
-            return 0;
-          });
+          divisionArr.sort((a, b) => { return this.FS.arrangeDivisions(a,b); } );
           return divisionArr;
         }
       )
