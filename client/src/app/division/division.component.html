@@ -111,7 +111,7 @@
                         <!-- Tab four - tournament -->
                         <div class="tab-pane" id="tournament">
                             <div *ngIf="index == 4">
-                                <div *ngIf="currentSeason>6 else oldBracket">
+                                <div *ngIf="currentSeason>6 || passSeasonVal>6 else oldBracket">
                                     <app-challonge-tourn [season]="passSeasonVal? passSeasonVal : currentSeason" [division]="divDisplay">
                                     </app-challonge-tourn>
                                 </div>

@@ -8,6 +8,16 @@ export class FilterService {
 
   constructor( private util:UtilitiesService) { }
 
+  arrangeDivisions = (a, b) => {
+    if (a.sorting < b.sorting) {
+      return -1;
+    }
+    if (a.sorting > b.sorting) {
+      return 1
+    }
+    return 0;
+  };
+
   testName(unit, teamFlt) {
     let bool = false;
 
@@ -34,12 +44,12 @@ export class FilterService {
     return unit.round == flt;
   }
 
-  testScheduled(unit){    
+  testScheduled(unit){
     return this.util.returnBoolByPath(unit, 'scheduledTime.startTime');
   }
 
   testTournament(unit){
-    let bool = false;  
+    let bool = false;
       if (unit.type && unit.type == 'tournament') {
         bool = true;
       }

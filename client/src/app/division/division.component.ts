@@ -1,11 +1,10 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, SimpleChanges, OnChanges } from '@angular/core';
 import { DivisionService } from '../services/division.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Team } from '../classes/team.class';
 import { Division } from '../classes/division';
 import { TeamService } from '../services/team.service';
-import { environment } from '../../environments/environment';
 import { TimeserviceService } from '../services/timeservice.service';
 
 
@@ -16,7 +15,7 @@ import { TimeserviceService } from '../services/timeservice.service';
   styleUrls: ['./division.component.css']
 })
 
-export class DivisionComponent implements OnInit {
+export class DivisionComponent implements OnInit, OnChanges {
 
 
 
@@ -64,6 +63,25 @@ export class DivisionComponent implements OnInit {
     }
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+
+    if (changes.hasOwnProperty('passDivision')) {
+      let currentDivConcat = changes.passDivision.currentValue ? changes.passDivision.currentValue : null;
+      let previousDivConcat = changes.passDivision.previousValue ? changes.passDivision.previousValue : null;
+      if (currentDivConcat != null && currentDivConcat != previousDivConcat && this._passSeason) {
+        this.ngOnInit();
+      }
+    }
+    if (changes.hasOwnProperty('passSeason')) {
+      let currentSea = changes.passSeason.currentValue ? changes.passSeason.currentValue : null;
+      let previousSea = changes.passSeason.previousValue ? changes.passSeason.previousValue : null;
+      if (currentSea != null && currentSea != previousSea && this._passDivision) {
+        this.ngOnInit();
+      }
+    }
+
+  }
+
 
   //this initialise shall be ran if the division component is loaded via a route; or in best estimation ... via current season loading a division...
   initialise(){
@@ -89,6 +107,7 @@ export class DivisionComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log('this._passDivision ',this._passDivision);
     this.teamAggregate = [];
     if (this._passDivision){
       this.divDisplay = this._passDivision;
