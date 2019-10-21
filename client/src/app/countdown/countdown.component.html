@@ -16,6 +16,9 @@
             <span>{{timeRemaining.minutes}} <br> <small>min</small> </span>
             <span>{{timeRemaining.seconds}} <br> <small>sec</small></span>
         </div>
+        <div id="event-one" class="counter" *ngIf="registrationOpen">
+            <span>Registration Open Now!</span>
+        </div>
         <ul class="post-options">
             <li><i class="fa fa-calendar"></i>{{util.getFormattedDate(startDate, "DD MMMM, YYYY")}}</li>
             <!-- <li><i class="fa fa-clock-o"></i>Draft Starts, {{util.getFormattedDate(startDate, "hh:mm A zz")}}</li> -->
