@@ -20,6 +20,7 @@ export class CountdownComponent implements OnInit {
     this.timeService.getSesasonInfo().subscribe(
       res=>{
         this.seasonStartDate = res['data'].seasonStartDate;
+        this.registrationOpen = res['data'].registrationOpen;
         this.ngOnInit();
       }
     );
@@ -27,6 +28,7 @@ export class CountdownComponent implements OnInit {
    }
 
    seasonStartDate;
+   registrationOpen;
 
   validMatch = false;
   targetMatch = {
