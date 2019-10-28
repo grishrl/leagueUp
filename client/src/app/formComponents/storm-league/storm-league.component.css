@@ -8,8 +8,8 @@
 
 .rank {
     position: absolute;
-    top: 40px;
-    left: 96px;
+    top: 50px;
+    left: 90px;
     color: #F2692E;
     font-size: 80px;
     font-weight: 900;
@@ -19,7 +19,7 @@
 
 .masterKplusRank {
     position: absolute;
-    top: 48px;
+    top: 50px;
     left: 25px;
     color: #F2692E;
     font-size: 80px;
@@ -30,7 +30,7 @@
 
 .masterCplusRank {
     position: absolute;
-    top: 40px;
+    top: 50px;
     left: 45px;
     color: #F2692E;
     font-size: 80px;
