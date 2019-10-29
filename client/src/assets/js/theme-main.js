@@ -15,8 +15,6 @@
 
 $(document).ready(function($) {
     'use strict';
-    //=========== Sticky nav ===========//
-    $(".mainmenu").sticky({ topSpacing: 0 });
 
     $().UItoTop({
         scrollSpeed: 500,

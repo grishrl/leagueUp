@@ -55,6 +55,7 @@ export class NavComponent implements OnInit {
   ngAfterViewInit(){
     this.createMobileNav();
     $('ul.sf-menu').superfish();
+    $('.mainmenu').sticky({ topSpacing: 0 });
 }
 
 createMobileNav(){
