@@ -15,6 +15,7 @@ const uploadTeamLogo = require('../methods/teamLogoUpload').uploadTeamLogo;
 const Stats = require('../models/stats-model');
 const logger = require('../subroutines/sys-logging-subs');
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
+const TeamMethods = require('../methods/teamCommon');
 
 /*
 routes for team management --
@@ -97,6 +98,8 @@ router.get('/get/registered', (req, res) => {
     }).lean().then(
         (foundTeam) => {
             if (foundTeam) {
+                foundTeam = util.objectify(foundTeam);
+                foundTeam = TeamMethods.removeDegenerateTeams(foundTeam);
                 res.status(200).send(util.returnMessaging(path, 'Found team', false, foundTeam));
             } else {
                 res.status(200).send(util.returnMessaging(path, "Team not found", false, {}));
