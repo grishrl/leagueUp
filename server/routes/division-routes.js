@@ -29,7 +29,6 @@ router.get('/get/all', (req, res) => {
 
 ///division/get/any
 router.get('/get/any', (req, res) => {
-    console.log(req.query);
     var divInfo = decodeURIComponent(req.query.q);
 
     let query = {

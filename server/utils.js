@@ -231,6 +231,21 @@ function objectify(obj) {
     }
 }
 
+//simple console log for server side errors that will give me more info from the papertrail than a simple console.log;
+//simple method to add a few peices of data together to log out
+function errLogger(location, err, add) {
+    let errLog = `Log @ ${location} : `;
+
+    if (err) {
+        errLog += ` ${err} `
+    }
+
+    if (add) {
+        errLog += `\n Additonal Message: add`;
+    }
+    console.log(errLog);
+}
+
 module.exports = {
     isNullOrEmpty: isNullOrEmpty,
     isNullorUndefined: isNullorUndefined,
@@ -241,5 +256,6 @@ module.exports = {
     returnIdString: returnIdString,
     sortMatchesByTime: sortMatchesByTime,
     objectify: objectify,
-    removeInactiveTeams: removeInactiveTeams
+    removeInactiveTeams: removeInactiveTeams,
+    errLogger: errLogger
 };

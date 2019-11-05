@@ -2,6 +2,9 @@ const axios = require('axios');
 const https = require('https');
 const util = require('../utils');
 const hpAPI = require('./heroesProfileAPI');
+
+const location = 'mmrMethods';
+
 //helper function to return compatible user name for hotslogs
 //replaces the # in a battle tag with _
 function routeFriendlyUsername(username) {
@@ -19,7 +22,6 @@ async function hotslogs(btag) {
     let val = 0;
     let id = null;
     try {
-        // console.log(url + btag);
         //ignore hotslogs expired certs
         const agent = new https.Agent({
             rejectUnauthorized: false
@@ -27,9 +29,7 @@ async function hotslogs(btag) {
         const response = await axios.get(hotslogsURL + routeFriendlyUsername(btag), {
             httpsAgent: agent
         });
-        console.log(response);
         let data = response.data;
-        console.log(data);
         if (data['PlayerID']) {
             id = data.PlayerID
         }
@@ -123,7 +123,7 @@ async function heroesProfile(btag) {
             }
         }
     } catch (error) {
-        console.log(error);
+        util.errLogger(location, error, 'heroesProfile');
         val = null;
     }
     if (val) {

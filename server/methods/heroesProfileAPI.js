@@ -1,5 +1,6 @@
 const axios = require('axios');
 const querystring = require('querystring');
+const util = require('../utils');
 
 const hpAPIbase = 'https://api.heroesprofile.com/api/';
 
@@ -44,7 +45,7 @@ async function matchUploadFn(postObj) {
     try {
         returnUrl = await axios.get(postToHotsProfileURL + '?' + querystring.stringify(postObj), config);
     } catch (error) {
-        console.log(error);
+        util.errLogger('HeroesProfileAPI', error, 'matchUploadFn');
     }
 
     return returnUrl;
@@ -100,7 +101,7 @@ async function highestStatFn(stat, season) {
     try {
         returnUrl = await axios.get(url, config);
     } catch (error) {
-        console.log(error);
+        util.errLogger('HeroesProfileAPI', error, 'highestStatFn');
     }
 
     return returnUrl;

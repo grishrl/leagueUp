@@ -31,7 +31,7 @@ async function calulateStandings(division, season, pastSeason) {
 
         return standings;
     } catch (e) {
-        console.log(e);
+        util.errLogger('standings-subs', e);
     }
 
 
@@ -198,10 +198,11 @@ async function cupDivStanding(division, season) {
                 }
             ).then(
                 saved => {
-                    console.log('standings upserted');
+                    //needs to be replaced with dB log if ever used.
+                    util.errLogger('standings-subs', null, 'standings upserted');
                 },
                 err => {
-                    console.log(err);
+                    util.errLogger('standings-subs', err);
                 }
             );
         }

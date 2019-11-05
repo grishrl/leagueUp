@@ -154,7 +154,7 @@ router.get('/user/update', (req, res) => {
                         user.save().then(
                             save => {
                                 ammountUpdated += 1;
-                                console.log('updated ', ammountUpdated, ' users');
+                                util.errLogger(path, null, 'updated ' + ammountUpdated + ' users')
                             }
                         );
                     }

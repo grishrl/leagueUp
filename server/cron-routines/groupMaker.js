@@ -19,11 +19,11 @@ async function suggestUserToUser() {
             return found;
         },
         err => {
-            console.log(err);
+            util.errLogger('groupMaker', err, 'userlfg query')
             return null;
         }
     );
-    console.log(usersLFG.length)
+
     if (usersLFG) {
         for (var i = 0; i < usersLFG.length; i++) {
             let user = usersLFG[i]
@@ -32,7 +32,7 @@ async function suggestUserToUser() {
 
             userBreakOut1(userObj).then(
                 ret => {
-                    // console.log('ret ', ret);
+                    // empty return for this async function
                 }
             );
         }
@@ -218,7 +218,6 @@ async function userBreakOut1(userObj) {
         }
     }
 
-    // console.log('possible ', possible)
     if (possible >= 2) {
         messageSub(userMsg);
     }
@@ -310,7 +309,7 @@ async function suggestUserToTeam() {
             return found;
         },
         err => {
-            console.log(err);
+            util.errLogger('groupMaker', err, 'teamsLfg query')
             return null;
         }
     );
@@ -324,7 +323,7 @@ async function suggestUserToTeam() {
 
             breakout1(team, teamObj).then(
                 ret => {
-                    // console.log('ret ', ret);
+                    // empty return from async
                 }
             );
         }
@@ -477,8 +476,6 @@ async function breakout1(team, teamObj) {
                 rep => { return rep; },
                 err => { return null; }
             )
-
-            // console.log('conf ', conf);
 
             if (conf && conf.conf >= 6) {
                 if (userMessages.hasOwnProperty(conf.userId)) {
@@ -675,7 +672,6 @@ function addMil(time, plus) {
 //     }
 // }
 // function convertToMil(time) {
-//     console.log(time);
 //     if (typeof time === 'string') {
 //         let colonSplit = time.split(':');
 //         let hour = parseInt(colonSplit[0]);
@@ -758,10 +754,10 @@ async function zeroTeamTimes() {
             team.markModified('availability');
             team.save().then(
                 saved => {
-                    console.log(num + ' of ' + teams.length + ' teams saved.');
+                    util.errLogger('groupMaker', null, num + ' of ' + teams.length + ' teams saved. zeroTeamTimes')
                 },
                 err => {
-                    console.log('error saving');
+                    util.errLogger('groupMaker', null, 'error saving, zeroTeamTimes');
                 }
             )
 
@@ -814,10 +810,10 @@ async function zeroUserTimes() {
             team.markModified('availability');
             team.save().then(
                 saved => {
-                    console.log(num + ' of ' + teams.length + ' teams saved.');
+                    util.errLogger('groupMaker', null, num + ' of ' + teams.length + ' teams saved.')
                 },
                 err => {
-                    console.log('error saving');
+                    util.errLogger('groupMaker', null, 'error saving: zeroUserTimes');
                 }
             )
 

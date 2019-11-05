@@ -1,4 +1,5 @@
 const log = require('../models/system-models');
+const util = require('../utils');
 
 //helper method to log server side activity to the database
 
@@ -22,7 +23,7 @@ function logger(logObj, actor, action, target, error, deepLogging) {
             deepLogging: JSON.stringify(deepLogging)
         }).save();
     } else {
-        console.log('logger got bad data');
+        util.errLogger('sys-logging-subs', null, 'logger got bad data');
     }
 }
 

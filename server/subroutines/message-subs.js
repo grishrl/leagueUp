@@ -1,5 +1,6 @@
 const Message = require('../models/message-models');
 const socketMethods = require('./socket-io-methods');
+const util = require('../utils');
 
 //function for sending messages to users
 //accepts a message object, or recipeint:string,subject:string,content:string,sender:string,
@@ -20,7 +21,7 @@ function message(recipient, subject, content, sender) {
         }).save();
         socketMethods.dispatchMessage(recipient);
     } else {
-        console.log('messenger got bad data');
+        util.errLogger('message-sub', null, 'messenger got bad data');
     }
 }
 

@@ -343,7 +343,6 @@ router.post('/upload/avatar', passport.authenticate('jwt', {
 
 
     let userId = req.user._id;
-    console.log(userId);
     let dataURI = req.body.logo;
 
     //construct log object
@@ -356,22 +355,20 @@ router.post('/upload/avatar', passport.authenticate('jwt', {
         userId: userId
     }).then(
         found => {
-            // console.log('deleting other pending avatar queues ');
             for (var i = 0; i < found.length; i++) {
-                // console.log(found[i]);
                 Avatar.deleteFile(found[i].fileName);
                 PendingAvatarQueue.findByIdAndDelete(found[i]._id).then(
                     deleted => {
-                        // console.log(deleted);
+                        //empty return from promise
                     },
                     err => {
-                        console.log(err);
+                        util.errLogger(path, err, 'PendingAvatarQueue.findByIdAndDelete');
                     }
                 );
             }
         },
         err => {
-            console.log('err ', err);
+            util.errLogger(path, err);
         }
     );
     Avatar.uploadAvatar(path, dataURI, req.user.displayName).then(rep => {

@@ -20,7 +20,7 @@ router.get('/bnet', passport.authenticate('bnet', {
 router.get('/bnet/redirect', function(req, res, next) {
     passport.authenticate('bnet', function(err, user, info) {
         if (err) {
-            console.log('there was an error: ', err);
+            util.errLogger('/bnet/redirect', err);
         }
         if (!user) {
             res.redirect('/');

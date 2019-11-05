@@ -1,4 +1,5 @@
 const axios = require('axios');
+const util = require('../utils');
 
 const tournamnetCreateAPI = 'https://api.challonge.com/v1/tournaments.json';
 
@@ -12,7 +13,7 @@ const participantBulkAddAPI = 'https://api.challonge.com/v1/tournaments/{tournam
 
 const matchUpdateAPI = 'https://api.challonge.com/v1/tournaments/{tournament}/matches/{match_id}.json';
 
-const matchGetAPI = 'https://api.challonge.com/v1/tournaments/{tournament}/matches/{match_id}.json'
+const matchGetAPI = 'https://api.challonge.com/v1/tournaments/{tournament}/matches/{match_id}.json';
 
 function replaceTournamentApi(api, param, key) {
     let s = api;
@@ -22,7 +23,6 @@ function replaceTournamentApi(api, param, key) {
 function matchGet(tournamentId, matchId) {
     let url = replaceTournamentApi(matchUpdateAPI, '{tournament}', tournamentId);
     url = replaceTournamentApi(url, '{match_id}', matchId);
-    console.log('url ', url);
     url += '?api_key=' + process.env.challongeApiKey;
     return axios.get(url).then(response => {
         return response.data;
@@ -127,7 +127,7 @@ async function retriveTournaments(tournamentIds) {
             return resolves;
         },
         err => {
-            console.log('this didnt work')
+            util.errLogger('challongeApi', err, 'retriveTournaments');
         }
     )
     return returnArr;

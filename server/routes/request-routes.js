@@ -289,21 +289,13 @@ router.post('/user/join', passport.authenticate('jwt', {
                                 foundTeam.invitedUsers = [payloadUserName];
                             }
                             foundTeam.save().then(
-                                    saved => {
-                                        console.log('team saved')
-                                    },
-                                    err => {
-                                        console.log('error saving team')
-                                    }
-                                )
-                                // new Message(msg).save().then(
-                                //     (newmsg) => {
-
-
-                            //     }, (err) => {
-                            //         res.status(500).send(util.returnMessaging(path, 'There was an error sending request', err, null, null, logObj));
-                            //     }
-                            // )
+                                saved => {
+                                    // empty return from promise
+                                },
+                                err => {
+                                    //empty return from promise
+                                }
+                            )
 
                         } else {
                             logObj.logLevel = 'ERROR';
@@ -480,7 +472,7 @@ router.post('/user/join/response', passport.authenticate('jwt', {
                 }
             },
             err => {
-                console.log(err);
+                util.errLogger(path, err);
             }
         )
         Message.findByIdAndDelete(messageId).then(
@@ -518,7 +510,7 @@ function deleteOutstandingRequests(user) {
             });
         },
         err => {
-            console.log(err);
+            util.errLogger('request-routes', err, 'deleteOutstandingRequests');
         }
     )
 }
