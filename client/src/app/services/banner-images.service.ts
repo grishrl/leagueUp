@@ -26,6 +26,7 @@ export class BannerImagesService {
     "Dh.jpg",
     "Dic.jpg",
     "DN.jpg",
+    "Dw.jpg",
     "En.jpg",
     "Fc.jpg",
     "FKC.jpg",
