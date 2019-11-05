@@ -7,7 +7,6 @@ const Match = require('../models/match-model');
 const logger = require('../subroutines/sys-logging-subs');
 const summarizePlayerData = require('../summarizeData/summarize-player-data');
 const summarizeTeamData = require('../summarizeData/summarize-team-data');
-// const axios = require('axios');
 const _ = require('lodash');
 const util = require('../utils');
 const System = require('../models/system-models').system;
@@ -15,22 +14,7 @@ const MatchMethods = require('../methods/matchCommon');
 const hpAPI = require('../methods/heroesProfileAPI');
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 
-// const postToHotsProfileURL = process.env.heroProfileAPI;
-// const config = {
-//     headers: {
-//         'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
-//     }
-// }
-// async function postToHotsProfile(postObj) {
-//     let returnUrl = 'null';
-//     try {
-//         returnUrl = await axios.get(postToHotsProfileURL + '?' + querystring.stringify(postObj), config);
-//     } catch (error) {
-//         console.log(error);
-//     }
-
-//     return returnUrl;
-// }
+const location = 'stats-routines';
 
 function getToonHandle(obj, name) {
     let handle = null;
@@ -118,17 +102,17 @@ async function asscoatieReplays() {
                         if (!thisUser.toonHandle) {
                             thisUser.toonHandle = getToonHandle(playerTagsAndToonHandle, thisUser.displayName);
                         }
-                        // console.log('replay.systemId ', replayObj.systemId);
+                        //util.errLogger(location, null, 'replay.systemId '+ replayObj.systemId)
                         if (thisUser.replays.indexOf(replayObj.systemId) == -1) {
                             thisUser.replays.push(replayObj.systemId);
                             thisUser.parseStats = true;
                             associatedCount += 1;
                             thisUser.save().then(
                                 saved => {
-                                    // console.log('saved user!')
+                                    //empty promise return
                                 },
                                 err => {
-                                    // console.log('err!');
+                                    //empty promise return
                                 })
                         } else {
                             associatedCount += 1;
@@ -159,10 +143,10 @@ async function asscoatieReplays() {
                             associatedCount += 1;
                             team.save().then(
                                 saved => {
-                                    // console.log('team saved!');
+                                    // empty promises
                                 },
                                 err => {
-                                    // console.log('err');
+                                    // empty promises
                                 }
                             )
                         } else {
@@ -195,10 +179,10 @@ async function asscoatieReplays() {
                     replayToSave.markModified('futureAssociated');
                     replayToSave.save().then(
                         saved => {
-                            // console.log('replay saved');
+                            // empty promises
                         },
                         err => {
-                            // console.log('err');
+                            // empty promises
                         }
                     )
                 }
@@ -247,7 +231,7 @@ async function leagueStatRunner() {
     )
     if (replays.length > 0) {
         for (var i = 0; i < replays.length; i++) {
-            console.log('calculating fun stats ', i + 1, ' of ', replays.length);
+            util.errLogger(location, null, 'calculating fun stats ' + (i + 1) + ' of ' + replays.length);
             let replay = replays[i];
             try {
                 let finishUpdate = await calcLeagueStats(replay);
@@ -255,12 +239,12 @@ async function leagueStatRunner() {
                     replay.leagueStats = true;
                     replay.save().then(
                         saved => {
-                            console.log('done with ', i + 1, ' of ', replays.length);
+                            util.errLogger(location, null, 'done with ' + (i + 1) + ' of ' + replays.length)
                         }
                     )
                 }
             } catch (error) {
-                console.log(error);
+                util.errLogger(location, error);
                 let logObj = {};
                 logObj.actor = 'SYSTEM; CRON; leagueStatRunner';
                 logObj.target = replays[i].systemId;
@@ -691,7 +675,7 @@ async function tabulateUserStats() {
                     let obj = replay.toObject()
                     replaysObj.push(obj);
                 })
-                // console.log(replaysObj.length);
+                //util.errLogger(location, null, replaysObj.length)
             if (replaysObj && replaysObj.length > 0) {
                 //parse each replay found
                 let playerData = summarizePlayerData(replaysObj, toonHandle);
@@ -732,9 +716,9 @@ async function tabulateUserStats() {
                 }
 
                 if (statResult) {
-                    console.log('stats saved');
+                    util.errLogger(location, null, 'stats saved');
                 } else {
-                    console.log('stats not saved');
+                    util.errLogger(location, null, 'stats not saved');
                 }
 
                 let savePayer = await player.save().then(
@@ -790,12 +774,12 @@ async function tabulateTeamStats() {
                     let obj = replay.toObject();
                     replaysObj.push(obj);
                 })
-                // console.log('replaysObj.length ', replaysObj.length)
+                //util.errLogger(location, null, 'replaysObj.length ' + replaysObj.length);
             if (replaysObj && replaysObj.length > 0) {
-                // console.log('thisTeam.teamName ', thisTeam.teamName);
-                // console.log(summarizeTeamData(thisTeam.teamName, replaysObj))
+                //util.errLogger(location, null, 'thisTeam.teamName ' + thisTeam.teamName);
+                //util.errLogger(location, null, summarizeTeamData(thisTeam.teamName, replaysObj));
                 let teamData = summarizeTeamData(thisTeam._id.toString(), replaysObj);
-                // console.log('teamData ', teamData);
+                //util.errLogger(location, null, 'teamData '+ teamData);
                 thisTeam.parseStats = false;
 
                 let dbStats = await Stats.findOne({
@@ -837,9 +821,9 @@ async function tabulateTeamStats() {
                 }
 
                 if (statResult) {
-                    // console.log('stats saved');
+                    //util.errLogger(location, null, 'stats saved')
                 } else {
-                    // console.log('stats not saved');
+                    //util.errLogger(location, null, 'stats not saved')
                 }
 
                 let saveTeam = thisTeam.save().then(
@@ -878,7 +862,7 @@ async function postToHotsProfileHandler(limNum) {
     } else {
         limNum = parseInt(limNum);
     }
-    // console.log('limit ', limNum);
+
     let matches = await Match.find({
         $and: [{
                 $or: [{
@@ -907,7 +891,7 @@ async function postToHotsProfileHandler(limNum) {
         }
     );
 
-    // console.log('matches.length ', matches.length);
+    //util.errLogger(location, null, 'matches.length '+ matches.length)
     if (matches) {
 
         let divisionList = [];
@@ -926,24 +910,23 @@ async function postToHotsProfileHandler(limNum) {
                 return reply;
             },
             err => {
-                console.log(err);
+                util.errLogger(location, err);
                 return null;
             }
         );
 
-        // console.log(matches.length);
-
+        //util.errLogger(location, null, matches.length)
         let savedArray = [];
         for (var i = 0; i < matches.length; i++) {
             let postedReplays = 0;
             let postObj = {};
             // postObj['api_key'] = 'ngs!7583hh';
             let match = matches[i];
-            // console.log('match ', match);
+            // util.errLogger(location, null, 'match '+ match)
 
             let matchObj = match.toObject();
 
-            // console.log('matchObj ', matchObj);
+            // util.errLogger(location, null,'matchObj '+ matchObj )
 
             let matchCopy = _.cloneDeep(matchObj);
             matchCopy = await MatchMethods.addTeamInfoToMatch(matchCopy).then(fufilled => { return fufilled }, err => { return null });
@@ -955,13 +938,13 @@ async function postToHotsProfileHandler(limNum) {
                 if (matchCopy.hasOwnProperty('forfeit') && matchCopy.forfeit) {
 
                     match['postedToHP'] = true;
-                    // console.log('match ', match);
+                    //util.errLogger(location, null, 'match '+ match)
                     let saved = await match.save().then(
                         saved => {
                             return saved;
                         },
                         err => {
-                            console.log(err);
+                            util.errLogger(location, err);
                             return null;
                         }
                     )
@@ -973,10 +956,8 @@ async function postToHotsProfileHandler(limNum) {
                 } else {
 
                     try {
-                        // console.log('matchCopy ', matchCopy);
+                        //util.errLogger(location, null, 'matchCopy '+ matchCopy);
                         postObj['division'] = getDivisionNameFromConcat(divisions, matchCopy.divisionConcat);
-
-                        console.log(matchCopy);
 
                         postObj['team_one_name'] = matchCopy.home.teamName;
                         postObj['team_one_image_url'] = process.env.heroProfileImage + matchCopy.home.logo;
@@ -1009,12 +990,12 @@ async function postToHotsProfileHandler(limNum) {
                         postObj['season'] = seasonNum.toString();
 
                     } catch (e) {
-                        console.log(e);
+                        util.errLogger(location, e);
                     } finally {
 
                         let replayKeys = Object.keys(matchCopy.replays);
 
-                        // console.log('replayKeys ', replayKeys);
+                        //util.errLogger(location, null, 'replayKeys '+ replayKeys)
                         for (var j = 0; j < replayKeys.length; j++) {
                             let localKey = j + 1;
 
@@ -1034,7 +1015,7 @@ async function postToHotsProfileHandler(limNum) {
                                 logObj.timeStamp = new Date().getTime();
                                 logObj.logLevel = 'STD';
 
-                                // console.log(postObj);
+                                //util.errLogger(location, null, postObj)
                                 if (screenPostObject(postObj)) {
 
                                     // if (false) {
@@ -1049,7 +1030,7 @@ async function postToHotsProfileHandler(limNum) {
                                             return null;
                                         }
                                     );
-                                    //     // console.log('POSTED!')
+
                                     logObj.action = ' logging reply from hots-profile ' + JSON.stringify(posted.data);
                                     logger(logObj);
 
@@ -1061,7 +1042,7 @@ async function postToHotsProfileHandler(limNum) {
                                         // postedReplays = false;
                                     }
                                 } else {
-                                    // console.log('NOT POSTED!')
+
                                     logObj.logLevel = "ERROR";
                                     logObj.error = "This replay failed the screen, NOT SENT TO HEROSPROFILE!!";
                                     logger(logObj);
@@ -1071,13 +1052,14 @@ async function postToHotsProfileHandler(limNum) {
                         }
 
                         match['postedToHP'] = postedReplays > 0;
-                        // console.log('match ', match);
+
+                        //util.errLogger(location, null,'match ' + match )
                         let saved = await match.save().then(
                             saved => {
                                 return saved;
                             },
                             err => {
-                                console.log(err);
+                                util.errLogger(location, err);
                                 return null;
                             }
                         )

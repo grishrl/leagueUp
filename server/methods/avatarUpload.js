@@ -18,7 +18,6 @@ const s3Bucket = new AWS.S3({
 });
 
 async function uploadAvatar(path, dataURI, displayName) {
-    // console.log('path, dataURI, displayName ', path, dataURI, displayName);
     let uploadedFileName = '';
     var decoded = Buffer.byteLength(dataURI, 'base64');
 
@@ -49,14 +48,12 @@ async function uploadAvatar(path, dataURI, displayName) {
                     "cont": true,
                     "eo": s3pass
                 };
-                // console.log('s3 success!');
             },
             s3fail => {
                 return {
                     "cont": false,
                     "eo": s3fail
                 };
-                // console.log('S3 failure!');
             }
         )
         if (s3await.cont) {

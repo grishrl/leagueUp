@@ -46,14 +46,12 @@ async function uploadTeamLogo(path, dataURI, teamName) {
                     "cont": true,
                     "eo": s3pass
                 };
-                // console.log('s3 success!');
             },
             s3fail => {
                 return {
                     "cont": false,
                     "eo": s3fail
                 };
-                // console.log('S3 failure!');
             }
         )
         if (s3await.cont) {
@@ -124,15 +122,12 @@ async function teamLogoArchive(logo) {
                 "cont": true,
                 "eo": s3pass
             };
-            // console.log('s3 success!');
         },
         s3fail => {
-            console.log(s3fail);
             return {
                 "cont": false,
                 "eo": s3fail
             };
-            // console.log('S3 failure!');
         }
     )
     if (s3await.cont) {

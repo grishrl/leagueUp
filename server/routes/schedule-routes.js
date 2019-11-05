@@ -604,8 +604,8 @@ router.post('/report/match', passport.authenticate('jwt', {
                                     }
                                     parsed.push(parsedReplay);
                                 } catch (error) {
-                                    parsed.push({ match: { map: 'UNKNOWN-PARSE-ERROR' } })
-                                    console.log('caught error :', error);
+                                    parsed.push({ match: { map: 'UNKNOWN-PARSE-ERROR' } });
+                                    util.errLogger(path, error, 'caught parse error');
                                 }
                             });
 
@@ -688,7 +688,6 @@ router.post('/report/match', passport.authenticate('jwt', {
                                         };
                                         s3replayBucket.putObject(data, function(err, data) {
                                             if (err) {
-                                                console.log(err);
                                                 //log object
                                                 let sysLog = {};
                                                 sysLog.actor = 'SYS';
@@ -711,7 +710,7 @@ router.post('/report/match', passport.authenticate('jwt', {
                                         });
                                     },
                                     err => {
-                                        console.log('error ', err);
+                                        util.errLogger(path, err, 'replay upload error');
                                     }
                                 )
                             }

@@ -482,7 +482,7 @@ router.post('/groupmaker', (req, res) => {
 
                     },
                     err => {
-                        console.log(err);
+                        util.errLogger(path, err, 'caught an error');
                     }
                 );
 
@@ -491,7 +491,7 @@ router.post('/groupmaker', (req, res) => {
 
                     },
                     err => {
-                        console.log(err);
+                        util.errLogger(path, err, 'caught an error');
                     }
                 );
 

@@ -42,7 +42,6 @@ router.post('/upsertSeasonInfo', passport.authenticate('jwt', {
         }
     ).then(
         saved => {
-            // console.log('season info upserted');
             res.status(200).send(util.returnMessaging(path, "Upserted the season schedule.", false, saved, null, logObj));
         },
         err => {
@@ -65,7 +64,6 @@ router.get('/getSeasonInfo', (req, res) => {
                 }
             )
         } catch (e) {
-            console.log(e);
             res.status(500).send(util.returnMessaging(path, "Error in node", err, null, null));
         }
     } else {
@@ -80,7 +78,7 @@ router.get('/getSeasonInfo', (req, res) => {
                 }
             )
         } catch (e) {
-            console.log(e);
+            //log?
         }
     }
 

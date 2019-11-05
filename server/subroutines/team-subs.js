@@ -6,6 +6,8 @@ const logger = require('./sys-logging-subs');
 const mmrMethods = require('../methods/mmrMethods');
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 
+const location = 'team-subs.js';
+
 //how many members of team we will use to calculate avg-mmr
 const numberOfTopMembersToUse = 4;
 
@@ -88,7 +90,7 @@ async function updateTeamMmrAsynch(team) {
             return null;
         }
     }, (err) => {
-        console.log('updateMmr routine failed');
+        util.errLogger(location, err, 'updateMmr routine failed')
         return null;
     });
 
@@ -183,16 +185,16 @@ function updateTeamMmr(team) {
                 foundTeam.hpMmrAvg = processed.heroesProfileAvgMmr;
                 foundTeam.ngsMmrAvg = processed.ngsAvgMmr;
                 foundTeam.save().then(saved => {
-                    console.log('team mmr updated successfully');
+                    //empty promises
                 }, err => {
-                    console.log('error saving');
+                    //empty promises
                 })
             } else {
-                console.log('there was an error');
+                //empty promises
             }
         });
     }, (err) => {
-        console.log('updateMmr routine failed');
+        util.errLogger(location, err, 'updateMmr routine failed')
     });
 }
 
@@ -300,7 +302,7 @@ async function topMemberMmr(members) {
                 returnVal.heroesProfileAvgMmr = average;
             }
             ngsMmrArr = removeZeroIndicies(ngsMmrArr);
-            console.log(ngsMmrArr);
+
             if (ngsMmrArr.length > 0) {
                 ngsMmrArr.sort((a, b) => {
                     if (a > b) {
@@ -334,7 +336,7 @@ async function topMemberMmr(members) {
         return returnVal;
 
     } catch (err) {
-        console.log(err);
+        util.errLogger(location, err, 'topMemberMmr');
         throw err;
     }
 
@@ -415,15 +417,15 @@ function removeUser(team, user) {
         if (index && index > -1) {
             foundTeam.teamMembers.splice(index, 1);
             foundTeam.save().then((saved) => {
-                console.log('user successfully removed from team');
+                util.errLogger(location, null, 'user successfully removed from team');
             }, (err) => {
-                console.log('error saving team, removeUser sub');
+                util.errLogger(location, err, 'error saving team, removeUser sub');
             })
         } else {
-            console.log('no changes were made to the team, couldnt find user in team members');
+            util.errLogger(location, null, 'no changes were made to the team, couldnt find user in team members')
         }
     }, (err) => {
-        console.log('remove player routine failed.');
+        util.errLogger(location, err, 'remove player routine failed.')
     })
 }
 
@@ -436,12 +438,11 @@ function scrubUserFromTeams(username) {
         'pendingMembers.displayName': username
     }).exec().then(
         (foundTeams) => {
-            console.log('pendingMembers Scrub a ', foundTeams);
+            util.errLogger(location, null, 'pendingMembers Scrub a ' + foundTeams)
             if (foundTeams && foundTeams.length > 0) {
                 //iterate through the teams the user was foudn in
-                console.log('pendingMembers Scrub b')
+                util.errLogger(location, null, 'pendingMembers Scrub b')
                 foundTeams.forEach(element => {
-
                     let save = false;
                     let pendingMembers = util.returnByPath(element.toObject(), 'pendingMembers');
                     //find the index of the user and remove them
@@ -455,7 +456,6 @@ function scrubUserFromTeams(username) {
                     }
                     //save the team
                     if (save) {
-                        console.log('pendingMembers Scrub save')
                         element.save();
                     }
                 })
@@ -468,10 +468,8 @@ function scrubUserFromTeams(username) {
         'teamMembers.displayName': username
     }).exec().then(
         (foundTeams) => {
-            console.log('teamMembers Scrub a ', foundTeams);
             if (foundTeams && foundTeams.length > 0) {
-                console.log('teamMembers Scrub b')
-                    //iterate through the teams
+                //iterate through the teams
                 foundTeams.forEach(element => {
                     let save = false;
                     let members = util.returnByPath(element.toObject(), 'teamMembers');
@@ -486,7 +484,6 @@ function scrubUserFromTeams(username) {
                     }
                     //save the team
                     if (save) {
-                        console.log('teamMembers Scrub saving')
                         element.save();
                     }
                 })
@@ -565,18 +562,16 @@ function updateTeamMatches(team) {
             team.teamName_lower = team.teamName_lower + ' (withdrawn)';
             addTeamNamesToMatch(team, found).then(
                 res => {
-                    console.log('matches modified')
+                    util.errLogger(location, null, 'matches modified');
                 },
                 err => {
-                    console.log('error occurred');
+                    util.errLogger(location, err, 'error occurred');
                 }
             )
 
-        } else {
-            console.log('no matches found')
         }
     }, (err) => {
-        console.log('error finding matches');
+        util.errLogger(location, err, 'error finding matches');
     });
 
 }

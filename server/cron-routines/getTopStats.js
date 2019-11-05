@@ -2,6 +2,7 @@ const System = require('../models/system-models').system;
 const logger = require('../subroutines/sys-logging-subs');
 const hpAPI = require('../methods/heroesProfileAPI');
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
+const utls = require('../utils');
 
 const stats = [
     'kills',
@@ -67,7 +68,6 @@ getTopStats = async function() {
         )
         //loop through each returned promise and save the result
     if (rtval) {
-        // console.log(rtval);
         for (var i = 0; i < rtval.length; i++) {
             //check to make sure that data was returned from the call before continuing;
             if (rtval[i].data != undefined) {
@@ -106,7 +106,7 @@ getTopStats = async function() {
                         logger(logObj);
                     },
                     err => {
-                        console.log(err);
+                        utls.errLogger('getTopStats', err);
                     }
                 )
             }

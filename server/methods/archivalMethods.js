@@ -6,11 +6,14 @@ const archiveTeamLogo = require('./teamLogoUpload').archiveTeamLogo;
 const CustomError = require('./customError');
 const _ = require('lodash');
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
+const util = require('../utils');
+
+const location = 'archivalMethod';
 
 async function archiveDivisions() {
     let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
     let seasonNum = currentSeasonInfo.value;
-    console.log('finding divisions for archival...')
+    util.errLogger(location, null, 'finding divisions for archival...');
     let divisions = await Division.find().then(
         foundDiv => {
             return { cont: true, eo: foundDiv };
@@ -22,13 +25,15 @@ async function archiveDivisions() {
             };
         }
     );
-    console.log('found divisions ' + divisions.eo.length + ' for archival');
+
+    util.errLogger(location, null, 'found divisions ' + divisions.eo.length + ' for archival')
+
     if (divisions.cont) {
 
         for (var i = 0; i < divisions.eo.length; i++) {
 
             let division = divisions.eo[i];
-            console.log('archiving division ' + division.displayName);
+            util.errLogger(location, null, 'archiving division ' + division.displayName)
             new Archive({
                 type: 'division',
                 season: seasonNum,
@@ -45,10 +50,10 @@ async function archiveDivisions() {
                 }
             )
             if (dbTeams.cont) {
-                console.log('archiving teams... ')
+                util.errLogger(location, null, 'archiving teams... ')
                 for (var j = 0; j < dbTeams.eo.length; j++) {
                     let team = dbTeams.eo[j];
-                    console.log('archiving ' + team.teamName);
+                    util.errLogger(location, null, 'archiving ' + team.teamName)
                     let teamObject = team.toObject();
                     teamObject.teamId = team._id.toString();
                     new Archive({
@@ -73,7 +78,7 @@ async function archiveDivisions() {
             }
         }
         playerSeasonFinalize();
-        console.log('finished up archiving...')
+        util.errLogger(location, null, 'finished up archiving...')
 
     } else {
         //error handling
@@ -118,7 +123,7 @@ async function playerSeasonFinalize() {
             });
         },
         err => {
-            console.log(err);
+            util.errLogger(location, err, 'playerSeasonFinalize');
         }
     )
 }
@@ -233,7 +238,7 @@ async function retrieveAndRemoveArchiveUser(user) {
             return found;
         },
         err => {
-            console.log(err);
+            util.errLogger(location, err, 'retrieveAndRemoveArchiveUser')
 
             throw err;
         }

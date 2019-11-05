@@ -21,7 +21,6 @@ function nameContains(teamName, check) {
     check.forEach(
         ck => {
             ck = ck.toLowerCase();
-            console.log(tname.indexOf(ck));
             if (tname.indexOf(ck) > -1) {
                 match = false;
             }

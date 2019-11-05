@@ -99,11 +99,11 @@ function removePendingQueueByUsername(username) {
             //iterate through and delete them
             toDelete.forEach(ele => {
                 ele.remove();
-                console.log(username + ' scrubbed from pending queue.'); //static logging
+                util.errLogger('queue-subs', null, username + ' scrubbed from pending queue.');
             });
         }
     }, (err) => {
-        console.log('Error ' + username + ' not removed from queue'); //static logging
+        util.errLogger('queue-subs', err, 'Error ' + username + ' not removed from queue')
     })
 }
 

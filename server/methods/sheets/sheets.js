@@ -3,6 +3,9 @@ const {
 } = require('googleapis');
 const Match = require('../../models/match-model');
 const logger = require('../../subroutines/sys-logging-subs');
+const util = require('../../utils');
+
+const location = 'sheets.js';
 // const mongoose = require('mongoose');
 
 // mongoose.connect(process.env.mongoURI, () => {
@@ -21,10 +24,10 @@ function readInVods() {
 
     client.authorize((err, tokens) => {
         if (err) {
-            console.log(err);
+            util.errLogger(location, err, 'error setting up client');
             return;
         } else {
-            console.log('connected..');
+            util.errLogger(location, null, 'connected to g-sheet');
             gsRun(client);
         }
     });
@@ -42,7 +45,7 @@ async function gsRun(client) {
     let updateRequired = false;
 
     const gsapi = google.sheets({ version: 'v4', auth: client });
-
+    //update this ID to the new sheet season over season!
     const opts = {
         spreadsheetId: '1-dNFe8cJ7yZlb5aCDqKuKNlDNMll72RL3t_7rivVgk4',
         range: 'Form Responses 1!A2:Z100000'
@@ -70,16 +73,13 @@ async function gsRun(client) {
         return obj;
     });
 
-    // console.log('newDataArray ', newDataArray);
-
     for (var i = 0; i < newDataArray.length; i++) {
         let obj = newDataArray[i];
 
-        // console.log('sysread ', obj.sysRead, ' readInRow ', readInRow(obj.sysRead));
         if (obj.matchId && (obj.youtubeURL || obj.vod1 || obj.vod2) && readInRow(obj.sysRead)) {
             updateRequired = true;
             x += 1;
-            // console.log('I can work with this Caster: ', obj.caster, x);
+
             let match = await Match.findOne({
                 matchId: obj.matchId
             }).then(res => {
@@ -87,7 +87,7 @@ async function gsRun(client) {
             }, err => {
                 return null;
             });
-            // console.log(match);
+
             if (match) {
 
                 match.vodLinks = [];
@@ -150,7 +150,7 @@ async function gsRun(client) {
 
     //send a write to the sheet ONLY if we made read rows
     if (updateRequired) {
-        // console.log('read some rows ... updating')
+        //update this ID to the new sheet season over season!
         const updateOpts = {
             spreadsheetId: '1-dNFe8cJ7yZlb5aCDqKuKNlDNMll72RL3t_7rivVgk4',
             range: 'Form Responses 1!A2:Z100000',
@@ -164,12 +164,10 @@ async function gsRun(client) {
     }
 
     return returnStatus;
-    // console.log(update);
 
 }
 
 function readInRow(val) {
-    // console.log(' sysRead val ', val);
     if (val == undefined || val == null) {
         return true;
     } else {
