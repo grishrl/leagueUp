@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { UtilitiesService } from 'src/app/services/utilities.service';
-import { HotsLogsService } from 'src/app/services/hots-logs.service';
+// import { HotsLogsService } from 'src/app/services/hots-logs.service';
 import { HeroesProfileService } from 'src/app/services/heroes-profile.service';
 import { UserService } from 'src/app/services/user.service';
 import { ValueConverter } from '@angular/compiler/src/render3/view/template';
@@ -13,7 +13,7 @@ import { forEach as _forEach } from 'lodash';
 })
 export class PlayerStatsComponent implements OnInit {
 
-  constructor(private util: UtilitiesService, public hotsLogsService: HotsLogsService, public hotsProfile:HeroesProfileService, private user:UserService) { }
+  constructor(private util: UtilitiesService, public hotsProfile:HeroesProfileService, private user:UserService) { }
 
   ngOnInit() {
 
