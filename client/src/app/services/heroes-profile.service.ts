@@ -70,8 +70,8 @@ getHPProfileLink(toonHandle, displayName) {
       this.http.httpGet('user/hero-profile/path', [{'displayName':encodeURIComponent(displayName)}]).subscribe(
         res=>{
           if(res){
-            let blizz_id = res[0].blizz_id;
-            let region = res[0].region;
+            let blizz_id = res.blizz_id;
+            let region = res.region;
             let splitName = displayName.split('#');
             let battletag = splitName[0];
             returnUrl = environment.heroesProfile + 'region=' + region + '&blizz_id=' + blizz_id + '&battletag=' + battletag;
