@@ -19,6 +19,7 @@ export class BlogViewComponent implements OnInit {
   recId: string  //local property for a receieved blog ID
   displayBlog:Post //local property to hold a fetched blog
   displayAuthor:Author
+  slug:string
 
   constructor(private contentfulService:ContentfulService, private route: ActivatedRoute, public md:MarkdownParserService, public blogCommon:BlogCommonService, private WP:WordpressService) {
     //gets the ID from the url route
@@ -31,6 +32,9 @@ export class BlogViewComponent implements OnInit {
         if(res.blogId){
           this.recId = res.blogId;
         }
+        if (res.slug) {
+          this.slug = res.slug;
+        }
       }
     )
    }
@@ -39,16 +43,30 @@ export class BlogViewComponent implements OnInit {
     //gets provided blog post from received id
     this.displayBlog = new Post();
     this.displayAuthor = new Author();
-    this.WP.getCachePost(this.recId).subscribe(
-      (res: Post)=>{
-        this.displayBlog=res;
-        this.WP.getCacheAuthor(this.displayBlog.author).subscribe(
-          (auth:Author)=>{
-            this.displayAuthor = auth;
-          }
-        )
-      }
-    )
+    if(this.recId){
+      this.WP.getCachePost(this.recId).subscribe(
+        (res: Post) => {
+          this.displayBlog = res;
+          this.WP.getCacheAuthor(this.displayBlog.author).subscribe(
+            (auth: Author) => {
+              this.displayAuthor = auth;
+            }
+          )
+        }
+      )
+    }else if(this.slug){
+      this.WP.getBlogPosts([{slug:this.slug}]).subscribe(
+        (res: [Post]) => {
+          this.displayBlog = res[0];
+          this.WP.getCacheAuthor(this.displayBlog.author).subscribe(
+            (auth: Author) => {
+              this.displayAuthor = auth;
+            }
+          )
+        }
+      )
+    }
+
   }
 
 }
