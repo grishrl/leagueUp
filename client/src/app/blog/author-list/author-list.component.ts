@@ -1,5 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { ContentfulService } from 'src/app/services/contentful.service';
+import { WordpressService } from 'src/app/services/wordpress.service';
 
 @Component({
   selector: 'app-author-list',
@@ -8,17 +9,17 @@ import { ContentfulService } from 'src/app/services/contentful.service';
 })
 export class AuthorListComponent implements OnInit {
 
-  constructor(private contentfulService: ContentfulService) { }
+  constructor(private contentfulService: ContentfulService, private WP:WordpressService) { }
 
   @Output() currentAuthor = new EventEmitter();
 
   selectedAuthor = 'all';
-  authors=[];
+  authors;
 
   ngOnInit() {
-    this.contentfulService.getAuthors({}).then(
+    this.WP.getAuthors().subscribe(
       res=>{
-        this.authors = res;
+        this.authors=res;
       }
     )
   }

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ContentfulService } from '../../services/contentful.service';
 import { MarkdownParserService } from '../../services/markdown-parser.service';
 import { UtilitiesService } from '../../services/utilities.service';
+import { WordpressService } from 'src/app/services/wordpress.service';
 
 @Component({
   selector: 'app-blog-list',
@@ -13,14 +14,19 @@ import { UtilitiesService } from '../../services/utilities.service';
 export class BlogListComponent implements OnInit {
   perColumn: number = 3;
   posts = [];
-  constructor(private router: Router, private contentfulService: ContentfulService, public md: MarkdownParserService, public util: UtilitiesService) { }
+  constructor(private router: Router, private contentfulService: ContentfulService, public md: MarkdownParserService, public util: UtilitiesService, private WP:WordpressService) { }
   rows: any []=[];
 
   ngOnInit() {
-    this.contentfulService.getBlogs({ order: '-sys.createdAt'}).then(
-      res => {
-        this.posts = res;
-      });
+    let params = [
+      {'filter[orderby]':'date'},
+      {'order':'desc'}
+    ]
+      this.WP.getBlogPosts(params).subscribe(
+        (data: any[])=>{
+          this.posts = data;
+        }
+      )
   }
 
   categorySelection:string;
@@ -35,21 +41,26 @@ export class BlogListComponent implements OnInit {
   lastAuth;
 
   private getBlogsOfVal() {
-    let query = {
-      order: '-sys.createdAt'
-    };
+    let query = [];
+
+    query.push({ 'filter[orderby]': 'date' });
+    query.push({ 'order': 'desc' });
 
     if(this.authorSelection && this.authorSelection != 'all'){
-      query['fields.author.sys.id']=this.authorSelection;
+
+      query.push( { 'author': this.authorSelection } );
       //call query of both...
     }
     if(this.categorySelection && this.categorySelection != 'all'){
-      query['fields.category.sys.id']=this.categorySelection;
+      query.push({ 'categories': this.categorySelection} );
     }
 
-      this.contentfulService.getBlogs(query).then(res => {
+    this.WP.getBlogPosts(query).subscribe(
+      res=>{
         this.posts = res;
-      });
+      }
+    )
+
   }
 
   authorSelection;

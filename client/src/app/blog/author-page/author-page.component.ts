@@ -4,6 +4,8 @@ import { ContentfulService } from 'src/app/services/contentful.service';
 import { ActivatedRoute } from '@angular/router';
 import { MarkdownParserService } from 'src/app/services/markdown-parser.service';
 import { merge } from 'lodash';
+import { WordpressService } from 'src/app/services/wordpress.service';
+import { Author } from 'src/app/services/wordpress.service';
 
 @Component({
   selector: 'app-author-page',
@@ -13,10 +15,10 @@ import { merge } from 'lodash';
 export class AuthorPageComponent implements OnInit {
 
   recId;
-  authorInf = this.blogCommon.authorObj();
+  authorInf:Author;
   posts = [];
 
-  constructor(private contentfulService: ContentfulService, private route: ActivatedRoute, public md: MarkdownParserService, public blogCommon: BlogCommonService) {
+  constructor(private contentfulService: ContentfulService, private route: ActivatedRoute, public md: MarkdownParserService, public blogCommon: BlogCommonService, private WP:WordpressService) {
     //gets the ID from the url route
     if (this.route.snapshot.params['id']) {
       this.recId = this.route.snapshot.params['id'];
@@ -32,20 +34,31 @@ export class AuthorPageComponent implements OnInit {
    }
 
   ngOnInit() {
+    this.authorInf = new Author();
+    this.WP.getCacheAuthor(this.recId).subscribe(
+      (auth:Author)=>{
+        this.authorInf = auth;
+        this.WP.getBlogPosts([{ author: this.recId }, { 'filter[orderby]': 'date' }, { 'order': 'desc' }]).subscribe(
+          posts=>{
+            this.posts = posts;
+          }
+        )
+      }
+    )
 
-      this.contentfulService.getAuthors( {'fields.name':this.recId} ).then(
-        res => {
+      // this.contentfulService.getAuthors( {'fields.name':this.recId} ).then(
+      //   res => {
 
-          merge(this.authorInf, res[0]);
+      //     merge(this.authorInf, res[0]);
 
-          //get authors posts now
-          this.contentfulService.getBlogs({ 'links_to_entry': this.authorInf.sys.id, order: '-sys.createdAt' }).then(
-            res => {
-              this.posts = res;
-            }
-          )
-        }
-      );
+      //     //get authors posts now
+      //     this.contentfulService.getBlogs({ 'links_to_entry': this.authorInf.sys.id, order: '-sys.createdAt' }).then(
+      //       res => {
+      //         this.posts = res;
+      //       }
+      //     )
+      //   }
+      // );
 
 
     }

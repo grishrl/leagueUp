@@ -9,7 +9,7 @@ export class BlogCommonService {
   constructor(private router: Router) { }
 
   goToBlogPage(blog) {
-    this.router.navigate(['/blog', blog.sys.id]);
+    this.router.navigate(['/blog', blog.id]);
   }
 
   authorObj(){

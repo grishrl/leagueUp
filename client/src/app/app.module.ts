@@ -163,6 +163,8 @@ import { AuthorPageComponent } from './blog/author-page/author-page.component';
 
 import { DivisionTournamentScheduleTableComponent } from './division/division-tournament-schedule-table/division-tournament-schedule-table.component';
 import { CasterPageComponent } from './caster-tools/caster-page/caster-page.component';
+import { AuthorNameComponent } from './blog/author-name/author-name.component';
+import { ImageGetterComponent } from './blog/image-getter/image-getter.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -314,7 +316,9 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     AuthorListComponent,
     AuthorPageComponent,
     DivisionTournamentScheduleTableComponent,
-    CasterPageComponent
+    CasterPageComponent,
+    AuthorNameComponent,
+    ImageGetterComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
