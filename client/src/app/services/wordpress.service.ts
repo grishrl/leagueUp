@@ -28,11 +28,21 @@ export class WordpressService {
 
       });
     }
-      return this.Http.get(`${this.baseURL}/posts${paramString}`).pipe(
-        map((data:any[]) => {
-          let returnData= [];
-          data.forEach(post=>{
-            returnData.push(this.postFormater(post));
+    return this.Http.get(`${this.baseURL}/posts${paramString}`, { observe: 'response' }).pipe(
+        map((data:any) => {
+          // console.log(data.headers.headers);
+          let blogTotal = parseInt(data.headers.headers.get('x-wp-total')[0]);
+          let blogPages = parseInt(data.headers.headers.get('x-wp-totalpages')[0]);
+          // console.log(blogTotal);
+          // console.log(blogPages);
+          // console.log(data.body);
+          let returnData= {
+            totalBlogs:blogTotal,
+            pages:blogPages,
+            posts:[]
+          };
+          data.body.forEach(post=>{
+            returnData.posts.push(this.postFormater(post));
             this.postCache[post.id] = this.postFormater(post);
           });
           return returnData;
@@ -86,7 +96,7 @@ export class WordpressService {
   }
 
   getAuthors(){
-    return this.Http.get<any[]>(`${this.baseURL}/users`).pipe(
+    return this.Http.get<any[]>(`${this.baseURL}/users?per_page=100`).pipe(
       map(data=>{
         let returnData = [];
         data.forEach(auth => {
@@ -123,7 +133,7 @@ export class WordpressService {
 
 
   getCategories() {
-    return this.Http.get(`${this.baseURL}/categories`).pipe(
+    return this.Http.get(`${this.baseURL}/categories?per_page=100`).pipe(
       data => {
         return data;
       }
@@ -148,6 +158,7 @@ export class WordpressService {
     let tO = {};
     tO['id'] = post['id'];
     tO['date'] = post['date'];
+    tO['slug'] = post['slug'];
     tO['title'] = this.Util.returnByPath(post, 'title.rendered');
     tO['content'] = this.Util.returnByPath(post, 'content.rendered');
     tO['excerpt'] = this.Util.returnByPath(post, 'excerpt.rendered');
@@ -310,6 +321,7 @@ export class Author {
 export class Post {
   id: string;
   date:string;
+  slug:string;
   title: string;
   content:string;
   excerpt:string;
@@ -320,6 +332,7 @@ export class Post {
   constructor(){
     this.id = '';
     this.date= '';
+    this.slug ='';
     this.title= '';;
     this.content= '';;
     this.excerpt= '';;

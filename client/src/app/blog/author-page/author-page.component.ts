@@ -40,7 +40,7 @@ export class AuthorPageComponent implements OnInit {
         this.authorInf = auth;
         this.WP.getBlogPosts([{ author: this.recId }, { 'filter[orderby]': 'date' }, { 'order': 'desc' }]).subscribe(
           posts=>{
-            this.posts = posts;
+            this.posts = posts.posts;
           }
         )
       }

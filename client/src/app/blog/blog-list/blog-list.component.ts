@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ContentfulService } from '../../services/contentful.service';
 import { MarkdownParserService } from '../../services/markdown-parser.service';
 import { UtilitiesService } from '../../services/utilities.service';
 import { WordpressService } from 'src/app/services/wordpress.service';
+import { PageEvent, MatPaginator } from '@angular/material';
 
 @Component({
   selector: 'app-blog-list',
@@ -11,11 +12,19 @@ import { WordpressService } from 'src/app/services/wordpress.service';
   styleUrls: ['./blog-list.component.css']
 })
 
-export class BlogListComponent implements OnInit {
+export class BlogListComponent implements OnInit, AfterViewInit {
   perColumn: number = 3;
   posts = [];
   constructor(private router: Router, private contentfulService: ContentfulService, public md: MarkdownParserService, public util: UtilitiesService, private WP:WordpressService) { }
   rows: any []=[];
+
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+
+  pageEvent:PageEvent
+
+  ngAfterViewInit() {
+    this.paginator.pageIndex = 0;
+  }
 
   ngOnInit() {
     let params = [
@@ -23,8 +32,9 @@ export class BlogListComponent implements OnInit {
       {'order':'desc'}
     ]
       this.WP.getBlogPosts(params).subscribe(
-        (data: any[])=>{
-          this.posts = data;
+        (data: any)=>{
+          this.length = data.totalBlogs;
+          this.posts = data.posts;
         }
       )
   }
@@ -39,6 +49,36 @@ export class BlogListComponent implements OnInit {
 
   lastCat;
   lastAuth;
+
+  length;
+  pageSize=10;
+
+  pageEventHandler(pageEvent: PageEvent) {
+    let i = pageEvent.pageIndex * this.pageSize;
+    let endSlice = i + this.pageSize;
+    let pageReq = pageEvent.pageIndex+1;
+    let query = [];
+
+    query.push({ 'filter[orderby]': 'date' });
+    query.push({ 'order': 'desc' });
+    query.push({ 'page': pageReq });
+
+    if (this.authorSelection && this.authorSelection != 'all') {
+
+      query.push({ 'author': this.authorSelection });
+      //call query of both...
+    }
+    if (this.categorySelection && this.categorySelection != 'all') {
+      query.push({ 'categories': this.categorySelection });
+    }
+
+    this.WP.getBlogPosts(query).subscribe(
+      res => {
+        this.posts = res.posts;
+      }
+    )
+
+  }
 
   private getBlogsOfVal() {
     let query = [];
@@ -57,7 +97,9 @@ export class BlogListComponent implements OnInit {
 
     this.WP.getBlogPosts(query).subscribe(
       res=>{
-        this.posts = res;
+        this.length = res.totalBlogs;
+        this.posts = res.posts;
+        this.paginator.firstPage();
       }
     )
 

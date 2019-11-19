@@ -28,7 +28,7 @@ export class BlogViewComponent implements OnInit {
     }
 
     this.route.data.subscribe(
-      res=>{
+      res => {
         if(res.blogId){
           this.recId = res.blogId;
         }
@@ -44,9 +44,9 @@ export class BlogViewComponent implements OnInit {
     this.displayBlog = new Post();
     this.displayAuthor = new Author();
     if(this.recId){
-      this.WP.getCachePost(this.recId).subscribe(
-        (res: Post) => {
-          this.displayBlog = res;
+      this.WP.getBlogPosts([{ slug: this.recId }]).subscribe(
+        (res: any) => {
+          this.displayBlog = res.posts[0];
           this.WP.getCacheAuthor(this.displayBlog.author).subscribe(
             (auth: Author) => {
               this.displayAuthor = auth;
@@ -56,8 +56,8 @@ export class BlogViewComponent implements OnInit {
       )
     }else if(this.slug){
       this.WP.getBlogPosts([{slug:this.slug}]).subscribe(
-        (res: [Post]) => {
-          this.displayBlog = res[0];
+        (res: any) => {
+          this.displayBlog = res.posts[0];
           this.WP.getCacheAuthor(this.displayBlog.author).subscribe(
             (auth: Author) => {
               this.displayAuthor = auth;

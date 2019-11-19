@@ -34,20 +34,8 @@ export class LargeCarouselComponent implements OnInit {
 
   //slide model
   currentSlide = {
-    sys:{
-      id:null
-    },
-    fields:{
-      title:'',
-      description:'',
-      heroImage:{
-        fields:{
-          file:{
-            url:null
-          }
-        }
-      }
-  }
+    title: '',
+    excerpt: ''
 };
 
 player
@@ -158,9 +146,9 @@ timing = 300;
     // })
     //{ 'filter[orderby]': 'date' });
     //query.push({ 'order': 'desc' }
-    this.WP.getBlogPosts([{ categories: '3' }, { 'filter[orderby]': 'date' }, { 'order': 'desc' }]).subscribe(
+    this.WP.getBlogPosts([{ categories: '9' }, { 'filter[orderby]': 'date' }, { 'order': 'desc' }, { per_page: 3 }]).subscribe(
       res=>{
-        this.carousel = res;
+        this.carousel = res.posts;
         this.carousel.forEach(
           post=>{
             this.WP.getCacheImage(post.postThumbnail).subscribe(

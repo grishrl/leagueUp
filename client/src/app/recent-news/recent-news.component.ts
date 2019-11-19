@@ -22,9 +22,9 @@ export class RecentNewsComponent implements OnInit {
     //     this.blogs = res;
     //   }
     // );
-    this.WP.getBlogPosts([{ categories: '4' }, { 'filter[orderby]': 'date' }, { 'order': 'desc' }]).subscribe(
+    this.WP.getBlogPosts([{ categories: '14' }, { 'filter[orderby]': 'date' }, { 'order': 'desc' }, {per_page: 4}]).subscribe(
       res=>{
-        this.blogs = res;
+        this.blogs = res.posts;
       }
     )
   }
