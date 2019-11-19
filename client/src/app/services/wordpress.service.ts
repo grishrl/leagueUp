@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { UtilitiesService } from './utilities.service';
 import { map, share, shareReplay } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { utils } from 'protractor';
 
 @Injectable({
   providedIn: 'root'

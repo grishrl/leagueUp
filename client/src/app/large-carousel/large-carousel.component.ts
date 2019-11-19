@@ -35,7 +35,8 @@ export class LargeCarouselComponent implements OnInit {
   //slide model
   currentSlide = {
     title: '',
-    excerpt: ''
+    excerpt: '',
+    thumbnailUrl:null
 };
 
 player
