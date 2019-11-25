@@ -16,7 +16,7 @@ export class DivisionService {
       map(
         res => {
           let divisionArr = res;
-          divisionArr.sort( (a, b) => {this.fs.arrangeDivisions(a,b)});
+          divisionArr = divisionArr.sort( (a, b) => {return this.fs.arrangeDivisions(a,b)});
           return divisionArr;
         }
       )
