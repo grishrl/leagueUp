@@ -4,7 +4,7 @@ const util = require('../utils');
 
 const hpAPIbase = 'https://api.heroesprofile.com/api/';
 
-const matchUpload = 'NGS/Games/Upload/';
+const matchUpload = 'NGS/Games/Upload';
 
 const playerMmr = 'Player/MMR?mode=json&battletag={btag}&region=1';
 
@@ -29,10 +29,6 @@ const playerAllHero = 'Player/Hero/All?mode=json&battletag={btag}&region=1&api_t
 
 async function matchUploadFn(postObj) {
 
-    if (!postObj.hasOwnProperty('api_token')) {
-        postObj['api_token'] = process.env.heroProfileAPIkey;
-    }
-
     const config = {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
@@ -41,10 +37,15 @@ async function matchUploadFn(postObj) {
 
     let url = hpAPIbase + matchUpload;
 
+    url = appendApiToken(url);
+
+    console.log(url);
+
     let returnUrl = 'null';
     try {
-        returnUrl = await axios.get(postToHotsProfileURL + '?' + querystring.stringify(postObj), config);
+        returnUrl = await axios.get(url + '&' + querystring.stringify(postObj), config);
     } catch (error) {
+        console.log(error);
         util.errLogger('HeroesProfileAPI', error, 'matchUploadFn');
     }
 
