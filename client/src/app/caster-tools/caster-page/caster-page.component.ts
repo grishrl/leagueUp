@@ -46,11 +46,12 @@ export class CasterPageComponent implements OnInit {
     this.list = new Map<String, [object]>();
     this.scheduleService.getMyCastedMatches().subscribe(
       res=>{
-        let now = Date.now()
+        let now = Date.now();
+        res = this.util.sortMatchesByTime(res);
         res.forEach(match=>{
 
           if (now <= match.scheduledTime.startTime) {
-            let formatDate = this.util.getFormattedDate(match.scheduledTime.startTime, 'dddd MMM D');
+            let formatDate = this.util.getFormattedDate(match.scheduledTime.startTime, 'dddd MMM D hh:mm');
             if (this.list.has(formatDate)) {
               let tempArr = this.list.get(formatDate);
               tempArr.push(match);
