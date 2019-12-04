@@ -21,6 +21,7 @@ const requestRoutes = require('./server/routes/request-routes');
 const utilityRoutes = require('./server/routes/utility-routes');
 const eventRoutes = require('./server/routes/event-routes');
 const history = require('./server/routes/historical-routes');
+const blog = require('./server/routes/blog-routes');
 
 //load mongoose and other utilities 
 const mongoose = require('mongoose');
@@ -63,6 +64,7 @@ app.use('/request', requestRoutes);
 app.use('/utility', utilityRoutes);
 app.use('/events', eventRoutes);
 app.use('/history', history);
+app.use('/blog', blog);
 
 //this is a special route that can be used for seeding teams and users into a dev env when needed
 // const seeding = require('./server/routes/seeding-route');
