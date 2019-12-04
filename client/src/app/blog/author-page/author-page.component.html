@@ -8,12 +8,14 @@
                 <!-- Content Text-->
                 <div class="panel-box pb-3">
                     <div class="titles no-margin">
-                        <h4>{{authorInf.fields.name}}</h4>
+                        <h4>{{authorInf.name}}</h4>
                     </div>
-                    <div class="text-center pt-4"><img style="max-width: 250px;" src="{{authorInf.fields.image.fields.file.url}}" alt=""></div>
+                    <div class="text-center pt-4">
+                        <app-image-getter class="image-size" *ngIf="authorInf.mediaId" [imgId]="authorInf.mediaId"></app-image-getter>
+                    </div>
                     <div class="row">
-                        <div class="info-panel col text-center" *ngIf="authorInf.fields.shortBio">
-                            <p [innerHTML]="md.convertMarkdown(authorInf.fields.shortBio)"></p>
+                        <div class="info-panel col text-center" *ngIf="authorInf.description">
+                            <p [innerHTML]="authorInf.description"></p>
                         </div>
                     </div>
                 </div>

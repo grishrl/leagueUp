@@ -7,6 +7,7 @@ const searchRoutes = require('./server/routes/search-routes');
 const teamRoutes = require('./server/routes/team-routes');
 const adminRoutes = require('./server/routes/admin-routes');
 const adminTeam = require('./server/routes/admin-team');
+const adminLogs = require('./server/routes/admin-logs');
 const adminUser = require('./server/routes/admin-user');
 const adminMatch = require('./server/routes/admin-match');
 const adminDivision = require('./server/routes/admin-division');
@@ -20,6 +21,7 @@ const requestRoutes = require('./server/routes/request-routes');
 const utilityRoutes = require('./server/routes/utility-routes');
 const eventRoutes = require('./server/routes/event-routes');
 const history = require('./server/routes/historical-routes');
+const blog = require('./server/routes/blog-routes');
 
 //load mongoose and other utilities 
 const mongoose = require('mongoose');
@@ -51,6 +53,7 @@ app.use('/division', divisionRoutes);
 app.use('/search', searchRoutes);
 app.use('/outreach', outreachRoutes);
 app.use('/admin', adminTeam);
+app.use('/admin', adminLogs);
 app.use('/admin', adminDivision);
 app.use('/admin', adminUser);
 app.use('/admin', adminMatch);
@@ -61,6 +64,7 @@ app.use('/request', requestRoutes);
 app.use('/utility', utilityRoutes);
 app.use('/events', eventRoutes);
 app.use('/history', history);
+app.use('/blog', blog);
 
 //this is a special route that can be used for seeding teams and users into a dev env when needed
 // const seeding = require('./server/routes/seeding-route');

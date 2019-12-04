@@ -11,13 +11,15 @@
                 <div class="panel-box">
                     <div class="titles no-margin">
                         <h4>
-                            <a [routerLink]="['/blog/author/',displayBlog.fields.author.fields.name]">{{displayBlog.fields.author.fields.name}}</a>
+                            <a [routerLink]="['/blog/author/',displayBlog.author]">
+                                {{displayAuthor.name}}
+                            </a>
                         </h4>
                     </div>
-                    <img src="{{displayBlog.fields.author.fields.image.fields.file.url}}" alt="">
+                    <app-image-getter *ngIf="displayAuthor.mediaId" [imgId]="displayAuthor.mediaId" class="img-responsive author-image"></app-image-getter>
                     <div class="row">
-                        <div class="info-panel" *ngIf="displayBlog.fields.author.fields.shortBio">
-                            <p [innerHTML]="md.convertMarkdown(displayBlog.fields.author.fields.shortBio)"></p>
+                        <div class="info-panel" *ngIf="displayAuthor.description">
+                            <p [innerHTML]="displayAuthor.description"></p>
                         </div>
                     </div>
                 </div>
@@ -30,15 +32,15 @@
                 <!-- Content Text-->
                 <div class="panel-box">
                     <div class="titles no-margin">
-                        <h4>{{displayBlog.fields.title}}</h4>
+                        <h4>{{displayBlog.title}}</h4>
                     </div>
-                    <div class="centerImage text-center mt-4 mb-2">
-                        <img class="image-size" src="{{displayBlog.fields.heroImage.fields.file.url}}" alt="">
+                    <div class="centerImage text-center mb-2">
+                        <app-image-getter *ngIf="displayBlog.postThumbnail" class="image-size" [imgId]="displayBlog.postThumbnail"></app-image-getter>
                     </div>
 
                     <div class="info-panel">
-                        <div [innerHTML]="md.convertMarkdown(displayBlog.fields.description)"></div>
-                        <div id="markedBody" [innerHTML]="md.convertMarkdown(displayBlog.fields.body)"></div>
+                        <div [innerHTML]="displayBlog.excerpt"></div>
+                        <div id="markedBody" [innerHTML]="displayBlog.content"></div>
                     </div>
                 </div>
                 <!-- End Content Text-->

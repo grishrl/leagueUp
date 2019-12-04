@@ -5,7 +5,7 @@
                 <span class="head">
           {{match.home.teamName}} Vs {{match.away.teamName}} <span
             *ngIf="match.scheduledTime && match.scheduledTime.startTime"
-            class="date">{{util.getFormattedDate(match.scheduledTime.startTime, "ddd MMM YYYY")}}</span>
+            class="date">{{util.getFormattedDate(match.scheduledTime.startTime, "ddd MMM DD YYYY")}}</span>
                 </span>
 
 

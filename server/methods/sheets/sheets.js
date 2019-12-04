@@ -1,3 +1,5 @@
+//season 7 sheet: 1-dNFe8cJ7yZlb5aCDqKuKNlDNMll72RL3t_7rivVgk4
+//season 8 sheet: 1-EYgbPXWCCFbgXv6S5lHLPBnPLHWyx7E4Qy7NNKR73w
 const {
     google
 } = require('googleapis');
@@ -47,7 +49,7 @@ async function gsRun(client) {
     const gsapi = google.sheets({ version: 'v4', auth: client });
     //update this ID to the new sheet season over season!
     const opts = {
-        spreadsheetId: '1-dNFe8cJ7yZlb5aCDqKuKNlDNMll72RL3t_7rivVgk4',
+        spreadsheetId: '1-EYgbPXWCCFbgXv6S5lHLPBnPLHWyx7E4Qy7NNKR73w',
         range: 'Form Responses 1!A2:Z100000'
     };
 
@@ -152,7 +154,7 @@ async function gsRun(client) {
     if (updateRequired) {
         //update this ID to the new sheet season over season!
         const updateOpts = {
-            spreadsheetId: '1-dNFe8cJ7yZlb5aCDqKuKNlDNMll72RL3t_7rivVgk4',
+            spreadsheetId: '1-EYgbPXWCCFbgXv6S5lHLPBnPLHWyx7E4Qy7NNKR73w',
             range: 'Form Responses 1!A2:Z100000',
             valueInputOption: 'USER_ENTERED',
             resource: {

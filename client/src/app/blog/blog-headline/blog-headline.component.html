@@ -1,22 +1,24 @@
 <div class="row">
     <div class="col-md-4 text-center">
         <div class="img-hover">
-            <img src="{{blog.fields.heroImage.fields.file.url}}" alt="" class="img-responsive image-height">
+            <!-- <img *ngIf="blog.postThumbnail" src="{{imageUrl}}" alt="" class="img-responsive image-height"> -->
+            <app-image-getter class="img-responsive image-height" [imgId]="blog.postThumbnail"></app-image-getter>
             <div class="overlay">
                 <a class="finger" (click)="blogCommon.goToBlogPage(blog)">+</a>
             </div>
         </div>
     </div>
     <div class="col-md-8">
-        <h5><a class="finger" (click)="blogCommon.goToBlogPage(blog)">{{blog.fields.title}}</a></h5>
+        <h5><a class="finger" (click)="blogCommon.goToBlogPage(blog)">{{blog.title}}</a></h5>
         <span class="data-info">{{util.getFormattedDate(dateObject, "MMMM DD, YYYY")}} / <span
             *ngIf="util.returnBoolByPath(blog,
-            'fields.author.fields.name')"> <a [routerLink]="['/blog/author/',blog.fields.author.fields.name]">
-              {{blog.fields.author.fields.name}}</a>
+            'author')"> <a [routerLink]="['/blog/author/', blog.author]">
+              <app-author-name [authorId]="blog.author"></app-author-name>
+              </a>
            </span> </span>
         <span>
-          <p *ngIf="util.returnBoolByPath(blog, 'fields.description')"
-            [innerHTML]="md.convertMarkdown(blog.fields.description)"></p>
+          <p *ngIf="util.returnBoolByPath(blog, 'excerpt')"
+            [innerHTML]="blog.excerpt"></p>
           <span class="finger post-item linkColor" (click)="blogCommon.goToBlogPage(blog)">Read More [+]</span>
         </span>
     </div>

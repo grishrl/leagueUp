@@ -35,6 +35,7 @@ export class DivisionSelectorComponent implements OnInit {
 
 
   adminLoad=false;
+
   @Input() set admin(_admin){
     if(_admin!=null||_admin!=undefined){
       this.adminLoad = !!_admin;

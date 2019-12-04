@@ -7,6 +7,7 @@ import { environment } from 'src/environments/environment';
 import { timer, Subscription, Subject, Observable, BehaviorSubject, interval } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 import { animate, AnimationBuilder, AnimationFactory, AnimationPlayer, style, trigger, state, transition } from '@angular/animations';
+import { WordpressService } from '../services/wordpress.service';
 
 @Component({
   selector: 'app-large-carousel',
@@ -17,7 +18,7 @@ export class LargeCarouselComponent implements OnInit {
 
 
 
-  constructor(private contentfulService: ContentfulService, private router: Router, public md: MarkdownParserService, public util: UtilitiesService, private builder: AnimationBuilder) { }
+  constructor(private contentfulService: ContentfulService, private router: Router, public md: MarkdownParserService, public util: UtilitiesService, private builder: AnimationBuilder, private WP:WordpressService) { }
 
   //helper for monitoring time of the carousel
   private reset$: BehaviorSubject<any>;
@@ -33,20 +34,9 @@ export class LargeCarouselComponent implements OnInit {
 
   //slide model
   currentSlide = {
-    sys:{
-      id:null
-    },
-    fields:{
-      title:'',
-      description:'',
-      heroImage:{
-        fields:{
-          file:{
-            url:null
-          }
-        }
-      }
-  }
+    title: '',
+    excerpt: '',
+    thumbnailUrl:null
 };
 
 player
@@ -151,10 +141,28 @@ timing = 300;
 
 
   ngOnInit() {
-    this.contentfulService.getBlogs((Object.assign({ content_type: 'blogPost' }, { links_to_entry: environment.contentful.categoryIDs.jumbotron, order: '-sys.createdAt', limit: 3 }))).then(res => {
-      this.carousel = res;
-      this.assignSlide(this.currentPointer);
-    })
+    // this.contentfulService.getBlogs((Object.assign({ content_type: 'blogPost' }, { links_to_entry: environment.contentful.categoryIDs.jumbotron, order: '-sys.createdAt', limit: 3 }))).then(res => {
+    //   this.carousel = res;
+    //   this.assignSlide(this.currentPointer);
+    // })
+    //{ 'filter[orderby]': 'date' });
+    //query.push({ 'order': 'desc' }
+    this.WP.getBlogPosts([{ categories: '9' }, { 'filter[orderby]': 'date' }, { 'order': 'desc' }, { per_page: 3 }]).subscribe(
+      res=>{
+        this.carousel = res.posts;
+        this.carousel.forEach(
+          post=>{
+            this.WP.getCacheImage(post.postThumbnail).subscribe(
+              imgUrl=>{
+                post['thumbnailUrl']=imgUrl;
+              }
+            );
+          }
+        )
+        this.assignSlide(this.currentPointer);
+
+      }
+    )
   }
 
   subscription: Subscription
@@ -175,8 +183,8 @@ timing = 300;
   }
 
   goToBlogPage(blog) {
-    this.contentfulService.cacheBlog(blog);
-    this.router.navigate(['/blog', blog.sys.id]);
+    // this.contentfulService.cacheBlog(blog);
+    this.router.navigate(['/blog', blog.slug]);
   }
 
 

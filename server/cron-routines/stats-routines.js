@@ -956,6 +956,7 @@ async function postToHotsProfileHandler(limNum) {
                 } else {
 
                     try {
+                        postObj['mode'] = process.env.heroProfileMode;
                         //util.errLogger(location, null, 'matchCopy '+ matchCopy);
                         postObj['division'] = getDivisionNameFromConcat(divisions, matchCopy.divisionConcat);
 
@@ -974,9 +975,9 @@ async function postToHotsProfileHandler(limNum) {
                         postObj['team_two_image_url'] = process.env.heroProfileImage + matchCopy.away.logo;
 
                         if (matchCopy.hasOwnProperty('mapBans')) {
-                            postObj['team_one_map_ban'] = matchCopy.mapBans.homeOne;
+                            postObj['team_one_map_ban_1'] = matchCopy.mapBans.homeOne;
                             postObj['team_one_map_ban_2'] = matchCopy.mapBans.homeTwo;
-                            postObj['team_two_map_ban'] = matchCopy.mapBans.awayOne;
+                            postObj['team_two_map_ban_1'] = matchCopy.mapBans.awayOne;
                             postObj['team_two_map_ban_2'] = matchCopy.mapBans.awayTwo;
                         }
 

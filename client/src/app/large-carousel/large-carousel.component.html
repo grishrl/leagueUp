@@ -1,12 +1,12 @@
 <div class="hero-header">
     <div id="hero-slider" #heroSlider class="hero-slider slider-position">
-        <div class="item-slider background-adj" [ngStyle]="{'background':'url('+currentSlide.fields.heroImage.fields.file.url+')'}">
+        <div class="item-slider background-adj" [ngStyle]="{'background':'url('+currentSlide.thumbnailUrl+')'}">
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-lg-7">
                         <div class="info-slider">
-                            <h1>{{currentSlide.fields.title}}</h1>
-                            <p [innerHTML]="md.convertMarkdown(currentSlide.fields.description)">
+                            <h1>{{currentSlide.title}}</h1>
+                            <p [innerHTML]="currentSlide.excerpt">
                             </p>
                             <a (click)="goToBlogPage(currentSlide)" class="finger btn-cst btn-iw outline"><span
                                 class="buttonText">Read More <i class="fas fa-long-arrow-alt-right"></i></span></a>
