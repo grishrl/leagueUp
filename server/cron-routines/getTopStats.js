@@ -82,6 +82,9 @@ getTopStats = async function() {
                             'dataName': 'TopStatList'
                         },
                         {
+                            'span': season
+                        },
+                        {
                             'stat': stat
                         }
                     ]
@@ -90,6 +93,7 @@ getTopStats = async function() {
                     query, {
                         "dataName": "TopStatList",
                         "stat": stat,
+                        "span": season,
                         "data": rtval[i].data
                     }, {
                         new: true,

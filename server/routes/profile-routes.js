@@ -10,6 +10,7 @@ const Avatar = require('../methods/avatarUpload');
 const PendingAvatarQueue = require('../models/admin-models').PendingAvatarQueue;
 const archiveUser = require('../methods/archivalMethods').archiveUser;
 const hpAPI = require('../methods/heroesProfileAPI');
+const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 
 /*
 /get
@@ -228,15 +229,20 @@ router.get('/update/mmr', passport.authenticate('jwt', {
         }
     });
 
-router.get('/frontPageStats', (req, res) => {
+router.get('/frontPageStats', async(req, res) => {
 
     const path = '/user/frontPageStats';
     var stat = req.query.stat;
+
+    let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
 
     if (stat) {
         let query = {
             '$and': [{
                     'dataName': 'TopStatList'
+                },
+                {
+                    'span': currentSeasonInfo.value
                 },
                 {
                     'stat': stat
