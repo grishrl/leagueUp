@@ -1,3 +1,70 @@
-<p>
-  logs-viewer works!
-</p>
+<div class="container-full forceFull">
+    <div class="row">
+        <div class="col">
+            <a [routerLink]="['/_admin/dashboard']">Back to Dashboard</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+
+            <!-- <div class="row">
+                <div class="col">TimeStamp</div>
+                <div class="col">Actor</div>
+                <div class="col">Target</div>
+                <div class="col">Action</div>
+                <th scope="col">Error</th>
+                <div class="col"></div>
+            </div>
+            <div class="row" *ngFor="let log of logs">
+                <div class="col">{{util.getFormattedDate(log.timeStamp, 'MM/DD/YYYY hh:mm A')}}</div>
+                <div class="col">{{log.actor}}</div>
+                <div class="col">{{log.target}}</div>
+                <div class="col">{{log.action}}</div>
+                <div class="col">{{log.error}}</div>
+            </div> -->
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">TimeStamp</th>
+                        <th scope="col">Actor</th>
+                        <th scope="col">Target</th>
+                        <th scope="col">Action</th>
+                        <th scope="col">Error</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let log of logs">
+                        <th scope="row">{{util.getFormattedDate(log.timeStamp, 'MM/DD/YYYY hh:mm A')}}</th>
+                        <td>{{log.action}}</td>
+                        <td>{{log.actor}}</td>
+                        <td>{{log.action}}</td>
+                        <td>{{log.error}}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- <table class="table">
+                <thead>
+                    <tr>
+                        <th style="width:10%">TimeStamp</th>
+                        <th style="width:10%">Actor</th>
+                        <th style="width:10%">Target</th>
+                        <th style="width:10%">Action</th>
+                        <th style="width:10%">Error</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let log of logs">
+                        <th style="width:10%">{{util.getFormattedDate(log.timeStamp, 'MM/DD/YYYY hh:mm A')}}</th>
+                        <td style="width:10%">{{log.action}}</td>
+                        <td style="width:10%">{{log.actor}}</td>
+                        <td style="width:10%">{{log.action}}</td>
+                        <td style="width:10%">{{log.error}}</td>
+                    </tr>
+                </tbody>
+            </table> -->
+
+        </div>
+    </div>
+</div>

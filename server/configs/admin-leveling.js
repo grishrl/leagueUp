@@ -37,6 +37,10 @@ function events(req, res, next) {
     adminCheck('EVENTS', req, res, next);
 }
 
+function logs(req, res, next) {
+    adminCheck('LOGS', req, res, next);
+}
+
 module.exports = {
     teamLevel: teamLevel,
     userLevel: userLevel,
@@ -45,5 +49,6 @@ module.exports = {
     matchLevel: matchLevel,
     scheduleGenerator: scheduleGenerator,
     userACL: userACL,
-    events: events
+    events: events,
+    logs: logs
 }

@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { UtilitiesService } from 'src/app/services/utilities.service';
+import { AdminService } from 'src/app/services/admin.service';
 
 @Component({
   selector: 'app-logs-viewer',
@@ -7,9 +9,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LogsViewerComponent implements OnInit {
 
-  constructor() { }
+  constructor(public util: UtilitiesService, private admin:AdminService) { }
+
+  logs = [];
 
   ngOnInit() {
+    this.admin.getLogs().subscribe(
+      res=>{
+       this.logs = res;
+      },
+      err=>{
+        console.log(err);
+      }
+    )
   }
 
 }

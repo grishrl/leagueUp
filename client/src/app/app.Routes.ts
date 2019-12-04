@@ -52,6 +52,7 @@ import { SeasonInfoManagerComponent } from "./admin/match-management/season-info
 import { PastSeasonsComponent } from "./past-seasons/past-seasons.component";
 import { AuthorPageComponent } from "./blog/author-page/author-page.component";
 import { CasterPageComponent } from "./caster-tools/caster-page/caster-page.component";
+import { LogsViewerComponent } from './admin/logs-viewer/logs-viewer.component';
 
 const APP_ROUTES: Routes = [
   { path: 'challonge', component: ChallongeTournComponent },
@@ -77,6 +78,7 @@ const APP_ROUTES: Routes = [
   { path: 'blog/author/:id', component: AuthorPageComponent },
   { path: 'match/view/:id', component:MatchResultsViewComponent },
   { path: '_admin/seasonInfo', component: SeasonInfoManagerComponent},
+  { path: '_admin/logs', component: LogsViewerComponent, canActivate: [AuthGuardService], data: { role: 'logs' } },
   { path: '_admin/approveTeamQueue', component:ApproveMemberComponent, canActivate:[AuthGuardService], data:{role:'team'} },
   { path: '_admin/approveAvatarQueue', component: ApprovePendingAvatarComponent, canActivate: [AuthGuardService], data: { role: 'user' } },
   { path: '_admin/manageUser', component: ManageMemberComponent, canActivate: [AuthGuardService], data: { role: 'user' } },

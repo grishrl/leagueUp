@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const adminSchema = new Schema({
     "adminId": String,
+    "LOGS": Boolean,
     "TEAM": Boolean,
     "USER": Boolean,
     "DIVISION": Boolean,

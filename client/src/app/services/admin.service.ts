@@ -17,6 +17,11 @@ export class AdminService {
     return this.httpService.httpPost(url, imgInput, true);
   }
 
+  getLogs(){
+    let url = '/admin/logs';
+    return this.httpService.httpGet(url, [], false);
+  }
+
   teamLogoUpload(img, teamName?){
     let url = '/admin/team/uploadLogo';
     let imgInput;
