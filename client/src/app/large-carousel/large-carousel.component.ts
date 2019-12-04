@@ -184,7 +184,7 @@ timing = 300;
 
   goToBlogPage(blog) {
     // this.contentfulService.cacheBlog(blog);
-    this.router.navigate(['/blog', blog.id]);
+    this.router.navigate(['/blog', blog.slug]);
   }
 
 
