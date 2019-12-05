@@ -567,7 +567,7 @@ function tombCalc(replay) {
         //     let player = replay.players[key];
         //     obj['spiderButtsTurnedIn'] += player.gameStats.GemsTurnedIn;
         // });
-        _.forEach(replay.player, (value, key) => {
+        _.forEach(replay.players, (value, key) => {
             obj['spiderButtsTurnedIn'] += value.gameStats.GemsTurnedIn;
         });
 
@@ -988,7 +988,7 @@ async function postToHotsProfileHandler(limNum) {
                             postObj['round'] = matchCopy.round.toString();
                         }
 
-                        postObj['season'] = seasonNum.toString();
+                        postObj['season'] = matchCopy.season.toString();
 
                     } catch (e) {
                         util.errLogger(location, e);
