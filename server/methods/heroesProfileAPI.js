@@ -43,7 +43,6 @@ async function matchUploadFn(postObj) {
     try {
         returnUrl = await axios.get(url + '&' + querystring.stringify(postObj), config);
     } catch (error) {
-        console.log(error);
         util.errLogger('HeroesProfileAPI', error, 'matchUploadFn');
     }
 
