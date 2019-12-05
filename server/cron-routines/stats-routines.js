@@ -893,7 +893,7 @@ async function postToHotsProfileHandler(limNum) {
 
     //util.errLogger(location, null, 'matches.length '+ matches.length)
     if (matches) {
-
+        let fallThroughCheck = true; //this will make sure this replay does not get stuck if someonthing was reported wrong
         let divisionList = [];
         matches.forEach(match => {
             if (divisionList.indexOf(match.divisionConcat) == -1) {
@@ -941,9 +941,11 @@ async function postToHotsProfileHandler(limNum) {
                     //util.errLogger(location, null, 'match '+ match)
                     let saved = await match.save().then(
                         saved => {
+                            fallThroughCheck = false;
                             return saved;
                         },
                         err => {
+                            fallThroughCheck = false;
                             util.errLogger(location, err);
                             return null;
                         }
@@ -994,60 +996,64 @@ async function postToHotsProfileHandler(limNum) {
                         util.errLogger(location, e);
                     } finally {
 
-                        let replayKeys = Object.keys(matchCopy.replays);
+                        if (util.returnBoolByPath(matchCopy, 'replays')) {
 
-                        //util.errLogger(location, null, 'replayKeys '+ replayKeys)
-                        for (var j = 0; j < replayKeys.length; j++) {
-                            let localKey = j + 1;
+                            let replayKeys = Object.keys(matchCopy.replays);
 
-                            postObj['game'] = (j + 1).toString();
+                            //util.errLogger(location, null, 'replayKeys '+ replayKeys)
+                            for (var j = 0; j < replayKeys.length; j++) {
+                                let localKey = j + 1;
 
-                            let replayObj = matchCopy.replays[(j + 1).toString()];
+                                postObj['game'] = (j + 1).toString();
 
-                            if (!util.isNullorUndefined(replayObj)) {
+                                let replayObj = matchCopy.replays[(j + 1).toString()];
 
-                                postObj['replay_url'] = process.env.heroProfileReplay + replayObj.url;
-                                let logObj = {};
-                                logObj.actor = 'SYSTEM; CRON; Hots-Profile Submit';
-                                logObj.target = 'Match Id: ' + matchObj.matchId
-                                if (replayObj.data) {
-                                    logObj.target += ', ReplayID: ' + replayObj.data;
-                                }
-                                logObj.timeStamp = new Date().getTime();
-                                logObj.logLevel = 'STD';
+                                if (!util.isNullorUndefined(replayObj)) {
 
-                                //util.errLogger(location, null, postObj)
-                                if (screenPostObject(postObj)) {
-
-                                    // if (false) {
-
-
-                                    //     // call to hotsprofile
-                                    let posted = await hpAPI.matchUpload(postObj).then(
-                                        reply => {
-                                            return reply;
-                                        },
-                                        err => {
-                                            return null;
-                                        }
-                                    );
-
-                                    logObj.action = ' logging reply from hots-profile ' + JSON.stringify(posted.data);
-                                    logger(logObj);
-
-                                    if (posted) {
-                                        match['replays'][localKey]['parsedUrl'] = posted.data.url;
-                                        postedReplays += 1;
-                                    } else {
-                                        //if posted fails then do not set the match to fully reported
-                                        // postedReplays = false;
+                                    postObj['replay_url'] = process.env.heroProfileReplay + replayObj.url;
+                                    let logObj = {};
+                                    logObj.actor = 'SYSTEM; CRON; Hots-Profile Submit';
+                                    logObj.target = 'Match Id: ' + matchObj.matchId
+                                    if (replayObj.data) {
+                                        logObj.target += ', ReplayID: ' + replayObj.data;
                                     }
-                                } else {
+                                    logObj.timeStamp = new Date().getTime();
+                                    logObj.logLevel = 'STD';
 
-                                    logObj.logLevel = "ERROR";
-                                    logObj.error = "This replay failed the screen, NOT SENT TO HEROSPROFILE!!";
-                                    logger(logObj);
+                                    //util.errLogger(location, null, postObj)
+                                    if (screenPostObject(postObj)) {
+
+                                        // if (false) {
+
+
+                                        //     // call to hotsprofile
+                                        let posted = await hpAPI.matchUpload(postObj).then(
+                                            reply => {
+                                                return reply;
+                                            },
+                                            err => {
+                                                return null;
+                                            }
+                                        );
+
+                                        logObj.action = ' logging reply from hots-profile ' + JSON.stringify(posted.data);
+                                        logger(logObj);
+
+                                        if (posted && posted != 'null') {
+                                            match['replays'][localKey]['parsedUrl'] = posted.data.url;
+                                            postedReplays += 1;
+                                        } else {
+                                            //if posted fails then do not set the match to fully reported
+                                            // postedReplays = false;
+                                        }
+                                    } else {
+
+                                        logObj.logLevel = "ERROR";
+                                        logObj.error = "This replay failed the screen, NOT SENT TO HEROSPROFILE!!";
+                                        logger(logObj);
+                                    }
                                 }
+
                             }
 
                         }
@@ -1057,9 +1063,11 @@ async function postToHotsProfileHandler(limNum) {
                         //util.errLogger(location, null,'match ' + match )
                         let saved = await match.save().then(
                             saved => {
+                                fallThroughCheck = false;
                                 return saved;
                             },
                             err => {
+                                fallThroughCheck = false;
                                 util.errLogger(location, err);
                                 return null;
                             }
@@ -1076,6 +1084,12 @@ async function postToHotsProfileHandler(limNum) {
             } else {
 
 
+            }
+
+            if (fallThroughCheck) {
+                logObj.logLevel = "WARNING";
+                logObj.error = "This replay did nothing, needs investigation.";
+                logger(logObj);
             }
 
 

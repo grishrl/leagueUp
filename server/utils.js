@@ -241,7 +241,7 @@ function errLogger(location, err, add) {
     }
 
     if (add) {
-        errLog += `\n Additonal Message: add`;
+        errLog += `\n Additonal Message: ${add}`;
     }
     console.log(errLog);
 }
