@@ -39,8 +39,6 @@ async function matchUploadFn(postObj) {
 
     url = appendApiToken(url);
 
-    console.log(url);
-
     let returnUrl = 'null';
     try {
         returnUrl = await axios.get(url + '&' + querystring.stringify(postObj), config);
