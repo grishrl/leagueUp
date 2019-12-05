@@ -36,8 +36,8 @@
                 <tbody>
                     <tr *ngFor="let log of logs">
                         <th scope="row">{{util.getFormattedDate(log.timeStamp, 'MM/DD/YYYY hh:mm A')}}</th>
-                        <td>{{log.action}}</td>
                         <td>{{log.actor}}</td>
+                        <td>{{log.target}}</td>
                         <td>{{log.action}}</td>
                         <td>{{log.error}}</td>
                     </tr>
