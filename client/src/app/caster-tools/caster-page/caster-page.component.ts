@@ -15,7 +15,8 @@ export class CasterPageComponent implements OnInit {
 
   constructor(private scheduleService: ScheduleService, public util: UtilitiesService, public teamServ:TeamService, private user:UserService, private auth:AuthService ) { }
 
-  list = new Map<String, [object]>();
+  upcomingList = new Map<String, [object]>();
+  pastList = new Map<String, [object]>();
   seasonVal;
 
   asIsOrder(a, b) {
@@ -43,25 +44,38 @@ export class CasterPageComponent implements OnInit {
       this.returnedProfile = res;
     });
 
-    this.list = new Map<String, [object]>();
+    this.upcomingList = new Map<String, [object]>();
     this.scheduleService.getMyCastedMatches().subscribe(
       res=>{
         let now = Date.now();
         res = this.util.sortMatchesByTime(res);
         res.forEach(match=>{
-
           if (now <= match.scheduledTime.startTime) {
             let formatDate = this.util.getFormattedDate(match.scheduledTime.startTime, 'dddd MMM D hh:mm');
-            if (this.list.has(formatDate)) {
-              let tempArr = this.list.get(formatDate);
+            if (this.upcomingList.has(formatDate)) {
+              let tempArr = this.upcomingList.get(formatDate);
               tempArr.push(match);
-              this.list.set(formatDate, tempArr);
+              this.upcomingList.set(formatDate, tempArr);
               // this.list[formatDate].push(match);
             } else {
-              this.list.set(formatDate, [match]);
+              this.upcomingList.set(formatDate, [match]);
             }
-          }
+          }else{
+            let thirtyDaysInMs = 2592000000;
+            let thirtdayDaysAgo = now - thirtyDaysInMs;
+            if (match.scheduledTime.startTime > thirtdayDaysAgo){
+              let formatDate = this.util.getFormattedDate(match.scheduledTime.startTime, 'dddd MMM D hh:mm');
+              if (this.pastList.has(formatDate)) {
+                let tempArr = this.pastList.get(formatDate);
+                tempArr.push(match);
+                this.pastList.set(formatDate, tempArr);
+                // this.list[formatDate].push(match);
+              } else {
+                this.pastList.set(formatDate, [match]);
+              }
+            }
 
+          }
         });
       },
       err=>{
