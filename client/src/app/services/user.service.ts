@@ -134,11 +134,16 @@ export class UserService {
 
   //replaces URL safe character # with _ for URLs for usernames
   routeFriendlyUsername(username): string {
-    if(username!=null&&username!=undefined){
-      return username.replace('#', '_');
+    if(typeof username == 'string'){
+      if (username != null && username != undefined) {
+        return username.replace('#', '_');
+      } else {
+        return '';
+      }
     }else{
       return '';
     }
+
   }
 
   //turns any user name that has been sanatised for URL back to the real user name
