@@ -274,6 +274,10 @@ async function calcLeagueStats(replay) {
         'secondsPlayed': 0
     };
 
+    if (!replay.match) {
+        return 'null';
+    }
+
     switch (replay.match.map) {
         case 'Braxis Holdout':
             objectiveInfo['zergWaves'] = braxCalc(replay);
