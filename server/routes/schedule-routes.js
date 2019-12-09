@@ -734,18 +734,18 @@ router.post('/report/match', passport.authenticate('jwt', {
 
                                     ParsedReplay.collection.insertMany(parsed).then(
                                         (records) => {
-                                            let targetString = '';
-                                            records.forEach(
-                                                    record => {
-                                                        targetString += record.systemId + ', ';
-                                                    }
-                                                )
-                                                //log object
+                                            // let targetString = '';
+                                            // records.forEach(
+                                            //         record => {
+                                            //             targetString += record.systemId + ', ';
+                                            //         }
+                                            //     )
+                                            //log object
                                             let sysLog = {};
                                             sysLog.actor = 'SYS';
                                             sysLog.action = ' parsed replay stored';
                                             sysLog.logLevel = 'SYSTEM';
-                                            sysLog.target = targetString;
+                                            sysLog.target = '';
                                             sysLog.timeStamp = new Date().getTime();
                                             logger(sysLog);
 
