@@ -687,6 +687,7 @@ router.post('/report/match', passport.authenticate('jwt', {
                                             Body: buffer
                                         };
                                         s3replayBucket.putObject(data, function(err, data) {
+                                            util.errLogger(path, data, 'replay data..');
                                             if (err) {
                                                 //log object
                                                 let sysLog = {};
@@ -733,12 +734,18 @@ router.post('/report/match', passport.authenticate('jwt', {
 
                                     ParsedReplay.collection.insertMany(parsed).then(
                                         (records) => {
-                                            //log object
+                                            let targetString = '';
+                                            records.forEach(
+                                                    record => {
+                                                        targetString += record.systemId + ', ';
+                                                    }
+                                                )
+                                                //log object
                                             let sysLog = {};
                                             sysLog.actor = 'SYS';
                                             sysLog.action = ' parsed replay stored';
                                             sysLog.logLevel = 'SYSTEM';
-                                            sysLog.target = replayfilenames.toString();
+                                            sysLog.target = targetString;
                                             sysLog.timeStamp = new Date().getTime();
                                             logger(sysLog);
 

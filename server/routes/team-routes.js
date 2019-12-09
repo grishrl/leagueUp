@@ -717,8 +717,8 @@ router.post('/reassignCaptain', passport.authenticate('jwt', {
         (foundTeam) => {
             if (foundTeam) {
                 if (foundTeam.assistantCaptain && foundTeam.assistantCaptain.indexOf(req.user.displayName) > -1) {
-                    logObj.error = 'Assisstant Captain may not reassign Captain';
-                    res.status(500).send(util.returnMessaging(path, 'Assisstant Captain may not reassign captain; contact an admin', false, null, null, logObj));
+                    logObj.error = 'Assistant Captain may not reassign Captain';
+                    res.status(500).send(util.returnMessaging(path, 'Assistant Captain may not reassign captain; contact an admin', false, null, null, logObj));
                 } else {
                     let members = util.returnByPath(foundTeam.toObject(), 'teamMembers');
                     let cont = false;

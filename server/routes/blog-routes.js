@@ -16,6 +16,7 @@ router.post('/blogs', (req, res) => {
                     res.status(200).send(util.returnMessaging(path, 'Returning blogs', null, data));
                 },
                 err => {
+                    util.errLogger(path, err, 'getBlogPosts');
                     res.status(500).send(util.returnMessaging(path, 'Invalid request', err, null));
                 }
             )
@@ -26,6 +27,7 @@ router.post('/blogs', (req, res) => {
                     res.status(200).send(util.returnMessaging(path, 'Returning blog', null, data));
                 },
                 err => {
+                    util.errLogger(path, err, 'getBlogPost');
                     res.status(500).send(util.returnMessaging(path, 'Invalid request', err, null));
                 }
             )
@@ -36,6 +38,7 @@ router.post('/blogs', (req, res) => {
                     res.status(200).send(util.returnMessaging(path, 'Returning blogs', null, data));
                 },
                 err => {
+                    util.errLogger(path, err, 'getPostByAuthor');
                     res.status(500).send(util.returnMessaging(path, 'Invalid request', err, null));
                 }
             )
@@ -46,6 +49,7 @@ router.post('/blogs', (req, res) => {
                     res.status(200).send(util.returnMessaging(path, 'Returning categories', null, data));
                 },
                 err => {
+                    util.errLogger(path, err, 'getPostsByCategory');
                     res.status(500).send(util.returnMessaging(path, 'Invalid request', err, null));
                 }
             )
@@ -56,6 +60,7 @@ router.post('/blogs', (req, res) => {
                     res.status(200).send(util.returnMessaging(path, 'Returning authors', null, data));
                 },
                 err => {
+                    util.errLogger(path, err, 'getAuthors');
                     res.status(500).send(util.returnMessaging(path, 'Invalid request', err, null));
                 }
             )
@@ -66,6 +71,7 @@ router.post('/blogs', (req, res) => {
                     res.status(200).send(util.returnMessaging(path, 'Returning author', null, data));
                 },
                 err => {
+                    util.errLogger(path, err, 'getAuthor');
                     res.status(500).send(util.returnMessaging(path, 'Invalid request', err, null));
                 }
             )
@@ -76,6 +82,7 @@ router.post('/blogs', (req, res) => {
                     res.status(200).send(util.returnMessaging(path, 'Returning categories', null, data));
                 },
                 err => {
+                    util.errLogger(path, err, 'getCategories');
                     res.status(500).send(util.returnMessaging(path, 'Invalid request', err, null));
                 }
             )
@@ -86,11 +93,13 @@ router.post('/blogs', (req, res) => {
                     res.status(200).send(util.returnMessaging(path, 'Returning media', null, data));
                 },
                 err => {
+                    util.errLogger(path, err, 'getMedia');
                     res.status(500).send(util.returnMessaging(path, 'Invalid request', err, null));
                 }
             )
             break;
         default:
+            util.errLogger(path, request.action, 'Invalid Request');
             res.status(500).send(util.returnMessaging(path, 'Invalid request', null, null));
     }
 
