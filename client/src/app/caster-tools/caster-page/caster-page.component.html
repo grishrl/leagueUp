@@ -44,70 +44,91 @@
 
             </div>
         </div> -->
-        <div *ngIf="list.size>0 else noMatches">
-            <div class="panel-box padding-b" *ngFor="let day of list | keyvalue">
-                <div class="titles">
-                    <h4>{{day.key}}</h4>
-                </div>
-                <div class="info-panel">
 
-                    <div class="table-responsive">
-                        <table class=" table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Home</th>
-                                    <th class="text-center">VS</th>
-                                    <th>Away</th>
-                                    <th>Details</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let match of day.value">
+        <mat-tab-group dynamicHeight class="fullHeight mb-4">
+            <mat-tab label="Upcoming Casts">
+                <ng-template matTabContent>
 
-                                    <td>
-                                        <img src="{{teamServ.imageFQDN(match.home.logo, seasonVal)}}" alt="icon">
-                                        <strong>
-                   <app-team-link [team]="match.home.teamName" [season]="seasonVal">{{match.home.teamName}}
-                   </app-team-link>
-                 </strong><br>
-                                        <!-- <small class="meta-text">GROUP H.</small> -->
-                                    </td>
-                                    <td class="text-center">Vs</td>
-                                    <td>
-                                        <img src="{{teamServ.imageFQDN(match.away.logo, seasonVal)}}" alt="icon1">
-                                        <strong>
-                   <app-team-link [team]="match.away.teamName" [season]="seasonVal">{{match.away.teamName}}
-                   </app-team-link>
-                 </strong><br>
-                                        <!-- <small class="meta-text">GROUP H.</small> -->
-                                    </td>
-                                    <td>
-                                        <strong>Match ID:</strong><span>{{match.matchId}}</span><br>
-                                        <span *ngIf="match.scheduledTime && match.scheduledTime.startTime else tbd">{{util.getFormattedDate(match.scheduledTime.startTime, "MMM DD hh:mm A zz")}}<br></span>
-                                        <span *ngIf="match.casterName"><br><small class="meta-text">Caster: {{match.casterName}}, <a
-                       href="{{util.prePendHttp(match.casterUrl)}}"
-                       target="_blank">{{match.casterUrl}}</a></small></span>
-                                    </td>
-                                    <!-- ng-templates -->
-                                    <ng-template #tbd>
+                    <ng-container *ngTemplateOutlet="matches;context:{list:upcomingList}"></ng-container>
 
-                                        <ng-template #userView>
-                                            <span>Not yet scheduled</span>
-                                        </ng-template>
-                                    </ng-template>
-                                    <!-- end template -->
-                                </tr>
-                            </tbody>
-                        </table>
+                </ng-template>
+            </mat-tab>
+            <mat-tab label="Past Casts">
+                <ng-template matTabContent>
+                    <ng-container *ngTemplateOutlet="matches;context:{list:pastList}"></ng-container>
+                    <!-- <app-division-props></app-division-props> -->
+                </ng-template>
+            </mat-tab>
+        </mat-tab-group>
+
+        <ng-template #matches let-list="list">
+            <div *ngIf="list.size>0 else noMatches">
+                <div class="panel-box padding-b" *ngFor="let day of list | keyvalue">
+                    <div class="titles">
+                        <h4>{{day.key}}</h4>
                     </div>
+                    <div class="info-panel">
+
+                        <div class="table-responsive">
+                            <table class=" table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Home</th>
+                                        <th class="text-center">VS</th>
+                                        <th>Away</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let match of day.value">
+
+                                        <td>
+                                            <img src="{{teamServ.imageFQDN(match.home.logo, seasonVal)}}" alt="icon">
+                                            <strong>
+                     <app-team-link [team]="match.home.teamName" [season]="seasonVal">{{match.home.teamName}}
+                     </app-team-link>
+                   </strong><br>
+                                            <!-- <small class="meta-text">GROUP H.</small> -->
+                                        </td>
+                                        <td class="text-center">Vs</td>
+                                        <td>
+                                            <img src="{{teamServ.imageFQDN(match.away.logo, seasonVal)}}" alt="icon1">
+                                            <strong>
+                     <app-team-link [team]="match.away.teamName" [season]="seasonVal">{{match.away.teamName}}
+                     </app-team-link>
+                   </strong><br>
+                                            <!-- <small class="meta-text">GROUP H.</small> -->
+                                        </td>
+                                        <td>
+                                            <strong>Match ID:</strong><span> {{match.matchId}}</span><br>
+                                            <strong>Division:</strong><span> {{match.divisionConcat}}</span><br>
+                                            <span *ngIf="match.scheduledTime && match.scheduledTime.startTime else tbd">{{util.getFormattedDate(match.scheduledTime.startTime, "MMM DD hh:mm A zz")}}<br></span>
+                                            <span *ngIf="match.casterName"><br><small class="meta-text">Caster: {{match.casterName}}, <a
+                         href="{{util.prePendHttp(match.casterUrl)}}"
+                         target="_blank">{{match.casterUrl}}</a></small></span>
+                                        </td>
+                                        <!-- ng-templates -->
+                                        <ng-template #tbd>
+
+                                            <ng-template #userView>
+                                                <span>Not yet scheduled</span>
+                                            </ng-template>
+                                        </ng-template>
+                                        <!-- end template -->
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
 
 
+                    </div>
                 </div>
             </div>
-        </div>
+        </ng-template>
+
         <ng-template #noMatches>
-            <div>
-                <h5>You currently have no claimed matches!</h5>
+            <div class="mt-3 mb-3">
+                <h5>You currently have no claimed matches! (Or the matches were over 30 days old)</h5>
             </div>
         </ng-template>
 
