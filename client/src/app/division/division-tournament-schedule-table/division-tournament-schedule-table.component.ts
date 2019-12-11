@@ -84,19 +84,6 @@ export class DivisionTournamentScheduleTableComponent implements OnInit, OnChang
         )
   }
 
-  checkDate(match) {
-
-    // let ret = false;
-    // if (match['scheduleDeadline']) {
-    //   let intDate = parseInt(match['scheduleDeadline']);
-    //   let weekAgo = intDate - 604800000;
-    //   if (this.todayDate > weekAgo) {
-    //     ret = true;
-    //   }
-    // }
-    return true;
-  }
-
   divisionObj;
   priorDiv;
   @Input() set division(val) {

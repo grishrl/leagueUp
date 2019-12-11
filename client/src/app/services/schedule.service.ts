@@ -38,6 +38,15 @@ export class ScheduleService {
 
   }
 
+  getMatchupHistory(teamAid:string, teamBid:string){
+
+    let url = 'schedule/get/matchup/history';
+    let payload = {
+      teamAid,teamBid
+    }
+    return this.httpService.httpPost(url, payload);
+  }
+
   getMatchList(matches, season?){
     let url = 'schedule/get/match/list';
     let payload = {matches:matches};

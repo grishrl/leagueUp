@@ -165,6 +165,10 @@ import { DivisionTournamentScheduleTableComponent } from './division/division-to
 import { CasterPageComponent } from './caster-tools/caster-page/caster-page.component';
 import { AuthorNameComponent } from './blog/author-name/author-name.component';
 import { ImageGetterComponent } from './blog/image-getter/image-getter.component';
+import { MatchupHistoryComponent } from './match/matchup-history/matchup-history.component';
+import { GamesInformationComponent } from './match/games-information/games-information.component';
+import { MatchupInfoEmbeddableComponent } from './match/matchup-history/matchup-info-embeddable/matchup-info-embeddable.component';
+import { ScheduleTableComponent } from './elements/schedule-table/schedule-table.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -318,7 +322,11 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     DivisionTournamentScheduleTableComponent,
     CasterPageComponent,
     AuthorNameComponent,
-    ImageGetterComponent
+    ImageGetterComponent,
+    MatchupHistoryComponent,
+    GamesInformationComponent,
+    MatchupInfoEmbeddableComponent,
+    ScheduleTableComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

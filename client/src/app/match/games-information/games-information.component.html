@@ -1,0 +1,87 @@
+<div class="panel-box padding-b">
+    <div class="titles">
+        <h4>Games Information</h4>
+    </div>
+    <div class="info-panel">
+        <div *ngIf="match.forfeit else gamesInfo">
+            <p> This match was forfeit by <span *ngIf="match.home.score == 2 else otherTeam">{{match.away.teamName}}</span>
+                <ng-template #otherTeam>
+                    {{match.home.teamName}}
+                </ng-template> no other information will be available.
+            </p>
+        </div>
+        <ng-template #gamesInfo>
+            <div class="row" *ngIf="util.hasMapBans(match)">
+                <div class="col-sm">
+                    <div class="row no-gutter justify-content-md-center">
+                        <h4>
+                            {{match.home.teamName}} Bans
+                        </h4>
+                    </div>
+                    <div class="row no-gutter">
+                        <div class="col-sm">
+                            <div class="banner" [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.homeOne) + ')' } ">
+                                <span class="mapBanText">{{match.mapBans.homeOne}}</span>
+                            </div>
+                        </div>
+                        <div class="col-sm">
+                            <div class="banner" [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.homeTwo) + ')' } ">
+                                <span class="mapBanText">{{match.mapBans.homeTwo}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm">
+                    <div class="row no-gutter justify-content-md-center">
+                        <h4>
+                            {{match.away.teamName}} Bans
+                        </h4>
+                    </div>
+                    <div class="row no-gutter">
+                        <div class="col-sm">
+                            <div class="banner" [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.awayOne) + ')' } ">
+                                <span class="mapBanText">{{match.mapBans.awayOne}}</span>
+                            </div>
+                        </div>
+                        <div class="col-sm">
+                            <div class="banner" [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.awayTwo) + ')' } ">
+                                <span class="mapBanText">{{match.mapBans.awayTwo}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4" *ngFor="let replay of resultsMap| keyvalue">
+                <div class=" col-12 ">
+                    <div class="banner " [ngStyle]="{ 'background': 'url('+ getBackground(replay.value.map) + '), currentColor' } ">
+                        <div class="winnerText ">
+                            <p>
+                                <span *ngIf="replay.value.map else noMap ">{{replay.value.map}}</span>
+                                <ng-template #noMap>No Map Info</ng-template>
+                            </p>
+                            <p>
+                                Winner: {{getWinner(replay.value.winner)}}
+                            </p>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="col mt-2 ">
+                    <div><strong>Replay File:</strong> <a href="{{util.replayFQDN(replay.value.url)}} ">Stored
+              Replay</a></div>
+                    <div><strong>Heroes Profile:</strong> <a href="{{replay.value.parsedUrl}} " target="_blank "> Match
+              Link</a></div>
+                </div>
+            </div>
+            <div class="row mt-3 " *ngIf="match.vodLinks ">
+                <div class="col-3 ">
+                    <div><strong>VOD LINKS:</strong></div>
+                </div>
+                <div class="col-5 ">
+                    <div *ngFor="let vod of match.vodLinks "><a href="{{vod}} " target="_blank ">VOD Link</a></div>
+                </div>
+            </div>
+        </ng-template>
+    </div>
+</div>

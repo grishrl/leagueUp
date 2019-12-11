@@ -30,6 +30,9 @@ export class TeamScheduleTableComponent implements OnInit {
   matches;
 
   initTeamSchedule(teamName){
+    console.log(
+    'teamName',teamName
+    )
     this.timeService.getSesasonInfo().subscribe(
         res => {
           this.currentSeason = res['value'];
@@ -84,13 +87,14 @@ export class TeamScheduleTableComponent implements OnInit {
     return ret;
   }
 
-  teamObj;
-  @Input() set team(val){
+  teamNameVal;
+  @Input() set teamName(val){
     if(val){
-      this.teamObj = val;
-      // if(val.teamName){
-      //   this.initTeamSchedule(val.teamName)
-      // }
+      console.log('val',val);
+      this.teamNameVal = val;
+      if(this.teamNameVal){
+        this.ngOnInit()
+      }
     }
   }
 
@@ -98,14 +102,14 @@ export class TeamScheduleTableComponent implements OnInit {
   @Input() set season(val) {
     if (val) {
       this.seasonVal = val;
-      // if (val) {
-      //   this.initWithSeason();
-      // }
+      if (this.teamNameVal) {
+        this.ngOnInit()
+      }
     }
   }
 
   initWithSeason(){
-    this.scheduleService.getTeamSchedules(this.seasonVal, this.teamObj.teamName).subscribe(
+    this.scheduleService.getTeamSchedules(this.seasonVal, this.teamNameVal).subscribe(
       res => {
         let matches = res;
         if (matches.length == 0) {
@@ -138,7 +142,7 @@ export class TeamScheduleTableComponent implements OnInit {
 
 
   userCanSchedule() {
-    if (this.teamObj.teamName == this.Auth.getTeam() && this.Auth.getCaptain() != 'false') {
+    if (this.teamNameVal == this.Auth.getTeam() && this.Auth.getCaptain() != 'false') {
       return true;
     } else {
       return false;
@@ -150,7 +154,7 @@ export class TeamScheduleTableComponent implements OnInit {
     if (this.seasonVal){
       this.initWithSeason();
     }else{
-      this.initTeamSchedule(this.teamObj.teamName);
+      this.initTeamSchedule(this.teamNameVal);
     }
     this.todayDate = new Date().getTime();
   }

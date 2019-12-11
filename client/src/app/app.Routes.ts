@@ -33,7 +33,6 @@ import { CalendarViewComponent } from "./calendar-view/calendar-view.component";
 import { EventLargeComponent } from "./calendar-view/event-large/event-large.component";
 import { SetDeadlineComponent } from "./admin/match-management/set-deadline/set-deadline.component";
 import { UserMessageCenterComponent } from "./messageCenter/user-message-center/user-message-center.component";
-import { RulesComponent } from "./rules/rules.component";
 import { TeamMarketComponent } from "./marketplace/team-market/team-market.component";
 import { UserMarketplaceComponent } from "./marketplace/user-marketplace/user-marketplace.component";
 import { GenerateSeasonComponent } from "./admin/match-management/generate-season/generate-season.component";
@@ -53,6 +52,7 @@ import { PastSeasonsComponent } from "./past-seasons/past-seasons.component";
 import { AuthorPageComponent } from "./blog/author-page/author-page.component";
 import { CasterPageComponent } from "./caster-tools/caster-page/caster-page.component";
 import { LogsViewerComponent } from './admin/logs-viewer/logs-viewer.component';
+import { MatchupHistoryComponent } from './match/matchup-history/matchup-history.component';
 
 const APP_ROUTES: Routes = [
   { path: 'challonge', component: ChallongeTournComponent },
@@ -107,6 +107,7 @@ const APP_ROUTES: Routes = [
   { path: '_admin/matchMgmt/weekDeadline', component: SetDeadlineComponent, canActivate: [AuthGuardService], data: { role: 'match' }},
   { path: 'messageCenter', component:UserMessageCenterComponent},
   { path: 'findTeams', component:TeamMarketComponent},
+  { path: 'matchupHistory', component:MatchupHistoryComponent},
   { path: 'findPlayers', component:UserMarketplaceComponent},
   { path: 'replayBrowser', component:ReplayBrowserComponent},
   { path: 'tournament', component:TournamentViewComponent },
