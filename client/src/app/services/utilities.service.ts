@@ -281,7 +281,7 @@ export class UtilitiesService {
   }
 
   hasMapBans(match: Match) : boolean {
-      if (match.mapBans.awayOne &&
+      if (match.mapBans && match.mapBans.awayOne &&
         match.mapBans.awayTwo &&
         match.mapBans.homeOne &&
         match.mapBans.homeTwo)

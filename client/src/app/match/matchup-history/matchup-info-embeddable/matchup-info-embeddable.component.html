@@ -49,6 +49,8 @@
         <div class="col text-center my-auto"><strong>Total Games:</strong> {{teamAgameWins+teamBgameWins}}</div>
     </div>
     <ng-container class="mt-2" *ngFor="let match of matches">
-        <app-games-information [match]="match"></app-games-information>
+        <ng-container *ngIf="match.reported">
+            <app-games-information [match]="match"></app-games-information>
+        </ng-container>
     </ng-container>
 </div>

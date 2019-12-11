@@ -50,6 +50,7 @@
                     </ng-container>
 
                     <span *ngIf="match.scheduledTime && match.scheduledTime.startTime else tbd"><strong>Scheduled Time: </strong>{{util.getFormattedDate(match.scheduledTime.startTime, "MMM DD hh:mm A zz")}}<br></span>
+                    <span><a [routerLink]="['/matchupHistory', {teamAid:match.home.id, teamBid:match.away.id}]">Match Up History</a> <br></span>
                     <span *ngIf="match.casterName else casterButton"><small class="meta-text">Caster: {{match.casterName}}, <a
                 href="{{util.prePendHttp(match.casterUrl)}}" target="_blank">{{match.casterUrl}}</a></small></span>
                 </td>

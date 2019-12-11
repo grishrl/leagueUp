@@ -62,10 +62,12 @@ export class MatchupInfoEmbeddableComponent implements OnInit {
     let matchWins = 0;
     this.matches.forEach(
       match=>{
-        if(match.home.id == id && match.home.score > match.away.score){
-          matchWins+=1;
-        } else if (match.away.id == id && match.away.score > match.home.score ){
-          matchWins += 1;
+        if(match.reported){
+          if (match.home.id == id && match.home.score > match.away.score) {
+            matchWins += 1;
+          } else if (match.away.id == id && match.away.score > match.home.score) {
+            matchWins += 1;
+          }
         }
       }
     );
@@ -84,10 +86,12 @@ export class MatchupInfoEmbeddableComponent implements OnInit {
     let gameWins = 0;
     this.matches.forEach(
       match => {
-        if (match.home.id == id) {
-          gameWins += match.home.score;
-        } else if (match.away.id ) {
-          gameWins += match.away.score;
+        if(match.reported){
+          if (match.home.id == id) {
+            gameWins += match.home.score;
+          } else if (match.away.id) {
+            gameWins += match.away.score;
+          }
         }
       }
     );
