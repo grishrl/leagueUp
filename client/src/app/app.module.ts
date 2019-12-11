@@ -39,7 +39,7 @@ import { DivisionPropsComponent } from './admin/division-management/division-pro
 import { RemoveTeamComponent } from './admin/division-management/remove-team/remove-team.component';
 import { ScheduleViewComponent } from './schedule/schedule-view/schedule-view.component';
 import { MatchSchedulerComponent } from './schedule/match-scheduler/match-scheduler.component';
-import { TeamScheduleComponent } from './schedule/team-schedule/team-schedule.component';
+
 import { ReportingComponent } from './reporting/reporting.component';
 import { ReportingDeckComponent } from './reporting/reporting-deck/reporting-deck.component';
 import { ngfModule } from 'angular-file';
@@ -206,7 +206,6 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     RemoveTeamComponent,
     ScheduleViewComponent,
     MatchSchedulerComponent,
-    TeamScheduleComponent,
     ReportingComponent,
     ReportingDeckComponent,
     DashboardComponent,

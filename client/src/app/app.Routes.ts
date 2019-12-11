@@ -17,7 +17,6 @@ import { ManageSelectTeamComponent } from "./admin/manage-team/manage-select-tea
 import { DivisionManagementComponent } from "./admin/division-management/division-management.component";
 import { ScheduleViewComponent } from "./schedule/schedule-view/schedule-view.component";
 import { MatchSchedulerComponent } from "./schedule/match-scheduler/match-scheduler.component";
-import { TeamScheduleComponent } from "./schedule/team-schedule/team-schedule.component";
 import { ReportingComponent } from "./reporting/reporting.component";
 import { DashboardComponent } from "./admin/dashboard/dashboard.component";
 import { CasterDashboardComponent } from "./caster-tools/caster-dashboard/caster-dashboard.component";
@@ -113,10 +112,7 @@ const APP_ROUTES: Routes = [
   { path: 'tournament', component:TournamentViewComponent },
   { path: 'page/:id', component: StaticHtmlLoaderComponent },
   { path: '**', component: StaticHtmlLoaderComponent, data: { template: '404', headerText: 'Not Found' } }
-
 ]
-
-//{ path: 'schedule/teamSchedule/:id', component:TeamScheduleComponent}, //accepts team name as url parameter
 
 @NgModule({
   imports: [ RouterModule.forRoot(APP_ROUTES, {onSameUrlNavigation:'reload', scrollPositionRestoration:'enabled', anchorScrolling:'enabled'})],

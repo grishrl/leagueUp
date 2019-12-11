@@ -110,9 +110,6 @@ export class DivisionTournamentScheduleTableComponent implements OnInit, OnChang
     }
   }
 
-  userCanSchedule() {
-    return false;
-  }
 
   // todayDate;
   ngOnInit() {
@@ -152,11 +149,6 @@ export class DivisionTournamentScheduleTableComponent implements OnInit, OnChang
       }
     }
 
-  }
-
-
-  scheduleMatch(id) {
-    this.router.navigate(['schedule/scheduleMatch', id]);
   }
 
 

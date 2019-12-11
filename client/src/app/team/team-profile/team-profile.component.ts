@@ -71,9 +71,7 @@ export class TeamProfileComponent implements OnInit {
       //so that people can manually enter different tags from currently being on a profile page; we can reinitialize the component with the new info
     this.router.events.subscribe((e: any) => {
       // If it is a NavigationEnd event re-initalise the component
-      console.log(e);
       if (e instanceof NavigationEnd) {
-        console.log(e, this.route.snapshot.params['id']);
         this.teamName = team.realTeamName(this.route.snapshot.params['id']);
         this.season = this.route.snapshot.params['season'];
         this.ngOnInit();

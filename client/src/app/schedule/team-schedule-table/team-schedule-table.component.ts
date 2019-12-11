@@ -30,9 +30,6 @@ export class TeamScheduleTableComponent implements OnInit {
   matches;
 
   initTeamSchedule(teamName){
-    console.log(
-    'teamName',teamName
-    )
     this.timeService.getSesasonInfo().subscribe(
         res => {
           this.currentSeason = res['value'];
@@ -70,27 +67,9 @@ export class TeamScheduleTableComponent implements OnInit {
 
   }
 
-  hasDeadline(match){
-    return match.hasOwnProperty("scheduleDeadline");
-  }
-
-  checkDate(match) {
-
-    let ret = false;
-    if (match['scheduleDeadline']) {
-      let intDate = parseInt(match['scheduleDeadline']);
-      let weekAgo = intDate - 604800000;
-      if (this.todayDate > weekAgo) {
-        ret = true;
-      }
-    }
-    return ret;
-  }
-
   teamNameVal;
   @Input() set teamName(val){
     if(val){
-      console.log('val',val);
       this.teamNameVal = val;
       if(this.teamNameVal){
         this.ngOnInit()
@@ -157,10 +136,6 @@ export class TeamScheduleTableComponent implements OnInit {
       this.initTeamSchedule(this.teamNameVal);
     }
     this.todayDate = new Date().getTime();
-  }
-
-  scheduleMatch(id) {
-    this.router.navigate(['schedule/scheduleMatch', id]);
   }
 
 }

@@ -16,7 +16,6 @@ export class ScheduleTableComponent implements OnInit {
 
   matchesVal = [];
   @Input() set matches(val){
-    console.log(val);
     if(val){
       this.matchesVal = val;
     }else{
