@@ -12,6 +12,7 @@ const Replay = require('../models/replay-parsed-models');
 const getTopStats = require('../cron-routines/getTopStats');
 const readInVods = require('../methods/sheets/sheets');
 const groupMaker = require('../cron-routines/groupMaker');
+const hpUploadHandler = require('../cron-routines/uploadToHeroesProfile');
 
 
 AWS.config.update({
@@ -373,7 +374,7 @@ router.post('/tabulate-stats/hots-profile', (req, res) => {
     checkApiKey(apiKey).then(
         validate => {
             if (validate) {
-                StatsJobs.postToHotsProfileHandler(limit).then(
+                hpUploadHandler.postToHotsProfileHandler(limit).then(
                     (response) => {
                         logObj.action = 'Submitting replays to Hots Profile completed normally ';
                         logger(logObj);
