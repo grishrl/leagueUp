@@ -169,6 +169,7 @@ import { MatchupHistoryComponent } from './match/matchup-history/matchup-history
 import { GamesInformationComponent } from './match/games-information/games-information.component';
 import { MatchupInfoEmbeddableComponent } from './match/matchup-history/matchup-info-embeddable/matchup-info-embeddable.component';
 import { ScheduleTableComponent } from './elements/schedule-table/schedule-table.component';
+import { ScoutReportComponent } from './scout-report/scout-report.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -325,7 +326,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     MatchupHistoryComponent,
     GamesInformationComponent,
     MatchupInfoEmbeddableComponent,
-    ScheduleTableComponent
+    ScheduleTableComponent,
+    ScoutReportComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
