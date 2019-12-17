@@ -11,47 +11,73 @@
             </p>
         </div>
         <ng-template #gamesInfo>
-            <div class="row" *ngIf="util.hasMapBans(match)">
-                <div class="col-sm">
-                    <div class="row no-gutter justify-content-md-center">
+            <div class="row mt-2">
+                <div class=" col-sm ">
+                    <div class="row no-gutter justify-content-md-center ">
+                        <h4>
+                            Season
+                        </h4>
+                    </div>
+                    <div class="row no-gutter ">
+                        <div class="col-sm text-center">
+                            <span class="">{{match.season}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm ">
+                    <div class="row no-gutter justify-content-md-center ">
+                        <h4>
+                            Date
+                        </h4>
+                    </div>
+                    <div class="row no-gutter ">
+                        <div class="col-sm text-center">
+                            <span>{{util.getFormattedDate(match.scheduledTime.startTime, "MM/DD/YYYY hh:mm A ")}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4" *ngIf="util.hasMapBans(match) ">
+                <div class="col-sm ">
+                    <div class="row no-gutter justify-content-md-center ">
                         <h4>
                             {{match.home.teamName}} Bans
                         </h4>
                     </div>
-                    <div class="row no-gutter">
-                        <div class="col-sm">
-                            <div class="banner" [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.homeOne) + ')' } ">
-                                <span class="mapBanText">{{match.mapBans.homeOne}}</span>
+                    <div class="row no-gutter ">
+                        <div class="col-sm ">
+                            <div class="banner " [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.homeOne) + ')' } ">
+                                <span class="mapBanText ">{{match.mapBans.homeOne}}</span>
                             </div>
                         </div>
-                        <div class="col-sm">
-                            <div class="banner" [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.homeTwo) + ')' } ">
-                                <span class="mapBanText">{{match.mapBans.homeTwo}}</span>
+                        <div class="col-sm ">
+                            <div class="banner " [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.homeTwo) + ')' } ">
+                                <span class="mapBanText ">{{match.mapBans.homeTwo}}</span>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm">
-                    <div class="row no-gutter justify-content-md-center">
+                <div class="col-sm ">
+                    <div class="row no-gutter justify-content-md-center ">
                         <h4>
                             {{match.away.teamName}} Bans
                         </h4>
                     </div>
-                    <div class="row no-gutter">
-                        <div class="col-sm">
-                            <div class="banner" [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.awayOne) + ')' } ">
-                                <span class="mapBanText">{{match.mapBans.awayOne}}</span>
+                    <div class="row no-gutter ">
+                        <div class="col-sm ">
+                            <div class="banner " [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.awayOne) + ')' } ">
+                                <span class="mapBanText ">{{match.mapBans.awayOne}}</span>
                             </div>
                         </div>
-                        <div class="col-sm">
-                            <div class="banner" [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.awayTwo) + ')' } ">
-                                <span class="mapBanText">{{match.mapBans.awayTwo}}</span>
+                        <div class="col-sm ">
+                            <div class="banner " [ngStyle]="{ 'background': 'url('+ getBackground(match.mapBans.awayTwo) + ')' } ">
+                                <span class="mapBanText ">{{match.mapBans.awayTwo}}</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="row mt-4" *ngFor="let replay of resultsMap| keyvalue">
+            <div class="row mt-4 " *ngFor="let replay of resultsMap| keyvalue ">
                 <div class=" col-12 ">
                     <div class="banner " [ngStyle]="{ 'background': 'url('+ getBackground(replay.value.map) + '), currentColor' } ">
                         <div class="winnerText ">

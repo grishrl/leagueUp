@@ -228,24 +228,28 @@ router.post('/get/matchup/history', (req, res) => {
     const path = 'schedule/get/matchup/history';
 
     let query = {
-        $or: [{
-                $and: [{
-                        "home.id": req.body.teamAid
+        $and: [{
+                $or: [{
+                        $and: [{
+                                "home.id": req.body.teamAid
+                            },
+                            {
+                                "away.id": req.body.teamBid
+                            }
+                        ]
                     },
                     {
-                        "away.id": req.body.teamBid
+                        $and: [{
+                                "home.id": req.body.teamBid
+                            },
+                            {
+                                "away.id": req.body.teamAid
+                            }
+                        ]
                     }
                 ]
             },
-            {
-                $and: [{
-                        "home.id": req.body.teamBid
-                    },
-                    {
-                        "away.id": req.body.teamAid
-                    }
-                ]
-            }
+            { reported: true }
         ]
     };
 

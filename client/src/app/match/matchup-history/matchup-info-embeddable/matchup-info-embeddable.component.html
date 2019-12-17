@@ -28,29 +28,42 @@
             </span>
         </div>
     </div>
-    <div class="row">
-        <div class="col text-center my-auto"><strong>Match Wins:</strong> {{teamAmatchWins}}</div>
-        <div class="col text-center my-auto">
 
-        </div>
-        <div class="col text-center my-auto"><strong>Match Wins:</strong> {{teamBmatchWins}}</div>
-    </div>
-    <div class="row mt-2">
-        <div class="col text-center my-auto"><strong>Total Matches:</strong> {{matches.length}}</div>
-    </div>
-    <div class="row mt-2">
-        <div class="col text-center my-auto"><strong>Game Wins:</strong> {{teamAgameWins}}</div>
-        <div class="col text-center my-auto">
+    <div class="mb-5" *ngIf="matches.length>0 else noHistory">
+        <div class="row">
+            <div class="col text-center my-auto"><strong>Match Wins:</strong> {{teamAmatchWins}}</div>
+            <div class="col text-center my-auto">
 
+            </div>
+            <div class="col text-center my-auto"><strong>Match Wins:</strong> {{teamBmatchWins}}</div>
         </div>
-        <div class="col text-center my-auto"><strong>Game Wins:</strong> {{teamBgameWins}}</div>
+        <div class="row mt-2">
+            <div class="col text-center my-auto"><strong>Total Matches:</strong> {{matches.length}}</div>
+        </div>
+        <div class="row mt-2">
+            <div class="col text-center my-auto"><strong>Game Wins:</strong> {{teamAgameWins}}</div>
+            <div class="col text-center my-auto">
+
+            </div>
+            <div class="col text-center my-auto"><strong>Game Wins:</strong> {{teamBgameWins}}</div>
+        </div>
+        <div class="row mt-2 mb-3">
+            <div class="col text-center my-auto"><strong>Total Games:</strong> {{teamAgameWins+teamBgameWins}}</div>
+        </div>
     </div>
-    <div class="row mt-2 mb-3">
-        <div class="col text-center my-auto"><strong>Total Games:</strong> {{teamAgameWins+teamBgameWins}}</div>
-    </div>
-    <ng-container class="mt-2" *ngFor="let match of matches">
-        <ng-container *ngIf="match.reported">
-            <app-games-information [match]="match"></app-games-information>
+
+
+    <div style="margin-bottom: 70px;">
+        <ng-container class="mt-2 mb-5" *ngFor="let match of matches">
+            <ng-container *ngIf="match.reported">
+                <app-games-information [match]="match"></app-games-information>
+            </ng-container>
         </ng-container>
-    </ng-container>
+    </div>
+    <ng-template #noHistory>
+        <div class="mb-5 p-5 text-center">
+            <h4> These teams have no prior match ups!</h4>
+        </div>
+
+    </ng-template>
 </div>

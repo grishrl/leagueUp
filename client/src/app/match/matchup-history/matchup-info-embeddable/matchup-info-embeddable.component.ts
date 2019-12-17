@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { TeamService } from 'src/app/services/team.service';
 import { Team } from 'src/app/classes/team.class';
+import { FilterService } from 'src/app/services/filter.service';
 
 @Component({
   selector: 'app-matchup-info-embeddable',
@@ -10,7 +11,7 @@ import { Team } from 'src/app/classes/team.class';
 })
 export class MatchupInfoEmbeddableComponent implements OnInit {
 
-  constructor( private scheduleService: ScheduleService, private teamService: TeamService, public team:TeamService) { }
+  constructor( private scheduleService: ScheduleService, private teamService: TeamService, public team:TeamService, private flt:FilterService) { }
 
 
   @Input() teamA;
@@ -34,6 +35,7 @@ export class MatchupInfoEmbeddableComponent implements OnInit {
     );
     this.scheduleService.getMatchupHistory(this.teamA, this.teamB).subscribe(
       res => {
+        this.matches = this.flt.sortMatchesBySeason(res);
         this.matches = res;
         console.log(this.matches);
         this.calculateAWins();
