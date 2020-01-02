@@ -29,7 +29,7 @@
         </div>
     </div>
 
-    <div class="mb-5" *ngIf="matches.length>0 else noHistory">
+    <div class="mb-5 panel-box pb-2 pt-3" *ngIf="matches.length>0 else noHistory">
         <div class="row">
             <div class="col text-center my-auto"><strong>Match Wins:</strong> {{teamAmatchWins}}</div>
             <div class="col text-center my-auto">
@@ -37,9 +37,11 @@
             </div>
             <div class="col text-center my-auto"><strong>Match Wins:</strong> {{teamBmatchWins}}</div>
         </div>
+
         <div class="row mt-2">
             <div class="col text-center my-auto"><strong>Total Matches:</strong> {{matches.length}}</div>
         </div>
+        <hr>
         <div class="row mt-2">
             <div class="col text-center my-auto"><strong>Game Wins:</strong> {{teamAgameWins}}</div>
             <div class="col text-center my-auto">

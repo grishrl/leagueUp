@@ -263,7 +263,7 @@ export class UtilitiesService {
 
   sortMatchesByTime(matches) {
     matches.sort((a, b) => {
-      let ret;
+      let ret = 0;
       if (!this.returnBoolByPath(a, 'scheduledTime.startTime')) {
         ret = -1;
       } else if (!this.returnBoolByPath(b, 'scheduledTime.startTime')) {
