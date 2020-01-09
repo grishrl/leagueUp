@@ -12,8 +12,6 @@ const location = 'uploadToHeroesProfileHandler'
 
 async function postToHotsProfileHandler(limNum) {
 
-    console.log('asdfasdfasdf');
-
     // let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
     // let seasonNum = currentSeasonInfo.value;
 
@@ -62,15 +60,10 @@ async function postToHotsProfileHandler(limNum) {
         }
     );
 
-    console.log(matches.length);
-
-
-
     // util.errLogger(location, null, 'matches.length ' + matches.length);
     try {
         let pq = promiseQueue();
         if (matches.length > 0) {
-            console.log('rrrr')
             let fallThroughCheck = true; //this will make sure this replay does not get stuck if someonthing was reported wrong
             let divisionList = [];
             matches.forEach(match => {
@@ -93,14 +86,12 @@ async function postToHotsProfileHandler(limNum) {
                 }
             );
 
-            console.log('matches.length ', matches.length);
             util.errLogger(location, null, matches.length)
 
             let savedArray = [];
             for (var i = 0; i < matches.length; i++) {
                 let logObj = {};
                 logObj.actor = 'SYSTEM; CRON; Hots-Profile Submit';
-                console.log('eeeee');
                 let postedReplays = 0;
                 let postObj = {};
                 // postObj['api_key'] = 'ngs!7583hh';
@@ -118,12 +109,8 @@ async function postToHotsProfileHandler(limNum) {
                     return null
                 });
 
-                console.log('aaaaa');
-
-                console.log(matchCopy);
                 if (matchCopy) {
 
-                    console.log('zzzzz');
                     matchCopy = matchCopy[0];
                     //check to make sure this match was not forfeit
                     if (matchCopy.hasOwnProperty('forfeit') && matchCopy.forfeit) {
@@ -148,9 +135,6 @@ async function postToHotsProfileHandler(limNum) {
 
                     } else {
 
-                        console.log(
-                            'a'
-                        );
                         pq.addToQueue(
                             () => {
                                 return sendToHp(postObj, divisions, matchCopy, match, matchObj, postedReplays, fallThroughCheck, savedArray, matches, success, logObj)
@@ -163,12 +147,6 @@ async function postToHotsProfileHandler(limNum) {
                 } else {
 
 
-                }
-
-                if (fallThroughCheck) {
-                    logObj.logLevel = "WARNING";
-                    logObj.error = "This replay did nothing, needs investigation.";
-                    logger(logObj);
                 }
 
 
@@ -274,12 +252,33 @@ async function sendToHp(postObj, divisions, matchCopy, match, matchObj, postedRe
                         let posted = await hpAPI.matchUpload(postObj).then(reply => {
                             return reply;
                         }, err => {
+                            fallThroughCheck = false;
+                            logObj.error = '';
+                            if (err.message) {
+                                logObj.error += err.message
+                            }
+                            if (err.response.data.message) {
+                                logObj.error += ', ' + err.response.data.message
+                            }
+                            //if we get a known error then we need to remove this match and replay from the scrap...
+                            if (err.response.data.message) {
+                                if (err.response.data.message == 'Game mode is not custom.  Invalid replay sent') {
+                                    postedReplays += 1;
+                                }
+                                if (err.response.data.message == 'Invalid parameter. A player provided was not in the game') {
+                                    postedReplays += 1;
+                                }
+                            }
+                            logObj.logLevel = 'ERROR';
+                            logger(logObj);
                             return null;
                         });
-                        logObj.action = ' logging reply from hots-profile ' + JSON.stringify(posted.data);
-                        logger(logObj);
+
                         if (posted && posted != 'null') {
-                            match['replays'][localKey]['parsedUrl'] = posted.data.url;
+                            fallThroughCheck = false;
+                            logObj.action = ' logging reply from hots-profile ' + JSON.stringify(posted);
+                            logger(logObj);
+                            match['replays'][localKey]['parsedUrl'] = posted.url;
                             postedReplays += 1;
                         } else {
                             //if posted fails then do not set the match to fully reported
@@ -291,8 +290,16 @@ async function sendToHp(postObj, divisions, matchCopy, match, matchObj, postedRe
                         logger(logObj);
                     }
                 }
+                if (fallThroughCheck) {
+                    console.log('localKey', localKey);
+                    logObj.logLevel = "WARNING";
+                    logObj.error = "This replay did nothing, needs investigation.";
+                    logger(logObj);
+                }
             }
         }
+
+
         match['postedToHP'] = postedReplays > 0;
         //util.errLogger(location, null,'match ' + match )
         let saved = await match.save().then(saved => {
@@ -307,6 +314,7 @@ async function sendToHp(postObj, divisions, matchCopy, match, matchObj, postedRe
         if (savedArray.length == matches.length) {
             success = true;
         }
+
     }
     return { postedReplays, fallThroughCheck, success };
 }
