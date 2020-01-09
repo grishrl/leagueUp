@@ -27,6 +27,19 @@
                 <div class="col-sm ">
                     <div class="row no-gutter justify-content-md-center ">
                         <h4>
+                            Round
+                        </h4>
+                    </div>
+                    <div class="row no-gutter ">
+                        <div class="col-sm text-center">
+                            <span *ngIf="match.type == 'tournament'">Tournament </span>
+                            <span>{{match.round}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm ">
+                    <div class="row no-gutter justify-content-md-center ">
+                        <h4>
                             Date
                         </h4>
                     </div>
