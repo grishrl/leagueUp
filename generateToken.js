@@ -13,6 +13,8 @@ const hpAPI = require('./server/methods/heroesProfileAPI');
 let tokenObject = {};
 // set this ID to the _id that the API key will be tied to
 tokenObject.id = "5c62f9d8a55a147ce08c9674";
+//"5c633b8ea55a147ce08c96bc";
+//"5c62f9d8a55a147ce08c9674";
 
 //set this to false to create a std JWToken for API calls, or true for an API key :)
 //to remind you; the api key will only work in instances that are set to validate it IE it will fail jwt because
@@ -46,35 +48,35 @@ mongoose.connect(process.env.mongoURI, () => {
 //     }
 // )
 
-hpAPI.playerMmrAPI('wraithling#1178').then(
-    res => {
+// hpAPI.playerMmrAPI('wraithling#1178').then(
+//     res => {
 
-        console.log('ret 1', res);
-    },
-    err => {
-        console.log(err);
-    }
-);
+//         console.log('ret 1', res);
+//     },
+//     err => {
+//         console.log(err);
+//     }
+// );
 
-hpAPI.playerProfile('wraithling#1178').then(
-    res => {
+// hpAPI.playerProfile('wraithling#1178').then(
+//     res => {
 
-        console.log('ret 2', res);
-    },
-    err => {
-        console.log(err);
-    }
-);
+//         console.log('ret 2', res);
+//     },
+//     err => {
+//         console.log(err);
+//     }
+// );
 
-hpAPI.highestStat('kills', '7').then(
-    res => {
+// hpAPI.highestStat('kills', '7').then(
+//     res => {
 
-        console.log('ret 3', res);
-    },
-    err => {
-        console.log(err);
-    }
-);
+//         console.log('ret 3', res);
+//     },
+//     err => {
+//         console.log(err);
+//     }
+// );
 
 
 // new System.system({
@@ -218,4 +220,4 @@ hpAPI.highestStat('kills', '7').then(
 //     err => {
 //         console.log(err);
 //     }
-// );
+// );≠≠
