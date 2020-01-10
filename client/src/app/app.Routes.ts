@@ -17,7 +17,6 @@ import { ManageSelectTeamComponent } from "./admin/manage-team/manage-select-tea
 import { DivisionManagementComponent } from "./admin/division-management/division-management.component";
 import { ScheduleViewComponent } from "./schedule/schedule-view/schedule-view.component";
 import { MatchSchedulerComponent } from "./schedule/match-scheduler/match-scheduler.component";
-import { TeamScheduleComponent } from "./schedule/team-schedule/team-schedule.component";
 import { ReportingComponent } from "./reporting/reporting.component";
 import { DashboardComponent } from "./admin/dashboard/dashboard.component";
 import { CasterDashboardComponent } from "./caster-tools/caster-dashboard/caster-dashboard.component";
@@ -33,7 +32,6 @@ import { CalendarViewComponent } from "./calendar-view/calendar-view.component";
 import { EventLargeComponent } from "./calendar-view/event-large/event-large.component";
 import { SetDeadlineComponent } from "./admin/match-management/set-deadline/set-deadline.component";
 import { UserMessageCenterComponent } from "./messageCenter/user-message-center/user-message-center.component";
-import { RulesComponent } from "./rules/rules.component";
 import { TeamMarketComponent } from "./marketplace/team-market/team-market.component";
 import { UserMarketplaceComponent } from "./marketplace/user-marketplace/user-marketplace.component";
 import { GenerateSeasonComponent } from "./admin/match-management/generate-season/generate-season.component";
@@ -53,6 +51,7 @@ import { PastSeasonsComponent } from "./past-seasons/past-seasons.component";
 import { AuthorPageComponent } from "./blog/author-page/author-page.component";
 import { CasterPageComponent } from "./caster-tools/caster-page/caster-page.component";
 import { LogsViewerComponent } from './admin/logs-viewer/logs-viewer.component';
+import { MatchupHistoryComponent } from './match/matchup-history/matchup-history.component';
 
 const APP_ROUTES: Routes = [
   { path: 'challonge', component: ChallongeTournComponent },
@@ -107,15 +106,13 @@ const APP_ROUTES: Routes = [
   { path: '_admin/matchMgmt/weekDeadline', component: SetDeadlineComponent, canActivate: [AuthGuardService], data: { role: 'match' }},
   { path: 'messageCenter', component:UserMessageCenterComponent},
   { path: 'findTeams', component:TeamMarketComponent},
+  { path: 'matchupHistory', component:MatchupHistoryComponent},
   { path: 'findPlayers', component:UserMarketplaceComponent},
   { path: 'replayBrowser', component:ReplayBrowserComponent},
   { path: 'tournament', component:TournamentViewComponent },
   { path: 'page/:id', component: StaticHtmlLoaderComponent },
   { path: '**', component: StaticHtmlLoaderComponent, data: { template: '404', headerText: 'Not Found' } }
-
 ]
-
-//{ path: 'schedule/teamSchedule/:id', component:TeamScheduleComponent}, //accepts team name as url parameter
 
 @NgModule({
   imports: [ RouterModule.forRoot(APP_ROUTES, {onSameUrlNavigation:'reload', scrollPositionRestoration:'enabled', anchorScrolling:'enabled'})],

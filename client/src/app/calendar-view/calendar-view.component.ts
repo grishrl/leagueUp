@@ -92,19 +92,6 @@ export class CalendarViewComponent implements OnInit {
     return ret;
   }
 
-  claimMatch(match) {
-
-    this.scheduleService.addCasterOcc(match).subscribe(
-      res => {
-        this.ngOnInit();
-      },
-      err => {
-        console.log(err);
-      }
-    )
-
-  }
-
   shouldShowTimeInEventTitle() : boolean
   {
     return this.view == CalendarView.Month;

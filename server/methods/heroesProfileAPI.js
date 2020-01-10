@@ -39,12 +39,16 @@ async function matchUploadFn(postObj) {
 
     url = appendApiToken(url);
 
-    let returnUrl = 'null';
-    try {
-        returnUrl = await axios.get(url + '&' + querystring.stringify(postObj), config);
-    } catch (error) {
-        util.errLogger('HeroesProfileAPI', error, 'matchUploadFn');
-    }
+    let returnUrl = await axios.get(url + '&' + querystring.stringify(postObj), config).then(
+        success => {
+            return success.data;
+        },
+        failure => {
+            // console.log('failure', failure);
+            // util.errLogger('HeroesProfileAPI', failure, 'matchUploadFn');
+            throw failure;
+        }
+    );
 
     return returnUrl;
 

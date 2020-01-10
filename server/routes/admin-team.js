@@ -293,12 +293,12 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
                         } else {
                             logObj.logLevel = 'ERROR';
                             logObj.error = 'User was not found in pending members of team';
-                            res.status(500).send(util.returnMessaging(path, "User \'" + foundUser.displayName + "\' was not found in pending members of team \'" + teamName + "\'", false, null, null, logObj));
+                            res.status(500).send(util.returnMessaging(path, "User \'" + foundUser.displayName + "\' was not found in pending members of team \'" + foundTeam.teamName + "\'", false, null, null, logObj));
                         }
                     } else {
                         logObj.logLevel = 'ERROR';
                         logObj.error = 'team had no pending members';
-                        res.status(500).send(util.returnMessaging(path, "The team " + teamName + " had no pending members!", null, null, null, logObj));
+                        res.status(500).send(util.returnMessaging(path, "The team " + foundTeam.teamName + " had no pending members!", null, null, null, logObj));
                     }
                     messageSub(msg);
                 } else {

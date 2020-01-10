@@ -93,19 +93,6 @@ export class TeamTournamentScheduleTableComponent implements OnInit {
         )
   }
 
-  checkDate(match) {
-
-    let ret = false;
-    if (match['scheduleDeadline']) {
-      let intDate = parseInt(match['scheduleDeadline']);
-      let weekAgo = intDate - 604800000;
-      if (this.todayDate > weekAgo) {
-        ret = true;
-      }
-    }
-    return ret;
-  }
-
   teamObj;
   @Input() set team(val) {
     if (val) {
@@ -133,7 +120,6 @@ export class TeamTournamentScheduleTableComponent implements OnInit {
   todayDate;
   ngOnInit() {
     this.todayDate = new Date().getTime();
-    console.log('this.teamObj', this.teamObj, ' seasonVal ', this.seasonVal)
     if(this.seasonVal){
       this.initTeamSchedule(this.teamObj._id, this.seasonVal);
     }else{
@@ -147,10 +133,6 @@ export class TeamTournamentScheduleTableComponent implements OnInit {
         })
 
     }
-  }
-
-  scheduleMatch(id) {
-    this.router.navigate(['schedule/scheduleMatch', id]);
   }
 
 

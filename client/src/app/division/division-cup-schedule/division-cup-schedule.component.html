@@ -12,45 +12,6 @@
             </mat-form-field>
         </div>
     </div>
-    <div class="table-responsive">
-        <table class="table-striped  table-hover">
-            <thead>
-                <tr>
-                    <th>Home</th>
-                    <th class="text-center">VS</th>
-                    <th>Away</th>
-                    <th>Details</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let match of matches">
-                    <td>
-                        <img src="{{team.imageFQDN(match.home.logo)}}" alt="icon">
-                        <strong>
-                          <app-team-link [team]="match.home.teamName">
-                            {{match.home.teamName}}
-                          </app-team-link>
-
-                        </strong><br>
-                    </td>
-                    <td class="text-center">Vs</td>
-                    <td>
-                        <img src="{{team.imageFQDN(match.away.logo)}}" alt="icon1">
-                        <strong>
-                          <app-team-link [team]="match.away.teamName">
-                            {{match.away.teamName}}
-                          </app-team-link>
-                        </strong><br>
-                    </td>
-                    <td>
-                        <span *ngIf="match.scheduledTime && match.scheduledTime.startTime else tbd">{{util.getFormattedDate(match.scheduledTime.startTime, "MMM DD hh:mm A zz")}}</span><br>
-                        <span *ngIf="match.casterName"><small class="meta-text">Caster: {{match.casterName}}, <a
-                href="{{util.prePendHttp(match.casterUrl)}}" target="_blank">{{match.casterUrl}}</a></small></span>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <ng-template #tbd> Not yet scheduled </ng-template>
+    <app-schedule-table [matches]="matches" [showRound]="false"></app-schedule-table>
 
 </div>

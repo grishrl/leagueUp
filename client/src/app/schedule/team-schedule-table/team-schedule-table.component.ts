@@ -67,30 +67,13 @@ export class TeamScheduleTableComponent implements OnInit {
 
   }
 
-  hasDeadline(match){
-    return match.hasOwnProperty("scheduleDeadline");
-  }
-
-  checkDate(match) {
-
-    let ret = false;
-    if (match['scheduleDeadline']) {
-      let intDate = parseInt(match['scheduleDeadline']);
-      let weekAgo = intDate - 604800000;
-      if (this.todayDate > weekAgo) {
-        ret = true;
-      }
-    }
-    return ret;
-  }
-
-  teamObj;
-  @Input() set team(val){
+  teamNameVal;
+  @Input() set teamName(val){
     if(val){
-      this.teamObj = val;
-      // if(val.teamName){
-      //   this.initTeamSchedule(val.teamName)
-      // }
+      this.teamNameVal = val;
+      if(this.teamNameVal){
+        this.ngOnInit()
+      }
     }
   }
 
@@ -98,14 +81,14 @@ export class TeamScheduleTableComponent implements OnInit {
   @Input() set season(val) {
     if (val) {
       this.seasonVal = val;
-      // if (val) {
-      //   this.initWithSeason();
-      // }
+      if (this.teamNameVal) {
+        this.ngOnInit()
+      }
     }
   }
 
   initWithSeason(){
-    this.scheduleService.getTeamSchedules(this.seasonVal, this.teamObj.teamName).subscribe(
+    this.scheduleService.getTeamSchedules(this.seasonVal, this.teamNameVal).subscribe(
       res => {
         let matches = res;
         if (matches.length == 0) {
@@ -138,7 +121,7 @@ export class TeamScheduleTableComponent implements OnInit {
 
 
   userCanSchedule() {
-    if (this.teamObj.teamName == this.Auth.getTeam() && this.Auth.getCaptain() != 'false') {
+    if (this.teamNameVal == this.Auth.getTeam() && this.Auth.getCaptain() != 'false') {
       return true;
     } else {
       return false;
@@ -150,13 +133,9 @@ export class TeamScheduleTableComponent implements OnInit {
     if (this.seasonVal){
       this.initWithSeason();
     }else{
-      this.initTeamSchedule(this.teamObj.teamName);
+      this.initTeamSchedule(this.teamNameVal);
     }
     this.todayDate = new Date().getTime();
-  }
-
-  scheduleMatch(id) {
-    this.router.navigate(['schedule/scheduleMatch', id]);
   }
 
 }

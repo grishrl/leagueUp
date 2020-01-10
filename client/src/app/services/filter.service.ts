@@ -18,6 +18,18 @@ export class FilterService {
     return 0;
   };
 
+  sortMatchesBySeason(matches){
+
+      return matches.sort( (a,b)=>{
+        if(a.season<b.season){
+          return 1;
+        }else{
+          return -1;
+        }
+      })
+
+  }
+
   testName(unit, teamFlt) {
     let bool = false;
 

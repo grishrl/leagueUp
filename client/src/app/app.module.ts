@@ -39,7 +39,7 @@ import { DivisionPropsComponent } from './admin/division-management/division-pro
 import { RemoveTeamComponent } from './admin/division-management/remove-team/remove-team.component';
 import { ScheduleViewComponent } from './schedule/schedule-view/schedule-view.component';
 import { MatchSchedulerComponent } from './schedule/match-scheduler/match-scheduler.component';
-import { TeamScheduleComponent } from './schedule/team-schedule/team-schedule.component';
+
 import { ReportingComponent } from './reporting/reporting.component';
 import { ReportingDeckComponent } from './reporting/reporting-deck/reporting-deck.component';
 import { ngfModule } from 'angular-file';
@@ -165,6 +165,11 @@ import { DivisionTournamentScheduleTableComponent } from './division/division-to
 import { CasterPageComponent } from './caster-tools/caster-page/caster-page.component';
 import { AuthorNameComponent } from './blog/author-name/author-name.component';
 import { ImageGetterComponent } from './blog/image-getter/image-getter.component';
+import { MatchupHistoryComponent } from './match/matchup-history/matchup-history.component';
+import { GamesInformationComponent } from './match/games-information/games-information.component';
+import { MatchupInfoEmbeddableComponent } from './match/matchup-history/matchup-info-embeddable/matchup-info-embeddable.component';
+import { ScheduleTableComponent } from './elements/schedule-table/schedule-table.component';
+import { ScoutReportComponent } from './scout-report/scout-report.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -202,7 +207,6 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     RemoveTeamComponent,
     ScheduleViewComponent,
     MatchSchedulerComponent,
-    TeamScheduleComponent,
     ReportingComponent,
     ReportingDeckComponent,
     DashboardComponent,
@@ -318,7 +322,12 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     DivisionTournamentScheduleTableComponent,
     CasterPageComponent,
     AuthorNameComponent,
-    ImageGetterComponent
+    ImageGetterComponent,
+    MatchupHistoryComponent,
+    GamesInformationComponent,
+    MatchupInfoEmbeddableComponent,
+    ScheduleTableComponent,
+    ScoutReportComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

@@ -223,6 +223,58 @@ router.post('/get/matches/all',
         });
     });
 
+router.post('/get/matchup/history', (req, res) => {
+
+    const path = 'schedule/get/matchup/history';
+
+    let query = {
+        $and: [{
+                $or: [{
+                        $and: [{
+                                "home.id": req.body.teamAid
+                            },
+                            {
+                                "away.id": req.body.teamBid
+                            }
+                        ]
+                    },
+                    {
+                        $and: [{
+                                "home.id": req.body.teamBid
+                            },
+                            {
+                                "away.id": req.body.teamAid
+                            }
+                        ]
+                    }
+                ]
+            },
+            { reported: true }
+        ]
+    };
+
+    Match.find(query).then(
+        found => {
+            matchCommon.addTeamInfoToMatch(found).then(ret => {
+                    res.status(200).send(util.returnMessaging(path, 'Found matches', null, found));
+                })
+                // if(found){
+                //   for(var i = 0; i<found.length;i++){
+
+            //   }
+            // }else{
+
+            // }
+
+        },
+        err => {
+            res.status(500).send(util.returnMessaging(path, 'Error getting matches', err));
+        }
+    )
+
+
+
+});
 /**
  * returns matches that are generated
  * accepts season, team
