@@ -56,7 +56,7 @@ export class RecentContentComponent implements OnInit {
 
   ngOnInit() {
 
-    let showdownPlaylistID = 'PLCylT7hBfO1TMCpCxcFVB_n7wZUXU2dKu'
+    let showdownPlaylistID = "PLCylT7hBfO1QeuiQil-GTE51yLadORZQ8";
     let nexusEdegePlaylistID = 'PLCylT7hBfO1SIMocVH3UWqrCywkKrM8JM'
     let podcastPlaylistID = 'PLCylT7hBfO1TfE4U-kdLMSvksc-nx4stD'
 
