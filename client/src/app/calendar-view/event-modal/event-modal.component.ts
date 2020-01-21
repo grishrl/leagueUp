@@ -12,7 +12,7 @@ export class EventModalComponent {
   constructor(
     public dialogRef: MatDialogRef<EventModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: {}) {
-      console.log(data);
+
      }
 
   onNoClick(): void {

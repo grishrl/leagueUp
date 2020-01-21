@@ -2,7 +2,6 @@ const Team = require('../models/team-models');
 const teamSub = require('../subroutines/team-subs');
 const User = require('../models/user-models');
 const Division = require('../models/division-models');
-const mongoose = require('mongoose')
 
 /*
 check teams who have not been touched or have not been touched in 5 days
@@ -10,23 +9,20 @@ update this teams MMR
 make sure that the users in this team are marked as a member (we will use the teams list of members as a trusted source)
 check the teams division, if it is not in that division, remove the marker from the team (we will use the divisions list as a trusted source)
 */
-async function updateTeamsNotTouched() {
-    //connect to mongo db
-    mongoose.connect(process.env.mongoURI, () => {
-        console.log('connected to mongodb');
-    });
+async function updateTeamsNotTouched(days, limit) {
+
     //generate the timestamp to compare to
     let date = new Date().getTime();
-    let pastDate = 1000 * 60 * 60 * 24 * process.env.daysToRefreshTeams;
+    let pastDate = 1000 * 60 * 60 * 24 * days;
     let pastDue = date - pastDate
 
     //grab teams who fit the criterias
     let teams = await Team.find({
         $or: [{
-                lastTouched: null
+                lastTouched: { $exists: false }
             },
             {
-                lastTouched: undefined
+                lastTouched: null
             },
             {
                 lastTouched: {
@@ -34,7 +30,7 @@ async function updateTeamsNotTouched() {
                 }
             }
         ]
-    }).then(
+    }).limit(limit).then(
         (foundTeams) => {
             if (foundTeams) {
                 return foundTeams
@@ -43,11 +39,12 @@ async function updateTeamsNotTouched() {
             }
         },
         (err) => {
-            console.log("There was an error in the query", err);
+            // logObj.error = err;
+            // logger(logObj)
             return null;
         }
     );
-
+    // console.log('teams ', teams);
     //this batch will be returned
     let batch = [];
     if (teams) {
@@ -55,12 +52,13 @@ async function updateTeamsNotTouched() {
         // teams.forEach(team => {
         for (var i = 0; i < teams.length; i++) {
             let team = teams[i];
-            console.log(team);
+
             //update the team mmr
+            // console.log('team to update ', team);
             let mmrUpdate = await teamSub.updateTeamMmrAsynch(team);
 
             if (mmrUpdate) {
-                console.log('mmr updated')
+                // console.log(team, ' mmr updated')
             }
 
             let teamMembers = [];
@@ -76,7 +74,7 @@ async function updateTeamsNotTouched() {
                 }
             );
             if (usersTeamNameUpdate) {
-                console.log(' updated users profile to belong to team ');
+                // console.log(' updated users profile to belong to team ');
             }
 
             //check to make sure the prop exists
@@ -100,15 +98,18 @@ async function updateTeamsNotTouched() {
                     }
                 );
                 if (usersPendingFlag) {
-                    console.log(' updated users profiles to pending team ');
+                    // console.log(' updated users profiles to pending team ');
                 }
             }
 
 
             if (team.divisionConcat) {
+                // console.log('team ', team.teamName);
+                // console.log('team.divisionConcat ', team.divisionConcat);
                 let division = await Division.findOne({ divisionConcat: team.divisionConcat }).then(foundDiv => { return foundDiv; }, err => { return null; });
+                // console.log('division ', division);
                 if (division) {
-                    if (division.teams.indexOf(team.displayName) == -1) {
+                    if (division.teams.indexOf(team.teamName) == -1) {
                         team.divisionDisplayName = '';
                         team.divisionConcat = '';
                     } else {
@@ -121,18 +122,19 @@ async function updateTeamsNotTouched() {
                 }
             }
 
-            team.lastTouched = date;
-
+            team['lastTouched'] = date;
+            team.markModified('lastTouched');
             let saved = await team.save().then(
                 (sav) => {
                     return sav;
+
                 },
                 (err) => {
                     return null;
                 }
             );
             if (saved == null) {
-                console.log('Team wasn\'t saved');
+                // console.log('Team wasn\'t saved');
             } else {
                 batch.push(saved);
             }

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminService } from 'src/app/services/admin.service';
 import { indexOf } from 'lodash';
-import { Router } from '@angular/router';
 import { TeamService } from 'src/app/services/team.service';
 
 @Component({
@@ -17,10 +16,10 @@ export class AddTeamComponent implements OnInit {
   selectedTeams: any = []; //local variable holds the selected teams to assign to a division
   selectedDiv //local variable holds the info of the selected div to add teams to
 
-  constructor(private admin: AdminService, private router:Router, public teamService:TeamService) { }
+  constructor(private admin: AdminService, public teamService:TeamService) { }
 
   ngOnInit() {
-    //set the local vars to empty / uninitialised 
+    //set the local vars to empty / uninitialised
     this.selectedTeams = [];
     this.selectedDiv = undefined;
     this.undivisionTeams=[];
@@ -39,7 +38,7 @@ export class AddTeamComponent implements OnInit {
       } )
     }, (err) => {
       console.log(err)
-    })
+    });
     this.divisions=[];
     this.admin.getDivisionList().subscribe(res => {
       this.divisions = res;

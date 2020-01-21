@@ -1,0 +1,44 @@
+<div class="item-player" *ngIf="player.displayName else error">
+    <div class="head-player">
+        <img src="{{user.avatarFQDN(player.avatar)}}" alt="player-avatar">
+        <div class="overlay">
+            <app-player-link [player]="player.displayName">+</app-player-link>
+        </div>
+    </div>
+    <div class="info-player">
+        <span class="number-player">
+    </span>
+        <h4>
+            {{player.displayName}}
+            <span *ngIf="_captain == displayName">Captain</span>
+        </h4>
+        <ul>
+            <li><strong>MATCHES:</strong> <span>{{matches}}</span></li>
+            <li><strong>Seasons:</strong> <span>{{player.seasonsPlayed}}</span></li>
+        </ul>
+    </div>
+    <app-player-link [player]="player.displayName">
+        <span class="btn">View Player <i class="fa fa-angle-right" aria-hidden="true"></i></span>
+    </app-player-link>
+    <div class="row mt-1" *ngIf="showRemove()">
+        <div class="col">
+            <button class="btn-remove" (click)="removeMember(player.displayName)"><i class="fas fa-ban"></i> Remove From
+              Team </button>
+        </div>
+    </div>
+    <div class="row mt-1" *ngIf="showLeave()">
+        <div class="col">
+            <button class="btn-remove" (click)="removeMember(player.displayName)"><i class="fas fa-user-slash"></i>
+              Leave Team </button>
+        </div>
+    </div>
+</div>
+
+<ng-template #error>
+    <div class="item-player text-center" style="height: 389px; margin-bottom: 50px;">
+        <div style="margin-top: 50%;">
+            <h4>Sorry we couldn't find this user!</h4>
+        </div>
+
+    </div>
+</ng-template>

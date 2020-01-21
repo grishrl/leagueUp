@@ -60,7 +60,6 @@ export class UserSearchComponent implements OnInit {
   message:string
 
   filterUsers(master, remove){
-    console.log('master ', master, 'remove ', remove)
     remove.forEach(element => {
       let index = master.indexOf(element)
       if(index >-1 ){

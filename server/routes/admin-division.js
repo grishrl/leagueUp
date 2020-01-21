@@ -6,6 +6,7 @@ const TeamSubs = require('../subroutines/team-subs');
 const Team = require("../models/team-models");
 const passport = require("passport");
 const levelRestrict = require("../configs/admin-leveling");
+const _ = require('lodash');
 
 //this api retrieves all teams that do not have a division assigned, and have 
 //successuflly registered for the season
@@ -34,6 +35,8 @@ router.get('/getTeamsUndivisioned', passport.authenticate('jwt', {
     }).then((results) => {
         if (results && results.length > 0) {
             res.status(200).send(util.returnMessaging(path, 'Found teams', false, results));
+        } else {
+            res.status(200).send(util.returnMessaging(path, 'Found teams', false, results));
         }
     }, (err) => {
         res.status(500).send(util.returnMessaging(path, 'Error querying teams', err));
@@ -46,7 +49,6 @@ router.get('/getTeamsUndivisioned', passport.authenticate('jwt', {
 // }),
 
 //NOTICE this route is not secured because it is used for pulling back division lists et all - no use for replication
-//TODO: further refactor might move this into the division route -- and fix the service provider in client???
 router.get('/getDivisionInfo', (req, res) => {
     const path = '/admin/getDivisionInfo'
     Division.find({}).then((found) => {
@@ -133,16 +135,24 @@ router.post('/upsertDivision', passport.authenticate('jwt', {
 
     Division.findOne({ divisionConcat: name }).then((found) => {
         if (found) {
+            let divisionPriorState = found.toObject();
             //check one more time to ensure we dont need to run sub routines:
             if (found.displayName != division.displayName || found.divisionConcat != division.concat) {
                 runSubs = true;
             }
-            let keys = Object.keys(division);
-            keys.forEach(key => {
-                found[key] = division[key];
+            _.forEach(division, (value, key) => {
+                found[key] = value;
             });
+            // let keys = Object.keys(division);
+            // keys.forEach(key => {
+            //     found[key] = division[key];
+            // });
+
             found.save().then(
                 (saved) => {
+                    if (saved.public && divisionPriorState.public != saved.public) {
+                        TeamSubs.updateTeamDivHistory(saved.teams, saved.displayName);
+                    }
                     res.status(200).send(util.returnMessaging(path, 'Division updated', false, saved, null, logObj));
                     if (runSubs) {
                         TeamSubs.upsertTeamsDivision(found.teams, {
@@ -268,7 +278,7 @@ router.post('/deleteDivision', passport.authenticate('jwt', {
 
             } else {
                 logObj.logLevel = 'ERROR';
-                logObj.error = 'Divison not found'
+                logObj.error = 'Division not found'
                 res.status(400).send(util.returnMessaging(path, 'Division not found', false, null, null, logObj));
             }
         },

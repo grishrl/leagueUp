@@ -1,0 +1,13 @@
+.error-avail {
+    border-style: solid;
+    border-width: 2px;
+    border-color: red;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.req-field {
+    color: red;
+    font-size: .80em;
+    font-weight: 600;
+}

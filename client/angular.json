@@ -23,7 +23,7 @@
                             "src/assets"
                         ],
                         "styles": [{
-                                "input": "node_modules/@angular/material/prebuilt-themes/indigo-pink.css"
+                                "input": "src/ang-mat-dark-theme.scss"
                             },
                             "node_modules/croppie/croppie.css",
                             "node_modules/bootstrap/dist/css/bootstrap.css",
@@ -31,15 +31,41 @@
                         ],
                         "scripts": [
                             "node_modules/jquery/dist/jquery.min.js",
+                            "node_modules/mmenu-js/dist/mmenu.js",
+                            "node_modules/superfish/dist/js/superfish.js",
                             "node_modules/popper.js/dist/umd/popper.min.js",
-                            "node_modules/bootstrap/dist/js/bootstrap.js"
+                            "node_modules/bootstrap/dist/js/bootstrap.js",
+                            "src/assets/js/theme-scripts.js",
+                            "src/assets/js/theme-main.js",
+                            "src/assets/js/challonge.js",
+                            {
+                                "input": "node_modules/document-register-element/build/document-register-element.js"
+                            }
                         ]
                     },
                     "configurations": {
+                        "local": {
+                            "fileReplacements": [{
+                                "replace": "src/environments/environment.ts",
+                                "with": "src/environments/environment.local.ts"
+                            }]
+                        },
+
                         "development": {
                             "fileReplacements": [{
                                 "replace": "src/environments/environment.ts",
                                 "with": "src/environments/environment.ts"
+
+                            }],
+                            "optimization": true,
+                            "outputHashing": "all",
+                            "sourceMap": false,
+                            "extractCss": true,
+                            "namedChunks": false,
+                            "aot": true,
+                            "extractLicenses": true,
+                            "vendorChunk": false,
+                            "buildOptimizer": true
                             }]
                         },
                         "production": {

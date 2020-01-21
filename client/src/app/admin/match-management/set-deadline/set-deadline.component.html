@@ -6,18 +6,10 @@
     </div>
     <div class="row mt-3">
         <div class="col">
-            Select Divison:
+            Select Division:
         </div>
     </div>
-    <div class="row">
-        <div class="col">
-            <mat-form-field>
-                <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="selected(selectedDivision)" disableOptionCentering>
-                    <mat-option *ngFor="let division of divisions; let i = index" [value]="division">{{division.displayName}}</mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
-    </div>
+    <app-division-selector (selectedDiv)="selected($event)" [admin]="true"></app-division-selector>
     <div class="row">
         <div class="col">
             Select week to require a deadline through:
@@ -26,7 +18,7 @@
     <div class="row">
         <div class="col">
             <mat-form-field>
-                <mat-select placeholder="Division:" [(ngModel)]="selectedWeek" disableOptionCentering>
+                <mat-select placeholder="Week: #" [(ngModel)]="selectedWeek" disableOptionCentering>
                     <mat-option *ngFor="let week of weeks; let i = index" [value]="week">{{week}}</mat-option>
                 </mat-select>
             </mat-form-field>
@@ -39,16 +31,12 @@
     </div>
     <div class="row">
         <div class="col">
-            <mat-form-field>
-                <input matInput [matDatepicker]="picker" placeholder="Choose a date" [(ngModel)]="friendlyDate">
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker #picker></mat-datepicker>
-            </mat-form-field>
+            <app-date-picker [(date)]="friendlyDate"></app-date-picker>
         </div>
     </div>
     <div class="row">
         <div class="col">
-            <button (click)="createDeadline()" class="btn btn-info">Set Scheduling Deadlines!</button>
+            <button (click)="createDeadline()" class="btn btn-info">Set Play Deadlines!</button>
         </div>
     </div>
 

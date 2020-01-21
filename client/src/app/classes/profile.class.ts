@@ -16,15 +16,30 @@ export class Profile {  //addition of stats for future plans
   timeZone: string; //form input added
   hotsLogsURL: string; //form input added
   averageMmr: number;  //user average mmr
-  toonId:string;
+  toonHandle:string;
   discordTag:string;
+  pendingTeam:Boolean;
+  history: Array<history>;
+  hotsLogsPlayerID:string;
+  lowReplays:Boolean;
+  ngsMmr:number;
+  heroesProfileMmr:number;
+  seasonsPlayed:number;
+  replays:Array<string>;
+  replayArchive: Array<replayarchive>;
+  smurfAccount:Boolean;
+  avatar:string;
+  twitch: string;
+  twitter: string;
+  youtube: string;
+  casterName:string;
   __v: string;//useless
 
 
   constructor (id: string, displayName: string, teamId:string, teamName:string, isCaptain:boolean,
-    hlRankMetal:string, hlRankDivision:number, lookingForGroup: Boolean, availability:schedule, 
+    hlRankMetal:string, hlRankDivision:number, lookingForGroup: Boolean, availability:schedule,
     competitiveLevel:number, descriptionOfPlay:string, role:roles, timeZone:string, hotsLogsURL:string,
-    averageMmr: number, toonId: string, discordTag:string){
+    averageMmr: number, toonHandle: string, discordTag: string, history: Array<history>){
   if (id != null && id != undefined && id.length > 0) {
     this._id = id;
   } else {
@@ -119,7 +134,7 @@ export class Profile {  //addition of stats for future plans
     if (role != null && role != undefined) {
       this.role = role;
     } else {
-      this.role = { "tank": false, "meleeassassin": false, "rangedassassin": false, "support": false, "offlane": false, "flex": false };
+      this.role = { "tank": false, "meleeassassin": false, "rangedassassin": false, "support": false, "healer":false,  "offlane": false, "flex": false };
     }
     if (timeZone != null && timeZone != undefined) {
       this.timeZone = timeZone;
@@ -136,16 +151,33 @@ export class Profile {  //addition of stats for future plans
     } else {
       this.averageMmr = null;
     }
-    if (toonId != null && toonId != undefined) {
-      this.toonId = toonId;
+    if (toonHandle != null && toonHandle != undefined) {
+      this.toonHandle = toonHandle;
     } else {
-      this.toonId = null;
+      this.toonHandle = null;
     }
     if (discordTag != null && discordTag != undefined) {
-      this.discordTag = toonId;
+      this.discordTag = discordTag;
     } else {
       this.discordTag = null;
     }
+    this.lowReplays = false;
+    this.ngsMmr=null;
+    this.heroesProfileMmr=null;
+    if(history){
+      this.history = history;
+    }else{
+      this.history = [];
+    }
+
+    this.seasonsPlayed = 0;
+    this.replayArchive = [];
+    this.replays = [];
+    this.avatar=null;
+    this.twitch = null;
+    this.twitter = null;
+    this.youtube = null;
+    this.casterName = null;
 }
 }
 
@@ -166,11 +198,24 @@ export interface atset {
   endTime: number
 }
 
+export interface replayarchive {
+  replays:Array<string>,
+  season:number
+}
+
 export interface roles {
   tank: boolean,
   'meleeassassin': boolean,
   'rangedassassin': boolean,
   offlane: boolean,
+  healer:boolean,
   support: boolean,
   flex: boolean
+}
+
+export interface history {
+  timestamp:string;
+  action:string;
+  target:string;
+  season:string;
 }

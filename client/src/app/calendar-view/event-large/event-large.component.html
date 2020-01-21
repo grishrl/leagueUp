@@ -1,69 +1,26 @@
-<div class="container">
-    <div class="row">
+<app-banner-image [bannerTitle]="bannerText"></app-banner-image>
+<div class="container forceFull">
+    <div class="row mt-4" *ngIf="match">
         <div class="col">
-            <div class="row">
+            <!-- <div class="row">
                 <div class="col text-center">
                     <h3>Match Details</h3>
                 </div>
-            </div>
-            <div class="row mt-3" *ngIf="match">
-                <div class="col">
-                    <div class="row">
-                        <div class="col-5">
-                            <div class="row">
-                                <div class="col">
-                                    <img class="img-fluid" src="{{team.imageFQDN(match.home.logo)}}" width="150" alt="Team Logo">
-                                </div>
-                                <div class="col vertical-middle">
-                                    <div *ngIf="match.home.teamName">{{match.home.teamName}}</div>
-
-                                </div>
-                                <div class="col-2 vertical-middle">
-                                    <span> {{match.home.wins}} - {{match.home.losses}} </span>
-                                </div>
-                            </div>
-
-                        </div>
-                        <div class="col-2 vertical-middle text-center">
-                            - VS -
-                        </div>
-                        <div class="col-5">
-                            <div class="row">
-                                <div class="col-2 vertical-middle">
-                                    <span> {{match.away.wins}} - {{match.away.losses}} </span>
-                                </div>
-                                <div class="col vertical-middle">
-                                    <div *ngIf="match.away.teamName; else bye">{{match.away.teamName}}</div>
-                                </div>
-                                <div class="col">
-                                    <img class="img-fluid" src="{{team.imageFQDN(match.away.logo)}}" width="150" alt="Team Logo">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-
-                        </div>
-                        <div class="col-7 text-center">
-                            <span *ngIf="match.scheduledTime else tbd">Scheduled Time: {{match.friendlyDate}} - {{match.friendlyTime}} {{match.suffix}}</span>
-                            <ng-template #tbd>
-                                <button class="btn btn-info" (click)="scheduleMatch(match.matchId)"> Schedule this match! </button>
-                            </ng-template>
-                        </div>
-                        <div class="col">
-
-                        </div>
-                    </div>
-                    <div class="row" *ngIf="match.casterName && match.casterUrl">
-                        <div class="col"></div>
-                        <div class="col-7 text-center">
-                            <span> Casted by:</span> {{match.casterName}} : <a href="{{util.prePendHttp(match.casterUrl)}}" target="_blank">{{match.casterUrl}}</a>
-                        </div>
-                        <div class="col"></div>
-                    </div>
+            </div> -->
+            <app-match-view [passMatch]="match"></app-match-view>
+        </div>
+    </div>
+    <div class="row mt-4" *ngIf="event">
+        <div class="col">
+            <!-- <div class="row">
+                <div class="col text-center">
+                    <h3>Event Details</h3>
                 </div>
+            </div> -->
+            <div class="mt-3">
+                <app-event-display [event]="event"></app-event-display>
             </div>
+
         </div>
     </div>
 </div>

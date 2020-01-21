@@ -1,7 +1,7 @@
 export class Team {
   _id: string;
   logo: string;
-  teamName: string; //added to display form 
+  teamName: string; //added to display form
   teamName_lower: string ;
   divisionDisplayName: string;
   divisionConcat: string;
@@ -13,17 +13,25 @@ export class Team {
   descriptionOfTeam: string;
   timeZone: string;
   captain: string;
+  history: Array<history>;
   teamMMRAvg: number; //added to display
-  teamMembers: [string]; //added to display
-  pendingMembers: [string];
-  questionnaire:object;
-  
+  teamMembers: [{displayName:string}]; //added to display
+  pendingMembers: [{displayName:string}];
+  questionnaire: questionnaire;
+  hpMmrAvg:number;
+  ngsMmrAvg:number;
+  assistantCaptain:Array<string>;
+  ticker: string;
+  twitch:string;
+  twitter:string;
+  youtube:string;
+
 
 
   constructor(id: string, logo:string, teamName: string, lookingForMore: Boolean, availability:schedule,
     competitiveLevel: number, rolesNeeded: roles, descriptionOfTeam: string, timeZone: string,
-    teamMembers: [string], pendingMembers: [string], captain: string, teamMMRAvg:number,
-    divisionDisplayName: string, divisionConcat: string, questionnaire:object) {
+    teamMembers: [{ displayName: string }], pendingMembers: [{ displayName: string }], captain: string, teamMMRAvg:number,
+    divisionDisplayName: string, divisionConcat: string, questionnaire: questionnaire) {
     if (id != null && id != undefined && id.length > 0) {
       this._id = id;
     } else {
@@ -135,10 +143,31 @@ export class Team {
       this.questionnaire = questionnaire;
     } else {
       this.questionnaire = {
+        registered:null,
         pickedMaps:[]
       };
     }
+    this.assistantCaptain = []
+    this.ticker=null;
+    this.history=[];
+    this.hpMmrAvg = null;
+    this.ngsMmrAvg = null;
+    this.twitch = null;
+    this.twitter = null;
+    this.youtube = null;
   }
+}
+
+interface questionnaire{
+  registered:boolean,
+  pickedMaps:Array<string>
+}
+
+interface history{
+  season:number,
+  target:string,
+  timestamp:string,
+  action:string
 }
 
 interface schedule {

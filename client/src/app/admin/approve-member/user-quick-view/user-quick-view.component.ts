@@ -10,16 +10,16 @@ import { Profile } from '../../../classes/profile.class';
 export class UserQuickViewComponent implements OnInit {
   //component properties
   _user:string
-  player = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+  player = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
   //input bindings
   @Input() set userId(usr){
     if(usr != null && usr != undefined){
       this.player = usr;
-    } 
+    }
   }
 
-  constructor(private user: UserService) { }
+  constructor(public user: UserService) { }
 
   ngOnInit() {
 

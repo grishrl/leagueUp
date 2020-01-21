@@ -1,0 +1,57 @@
+<div class="container">
+    <div class="row forceFull">
+        <div class="col">
+            <div class="row mt-2">
+                <div class="col">
+                    <a [routerLink]="['/_admin/dashboard']">Back to Dashboard</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <span>Select Season For Management</span>
+                    <mat-select placeholder="Select Season" [(ngModel)]="selectedSeason" (ngModelChange)="getSpecificSeason()">
+                        <mat-option *ngFor="let season of seasons" [value]="season">
+                            {{season}}
+                        </mat-option>
+                    </mat-select>
+                </div>
+            </div>
+            <div *ngIf="editSeason && editSeason.data">
+                <div class="row">
+                    <div class="col text-center">
+                        <h5>Selected Season Info:</h5>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col text-center">
+                        <mat-form-field>
+                            <input matInput type="number" placeholder="Season Number" [(ngModel)]="editSeason.value">
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col text-center">
+                        <mat-checkbox [(ngModel)]="editSeason.data.registrationOpen">
+                            Registration Open</mat-checkbox>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col text-center">
+                        <app-date-picker [(date)]="editSeason.data.seasonStartDate">
+                        </app-date-picker>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col text-center">
+                        <app-date-picker [(date)]="editSeason.data.seasonEndDate"></app-date-picker>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col text-center">
+                        <button class="btn btn-success" (click)="save()">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

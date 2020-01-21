@@ -1,0 +1,51 @@
+.medal {
+    height: 200px;
+    width: 200px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+
+.rank {
+    position: absolute;
+    top: 50px;
+    left: 90px;
+    color: #F2692E;
+    font-size: 80px;
+    font-weight: 900;
+    -webkit-text-stroke: black;
+    -webkit-text-stroke-width: 1px;
+}
+
+.masterKplusRank {
+    position: absolute;
+    top: 50px;
+    left: 25px;
+    color: #F2692E;
+    font-size: 80px;
+    font-weight: 900;
+    -webkit-text-stroke: black;
+    -webkit-text-stroke-width: 1px;
+}
+
+.masterCplusRank {
+    position: absolute;
+    top: 50px;
+    left: 45px;
+    color: #F2692E;
+    font-size: 80px;
+    font-weight: 900;
+    -webkit-text-stroke: black;
+    -webkit-text-stroke-width: 1px;
+}
+
+.masterXplusRank {
+    position: absolute;
+    top: 40px;
+    left: 69px;
+    color: #F2692E;
+    font-size: 80px;
+    font-weight: 900;
+    -webkit-text-stroke: black;
+    -webkit-text-stroke-width: 1px;
+}

@@ -1,58 +1,36 @@
-<div class="container">
-    <div class="row">
-        <div class="col">
-            <h3>Standings</h3>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            Position
-        </div>
-        <div class="col">
-            Team Name
-        </div>
-        <div class="col">
-            Points
-        </div>
-        <div class="col">
-            Dominations
-        </div>
-        <div class="col">
-            Wins
-        </div>
-        <div class="col">
-            Losses
-        </div>
-    </div>
-    <div *ngIf="standings.length>0 else noStandings">
-        <div class="row" *ngFor="let standing of standings">
-            <div class="col">
-                {{standing.standing}}
-            </div>
-            <div class="col">
-                {{standing.teamName}}
-            </div>
-            <div class="col">
-                {{standing.points}}
-            </div>
-            <div class="col">
-                {{standing.dominations}}
-            </div>
-            <div class="col">
-                {{standing.wins}}
-            </div>
-            <div class="col">
-                {{standing.losses}}
-            </div>
-        </div>
-    </div>
+<div class="table-responsive">
+    <table class="table-striped  table-hover result-point">
+        <thead class="point-table-head">
+            <tr>
+                <th class="text-left">Rank</th>
+                <th class="text-left">Team</th>
+                <th class="text-center">Points</th>
+                <th class="text-center">Dominations</th>
+                <th class="text-center">Games<br>Won</th>
+                <th class="text-center">Games<br>Lost</th>
+                <th class="text-center">Matches<br>Played</th>
+            </tr>
+        </thead>
 
-    <ng-template #noStandings>
-        <div class="row mt-3">
-            <div class="col text-center">
-                <h5>There are currently no matches generated to calculate standings!</h5>
-                <h6> Check back later! </h6>
-            </div>
-        </div>
-    </ng-template>
+        <tbody class="text-center">
+            <tr *ngFor="let standing of standings">
+                <td class="text-left number">{{standing.standing}}
+                    <!-- todo: figure up or down if possible -->
+                    <!-- <i class="fa fa-caret-up" aria-hidden="true"></i>-->
+                </td>
+                <td class="text-left">
+                    <!-- <img src="img/clubs-logos/colombia.png" alt="Colombia"> -->
+                    <span>
+                      <app-team-link [team]="standing.teamName" [season]="seasonVal">{{standing.teamName}}</app-team-link>
+                    </span>
+                </td>
+                <td>{{standing.points}}</td>
+                <td>{{standing.dominations}}</td>
+                <td>{{standing.wins}}</td>
+                <td>{{standing.losses}}</td>
+                <td>{{standing.matchesPlayed}}</td>
+            </tr>
+
+        </tbody>
+    </table>
 </div>

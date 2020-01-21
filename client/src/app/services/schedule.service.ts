@@ -1,14 +1,17 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { map } from 'rxjs/operators'
 import { HttpServiceService } from './http-service.service';
+import { TimeserviceService } from './timeservice.service';
+import { map, switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ScheduleService {
 
-  constructor(private httpService: HttpServiceService) { }
+  currentSeason;
+  constructor(private httpService: HttpServiceService, private timeService:TimeserviceService) {
+
+   }
 
   //returns all generated matches
   getAllMatches(){
@@ -21,7 +24,36 @@ export class ScheduleService {
   //schedule/get/matches/scheduled
   getAllMatchesWithStartTime(){
     let url = 'schedule/get/matches/scheduled';
-    return this.httpService.httpGet(url, []);
+    return this.timeService.getSesasonInfo().pipe(
+      switchMap(
+        res => {
+          let payload = {
+            season: res['value']
+          };
+          return this.httpService.httpGet(url, [payload]);
+        }
+      )
+
+    );
+
+  }
+
+  getMatchupHistory(teamAid:string, teamBid:string){
+
+    let url = 'schedule/get/matchup/history';
+    let payload = {
+      teamAid,teamBid
+    }
+    return this.httpService.httpPost(url, payload);
+  }
+
+  getMatchList(matches, season?){
+    let url = 'schedule/get/match/list';
+    let payload = {matches:matches};
+    if(season){
+      payload['season']=season
+    };
+    return this.httpService.httpPost(url, payload, false);
   }
 
   //returns matches that match criteria of season, division
@@ -35,7 +67,7 @@ export class ScheduleService {
   };
 
   //returns matches that match criteria of season, division, round
-  getScheduleMatches(season, division:string, round:number){  
+  getScheduleMatches(season, division:string, round:number){
     let url = 'schedule/get/matches';
     let payload = {
       'season':season,
@@ -57,10 +89,9 @@ export class ScheduleService {
   }
 
   //returns a match given the matchId and season
-  getMatchInfo(season, matchId:string){
+  getMatchInfo(matchId:string){
     let url = 'schedule/get/match';
     let payload={
-      "season":season,
       "matchId":matchId
     }
     return this.httpService.httpPost(url, payload);
@@ -70,13 +101,107 @@ export class ScheduleService {
   scheduleMatchTime(matchId:string, scheduledStartTime:number, scheduledEndTime:number){
     // let url = 'http://localhost:3000/schedule/setMatchTime';
     let url = 'schedule/update/match/time';
-  
+
     let payload = {
       "matchId":matchId,
       "scheduledStartTime": scheduledStartTime,
       "scheduledEndTime":scheduledEndTime
     }
     return this.httpService.httpPost(url, payload, true);
+  }
+
+  getReportedMatches(sort?, limit?, showSnack?){
+    let url = 'schedule/get/reported/matches';
+
+
+    if (showSnack != undefined) {
+      showSnack = showSnack
+    } else {
+      showSnack = true;
+    }
+
+    return this.timeService.getSesasonInfo().pipe(
+      switchMap(
+        res => {
+          let payload = {
+            season: res['value']
+          };
+          if(sort){
+            payload['sortOrder'] = sort;
+          }
+          if(limit){
+            payload['limit']=limit;
+          }
+          return this.httpService.httpPost(url, payload, showSnack)
+        }
+      )
+
+    );
+  }
+
+  getReportedMatchesByDivision(division, showSnack?) {
+    let url = 'schedule/get/reported/matches';
+
+    if (showSnack != undefined) {
+      showSnack = showSnack
+    } else {
+      showSnack = true;
+    }
+    return this.timeService.getSesasonInfo().pipe(
+      switchMap(
+        res => {
+          let payload = {
+            season: res['value'],
+            division:division
+          };
+          return this.httpService.httpPost(url, payload, showSnack)
+        }
+      )
+
+    );
+  }
+
+  getReportedMatchesByDivisionAndSeason(division, season, showSnack?) {
+    let url = 'schedule/get/reported/matches';
+
+    if (showSnack != undefined) {
+      showSnack = showSnack
+    } else {
+      showSnack = true;
+    }
+    let payload = {
+      division:division,
+      season:season
+    }
+          return this.httpService.httpPost(url, payload, showSnack)
+
+  }
+
+  //get tournament
+  getTournamentGames(name?, season?, division?){
+    let url = '/schedule/fetch/tournament';
+    let payload = {
+
+    }
+    if(name){
+      payload['tournamentName']=name;
+    }
+    if (season) {
+      payload['season'] = season;
+    }
+    if (division) {
+      payload['division'] = division;
+    }
+    return this.httpService.httpPost(url, payload);
+  }
+
+  getTeamTournamentGames(season, teamId){
+    let url = 'schedule/fetch/team/tournament/matches';
+    let payload = {
+      season:season,
+      teamId:teamId
+    };
+    return this.httpService.httpPost(url, payload);
   }
 
   //accepts an object that contains elements for reporting the match outcome:
@@ -110,5 +235,23 @@ export class ScheduleService {
     }
     let url = 'schedule/match/add/caster';
     return this.httpService.httpPost(url, payload, true);
+  }
+
+  // /match/add / caster oneclickclaim
+  addCasterOcc(matchId:string) {
+    let payload = {
+      matchId: matchId
+    }
+    let url = 'schedule/match/add/caster/occ';
+    return this.httpService.httpPost(url, payload, true);
+  }
+
+  // my casted matches
+  getMyCastedMatches() {
+    let payload = {
+
+    }
+    let url = 'schedule/match/fetch/mycasted';
+    return this.httpService.httpPost(url, payload, false);
   }
 }

@@ -1,0 +1,41 @@
+<div class="row">
+    <div class="col">
+
+        <div class="row">
+            <div class="col text-center">
+                <h3>{{_event.eventName}}</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                {{returnDate()}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                <div *ngIf="_showImage else text">
+                    <img class="img-fluid" src="{{imgUrl()}}">
+                </div>
+                <ng-template #text>
+                    {{_event.eventImage}}
+                </ng-template>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                {{_event.eventBlurb}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                {{_event.eventDescription}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                <a href="{{eventUrl()}}" target="_blank">{{_event.eventLink}}</a>
+            </div>
+        </div>
+
+    </div>
+</div>

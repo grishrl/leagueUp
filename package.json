@@ -1,11 +1,11 @@
 {
     "name": "ngsMeanCore",
-    "version": "0.0.1",
+    "version": "2.1.7",
     "description": "Large package encompassing several capabilities for e-sports leagues",
     "main": "server.js",
     "scripts": {
         "start": "node server.js",
-        "heroku-postbuild": "cd client && npm install"
+        "heroku-postbuild": "node node_modules/heroprotocol/postinstall.js && cd client && npm install"
     },
     "engines": {
         "node": "10.10.0",
@@ -14,28 +14,31 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@angular/cli": "^6.2.8",
-        "@uirouter/angularjs": "^1.0.20",
-        "angular": "^1.7.5",
-        "aws-sdk": "^2.382.0",
-        "body-parser": "^1.18.3",
-        "express": "^4.16.4",
+        "aws-sdk": "^2.600.0",
+        "axios": "^0.19.1",
+        "body-parser": "^1.19.0",
+        "express": "^4.17.1",
         "express-https-redirect": "^1.0.0",
         "formidable": "^1.2.1",
-        "hots-parser": "^6.41.2",
-        "image-data-uri": "^2.0.0",
-        "jsonwebtoken": "^8.4.0",
-        "mongoose": "^5.4.0",
+        "googleapis": "^39.2.0",
+        "hots-parser": "^7.49.4",
+        "hots-parser-fallback": "^7.46.1",
+        "image-data-uri": "^2.0.1",
+        "jsonwebtoken": "^8.5.1",
+        "lodash": "^4.17.15",
+        "mongoose": "^5.8.6",
         "nodemailer": "^4.7.0",
-        "passport": "^0.4.0",
+        "passport": "^0.4.1",
         "passport-bnet": "^2.0.0",
         "passport-google-oauth20": "^1.0.0",
         "passport-jwt": "^4.0.0",
-        "pino-pretty": "^2.5.0",
+        "pino-pretty": "^2.6.1",
+        "request": "^2.88.0",
         "roundrobin": "^1.0.3",
-        "uniqid": "^5.0.3"
+        "socket.io": "^2.3.0",
+        "uniqid": "^5.2.0"
     },
     "devDependencies": {
-        "eslint": "^5.11.0"
+        "eslint": "^5.16.0"
     }
 }

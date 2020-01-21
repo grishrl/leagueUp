@@ -1,3 +1,8 @@
+/*
+These wrappers ostensibly simplify the admin checking we want to do by
+wrapping the whole function
+ */
+
 const adminCheck = require("../adminCheck");
 
 function teamLevel(req, res, next) {
@@ -28,6 +33,14 @@ function userACL(req, res, next) {
     adminCheck('ACL', req, res, next);
 }
 
+function events(req, res, next) {
+    adminCheck('EVENTS', req, res, next);
+}
+
+function logs(req, res, next) {
+    adminCheck('LOGS', req, res, next);
+}
+
 module.exports = {
     teamLevel: teamLevel,
     userLevel: userLevel,
@@ -35,5 +48,7 @@ module.exports = {
     casterLevel: casterLevel,
     matchLevel: matchLevel,
     scheduleGenerator: scheduleGenerator,
-    userACL: userACL
+    userACL: userACL,
+    events: events,
+    logs: logs
 }

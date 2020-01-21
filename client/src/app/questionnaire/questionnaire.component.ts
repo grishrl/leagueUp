@@ -1,7 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { TeamService } from '../services/team.service';
-import { merge } from 'lodash';
+import { merge, forEach as _forEach, includes as _includes } from 'lodash';
 import { UtilitiesService } from '../services/utilities.service';
+import { AuthService } from '../services/auth.service';
+import { TimeserviceService } from '../services/timeservice.service';
+
 
 @Component({
   selector: 'app-questionnaire',
@@ -13,9 +16,15 @@ export class QuestionnaireComponent implements OnInit {
   passedTeam: any = {};
   responses: any = {};
   pickedMaps: any[] = [];
+  registrationOpen = false;
+  seasonNumber;
 
-  constructor(private teamService: TeamService, private util:UtilitiesService) {  }
-  
+  constructor(private teamService: TeamService, private util:UtilitiesService, public auth:AuthService, private timeService:TimeserviceService) {
+
+   }
+
+  @Input() source;
+
   @Input() set team(_team){
     if(_team != undefined || _team != null){
       this.passedTeam = _team;
@@ -24,7 +33,7 @@ export class QuestionnaireComponent implements OnInit {
         if (_team.questionnaire.pickedMaps != null && _team.questionnaire.pickedMaps != undefined){
           this.pickedMaps = _team.questionnaire.pickedMaps
         }
-      } 
+      }
     }
   }
 
@@ -44,20 +53,18 @@ export class QuestionnaireComponent implements OnInit {
     AlteracPass: 'Alterac Pass'
   };
 
-  
+
   selectedMap:string;
-  
-  
+
+
 
   checkTeamMates(){
-    // if(this.passedTeam && this.passedTeam.teamMembers){
-    //   if (this.passedTeam.teamMembers.length >= 5) {
-    //     return true;
-    //   }
-    // }
-    
-    // return false;
-    return true;
+    if(this.passedTeam && this.passedTeam.teamMembers){
+      if (this.passedTeam.teamMembers.length >= 5) {
+        return true;
+      }
+    }
+    return false;
   }
 
 
@@ -66,7 +73,7 @@ export class QuestionnaireComponent implements OnInit {
       this.responses['pickedMaps'] = this.pickedMaps;
       this.responses['registered']=true;
       this.teamService.saveTeamQuestionnaire(this.passedTeam.teamName_lower, this.responses).subscribe(res => {
-        console.log(res);
+
       }, err => {
         console.log(err);
       })
@@ -79,25 +86,37 @@ export class QuestionnaireComponent implements OnInit {
       if(this.responses.lastSeason=='yes'){
 
         return this.util.returnBoolByPath(this.responses, 'eastWest') &&
-          this.util.returnBoolByPath(this.responses, 'oldTeam') && 
+          this.util.returnBoolByPath(this.responses, 'compLevel') &&
+          this.util.returnBoolByPath(this.responses, 'oldTeam') &&
           this.util.returnBoolByPath(this.responses, 'oldDivision') &&
           this.util.returnBoolByPath(this.responses, 'returningPlayers') &&
-          this.util.returnBoolByPath(this.responses, 'returningPlayersDiv') &&
-          this.util.returnBoolByPath(this.responses, 'otherLeagues');
+          this.util.returnBoolByPath(this.responses, 'returningPlayersDiv');
 
       } else if (this.responses.lastSeason == 'no'){
 
         return this.util.returnBoolByPath(this.responses, 'eastWest') &&
-          this.util.returnBoolByPath(this.responses, 'otherLeagues') &&
+          this.util.returnBoolByPath(this.responses, 'compLevel') &&
           this.util.returnBoolByPath(this.responses, 'skillGuess')
-      
+
       }else{
         return false;
       }
   }
 
-  checkValid(){
-    return this.checkTeamMates() && this.checkQuestionnaire() && this.pickedMaps.length==9;
+  showRegisteredQuestionnaire() {
+    if(this.source){
+      if(this.source == 'admin'){
+        return true;
+      }
+    }else if (this.auth.getUser() == this.passedTeam.captain) {
+      return !this.responses['registered'];
+    } else {
+      return false;
+    }
+  }
+
+  checkValid() {
+    return this.checkTeamMates() && this.checkQuestionnaire() && this.pickedMaps.length == 9 && this.responses.acknowledge == true;
   }
 
   remove(map){
@@ -107,9 +126,9 @@ export class QuestionnaireComponent implements OnInit {
 
   filterMaps(){
     let returnArray = [];
-    let keys = Object.keys(this.maps);
-    keys.forEach(key=>{
-      if(this.pickedMaps.indexOf(this.maps[key])==-1){
+
+    _forEach(this.maps, (value, key)=>{
+      if (!_includes(this.pickedMaps, value) ) {
         returnArray.push(this.maps[key]);
       }
     });
@@ -119,7 +138,7 @@ export class QuestionnaireComponent implements OnInit {
   save(){
     this.responses['pickedMaps']=this.pickedMaps;
     this.teamService.saveTeamQuestionnaire(this.passedTeam.teamName_lower,this.responses).subscribe(res=>{
-      console.log(res);
+
     },err=>{
       console.log(err);
     })
@@ -131,7 +150,16 @@ export class QuestionnaireComponent implements OnInit {
 
 
   ngOnInit() {
-
+    this.timeService.getSesasonInfo().subscribe(
+      res => {
+        this.seasonNumber = res['value'];
+        if (this.source == 'admin') {
+          this.registrationOpen = true;
+        } else {
+          this.registrationOpen = res['data'].registrationOpen;
+        }
+      }
+    );
   }
 
 }

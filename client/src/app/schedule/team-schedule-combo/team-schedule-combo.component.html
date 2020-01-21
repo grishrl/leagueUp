@@ -1,0 +1,18 @@
+<div class="row forceFull">
+    <div class="col">
+        <div id="wrapper">
+            <mat-tab-group id="tab-group" dynamicHeight class="mb-3">
+                <mat-tab label="Seasonal Schedule">
+                    <ng-template matTabContent>
+                        <app-team-schedule></app-team-schedule>
+                    </ng-template>
+                </mat-tab>
+                <mat-tab label="Tournaments">
+                    <ng-template matTabContent>
+                        <app-team-tournaments></app-team-tournaments>
+                    </ng-template>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </div>
+</div>

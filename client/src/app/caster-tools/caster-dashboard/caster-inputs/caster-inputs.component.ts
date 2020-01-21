@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { ScheduleService } from 'src/app/services/schedule.service';
 
@@ -16,12 +16,21 @@ export class CasterInputsComponent implements OnInit {
 
   name:string;
   URL: string;
-  
+
   @Input() set matchId(id) {
     if (id != null && id != undefined) {
       this._id = id;
     }
   }
+
+  recMatch;
+  @Input() set match(_match) {
+    if (_match != null && _match != undefined) {
+      this.recMatch = _match;
+    }
+  }
+
+  @Output() matchChange = new EventEmitter();
 
   casterNameControl = new FormControl('', [
     Validators.required
@@ -34,7 +43,7 @@ export class CasterInputsComponent implements OnInit {
     url: this.casterUrlControl,
 
   })
-  
+
   ngOnInit() {
   }
 
@@ -47,10 +56,12 @@ export class CasterInputsComponent implements OnInit {
         if (casterUrl != null && casterUrl != undefined) {
           this.scheduleService.addCaster(matchId, casterName, casterUrl).subscribe(
             (res)=>{
-              
+              this.recMatch = res;
+              this.matchChange.emit(this.recMatch);
+              this.hideForm = !this.hideForm;
             },
             (err)=>{
-
+              console.log(err);
             }
           )
         }else{
@@ -62,6 +73,6 @@ export class CasterInputsComponent implements OnInit {
     }else{
       alert('Null MatchId');
     }
-    
+
   }
 }

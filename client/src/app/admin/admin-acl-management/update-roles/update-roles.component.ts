@@ -3,6 +3,7 @@ import { AdminService } from 'src/app/services/admin.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AclServiceService } from '../acl-service.service';
 import { cloneDeep } from 'lodash';
+import { forEach as _forEach } from 'lodash'
 
 @Component({
   selector: 'app-update-roles',
@@ -35,25 +36,19 @@ export class UpdateRolesComponent implements OnInit {
     //get the users ACLs provided in the route
     this.adminService.getUserAcls(this.recId).subscribe(
       (res)=>{
-
         res = this.aclSerive.removeUnwantedProps(res);
-        console.log('res ', res);
-        if (res.adminRights != null || res.adminRights != undefined){
-          let key = Object.keys(res.adminRights);
-          key.forEach(element => {
+        if (res.adminRights != null || res.adminRights != undefined) {
+          _forEach(res.adminRights, (value, key)=>{
             this.rights.forEach((statRight) => {
-              if (element == statRight.key) {
-                statRight.value = true;
+              if (key == statRight.key) {
+                statRight.value = value;
               }
             });
-          });
-        }else{
+          })
+        } else {
           res.adminRights = {};
-          // this.rights.forEach((statRight) => {
-          //     console.log(statRight);
-          //   });
         }
-        
+
 
 
         this.user = res;
@@ -68,9 +63,9 @@ export class UpdateRolesComponent implements OnInit {
   updateUserRights(){
     let resultantACL = {};
     this.rights.forEach(right=>{
-      if(right.value){
+
         resultantACL[right.key]=right.value;
-      }
+
     });
     resultantACL['adminId'] = this.user['_id'];
     this.adminService.upsertUserAcls(resultantACL).subscribe(res=>{

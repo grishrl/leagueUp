@@ -2,12 +2,19 @@
     <div class="col">
         <div class="row">
             <div class="col">
-                Name: {{disTeam.teamName}}
+                Name:
+                <app-team-link [team]="disTeam.teamName">{{disTeam.teamName}}</app-team-link>
             </div>
         </div>
         <div class="row">
-            <div class="col">
-                Average MMR: {{disTeam.teamMMRAvg}}
+            <div class="col-12">
+                Average hotsLogs MMR: {{disTeam.teamMMRAvg}}
+            </div>
+            <div class="col-12">
+                Average heroProfile MMR: {{disTeam.hpMmrAvg}}
+            </div>
+            <div class="col-12">
+                Average ngs MMR: {{disTeam.ngsMmrAvg}}
             </div>
         </div>
     </div>

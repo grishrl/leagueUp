@@ -1,0 +1,40 @@
+[{
+        "id": "QaYZDF8dQNm4G7jbg2fqLw",
+        "action": "Submit Replays to Heroes-Profile"
+    },
+    {
+        "id": "pLb3BRV6Q8uabvEidi0RSw",
+        "action": "Read in VOD links"
+    },
+    {
+        "id": "mPdY-f4QTae7O9o5RGMQ-w",
+        "action": "Tabulate Team Stats"
+    },
+    {
+        "id": "64GLW22XT0Kzueyp_p6V1Q",
+        "action": "Update teams that haven't been touched in N days"
+    },
+    {
+        "id": "46mz9JRiSsOjIGVJi98FAA",
+        "action": "Tabulate Users Stats"
+    },
+    {
+        "id": "kyietNHsT4awJM_TZZ_LHw",
+        "action": "Grab League Top Stats From Heroes-Profile"
+    },
+    {
+        "id": "B9QN3eQhSj-S9F7HqbvzkA",
+        "action": "Generate league 'fun' stats"
+    }, {
+        "id": "Z0hktRDKSq2G6aYY2Q7PVA",
+        "action": "Associate Parsed Replays to users and teams"
+    },
+    {
+        "id": "l5oGXAyARMaP5_eMPh-bkg",
+        "desctiption": "Routine to find user/team and user/user matches"
+    },
+    {
+        "id": "B9QN3eQhSj-S9F7HqbvzkA",
+        "desctiption": "League Stats Runner"
+    }
+]

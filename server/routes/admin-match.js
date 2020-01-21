@@ -3,6 +3,8 @@ const router = require('express').Router();
 const passport = require("passport");
 const levelRestrict = require("../configs/admin-leveling");
 const Match = require('../models/match-model');
+const _ = require('lodash');
+const matchCommon = require('../methods/matchCommon');
 
 router.post('/match/update', passport.authenticate('jwt', {
     session: false
@@ -18,16 +20,52 @@ router.post('/match/update', passport.authenticate('jwt', {
 
     if (req.body.match) {
         let match = req.body.match;
+
+        let homeDominate = false;
+        let awayDominate = false;
+
+        if (util.returnBoolByPath(match, 'home.score') && util.returnBoolByPath(match, 'away.score')) {
+            if (match.home.score == 2 && match.away.score == 0) {
+                homeDominate = true;
+            } else if (match.home.score == 0 && match.away.score == 2) {
+                awayDominate = true;
+            } else {
+                match.home.dominator = false;
+                match.away.dominator = false;
+            }
+            if (homeDominate) {
+                if (util.returnBoolByPath(match, 'away.dominator')) {
+                    match.away.dominator = false;
+                }
+                match.home.dominator = true;
+            }
+            if (awayDominate) {
+                if (util.returnBoolByPath(match, 'home.dominator')) {
+                    match.home.dominator = false;
+                }
+                match.away.dominator = true;
+            }
+            //if scores are sent - regardless of whether there was domination; set this match to reported
+            match.reported = true;
+        }
+
+
         Match.findOne({ matchId: match.matchId }).then(
             (found) => {
                 if (found) {
                     // found = match;
-                    let keys = Object.keys(match);
-                    keys.forEach(key => {
-                        found[key] = match[key];
+                    // let keys = Object.keys(match);
+                    // keys.forEach(key => {
+                    //     found[key] = match[key];
+                    // });
+                    _.forEach(match, (value, key) => {
+                        found[key] = value;
                     });
                     found.save().then(
                         (saved) => {
+                            if (saved.reported) {
+                                matchCommon.promoteTournamentMatch(saved.toObject());
+                            }
                             res.status(200).send(util.returnMessaging(path, 'Match Saved', false, saved, null, logInfo));
                         },
                         (err) => {

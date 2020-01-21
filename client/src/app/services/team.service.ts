@@ -3,6 +3,8 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { HttpServiceService } from './http-service.service';
 import { Team } from '../classes/team.class';
+import { SpecialCharactersService } from './special-characters.service';
+import { TimeserviceService } from 'src/app/services/timeservice.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,11 +18,39 @@ export class TeamService {
     return this.httpService.httpPost(url, payload);
   }
 
+  getRegisteredTeams(){
+    let url = '/team/get/registered';
+    return this.httpService.httpGet(url, []);
+  }
+
+  captainLevel(team, user):boolean{
+    let isCapt = false;
+    if (team.assistantCaptain){
+      if (user == team.captain || team.assistantCaptain.indexOf(user) > -1) {
+        isCapt = true;
+      }
+    }else{
+      isCapt = user == team.captain
+    }
+
+    return isCapt;
+  }
+
   //returns requested team
-  getTeam(name:string):Observable<any>{
-    let encodededID = encodeURIComponent(this.realTeamName(name));
+  getTeam(name?:string, ticker?:string, id?:string):Observable<any>{
     let url = 'team/get';
-    let params = [{team:encodededID}];
+    let params = [];
+    if(name){
+      let encodededID = encodeURIComponent(this.realTeamName(name));
+      params.push({ team: encodededID });
+    }
+    if(ticker){
+      params.push({ ticker: ticker });
+    }
+    if (id) {
+      let encodededID = encodeURIComponent(id);
+      params.push({ teamId: encodededID });
+    }
     return this.httpService.httpGet(url, params);
   };
 
@@ -103,30 +133,103 @@ export class TeamService {
     return this.httpService.httpPost(url, postData, true);
   }
 
+  //uploads team logo
   logoUpload(imgInput){
     let url = 'team/uploadLogo';
     return this.httpService.httpPost(url, imgInput, true);
   }
 
+  //search for teams off certain criteria
+  searchTeams(searchObj){
+    let url = '/search/team/market';
+    let payload = {
+      searchObj:searchObj
+    }
+    return this.httpService.httpPost(url, payload, true);
+  }
+
+  //returns total number of teams
+  getTeamNumber() {
+    let url = '/search/teams/total';
+    return this.httpService.httpGet(url, []);
+  }
+
+  getTeamsOfPageNum(page, msg?){
+    let url = '/search/team/paginate';
+    let payload = {
+      page:page
+    };
+    return this.httpService.httpPost(url, payload, msg);
+  }
+
+  getTournaments(teamId){
+    let url = '/schedule/fetch/team/tournament';
+    let payload = {
+      teamId:teamId
+    };
+    return this.httpService.httpPost(url, payload);
+  }
+
+  getTournamentMatches(teamId, name, season, division){
+    let url = '/schedule/fetch/team/tournament/matches';
+    let payload = {
+      teamId:teamId,
+      name:name,
+      season:season,
+      division:division
+    }
+    return this.httpService.httpPost(url, payload);
+  }
+
+
 
   //retuns a formatted string that includes the requisite info to retrieve an image from s3 bucket
-  imageFQDN(img) {
-    let imgFQDN = 'https://s3.amazonaws.com/' + environment.s3bucketImages + '/'
-    if(img){
-      imgFQDN += img;
+  imageFQDN(img, season?) {
+    if(season){
+      let imgFQDN = 'https://s3.amazonaws.com/' + environment.s3bucketArchiveImage + '/';
+            if (img) {
+              imgFQDN += img;
+            }
+            else {
+              imgFQDN = 'https://s3.amazonaws.com/' + environment.s3bucketImages + '/';
+              imgFQDN += 'defaultTeamLogo.png';
+            }
+            return encodeURI(imgFQDN);
+
     }else{
+      return this.returnCurrentFQDN(img);
+    }
+  }
+
+  private returnCurrentFQDN(img: any) {
+    let imgFQDN = 'https://s3.amazonaws.com/' + environment.s3bucketImages + '/';
+    if (img) {
+      imgFQDN += img;
+    }
+    else {
       imgFQDN += 'defaultTeamLogo.png';
     }
-    
-    return imgFQDN;
+    return encodeURI(imgFQDN);
   }
+
+  checkCanInvite(){
+    let url = '/team/check/status';
+    return this.httpService.httpGet(url, []);
+  }
+
+
 
   //returns a route friendly URL name for a team, removing any spaces
   routeFriendlyTeamName(teamname):string{
-    var pattern = ' ';
-    var re = new RegExp(pattern, "g");
     if(teamname!=null&&teamname!=undefined){
-      return teamname.replace(re, '_');
+      let strArr = [];
+      for(let i = 0; i<teamname.length; i++){
+        strArr.push( teamname.charAt(i) );
+      }
+      strArr.forEach((char, index)=>{
+        strArr[index] = this.charServ.replace(char);
+      });
+      return strArr.join('');
     }else{
       return '';
     }
@@ -134,15 +237,20 @@ export class TeamService {
 
   //returns team name re formatted with spaces
   realTeamName(teamname):string{
-    var pattern = '_';
-    var re = new RegExp(pattern, "g");
     if (teamname != null && teamname != undefined) {
-      return teamname.replace(re, ' ');
-    }else{
+      return this.charServ.reverse(teamname)
+    } else {
       return '';
     }
-    
+
   }
 
-  constructor(private httpService: HttpServiceService) { }
+    getStatistics(username){
+    let encodedID = encodeURIComponent(username);
+    let url = '/team/statistics';
+    let params = [{ id: encodedID }];
+    return this.httpService.httpGet(url, params);
+  }
+
+  constructor(private httpService: HttpServiceService, private charServ: SpecialCharactersService, private timeService:TimeserviceService) { }
 }

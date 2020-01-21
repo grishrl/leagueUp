@@ -2,6 +2,8 @@ import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { CroppieOptions } from 'croppie';
 import { NgxCroppieComponent } from 'ngx-croppie';
 import { TeamService } from '../services/team.service';
+import { UtilitiesService } from '../services/utilities.service';
+import { AdminService } from '../services/admin.service';
 
 @Component({
   selector: 'app-image-upload',
@@ -9,7 +11,7 @@ import { TeamService } from '../services/team.service';
   styleUrls: ['./image-upload.component.css']
 })
 export class ImageUploadComponent implements OnInit {
-  @ViewChild('ngxCroppie') ngxCroppie: NgxCroppieComponent;
+  @ViewChild('ngxCroppie', { static: false }) ngxCroppie: NgxCroppieComponent;
 
   _teamName: string
   @Input() set teamName(name) {
@@ -19,6 +21,14 @@ export class ImageUploadComponent implements OnInit {
       this._teamName = '';
     }
   }
+
+  _embedded:boolean=false;
+  @Input() set embedded(embedded){
+    if(!this.util.isNullOrEmpty(embedded)){
+      this._embedded = embedded;
+    }
+  }
+
   _showEdit:boolean=false;
   @Input() set showEdit(show){
     if (show != null && show != undefined) {
@@ -30,7 +40,7 @@ export class ImageUploadComponent implements OnInit {
 
   @Input() set teamLogo(img){
     if (img != null && img != undefined && img.length) {
-      this.currentImage = this.teamService.imageFQDN(img);
+      this.currentImage = this.teamService.imageFQDN(encodeURIComponent(img));
     } else {
       this.currentImage = null;
     }
@@ -38,14 +48,27 @@ export class ImageUploadComponent implements OnInit {
 
   editClicked:boolean=true;
 
-  widthPx = '350';
-  heightPx = '230';
+  widthPx = '500';
+  heightPx = '350';
   imageUrl = '';
   currentImage: string;
   croppieImage: string;
+  editedImage:string;
 
-  constructor(private teamService:TeamService){
+  constructor(private teamService:TeamService, private util:UtilitiesService, private admin:AdminService){
 
+  }
+
+  removeImage(){
+    this.admin.teamRemoveLogo(this._teamName).subscribe(
+      res=>{
+        this.currentImage = `https://placehold.it/${this.widthPx}x${this.heightPx}`;
+      },
+      err=>{
+        console.log(err);
+      }
+
+    )
   }
 
   public get imageToDisplay() {
@@ -71,13 +94,13 @@ export class ImageUploadComponent implements OnInit {
     return opts;
   }
 
-  public get croppieImageG():string{
-    return this.croppieImage;
-  }
+  // public get croppieImageG():string{
+  //   return this.croppieImage;
+  // }
 
   ngOnInit() {
-    this.currentImage = this.imageUrl;
-    this.croppieImage = this.imageUrl;
+    // this.currentImage = this.imageUrl;
+    // this.croppieImage = this.imageUrl;
   }
 
   ngOnChanges(changes: any) {
@@ -89,28 +112,41 @@ export class ImageUploadComponent implements OnInit {
   }
 
   newImageResultFromCroppie(img: string) {
-    this.croppieImage = img;
+    this.editedImage = img;
   }
 
   saveImageFromCroppie() {
-    
+
     let input = {
-      logo: this.croppieImage,
+      logo: this.editedImage,
       teamName: this._teamName
     }
 
-    this.teamService.logoUpload(input).subscribe(res=>{
-      this.currentImage = this.croppieImage;
-      this.croppieImage = null;
-      this.editClicked = true;
-    },(err)=>{
-      console.log(err);
-    });
-   
+    if(this._embedded){
+      this.admin.teamLogoUpload(input).subscribe(res=>{
+        this.currentImage = this.editedImage;
+        this.croppieImage = null;
+        this.editClicked = true;
+      },
+      (err)=>{
+        console.log(err)
+      })
+    }else{
+      this.teamService.logoUpload(input).subscribe(res => {
+        this.currentImage = this.editedImage;
+        this.croppieImage = null;
+        this.editClicked = true;
+      }, (err) => {
+        console.log(err);
+      });
+    }
+
+
   }
 
   cancelCroppieEdit() {
     this.croppieImage = null;
+    this.editedImage = null;
     this.editClicked = true;
   }
 

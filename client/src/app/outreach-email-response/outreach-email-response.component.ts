@@ -12,9 +12,7 @@ export class OutreachEmailResponseComponent implements OnInit {
   referralKey
   constructor(private route:ActivatedRoute, private auth: AuthService) {
     if(route.snapshot.params['id']){
-      console.log('setting referral code')
       auth.setReferral(route.snapshot.params['id']);
-      console.log(auth.getReferral());
     }
    }
 

@@ -6,6 +6,8 @@ const passport = require("passport");
 const util = require('../utils');
 const UserSubs = require('../subroutines/user-subs');
 const QueueSub = require('../subroutines/queue-subs');
+const User = require('../models/user-models');
+const message = require('../subroutines/message-subs');
 
 var crypto = require('crypto'),
     algorithm = 'aes-256-ctr',
@@ -59,7 +61,6 @@ router.post('/invite', passport.authenticate('jwt', {
 
     transporter.sendMail(mailOptions, function(err, info) {
         if (err) {
-            console.log(err); //replace with static logs?
             res.status(500).send(util.returnMessaging(path, 'We encountered an error, try again later or contact an admin.', err, null, null, logObj));
         } else {
             new Outreach({
@@ -96,32 +97,53 @@ router.post('/inviteResponseComplete', passport.authenticate('jwt', {
             logObj.error = 'Reference not found in ref table.';
             res.status(404).send(util.returnMessaging(path, "Reference not found in ref table.", null, null, null, logObj));
         } else {
-            console.log('del', deletedRef); //replace with static log?
-            let lower = deletedRef.teamName.toLowerCase();
-            Team.findOne({
-                teamName_lower: lower
-            }).then((foundTeam) => {
-                if (foundTeam.pendingMembers) {
-                    foundTeam.pendingMembers.push({
-                        "displayName": user
-                    });
-                } else {
-                    foundTeam.pendingMembers = [{ "displayName": user }];
-                }
-                UserSubs.togglePendingTeam(user);
-                QueueSub.addToPendingTeamMemberQueue(foundTeam.teamName_lower, user);
-                console.log(foundTeam);
-                foundTeam.save().then(
-                    saved => {
-                        res.status(200).send(util.returnMessaging(path, "We added the user to pending members", false, null, null, logObj));
-                    },
-                    err => {
+            User.findOne({ displayName: user }).then(
+                foundUser => {
+                    if (foundUser) {
+                        let foundObj = foundUser.toObject();
+                        if (!util.returnBoolByPath(foundObj, 'teamName') && !util.returnBoolByPath(foundObj, 'teamId')) {
+                            let lower = deletedRef.teamName.toLowerCase();
+                            Team.findOne({
+                                teamName_lower: lower
+                            }).then((foundTeam) => {
+                                if (foundTeam.pendingMembers) {
+                                    foundTeam.pendingMembers.push({
+                                        "displayName": foundUser.displayName
+                                    });
+                                } else {
+                                    foundTeam.pendingMembers = [{
+                                        "displayName": foundUser.displayName
+                                    }];
+                                }
+                                UserSubs.togglePendingTeam(foundUser.displayName);
+
+                                QueueSub.addToPendingTeamMemberQueue(util.returnIdString(foundTeam._id), foundTeam.teamName_lower, util.returnIdString(foundUser._id), foundUser.displayName);
+                                foundTeam.save().then(
+                                    saved => {
+                                        res.status(200).send(util.returnMessaging(path, "We added the user to pending members", false, null, null, logObj));
+                                    },
+                                    err => {
+                                        res.status(500).send(util.returnMessaging(path, "We encountered an error completing the email response", err, null, null, logObj));
+                                    }
+                                )
+                            }, (err) => {
+                                res.status(500).send(util.returnMessaging(path, "We encountered an error completing the email response", err, null, null, logObj));
+                            });
+                        } else {
+                            res.status(500).send(util.returnMessaging(path, "User was all ready a member of the team", null, null, null, logObj));
+                            message(foundUser._id.toString(), 'Email Invite', 'Your email invite was processed properly but you were all ready on a team.', 'SYSTEM');
+                        }
+
+
+
+                    } else {
                         res.status(500).send(util.returnMessaging(path, "We encountered an error completing the email response", err, null, null, logObj));
                     }
-                )
-            }, (err) => {
-                res.status(500).send(util.returnMessaging(path, "We encountered an error completing the email response", err, null, null, logObj));
-            })
+                },
+                err => {
+                    res.status(500).send(util.returnMessaging(path, "We encountered an error completing the email response", err, null, null, logObj));
+                }
+            )
         }
 
     }, (err) => {

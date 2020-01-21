@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DivisionService } from '../services/division.service';
 
 @Component({
   selector: 'app-footer',
@@ -7,9 +8,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AppFooterComponent implements OnInit {
 
-  constructor() { }
+  constructor(private divisionService: DivisionService) { }
 
+  divisions = [];
   ngOnInit() {
+    //get divisions for the division list drop down
+    this.divisionService.getDivisionInfo().subscribe(res => {
+      this.divisions = res;
+    }, err => {
+      console.log(err);
+    });
   }
 
 }

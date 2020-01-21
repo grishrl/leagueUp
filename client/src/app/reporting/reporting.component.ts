@@ -3,6 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { ScheduleService } from '../services/schedule.service';
 import { AuthService } from '../services/auth.service';
 import { TeamService } from '../services/team.service';
+import { environment } from '../../environments/environment';
+import { TimeserviceService } from '../services/timeservice.service';
 
 @Component({
   selector: 'app-reporting',
@@ -12,14 +14,26 @@ import { TeamService } from '../services/team.service';
 export class ReportingComponent implements OnInit {
 
   recTeam
-  constructor(private Auth: AuthService, private teamService:TeamService, private route: ActivatedRoute, private scheduleService: ScheduleService) {
+  currentSeason;
+  constructor(private Auth: AuthService, private teamService:TeamService, private route: ActivatedRoute,
+    private scheduleService: ScheduleService, private timeService:TimeserviceService) {
     if (this.route.snapshot.params['id']) {
       this.recTeam = this.route.snapshot.params['id'];
     }
+
+    this.timeService.getSesasonInfo().subscribe(
+      res=>{
+        this.currentSeason = res['value'];
+        this.ngOnInit();
+      }
+    );
   }
+  index = 0;
+  roundsArray:any
   rounds:any
   noMatches: Boolean;
   ngOnInit() {
+
     let getTeam;
     if (this.recTeam) {
       getTeam = this.recTeam;
@@ -28,36 +42,44 @@ export class ReportingComponent implements OnInit {
       getTeam = this.Auth.getTeam()
     }
 
-    
-    this.scheduleService.getTeamSchedules(6, getTeam).subscribe(
-      res => {
-        let matches = res;
-        if(matches.length == 0){
-          this.noMatches = true;
-        }else{
-          this.noMatches = false;
-        }
-        for (var i = 0; i <= matches.length; i++) {
-          if (this.rounds == null || this.rounds == undefined) {
-            this.rounds = {};
+    if(getTeam && this.currentSeason){
+      this.scheduleService.getTeamSchedules(this.currentSeason, getTeam).subscribe(
+        res => {
+          let matches = res;
+          if (matches.length == 0) {
+            this.noMatches = true;
+          } else {
+            this.noMatches = false;
           }
-          
-          let realMatchNumber = i+1;
-          this.rounds[realMatchNumber.toString()]=[];
-          matches.forEach(match => {
-            if (match.round == realMatchNumber) {
-              if (this.rounds[realMatchNumber.toString()] == null || this.rounds[realMatchNumber.toString()] == undefined) {
-                this.rounds[realMatchNumber.toString()] = [];
-              }
-              this.rounds[realMatchNumber.toString()].push(match);
+          let roundsArray = [];
+          for (var i = 0; i <= matches.length; i++) {
+            if (this.rounds == null || this.rounds == undefined) {
+              this.rounds = {};
             }
-          });
 
-        }
-        this.rounds;
-      },
-      err => { console.log(err) }
-    )
+            let realMatchNumber = i + 1;
+            roundsArray.push(realMatchNumber);
+            this.rounds[realMatchNumber] = [];
+            matches.forEach(match => {
+              if (match.round == realMatchNumber) {
+                if (this.rounds[realMatchNumber] == null || this.rounds[realMatchNumber] == undefined) {
+                  this.rounds[realMatchNumber] = [];
+                }
+                this.rounds[realMatchNumber].push(match);
+              }
+            });
+
+          }
+          this.rounds;
+          this.roundsArray = roundsArray;
+        },
+        err => { console.log(err) }
+      )
+    }
+
+  }
+
+  init(){
   }
 
 }

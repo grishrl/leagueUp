@@ -3,6 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { AdminService } from 'src/app/services/admin.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
+import { environment } from '../../../../environments/environment';
+import { Match } from '../../../classes/match.class';
 
 @Component({
   selector: 'app-match-edit',
@@ -14,18 +16,24 @@ export class MatchEditComponent implements OnInit {
   //component properties
   matchId;
   times: any[] = [];
-  match: any = {
-    home: {
-      teamName: '',
-      score: null
-    },
-    away: {
-      teamName: '',
-      score: null
-    },
-    casterName: null,
-    casterUrl: null
-  }; //match prototype
+  // match: any = {
+  //   home: {
+  //     teamName: '',
+  //     score: null
+  //   },
+  //   away: {
+  //     teamName: '',
+  //     score: null
+  //   },
+  //   scheduledTime:{
+  //     startTime:null
+  //   },
+  //   casterName: null,
+  //   casterUrl: null,
+  //   notes:'',
+  //   forfeit:false
+  // }; //match prototype
+  match = new Match();
   homeScore: number;
   awayScore: number;
   suffix;
@@ -33,24 +41,27 @@ export class MatchEditComponent implements OnInit {
   friendlyDate;
   amPm = ['PM', 'AM'];
 
-  
-  constructor(private route: ActivatedRoute, private scheduleService: ScheduleService, private adminService: AdminService, private util:UtilitiesService) { 
+
+  constructor(private route: ActivatedRoute, private scheduleService: ScheduleService, private adminService: AdminService, private util:UtilitiesService) {
     if (this.route.snapshot.params['id']) {
       this.matchId = this.route.snapshot.params['id'];
     }
   }
 
   ngOnInit() {
-    this.scheduleService.getMatchInfo(6, this.matchId).subscribe(res=>{
+    this.scheduleService.getMatchInfo(this.matchId).subscribe(res=>{
       this.match = res;
       if (this.match.away.score || this.match.home.score) {
         this.homeScore = this.match.home.score;
         this.awayScore = this.match.away.score;
       }
-      if(!this.match.scheduledTime){
-        this.match.scheduledTime = {};
+      if( !this.match.hasOwnProperty('scheduledTime') ){
+        this.match.scheduledTime = {
+          startTime:null,
+          endTime:null
+        }
       }else{
-        this.friendlyDate = this.util.getDatePickerFormatFromMS(this.match.scheduledTime.startTime);
+        // this.friendlyDate = this.util.getDatePickerFormatFromMS(this.match.scheduledTime.startTime);
         this.friendlyTime = this.util.getTimeFromMS(this.match.scheduledTime.startTime);
         this.suffix = this.util.getSuffixFromMS(this.match.scheduledTime.startTime);
       }
@@ -70,20 +81,22 @@ export class MatchEditComponent implements OnInit {
   }
 
   saveMatch(match){
+
+
     let submittable = true;
-    if(this.homeScore == 1 && this.awayScore == 2 || this.awayScore == 1 && this.homeScore ==2){
-      //ok
-    } else if (this.homeScore == 0 && this.awayScore == 2 || this.awayScore == 0 && this.homeScore == 2){
-      //ok
-    }else if(this.homeScore + this.awayScore > 3){
-      submittable = false;
-      alert('these scores are not allowed');
-    }else{
-      submittable = false;
-      alert('these scores are not allowed');
+
+    if (this.homeScore != undefined && this.homeScore != null){
+      match.home.score = this.homeScore;
     }
 
-    if(this.friendlyDate && this.friendlyTime){
+    if (this.awayScore != undefined && this.awayScore != null) {
+      match.away.score = this.awayScore;
+    }
+
+    // console.log(this.match.scheduledTime.startTime , this.friendlyTime)
+    if (this.match.scheduledTime.startTime && this.friendlyTime){
+
+      this.friendlyDate = new Date(this.match.scheduledTime.startTime);
       let years = this.friendlyDate.getFullYear();
       let month = this.friendlyDate.getMonth();
       let day = this.friendlyDate.getDate();
@@ -95,22 +108,18 @@ export class MatchEditComponent implements OnInit {
         colonSplit[0] += 12;
       }
       let setDate = new Date();
-      setDate.setFullYear(years);
-      setDate.setMonth(month);
-      setDate.setDate(day);
-      setDate.setHours(colonSplit[0]);
-      setDate.setMinutes(colonSplit[1]);
+      setDate.setFullYear(years, month, day);
+      setDate.setHours(colonSplit[0], colonSplit[1], 0, 0);
+
       let msDate = setDate.getTime();
+      // console.log('msDate ', msDate);
       let endDate = msDate + 5400000;
       match.scheduledTime.startTime = msDate;
-      match.scheduledTime.endDate = endDate;
-    } else if (this.friendlyDate && !this.friendlyTime){
-      alert('You have entered a date but no time!');
-    } else if (!this.friendlyDate && this.friendlyTime) {
-      alert('You have entered a time but no date!');
+      match.scheduledTime.endTime = endDate;
     }
 
     if(submittable){
+      console.log(match);
       this.adminService.matchUpdate(match).subscribe(
         (res) => {
           this.ngOnInit();
@@ -120,8 +129,8 @@ export class MatchEditComponent implements OnInit {
         }
       )
     }
-    
-    
+
+
   }
- 
+
 }

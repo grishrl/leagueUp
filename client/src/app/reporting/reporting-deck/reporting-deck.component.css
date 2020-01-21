@@ -46,3 +46,8 @@
     border-bottom-style: solid;
     padding-bottom: 10px;
 }
+
+.vertical-middle {
+    margin-top: auto;
+    margin-bottom: auto;
+}

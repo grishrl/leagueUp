@@ -2,16 +2,35 @@
     <div class="col">
         <div class="row">
             <div class="col">
-                Name: {{player.displayName}}
+                Name:
+                <app-player-link [player]="player.displayName">{{player.displayName}}</app-player-link>
+            </div>
+        </div>
+        <div class="row" *ngIf="player.smurfAccount">
+            <div class="col">
+                <span class="text-danger"> <i class="text-warning fas fa-exclamation-triangle"></i> !!! This account has been flagged
+                  as a smurf / banned account !!!! <i class="text-warning fas fa-exclamation-triangle"></i> </span>
             </div>
         </div>
         <div class="row">
-            <div class="col">
-                <div *ngIf="player.averageMmr; else noMmr">MMR: {{player.averageMmr}}</div>
-
+            <div class="col-12">
+                <div *ngIf="player.averageMmr; else noMmr">Hots Logs MMR: {{player.averageMmr}}</div>
+            </div>
+            <div class="col-12">
+                <div *ngIf="player.heroesProfileMmr; else nohpMmr">Heros-Profile MMR: {{player.heroesProfileMmr}}</div>
+                <div *ngIf="player.lowReplays">! This player has few replays !</div>
+            </div>
+            <div class="col-12">
+                <div *ngIf="player.ngsMmr; else nongsMmr">NGS MMR: {{player.ngsMmr}}</div>
             </div>
             <ng-template #noMmr>
-                MMR: Player has not updated profile with hots logs URL, please contact them!
+                Warning: Player does not have a hotslogs mmr!
+            </ng-template>
+            <ng-template #nohpMmr>
+                Warning: Player does not have a heroes profile mmr!
+            </ng-template>
+            <ng-template #nongsMmr>
+                Warning: Player does not have league specific mmr! New Guy?
             </ng-template>
         </div>
         <div class="row">
@@ -20,7 +39,7 @@
                     Hero League: {{player.hlRankMetal}} - {{player.hlRankDivision}}
                 </div>
                 <ng-template #noMetalDiv>
-                    Player has not recorded an ingame metal/div in their profole, please contact them!
+                    Player has not recorded an ingame metal/div in their profile, please contact them!
                 </ng-template>
             </div>
         </div>

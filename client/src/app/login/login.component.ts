@@ -17,11 +17,9 @@ export class LoginComponent implements OnInit {
       let URI = decodeURIComponent(route.snapshot.params['token']);
       
       let parsed = JSON.parse(URI);
-
-      // console.log('parsed ',parsed );
       
       Auth.createAuth(parsed.token);
-      // console.log('init in login ', Auth.getReferral());
+      
       if (Auth.getReferral()) {
         this.user.outreachResponse(Auth.getReferral(), Auth.getUser()).subscribe((res) => {
           Auth.destroyReferral();

@@ -1,0 +1,48 @@
+<app-banner-image [bannerTitle]="'NGS Blog'" [bannerCrumbLink]="'/blog'" [bannerCrumbRoot]="'Blog Home'" [bannerCrumbBranch]="'Author'"></app-banner-image>
+<section class="content-info">
+
+    <div class="container paddings-mini">
+        <div class="row">
+
+            <div class="col-lg-9 mx-auto">
+                <!-- Content Text-->
+                <div class="panel-box pb-3">
+                    <div class="titles no-margin">
+                        <h4>{{authorInf.name}}</h4>
+                    </div>
+                    <div class="text-center pt-4">
+                        <app-image-getter class="image-size" *ngIf="authorInf.mediaId" [imgId]="authorInf.mediaId"></app-image-getter>
+                    </div>
+                    <div class="row">
+                        <div class="info-panel col text-center" *ngIf="authorInf.description">
+                            <p [innerHTML]="authorInf.description"></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Content Text-->
+
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-lg-9 mx-auto">
+                <!-- Content Text-->
+                <div class="panel-box">
+                    <div class="titles">
+                        <h4>Articles</h4>
+                    </div>
+                    <div *ngIf="posts.length == 0" class="post-item">
+                        <h5>No Posts Currently.</h5>
+                    </div>
+                    <div class="post-item" *ngFor="let post of posts">
+                        <app-blog-headline [blogObj]="post"></app-blog-headline>
+                    </div>
+                </div>
+                <!-- End Content Text-->
+
+            </div>
+        </div>
+    </div>
+
+
+</section>

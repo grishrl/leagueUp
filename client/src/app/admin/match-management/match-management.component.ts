@@ -2,6 +2,9 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { AdminService } from 'src/app/services/admin.service';
 import { MatPaginator, PageEvent } from '@angular/material';
+import { UtilitiesService } from 'src/app/services/utilities.service';
+import { TimeserviceService } from 'src/app/services/timeservice.service';
+import { FilterService } from 'src/app/services/filter.service';
 
 @Component({
   selector: 'app-match-management',
@@ -10,7 +13,7 @@ import { MatPaginator, PageEvent } from '@angular/material';
 })
 export class MatchManagementComponent implements OnInit, AfterViewInit {
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   //component properties
   hideForm = true;
@@ -19,36 +22,45 @@ export class MatchManagementComponent implements OnInit, AfterViewInit {
   originalMatches: any
   filterMatches: any
   filterTeam: any
+  filterTeam2:string
   rounds = [];
   divisions = []
 
-  constructor(private scheduleService: ScheduleService, private adminService: AdminService) { }
+  constructor(private scheduleService: ScheduleService, private adminService: AdminService,
+    public util: UtilitiesService, private timeService:TimeserviceService, private filterServ: FilterService) { }
 
   ngAfterViewInit() {
     this.paginator.pageIndex = 0;
   }
 
+  currentSeason;
   ngOnInit() {
     this.adminService.getDivisionList().subscribe((res) => {
       this.divisions = res;
-      this.scheduleService.getAllMatches().subscribe(
-        (sched) => {
-          this.originalMatches = sched;
-          this.filterMatches = sched;
-          this.filterMatches.forEach(match => {
-            match.submitCaster = {
-              "name": '',
-              "URL": ''
+      this.timeService.getSesasonInfo().subscribe(
+        res => {
+          this.currentSeason = res['value'];
+          this.scheduleService.getScheduleMatches(this.currentSeason, null, null).subscribe(
+            (sched) => {
+              this.originalMatches = sched;
+              this.filterMatches = sched;
+              this.filterMatches.forEach(match => {
+                match.submitCaster = {
+                  "name": '',
+                  "URL": ''
+                }
+                if (this.rounds.indexOf(match.round) < 0) {
+                  this.rounds.push(match.round);
+                }
+              });
+              this.rounds.sort();
+              this.length = this.filterMatches.length;
+              this.displayArray = this.filterMatches.slice(0, this.pageSize);
             }
-            if (this.rounds.indexOf(match.round) < 0) {
-              this.rounds.push(match.round);
-            }
-          });
-          this.rounds.sort();
-          this.length = this.filterMatches.length;
-          this.displayArray = this.filterMatches.slice(0, this.pageSize);
+          )
         }
-      )
+      );
+
     }, (err) => {
       console.log(err);
     });
@@ -61,38 +73,38 @@ export class MatchManagementComponent implements OnInit, AfterViewInit {
   pageIndex: number;
 
   pageEventHandler(pageEvent: PageEvent) {
-    console.log(pageEvent);
+
     let i = pageEvent.pageIndex * this.pageSize;
     let endSlice = i + this.pageSize
     if (endSlice > this.filterMatches.length) {
       endSlice = this.filterMatches.length;
     }
-    console.log('index start ', i, ' endSlice ', endSlice);
+
     this.displayArray = [];
     this.displayArray = this.filterMatches.slice(i, endSlice)
 
-  } 
+  }
 
   /*
   div, round, team
-  div, round, 
+  div, round,
   div, team,
   round, team,
-  div, 
-  round, 
+  div,
+  round,
   team
   */
  //filters the matches based on selected criteria
   doFilterMatches(div, round, team) {
-    // console.log('div ', div, ' round ', round, ' team ', team);
+
     this.filterMatches = this.originalMatches.filter(match => {
       let home, away;
-      if(!match.away.teamName){
+      if(!this.util.returnBoolByPath(match, 'away.teamName')){
         away = '';
       }else{
         away = match.away.teamName.toLowerCase();
       }
-      if(!match.home.teamName){
+      if (!this.util.returnBoolByPath(match, 'home.teamName')){
         home = '';
       }else{
         home = match.home.teamName.toLowerCase();
@@ -100,10 +112,10 @@ export class MatchManagementComponent implements OnInit, AfterViewInit {
       if(team){
         team = team.toLowerCase();
       }
-      
+
       let pass = false;
       if (div && round && team) {
-        if (div == match.divisionConcat && round == match.round && 
+        if (div == match.divisionConcat && round == match.round &&
           (away.indexOf(team) > -1 || home.indexOf(team) >-1 )) {
           pass = true;
         }
@@ -141,6 +153,14 @@ export class MatchManagementComponent implements OnInit, AfterViewInit {
     this.length = this.filterMatches.length;
     this.displayArray = this.filterMatches.slice(0, this.pageSize > this.length ? this.length : this.pageSize);
     this.paginator.firstPage();
+  }
+
+  filterOtherTeam(teamName){
+    if(this.filterTeam){
+      let showing = this.displayArray;
+      showing = showing.filter((a) => { return this.filterServ.testName(a, teamName)}  );
+      this.displayArray = showing;
+    }
   }
 
   displayTime(ms) {

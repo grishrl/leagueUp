@@ -2,13 +2,48 @@ import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { HttpServiceService } from './http-service.service';
 import { Team } from '../classes/team.class';
+import { FilterService } from '../services/filter.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminService {
 
-  constructor(private httpService: HttpServiceService) { }
+  constructor(private httpService: HttpServiceService, private FS:FilterService) { }
+
+  //uploads team logo
+  imageUpload(imgInput) {
+    let url = '/utility/image/upload';
+    return this.httpService.httpPost(url, imgInput, true);
+  }
+
+  getLogs(){
+    let url = '/admin/logs';
+    return this.httpService.httpGet(url, [], false);
+  }
+
+  teamLogoUpload(img, teamName?){
+    let url = '/admin/team/uploadLogo';
+    let imgInput;
+    if(typeof img != 'object'){
+      imgInput = {
+        logo:img,
+        teamName:teamName
+      };
+    }else{
+      imgInput = img;
+    }
+    return this.httpService.httpPost(url, imgInput, true);
+  }
+
+  teamRemoveLogo(team){
+    let url = '/admin/team/removeLogo';
+    let payload = {
+      teamName:team
+    };
+    return this.httpService.httpPost(url, payload, true);
+  }
+
 
   //returns a list of all teams
   getTeams(){
@@ -22,6 +57,40 @@ export class AdminService {
 
     return this.httpService.httpGet(url, []);
   }
+
+  generateSeason(seas){
+    let url = 'schedule/generate/schedules';
+    let payload = {
+      season:seas
+    }
+    return this.httpService.httpPost(url, payload, true);
+  }
+
+  /*
+  teams, season, division, cupNumber, tournamentName, description
+  */
+
+  generateTournament(teams, season, name, division, cupNumber, description){
+    let url = '/schedule/generate/tournament';
+    let payload = {
+      teams:teams,
+      season:season,
+      tournamentName:name,
+      division:division,
+      cupNumber:cupNumber,
+      description: description
+    };
+    return this.httpService.httpPost(url, payload, true);
+  }
+
+  validateSeason(seas) {
+    let url = 'schedule/check/valid';
+    let payload = {
+      season: seas
+    }
+    return this.httpService.httpPost(url, payload, true);
+  }
+
 
   //admin function to remove memvers from team accepts team name and name of user to remove
   //member can be an array of strings or string
@@ -93,15 +162,7 @@ export class AdminService {
     return this.httpService.httpGet(url, []).pipe(
       map(res=>{
           let divisionArr = res;
-          divisionArr.sort((a, b) => {
-            if (a.sorting < b.sorting) {
-              return -1;
-            }
-            if (a.sorting > b.sorting) {
-              return 1
-            }
-            return 0;
-          });
+          divisionArr.sort((a, b) => { return this.FS.arrangeDivisions(a,b); } );
           return divisionArr;
         }
       )
@@ -112,9 +173,20 @@ export class AdminService {
   queuePost(teamName:string, memberName:string, action:boolean){
     let url = 'admin/approveMemberAdd';
     let payload = {
-      teamName:teamName,
-      member:memberName,
+      teamId:teamName,
+      memberId:memberName,
       approved:action
+    }
+    return this.httpService.httpPost(url, payload, true);
+  }
+
+  //returns to the pending member queue the admins approval or declining of a team member add
+  avatarQueuePost(id: string, fileName: string, action: boolean) {
+    let url = 'admin/approveAvatar';
+    let payload = {
+      userId: id,
+      fileName: fileName,
+      approved: action
     }
     return this.httpService.httpPost(url, payload, true);
   }
@@ -123,6 +195,23 @@ export class AdminService {
   deleteUser(user:string){
     let url = 'admin/delete/user';
     let payload = {displayName:user};
+    return this.httpService.httpPost(url, payload, true);
+  }
+
+  saveUser(user){
+    let url = '/admin/user/save';
+    let payload = {
+      user:user
+    };
+    return this.httpService.httpPost(url, payload, true);
+  }
+
+  manualTeamAdd(user, team){
+    let url ='admin/team/memberAdd';
+    let payload = {
+      teamName:team,
+      user:user
+    };
     return this.httpService.httpPost(url, payload, true);
   }
 

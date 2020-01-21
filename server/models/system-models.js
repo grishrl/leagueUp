@@ -3,7 +3,8 @@ const Schema = mongoose.Schema;
 
 
 const systemSchema = new Schema({
-    "dataName": String
+    "dataName": String,
+    "data": Object
 }, {
     strict: false,
     useNestedStrict: false
@@ -16,10 +17,25 @@ const logSchema = new Schema({
     "target": String,
     "timeStamp": Number,
     "error": String,
-    'location': String
+    'location': String,
+    'deepLogging': String
 });
+
+const archiveSchema = new Schema({
+    "season": Number,
+    "type": String,
+    "object": Object,
+    "timeStamp": String
+}, {
+    useNestedStrict: false
+})
 
 const System = mongoose.model('system', systemSchema);
 const Log = mongoose.model('log', logSchema);
+const Archive = mongoose.model('archive', archiveSchema);
 
-module.exports = { system: System, Log: Log };
+module.exports = {
+    system: System,
+    Log: Log,
+    archive: Archive
+};

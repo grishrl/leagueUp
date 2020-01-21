@@ -1,3 +1,5 @@
+const { confirmCaptain } = require("../methods/confirmCaptain");
+
 const util = require('../utils');
 const router = require('express').Router();
 const User = require("../models/user-models");
@@ -5,26 +7,15 @@ const Admin = require('../models/admin-models');
 const QueueSub = require('../subroutines/queue-subs');
 const TeamSub = require('../subroutines/team-subs');
 const UserSub = require('../subroutines/user-subs');
+const DivSub = require('../subroutines/division-subs');
 const Team = require("../models/team-models");
 const passport = require("passport");
-const fs = require('fs');
-const imageDataURI = require('image-data-uri');
-const AWS = require('aws-sdk');
 const sysModels = require('../models/system-models');
-
+const uploadTeamLogo = require('../methods/teamLogoUpload').uploadTeamLogo;
+const Stats = require('../models/stats-model');
 const logger = require('../subroutines/sys-logging-subs');
-
-AWS.config.update({
-    accessKeyId: process.env.S3accessKeyId,
-    secretAccessKey: process.env.S3secretAccessKey,
-    region: process.env.S3region
-});
-
-const s3Bucket = new AWS.S3({
-    params: {
-        Bucket: process.env.s3bucketImages
-    }
-});
+const SeasonInfoCommon = require('../methods/seasonInfoMethods');
+const TeamMethods = require('../methods/teamCommon');
 
 /*
 routes for team management --
@@ -45,24 +36,47 @@ reassignCaptian - moves captain to another team member
 //get
 // path: /team/get
 // URI query param - team
-// finds team of passed team name
+// URI query param - ticker
+// finds team of passed team name or ticker
 // returns found team
 router.get('/get', (req, res) => {
     const path = '/team/get';
     var team = req.query.team;
+    var ticker = req.query.ticker;
+    var id = req.query.teamId;
 
-    team = decodeURIComponent(team);
+    if (team) {
+        team = decodeURIComponent(team);
+        team = team.toLowerCase();
+    }
 
-    team = team.toLowerCase();
+    if (ticker) {
+        ticker = ticker.toLowerCase();
+    }
 
-    Team.findOne({
-        teamName_lower: team
-    }).lean().then(
+    if (id) {
+        id = decodeURIComponent(id);
+    }
+
+    let query = {};
+    if (id) {
+        query = { "_id": id }
+    } else if (team && ticker) {
+        query['$and'] = [];
+        query['$and'].push({ 'teamName_lower': team });
+        query['$and'].push({ 'ticker': ticker });
+    } else if (team && !ticker) {
+        query['teamName_lower'] = team;
+    } else {
+        query['ticker_lower'] = ticker;
+    }
+
+    Team.findOne(query).lean().then(
         (foundTeam) => {
             if (foundTeam) {
                 res.status(200).send(util.returnMessaging(path, 'Found team', false, foundTeam));
             } else {
-                res.status(200).send(util.returnMessaging(path, "Team not found", false, foundTeam));
+                res.status(200).send(util.returnMessaging(path, "Team not found", false, {}));
             }
         }, (err) => {
             res.status(500).send(util.returnMessaging(path, "Error querying teams.", err));
@@ -71,6 +85,32 @@ router.get('/get', (req, res) => {
 });
 
 //get
+// path: /team/get
+// URI query param - team
+// URI query param - ticker
+// finds team of passed team name or ticker
+// returns found team
+router.get('/get/registered', (req, res) => {
+    const path = '/team/get/registered';
+
+    Team.find({
+        'questionnaire.registered': true
+    }).lean().then(
+        (foundTeam) => {
+            if (foundTeam) {
+                foundTeam = util.objectify(foundTeam);
+                foundTeam = TeamMethods.removeDegenerateTeams(foundTeam);
+                res.status(200).send(util.returnMessaging(path, 'Found team', false, foundTeam));
+            } else {
+                res.status(200).send(util.returnMessaging(path, "Team not found", false, {}));
+            }
+        }, (err) => {
+            res.status(500).send(util.returnMessaging(path, "Error querying teams.", err));
+        }
+    );
+});
+
+//post
 // path: /team/get
 // URI query param - team
 // finds team of passed team name
@@ -121,6 +161,9 @@ router.post('/delete', passport.authenticate('jwt', {
     }).then((deletedTeam) => {
         if (deletedTeam) {
             UserSub.clearUsersTeam(deletedTeam.teamMembers);
+            TeamSub.updateTeamMatches(deletedTeam.toObject());
+            DivSub.updateTeamNameDivision(deletedTeam.teamName, deletedTeam.teamName + ' (withdrawn)');
+            //TODO: division sub to handle removing team from the division
             res.status(200).send(util.returnMessaging(path, 'Team has been deleted', false, false, null, logObj));
         } else {
             logObj.logLevel = 'ERROR';
@@ -138,12 +181,11 @@ router.post('/delete', passport.authenticate('jwt', {
 // returns success or error HTTP plus the json object of the created team
 router.post('/create', passport.authenticate('jwt', {
     session: false
-}), (req, res) => {
+}), async(req, res) => {
     const path = '/team/create';
-    /* 
-    TODO: THERE MAY BE FUTURE NEEDS FOR A CHECK FOR AN ADMIN ROLE TO ALLOW SOMEONE ELSE TO 
-    CREATE A TEAM ON BEHALF OF SOMEONE ELSE, THIS WILL BE HANDLED LATER!!!!
-    */
+
+    let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+    let seasonNum = currentSeasonInfo.value;
 
     //log object
     let logObj = {};
@@ -166,7 +208,6 @@ router.post('/create', passport.authenticate('jwt', {
 
         recievedTeam.captain = req.user.displayName;
 
-
         recievedTeam.teamMembers.push({
             _id: req.user._id,
             'displayName': req.user.displayName
@@ -176,24 +217,18 @@ router.post('/create', passport.authenticate('jwt', {
             status = 400;
             message.nameError = "Null team name not allowed!";
         }
-        //time zone should be in here.. although not sure if that's even necessary for a minimal creation
-        if (!util.returnBoolByPath(recievedTeam, 'timeZone')) {
-            status = 400;
-            message = {
-                "message": "Must have a timezone!"
-            };
-        }
 
         if (recievedTeam.hasOwnProperty('_id')) {
             delete recievedTeam._id;
         }
 
-        if (!util.isNullOrEmpty(status) && !util.isNullOrEmpty(message)) {
+        if (!util.isNullorUndefined(status) && !util.isNullorUndefined(message)) {
             //we were missing data so send an error back.
             logObj.logLevel = 'ERROR';
             logObj.error = 'Missing required data'
             res.status(status).send(util.returnMessaging(path, message, false, null, null, logObj));
         } else {
+            recievedTeam.teamName = recievedTeam.teamName.trim();
             let lowerName = recievedTeam.teamName.toLowerCase();
             Team.findOne({
                 teamName_lower: lowerName
@@ -204,6 +239,12 @@ router.post('/create', passport.authenticate('jwt', {
                     res.status(500).send(util.returnMessaging(path, 'This team name all ready exists!', false, null, null, logObj));
                 } else {
                     recievedTeam.teamName_lower = recievedTeam.teamName.toLowerCase();
+                    recievedTeam.history = [{
+                        timestamp: Date.now(),
+                        season: seasonNum,
+                        action: 'Team Created',
+                        target: recievedTeam.teamName
+                    }];
                     new Team(
                         recievedTeam
                     ).save().then((newTeam) => {
@@ -218,6 +259,20 @@ router.post('/create', passport.authenticate('jwt', {
                                 found["teamId"] = newTeam._id,
                                     found["teamName"] = newTeam.teamName,
                                     found["isCaptain"] = true;
+                                let userHistoryUpdate = {
+                                    timestamp: Date.now(),
+                                    season: seasonNum,
+                                    action: 'Created Team',
+                                    target: recievedTeam.teamName
+                                }
+                                if (found.history) {
+                                    found.history.push(userHistoryUpdate);
+                                } else {
+                                    found.history = [{
+                                        userHistoryUpdate
+                                    }]
+                                }
+                                found.markModified('history');
                                 found.save().then((save) => {
                                     if (save) {
                                         //log object
@@ -276,7 +331,6 @@ router.post('/create', passport.authenticate('jwt', {
                             logger(sysObj);
                         });
                     }, (err) => {
-                        console.log(err);
                         res.status(500).send(util.returnMessaging(path, "Error creating new team", err, null, null, logObj));
                     });
                 }
@@ -343,7 +397,7 @@ router.post('/addMember', passport.authenticate('jwt', {
                     displayName: payloadMemberToAdd
                 }).then((foundUser) => {
                     if (foundUser) {
-                        if (!util.returnBoolByPath(foundTeam, 'pendingMembers')) {
+                        if (!util.returnBoolByPath(foundTeam.toObject(), 'pendingMembers')) {
                             foundTeam.pendingMembers = [];
                         }
 
@@ -354,7 +408,7 @@ router.post('/addMember', passport.authenticate('jwt', {
                         foundTeam.save().then((saveOK) => {
                             UserSub.togglePendingTeam(foundUser.displayName);
                             res.status(200).send(util.returnMessaging(path, "User added to pending members", false, saveOK, null, logObj));
-                            QueueSub.addToPendingTeamMemberQueue(foundTeam.teamName_lower, foundUser.displayName);
+                            QueueSub.addToPendingTeamMemberQueue(util.returnIdString(foundTeam._id), foundTeam.teamName_lower, until.returnIdString(foundUser._id), foundUser.displayName);
                         }, (teamSaveErr) => {
                             logObj.logLevel = 'ERROR';
                             res.status(500).send(
@@ -435,10 +489,70 @@ router.post('/save', passport.authenticate('jwt', {
                 foundTeam.timeZone = payload.timeZone;
             }
 
+            if (util.returnBoolByPath(payload, 'twitch')) {
+                foundTeam.twitch = payload.twitch;
+            }
+            if (util.returnBoolByPath(payload, 'twitter')) {
+                foundTeam.twitter = payload.twitter;
+            }
+            if (util.returnBoolByPath(payload, 'youtube')) {
+                foundTeam.youtube = payload.youtube;
+            }
+
+            if (util.returnBoolByPath(payload, 'ticker')) {
+                foundTeam.ticker = payload.ticker;
+                foundTeam.ticker_lower = payload.ticker.toLowerCase();
+            }
+
             if (util.returnBoolByPath(payload, 'captain')) {
                 //do stuff with this
                 //send message back, we won't allow this to change here.
                 captainRec = true;
+            }
+
+            if (util.returnBoolByPath(payload, 'assistantCaptain')) {
+                //this will loop through any current assistant captains and toggle them out of captain status.
+                let toggle = [];
+                let tempAc;
+
+
+                if (foundTeam.assistantCaptain) {
+                    tempAc = foundTeam.assistantCaptain;
+                    payload.assistantCaptain.forEach(player => {
+
+                        if (tempAc.indexOf(player) > -1) {
+
+                            //player from payload was all ready in the assistantCaptain list;
+                        } else {
+
+                            //new player;
+                            tempAc.push(player);
+                            toggle.push(player);
+                        }
+                    });
+                    tempAc.forEach((player, delInd) => {
+                        let index = payload.assistantCaptain.indexOf(player);
+
+                        if (index == -1) {
+
+                            //player was removed;
+                            toggle.push(player);
+                            tempAc.splice(delInd, 1);
+                        }
+                    });
+
+                } else {
+                    //new player
+                    tempAc = [];
+                    tempAc = payload.assistantCaptain;
+                    toggle = payload.assistantCaptain;
+                }
+                foundTeam.assistantCaptain = tempAc;
+
+                toggle.forEach(ele => {
+                    UserSub.toggleCaptain(ele);
+                })
+                foundTeam.markModified('assistantCaptain');
             }
 
             foundTeam.save().then((savedTeam) => {
@@ -563,13 +677,12 @@ router.post('/removeMember', passport.authenticate('jwt', {
 router.post('/uploadLogo', passport.authenticate('jwt', {
     session: false
 }), confirmCaptain, (req, res) => {
+
     const path = '/team/uploadLogo';
     let uploadedFileName = "";
 
     let teamName = req.body.teamName;
     let dataURI = req.body.logo;
-
-    var decoded = Buffer.byteLength(dataURI, 'base64');
 
     //construct log object
     let logObj = {};
@@ -578,99 +691,12 @@ router.post('/uploadLogo', passport.authenticate('jwt', {
     logObj.target = teamName;
     logObj.logLevel = 'STD';
 
-    if (decoded.length > 2500000) {
-        logObj.logLevel = 'ERROR';
-        logObj.error = 'File was too big';
-        res.status(500).send(util.returnMessaging(path, "File is too big!", false, null, null, logObj));
-    } else {
-
-        var png = dataURI.indexOf('png');
-        var jpg = dataURI.indexOf('jpg');
-        var jpeg = dataURI.indexOf('jpeg');
-        var gif = dataURI.indexOf('gif');
-
-        var stamp = Date.now()
-        stamp = stamp.toString();
-        stamp = stamp.slice(stamp.length - 4, stamp.length);
-
-        uploadedFileName += teamName + stamp + "_logo.png";
-
-
-        var buf = new Buffer.from(dataURI.replace(/^data:image\/\w+;base64,/, ""), 'base64');
-        // var buf = new Buffer.from(dataURI, 'base64');
-
-        var data = {
-            Key: uploadedFileName,
-            Body: buf,
-            ContentEncoding: 'base64',
-            ContentType: 'image/png'
-        };
-        s3Bucket.putObject(data, function(err, data) {
-            if (err) {
-                //log object
-                let sysObj = {};
-                sysObj.actor = 'SYSTEM';
-                sysObj.action = 'error uploading to AWS ';
-                sysObj.logLevel = 'ERROR';
-                sysObj.error = err;
-                sysObj.location = path;
-                sysObj.target = teamName;
-                sysObj.timeStamp = new Date().getTime();
-                logger(sysObj);
-            } else {
-                //log object
-                let sysObj = {};
-                sysObj.actor = 'SYSTEM';
-                sysObj.action = 'uploaded to AWS ';
-                sysObj.logLevel = 'STD';
-                sysObj.location = path;
-                sysObj.target = teamName;
-                sysObj.timeStamp = new Date().getTime();
-                logger(sysObj);
-            }
+    uploadTeamLogo(path, dataURI, teamName).then(rep => {
+            res.status(200).send(util.returnMessaging(path, "Image Uploaded.", false, rep.eo, null, logObj))
+        },
+        err => {
+            res.status(500).send(util.returnMessaging(path, "err.message", err, null, null, logObj))
         });
-
-        let lower = teamName.toLowerCase();
-        Team.findOne({
-            teamName_lower: lower
-        }).then((foundTeam) => {
-            if (foundTeam) {
-                if (foundTeam.captain == req.user.displayName) {
-                    var logoToDelete;
-                    if (foundTeam.logo) {
-                        logoToDelete = foundTeam.logo;
-                    }
-                    if (logoToDelete) {
-                        deleteFile(logoToDelete);
-                    }
-                    foundTeam.logo = uploadedFileName;
-                    foundTeam.save().then((savedTeam) => {
-                        if (savedTeam) {
-                            res.status(200).send(util.returnMessaging(path, "File uploaded", false, savedTeam, null, logObj));
-                        }
-                    }, (err) => {
-                        deleteFile(filePath);
-                        res.status(500).send(util.returnMessaging(path, "Error uploading file", err, null, null, logObj));
-                    })
-                } else {
-                    deleteFile(filePath);
-                    logObj.logLevel = 'ERROR';
-                    logObj.error = 'Actor was not captain'
-                    res.status(500).send(util.returnMessaging(path, "Error uploading file", false, null, null, logObj));
-                }
-            } else {
-                deleteFile(filePath);
-                logObj.logLevel = 'ERROR';
-                logObj.error = 'Team was not found';
-                res.status(500).send(util.returnMessaging(path, "Error uploading file", false, null, null, logObj));
-            }
-
-        }, (err) => {
-            deleteFile(filePath);
-            res.status(500).send(util.returnMessaging(path, "Error uploading file", err, null, null, logObj));
-        });
-    }
-
 });
 
 router.post('/reassignCaptain', passport.authenticate('jwt', {
@@ -684,50 +710,57 @@ router.post('/reassignCaptain', passport.authenticate('jwt', {
     let logObj = {};
     logObj.actor = req.user.displayName;
     logObj.action = 'reassign team capt ';
-    logObj.target = teamName + ': new capt: ' + newCapt + ' old capt: ' + req.user.displayName;
+    logObj.target = team + ': new capt: ' + newCapt + ' old capt: ' + req.user.displayName;
     logObj.logLevel = 'STD';
 
     Team.findOne({ teamName_lower: team }).then(
         (foundTeam) => {
             if (foundTeam) {
-                let members = util.returnByPath(foundTeam.toObject(), 'teamMembers');
-                let cont = false;
-                if (members) {
-                    members.forEach(element => {
-                        if (element.displayName == newCapt) {
-                            cont = true;
-                        }
-                    });
-                }
-                if (cont) {
-                    let oldCpt = foundTeam.captain;
-                    foundTeam.captain = newCapt;
-                    foundTeam.save().then(
-                        (savedTeam) => {
-                            if (savedTeam) {
-                                UserSub.toggleCaptain(oldCpt);
-                                UserSub.toggleCaptain(savedTeam.captain);
-                                res.status(200).send(util.returnMessaging(path, 'Team captain changed', false, savedTeam, null, logObj));
-                            } else {
-                                logObj.logLevel = 'ERROR';
-                                logObj.error = 'Error occured in save';
-                                res.status(500).send(util.returnMessaging(path, 'Team captain not changed', false, null, null, logObj));
-                            }
-                        }, (err) => {
-                            res.status(500).send(util.returnMessaging(path, 'Error changing team captain', err, null, null, logObj));
-                        });
-
+                if (foundTeam.assistantCaptain && foundTeam.assistantCaptain.indexOf(req.user.displayName) > -1) {
+                    logObj.error = 'Assistant Captain may not reassign Captain';
+                    res.status(500).send(util.returnMessaging(path, 'Assistant Captain may not reassign captain; contact an admin', false, null, null, logObj));
                 } else {
-                    logObj.logLevel = 'ERROR';
-                    logObj.error = 'Provided user was not a member of the team';
-                    res.status(400).send(util.returnMessaging(path, 'Provided user was not a member of the team', false, null, null, logObj));
+                    let members = util.returnByPath(foundTeam.toObject(), 'teamMembers');
+                    let cont = false;
+                    if (members) {
+                        members.forEach(element => {
+                            if (element.displayName == newCapt) {
+                                cont = true;
+                            }
+                        });
+                    }
+                    if (cont) {
+                        let oldCpt = foundTeam.captain;
+                        foundTeam.captain = newCapt;
+                        foundTeam.save().then(
+                            (savedTeam) => {
+                                if (savedTeam) {
+                                    UserSub.toggleCaptain(oldCpt);
+                                    UserSub.toggleCaptain(savedTeam.captain);
+                                    res.status(200).send(util.returnMessaging(path, 'Team captain changed', false, savedTeam, null, logObj));
+                                } else {
+                                    logObj.logLevel = 'ERROR';
+                                    logObj.error = 'Error occured in save';
+                                    res.status(500).send(util.returnMessaging(path, 'Team captain not changed', false, null, null, logObj));
+                                }
+                            }, (err) => {
+                                res.status(500).send(util.returnMessaging(path, 'Error changing team captain', err, null, null, logObj));
+                            });
+
+                    } else {
+                        logObj.logLevel = 'ERROR';
+                        logObj.error = 'Provided user was not a member of the team';
+                        res.status(400).send(util.returnMessaging(path, 'Provided user was not a member of the team', false, null, null, logObj));
+                    }
                 }
+
             }
         }, (err) => {
             res.status(500).send(util.returnMessaging(path, 'Error finding team', err, null, null, logObj));
         }
     )
 });
+
 //system
 router.post('/get/sys/dat', passport.authenticate('jwt', {
     session: false
@@ -746,37 +779,6 @@ router.post('/get/sys/dat', passport.authenticate('jwt', {
         }
     )
 });
-
-function deleteFile(path) {
-    let data = {
-        Bucket: process.env.s3bucketImages,
-        Key: path
-    };
-    s3Bucket.deleteObject(data, (err, data) => {
-        if (err) {
-            //log object
-            let sysObj = {};
-            sysObj.actor = 'SYSTEM';
-            sysObj.action = 'error deleting from AWS ';
-            sysObj.location = 'team-route-deleteFile'
-            sysObj.logLevel = 'ERROR';
-            sysObj.error = err;
-            sysObj.target = path;
-            sysObj.timeStamp = new Date().getTime();
-            logger(sysObj);
-        } else {
-            //log object
-            let sysObj = {};
-            sysObj.actor = 'SYSTEM';
-            sysObj.action = 'deleted from AWS ';
-            sysObj.location = 'team-route-deleteFile'
-            sysObj.logLevel = 'STD';
-            sysObj.target = path;
-            sysObj.timeStamp = new Date().getTime();
-            logger(sysObj);
-        }
-    })
-}
 
 //post route
 //updates the team questionnaire related info
@@ -813,6 +815,39 @@ router.post('/questionnaire/save', passport.authenticate('jwt', {
     })
 });
 
+router.get('/statistics', (req, res) => {
+
+    const path = '/team/statistics';
+    var id = decodeURIComponent(req.query.id);
+
+    Team.findOne({
+        teamName: id
+    }).then(
+        found => {
+            if (found) {
+                let id = found._id.toString();
+                Stats.find({
+                    associateId: id
+                }).then(
+                    foundStats => {
+                        res.status(200).send(util.returnMessaging(path, 'Found stat', false, foundStats));
+                    },
+                    err => {
+                        res.status(400).send(util.returnMessaging(path, 'Error finding stats.', err, null, null));
+                    }
+                )
+            } else {
+                res.status(400).send(util.returnMessaging(path, 'User ID not found.', false, null, null));
+            }
+        },
+        err => {
+            res.status(400).send(util.returnMessaging(path, 'Error finding user.', err, null, null));
+        }
+    )
+
+
+});
+
 //this confirms the calling user is the captain OR is themselves, for removing from team
 //while a captain can not remove themselves a user can remove themsevles
 function confirmCanRemove(req, res, next) {
@@ -836,7 +871,11 @@ function confirmCanRemove(req, res, next) {
             teamName_lower: lower
         }).then((foundTeam) => {
             if (foundTeam) {
-                if (foundTeam.captain == callingUser.displayName) {
+                let acIndex = -1;
+                if (foundTeam.assistantCaptain) {
+                    acIndex = foundTeam.assistantCaptain.indexOf(req.user.displayName);
+                }
+                if (foundTeam.captain == callingUser.displayName || acIndex > -1) {
                     req.team = foundTeam;
                     next();
                 } else if (callingUser.displayName == payloadUser || payloadUser.indexOf(callingUser.displayName) > -1) {
@@ -861,45 +900,6 @@ function confirmCanRemove(req, res, next) {
         next();
     }
 
-}
-
-//this confirms that the calling user is a captain of the team
-function confirmCaptain(req, res, next) {
-    const path = 'captianCheck';
-    var callingUser = req.user;
-    var payloadTeamName = req.body.teamName;
-
-    //log object
-    let logObj = {};
-    logObj.actor = req.user.displayName;
-    logObj.action = ' validate captain ';
-    logObj.logLevel = 'STD';
-    logObj.target = payloadTeamName;
-
-    let lower = payloadTeamName.toLowerCase();
-    Team.findOne({
-        teamName_lower: lower
-    }).then((foundTeam) => {
-        if (foundTeam) {
-            if (foundTeam.captain == callingUser.displayName) {
-                req.team = foundTeam;
-                next();
-            } else {
-                logObj.logLevel = 'ERROR';
-                logObj.error = 'Not authorized to change team'
-                res.status(403).send(
-                    util.returnMessaging(path, "User not authorized to change team.", false, null, null, logObj));
-            }
-        } else {
-            logObj.logLevel = 'ERROR';
-            logObj.error = 'Team was not found'
-            res.status(400).send(util.returnMessaging(path, "Team not found.", false, null, null, logObj));
-        }
-    }, (err) => {
-        res.status(500).send(
-            util.returnMessaging(path, "Error finding team", err, null, null, logObj)
-        );
-    });
 }
 
 module.exports = router;

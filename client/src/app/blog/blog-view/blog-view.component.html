@@ -1,0 +1,53 @@
+<app-banner-image [bannerTitle]="'NGS Blog'" [bannerCrumbLink]="'/blog'" [bannerCrumbRoot]="'Blog Home'" [bannerCrumbBranch]="'Post'"></app-banner-image>
+<section class="content-info">
+
+    <div class="container paddings-mini">
+        <div class="row">
+
+            <!-- Sidebars -->
+            <aside class="col-lg-3">
+
+                <!-- Widget img-->
+                <div class="panel-box">
+                    <div class="titles no-margin">
+                        <h4>
+                            <a [routerLink]="['/blog/author/',displayBlog.author]">
+                                {{displayAuthor.name}}
+                            </a>
+                        </h4>
+                    </div>
+                    <app-image-getter *ngIf="displayAuthor.mediaId" [imgId]="displayAuthor.mediaId" class="img-responsive author-image"></app-image-getter>
+                    <div class="row">
+                        <div class="info-panel" *ngIf="displayAuthor.description">
+                            <p [innerHTML]="displayAuthor.description"></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Widget img-->
+            </aside>
+            <!-- End Sidebars -->
+
+
+            <div class="col-lg-9">
+                <!-- Content Text-->
+                <div class="panel-box">
+                    <div class="titles no-margin">
+                        <h4>{{displayBlog.title}}</h4>
+                    </div>
+                    <div class="centerImage text-center mb-2">
+                        <app-image-getter *ngIf="displayBlog.postThumbnail" class="image-size" [imgId]="displayBlog.postThumbnail"></app-image-getter>
+                    </div>
+
+                    <div class="info-panel">
+                        <div [innerHTML]="displayBlog.excerpt"></div>
+                        <div id="markedBody" [innerHTML]="displayBlog.content"></div>
+                    </div>
+                </div>
+                <!-- End Content Text-->
+
+            </div>
+        </div>
+    </div>
+
+
+</section>

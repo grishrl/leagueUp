@@ -15,16 +15,12 @@ export class SetDeadlineComponent implements OnInit {
   constructor( private admin:AdminService) { }
 
   ngOnInit() {
-    this.divisions = [];
-    this.admin.getDivisionList().subscribe(res => {
-      this.divisions = res;
-    }, (err) => {
-      console.log(err);
-    })
+
   }
 
   selected(selectedDivision){
     let number;
+    this.weeks = [];
     this.selectedDivision = selectedDivision;
     if(selectedDivision.teams % 2 == 0){
       number = selectedDivision.teams.length-1;
@@ -37,14 +33,14 @@ export class SetDeadlineComponent implements OnInit {
   }
 
   createDeadline(){
-    console.log(this.friendlyDate);
 
-    this.friendlyDate.setHours(23);
-    this.friendlyDate.setMinutes(59);
+    let date = new Date(this.friendlyDate);
+    date.setHours(23);
+    date.setMinutes(59);
 
-    let time = this.friendlyDate.getTime();
+    let time = date.getTime();
 
-    
+
     if (this.selectedDivision.divisionConcat && time && this.selectedWeek){
       this.admin.setScheduleDeadline(this.selectedDivision.divisionConcat, time, this.selectedWeek).subscribe( res=>{
       console.log(res)
@@ -53,7 +49,7 @@ export class SetDeadlineComponent implements OnInit {
     })
     }else{
       alert('Input missing');
-    } 
+    }
 
 
   }

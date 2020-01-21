@@ -1,38 +1,9 @@
 
-TO DO 
-1) SET UP NGS AWS S3 BUCKETS
-2) SET UP HEROKU INSTANCES FOR 
-  2)A:  NODE APP
-  2)B:  MONGO DATABASE
-3) SET UP NGS BLIZZARD API KEY FOR OUATH
-
-
-
-Work on client flow > particularly in regards to scheduling screens, what is the flow? think it through
-***!!!returnboolbypath is not working on any document returned from mongo investigate further!!!***
-
->>> remove all hard codings of season 6 with something... else MEDIUM PRIO
-
-team
-> player names links, if possible.
-> show pending members?
-
-user
->Looking for team (marketplace)
-
-MARKETPLACE:
->looking for users (market place)
+-admin need a log browser
 
 > Server, 
->need some persistnet logging to keep up with background notices > in progress
 >post to discord when someone is looking for team 
 >post to discord when team is looking for someone
 
-MOST OF THESE HANDLED BY THE WRITING TEAM, I HOPE
-contentfulservice :
-contenful:
->podcasts on the blogging?
->ADD CATEGORY FOR EACH DIVISION TO LINK BLOG POSTS TO
->TRY TO REDUCE THE AMMOUNT OF CONTENTFUL REQUESTS MADE BY USING LOCAL STORAGE -- MAY REQUIRE SOME OBSERVABLE / PROMISE STATE MIXING TO PULL FROM LOCAL OR HTTP 
->PAGINATION AND LIMITS + PULLING EXTRA ARTICLES 
-> order posts in the list by date.
+> free agent page ; update info blocks with hero profile mmr; and links
+> team market ; maybe robustify this so that someone can't request to join a team over and over?

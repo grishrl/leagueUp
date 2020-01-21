@@ -1,0 +1,13 @@
+.groupBorder {
+    border: 2px solid;
+    border-color: #F2692E;
+    border-radius: 6px;
+}
+
+.finger {
+    cursor: pointer;
+}
+
+.finger:hover {
+    text-decoration: underline;
+}

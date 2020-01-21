@@ -1,69 +1,200 @@
 import { Component,ChangeDetectionStrategy,ViewChild,TemplateRef, OnInit} from '@angular/core';
 import { startOfDay, endOfDay, subDays,addDays,endOfMonth, isSameDay, isSameMonth, addHours } from 'date-fns';
 import { Subject } from 'rxjs';
-import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarView } from 'angular-calendar';
+import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarView, collapseAnimation } from 'angular-calendar';
 import { ScheduleService } from '../services/schedule.service';
 import { EventModalComponent } from './event-modal/event-modal.component';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
+import { EventsService } from '../services/events.service';
+import { UtilitiesService } from '../services/utilities.service';
+import { TeamService } from '../services/team.service';
+import { AuthService } from '../services/auth.service';
 
 const colors: any = {
-  red: {
-    primary: '#ad2121',
-    secondary: '#FAE3E3'
+  heroic: {  //navy
+    primary: '#001f3f',
+    name: 'Heroic Division',
+    sortOder:1
   },
-  blue: {
-    primary: '#1e90ff',
-    secondary: '#D1E8FF'
+  a: { //red
+    primary: '#FF4136',
+    name: 'Division A',
+    sortOder: 2
   },
-  yellow: {
-    primary: '#e3bc08',
-    secondary: '#FDF1BA'
+  'b-east':{ //teal
+    primary:'#39CCCC',
+    name: 'Division B East',
+    sortOder: 3
+  },
+  'b-west': { //aqua
+    primary: '#7FDBFF',
+    name: 'Division B West',
+    sortOder: 4
+  },
+  'c-east': { //fuchsia
+    primary: '#F012BE',
+    name: 'Division C East',
+    sortOder: 5
+  },
+  'c-west':{ //PURPLE
+    primary: '#B10DC9',
+    name: 'Division C West',
+    sortOder: 6
+  },
+  'd-east': { //green
+    primary: '#2ECC40',
+    name: 'Division D East',
+    sortOder: 7
+  },
+  'd-west': { //lime
+    primary: '#01FF70',
+    name: 'Division D West',
+    sortOder: 8
+  },
+  'event':{ //orange
+    primary:'#FF851B',
+    name: 'NGS Event',
+    sortOder: 9
   }
 };
-
 
 @Component({
   selector: 'app-calendar-view',
   templateUrl: './calendar-view.component.html',
-  styleUrls: ['./calendar-view.component.css']
+  styleUrls: ['./calendar-view.component.css'],
+  animations: [collapseAnimation]
 })
 export class CalendarViewComponent implements OnInit {
 
+  sortOrder = (a,b)=>{
+    return a.value.sortOrder > b.value.sortOrder ? 1 : 0;
+  }
 
+  seasonVal;
+  list = new Map<String, [object]>();
 
-  constructor(private matches: ScheduleService, public dialog: MatDialog, private router:Router) { }
+  key = colors;
+
+  constructor(private matches: ScheduleService, public dialog: MatDialog, private router:Router, private eventService:EventsService, public util: UtilitiesService, public teamServ:TeamService, public auth:AuthService, private scheduleService:ScheduleService) { }
+
+  showCasterNameUrl(match) {
+    let ret = false;
+    if (this.util.returnBoolByPath(match, 'casterName')) {
+      if (match.casterName.length > 0) {
+        ret = true;
+      } else {
+        ret = false;
+      }
+    } else {
+      ret = false;
+    }
+    return ret;
+  }
+
+  shouldShowTimeInEventTitle() : boolean
+  {
+    return this.view == CalendarView.Month;
+  }
+
+  asIsOrder(a,b){
+    return 1;
+  }
 
   _matches = [];
   ngOnInit(){
+    this.list = new Map<String, [object]>();
     this.matches.getAllMatchesWithStartTime().subscribe(
       res=>{
         let matches = res;
         this._matches = res;
+
+        matches = this.util.sortMatchesByTime(matches);
+
+        let now = Date.now()
+
         matches.forEach(match => {
+          let startDate: Date = new Date(parseInt(match.scheduledTime.startTime));
+          let endDate: Date = new Date(parseInt(match.scheduledTime.startTime)+1);
           let event: CalendarEvent = {
-            'start': new Date(parseInt(match.scheduledTime.startTime)),
-            'end': new Date(parseInt(match.scheduledTime.endTime)),
-            'title': match.home.teamName + ' vs ' + match.away.teamName,
-            'meta':match.matchId
+            'start': startDate,
+            'end': endDate,
+            'title': (colors[match.divisionConcat] ? colors[match.divisionConcat].name : 'matchErr' )+ ': ' +
+            (this.util.returnBoolByPath(match, 'home.teamName') ? match.home.teamName : 'TBD') + ' vs ' +
+            (this.util.returnBoolByPath(match, 'away.teamName') ? match.away.teamName : 'TBD'),
+            'meta':{ id: match.matchId, 'type':'match'}
           };
 
-          if(match.casterName!=null||match.casterName!=undefined){
-            event['title']+=' Casted! '
+
+          if (this.showCasterNameUrl(match)){
+            event['meta'].casted = true;
           }
-          event['color']=colors.red;
+
+          if (this.shouldShowTimeInEventTitle())
+          {
+            event['title'] = this.util.getFormattedDate(startDate, "hh:mm A zz") + ': ' + event['title'];
+          }
+
+          event['color'] = colors[match.divisionConcat] ? colors[match.divisionConcat] : { primary: '#FFFFFF'} ;
+
           this.events.push(event);
+
+          if (now <= match.scheduledTime.startTime) {
+            let formatDate = this.util.getFormattedDate(match.scheduledTime.startTime, 'dddd MMM D');
+            if (this.list.has(formatDate)) {
+              let tempArr = this.list.get(formatDate);
+              tempArr.push(match);
+              this.list.set(formatDate, tempArr);
+              // this.list[formatDate].push(match);
+            } else {
+              this.list.set(formatDate, [match]);
+            }
+          }
+
         });
-        this.refresh.next();
+
+        this.eventService.getAll().subscribe(
+          reply=>{
+
+            reply.forEach(rep=>{
+              let event: CalendarEvent = {
+                'start': new Date(parseInt(rep.eventDate)),
+                'title': rep.eventName,
+                'meta': { id: rep.uuid, 'type': 'event' }
+              };
+
+              event['color'] = colors.event;
+              this.events.push(event);
+
+
+            });
+
+            this.events = this.events.sort((a,b)=>{
+              let retVal = 0;
+              if (a.start > b.start) {
+                retVal = 1;
+              } else {
+                retVal = -1;
+              }
+              return retVal;
+            });
+
+            this.refresh.next();
+          },
+          err=>{
+            console.log(err);
+          }
+        )
+
+
       },
       err=>{
         console.log(err);
       }
     )
-    //todo: pull in matches
   }
 
-  @ViewChild('modalContent')
+  @ViewChild('modalContent', { static: false })
   modalContent: TemplateRef<any>;
 
   view: CalendarView = CalendarView.Month;
@@ -100,6 +231,7 @@ export class CalendarViewComponent implements OnInit {
   activeDayIsOpen: boolean = true;
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
+
     if (isSameMonth(date, this.viewDate)) {
       this.viewDate = date;
       if (
@@ -137,33 +269,12 @@ export class CalendarViewComponent implements OnInit {
   }
 
   handleEvent(action: string, event: CalendarEvent): void {
-    // console.log('hi, ', event);
-    // let passMatch;
-    // this._matches.forEach(match=>{
-    //   console.log('event.meta ', event.meta, ' match.matchId ', match.matchId)
-    //   if(event.meta == match.matchId){
-    //     passMatch = match;
-    //   }
-    // });
-    // this.openDialog(passMatch);
 
-    this.router.navigate(['event/',event.meta]);
+    this.eventService.setLocalEvent(event.meta);
+    this.router.navigate(['event/']);
+
 
   }
 
-  // addEvent(): void {
-  //   this.events.push({
-  //     title: 'New event',
-  //     start: startOfDay(new Date()),
-  //     end: endOfDay(new Date()),
-  //     color: colors.red,
-  //     draggable: true,
-  //     resizable: {
-  //       beforeStart: true,
-  //       afterEnd: true
-  //     }
-  //   });
-  //   this.refresh.next();
-  // }
 
 }

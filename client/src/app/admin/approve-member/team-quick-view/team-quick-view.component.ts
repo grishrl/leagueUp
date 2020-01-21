@@ -19,7 +19,7 @@ export class TeamQuickViewComponent implements OnInit {
     }
   }
 
-  constructor(private team : TeamService) { }
+  constructor(public team : TeamService) { }
 
   ngOnInit() {
   }

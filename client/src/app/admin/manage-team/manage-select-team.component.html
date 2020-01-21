@@ -1,4 +1,4 @@
-<div class="container pt-4">
+<div class="container pt-4 forceFull">
     <div class="">
         <div class="row bg-white">
             <div class="col">
@@ -31,7 +31,7 @@
                                 <span class="titles">Team Name:</span> {{team.teamName}}
                             </div>
                             <div class="col">
-                                <span class="titles">Divison: </span> <i *ngIf="!team.divisionDisplayName">(not assigned)</i>
+                                <span class="titles">Division: </span> <i *ngIf="!team.divisionDisplayName">(not assigned)</i>
                                 <span *ngIf="team.divisionDisplayName">{{team.divisionDisplayName}}</span>
                             </div>
                             <div class="col">
@@ -51,7 +51,7 @@
                         </div>
                         <div class="row">
                             <div class="col text-center">
-                                <a class="btn btn-secondary" (click)="selectedFromList(team)">Select this team for management</a>
+                                <a class="btn btn-primary text-white" (click)="selectedFromList(team)">Select this team for management</a>
                             </div>
                         </div>
                     </div>

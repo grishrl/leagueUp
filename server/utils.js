@@ -1,4 +1,5 @@
 const logger = require('./subroutines/sys-logging-subs');
+const _ = require('lodash');
 
 isNullOrEmpty = function(dat) {
     if (dat == null || dat == undefined) {
@@ -10,12 +11,17 @@ isNullOrEmpty = function(dat) {
         }
     } else if (typeof dat == 'object') {
         var noe = false;
-        var keys = Object.keys(dat);
-        keys.forEach(function(key) {
-            if (isNullOrEmpty(dat[key])) {
+        _.forEach(dat, (value, key) => {
+            if (isNullOrEmpty(value)) {
                 noe = true;
             }
         });
+        // var keys = Object.keys(dat);
+        // keys.forEach(function(key) {
+        //     if (isNullOrEmpty(dat[key])) {
+        //         noe = true;
+        //     }
+        // });
         return noe;
     } else if (typeof dat == "string") {
         return dat.length == 0;
@@ -23,6 +29,34 @@ isNullOrEmpty = function(dat) {
         return false;
     }
 };
+
+removeInactiveTeams = function(teams) {
+    let indexToRemove = [];
+    teams.forEach((team, ind) => {
+        if (team.teamName.includes('inactive') || team.teamName.includes('withdrawn')) {
+            indexToRemove.push(ind);
+        }
+    });
+    while (indexToRemove.length > 0) {
+        let indToRem = indexToRemove.pop();
+        teams.splice(indToRem, 1);
+    }
+    return teams;
+}
+
+returnIdString = function(obj) {
+    let ret = '';
+    if (!isNullorUndefined(obj)) {
+        if (obj.hasOwnProperty('toString()')) {
+            ret = obj.toString();
+        } else {
+            ret = obj + "";
+        }
+    } else {
+        ret = "nil";
+    }
+    return ret;
+}
 
 isNullorUndefined = function(dat) {
     if (dat === null || dat === undefined) {
@@ -37,18 +71,22 @@ returnMessaging = function(route, message, err, obj, additional, logInfo) {
         "route": route,
         "message": message
     };
-    if (!isNullOrEmpty(err) && err) {
+    if (!isNullorUndefined(err) && err) {
         ret.err = err;
     }
     if (!isNullorUndefined(obj) && obj) {
         ret.returnObject = obj;
     }
-    if (!isNullOrEmpty(additional)) {
-        ret = Object.assign(additional, ret);
+    if (!isNullorUndefined(additional)) {
+        if (!ret.returnObject) {
+            ret.returnObject = {};
+        }
+        ret.returnObject.additional = {};
+        Object.assign(ret.returnObject.additional, additional);
     }
 
     let logObj = {};
-    if (!isNullOrEmpty(err) && err) {
+    if (!isNullorUndefined(err) && err) {
         logObj.logLevel = 'ERROR';
         logObj.error = err;
     } else {
@@ -114,6 +152,10 @@ returnByPath = function(obj, path) {
 }
 
 returnBoolByPath = function(obj, path) {
+
+    if (obj.hasOwnProperty('toObject')) {
+        obj = obj.toObject();
+    }
     //path is a string representing a dot notation object path;
     //create an array of the string for easier manipulation
     let pathArr = path.split('.');
@@ -149,6 +191,9 @@ returnBoolByPath = function(obj, path) {
             retVal = obj[ele]
         }
     }
+    if (typeof retVal == 'number' && retVal == 0) {
+        retVal = 1;
+    }
     return !!retVal;
 }
 
@@ -159,11 +204,58 @@ function appendResHeader(request, response, next) {
     next();
 }
 
+function sortMatchesByTime(matches) {
+    matches.sort((a, b) => {
+        let ret;
+        if (!returnBoolByPath(a, 'scheduledTime.startTime')) {
+            ret = -1;
+        } else if (!returnBoolByPath(b, 'scheduledTime.startTime')) {
+            ret = -1;
+        } else {
+            if (parseInt(a.scheduledTime.startTime) > parseInt(b.scheduledTime.startTime)) {
+                ret = 1;
+            } else {
+                ret = -1;
+            }
+        }
+        return ret;
+    });
+    return matches;
+}
+
+function objectify(obj) {
+    try {
+        return obj.toObject();
+    } catch {
+        return obj;
+    }
+}
+
+//simple console log for server side errors that will give me more info from the papertrail than a simple console.log;
+//simple method to add a few peices of data together to log out
+function errLogger(location, err, add) {
+    let errLog = `Log @ ${location} : `;
+
+    if (err) {
+        errLog += ` ${err} `
+    }
+
+    if (add) {
+        errLog += `\n Additonal Message: ${add}`;
+    }
+    console.log(errLog);
+}
+
 module.exports = {
     isNullOrEmpty: isNullOrEmpty,
     isNullorUndefined: isNullorUndefined,
     returnMessaging: returnMessaging,
     returnByPath: returnByPath,
     returnBoolByPath: returnBoolByPath,
-    appendResHeader: appendResHeader
+    appendResHeader: appendResHeader,
+    returnIdString: returnIdString,
+    sortMatchesByTime: sortMatchesByTime,
+    objectify: objectify,
+    removeInactiveTeams: removeInactiveTeams,
+    errLogger: errLogger
 };

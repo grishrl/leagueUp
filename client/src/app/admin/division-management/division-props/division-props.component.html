@@ -1,16 +1,14 @@
-<div class="container">
+<div class="container forceFull">
     <div class="row">
         <div class="col">
             <div class="row">
                 <div class="col">
-                    <div class="example-container">
-                        <h5>Select division to modify:</h5>
-                        <mat-form-field>
-                            <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="selected(selectedDivision)" disableOptionCentering>
-                                <mat-option *ngFor="let division of divisions; let i = index" [value]="division">{{division.displayName}}</mat-option>
-                            </mat-select>
-                        </mat-form-field>
+                    <div class="row">
+                        <div class="col">
+                            <h3>Select division to modify:</h3>
+                        </div>
                     </div>
+                    <app-division-selector (selectedDiv)="selected($event)" [admin]="true"></app-division-selector>
                 </div>
                 <div class="col">
                     <h5>Create new division</h5>
@@ -19,7 +17,7 @@
             </div>
 
             <div *ngIf="editDivision">
-                <div class="row">
+                <div class="row pb-2">
                     <div class="col">
                         <div class="example-container">
                             <mat-form-field>
@@ -41,7 +39,10 @@
                                 <input matInput placeholder="Division Concat (System Reference)" [(ngModel)]="editDivision.divisionConcat" disabled="true">
                             </mat-form-field>
                             <mat-form-field>
-                                <input matInput placeholder="Sorting" [(ngModel)]="editDivision.sorting">
+                                <input matInput placeholder="Sorting" [formControl]="sortingControl" [(ngModel)]="editDivision.sorting">
+                                <mat-error *ngIf="sortingControl.hasError('required')">
+                                    Sort order is required
+                                </mat-error>
                             </mat-form-field>
                             <mat-form-field>
                                 <input matInput placeholder="Max MMR" [formControl]="maxMMRControl" [(ngModel)]="editDivision.maxMMR">
@@ -55,6 +56,16 @@
                                     Min MMR is required
                                 </mat-error>
                             </mat-form-field>
+                            <mat-form-field>
+                                <input matInput placeholder="Division Moderator" [formControl]="divisionModeratorControl" [(ngModel)]="editDivision.moderator">
+                                <mat-error *ngIf="divisionModeratorControl.hasError('required')">
+                                    Division Moderator is required
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-checkbox [(ngModel)]="editDivision.public">Visible to Public</mat-checkbox>
+                            <mat-checkbox [(ngModel)]="editDivision.cupDiv">Cup Division</mat-checkbox>
+
                         </div>
                     </div>
                 </div>

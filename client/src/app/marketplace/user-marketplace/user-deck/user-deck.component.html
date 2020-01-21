@@ -1,0 +1,33 @@
+<div class="row">
+    <div class="col">
+        <span class="titles">Player Name:</span> {{player.displayName}}
+    </div>
+    <div class="col">
+        <span class="titles">HL Ranking:</span> {{player.hlRankMetal}}
+        <div>
+            <span class="titles">HL Division: </span>{{player.hlRankDivision}}
+        </div>
+    </div>
+</div>
+<div class="row mt-2">
+    <div class="col">
+        <span class="titles">MMR:</span> {{player.averageMmr}}
+    </div>
+    <div class="col">
+        <span class="titles">Hots Logs:</span><a href="{{hotsLogsService.returnProfileLink(player.hotsLogsPlayerID)}}" target="_blank">
+  Link</a>
+    </div>
+</div>
+<div class="row mt-2">
+    <div class="col-6">
+        <app-player-link [player]="player.displayName">View Player Profile</app-player-link>
+    </div>
+    <div *ngIf="!rosterFull()">
+        <div class="col text-center" *ngIf="showInvButton()">
+            <button class="btn btn-success" (click)="requestToJoin(player)">Invite to Team</button>
+        </div>
+        <div class="col text-center" *ngIf="invitedStatus == 'invited'">
+            <span class="badge badge-pill badge-info font-italic">Invited!</span>
+        </div>
+    </div>
+</div>

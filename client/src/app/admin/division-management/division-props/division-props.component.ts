@@ -18,6 +18,22 @@ export class DivisionPropsComponent implements OnInit {
   safeSource
   editDivision
 
+  markFormGroupTouched(formGroup: FormGroup) {
+
+    if (formGroup.controls) {
+      const keys = Object.keys(formGroup.controls);
+      for (let i = 0; i < keys.length; i++) {
+        const control = formGroup.controls[keys[i]];
+
+        if (control instanceof FormControl) {
+          control.markAsTouched();
+        } else if (control instanceof FormGroup) {
+          this.markFormGroupTouched(control);
+        }
+      }
+    }
+  }
+
   constructor(private dialog: MatDialog, private adminService: AdminService) { }
 
   displayNameControl = new FormControl('', [
@@ -35,20 +51,30 @@ export class DivisionPropsComponent implements OnInit {
   minMMRControl = new FormControl('', [
     Validators.required
   ]);
+  divisionModeratorControl = new FormControl('', [
+    Validators.required
+  ]);
+
+  sortingControl = new FormControl('', [
+    Validators.required,
+    Validators.pattern(/[0-9]/gm)
+  ])
 
   divisionForm = new FormGroup({
     displayName: this.displayNameControl,
     divName: this.divisionNameControl,
     maxMMR: this.maxMMRControl,
-    minMMR: this.minMMRControl
+    minMMR: this.minMMRControl,
+    sorting: this.sortingControl,
+    divisionModerator: this.divisionModeratorControl
   })
 
   //creates a new concatinated system id from provided inputs
   calculateNewConcat(){
-    let div = this.editDivision.divisionName?this.editDivision.divisionName.toLowerCase():'' 
-    
+    let div = this.editDivision.divisionName?this.editDivision.divisionName.toLowerCase():''
+
     let coast = this.editDivision.divisionCoast?this.editDivision.divisionCoast.toLowerCase():'';
-    
+
     this.editDivision.divisionConcat = div
     if (coast.length>0){
       this.editDivision.divisionConcat=this.editDivision.divisionConcat+'-'+coast;
@@ -58,29 +84,26 @@ export class DivisionPropsComponent implements OnInit {
 
   //division selected from dropdown, creates a safe source to cancel back to
   selected(div){
-    this.editDivision = Object.assign({}, this.selectedDivision);
-    this.safeSource = Object.assign({},this.selectedDivision);
+    this.markFormGroupTouched(this.divisionForm)
+    this.editDivision = Object.assign({}, div);
+    this.safeSource = Object.assign({},div);
   }
 
   //sets up an empty object to create a new division from
   createNew(){
+    this.markFormGroupTouched(this.divisionForm)
     this.newDiv = true;
     this.editDivision = Object.assign({});
   }
 
   ngOnInit() {
-    //gets division list
-    this.adminService.getDivisionList().subscribe( (res)=>{
-      this.divisions = res;
-    }, (err)=> {
-      console.log(err);
-    })
+
   }
 
   //reverts any changes to a dib object back to the safe source created at selection
   revert(){
     if(this.newDiv){
-      this.editDivision = null;  
+      this.editDivision = null;
     }
     this.editDivision = Object.assign({}, this.safeSource);
   }

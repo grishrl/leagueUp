@@ -1,0 +1,21 @@
+<!-- edit -->
+<div class="row" *ngIf="!edit">
+    <div class="col">
+        <mat-form-field class="timezone-full">
+            <mat-select placeholder="Timezone:" [formControl]="timezoneControl" [(ngModel)]="timezoneValue" (ngModelChange)="timezoneUpdate()">
+                <mat-option *ngFor="let zone of timezoneServ.timezones" [value]="zone.value">
+                    {{zone.text}}
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="timezoneControl.hasError('required')">
+                Timezone is required
+            </mat-error>
+        </mat-form-field>
+    </div>
+</div>
+<div class="row" *ngIf="edit">
+    <div class="col">
+        <h6>Players Timezone:</h6> <span *ngIf="timezoneValue" else noZone>{{timezoneServ.returnTimezoneInfoFromValue(timezoneValue).text}}</span>
+        <ng-template #noZone><span>No timezone selected</span></ng-template>
+    </div>
+</div>

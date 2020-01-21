@@ -1,84 +1,97 @@
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
+<!-- Section Title -->
+<app-banner-image [bannerTitle]="'Create Team'"></app-banner-image>
 
+
+<!-- Section Area - Content Central -->
+<section class="content-info">
+
+    <div class="container paddings-mini">
+        <!-- Content Text-->
+        <div class="panel-box padding-b">
+            <div class="row pt-5 pb-3">
+
+                <div class="col text-center">
+                    <button type="button" [disabled]="!validate()" (click)="save()" class="btn btn-success ">Save</button>
+                </div>
+                <div class="col text-center">
+                    <button type="button" (click)="cancel()" class="btn btn-warning">Reset Form</button>
+                </div>
+                <div class="col text-center">
+                    <a class="btn btn-danger" [routerLink]="['/']">Cancel</a>
+                </div>
+
+
+            </div>
+            <div class="row mt-2" *ngIf="errors && errors.length > 0">
+                <div class="col text-center">
+                    <div class="alert alert-danger mx-auto" style="width:50%;" *ngFor="let error of errors">{{error}}</div>
+                </div>
+            </div>
             <div class="row mt-3">
                 <div class="col">
                     <mat-form-field class="mat-FullWidth">
-                        <input matInput placeholder="Team Name*" [formControl]="nameContorl" [(ngModel)]="returnedProfile.teamName">
+                        <input matInput placeholder="Team Name*" [formControl]="nameContorl" [(ngModel)]="returnedProfile.teamName" (blur)="checkNameFree(returnedProfile.teamName)" (ngModelChange)="checkNameFree(returnedProfile.teamName)">
+                        <mat-error *ngIf="nameContorl.hasError('invalidCharacters')">
+                            Invalid character entered
+                        </mat-error>
                         <mat-error *ngIf="nameContorl.hasError('required')">
                             Team name is required
                         </mat-error>
-                        <mat-error *ngIf="nameContorl.hasError('invalidCharacters')">
-                            Special characters are not allowed in team names
+                        <mat-error *ngIf="nameContorl.hasError('taken')">
+                            Team name is taken.
                         </mat-error>
                     </mat-form-field>
+
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col">
+                    <app-team-ticker name="ticker" [(ngModel)]="returnedProfile.ticker" [formControl]="tickerControl"></app-team-ticker>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col">
                     <mat-slide-toggle [(ngModel)]="returnedProfile.lookingForMore">
-                        Looking for More.
+                        Looking for More. <small>Enabling this shows your team in the team finder</small>
                     </mat-slide-toggle>
                 </div>
             </div>
-
-            <mat-form-field class="mat-FullWidth">
-                <mat-select placeholder="Team Competitive Level" [(ngModel)]="returnedProfile.competitiveLevel" disableOptionCentering>
-                    <mat-option *ngFor="let level of competitonLevel" [value]="level.val">
-                        {{level.display}}
-                    </mat-option>
-                </mat-select>
-                <mat-hint align="start"><strong>Generally how serious / competitively you're looking to play</strong>
-                </mat-hint>
-            </mat-form-field>
-
-            <!-- <div class="row mt-2">
-                    <div class="col"> -->
-            <mat-form-field class="mat-FullWidth">
-                <mat-label>Describe the teams play history / style</mat-label>
-                <textarea matInput cdkTextareaAutosize [(ngModel)]="returnedProfile.descriptionOfTeam"></textarea>
-            </mat-form-field>
-            <!-- </div>
-                </div> -->
             <div class="row mt-3">
                 <div class="col">
-                    Roles the team needs:
-                    <section>
-                        <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.tank">Tank</mat-checkbox>
-                        <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.offlane">Offlane</mat-checkbox>
-                        <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.meleeassassin">Melee Assassin</mat-checkbox>
-                        <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.rangedassassin">Ranged Assassin</mat-checkbox>
-                        <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.support">Support</mat-checkbox>
-                        <mat-checkbox class="role-margin" [(ngModel)]="returnedProfile.rolesNeeded.flex">Flex</mat-checkbox>
-                    </section>
+                    <app-competitive-level [(competitiveLevel)]="returnedProfile.competitiveLevel">
+                    </app-competitive-level>
+
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col">
+                    <app-play-history [(description)]="returnedProfile.descriptionOfTeam"></app-play-history>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col">
+                    <app-roles [customDisplayText]="'Roles Needed:'" [(roles)]="returnedProfile.rolesNeeded">
+                    </app-roles>
                 </div>
             </div>
             <!-- Availability Schedule -->
-            <app-times-available [availObj]="returnedProfile.availability" (availValid)="receiveTimesValidity($event)"></app-times-available>
-
             <div class="row mt-3">
                 <div class="col">
-                    <mat-form-field class="mat-FullWidth">
-                        <mat-select placeholder="Timezone:*" [formControl]="timeZoneControl" [(ngModel)]="returnedProfile.timeZone">
-                            <mat-option *ngFor="let zone of timezone.timezones" [value]="zone.value">
-                                {{zone.text}}
-                            </mat-option>
-                        </mat-select>
-                        <mat-error *ngIf="timeZoneControl.hasError('required')">
-                            Timezone is required
-                        </mat-error>
-                    </mat-form-field>
+                    <app-times-available [availObj]="returnedProfile.availability" (availValid)="receiveTimesValidity($event)">
+                    </app-times-available>
                 </div>
             </div>
-            <div class="row mt-3 mb-3">
-
+            <div class="row mt-3">
                 <div class="col">
-                    <button type="button" [disabled]="!validate()" (click)="save()" class="btn btn-success ">Save</button>
-                </div>
-                <div class="col">
-                    <button type="button" (click)="cancel()" class="btn btn-danger">Cancel</button>
-                </div>
+                    <app-timezone [disabled]="false" [(error)]="timezoneError" [(timezone)]="returnedProfile.timeZone">
+                    </app-timezone>
 
-
+                </div>
             </div>
+
 
         </div>
+        <!-- End Content Text-->
     </div>
-</div>
+</section>
+<!-- End Section Area -  Content Central -->

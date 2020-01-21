@@ -1,0 +1,46 @@
+.blog-card {
+    max-width: 300px;
+    height: 100%
+}
+
+.m-t {
+    margin-top: 10px;
+}
+
+.nav-offset {
+    padding-top: 60px;
+}
+
+.finger {
+    cursor: pointer;
+}
+
+.author-image {
+    background-size: cover;
+}
+
+.example-container {
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+.example-container>* {
+    width: 100%;
+}
+
+.mat-card {
+    background-color: #F26A2F;
+    color: white;
+}
+
+.mat-card-image {
+    background-color: white;
+}
+
+.anchor {
+    color: #482262;
+    text-decoration: underline;
+    font-weight: bold;
+    font-size: 16px;
+}

@@ -26,10 +26,22 @@ const teamSchema = new Schema({
     "timeZone": String,
     "questionnaire": Object,
     "captain": String,
+    "assistantCaptain": [String],
+    "invitedUsers": [String],
     "teamMMRAvg": Number, //added to display
+    "hpMmrAvg": Number,
+    "ngsMmrAvg": Number,
     "teamMembers": [miniUser], //added to display
     "pendingMembers": [miniUser],
-    "lastTouched": Number
+    "lastTouched": Number,
+    "replays": [String],
+    "parseStats": Boolean,
+    "ticker": String, //short aberviation of team name
+    "ticker_lower": String,
+    "history": [Object],
+    "twitch": String,
+    "twitter": String,
+    "youtube": String
 });
 
 const Team = mongoose.model('team', teamSchema);

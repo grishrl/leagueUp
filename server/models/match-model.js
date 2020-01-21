@@ -20,10 +20,27 @@ const scheduleSubSchema = new Schema({
 
 const replaySchema = new Schema({
     "1": {
+        "parsedUrl": String,
         "url": String,
         "data": String
     },
     "2": {
+        "parsedUrl": String,
+        "url": String,
+        "data": String
+    },
+    "3": {
+        "parsedUrl": String,
+        "url": String,
+        "data": String
+    },
+    "4": {
+        "parsedUrl": String,
+        "url": String,
+        "data": String
+    },
+    "5": {
+        "parsedUrl": String,
         "url": String,
         "data": String
     }
@@ -32,7 +49,6 @@ const replaySchema = new Schema({
 const matchSchema = new Schema({
     "matchId": String,
     "season": Number,
-    "division": String,
     "divisionConcat": String,
     "round": Number,
     "home": team,
@@ -40,11 +56,23 @@ const matchSchema = new Schema({
     "scheduledTime": scheduleSubSchema,
     "replays": replaySchema,
     "casterName": String,
+    "type": String,
+    "name": String,
+    "parentId": String,
+    "idChildren": [String],
     "casterUrl": String,
     "mapBans": Object,
     "other": Object,
+    "postedToHP": Boolean,
     "reported": Boolean,
-    "scheduleDeadline": String
+    "scheduleDeadline": String,
+    "forfeit": Boolean,
+    "notes": String,
+    "boX": Number,
+    "vodLinks": [String],
+    "challonge_match_ref": String, //new properties for reference challonge matches
+    "challonge_tournament_ref": String, //new properties for reference challonge matches
+    "challonge_idChildren": [String] //new properties for reference challonge matches
 }, { useNestedStrict: false });
 
 

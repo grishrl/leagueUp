@@ -1,0 +1,12 @@
+<div class="panel-box">
+    <div class="titles no-margin">
+        <h4>Categories</h4>
+    </div>
+    <div class="info-panel">
+        <ul class="list">
+            <li><i *ngIf="selectedCat == 'all'" class="fa fa-check"></i><a (click)="selectCategory('all')">All</a></li>
+            <li *ngFor="let category of categories"><i *ngIf="selectedCat == 'all' || selectedCat == category.id" class="fa fa-check"></i><a (click)="selectCategory(category.id)">{{category.name}}</a>
+            </li>
+        </ul>
+    </div>
+</div>

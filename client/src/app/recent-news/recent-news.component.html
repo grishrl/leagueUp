@@ -1,0 +1,13 @@
+<!-- Recent Post -->
+<div class="panel-box">
+
+    <div class="titles">
+        <h4>Recent News</h4>
+    </div>
+
+    <!-- Post Item -->
+    <div class="post-item" *ngFor="let blog of blogs">
+        <app-blog-headline [blogObj]="blog"></app-blog-headline>
+    </div>
+
+</div>
