@@ -40,7 +40,7 @@ export class UtilitiesService {
 
   prePendHttp(link) {
     if (link != undefined && link != null) {
-      if (link.indexOf('http://www.') == -1 || link.indexOf('https://wwww.') == -1) {
+      if (link.indexOf('http://www.') == -1 || link.indexOf('https://www.') == -1) {
         return 'http://www.' + link;
       } else {
         return link;
