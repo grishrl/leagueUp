@@ -297,4 +297,6 @@ export class UtilitiesService {
     let url = 'https://s3.amazonaws.com/' + environment.s3bucketReplays + '/' + replay;
     return url;
   }
+
+  //branch merge test
 }
