@@ -128,14 +128,13 @@ export class TeamScheduleTableComponent implements OnInit {
     }
   }
 
-  todayDate;
+
   ngOnInit() {
     if (this.seasonVal){
       this.initWithSeason();
     }else{
       this.initTeamSchedule(this.teamNameVal);
     }
-    this.todayDate = new Date().getTime();
   }
 
 }

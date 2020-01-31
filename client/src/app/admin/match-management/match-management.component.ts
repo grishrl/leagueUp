@@ -163,28 +163,4 @@ export class MatchManagementComponent implements OnInit, AfterViewInit {
     }
   }
 
-  displayTime(ms) {
-    let d = new Date(parseInt(ms));
-    let day = d.getDate();
-    let year = d.getFullYear();
-    let month = d.getMonth();
-    month = month + 1;
-    let hours = d.getHours();
-    let suffix = "AM";
-    if (hours > 12) {
-      hours = hours - 12;
-      suffix = "PM";
-    }
-
-    let min = d.getMinutes();
-    let minStr;
-    if (min == 0) {
-      minStr = '00';
-    } else {
-      minStr = min.toString();
-    }
-    let dateTime = month + '/' + day + '/' + year + ' @ ' + hours + ':' + minStr + " " + suffix;
-    return dateTime;
-  }
-
 }

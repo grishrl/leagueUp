@@ -115,7 +115,7 @@
                             <div class="row mt-2 ">
                                 <div class="col ">
                                     <span class="h6">Scheduled Time: </span><span *ngIf="match.scheduledTime !=undefined && match.scheduledTime !=null else notScheduled
-                                  ">{{timeParseAndReturn(match.scheduledTime.startTime)}}</span>
+                                  ">{{util.getFormattedDate(match.scheduledTime.startTime, "M/D/YYYY h:mm A zz")}}</span>
                                     <ng-template #notScheduled>
                                         <span>Not Yet Scheduled</span>
                                     </ng-template>

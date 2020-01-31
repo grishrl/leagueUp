@@ -4,6 +4,7 @@ import { ScheduleService } from 'src/app/services/schedule.service';
 import { AdminService } from 'src/app/services/admin.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { environment } from '../../../../environments/environment';
+import * as moment from 'moment-timezone';
 import { Match } from '../../../classes/match.class';
 
 @Component({
@@ -93,26 +94,12 @@ export class MatchEditComponent implements OnInit {
       match.away.score = this.awayScore;
     }
 
-    // console.log(this.match.scheduledTime.startTime , this.friendlyTime)
     if (this.match.scheduledTime.startTime && this.friendlyTime){
 
-      this.friendlyDate = new Date(this.match.scheduledTime.startTime);
-      let years = this.friendlyDate.getFullYear();
-      let month = this.friendlyDate.getMonth();
-      let day = this.friendlyDate.getDate();
+      this.friendlyDate = moment(this.match.scheduledTime.startTime);
 
-      let colonSplit = this.friendlyTime.split(':');
-      colonSplit[1] = parseInt(colonSplit[1]);
-      if (this.suffix == 'PM') {
-        colonSplit[0] = parseInt(colonSplit[0]);
-        colonSplit[0] += 12;
-      }
-      let setDate = new Date();
-      setDate.setFullYear(years, month, day);
-      setDate.setHours(colonSplit[0], colonSplit[1], 0, 0);
+      let msDate = this.util.returnMSFromFriendlyDateTime(this.friendlyDate, this.friendlyTime, this.suffix);
 
-      let msDate = setDate.getTime();
-      // console.log('msDate ', msDate);
       let endDate = msDate + 5400000;
       match.scheduledTime.startTime = msDate;
       match.scheduledTime.endTime = endDate;

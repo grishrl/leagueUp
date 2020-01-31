@@ -3,6 +3,7 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 import { MarkdownParserService } from 'src/app/services/markdown-parser.service';
 import { BlogCommonService } from 'src/app/services/blog-common.service';
 import { WordpressService } from 'src/app/services/wordpress.service';
+import * as moment from 'moment-timezone';
 
 @Component({
   selector: 'app-blog-headline',
@@ -29,7 +30,7 @@ export class BlogHeadlineComponent implements OnInit {
   dateObject
   ngOnInit() {
     if (this.blog  && this.blog.date){
-      this.dateObject = new Date(this.blog.date);
+      this.dateObject = moment(this.blog.date);
     }
 
     if(this.blog && this.blog.postThumbnail){

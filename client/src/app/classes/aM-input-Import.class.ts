@@ -17,19 +17,51 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatNativeDateModule } from '@angular/material';
 import { MatSnackBarModule } from '@angular/material';
 import { MatPaginatorModule } from '@angular/material';
+import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
 
 @NgModule({
-  imports: [MatInputModule, MatFormFieldModule, MatCheckboxModule, MatSelectModule, 
-    MatSliderModule, MatDatepickerModule, MatGridListModule, MatSlideToggleModule, 
-    MatButtonModule, MatCardModule, MatExpansionModule, MatAutocompleteModule, MatDialogModule,
-    MatRadioModule, MatTabsModule, MatNativeDateModule, MatSnackBarModule, MatPaginatorModule],
-  exports: [MatInputModule, MatFormFieldModule, MatCheckboxModule, MatSelectModule, 
-    MatSliderModule, MatDatepickerModule, MatGridListModule, MatSlideToggleModule, 
-    MatButtonModule, MatCardModule, MatExpansionModule, MatAutocompleteModule, MatDialogModule,
-    MatRadioModule, MatTabsModule, MatNativeDateModule, MatSnackBarModule, MatPaginatorModule]
+  imports: [
+    MatInputModule,
+    MatFormFieldModule,
+    MatCheckboxModule,
+    MatSelectModule,
+    MatSliderModule,
+    MatDatepickerModule,
+    MatGridListModule,
+    MatSlideToggleModule,
+    MatButtonModule,
+    MatCardModule,
+    MatExpansionModule,
+    MatAutocompleteModule,
+    MatDialogModule,
+    MatRadioModule,
+    MatTabsModule,
+    MatNativeDateModule,
+    MatSnackBarModule,
+    MatPaginatorModule,
+    MatMomentDateModule
+  ],
+  exports: [
+    MatInputModule,
+    MatFormFieldModule,
+    MatCheckboxModule,
+    MatSelectModule,
+    MatSliderModule,
+    MatDatepickerModule,
+    MatGridListModule,
+    MatSlideToggleModule,
+    MatButtonModule,
+    MatCardModule,
+    MatExpansionModule,
+    MatAutocompleteModule,
+    MatDialogModule,
+    MatRadioModule,
+    MatTabsModule,
+    MatNativeDateModule,
+    MatSnackBarModule,
+    MatPaginatorModule,
+    MatMomentDateModule
+  ]
 })
-
-export class InputFormMaterial{
-  
-}
+export class InputFormMaterial {}

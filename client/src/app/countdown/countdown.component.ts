@@ -6,6 +6,7 @@ import { TeamService } from '../services/team.service';
 import { CountdownService } from '../services/countdown.service';
 import { Iinterval } from '../model/iinterval';
 import { TimeserviceService } from '../services/timeservice.service';
+import * as moment from 'moment-timezone';
 
 
 @Component({
@@ -85,7 +86,7 @@ export class CountdownComponent implements OnInit {
 
           if (nearestMatch) {
             nearestMatch.scheduledTime.startTime = parseInt(nearestMatch.scheduledTime.startTime);
-            this.startDate = new Date(nearestMatch.scheduledTime.startTime);
+            this.startDate = nearestMatch.scheduledTime.startTime;
             this.targetMatch = nearestMatch;
             this.validMatch = true;
             this.initCountdown();

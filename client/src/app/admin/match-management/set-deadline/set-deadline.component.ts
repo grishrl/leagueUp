@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminService } from 'src/app/services/admin.service';
+import * as moment from 'moment-timezone';
 
 @Component({
   selector: 'app-set-deadline',
@@ -34,11 +35,11 @@ export class SetDeadlineComponent implements OnInit {
 
   createDeadline(){
 
-    let date = new Date(this.friendlyDate);
-    date.setHours(23);
-    date.setMinutes(59);
+    let date = moment(this.friendlyDate);
+    date.hours(23);
+    date.minutes(59);
 
-    let time = date.getTime();
+    let time = date.unix()*1000;
 
 
     if (this.selectedDivision.divisionConcat && time && this.selectedWeek){

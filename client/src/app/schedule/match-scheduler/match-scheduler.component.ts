@@ -4,6 +4,8 @@ import { ScheduleService } from 'src/app/services/schedule.service';
 import { TeamService } from 'src/app/services/team.service';
 import { environment } from '../../../environments/environment';
 import { AuthService } from 'src/app/services/auth.service';
+import * as moment from 'moment-timezone';
+import { UtilitiesService } from 'src/app/services/utilities.service';
 
 
 @Component({
@@ -15,7 +17,7 @@ export class MatchSchedulerComponent implements OnInit {
 
   //component properties
   matchId //local prop to hold match Id recieved from route
-  matchDate = Date.now();  //local prop that holds the selected date by user from the calendar
+  matchDate = moment();  //local prop that holds the selected date by user from the calendar
   time: any //local prop that hold the selected time from user
   suffix: any //local prop for selected AM/PM suffix
   times: any[] = [];  //local array that is populated progromatticaly to give users a drop down of times on 15 min interval to select
@@ -28,7 +30,7 @@ export class MatchSchedulerComponent implements OnInit {
   amPm = ['PM', 'AM']; //local propery holds array for the am/pm dropdown
 
   constructor(public team: TeamService, private route: ActivatedRoute, private scheduleService:ScheduleService, private router:Router,
-    private Auth: AuthService) {
+    private Auth: AuthService, private util:UtilitiesService) {
     //get the id provided in the URL route
     this.matchId = this.route.snapshot.params['id'];
    }
@@ -91,19 +93,8 @@ index = 0;
     if(!this.time){
       alert("Please select a date / time");
     }else{
-      let colonSplit = this.time.split(':');
 
-      colonSplit[1] = parseInt(colonSplit[1]);
-
-      if (this.suffix == 'PM') {
-        colonSplit[0] = parseInt(colonSplit[0]);
-        colonSplit[0] += 12;
-      }
-
-      let setDate = new Date(this.matchDate);
-      setDate.setHours(colonSplit[0], colonSplit[1], 0, 0);
-
-      let msDate = setDate.getTime();
+      let msDate = this.util.returnMSFromFriendlyDateTime(this.matchDate, this.time, this.suffix);
       let endDate = msDate + 5400000;
 
       if (msDate) {

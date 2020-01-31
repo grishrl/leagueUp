@@ -4,6 +4,7 @@ import { EventsService } from 'src/app/services/events.service';
 import { ActivatedRoute } from '@angular/router';
 import { cloneDeep } from 'lodash';
 import { forEach as _forEach } from 'lodash';
+import * as moment from 'moment-timezone';
 
 @Component({
   selector: 'app-event-create',
@@ -74,26 +75,11 @@ export class EventCreateComponent implements OnInit {
 
 
     if (this.event['eventDate'] && this.friendlyTime) {
-      this.friendlyDate = new Date(this.event['eventDate']);
-      let years = this.friendlyDate.getFullYear();
-      let month = this.friendlyDate.getMonth();
-      let day = this.friendlyDate.getDate();
+      this.friendlyDate = moment(this.event["eventDate"]);
 
-      let colonSplit = this.friendlyTime.split(':');
-      colonSplit[1] = parseInt(colonSplit[1]);
-      if (this.suffix == 'PM') {
-        colonSplit[0] = parseInt(colonSplit[0]);
-        colonSplit[0] += 12;
-      }
-
-      let setDate = new Date();
-      setDate.setFullYear(years, month, day);
-      setDate.setHours(colonSplit[0], colonSplit[1], 0, 0);
-
-      let msDate = setDate.getTime();
-      // let endDate = msDate + 5400000;
+      let msDate = this.util.returnMSFromFriendlyDateTime(this.friendlyDate, this.friendlyTime, this.suffix);
       this.event['eventDate'] = msDate;
-      // match.scheduledTime.endDate = endDate;
+
     }
 
     delete this.eventOrig['_id'];

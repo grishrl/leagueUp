@@ -6,6 +6,7 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { FilterService } from 'src/app/services/filter.service';
 import { TimeserviceService } from 'src/app/services/timeservice.service';
+import * as moment from 'moment-timezone';
 
 
 @Component({
@@ -26,12 +27,6 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
         this.initSchedule();
       }
     );
-   }
-
-
-   timeParseAndReturn(time){
-     time = parseInt(time);
-     return this.util.getFormattedDate(time, "M/D/YYYY h:mm A zz");
    }
 
   hideForm = true;
@@ -81,14 +76,13 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    // this.friendlyDate = Date.now();
-    let zeroHour = new Date(Date.now());
+    let zeroHour = moment();
 
-    zeroHour.setHours(0);
-    zeroHour.setMinutes(0);
-    zeroHour.setMilliseconds(0);
+    zeroHour.hours(0);
+    zeroHour.minutes(0);
+    zeroHour.milliseconds(0);
 
-    this.friendlyDate = zeroHour.getTime();
+    this.friendlyDate = zeroHour.unix()*1000;
 
     for (let i = 1; i < 13; i++) {
       for (let j = 0; j <= 3; j++) {
@@ -149,29 +143,12 @@ initSchedule(){
   timeChanged(){
     if (this.friendlyDate && this.friendlyTime) {
       if (this.friendlyTime && this.suffix) {
-        // let years = this.friendlyDate.getFullYear();
-        // let month = this.friendlyDate.getMonth();
-        // let day = this.friendlyDate.getDate();
 
-        let colonSplit = this.friendlyTime.split(':');
-        colonSplit[1] = parseInt(colonSplit[1]);
-        if (this.suffix == 'PM') {
-          colonSplit[0] = parseInt(colonSplit[0]);
-          colonSplit[0] += 12;
-        }
-        let setDate = new Date(this.friendlyDate);
-        // setDate.setFullYear(years);
-        // setDate.setMonth(month);
-        // setDate.setDate(day);
-        // setDate.setHours(0);
-        // setDate.setMinutes(0);
-        // setDate.setMilliseconds(0);
+        let setDate = moment(this.friendlyDate);
 
         this.endTimeFlt = this.friendlyDate + 86400000;
-        setDate.setHours(colonSplit[0]);
-        setDate.setMinutes(colonSplit[1]);
-        let msDate = setDate.getTime();
-        this.startTimeFlt = msDate;
+
+        this.startTimeFlt = this.util.returnMSFromFriendlyDateTime(setDate, this.friendlyTime, this.suffix);
         this.doFilterMatches();
       }
     } else if (this.friendlyDate){
@@ -290,30 +267,6 @@ initSchedule(){
       ret = false;
     }
     return ret;
-  }
-
-  displayTime(ms) {
-    let d = new Date(parseInt(ms));
-    let day = d.getDate();
-    let year = d.getFullYear();
-    let month = d.getMonth();
-    month = month + 1;
-    let hours = d.getHours();
-    let suffix = "AM";
-    if (hours > 12) {
-      hours = hours - 12;
-      suffix = "PM";
-    }
-
-    let min = d.getMinutes();
-    let minStr;
-    if (min == 0) {
-      minStr = '00';
-    } else {
-      minStr = min.toString();
-    }
-    let dateTime = month + '/' + day + '/' + year + ' @ ' + hours + ':' + minStr + " " + suffix;
-    return dateTime;
   }
 
 }

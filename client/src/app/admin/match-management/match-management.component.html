@@ -73,10 +73,8 @@
                         </div>
                         <div class="row mt-3">
                             <div class="col text-center">
-                                <span class="h5">Scheduled Time:</span> <span *ngIf="util.returnBoolByPath(match, 'scheduledTime.startTime') else notScheduled">{{displayTime(match.scheduledTime.startTime)}}</span>
-                                <ng-template #notScheduled>
-                                    <span>Not Yet Scheduled</span>
-                                </ng-template>
+                                <span class="h5">Scheduled Time: </span> <span *ngIf="util.returnBoolByPath(match, 'scheduledTime.startTime') else notScheduled">{{util.getFormattedDate(match.scheduledTime.startTime, "dddd M/D/YYYY h:mm A zz")}}</span>
+
                             </div>
                         </div>
                         <div class="row mt-3" *ngIf="match.notes">
@@ -107,3 +105,6 @@
         <!--  -->
     </div>
 </div>
+<ng-template #notScheduled>
+    <span> Not Yet Scheduled </span>
+</ng-template>

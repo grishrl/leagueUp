@@ -41,7 +41,7 @@ export class UtilitiesService {
   prePendHttp(link) {
     if (link != undefined && link != null) {
       if (link.includes('http://') || link.includes('https://')) {
-        return link; 
+        return link;
       } else {
         return 'http://' + link;
       }
@@ -51,14 +51,14 @@ export class UtilitiesService {
   }
 
   getTimeFromMS(msDate) {
-    let time = new Date(parseInt(msDate));
+    let time = moment(parseInt(msDate));
     // this.friendlyDate = time;
     // this.suffix = 'AM';
-    let hours = time.getHours();
+    let hours = time.hours();
     if (hours > 12) {
       hours = hours - 12;
     }
-    let min = time.getMinutes();
+    let min = time.minutes();
     let minStr;
     if (min == 0) {
       minStr = '00';
@@ -70,10 +70,6 @@ export class UtilitiesService {
 
   dayOfWeekAsString(dayIndex) {
     return ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][dayIndex];
-  }
-
-  getDatePickerFormatFromMS(msDate) {
-    return new Date(parseInt(msDate));
   }
 
   getDateFormatStr(showTimeZone: boolean = false) : string {
@@ -298,5 +294,33 @@ export class UtilitiesService {
     return url;
   }
 
-  //branch merge test
+  returnMSFromFriendlyDateTime(val, time, suffix){
+    //date in moment or date format...
+    let m = moment(val);
+    let year = m.year();
+    let month = m.month();
+    let date = m.date();
+    let setDate = moment();
+    setDate.year(year);
+    setDate.month(month);
+    setDate.date(date);
+    setDate
+      .hour(0)
+      .minute(0)
+      .second(0)
+      .millisecond(0);
+
+      let colonSplit = time.split(":");
+      colonSplit[1] = parseInt(colonSplit[1]);
+      if (suffix == "PM") {
+        colonSplit[0] = parseInt(colonSplit[0]);
+        colonSplit[0] += 12;
+      }
+
+    setDate.hour(colonSplit[0]).minutes(colonSplit[1]).seconds(0).milliseconds(0);
+
+    let msDate = setDate.unix() * 1000;
+    return msDate;
+  }
+
 }

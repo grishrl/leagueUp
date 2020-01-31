@@ -17,7 +17,7 @@
                                 <div class="col-10 finger" (click)="selectMessage(message)">
                                     <div class="row">
                                         <div class="col"><strong>Sender:</strong> {{message.sender}}</div>
-                                        <div class="col"><strong>Time:</strong> {{util.getDateFromMS(message.timeStamp)}} {{util.getTimeFromMS(message.timeStamp)}} {{util.getSuffixFromMS(message.timeStamp)}}
+                                        <div class="col"><strong>Time:</strong> {{util.getFormattedDate(message.timeStamp, 'MM/DD/YYYY hh:mm A')}}
                                         </div>
                                     </div>
                                     <div class="row">
