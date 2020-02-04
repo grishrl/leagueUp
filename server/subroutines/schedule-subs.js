@@ -37,80 +37,95 @@ async function generateSeason(season) {
     logObj.timeStamp = new Date().getTime();
     logObj.logLevel = 'STD';
 
+    let returnVal = false;
 
-    let divObj = {};
-    //get list of divisions
-    let getDivision = await Division.find({
-        $or: [{
-                cupDiv: false
-            },
+    try {
+
+        let divObj = {};
+        //get list of divisions
+        let getDivision = await Division.find({
+            $or: [{
+                    cupDiv: false
+                },
+                {
+                    cupDiv: {
+                        $exists: false
+                    }
+                }
+            ]
+        }).lean().then((res) => {
+            return res;
+        });
+        //loop through the divisions
+        for (var i = 0; i < getDivision.length; i++) {
+            //local div variable
+            let thisDiv = getDivision[i];
+            divObj[thisDiv.divisionConcat] = {};
+            //create an array of teams from the division
+            let lowerTeam = [];
+            thisDiv.teams.forEach(iterTeam => {
+                lowerTeam.push(iterTeam.toLowerCase());
+            });
+            //pull the teams info from the dB and create an array of strings of the teams _ids
+            // let participants = [];
+            let participants = await TeamModel.find({
+                teamName_lower: {
+                    $in: lowerTeam
+                }
+            }).then((teams) => {
+                //create an array of strings of the teams _ids and return
+                let returnParticipants = [];
+                if (teams && teams.length > 0) {
+                    teams.forEach(team => {
+                        returnParticipants.push(team._id.toString());
+                    });
+                }
+                return returnParticipants;
+            });
+            //schedule object will have
+            /*
             {
-                cupDiv: { $exists: false }
+                participants:[ String ], <- string array of team _ids
+                matches:[ Object ], <- object array of matches
+                roundSchedules[ Object ] <- object array of matches
             }
-        ]
-    }).then((res) => {
-        return res;
-    });
-    //loop through the divisions
-    for (var i = 0; i < getDivision.length; i++) {
-        //local div variable
-        let thisDiv = getDivision[i];
-        divObj[thisDiv.divisionConcat] = {};
-        //create an array of teams from the division
-        let lowerTeam = [];
-        thisDiv.teams.forEach(iterTeam => {
-            lowerTeam.push(iterTeam.toLowerCase());
-        });
-        //pull the teams info from the dB and create an array of strings of the teams _ids
-        // let participants = [];
-        let participants = await TeamModel.find({
-            teamName_lower: {
-                $in: lowerTeam
-            }
-        }).then((teams) => {
-            //create an array of strings of the teams _ids and return
-            let returnParticipants = [];
-            if (teams && teams.length > 0) {
-                teams.forEach(team => {
-                    returnParticipants.push(team._id.toString());
-                });
-            }
-            return returnParticipants;
-        });
-        //schedule object will have
-        /*
-        {
-            participants:[ String ], <- string array of team _ids
-            matches:[ Object ], <- object array of matches
-            roundSchedules[ Object ] <- object array of matches
-        }
-         */
-        divObj[thisDiv.divisionConcat]['participants'] = participants;
-        divObj[thisDiv.divisionConcat]['matches'] = [];
-        divObj[thisDiv.divisionConcat]['roundSchedules'] = {};
-    }
+             */
 
-    // create the schedule object
-    let schedObj = {
-            "season": season,
-            "division": divObj
+            divObj[thisDiv.divisionConcat]['participants'] = participants;
+            divObj[thisDiv.divisionConcat]['matches'] = [];
+            divObj[thisDiv.divisionConcat]['DRR'] = !!util.returnByPath(thisDiv, 'DRR');
+            divObj[thisDiv.divisionConcat]['roundSchedules'] = {};
         }
-        //save the schedule object to db
-    let sched = await new Scheduling(
-        schedObj
-    ).save().then((saved) => {
-        return true;
-    }, (err) => {
-        return false;
-    });
-    //log results
-    if (sched) {
-        logger(logObj);
-    } else {
+
+        // create the schedule object
+        let schedObj = {
+                "season": season,
+                "division": divObj
+            }
+            //save the schedule object to db
+        let sched = await new Scheduling(
+            schedObj
+        ).save().then((saved) => {
+            return true;
+        }, (err) => {
+            return false;
+        });
+        //log results
+        if (sched) {
+            logger(logObj);
+        } else {
+            logObj.logLevel = 'ERROR';
+            logger(logObj);
+        }
+        returnVal = sched;
+
+    } catch (e) {
         logObj.logLevel = 'ERROR';
         logger(logObj);
+        util.errLogger('schedule-sub', e, 'Error in generateSeason');
     }
-    return sched;
+    return returnVal;
+
 }
 
 
@@ -146,11 +161,10 @@ function generateRoundRobinSchedule(season) {
                 //use the robin method to create the round robin matches
                 let roundRobin = robin(participants.length, participants);
                 let matches = divisions[key].matches;
-                console.log('roundRobin.length ', roundRobin.length);
-                console.log('roundRobin', JSON.stringify(roundRobin));
 
                 //for a double round robin division >>>>
                 if (util.returnByPath(divisions[key], 'DRR')) {
+                    console.log('>>>>> here <<<<<<');
                     let dbl = lodash.clone(roundRobin);
                     dbl.forEach(
                         r => {
