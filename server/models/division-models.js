@@ -13,6 +13,7 @@ const divisionInfoSchema = new Schema({
     "lastTouched": String,
     "public": Boolean,
     "cupDiv": Boolean,
+    "DRR": Boolean,
     "participants": [String],
     "tournaments": [String], //tournament references for cup divs
     "moderator": String
