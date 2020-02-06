@@ -56,12 +56,12 @@ seasonVal
   ngOnInit() {
     if (this.seasonVal) {
       this.currentSeason = this.seasonVal;
-      this.calculateRounds(this.provDiv);
+      this.rounds = this.util.calculateRounds(this.provDiv);
     } else {
       this.timeService.getSesasonInfo().subscribe(
         res => {
           this.currentSeason = res['value'];
-          this.calculateRounds(this.provDiv);
+          this.rounds = this.util.calculateRounds(this.provDiv);
         }
       );
     }
@@ -72,41 +72,6 @@ seasonVal
   matches: any[] = [];
   selectedDivision: any
   rounds: number[] = [];
-
-  calculateRounds(div) {
-    this.provDiv = this.provDiv ? this.provDiv : div;
-    let roundNumber = 0;
-    if (this.provDiv != undefined && this.provDiv != null && this.provDiv.teams != undefined && this.provDiv.teams != null) {
-      if (this.provDiv % 2 == 0) {
-        roundNumber = this.provDiv.teams.length - 1;
-      } else {
-        roundNumber = this.provDiv.teams.length;
-      }
-
-    } else if (this.selectedDivision != null && this.selectedDivision != undefined && this.selectedDivision.teams != undefined && this.selectedDivision.teams != null) {
-      roundNumber = this.selectedDivision.teams.length - 1;
-    }
-    this.rounds = [];
-    this.matches = [];
-    if (roundNumber == 0) {
-      roundNumber = 1;
-    }
-    for (let i = 0; i < roundNumber; i++) {
-      this.rounds.push(i + 1);
-    }
-
-    let week
-    if(this.seasonVal){
-      week=1;
-    }else{
-      week = this.timeService.returnWeekNumber();
-    }
-    if (week > 0) {
-      this.selectedRound = week;
-    }
-    this.getMatches();
-
-  }
 
   selectedRound: number
   getMatches() {

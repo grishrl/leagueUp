@@ -50,7 +50,7 @@ export class ScheduleViewComponent implements OnInit, OnChanges {
       this.provDiv = val.division;
       this.provSeason = val.season;
       this.pastSeason = val.pastSeason;
-      this.calculateRounds(this.provDiv);
+      this.rounds = this.util.calculateRounds(this.provDiv);
     }
   }
 
@@ -61,7 +61,6 @@ export class ScheduleViewComponent implements OnInit, OnChanges {
   @Input() set division(div){
     if(div!=undefined && div != null){
       this.provDiv = div;
-      // this.calculateRounds(this.provDiv);
     }
   }
 
@@ -69,43 +68,6 @@ export class ScheduleViewComponent implements OnInit, OnChanges {
   selectedDivision:any
   rounds: number[] = [];
 
-  calculateRounds(div) {
-    this.provDiv = this.provDiv ? this.provDiv : div;
-    let roundNumber = 0;
-    let drr=false;
-    if (
-      (this.provDiv && this.provDiv.DRR) ||
-      this.selectedDivision && this.selectedDivision.DRR
-    ) {
-      drr = true;
-    }
-
-    if (this.provDiv != undefined && this.provDiv != null && this.provDiv.teams != undefined && this.provDiv.teams != null) {
-      if(this.provDiv.teams.length % 2 == 0){
-        roundNumber = this.provDiv.teams.length - 1;
-      }else{
-        roundNumber = this.provDiv.teams.length;
-      }
-    } else if (this.selectedDivision != null && this.selectedDivision != undefined && this.selectedDivision.teams != undefined && this.selectedDivision.teams != null){
-      if (this.selectedDivision.teams.length % 2 == 0) {
-        roundNumber = this.selectedDivision.teams.length - 1;
-      } else {
-        roundNumber = this.selectedDivision.teams.length;
-      }
-      // roundNumber = this.selectedDivision.teams.length - 1;
-    }
-    this.rounds = [];
-    this.matches=[];
-    if (roundNumber == 0){
-      roundNumber = 1;
-    }
-    if(drr){
-      roundNumber = roundNumber*2;
-    }
-    for (let i = 0; i < roundNumber; i++) {
-      this.rounds.push(i + 1);
-    }
-  }
 
   selectedRound:number
 
@@ -162,7 +124,7 @@ export class ScheduleViewComponent implements OnInit, OnChanges {
       if ((changes.division.currentValue && changes.division.currentValue['divisionConcat'] != null)) {
         if (changes.division.previousValue && changes.division.currentValue['divisionConcat'] != changes.division.previousValue['divisionConcat'] || !changes.division.previousValue) {
           this.provDiv = changes.division.currentValue;
-          this.calculateRounds(this.provDiv);
+          this.rounds = this.util.calculateRounds(this.provDiv);
           this.initialize();
         }
       }

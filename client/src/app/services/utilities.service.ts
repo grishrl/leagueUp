@@ -11,6 +11,36 @@ export class UtilitiesService {
 
   constructor() { }
 
+  calculateRounds(div):Array<number> {
+    let provDiv = div;
+    let roundNumber = 0;
+    let drr = false;
+    if (provDiv && provDiv.DRR)
+     {
+      drr = true;
+    }
+
+    if (provDiv != undefined && provDiv != null && provDiv.teams != undefined && provDiv.teams != null) {
+      if (provDiv.teams.length % 2 == 0) {
+        roundNumber = provDiv.teams.length - 1;
+      } else {
+        roundNumber = provDiv.teams.length;
+      }
+    }
+      // roundNumber = this.selectedDivision.teams.length - 1;
+    let rounds = [];
+    if (roundNumber == 0) {
+      roundNumber = 1;
+    }
+    if (drr) {
+      roundNumber = roundNumber * 2;
+    }
+    for (let i = 0; i < roundNumber; i++) {
+      rounds.push(i + 1);
+    }
+    return rounds;
+  }
+
   //this method is terrible
   isNullOrEmpty(dat): boolean {
     if (dat == null || dat == undefined) {
