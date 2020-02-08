@@ -16,11 +16,11 @@ async function promoteTournamentMatch(foundMatch) {
         let winner = {};
         if (foundMatch.home.score > foundMatch.away.score) {
             winner['id'] = foundMatch.home.id;
-            winner['pos'] = 'home';
+            // winner['pos'] = 'home';
             winner['teamName'] = foundMatch.home.teamName;
         } else {
             winner['id'] = foundMatch.away.id;
-            winner['pos'] = 'away';
+            // winner['pos'] = 'away';
             winner['teamName'] = foundMatch.away.teamName;
         }
 
@@ -77,7 +77,7 @@ async function promoteTournamentMatch(foundMatch) {
 
                     //match up the challonge parent match ID with the winner match
                     //this will allow us to have proper teams always promoted into a matching position to challonge
-                    if (parentChallongeMatch.match.player1_id == winnerID) {
+                    if (parentChallongeMatch.match.player1_prereq_match_id == foundMatch.challonge_match_ref) {
                         parentMatch.home = winner;
                         parentMatch.markModified('home');
                     } else {
