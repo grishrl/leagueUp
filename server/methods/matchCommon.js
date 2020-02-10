@@ -16,11 +16,11 @@ async function promoteTournamentMatch(foundMatch) {
         let winner = {};
         if (foundMatch.home.score > foundMatch.away.score) {
             winner['id'] = foundMatch.home.id;
-            // winner['pos'] = 'home';
+            winner['pos'] = 'home';
             winner['teamName'] = foundMatch.home.teamName;
         } else {
             winner['id'] = foundMatch.away.id;
-            // winner['pos'] = 'away';
+            winner['pos'] = 'away';
             winner['teamName'] = foundMatch.away.teamName;
         }
 
