@@ -353,4 +353,24 @@ export class UtilitiesService {
     return msDate;
   }
 
+    async imageToPng(blob) {
+    if (blob.type === "image/png") {
+      return blob;
+    }
+
+    const image = new Image();
+    await new Promise((resolve, reject) => {
+      image.onload = resolve;
+      image.onerror = reject;
+      image.src = URL.createObjectURL(blob);
+    });
+    const canvas = Object.assign(document.createElement("canvas"), {
+      width: image.naturalWidth,
+      height: image.naturalHeight
+    });
+    canvas.getContext("2d").drawImage(image, 0, 0);
+    URL.revokeObjectURL(image.src);
+    return new Promise(resolve => canvas.toBlob(resolve));
+  }
+
 }

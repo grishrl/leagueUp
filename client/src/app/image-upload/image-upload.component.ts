@@ -4,7 +4,6 @@ import { NgxCroppieComponent } from 'ngx-croppie';
 import { TeamService } from '../services/team.service';
 import { UtilitiesService } from '../services/utilities.service';
 import { AdminService } from '../services/admin.service';
-import { imageCompression } from 'browser-image-compression';
 
 @Component({
   selector: 'app-image-upload',
@@ -152,7 +151,6 @@ export class ImageUploadComponent implements OnInit {
   }
 
   imageUploadEvent(evt: any) {
-    console.log('evt',evt);
     this.croppieImage=null;
     if (!evt.target) { return; }
     if (!evt.target.files) { return; }
@@ -160,10 +158,8 @@ export class ImageUploadComponent implements OnInit {
     const file = evt.target.files[0];
     if (file.type !== 'image/jpeg' && file.type !== 'image/png' && file.type !== 'image/gif' && file.type !== 'image/jpg') { return; }
     const fr = new FileReader();
-    console.log('fr instanceofblob', file instanceof Blob);
-    imageToPng(file).then(
+    this.util.imageToPng(file).then(
       ret => {
-        console.log(ret);
         fr.readAsDataURL(ret);
       },
       err => {
@@ -174,30 +170,9 @@ export class ImageUploadComponent implements OnInit {
 
       this.croppieImage = '';
       this.croppieImage = <string>fr.result;
-          console.log(file);
-          console.log(this.croppieImage);
     };
 
 
   }
 
 }
-  async function imageToPng(blob) {
-    if (blob.type === "image/png") {
-      return blob;
-    }
-
-    const image = new Image();
-    await new Promise((resolve, reject) => {
-      image.onload = resolve;
-      image.onerror = reject;
-      image.src = URL.createObjectURL(blob);
-    });
-    const canvas = Object.assign(document.createElement("canvas"), {
-      width: image.naturalWidth,
-      height: image.naturalHeight
-    });
-    canvas.getContext("2d").drawImage(image, 0, 0);
-    URL.revokeObjectURL(image.src);
-    return new Promise(resolve => canvas.toBlob(resolve));
-  }

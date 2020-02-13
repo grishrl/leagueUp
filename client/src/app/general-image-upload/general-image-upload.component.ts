@@ -164,11 +164,18 @@ export class GeneralImageUploadComponent implements OnInit {
     const file = evt.target.files[0];
     if (file.type !== 'image/jpeg' && file.type !== 'image/png' && file.type !== 'image/gif' && file.type !== 'image/jpg') { return; }
     const fr = new FileReader();
-    fr.onloadend = (loadEvent) => {
-      this.croppieImage = '';
+    this.util.imageToPng(file).then(
+      ret => {
+        fr.readAsDataURL(ret);
+      },
+      err => {
+        console.log(err);
+      }
+    );
+    fr.onloadend = loadEvent => {
+      this.croppieImage = "";
       this.croppieImage = <string>fr.result;
     };
-    fr.readAsDataURL(file);
   }
 
 
