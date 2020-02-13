@@ -15,6 +15,7 @@ export class Match {
   mapBans: mapBans;
   season: number;
   boX:number;
+  type:string;
   reported:boolean;
   notes:string;
 
@@ -39,6 +40,7 @@ export class Match {
       startTime: null,
       endTime: null
     },
+    this.type = '';
     this.matchId=null;
     this.round = null;
     this.divisionConcat = null;

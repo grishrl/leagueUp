@@ -44,7 +44,7 @@
             </div>
             <div class="col ">
                 <span class="h6">Game Type: </span>
-                <span *ngIf="match.type && match.type=='tournament' else seasonal ">Tournament Match</span>
+                <span *ngIf="match.type=='tournament' else seasonal ">Tournament Match</span>
                 <ng-template #seasonal>
                     <span>Regular Season Game</span>
                 </ng-template>
