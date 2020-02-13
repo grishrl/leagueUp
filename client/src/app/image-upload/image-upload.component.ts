@@ -160,7 +160,7 @@ export class ImageUploadComponent implements OnInit {
     const file = evt.target.files[0];
     if (file.type !== 'image/jpeg' && file.type !== 'image/png' && file.type !== 'image/gif' && file.type !== 'image/jpg') { return; }
     const fr = new FileReader();
-    console.log('fr instanceofblob',, file instanceof Blob);
+    console.log('fr instanceofblob', file instanceof Blob);
     imageToPng(file).then(
       ret => {
         console.log(ret);

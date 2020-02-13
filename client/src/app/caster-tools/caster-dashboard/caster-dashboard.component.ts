@@ -19,7 +19,7 @@ export class CasterDashboardComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   currentSeason
-  constructor(public team:TeamService, private scheduleService:ScheduleService, public util:UtilitiesService, private Auth: AuthService,
+  constructor(public team:TeamService, private scheduleService:ScheduleService, public util:UtilitiesService,
     private filterService:FilterService, private timeService:TimeserviceService) {
     this.timeService.getSesasonInfo().subscribe(
       res => {
@@ -120,18 +120,7 @@ initSchedule(){
   )
 }
 
-  claimMatch(match){
 
-    this.scheduleService.addCasterOcc(match).subscribe(
-      res=>{
-        this.ngOnInit();
-      },
-      err=>{
-        console.log(err);
-      }
-    )
-
-  }
 
   resetTime(){
     this.startTimeFlt = null;
@@ -214,59 +203,5 @@ initSchedule(){
   }
 
 
-
-  checkRights(){
-    let ret = false;
-    if (this.Auth.getAdmin() && this.Auth.getAdmin().indexOf('match')>-1){
-      ret = true;
-    }
-    return ret;
-  }
-
-  removeCaster(match){
-          this.scheduleService.addCaster(match.matchId, '', '').subscribe(
-            (res) => {
-              let i = -1;
-              this.originalMatches.forEach(
-                (match, index)=>{
-                  if(match.matchId == res.matchId){
-                    i = index;
-                  }
-                }
-              )
-              if (i > -1) {
-                this.originalMatches[i] = res;
-              }
-              this.displayArray.forEach(
-                (match, index) => {
-                  if (match.matchId == res.matchId) {
-                    i = index;
-                  }
-                }
-              )
-              if(i>-1){
-                this.displayArray[i] = res;
-              }
-            },
-            (err) => {
-              console.log(err);
-            }
-          )
-
-  }
-
-  showCasterNameUrl(match){
-    let ret = false;
-    if (this.util.returnBoolByPath(match, 'casterName')){
-      if (match.casterName.length > 0){
-        ret = true;
-      }else{
-        ret = false;
-      }
-    }else{
-      ret = false;
-    }
-    return ret;
-  }
 
 }

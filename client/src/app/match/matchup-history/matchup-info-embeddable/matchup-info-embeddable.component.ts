@@ -37,7 +37,6 @@ export class MatchupInfoEmbeddableComponent implements OnInit {
       res => {
         this.matches = this.flt.sortMatchesBySeason(res);
         this.matches = res;
-        console.log(this.matches);
         this.calculateAWins();
         this.calculateBWins();
         this.calculateAGameWins();

@@ -75,8 +75,6 @@ export class DivisionTournamentScheduleTableComponent implements OnInit, OnChang
 
               this.matches = returnedMatches;
 
-              console.log(this.matches);
-
             });
 
           },

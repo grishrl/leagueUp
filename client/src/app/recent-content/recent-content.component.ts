@@ -54,6 +54,12 @@ export class RecentContentComponent implements OnInit {
     return url;
   }
 
+  loaded = {
+    showdown:false,
+    edge:false,
+    podcast:false
+  };
+
   ngOnInit() {
 
     let showdownPlaylistID = "PLCylT7hBfO1QeuiQil-GTE51yLadORZQ8";
@@ -65,6 +71,7 @@ export class RecentContentComponent implements OnInit {
       res => {
         this.showdownItem = res['items'][0];
         this.showdownItem.url = this.createURL(this.showdownItem);
+        this.loaded.showdown = true;
       },
       err => {
         console.log(err)
@@ -76,6 +83,7 @@ export class RecentContentComponent implements OnInit {
       res => {
         this.edgeItem = res['items'][0];
         this.edgeItem.url = this.createURL(this.edgeItem);
+        this.loaded.edge = true;
       },
       err=>{
         console.log(err)
@@ -87,6 +95,7 @@ export class RecentContentComponent implements OnInit {
       res => {
         this.podcastItem = res['items'][0];
         this.podcastItem.url = this.createURL(this.podcastItem);
+        this.loaded.podcast = true;
       },
       err => {
         console.log(err)

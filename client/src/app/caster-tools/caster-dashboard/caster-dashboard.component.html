@@ -68,106 +68,16 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <span class="finger float-right badge badge-pill pill-shadow badge-light" (click)="resetTime()">Reset
-                Time</span>
+                            <span class="finger float-right badge badge-pill pill-shadow badge-light" (click)="resetTime()">Reset Time</span>
                         </div>
                     </div>
                     <mat-paginator [length]="length " [pageIndex]="pageIndex " [pageSize]="pageSize " (page)="pageEventHandler($event) ">
 
                     </mat-paginator>
                     <div *ngIf="displayArray.length==0 " style="height: 650px "></div>
-                    <div class="row mb-3 p-4 " *ngFor="let match of displayArray; let ind=index " [ngClass]="{ 'bg-light':ind%2==0} ">
-                        <div class="col ">
-                            <div class="row ">
-                                <div class="col ">
-                                    <span class="h6">Division: </span>{{match.divisionConcat}}
-                                </div>
-                            </div>
-                            <div class="row mt-2">
-                                <div class="col text-center">
-                                    <span class="teamName" *ngIf="match.home else tbd ">
-                    <app-team-link [team]="match.home.teamName">
-                      {{match.home.teamName}}
-                    </app-team-link>
-
-                  </span>
-
-                                </div>
-                                <div class="col text-center">
-                                    -VS-
-                                </div>
-                                <div class="col text-center">
-                                    <span class="teamName" *ngIf="match.away else tbd ">
-
-                    <app-team-link [team]="match.away.teamName">
-                      {{match.away.teamName}}
-                    </app-team-link>
-                  </span>
-
-
-                                </div>
-                            </div>
-                            <div class="row mt-2">
-                                <div class="col">
-                                    <span class="h6">Match ID: </span><span>{{match.matchId}}</span>
-                                </div>
-                            </div>
-                            <div class="row mt-2 ">
-                                <div class="col ">
-                                    <span class="h6">Scheduled Time: </span><span *ngIf="match.scheduledTime !=undefined && match.scheduledTime !=null else notScheduled
-                                  ">{{util.getFormattedDate(match.scheduledTime.startTime, "M/D/YYYY h:mm A zz")}}</span>
-                                    <ng-template #notScheduled>
-                                        <span>Not Yet Scheduled</span>
-                                    </ng-template>
-                                </div>
-                                <div class="col ">
-                                    <span class="h6">Game Type: </span>
-                                    <span *ngIf="match.type && match.type=='tournament' else seasonal ">Tournament Match</span>
-                                    <ng-template #seasonal>
-                                        <span>Regular Season Game</span>
-                                    </ng-template>
-                                </div>
-                            </div>
-                            <div class="row mt-2 ">
-                                <div class="col ">
-                                    <div *ngIf="showCasterNameUrl(match) else addCasterButton ">
-                                        <div class="row ">
-                                            <div class="col ">
-                                                Caster: {{match.casterName}}
-                                                <div>
-                                                    Url: {{match.casterUrl}}
-                                                </div>
-                                            </div>
-                                            <div class="col ">
-                                                <span *ngIf="checkRights()">
-                          <button class="btn btn-danger" (click)="removeCaster(match) "><i class="fas fa-ban"></i>
-                            Remove caster</button>
-                        </span>
-
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                    <ng-template #addCasterButton>
-                                        <div class="row">
-                                            <div class="col">
-                                                <app-caster-inputs [(match)]="match " [matchId]="match.matchId ">
-                                                </app-caster-inputs>
-                                            </div>
-                                            <!-- NOTE: caster changes -->
-                                            <div class="col">
-                                                <button class="btn btn-success" (click)="claimMatch(match.matchId)">One Click
-                          Claim</button>
-                                            </div>
-                                        </div>
-
-
-                                    </ng-template>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
+                    <ng-container *ngFor="let match of displayArray; let ind=index;">
+                        <app-caster-dashboard-match-display [recMatch]="match" [ind]="ind"></app-caster-dashboard-match-display>
+                    </ng-container>
                 </div>
             </div>
         </div>

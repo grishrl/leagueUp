@@ -5,11 +5,11 @@
     </div>
 
     <!--Item Club News -->
-    <div class="col-lg-6 col-xl-4">
+    <div class="col-lg-6 col-xl-4" *ngIf="loaded.showdown">
         <!-- Widget Text-->
         <div class="panel-box">
             <div class="titles no-margin">
-                <h4><a href="{{createPlaylistUrl(showdownItem)}}" target="_blank">Game of the Week</a></h4>
+                <h4><a [href]="createPlaylistUrl(showdownItem) | safe" target="_blank">Game of the Week</a></h4>
             </div>
             <iframe class="video" [src]="showdownItem.url | safe" frameborder="0" allow="encrypted-media" allowfullscreen></iframe>
         </div>
@@ -18,11 +18,11 @@
     <!--End Item Club News -->
 
     <!--Item Club News -->
-    <div class="col-lg-6 col-xl-4">
+    <div class="col-lg-6 col-xl-4" *ngIf="loaded.edge">
         <!-- Widget Text-->
         <div class="panel-box">
             <div class="titles no-margin">
-                <h4><a href="{{createPlaylistUrl(edgeItem)}}" target="_blank">Nexus Edge</a></h4>
+                <h4><a [href]="createPlaylistUrl(edgeItem) | safe" target="_blank">Nexus Edge</a></h4>
             </div>
             <iframe class="video" [src]="edgeItem.url | safe" frameborder="0" allow="encrypted-media" allowfullscreen></iframe>
         </div>
@@ -31,11 +31,11 @@
     <!--End Item Club News -->
 
     <!--Item Club News -->
-    <div class="col-lg-6 col-xl-4">
+    <div class="col-lg-6 col-xl-4" *ngIf="loaded.podcast">
         <!-- Widget Text-->
         <div class="panel-box">
             <div class="titles no-margin">
-                <h4><a href="{{createPlaylistUrl(podcastItem)}}" target="_blank">Nexus Now Podcast</a></h4>
+                <h4><a [href]="createPlaylistUrl(podcastItem) | safe" target="_blank">Nexus Now Podcast</a></h4>
             </div>
             <iframe class="video" [src]="podcastItem.url | safe" frameborder="0" allow="encrypted-media" allowfullscreen></iframe>
         </div>

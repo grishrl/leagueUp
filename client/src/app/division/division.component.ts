@@ -107,7 +107,6 @@ export class DivisionComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    console.log('this._passDivision ',this._passDivision);
     this.teamAggregate = [];
     if (this._passDivision){
       this.divDisplay = this._passDivision;
