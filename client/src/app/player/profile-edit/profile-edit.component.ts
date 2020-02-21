@@ -1,11 +1,11 @@
-import { Component, OnInit, NgModule, Input} from '@angular/core';
+import { Component, OnInit, Input} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, NavigationEnd } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { Profile } from '../../classes/profile.class';
 import { Subscription } from 'rxjs';
-import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { merge } from 'lodash';
 import { HotsLogsService } from '../../services/hots-logs.service';
 import { Router } from '@angular/router';
@@ -14,12 +14,6 @@ import { UtilitiesService } from '../../services/utilities.service';
 import { HeroesProfileService } from '../../services/heroes-profile.service';
 import { TeamService } from '../../services/team.service';
 import { AdminService } from '../../services/admin.service';
-
-@NgModule({
-  imports:[
-    ReactiveFormsModule
-  ]
-})
 
 @Component({
   selector: 'app-profile-edit',

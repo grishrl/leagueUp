@@ -58,22 +58,22 @@ export class LeagueStatService {
    }
 
   statList = [
-    { "statName": "globesGathered", "displayText": "Globes Gathered", "image": "regenGlobe.png" },
-    { "statName": "minionsKilled", "displayText": "Minions Slain", "image": "Mal_Ganis_Homescreen.png" },
-    { "statName": "secondsPlayed", "displayText": "Minutes Played", "image": "timePlayed.png" },
-    { "statName": "punishers-Summoned", "displayText": "Punishers Summoned", "image": "shrines-banner.png" },
-    { "statName": "protectorsKilled", "displayText": "Shrine Protectors Slain", "image": "shrines-banner.png" },
-    { "statName": "protectors-Summoned", "displayText": "Triglav Protectors Summoned", "image": "volskaya-banner.png" },
-    { "statName": "dragonKnights-Summoned", "displayText": "Dragon Knights Summoned", "image": "dragon-shire-banner.png" },
-    { "statName": "altarsChanneled", "displayText": "Altars Captured", "image": "towers-of-doom-banner.png" },
-    { "statName": "spiderButtsTurnedIn", "displayText": "Gems Turned In", "image": "spider-banner.png" },
-    { "statName": "spiders-Summoned", "displayText": "Spider Waves Summoned", "image": "spider-banner.png" },
-    { "statName": "immortalsWon", "displayText": "Immortals Subdued", "image": "boe-banner.png" },
-    { "statName": "calvaryCharges", "displayText": "Calvary Charges", "image": "alterac-banner.png" },
-    { "statName": "tributesGathered", "displayText": "Tributes Gathered", "image": "cursed-banner.png" },
-    { "statName": "curses", "displayText": "Enemy Teams Cursed", "image": "cursed-banner.png" },
-    { "statName": "zergWaves", "displayText": "Zerg Waves Released", "image": "braxis-banner.png" },
-    { "statName": "templeShots", "displayText": "Temple Shots Fired", "image": "sky-temple-banner.png" }
+    { "statName": "globesGathered", "displayText": "Globes Gathered", "image": "regenGlobe.jpg" },
+    { "statName": "minionsKilled", "displayText": "Minions Slain", "image": "Mal_Ganis_Homescreen.jpg" },
+    { "statName": "secondsPlayed", "displayText": "Minutes Played", "image": "timePlayed.jpg" },
+    { "statName": "punishers-Summoned", "displayText": "Punishers Summoned", "image": "shrines-banner.jpg" },
+    { "statName": "protectorsKilled", "displayText": "Shrine Protectors Slain", "image": "shrines-banner.jpg" },
+    { "statName": "protectors-Summoned", "displayText": "Triglav Protectors Summoned", "image": "volskaya-banner.jpg" },
+    { "statName": "dragonKnights-Summoned", "displayText": "Dragon Knights Summoned", "image": "dragon-shire-banner.jpg" },
+    { "statName": "altarsChanneled", "displayText": "Altars Captured", "image": "towers-of-doom-banner.jpg" },
+    { "statName": "spiderButtsTurnedIn", "displayText": "Gems Turned In", "image": "spider-banner.jpg" },
+    { "statName": "spiders-Summoned", "displayText": "Spider Waves Summoned", "image": "spider-banner.jpg" },
+    { "statName": "immortalsWon", "displayText": "Immortals Subdued", "image": "boe-banner.jpg" },
+    { "statName": "calvaryCharges", "displayText": "Calvary Charges", "image": "alterac-banner.jpg" },
+    { "statName": "tributesGathered", "displayText": "Tributes Gathered", "image": "cursed-banner.jpg" },
+    { "statName": "curses", "displayText": "Enemy Teams Cursed", "image": "cursed-banner.jpg" },
+    { "statName": "zergWaves", "displayText": "Zerg Waves Released", "image": "braxis-banner.jpg" },
+    { "statName": "templeShots", "displayText": "Temple Shots Fired", "image": "sky-temple-banner.jpg" }
   ];
 
 

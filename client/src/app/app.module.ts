@@ -22,7 +22,6 @@ import { BlogListComponent } from './blog/blog-list/blog-list.component';
 import { BlogViewComponent } from './blog/blog-view/blog-view.component';
 import { AppFooterComponent } from './app-footer/app-footer.component';
 import { ImageUploadComponent } from './image-upload/image-upload.component';
-import { NgxCroppieModule } from 'ngx-croppie';
 import { LogoutComponent } from './logout/logout.component';
 import { CreateTeamComponent } from './create-team/create-team.component';
 import { ApproveMemberComponent } from './admin/approve-member/approve-member.component';
@@ -89,7 +88,7 @@ import { TournamentReportingComponent } from './reporting/tournament-reporting/t
 import { EventDisplayComponent } from './events/event-display/event-display.component';
 import { EventCreateComponent } from './admin/events/event-create/event-create.component';
 import { EventListComponent } from './admin/events/event-list/event-list.component';
-import { GeneralImageUploadComponent } from './general-image-upload/general-image-upload.component';
+// import { GeneralImageUploadComponent } from './general-image-upload/general-image-upload.component';
 import { MiniCarouselComponent } from './mini-carousel/mini-carousel.component';
 import { MatchViewVerticleComponent } from './match/match-view-verticle/match-view-verticle.component';
 import { LargeCarouselComponent } from './large-carousel/large-carousel.component';
@@ -130,7 +129,7 @@ import { DivisionUpcomingMatchesComponent } from './division/division-upcoming-m
 import { NgsAccordianComponent } from './elements/ngs-accordian/ngs-accordian.component';
 import { BannerImageComponent } from './banner-image/banner-image.component';
 import { ResultsTilesComponent } from './results-tiles/results-tiles.component';
-import { AvatarUploadComponent } from './player/avatar-upload/avatar-upload.component';
+// import { AvatarUploadComponent } from './player/avatar-upload/avatar-upload.component';
 import { ApprovePendingAvatarComponent } from './admin/approve-pending-avatar/approve-pending-avatar.component';
 import { ApproveAvatarViewComponent } from './admin/approve-pending-avatar/approve-avatar-view/approve-avatar-view.component';
 import { TwitchComponent } from './formComponents/twitch/twitch.component';
@@ -251,7 +250,6 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     EventDisplayComponent,
     EventCreateComponent,
     EventListComponent,
-    GeneralImageUploadComponent,
     MiniCarouselComponent,
     MatchViewVerticleComponent,
     LargeCarouselComponent,
@@ -291,7 +289,6 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     NgsAccordianComponent,
     BannerImageComponent,
     ResultsTilesComponent,
-    AvatarUploadComponent,
     ApprovePendingAvatarComponent,
     ApproveAvatarViewComponent,
     TwitchComponent,
@@ -349,7 +346,6 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     InputFormMaterial,
     FormsModule,
     ReactiveFormsModule,
-    NgxCroppieModule,
     ngfModule,
     CalendarModule.forRoot({
       provide: DateAdapter,

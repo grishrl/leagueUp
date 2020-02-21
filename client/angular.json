@@ -38,6 +38,7 @@
                             "src/assets/js/theme-scripts.js",
                             "src/assets/js/theme-main.js",
                             "src/assets/js/challonge.js",
+                            "node_modules/croppie/croppie.js",
                             {
                                 "input": "node_modules/document-register-element/build/document-register-element.js"
                             }

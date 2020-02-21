@@ -31,8 +31,7 @@
 
     <div class="row">
         <div class="col">
-            <app-image-upload [showEdit]="true" [embedded]="true" [teamName]="returnedProfile.teamName" [teamLogo]="returnedProfile.logo">
-            </app-image-upload>
+            <app-image-upload [showEdit]="true" [embedded]="true" [teamName]="returnedProfile.teamName" [width]="500" [height]="350" [existingImage]="returnedProfile.logo" [imageType]="'teamlogo'"></app-image-upload>
             <div class="mt-2">
                 <strong>Team Id:</strong>{{returnedProfile._id}}
             </div>

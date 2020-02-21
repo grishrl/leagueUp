@@ -354,9 +354,9 @@ export class UtilitiesService {
   }
 
     async imageToPng(blob) {
-    if (blob.type === "image/png") {
-      return blob;
-    }
+    // if (blob.type === "image/png") {
+    //   return blob;
+    // }
 
     const image = new Image();
     await new Promise((resolve, reject) => {
@@ -370,7 +370,7 @@ export class UtilitiesService {
     });
     canvas.getContext("2d").drawImage(image, 0, 0);
     URL.revokeObjectURL(image.src);
-    return new Promise(resolve => canvas.toBlob(resolve));
+    return new Promise(resolve => canvas.toBlob(resolve, "image/png", .3));
   }
 
 }

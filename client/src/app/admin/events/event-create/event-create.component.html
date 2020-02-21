@@ -79,7 +79,7 @@
             <!--  -->
             <div class="row mt-3" *ngIf="event._id">
                 <div class="col">
-                    <app-general-image-upload [objectType]="'event'" [objectId]="event._id" [existingImage]="event.eventImage" [width]="1280" [height]="720" [showEdit]="true"></app-general-image-upload>
+                    <app-image-upload [objectType]="'event'" [imageType]="'event'" [objectId]="event._id" [existingImage]="event.eventImage" [width]="1280" [height]="720" [showEdit]="true"></app-image-upload>
                 </div>
             </div>
 

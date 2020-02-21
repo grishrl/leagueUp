@@ -66,17 +66,17 @@ export class GamesInformationComponent implements OnInit, OnChanges {
 
   mapImage = [
 
-    { "map": "noMatch", "image": "Mal_Ganis_Homescreen.png" },
-    { "map": "Infernal Shrines", "image": "shrines-banner.png" },
-    { "map": "Volskaya Foundry", "image": "volskaya-banner.png" },
-    { "map": "Dragon Shire", "image": "dragon-shire-banner.png" },
-    { "map": "Towers of Doom", "image": "towers-of-doom-banner.png" },
-    { "map": "Tomb of the Spider Queen", "image": "spider-banner.png" },
-    { "map": "Battlefield of Eternity", "image": "boe-banner.png" },
-    { "map": "Alterac Pass", "image": "alterac-banner.png" },
-    { "map": "Cursed Hollow", "image": "cursed-banner.png" },
-    { "map": "Braxis Holdout", "image": "braxis-banner.png" },
-    { "map": "Sky Temple", "image": "sky-temple-banner.png" }
+    { "map": "noMatch", "image": "Mal_Ganis_Homescreen.jpg" },
+    { "map": "Infernal Shrines", "image": "shrines-banner.jpg" },
+    { "map": "Volskaya Foundry", "image": "volskaya-banner.jpg" },
+    { "map": "Dragon Shire", "image": "dragon-shire-banner.jpg" },
+    { "map": "Towers of Doom", "image": "towers-of-doom-banner.jpg" },
+    { "map": "Tomb of the Spider Queen", "image": "spider-banner.jpg" },
+    { "map": "Battlefield of Eternity", "image": "boe-banner.jpg" },
+    { "map": "Alterac Pass", "image": "alterac-banner.jpg" },
+    { "map": "Cursed Hollow", "image": "cursed-banner.jpg" },
+    { "map": "Braxis Holdout", "image": "braxis-banner.jpg" },
+    { "map": "Sky Temple", "image": "sky-temple-banner.jpg" }
   ]
 
   getBackground(map) {
