@@ -55,7 +55,8 @@
         "rxjs": "^6.5.4",
         "superfish": "^1.7.10",
         "typescript": "~3.7.5",
-        "zone.js": "~0.10.2"
+        "zone.js": "~0.10.2",
+        "angular-file": "^3.0.0"
     },
     "devDependencies": {
         "@angular-devkit/build-angular": "^0.900.2",
@@ -66,7 +67,6 @@
         "@types/marked": "^0.6.5",
         "@types/moment-timezone": "^0.5.12",
         "@types/node": "~12.7.12",
-        "angular-file": "^3.0.0",
         "codelyzer": "~5.1.2",
         "jasmine-core": "~3.5.0",
         "jasmine-spec-reporter": "~4.2.1",
