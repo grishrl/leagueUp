@@ -170,6 +170,7 @@ import { MatchupInfoEmbeddableComponent } from './match/matchup-history/matchup-
 import { ScheduleTableComponent } from './elements/schedule-table/schedule-table.component';
 import { ScoutReportComponent } from './scout-report/scout-report.component';
 import { CasterDashboardMatchDisplayComponent } from './caster-tools/caster-dashboard/caster-dashboard-match-display/caster-dashboard-match-display.component';
+import { MvpReportComponent } from './reporting/mvp-report/mvp-report.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -326,7 +327,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     MatchupInfoEmbeddableComponent,
     ScheduleTableComponent,
     ScoutReportComponent,
-    CasterDashboardMatchDisplayComponent
+    CasterDashboardMatchDisplayComponent,
+    MvpReportComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

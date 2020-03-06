@@ -1,0 +1,165 @@
+import { Component, OnInit, Input } from '@angular/core';
+import { MvpService } from 'src/app/services/mvp.service';
+import { forEach } from 'lodash';
+import { url } from 'inspector';
+import { UtilitiesService } from 'src/app/services/utilities.service';
+
+@Component({
+  selector: 'app-mvp-report',
+  templateUrl: './mvp-report.component.html',
+  styleUrls: ['./mvp-report.component.css']
+})
+export class MvpReportComponent implements OnInit {
+
+  constructor(private mvpServ: MvpService, private util:UtilitiesService) { }
+
+  mvpPlayer:string;
+  potgUrl:string;
+
+  warning = "Not reported";
+
+  allMembers = [];
+  @Input() set members(val){
+    this.allMembers = val;
+  }
+
+  matchIdVal;
+  @Input() set matchId(val){
+    this.matchIdVal = val;
+  }
+
+  origRes;
+
+  mvpObj = {
+    "match_id":"",
+    "player_id":"",
+    "potg_link":"",
+    "displayName":""
+  };
+
+  ngOnInit(): void {
+    console.log(this.allMembers, this.matchIdVal);
+    this.mvpServ.getMvpById('match_id', this.matchIdVal).subscribe(
+      res=>{
+        this.processResponse(res);
+      },
+      err=>{
+        console.log('err',err);
+      }
+    )
+  }
+
+  disableSubmit = false;
+  disablePlayerEdit = false;
+  disableUrlEdit = false;
+
+
+  private processResponse(res: any) {
+    if (res) {
+      if (!res || !res.match_id) {
+        res.match_id = this.matchIdVal;
+        }
+      this.origRes = Object.assign({},res);
+      this.mvpObj = res;
+      if (res.displayName) {
+        this.disablePlayerEdit = true;
+        this.warning = "MVP Player reported, no potg URL";
+      }
+      if (res.potg_link) {
+        this.disableUrlEdit = true;
+        this.warning = "PotG Rerported, no MVP Player";
+      }
+      if (this.disableUrlEdit && this.disablePlayerEdit) {
+        this.disableSubmit = true;
+        this.warning = "";
+      }
+
+    }
+  }
+
+  report(){
+    console.log('click');
+    if(!this.disableSubmit){
+      if(this.validate(this.origRes, this.mvpObj)){
+        if(!this.mvpObj.match_id){
+          this.mvpObj.match_id = this.matchIdVal;
+        }
+        //require some input before creating the post...
+        console.log(this.mvpObj);
+        if (this.mvpObj.displayName || this.mvpObj.potg_link) {
+          console.log("click1");
+          if (this.mvpObj.potg_link) {
+            if (validateUrl(this.mvpObj.potg_link)) {
+              this.mvpServ.upsertMvp(this.mvpObj).subscribe(
+                res => {
+                  this.processResponse(res);
+                },
+                err => {
+                  console.log("MVP Submit: ", err);
+                }
+              );
+            }
+          } else if (this.mvpObj.displayName) {
+            this.mvpServ.upsertMvp(this.mvpObj).subscribe(
+              res => {
+                this.processResponse(res);
+              },
+              err => {
+                console.log("MVP Submit: ", err);
+              }
+            );
+          }
+        } else {
+          alert("Must enter some information");
+        }
+    }
+  }
+}
+
+  private validate(obj1, obj2) {
+  console.log(obj1, obj2);
+  if (obj1) {
+    let valid = true;
+    forEach(obj1, (val, key) => {
+      console.log('val, key', val, key);
+      if (!this.util.isNullOrEmpty(obj2[key])) {
+        if(!this.util.isNullOrEmpty(val)){
+          if (val == obj2[key]) {
+            console.log(val, obj2[key], val == obj2[key]);
+            //the modified object same as original
+          } else {
+            valid = false;
+          }
+        }
+      } else {
+
+        console.log('obj2[key]' , obj2[key]);
+        //property was removed
+        valid = false;
+      }
+    });
+    console.log('valid ', valid);
+    return valid;
+  } else {
+    return true;
+  }
+}
+
+}
+
+function validateUrl(url:string){
+  const blacklist = [];
+  console.log(url);
+  if(url.includes('twitch.tv')||url.includes('youtube.com/watch')){
+    let valid = true;
+    forEach(blacklist, (val)=>{
+      if(url.includes(val)){
+        valid = false;
+      }
+    });
+    return valid;
+  }else{
+    alert("Only twitch and youtube clips are permitted.");
+    return false;
+  }
+}

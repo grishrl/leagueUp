@@ -250,10 +250,12 @@
                             <button [disabled]="uploading" class="btn btn-success" (click)="report() ">Report Match!</button>
                         </div>
                     </div>
-
+                    <app-mvp-report [members]="allPlayers" [matchId]="recMatch.matchId"></app-mvp-report>
 
                 </div>
+
             </div>
+
         </div>
     </div>
 </div>

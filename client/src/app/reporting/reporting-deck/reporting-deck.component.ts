@@ -28,6 +28,7 @@ export class ReportingDeckComponent implements OnInit {
   awayTeam
   homeTeamPlayer
   awayTeamPlayer
+  allPlayers = [];
 
   @Input() set match(match){
     if(match!=null && match != undefined){
@@ -41,6 +42,8 @@ export class ReportingDeckComponent implements OnInit {
       this.team.getTeam(match.home.teamName).subscribe(
         res=>{
           this.homeTeam = res;
+
+          this.allPlayers = this.allPlayers.concat(this.homeTeam.teamMembers);
         },
         err=>{
           console.log(err);
@@ -49,6 +52,8 @@ export class ReportingDeckComponent implements OnInit {
       this.team.getTeam(match.away.teamName).subscribe(
         res => {
           this.awayTeam = res;
+
+          this.allPlayers = this.allPlayers.concat(this.awayTeam.teamMembers);
         },
         err => {
           console.log(err);
@@ -61,6 +66,7 @@ export class ReportingDeckComponent implements OnInit {
       }
       this.requiredScore = (this.totalGames + 1) / 2;
       this.offScore = this.totalGames - this.requiredScore;
+
     }
 
     if(this.recMatch.other != null && this.recMatch.mapBans != undefined){

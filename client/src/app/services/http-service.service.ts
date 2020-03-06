@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { map, catchError, share, shareReplay } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { NotificationService } from './notification.service';
+import { forEach } from 'lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -41,16 +42,29 @@ export class HttpServiceService {
     /*
     [{parameter:query}]
     */
-   if(parameters){
-     parameters.forEach((element, index) => {
-       let key = Object.keys(element);
-       if (index == 0) {
-         url += '?' + key[0] + '=' + element[key[0]];
-       } else {
-         url += '&' + key[0] + '=' + element[key[0]];
-       }
 
-     });
+   if(parameters){
+     if(Array.isArray(parameters)){
+           parameters.forEach((element, index) => {
+             let key = Object.keys(element);
+             if (index == 0) {
+               url += "?" + key[0] + "=" + element[key[0]];
+             } else {
+               url += "&" + key[0] + "=" + element[key[0]];
+             }
+           });
+     }else if(typeof parameters === 'object'){
+       let index = 0;
+       forEach(parameters, (value, key) => {
+         if (index == 0) {
+           url += "?" + key + "=" + value;
+         } else {
+           url += "&" + key + "=" + value;
+         }
+         index++;
+       });
+     }
+
    }
 
     if (showNotification) {

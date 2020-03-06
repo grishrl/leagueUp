@@ -1,0 +1,47 @@
+<!--
+} -->
+<div class="matchBoxPadder mvpBox">
+    <div class="row">
+        <div class="col text-center">
+            <span class="h5 text-resalt">MVP / Play of the Game Link</span>
+            <div class="text-warning">
+                {{warning}}
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col text-center">
+            <strong>Select a player that was the MVP of this game:</strong>
+            <div>
+                <mat-select placeholder="Player " [(ngModel)]="this.mvpObj.displayName" [disabled]="disablePlayerEdit">
+                    <mat-option *ngFor="let player of allMembers" [value]="player.displayName">
+                        {{player.displayName}}
+                    </mat-option>
+                </mat-select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col text-center">
+            <strong> Enter a link to a Play of the Game clip:</strong>
+            <div>
+                <mat-form-field class="mat-60-width">
+                    <!-- [formControl]="casterUrlControl" -->
+                    <input matInput placeholder="PotG Clip URL" [(ngModel)]="this.mvpObj.potg_link" [disabled]="disableUrlEdit">
+                    <!-- <mat-error *ngIf="casterUrlControl.hasError('required')">
+                                            PotG Error!
+                                        </mat-error> -->
+                </mat-form-field>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col text-center">
+            <button class="btn btn-primary" [disabled]="disableSubmit" (click)="report()">Submit MVP Info</button>
+        </div>
+    </div>
+
+</div>

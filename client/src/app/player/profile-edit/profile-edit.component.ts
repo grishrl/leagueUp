@@ -14,6 +14,7 @@ import { UtilitiesService } from '../../services/utilities.service';
 import { HeroesProfileService } from '../../services/heroes-profile.service';
 import { TeamService } from '../../services/team.service';
 import { AdminService } from '../../services/admin.service';
+import { MvpService } from 'src/app/services/mvp.service';
 
 @Component({
   selector: 'app-profile-edit',
@@ -23,9 +24,11 @@ import { AdminService } from '../../services/admin.service';
 export class ProfileEditComponent implements OnInit {
 
   navigationSubscription
+  mvpCounts = 0;
 
   constructor(public user: UserService, public auth: AuthService, private router: Router, private route: ActivatedRoute,
-    public hotsLogsService: HotsLogsService, public dialog: MatDialog, public util:UtilitiesService, public hotsProfile: HeroesProfileService, public team:TeamService, private admin:AdminService) {
+    public hotsLogsService: HotsLogsService, public dialog: MatDialog, public util:UtilitiesService, public hotsProfile: HeroesProfileService, public team:TeamService, private admin:AdminService,
+    private mvpServ:MvpService) {
 
       //so that people can manually enter different tags from currently being on a profile page; we can reinitialize the component with the new info
     this.navigationSubscription = this.router.events.subscribe((e: any) => {
@@ -231,6 +234,16 @@ export class ProfileEditComponent implements OnInit {
     this.discordTagFormControl.markAsTouched();
     this.profSub = this.user.getUser(getProfile).subscribe((res) => {
       merge(this.returnedProfile, res);
+      this.mvpServ.getMvpById('player_id', this.returnedProfile._id).subscribe(
+        res=>{
+          if(res){
+            this.mvpCounts = res.length;
+          }
+        },
+        err=>{
+          console.log(err);
+        }
+      )
       } );
   }
 
