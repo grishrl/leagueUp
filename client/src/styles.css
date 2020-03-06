@@ -25357,6 +25357,10 @@ table.career tr td img {
     width: 100%;
 }
 
+.mat-60-width {
+    width: 60%;
+}
+
 .faqSmallQuestion {
     display: hidden;
 }

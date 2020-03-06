@@ -38,7 +38,7 @@ async function reparseReplays() {
         $and: [{
             reported: true
         }, {
-            season: 7
+            season: 8
         }, {
             replays: {
                 $exists: true
@@ -90,11 +90,11 @@ async function reparseReplays() {
     }
 }
 
-// reparseReplays().then(
-//     reply => {
-//         console.log('completed.');
-//     }
-// )
+reparseReplays().then(
+    reply => {
+        console.log('completed.');
+    }
+)
 
 async function retrieveFromS3andParse(replayInfo, match, thisKey) {
     let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
@@ -114,10 +114,17 @@ async function retrieveFromS3andParse(replayInfo, match, thisKey) {
             // });
             let filename = __dirname + '/temp/test-' + Date.now().toString();
             fs.writeFileSync(filename, s3Obj.Body);
-            let parsed = parser.processReplay(filename, {
-                useAttributeName: true,
-                overrideVerifiedBuild: true
-            });
+            let parsed;
+            try {
+                parsed = parser.processReplay(filename, {
+                    useAttributeName: true,
+                    overrideVerifiedBuild: true
+                });
+            } catch (e) {
+                console.log(e);
+            }
+            console.log(parsed);
+
             if (parsed.status == 1) {
                 let UUID = uniqid();
                 parsed.season = parseInt(season);
