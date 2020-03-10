@@ -1,4 +1,5 @@
 const MvpMethods = require('../methods/mvpMethods');
+const utils = require('../utils');
 
 const {
     confirmCaptain
@@ -16,6 +17,7 @@ router.get('/get', (req, res) => {
     let type = req.query.type;
     let list = req.query.list;
     let id = req.query.id;
+    let season = req.query.season;
 
     if (util.isNullorUndefined(id) && !util.isNullorUndefined(list)) {
 
@@ -34,6 +36,19 @@ router.get('/get', (req, res) => {
     } else if (!util.isNullorUndefined(id) && util.isNullorUndefined(list)) {
 
         MvpMethods.getById({ type, id }).then(
+            found => {
+                res.status(200).send(
+                    util.returnMessaging(path, 'Found records', false, found)
+                );
+            },
+            err => {
+                res.status(500).send(
+                    util.returnMessaging(path, 'Error fetching records', err)
+                );
+            }
+        )
+    } else if (!util.isNullOrEmpty(season)) {
+        MvpMethods.getBySeason(season).then(
             found => {
                 res.status(200).send(
                     util.returnMessaging(path, 'Found records', false, found)
@@ -70,7 +85,7 @@ router.post('/upsert', passport.authenticate('jwt', {
     const path = '/mvp/upsert';
     MvpMethods.upsert(req.body).then(
         found => {
-            found = found.toObject();
+            found = utils.objectify(found);
             if (req.body.displayName) {
                 found.displayName = req.body.displayName;
             }
@@ -81,6 +96,27 @@ router.post('/upsert', passport.authenticate('jwt', {
         err => {
             res.status(500).send(
                 util.returnMessaging(path, 'Error creating record', err)
+            );
+        }
+    )
+
+});
+
+router.post('/like', passport.authenticate('jwt', {
+    session: false
+}), (req, res) => {
+
+    const path = '/mvp/like';
+    MvpMethods.like(req.body.id, req.user._id).then(
+        found => {
+            found = utils.objectify(found);
+            res.status(200).send(
+                util.returnMessaging(path, 'Record updated', false, found)
+            );
+        },
+        err => {
+            res.status(500).send(
+                util.returnMessaging(path, 'Error updating record', err)
             );
         }
     )

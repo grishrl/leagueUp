@@ -38,7 +38,6 @@ export class MvpReportComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    console.log(this.allMembers, this.matchIdVal);
     this.mvpServ.getMvpById('match_id', this.matchIdVal).subscribe(
       res=>{
         this.processResponse(res);
@@ -89,7 +88,9 @@ export class MvpReportComponent implements OnInit {
         if (this.mvpObj.displayName || this.mvpObj.potg_link) {
           console.log("click1");
           if (this.mvpObj.potg_link) {
-            if (validateUrl(this.mvpObj.potg_link)) {
+            let urlObj = this.util.validateClipUrl(this.mvpObj.potg_link);
+            if (urlObj.valid) {
+              this.mvpObj.potg_link = urlObj.returnClip;
               this.mvpServ.upsertMvp(this.mvpObj).subscribe(
                 res => {
                   this.processResponse(res);
@@ -147,19 +148,56 @@ export class MvpReportComponent implements OnInit {
 
 }
 
-function validateUrl(url:string){
-  const blacklist = [];
-  console.log(url);
-  if(url.includes('twitch.tv')||url.includes('youtube.com/watch')){
-    let valid = true;
-    forEach(blacklist, (val)=>{
-      if(url.includes(val)){
-        valid = false;
-      }
-    });
-    return valid;
-  }else{
-    alert("Only twitch and youtube clips are permitted.");
-    return false;
-  }
-}
+// function validateUrl(url) {
+//   const blacklist = [];
+//   console.log(url);
+//   let valid = true;
+//   let returnClip = "";
+//   if (
+//     url.includes("twitch.tv") ||
+//     url.includes("youtube.com/watch") ||
+//     url.includes("youtu.be")
+//   ) {
+//     forEach(blacklist, val => {
+//       if (url.includes(val)) {
+//         valid = false;
+//       }
+//     });
+//     let clipVal = "";
+//     if (url.includes("twitch.tv")) {
+//       returnClip = "https://clips.twitch.tv/embed?clip=";
+//       let clipStr = "clip=";
+//       if (url.includes(clipStr)) {
+//         let index = url.indexOf(clipStr);
+//         clipVal = url.substring(index + clipStr.length, url.length);
+//       } else {
+//         let twitchTLD = "https://clips.twitch.tv/";
+//         let index = url.indexOf(twitchTLD);
+//         clipVal = url.substring(index + twitchTLD.length, url.length);
+//       }
+//       if (clipVal.length > 0) {
+//         returnClip += clipVal;
+//       }
+//     } else if (url.includes("youtu.be")) {
+//       returnClip = "https://www.youtube.com/embed/";
+//       let youtubeTLD = "https://youtu.be/";
+//       clipVal = url.substring(youtubeTLD.length, url.length);
+//       if (clipVal.length > 0) {
+//         returnClip += clipVal;
+//       }
+//     } else if (url.includes("youtube.com/watch")) {
+//       returnClip = "https://www.youtube.com/embed/";
+//       let clipStr = "watch?v=";
+//       let index = url.indexOf(clipStr);
+//       clipVal = url.substring(index + clipStr.length, url.length);
+//       if (clipVal.length > 0) {
+//         returnClip += clipVal;
+//       }
+//     } else if (url.includes("https://www.youtube.com/embed/")) {
+//       returnClip = url;
+//     }
+//   } else {
+//     valid = false;
+//   }
+//   return { valid, returnClip };
+// }

@@ -171,6 +171,8 @@ import { ScheduleTableComponent } from './elements/schedule-table/schedule-table
 import { ScoutReportComponent } from './scout-report/scout-report.component';
 import { CasterDashboardMatchDisplayComponent } from './caster-tools/caster-dashboard/caster-dashboard-match-display/caster-dashboard-match-display.component';
 import { MvpReportComponent } from './reporting/mvp-report/mvp-report.component';
+import { PotgPageComponent } from './potg-page/potg-page.component';
+import { PotgDisplayComponent } from './potg-page/potg-display/potg-display.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -328,7 +330,9 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     ScheduleTableComponent,
     ScoutReportComponent,
     CasterDashboardMatchDisplayComponent,
-    MvpReportComponent
+    MvpReportComponent,
+    PotgPageComponent,
+    PotgDisplayComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

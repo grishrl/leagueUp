@@ -31,4 +31,12 @@ export class MvpService {
     return this.http.httpPost(url, mvp, true);
   }
 
+  upvotePotg(id){
+    let url = '/mvp/like';
+    const payload = {
+      id
+    }
+    return this.http.httpPost(url,payload,true );
+  }
+
 }

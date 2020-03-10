@@ -3,31 +3,35 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { environment } from '../../environments/environment';
 import * as moment from 'moment-timezone';
 import { Match } from '../classes/match.class';
+import { forEach } from 'lodash';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class UtilitiesService {
+  constructor() {}
 
-  constructor() { }
-
-  calculateRounds(div):Array<number> {
+  calculateRounds(div): Array<number> {
     let provDiv = div;
     let roundNumber = 0;
     let drr = false;
-    if (provDiv && provDiv.DRR)
-     {
+    if (provDiv && provDiv.DRR) {
       drr = true;
     }
 
-    if (provDiv != undefined && provDiv != null && provDiv.teams != undefined && provDiv.teams != null) {
+    if (
+      provDiv != undefined &&
+      provDiv != null &&
+      provDiv.teams != undefined &&
+      provDiv.teams != null
+    ) {
       if (provDiv.teams.length % 2 == 0) {
         roundNumber = provDiv.teams.length - 1;
       } else {
         roundNumber = provDiv.teams.length;
       }
     }
-      // roundNumber = this.selectedDivision.teams.length - 1;
+    // roundNumber = this.selectedDivision.teams.length - 1;
     let rounds = [];
     if (roundNumber == 0) {
       roundNumber = 1;
@@ -46,14 +50,14 @@ export class UtilitiesService {
     if (dat == null || dat == undefined) {
       return true;
     }
-    if(typeof dat == 'boolean'){
+    if (typeof dat == "boolean") {
       return false;
     }
     if (Array.isArray(dat)) {
       if (dat.length == 0) {
         return true;
       }
-    } else if (typeof dat == 'object') {
+    } else if (typeof dat == "object") {
       let noe = false;
       for (let key in dat) {
         if (this.isNullOrEmpty(dat[key])) {
@@ -70,10 +74,10 @@ export class UtilitiesService {
 
   prePendHttp(link) {
     if (link != undefined && link != null) {
-      if (link.includes('http://') || link.includes('https://')) {
+      if (link.includes("http://") || link.includes("https://")) {
         return link;
       } else {
-        return 'http://' + link;
+        return "http://" + link;
       }
     } else {
       return link;
@@ -91,18 +95,26 @@ export class UtilitiesService {
     let min = time.minutes();
     let minStr;
     if (min == 0) {
-      minStr = '00';
+      minStr = "00";
     } else {
       minStr = min.toString();
     }
-    return hours + ":" + minStr
+    return hours + ":" + minStr;
   }
 
   dayOfWeekAsString(dayIndex) {
-    return ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][dayIndex];
+    return [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ][dayIndex];
   }
 
-  getDateFormatStr(showTimeZone: boolean = false) : string {
+  getDateFormatStr(showTimeZone: boolean = false): string {
     let displayStr = "dddd M/D/YYYY";
     if (showTimeZone) {
       displayStr += " zz";
@@ -114,13 +126,12 @@ export class UtilitiesService {
   // Formats a date using momentjs. See https://momentjs.com/docs/#/displaying/
   // for more information. timeZone can be used to be specific, or leave null
   // to use the browser local timezone.
-  getFormattedDate(time, format: string, timeZone: string = null) : string {
-    if (!(time instanceof Date)){
+  getFormattedDate(time, format: string, timeZone: string = null): string {
+    if (!(time instanceof Date)) {
       time = new Date(parseInt(time));
     }
 
     timeZone = timeZone || moment.tz.guess();
-
 
     let localMoment = moment(time).tz(timeZone);
     return localMoment.format(format);
@@ -132,7 +143,7 @@ export class UtilitiesService {
   }
 
   getSuffixFromMS(msDate) {
-    let suffix = 'AM';
+    let suffix = "AM";
     let time = new Date(parseInt(msDate));
     let hours = time.getHours();
     if (hours > 12) {
@@ -140,11 +151,9 @@ export class UtilitiesService {
       suffix = "PM";
     }
     return suffix;
-
   }
 
   markFormGroupTouched(formGroup: FormGroup) {
-
     if (formGroup.controls) {
       const keys = Object.keys(formGroup.controls);
       for (let i = 0; i < keys.length; i++) {
@@ -164,16 +173,15 @@ export class UtilitiesService {
     keys.forEach(element => {
       let day = obj.availability[element];
       if (day.available) {
-        day['startTimeNumber'] = this.convertToMil(day.startTime);
-        day['endTimeNumber'] = this.convertToMil(day.endTime);
+        day["startTimeNumber"] = this.convertToMil(day.startTime);
+        day["endTimeNumber"] = this.convertToMil(day.endTime);
       }
     });
   }
 
-
   convertToMil(time) {
-    if (typeof time === 'string') {
-      let colonSplit = time.split(':');
+    if (typeof time === "string") {
+      let colonSplit = time.split(":");
       return parseInt(colonSplit[0]) * 100 + parseInt(colonSplit[1]);
     } else {
       return null;
@@ -182,51 +190,51 @@ export class UtilitiesService {
 
   zeroGMT(time, timezone) {
     let localTime = time;
-    if (typeof localTime === 'string') {
+    if (typeof localTime === "string") {
       localTime = this.convertToMil(localTime);
     }
     timezone = parseInt(timezone);
-    let correct = localTime - (timezone * 100);
+    let correct = localTime - timezone * 100;
     return correct;
   }
 
   returnBoolByPath(obj, path): boolean {
     //path is a string representing a dot notation object path;
     //create an array of the string for easier manipulation
-    let pathArr = path.split('.');
+    let pathArr = path.split(".");
     //return value
     let retVal = null;
 
-    if(obj == null || obj == undefined){
+    if (obj == null || obj == undefined) {
       retVal = false;
-    }else{
+    } else {
       //get the first element of the array for testing
       let ele = pathArr[0];
       //make sure the property exist on the object
       if (obj.hasOwnProperty(ele)) {
-        if (typeof obj[ele] == 'boolean') {
+        if (typeof obj[ele] == "boolean") {
           retVal = true;
         }
         //property exists:
         //property is an object, and the path is deeper, jump in!
-        else if (typeof obj[ele] == 'object' && pathArr.length > 1) {
+        else if (typeof obj[ele] == "object" && pathArr.length > 1) {
           //remove first element of array
           pathArr.splice(0, 1);
           //reconstruct the array back into a string, adding "." if there is more than 1 element
           if (pathArr.length > 1) {
-            path = pathArr.join('.');
+            path = pathArr.join(".");
           } else {
             path = pathArr[0];
           }
           //recurse this function using the current place in the object, plus the rest of the path
           retVal = this.returnBoolByPath(obj[ele], path);
-        } else if (typeof obj[ele] == 'object' && pathArr.length == 0) {
+        } else if (typeof obj[ele] == "object" && pathArr.length == 0) {
           retVal = obj[ele];
         } else {
-          retVal = obj[ele]
+          retVal = obj[ele];
         }
       }
-      if (typeof retVal == 'number' && retVal == 0) {
+      if (typeof retVal == "number" && retVal == 0) {
         retVal = 1;
       }
     }
@@ -234,10 +242,10 @@ export class UtilitiesService {
     return !!retVal;
   }
 
-  returnByPath = function (obj, path) {
+  returnByPath = function(obj, path) {
     //path is a string representing a dot notation object path;
     //create an array of the string for easier manipulation
-    let pathArr = path.split('.');
+    let pathArr = path.split(".");
     //return value
     let retVal = null;
     //get the first element of the array for testing
@@ -246,32 +254,32 @@ export class UtilitiesService {
     if (obj.hasOwnProperty(ele)) {
       //property exists:
       //property is an object, and the path is deeper, jump in!
-      if (typeof obj[ele] == 'object' && pathArr.length > 1) {
+      if (typeof obj[ele] == "object" && pathArr.length > 1) {
         //remove first element of array
         pathArr.splice(0, 1);
         //reconstruct the array back into a string, adding "." if there is more than 1 element
         if (pathArr.length > 1) {
-          path = pathArr.join('.');
+          path = pathArr.join(".");
         } else {
           path = pathArr[0];
         }
         //recurse this function using the current place in the object, plus the rest of the path
-        retVal =  this.returnByPath(obj[ele], path);
-      } else if (typeof obj[ele] == 'object' && pathArr.length == 0) {
+        retVal = this.returnByPath(obj[ele], path);
+      } else if (typeof obj[ele] == "object" && pathArr.length == 0) {
         retVal = obj[ele];
       } else {
-        retVal = obj[ele]
+        retVal = obj[ele];
       }
     }
     return retVal;
-  }
+  };
 
   generalImageFQDN(img) {
-    let imgFQDN = 'https://s3.amazonaws.com/' + environment.s3bucketGeneralImage + '/'
+    let imgFQDN =
+      "https://s3.amazonaws.com/" + environment.s3bucketGeneralImage + "/";
     if (img) {
       imgFQDN += img;
     } else {
-
     }
     return imgFQDN;
   }
@@ -290,12 +298,15 @@ export class UtilitiesService {
   sortMatchesByTime(matches) {
     matches.sort((a, b) => {
       let ret = 0;
-      if (!this.returnBoolByPath(a, 'scheduledTime.startTime')) {
+      if (!this.returnBoolByPath(a, "scheduledTime.startTime")) {
         ret = -1;
-      } else if (!this.returnBoolByPath(b, 'scheduledTime.startTime')) {
+      } else if (!this.returnBoolByPath(b, "scheduledTime.startTime")) {
         ret = -1;
       } else {
-        if (parseInt(a.scheduledTime.startTime) > parseInt(b.scheduledTime.startTime)) {
+        if (
+          parseInt(a.scheduledTime.startTime) >
+          parseInt(b.scheduledTime.startTime)
+        ) {
           ret = 1;
         } else {
           ret = -1;
@@ -306,25 +317,27 @@ export class UtilitiesService {
     return matches;
   }
 
-  hasMapBans(match: Match) : boolean {
-      if (match.mapBans && match.mapBans.awayOne &&
-        match.mapBans.awayTwo &&
-        match.mapBans.homeOne &&
-        match.mapBans.homeTwo)
-        {
-          return true;
-        }
+  hasMapBans(match: Match): boolean {
+    if (
+      match.mapBans &&
+      match.mapBans.awayOne &&
+      match.mapBans.awayTwo &&
+      match.mapBans.homeOne &&
+      match.mapBans.homeTwo
+    ) {
+      return true;
+    }
 
-      return false;
+    return false;
   }
 
-
   replayFQDN(replay) {
-    let url = 'https://s3.amazonaws.com/' + environment.s3bucketReplays + '/' + replay;
+    let url =
+      "https://s3.amazonaws.com/" + environment.s3bucketReplays + "/" + replay;
     return url;
   }
 
-  returnMSFromFriendlyDateTime(val, time, suffix){
+  returnMSFromFriendlyDateTime(val, time, suffix) {
     //date in moment or date format...
     let m = moment(val);
     let year = m.year();
@@ -340,20 +353,24 @@ export class UtilitiesService {
       .second(0)
       .millisecond(0);
 
-      let colonSplit = time.split(":");
-      colonSplit[1] = parseInt(colonSplit[1]);
-      if (suffix == "PM") {
-        colonSplit[0] = parseInt(colonSplit[0]);
-        colonSplit[0] += 12;
-      }
+    let colonSplit = time.split(":");
+    colonSplit[1] = parseInt(colonSplit[1]);
+    if (suffix == "PM") {
+      colonSplit[0] = parseInt(colonSplit[0]);
+      colonSplit[0] += 12;
+    }
 
-    setDate.hour(colonSplit[0]).minutes(colonSplit[1]).seconds(0).milliseconds(0);
+    setDate
+      .hour(colonSplit[0])
+      .minutes(colonSplit[1])
+      .seconds(0)
+      .milliseconds(0);
 
     let msDate = setDate.unix() * 1000;
     return msDate;
   }
 
-    async imageToPng(blob) {
+  async imageToPng(blob) {
     // if (blob.type === "image/png") {
     //   return blob;
     // }
@@ -370,7 +387,69 @@ export class UtilitiesService {
     });
     canvas.getContext("2d").drawImage(image, 0, 0);
     URL.revokeObjectURL(image.src);
-    return new Promise(resolve => canvas.toBlob(resolve, "image/png", .3));
+    return new Promise(resolve => canvas.toBlob(resolve, "image/png", 0.3));
   }
 
+  validateClipUrl(url) {
+    const blacklist = [];
+    console.log(url);
+    let valid = true;
+    let returnClip = "";
+    if (
+      url.includes("twitch.tv") ||
+      url.includes("youtube.com/watch") ||
+      url.includes("youtu.be")
+    ) {
+      forEach(blacklist, val => {
+        if (url.includes(val)) {
+          valid = false;
+        }
+      });
+      let clipVal = "";
+      if (url.includes("twitch.tv")) {
+        returnClip = "clips.twitch.tv/embed?clip=";
+        let clipStr = "clip=";
+        if (url.includes(clipStr)) {
+          let index = url.indexOf(clipStr);
+          clipVal = url.substring(index + clipStr.length, url.length);
+        } else {
+          let twitchTLD = "clips.twitch.tv/";
+          let index = url.indexOf(twitchTLD);
+          clipVal = url.substring(index + twitchTLD.length, url.length);
+        }
+        if (clipVal.length > 0) {
+          returnClip += clipVal + `&autoplay=false`;
+        }
+      } else if (url.includes("youtu.be")) {
+        returnClip = "https://www.youtube.com/embed/";
+        let youtubeTLD = "https://youtu.be/";
+        clipVal = url.substring(youtubeTLD.length, url.length);
+        if (clipVal.length > 0) {
+          returnClip += clipVal;
+        }
+      } else if (url.includes("youtube.com/watch")) {
+        returnClip = "https://www.youtube.com/embed/";
+        let clipStr = "watch?v=";
+        let index = url.indexOf(clipStr);
+        clipVal = url.substring(index + clipStr.length, url.length);
+        if (clipVal.length > 0) {
+          returnClip += clipVal;
+        }
+      } else if (url.includes("https://www.youtube.com/embed/")) {
+        returnClip = url;
+      }
+    } else {
+      valid = false;
+    }
+    if(!valid){
+      alert('This URL is not accepted, only accepts URLs from youtube or twitch!');
+    }
+
+    if(returnClip.length == 0){
+      alert(
+        "Unable to extract the clip info in the format provided, please try again."
+      );
+    }
+    return { valid, returnClip };
+  }
 }

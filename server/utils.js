@@ -224,11 +224,17 @@ function sortMatchesByTime(matches) {
 }
 
 function objectify(obj) {
-    try {
-        return obj.toObject();
-    } catch {
+    if (obj) {
+        console.log('OBJ > ', obj)
+        try {
+            return obj.toObject();
+        } catch {
+            return obj;
+        }
+    } else {
         return obj;
     }
+
 }
 
 //simple console log for server side errors that will give me more info from the papertrail than a simple console.log;

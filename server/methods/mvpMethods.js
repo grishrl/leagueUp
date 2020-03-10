@@ -1,5 +1,7 @@
 const Mvp = require('../models/mvp-models');
 const ProfileMethods = require('./profileMethods');
+const SeasonInfo = require('./seasonInfoMethods');
+const utils = require('../utils');
 
 /*
 CRUD for new MVP community data
@@ -9,7 +11,7 @@ CRUD for new MVP community data
 async function getAll() {
     return Mvp.find({}).lean().then(
         found => {
-            return res;
+            return found;
         },
         err => {
             throw err;
@@ -66,6 +68,17 @@ async function getById({ type, id }) {
     return mvpInf;
 }
 
+async function getBySeason(season) {
+    return Mvp.find({ season: season }).lean().then(
+        found => {
+            return found;
+        },
+        err => {
+            throw err;
+        }
+    )
+}
+
 
 async function upsert(obj) {
 
@@ -73,6 +86,13 @@ async function upsert(obj) {
         let player_id = await ProfileMethods.returnIdFromDisplayName(obj.displayName);
         obj.player_id = player_id;
     }
+
+    obj.timeStamp = Date.now();
+    obj.likes = 0;
+
+    let season = await SeasonInfo.getSeasonInfo();
+
+    obj.season = season.value;
 
     let upsert = await Mvp.findOneAndUpdate({
         match_id: obj.match_id
@@ -122,6 +142,50 @@ async function deleteById({
     );
 }
 
+async function like(id, likerId) {
+    console.log('>>>>>', id, likerId);
+    return Mvp.findOne({ match_id: id }).then(
+        found => {
+            console.log('found ', found);
+            if (found) {
+                let foundObj = utils.objectify(found);
+                let canLike = true;
+                foundObj.likeHistory.forEach(id => {
+                    if (id == likerId) {
+                        canLike = false;
+                    }
+                });
+                if (canLike) {
+                    if (found.likes) {
+                        found.likes += 1;
+                    } else {
+                        found.likes = 1;
+                    }
+
+                    if (found.likeHistory.length > 0) {
+                        found.likeHistory.push(likerId);
+                    } else {
+                        found.likeHistory = [likerId];
+                    }
+                }
+                return found.save().then(
+                    saved => {
+                        return saved;
+                    },
+                    err => {
+                        throw err;
+                    }
+                )
+            } else {
+                return false;
+            }
+        },
+        err => {
+            throw err;
+        }
+    )
+}
+
 
 module.exports = {
     getAll,
@@ -129,5 +193,7 @@ module.exports = {
     getById,
     upsert,
     deleteList,
-    deleteById
+    deleteById,
+    like,
+    getBySeason
 }

@@ -52,67 +52,183 @@ import { AuthorPageComponent } from "./blog/author-page/author-page.component";
 import { CasterPageComponent } from "./caster-tools/caster-page/caster-page.component";
 import { LogsViewerComponent } from './admin/logs-viewer/logs-viewer.component';
 import { MatchupHistoryComponent } from './match/matchup-history/matchup-history.component';
+import { PotgPageComponent } from "./potg-page/potg-page.component";
 
 const APP_ROUTES: Routes = [
-  { path: 'challonge', component: ChallongeTournComponent },
-  { path: 'directory', component: DirectoryComponent},
-  { path:'', component: HomeComponent},
-  { path: 'login', component: LoginComponent },
-  { path: 'rules', component: BlogViewComponent, data: { slug: 'rules' }},
-  { path: 'volunteers', component: BlogViewComponent, data: { slug:'volunteers'}},
-  { path: 'rulestest' , component:StaticHtmlLoaderComponent, data:{template:'rules', headerText:'Rules'}},
-  { path: 'logout', component: LogoutComponent },
-  { path: 'faq', component: StaticHtmlLoaderComponent, data: { template: 'faq', headerText: 'Frequently Asked Questions' }},
-  { path: 'login/:token', component: LoginComponent},
-  { path: 'profile/:id', component: ProfileEditComponent},
-  { path: 'teamProfile/:id', component: TeamProfileComponent },
-  { path: 'teamProfile/:id/:season', component: TeamProfileComponent},
-  { path: 'allTeams', component:AllTeamsComponent},
-  { path: 'pastSeasons', component: PastSeasonsComponent },
-  { path: 'teamCreate', component: CreateTeamComponent},
-  { path: 'division/:division', component: DivisionComponent, runGuardsAndResolvers:'paramsChange' },
-  { path: 'email/invite/:id', component:OutreachEmailResponseComponent },
-  { path: 'blog', component:BlogListComponent },
-  { path: 'blog/:id', component:BlogViewComponent },
-  { path: 'blog/author/:id', component: AuthorPageComponent },
-  { path: 'match/view/:id', component:MatchResultsViewComponent },
-  { path: '_admin/seasonInfo', component: SeasonInfoManagerComponent},
-  { path: '_admin/logs', component: LogsViewerComponent, canActivate: [AuthGuardService], data: { role: 'logs' } },
-  { path: '_admin/approveTeamQueue', component:ApproveMemberComponent, canActivate:[AuthGuardService], data:{role:'team'} },
-  { path: '_admin/approveAvatarQueue', component: ApprovePendingAvatarComponent, canActivate: [AuthGuardService], data: { role: 'user' } },
-  { path: '_admin/manageUser', component: ManageMemberComponent, canActivate: [AuthGuardService], data: { role: 'user' } },
-  { path: '_admin/manageTeam', component: ManageSelectTeamComponent, canActivate: [AuthGuardService], data: { role: 'team' } },
-  { path: '_admin/manageTeam/:id', component: ManageTeamViewComponent, canActivate: [AuthGuardService], data: { role: 'team' } },
-  { path: '_admin/divisionMgmt', component: DivisionManagementComponent, canActivate: [AuthGuardService], data: { role: 'division' } },
-  { path: '_admin/matchMgmt', component: MatchManagementComponent, canActivate: [AuthGuardService], data: { role: 'match' } },
-  { path: '_admin/matchMgmt/match/:id', component: MatchEditComponent, canActivate: [AuthGuardService], data: { role: 'match' } },
-  { path: '_admin/userACLMgmt', component: AdminAclManagementComponent, canActivate: [AuthGuardService], data: { role: 'acl' } },
-  { path: '_admin/userACLMgmt/:id', component: UpdateRolesComponent, canActivate: [AuthGuardService], data: { role: 'acl' } },
-  { path: '_admin/scheduleGenerator', component: GenerateSeasonComponent, canActivate: [AuthGuardService], data: { role: 'schedulegen' } },
-  { path: '_admin/tournamentGenerator', component: TournamentGeneratorComponent, canActivate: [AuthGuardService], data: { role: 'schedulegen' } },
-  { path: '_admin/eventList', component: EventListComponent, canActivate: [AuthGuardService], data: { role: 'event' }},
-  { path: '_admin/eventMgmt/:id', component: EventCreateComponent, canActivate: [AuthGuardService], data: { role: 'event' } },
-  { path: 'schedule/scheduleMatch/:id', component:MatchSchedulerComponent},
-  { path: 'schedule/teamSchedule', component: TeamScheduleComboComponent },
-  { path: 'reporting/:id', component:ReportingComponent}, //accepts team name as url parameter
-  { path: '_admin/dashboard', component: DashboardComponent, canActivate: [AuthGuardService]},
-  { path: '_casterDashboard', component: CasterDashboardComponent, canActivate: [AuthGuardService], data: { role: 'caster' }},
-  { path: '_casterPage', component: CasterPageComponent, canActivate: [AuthGuardService], data: { role: 'caster' } },
-  { path: 'noAccess/:id', component:NoAccessComponent},
-  { path: 'sessionTimeOut', component: SessionTimeoutComponent},
-  { path: 'calendar' , component:CalendarViewComponent },
-  { path: 'event/:type/:id' , component:EventLargeComponent},
-  { path: 'event', component: EventLargeComponent },
-  { path: '_admin/matchMgmt/weekDeadline', component: SetDeadlineComponent, canActivate: [AuthGuardService], data: { role: 'match' }},
-  { path: 'messageCenter', component:UserMessageCenterComponent},
-  { path: 'findTeams', component:TeamMarketComponent},
-  { path: 'matchupHistory', component:MatchupHistoryComponent},
-  { path: 'findPlayers', component:UserMarketplaceComponent},
-  { path: 'replayBrowser', component:ReplayBrowserComponent},
-  { path: 'tournament', component:TournamentViewComponent },
-  { path: 'page/:id', component: StaticHtmlLoaderComponent },
-  { path: '**', component: StaticHtmlLoaderComponent, data: { template: '404', headerText: 'Not Found' } }
-]
+  { path: "challonge", component: ChallongeTournComponent },
+  { path: "directory", component: DirectoryComponent },
+  { path: "", component: HomeComponent },
+  { path: "login", component: LoginComponent },
+  { path: "rules", component: BlogViewComponent, data: { slug: "rules" } },
+  {
+    path: "volunteers",
+    component: BlogViewComponent,
+    data: { slug: "volunteers" }
+  },
+  {
+    path: "rulestest",
+    component: StaticHtmlLoaderComponent,
+    data: { template: "rules", headerText: "Rules" }
+  },
+  { path: "logout", component: LogoutComponent },
+  {
+    path: "faq",
+    component: StaticHtmlLoaderComponent,
+    data: { template: "faq", headerText: "Frequently Asked Questions" }
+  },
+  { path: "login/:token", component: LoginComponent },
+  { path: "profile/:id", component: ProfileEditComponent },
+  { path: "teamProfile/:id", component: TeamProfileComponent },
+  { path: "teamProfile/:id/:season", component: TeamProfileComponent },
+  { path: "allTeams", component: AllTeamsComponent },
+  { path: "pastSeasons", component: PastSeasonsComponent },
+  { path: "teamCreate", component: CreateTeamComponent },
+  {
+    path: "division/:division",
+    component: DivisionComponent,
+    runGuardsAndResolvers: "paramsChange"
+  },
+  { path: "email/invite/:id", component: OutreachEmailResponseComponent },
+  { path: "blog", component: BlogListComponent },
+  { path: "blog/:id", component: BlogViewComponent },
+  { path: "blog/author/:id", component: AuthorPageComponent },
+  { path: "match/view/:id", component: MatchResultsViewComponent },
+  { path: "_admin/seasonInfo", component: SeasonInfoManagerComponent },
+  {
+    path: "_admin/logs",
+    component: LogsViewerComponent,
+    canActivate: [AuthGuardService],
+    data: { role: "logs" }
+  },
+  {
+    path: "_admin/approveTeamQueue",
+    component: ApproveMemberComponent,
+    canActivate: [AuthGuardService],
+    data: { role: "team" }
+  },
+  {
+    path: "_admin/approveAvatarQueue",
+    component: ApprovePendingAvatarComponent,
+    canActivate: [AuthGuardService],
+    data: { role: "user" }
+  },
+  {
+    path: "_admin/manageUser",
+    component: ManageMemberComponent,
+    canActivate: [AuthGuardService],
+    data: { role: "user" }
+  },
+  {
+    path: "_admin/manageTeam",
+    component: ManageSelectTeamComponent,
+    canActivate: [AuthGuardService],
+    data: { role: "team" }
+  },
+  {
+    path: "_admin/manageTeam/:id",
+    component: ManageTeamViewComponent,
+    canActivate: [AuthGuardService],
+    data: { role: "team" }
+  },
+  {
+    path: "_admin/divisionMgmt",
+    component: DivisionManagementComponent,
+    canActivate: [AuthGuardService],
+    data: { role: "division" }
+  },
+  {
+    path: "_admin/matchMgmt",
+    component: MatchManagementComponent,
+    canActivate: [AuthGuardService],
+    data: { role: "match" }
+  },
+  {
+    path: "_admin/matchMgmt/match/:id",
+    component: MatchEditComponent,
+    canActivate: [AuthGuardService],
+    data: { role: "match" }
+  },
+  {
+    path: "_admin/userACLMgmt",
+    component: AdminAclManagementComponent,
+    canActivate: [AuthGuardService],
+    data: { role: "acl" }
+  },
+  {
+    path: "_admin/userACLMgmt/:id",
+    component: UpdateRolesComponent,
+    canActivate: [AuthGuardService],
+    data: { role: "acl" }
+  },
+  {
+    path: "_admin/scheduleGenerator",
+    component: GenerateSeasonComponent,
+    canActivate: [AuthGuardService],
+    data: { role: "schedulegen" }
+  },
+  {
+    path: "_admin/tournamentGenerator",
+    component: TournamentGeneratorComponent,
+    canActivate: [AuthGuardService],
+    data: { role: "schedulegen" }
+  },
+  {
+    path: "_admin/eventList",
+    component: EventListComponent,
+    canActivate: [AuthGuardService],
+    data: { role: "event" }
+  },
+  {
+    path: "_admin/eventMgmt/:id",
+    component: EventCreateComponent,
+    canActivate: [AuthGuardService],
+    data: { role: "event" }
+  },
+  { path: "schedule/scheduleMatch/:id", component: MatchSchedulerComponent },
+  { path: "schedule/teamSchedule", component: TeamScheduleComboComponent },
+  { path: "reporting/:id", component: ReportingComponent }, //accepts team name as url parameter
+  {
+    path: "_admin/dashboard",
+    component: DashboardComponent,
+    canActivate: [AuthGuardService]
+  },
+  {
+    path: "_casterDashboard",
+    component: CasterDashboardComponent,
+    canActivate: [AuthGuardService],
+    data: { role: "caster" }
+  },
+  {
+    path: "_casterPage",
+    component: CasterPageComponent,
+    canActivate: [AuthGuardService],
+    data: { role: "caster" }
+  },
+  { path: "noAccess/:id", component: NoAccessComponent },
+  { path: "sessionTimeOut", component: SessionTimeoutComponent },
+  { path: "calendar", component: CalendarViewComponent },
+  { path: "event/:type/:id", component: EventLargeComponent },
+  { path: "event", component: EventLargeComponent },
+  {
+    path: "_admin/matchMgmt/weekDeadline",
+    component: SetDeadlineComponent,
+    canActivate: [AuthGuardService],
+    data: { role: "match" }
+  },
+  { path: "messageCenter", component: UserMessageCenterComponent },
+  { path: "findTeams", component: TeamMarketComponent },
+  { path: "matchupHistory", component: MatchupHistoryComponent },
+  { path: "findPlayers", component: UserMarketplaceComponent },
+  { path: "replayBrowser", component: ReplayBrowserComponent },
+  { path: "tournament", component: TournamentViewComponent },
+  { path: "page/:id", component: StaticHtmlLoaderComponent },
+  { path: "potg", component: PotgPageComponent },
+  {
+    path: "**",
+    component: StaticHtmlLoaderComponent,
+    data: { template: "404", headerText: "Not Found" }
+  }
+];
 
 @NgModule({
   imports: [ RouterModule.forRoot(APP_ROUTES, {onSameUrlNavigation:'reload', scrollPositionRestoration:'enabled', anchorScrolling:'enabled'})],
