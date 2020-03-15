@@ -35,7 +35,7 @@
             </app-team-link>
 
           </strong><br>
-                    <!-- <small class="meta-text">GROUP H.</small> -->
+
                 </td>
                 <td>
                     <ng-container *ngIf="showCaster && auth.isCaster()">
@@ -49,10 +49,11 @@
                         </span>
                     </ng-container>
 
-                    <span *ngIf="match.scheduledTime && match.scheduledTime.startTime else tbd"><strong>Scheduled Time: </strong>{{util.getFormattedDate(match.scheduledTime.startTime, "MMM DD hh:mm A zz")}}<br></span>
+                    <span *ngIf="!match.reported else resultsButton">
+                      <span *ngIf="match.scheduledTime && match.scheduledTime.startTime else tbd"><strong>Scheduled Time: </strong>{{util.getFormattedDate(match.scheduledTime.startTime, "MMM DD hh:mm A zz")}}<br></span>
                     <span><a [routerLink]="['/matchupHistory', {teamAid:match.home.id, teamBid:match.away.id}]">Match Up History</a> <br></span>
-                    <span *ngIf="match.casterName else casterButton"><small class="meta-text">Caster: {{match.casterName}}, <a
-                href="{{util.prePendHttp(match.casterUrl)}}" target="_blank">{{match.casterUrl}}</a></small></span>
+                    <span *ngIf="match.casterName else casterButton"><small class="meta-text">Caster: {{match.casterName}}, <a href="{{util.prePendHttp(match.casterUrl)}}" target="_blank">{{match.casterUrl}}</a></small></span>
+                    </span>
                 </td>
                 <!-- ng-templates -->
                 <ng-template #tbd>
@@ -76,6 +77,9 @@
                     <div *ngIf="auth.isCaster() && !userCanSchedule(match)">
                         <button class="btn btn-success" (click)="claimMatch(match.matchId)">Caster One Click Claim</button>
                     </div>
+                </ng-template>
+                <ng-template #resultsButton>
+                    <a *ngIf="match.matchId" [routerLink]="['/match/view/', match.matchId]" class="btn btn-primary">View Match Info</a>
                 </ng-template>
                 <!-- end template -->
             </tr>

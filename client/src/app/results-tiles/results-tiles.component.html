@@ -2,7 +2,7 @@
     <div class="info-results">
         <ul>
             <li *ngFor="let match of provMatches">
-                <span class="head">
+                <span class="head" style="overflow: auto;">
           {{match.home.teamName}} Vs {{match.away.teamName}} <span
             *ngIf="match.scheduledTime && match.scheduledTime.startTime"
             class="date">{{util.getFormattedDate(match.scheduledTime.startTime, "ddd MMM DD YYYY")}}</span>
