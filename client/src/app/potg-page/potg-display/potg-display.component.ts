@@ -2,6 +2,7 @@ import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { Match } from '../../classes/match.class';
 import { MvpService } from 'src/app/services/mvp.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: "app-potg-display",
@@ -11,7 +12,8 @@ import { MvpService } from 'src/app/services/mvp.service';
 export class PotgDisplayComponent implements OnInit {
   constructor(
     private ScheduleServ: ScheduleService,
-    private MvpServ: MvpService
+    private MvpServ: MvpService,
+    public auth:AuthService
   ) {}
 
   @Input() potg ;

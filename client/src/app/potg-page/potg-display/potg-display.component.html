@@ -18,10 +18,12 @@
                     <div *ngIf="potg && potg.potg_link && potg.potg_link.length>0 else noPotg">
                         <iframe width="100%" [src]="potg.potg_link | safe" frameborder="0" [style.height.px]="eleHeight" allowfullscreen></iframe>
                         <div class="mt-1">
-                            <span class="finger"><a (click)="smile(potg.match_id)"><i
-                                                          class="far fa-laugh-squint"></i> <span
-                                                          *ngIf="potg.likes>0 else noLikes"> {{potg.likes}} Smiles</span></a>
-                            </span>
+                            <div *ngIf="auth.isAuthenticated() else logonToSmile">
+                                <span class="finger"><a (click)="smile(potg.match_id)"><i
+                                                            class="far fa-laugh-squint"></i> <span
+                                                            *ngIf="potg.likes>0 else noLikes"> {{potg.likes}} Smiles</span></a>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -38,6 +40,8 @@
 <ng-template #noLikes>
     No Smiles Yet
 </ng-template>
+
+<ng-template #logonToSmile> <span>Please logon to smile.</span> </ng-template>
 
 <ng-template #noPotg>
     <div [style.height.px]="eleHeight+17"> <span style="position: absolute; top: 50%; left: 33%;">No PotG Submitted Yet</span> </div>
