@@ -41,7 +41,12 @@
     No Smiles Yet
 </ng-template>
 
-<ng-template #logonToSmile> <span>Please logon to smile.</span> </ng-template>
+<ng-template #logonToSmile>
+    <div style="cursor: not-allowed;" data-toggle="tooltip" data-placement="top" title="Must be logged on to smile.">
+        <i class="far fa-laugh-squint"></i> <span *ngIf="potg.likes>0 else noLikes"> {{potg.likes}}
+      Smiles</span>
+    </div>
+</ng-template>
 
 <ng-template #noPotg>
     <div [style.height.px]="eleHeight+17"> <span style="position: absolute; top: 50%; left: 33%;">No PotG Submitted Yet</span> </div>
