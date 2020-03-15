@@ -82,16 +82,16 @@
                 <div class="col-lg-8 col-xl-9">
                     <!-- Nav Tabs -->
                     <ul class="nav nav-tabs" id="myTab">
-                        <li [ngClass]="{'active': index==0}"><a href="#overview" data-toggle="tab" (click)="index=0">Overview</a></li>
-                        <li [ngClass]="{'active': index==1}"><a href="#career" data-toggle="tab" (click)="index=1">History</a></li>
-                        <li [ngClass]="{'active': index==2}"><a href="#stats" data-toggle="tab" (click)="index=2">STATS</a></li>
+                        <li class="finger" [ngClass]="{'active': index==0}"><a (click)="setTab(0)">Overview</a></li>
+                        <li class="finger" [ngClass]="{'active': index==1}"><a (click)="setTab(1)">History</a></li>
+                        <li class="finger" [ngClass]="{'active': index==2}"><a (click)="setTab(2)">STATS</a></li>
                     </ul>
                     <!-- End Nav Tabs -->
 
                     <!-- Content Tabs -->
                     <div class="tab-content">
                         <!-- Tab One - overview -->
-                        <div class="tab-pane" [ngClass]="{'active': index==0}" id="overview">
+                        <div class="tab-pane" [ngClass]="{'active': index==0}" *ngIf="index==0">
 
                             <!-- edit buttons -->
                             <div class="row" *ngIf="auth.getUser() === returnedProfile.displayName">
@@ -245,13 +245,13 @@
                         <!-- Tab One - overview -->
 
                         <!-- Tab Theree - career -->
-                        <div class="tab-pane pb-5" [ngClass]="{'active': index==1}" id="career">
+                        <div class="tab-pane pb-5" [ngClass]="{'active': index==1}" *ngIf="index==1">
                             <app-history [playerProfile]="returnedProfile"></app-history>
                         </div>
                         <!-- Tab Theree - career -->
 
                         <!-- Tab Theree - stats -->
-                        <div class="tab-pane pb-5" [ngClass]="{'active': index==2}" id="stats">
+                        <div class="tab-pane pb-5" [ngClass]="{'active': index==2}" *ngIf="index==2">
                             <div *ngIf="index==2">
                                 <app-player-stats [playerID]="returnedProfile.displayName" [hotslogsID]="returnedProfile.hotsLogsPlayerID" [playerToon]="returnedProfile.toonHandle">
                                 </app-player-stats>

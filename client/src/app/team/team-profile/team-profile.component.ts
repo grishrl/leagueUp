@@ -17,6 +17,7 @@ import { HeroesProfileService } from '../../services/heroes-profile.service';
 import { DivisionService } from '../../services/division.service';
 import { AssistantCaptainMgmtComponent } from 'src/app/modal/assistant-captain-mgmt/assistant-captain-mgmt.component';
 import { HistoryService } from 'src/app/services/history.service';
+import { TabTrackerService } from 'src/app/services/tab-tracker.service';
 
 
 @Component({
@@ -66,7 +67,7 @@ export class TeamProfileComponent implements OnInit {
   //constructor
   constructor(public auth: AuthService, public user: UserService, public team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router: Router,
     private admin:AdminService, public util:UtilitiesService, private requestService:RequestService, public heroProfile: HeroesProfileService, private divisionServ: DivisionService,
-    private history:HistoryService) {
+    private history:HistoryService, private tabTracker:TabTrackerService) {
 
       //so that people can manually enter different tags from currently being on a profile page; we can reinitialize the component with the new info
     this.router.events.subscribe((e: any) => {
@@ -78,6 +79,13 @@ export class TeamProfileComponent implements OnInit {
       }
     });
 
+  }
+
+
+  setTab(ind){
+    this.tabTracker.lastRoute = 'teamProfile';
+    this.tabTracker.lastTab = ind;
+    this.index = ind;
   }
 
 
@@ -124,7 +132,7 @@ export class TeamProfileComponent implements OnInit {
         this.returnedProfile.teamMMRAvg = res.newMMR;
       },
       (err)=>{
-        console.log(err);
+        console.warn(err);
       }
     )
   }
@@ -139,16 +147,15 @@ export class TeamProfileComponent implements OnInit {
     let getProfile: string;
 
     if(this.season){
-
       this.history.getPastTeamsViaSeason([this.teamName], this.season).subscribe(
         res=>{
           merge(this.returnedProfile, res[0].object);
           this.setUpTeamMemberFilter(this.returnedProfile);
           this.checkDivision(this.returnedProfile.divisionConcat);
-
+          this.index = this.tabTracker.returnTabIndexIfSameRoute('teamProfile');
         },
         err=>{
-          console.log(err);
+          console.warn(err);
         }
       )
 
@@ -157,12 +164,12 @@ export class TeamProfileComponent implements OnInit {
         if (typeof this.providedProfile == 'string') {
           getProfile = this.providedProfile;
           this.getTeamByString(getProfile);
-
         } else {
           merge(this.returnedProfile, this.providedProfile);
           this.setUpTeamMemberFilter(this.returnedProfile);
           this.checkDivision(this.returnedProfile.divisionConcat);
           // this.cleanUpDivision();
+          this.index = this.tabTracker.returnTabIndexIfSameRoute("teamProfile");
         }
       } else {
         getProfile = this.teamName;
@@ -252,7 +259,7 @@ export class TeamProfileComponent implements OnInit {
               this.auth.destroyCaptain();
             },
             (err)=>{
-              console.log(err)
+              console.warn(err)
             }
           )
         }
@@ -272,7 +279,7 @@ export class TeamProfileComponent implements OnInit {
           this.returnedProfile = null;
           this.returnedProfile = res;
         }, (err) => {
-          console.log(err);
+          console.warn(err);
         })
       }
     });
@@ -291,7 +298,7 @@ export class TeamProfileComponent implements OnInit {
             this.router.navigate(['/_admin/manageTeam']);
 
           }, err => {
-            console.log(err);
+            console.warn(err);
           }
         )
       }
@@ -316,7 +323,7 @@ export class TeamProfileComponent implements OnInit {
             this.auth.destroyCaptain();
             this.router.navigate(['/profile',this.user.routeFriendlyUsername(this.auth.getUser())]);
           }, err => {
-            console.log(err);
+            console.warn(err);
           }
         )
       }
@@ -362,13 +369,13 @@ export class TeamProfileComponent implements OnInit {
       this.team.saveTeam(cptRemoved).subscribe((res) => {
         this.disabled = true;
       }, (err) => {
-        console.log(err);
+        console.warn(err);
         alert(err.message);
       });
     } else {
       //activate validator errors
       alert('the data was invalid');
-      console.log('the data was invalid')
+      console.warn('the data was invalid')
     }
 
   }
@@ -458,7 +465,7 @@ export class TeamProfileComponent implements OnInit {
             }
           },
           err => {
-            console.log(err)
+            console.warn(err)
           }
         )
       }
@@ -516,6 +523,7 @@ export class TeamProfileComponent implements OnInit {
       merge(this.returnedProfile, res);
       this.setUpTeamMemberFilter(this.returnedProfile);
       this.checkDivision(this.returnedProfile.divisionConcat);
+      this.index = this.tabTracker.returnTabIndexIfSameRoute("teamProfile");
     });
   }
 

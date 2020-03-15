@@ -6,6 +6,7 @@ import { Team } from '../classes/team.class';
 import { Division } from '../classes/division';
 import { TeamService } from '../services/team.service';
 import { TimeserviceService } from '../services/timeservice.service';
+import { TabTrackerService } from '../services/tab-tracker.service';
 
 
 
@@ -29,7 +30,7 @@ export class DivisionComponent implements OnInit, OnChanges {
 
 
   constructor(private division:DivisionService, private teamService:TeamService, private route:ActivatedRoute, private router: Router,
-    private timeService:TimeserviceService) {
+    private timeService:TimeserviceService, private tabTacker:TabTrackerService) {
 
 
     this.navigationSubscription = this.router.events.subscribe((e: any) => {
@@ -45,6 +46,12 @@ export class DivisionComponent implements OnInit, OnChanges {
    currentSeason;
 
    index=0;
+
+   setTab(ind){
+     this.tabTacker.lastRoute = 'division';
+     this.tabTacker.lastTab = ind;
+     this.index = ind;
+   }
 
 
    _passDivision;
@@ -98,7 +105,7 @@ export class DivisionComponent implements OnInit, OnChanges {
         }else{
           this.teamAggregate = this.divDisplay.teams
         }
-
+        this.index = this.tabTacker.returnTabIndexIfSameRoute('division');
       }
     }, (err)=>{
 

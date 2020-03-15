@@ -54,11 +54,11 @@
                 <div class="col-xl-12 col-md-12">
                     <!-- Nav Tabs -->
                     <ul class="nav nav-tabs" id="myTab">
-                        <li [ngClass]="{'active': index==0}"><a href="#standings" data-toggle="tab" (click)="index=0">Standings</a></li>
-                        <li [ngClass]="{'active': index==1}"><a href="#teams" data-toggle="tab" (click)="index=1">Teams</a></li>
-                        <li [ngClass]="{'active': index==2}"><a href="#schedule" data-toggle="tab" (click)="index=2">Schedule</a></li>
-                        <li [ngClass]="{'active': index==3}"><a href="#results" data-toggle="tab" (click)="index=3">Results</a></li>
-                        <li [ngClass]="{'active': index==4}"><a href="#tournament" data-toggle="tab" (click)="index=4">Tournament</a></li>
+                        <li class="finger" [ngClass]="{'active': index==0}"><a (click)="setTab(0)">Standings</a></li>
+                        <li class="finger" [ngClass]="{'active': index==1}"><a (click)="setTab(1)">Teams</a></li>
+                        <li class="finger" [ngClass]="{'active': index==2}"><a (click)="setTab(2)">Schedule</a></li>
+                        <li class="finger" [ngClass]="{'active': index==3}"><a (click)="setTab(3)">Results</a></li>
+                        <li class="finger" [ngClass]="{'active': index==4}"><a (click)="setTab(4)">Tournament</a></li>
                     </ul>
                     <!-- End Nav Tabs -->
                 </div>
@@ -67,7 +67,7 @@
                     <!-- Content Tabs -->
                     <div class="tab-content">
                         <!-- Tab One - overview -->
-                        <div class="tab-pane active" id="standings">
+                        <div class="tab-pane" *ngIf="index == 0" [ngClass]="{'active': index==0}">
 
                             <app-standings-view [division]="divDisplay" [season]="passSeasonVal"></app-standings-view>
 
@@ -75,7 +75,7 @@
                         <!-- Tab One - overview -->
 
                         <!-- Tab Two - squad -->
-                        <div class="tab-pane" id="teams">
+                        <div class="tab-pane" *ngIf="index == 1" [ngClass]="{'active': index==1}">
                             <div *ngIf="index==1">
                                 <app-team-display [teams]="teamAggregate" [season]="passSeasonVal"></app-team-display>
                             </div>
@@ -83,8 +83,8 @@
                         <!-- End Tab Two - squad -->
 
                         <!-- Tab Theree - schedule -->
-                        <div class="tab-pane" id="schedule">
-                            <ng-container class="pb-5" *ngIf="index == 2">
+                        <div class="tab-pane" *ngIf="index == 2" [ngClass]="{'active': index==2}">
+                            <ng-container class="pb-5">
                                 <app-schedule-view *ngIf="!divDisplay.cupDiv" [division]="divDisplay" [season]="passSeasonVal"></app-schedule-view>
                                 <br>
                                 <app-division-tournament-schedule-table *ngIf="!divDisplay.cupDiv" [division]="divDisplay" [season]="passSeasonVal"></app-division-tournament-schedule-table>
@@ -95,8 +95,8 @@
                         <!-- End Tab Theree - results -->
 
                         <!-- Tab Theree - results -->
-                        <div class="tab-pane" id="results">
-                            <div *ngIf="index==3">
+                        <div class="tab-pane" *ngIf="index == 3" [ngClass]="{'active': index==3}">
+                            <div>
                                 <app-division-results-tiles *ngIf="!divDisplay.cupDiv" [division]="divDisplay" [season]="passSeasonVal"></app-division-results-tiles>
                                 <div class="mt-3">
                                     <app-division-tournament-results-tiles *ngIf="!divDisplay.cupDiv" [division]="divDisplay"></app-division-tournament-results-tiles>
@@ -109,8 +109,8 @@
                         <!-- End Tab Theree - results -->
 
                         <!-- Tab four - tournament -->
-                        <div class="tab-pane" id="tournament">
-                            <div *ngIf="index == 4">
+                        <div class="tab-pane" *ngIf="index == 4" [ngClass]="{'active': index==4}">
+                            <div>
                                 <div *ngIf="currentSeason>6 || passSeasonVal>6 else oldBracket">
                                     <app-challonge-tourn [season]="passSeasonVal? passSeasonVal : currentSeason" [division]="divDisplay">
                                     </app-challonge-tourn>

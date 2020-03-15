@@ -89,11 +89,11 @@
                 <div class="col-xl-12 col-md-12">
                     <!-- Nav Tabs -->
                     <ul class="nav nav-tabs" id="myTab">
-                        <li [ngClass]="{'active': index==0}"><a href="#overview" data-toggle="tab" (click)="index=0">Overview</a></li>
-                        <li [ngClass]="{'active': index==1}"><a href="#squad" data-toggle="tab" (click)="index=1">Squad</a></li>
-                        <li [ngClass]="{'active': index==2}"><a href="#fixtures" data-toggle="tab" (click)="index=2">Schedule</a></li>
-                        <li [ngClass]="{'active': index==3}"><a href="#results" data-toggle="tab" (click)="index=3">Results</a></li>
-                        <li [ngClass]="{'active': index==4}"><a href="#stats" data-toggle="tab" (click)="index=4">Stats</a></li>
+                        <li class="finger" [ngClass]="{'active': index==0}"><a (click)="setTab(0)">Overview</a></li>
+                        <li class="finger" [ngClass]="{'active': index==1}"><a (click)="setTab(1)">Squad</a></li>
+                        <li class="finger" [ngClass]="{'active': index==2}"><a (click)="setTab(2)">Schedule</a></li>
+                        <li class="finger" [ngClass]="{'active': index==3}"><a (click)="setTab(3)">Results</a></li>
+                        <li class="finger" [ngClass]="{'active': index==4}"><a (click)="setTab(4)">Stats</a></li>
                     </ul>
                     <!-- End Nav Tabs -->
                 </div>
@@ -102,8 +102,8 @@
                     <!-- Content Tabs -->
                     <div class="tab-content pb-5">
                         <!-- Tab One - overview -->
-                        <div class="tab-pane active" id="overview">
-                            <div *ngIf="index==0">
+                        <div class="tab-pane" [ngClass]="{'active': index==0}" *ngIf="index==0">
+                            <div>
                                 <!-- captain buttons for editing -->
                                 <div class="row" *ngIf="showEditDialog()">
                                     <div class="col-6">
@@ -299,24 +299,24 @@
                         <!-- Tab One - overview -->
 
                         <!-- Tab Two - squad -->
-                        <div class="tab-pane pb-3" id="squad">
-                            <div *ngIf="index==1">
-                                <app-members [teamProfile]="returnedProfile"></app-members>
-                                <div class="row">
-                                    <div class="col">
+                        <div class="tab-pane pb-3" [ngClass]="{'active': index==1}" *ngIf="index==1">
+                            <div>
+                                <app-members [teamProfile]=" returnedProfile "></app-members>
+                                <div class="row ">
+                                    <div class="col ">
                                         <h6>History</h6>
                                     </div>
                                 </div>
-                                <app-team-history [teamProfile]="returnedProfile"></app-team-history>
-                                <div *ngIf="showEditDialog()">
-                                    <div class="row mt-3">
-                                        <div class="col">
+                                <app-team-history [teamProfile]="returnedProfile "></app-team-history>
+                                <div *ngIf="showEditDialog() ">
+                                    <div class="row mt-3 ">
+                                        <div class="col ">
                                             <h6>Pending Members:</h6>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-xl-4 col-lg-6 col-md-6" *ngFor="let player of returnedProfile.pendingMembers">
-                                            <app-player-small-card [playerID]="player.displayName"></app-player-small-card>
+                                    <div class="row ">
+                                        <div class="col-xl-4 col-lg-6 col-md-6 " *ngFor="let player of returnedProfile.pendingMembers ">
+                                            <app-player-small-card [playerID]="player.displayName "></app-player-small-card>
                                         </div>
                                     </div>
                                 </div>
@@ -326,11 +326,11 @@
                         <!-- End Tab Two - squad -->
 
                         <!-- Tab Theree - fixtures -->
-                        <div class="tab-pane" id="fixtures">
-                            <div *ngIf="index==2">
-                                <app-team-schedule-table [teamName]="returnedProfile.teamName" [season]="season"></app-team-schedule-table>
-                                <div class="mt-4">
-                                    <app-team-tournament-schedule-table [team]="returnedProfile" [season]="season">
+                        <div class="tab-pane " [ngClass]="{'active': index==2}" *ngIf="index==2">
+                            <div *ngIf=" index==2 ">
+                                <app-team-schedule-table [teamName]="returnedProfile.teamName " [season]="season "></app-team-schedule-table>
+                                <div class="mt-4 ">
+                                    <app-team-tournament-schedule-table [team]="returnedProfile " [season]="season ">
                                     </app-team-tournament-schedule-table>
                                 </div>
                             </div>
@@ -338,20 +338,20 @@
                         <!-- End Tab Theree - fixtures -->
 
                         <!-- Tab Theree - results -->
-                        <div class="tab-pane" id="results">
-                            <div *ngIf="index==3">
-                                <app-team-results-tiles [team]="returnedProfile.teamName" [season]="season"></app-team-results-tiles>
-                                <div class="mt-3">
-                                    <app-team-tournament-results-tiles [teamId]="returnedProfile._id" [season]="season"></app-team-tournament-results-tiles>
+                        <div class="tab-pane " [ngClass]="{ 'active': index==3} " *ngIf="index==3">
+                            <div *ngIf="index==3 ">
+                                <app-team-results-tiles [team]="returnedProfile.teamName " [season]="season "></app-team-results-tiles>
+                                <div class="mt-3 ">
+                                    <app-team-tournament-results-tiles [teamId]="returnedProfile._id " [season]="season "></app-team-tournament-results-tiles>
                                 </div>
                             </div>
                         </div>
                         <!-- End Tab Theree - results -->
 
                         <!-- Tab Theree - stats -->
-                        <div class="tab-pane" id="stats">
-                            <div *ngIf="index==4">
-                                <app-team-stats [team]="returnedProfile.teamName"></app-team-stats>
+                        <div class="tab-pane " [ngClass]="{ 'active': index==4} " *ngIf="index==4">
+                            <div *ngIf="index==4 ">
+                                <app-team-stats [team]="returnedProfile.teamName "></app-team-stats>
                             </div>
                         </div>
                         <!-- End Tab Theree - stats -->
@@ -360,9 +360,9 @@
                 </div>
 
                 <!-- Side info single team-->
-                <div class="col-lg-3 padding-top-mini" *ngIf="!season">
+                <div class="col-lg-3 padding-top-mini " *ngIf="!season ">
                     <!-- Diary -->
-                    <app-team-upcoming-match [team]="returnedProfile.teamName"></app-team-upcoming-match>
+                    <app-team-upcoming-match [team]="returnedProfile.teamName "></app-team-upcoming-match>
 
                 </div>
                 <!-- end Side info single team-->
