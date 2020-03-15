@@ -9,7 +9,8 @@
 
        </span>
             <h4>
-                {{returnedProfile.displayName}}
+                <app-player-link *ngIf="returnedProfile.displayName" [player]="returnedProfile.displayName">
+                    {{returnedProfile.displayName}}</app-player-link>
                 <!-- <span>Main Role</span> -->
             </h4>
             <ul>
