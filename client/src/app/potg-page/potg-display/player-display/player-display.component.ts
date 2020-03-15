@@ -36,7 +36,6 @@ export class PlayerDisplayComponent implements OnInit {
   );
   mvpCounts=0;
   ngOnInit(): void {
-    console.log(this.playerId);
     this.user.getUserById(this.playerId).subscribe(res => {
       this.returnedProfile = res;
     });

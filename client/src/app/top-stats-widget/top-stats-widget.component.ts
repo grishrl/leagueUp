@@ -207,7 +207,6 @@ export class TopStatsWidgetComponent implements OnInit {
     this.hp.getTopStats(this.currStat.stat).subscribe(
       res => {
         if (res) {
-          console.log(res);
           let object = res.data;
           _forEach(object, (value, key) => {
             let tO = {};
@@ -217,7 +216,7 @@ export class TopStatsWidgetComponent implements OnInit {
             this.stats.push(tO);
           });
         } else {
-          console.log('no stats found');
+          console.warn("TopStatsWidgetComponent: no stats found");
         }
 
       },

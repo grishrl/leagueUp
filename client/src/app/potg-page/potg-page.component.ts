@@ -11,14 +11,17 @@ export class PotgPageComponent implements OnInit {
 
   constructor(private mvpServ:MvpService, private timeService:TimeserviceService) { }
 
-  mvpList;
+  mvpList = [];
   ngOnInit(): void {
 
         this.timeService.getSesasonInfo().subscribe(res => {
-          console.log(res["value"]);
           this.mvpServ.getMvpById('season', res["value"]).subscribe(
             mvps=>{
-              this.mvpList = mvps;
+              mvps.forEach(m=>{
+                if(m.potg_link && m.potg_link.length>0){
+                   this.mvpList.push(m);
+                }
+              })
             }
           )
         });
