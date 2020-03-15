@@ -21,7 +21,12 @@ router.get('/get', (req, res) => {
 
     if (util.isNullorUndefined(id) && !util.isNullorUndefined(list)) {
 
-        MvpMethods.getList({ type, list }).then(
+        let listArr = list.split(',');
+        console.log(listArr);
+        MvpMethods.getList({
+            type,
+            listArr
+        }).then(
             found => {
                 res.status(200).send(
                     util.returnMessaging(path, 'Found records', false, found)

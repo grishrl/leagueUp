@@ -173,6 +173,11 @@ import { CasterDashboardMatchDisplayComponent } from './caster-tools/caster-dash
 import { MvpReportComponent } from './reporting/mvp-report/mvp-report.component';
 import { PotgPageComponent } from './potg-page/potg-page.component';
 import { PotgDisplayComponent } from './potg-page/potg-display/potg-display.component';
+import { CurrentlyLiveGamesComponent } from './currently-live-games/currently-live-games.component';
+import { LiveGameEmbeddComponent } from './currently-live-games/live-game-embed/live-game-embedd.component';
+import { MvpDisplayComponent } from './mvp-display/mvp-display.component';
+import { PlayerDisplayComponent } from './potg-page/potg-display/player-display/player-display.component';
+import { MvpPageComponent } from './mvp-page/mvp-page.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -332,7 +337,12 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     CasterDashboardMatchDisplayComponent,
     MvpReportComponent,
     PotgPageComponent,
-    PotgDisplayComponent
+    PotgDisplayComponent,
+    CurrentlyLiveGamesComponent,
+    LiveGameEmbeddComponent,
+    MvpDisplayComponent,
+    PlayerDisplayComponent,
+    MvpPageComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

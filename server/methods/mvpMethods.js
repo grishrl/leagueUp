@@ -11,6 +11,18 @@ CRUD for new MVP community data
 async function getAll() {
     return Mvp.find({}).lean().then(
         found => {
+            found = found.sort((a, b) => {
+                if (!a.timeStamp) {
+                    return -1;
+                } else if (!b.timeStamp) {
+                    return -1;
+                } else if (a.timeStamp > b.timeStamp) {
+                    return -1
+                } else {
+                    return 1;
+                }
+            });
+            // found.reverse();
             return found;
         },
         err => {
@@ -19,14 +31,17 @@ async function getAll() {
     )
 }
 
-async function getList({ type, list }) {
+async function getList({
+    type,
+    listArr
+}) {
     let query = {
 
     }
     query[type] = {
-        $in: list
+        $in: listArr
     };
-
+    console.log(query);
     return Mvp.find(query).lean().then(
         found => {
             return found;

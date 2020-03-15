@@ -8,6 +8,11 @@ export class MvpService {
 
   constructor(private http:HttpServiceService) { }
 
+  getAll(){
+      let url = "/mvp/get";
+      return this.http.httpGet(url, []);
+  }
+
   getMvpById(type, id){
     let url = '/mvp/get';
     const payload = {

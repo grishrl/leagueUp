@@ -223,6 +223,40 @@ router.post('/get/matches/all',
         });
     });
 
+router.get('/get/matches/casted/playing', (req, res) => {
+    const path = 'schedule/get/matches/casted/playing';
+    let now = Date.now();
+    let query = {
+        $and: [{
+            casterUrl: {
+                $exists: true
+            }
+        }, {
+            "scheduledTime.endTime": {
+                $gt: now
+            }
+        }, {
+            "scheduledTime.startTime": {
+                $lt: now
+            }
+        }]
+    }
+    Match.find(query).lean().then((found) => {
+        if (found) {
+            let teams = findTeamIds(found);
+            addTeamNamesToMatch(teams, found).then((processed) => {
+                res.status(200).send(util.returnMessaging(path, 'Found matches', false, processed));
+            }, (err) => {
+                res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
+            });
+        } else {
+            res.status(200).send(util.returnMessaging(path, 'No matches found for criteria', false, found));
+        }
+    }, (err) => {
+        res.status(500).send(util.returnMessaging(path, 'Error finding matches', err));
+    });
+});
+
 router.post('/get/matchup/history', (req, res) => {
 
     const path = 'schedule/get/matchup/history';

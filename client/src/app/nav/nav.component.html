@@ -32,6 +32,17 @@
                                     <a [routerLink]="['/volunteers']">Volunteers</a>
                                 </li>
                                 <li class="current">
+                                    <a class="finger linkColorFix">Community Spotlight</a>
+                                    <ul class="sub-current" appHideMenu>
+                                        <li>
+                                            <a [routerLink]="['/potg']">Play of the Game</a>
+                                        </li>
+                                        <li>
+                                            <a [routerLink]="['/mvp']">MVP</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="current">
                                     <a class="finger linkColorFix">Statistics</a>
                                     <ul class="sub-current" appHideMenu>
                                         <li>
@@ -173,6 +184,17 @@
         <li><a [routerLink]="['/rules']">Rules</a></li>
         <li><a [routerLink]="['/faq']">FAQ</a></li>
         <li><a [routerLink]="['/volunteers']">Volunteers</a></li>
+        <li>
+            <a>Community Spotlight</a>
+            <ul>
+                <li>
+                    <a [routerLink]="['/potg']">Play of the Game</a>
+                </li>
+                <li>
+                    <a [routerLink]="['/mvp']">MVP</a>
+                </li>
+            </ul>
+        </li>
         <li>
             <a>Divisions</a>
             <ul>

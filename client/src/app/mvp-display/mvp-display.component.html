@@ -1,0 +1,18 @@
+<!--Items Club video -->
+<div class="row no-line-height">
+    <div class="col-md-12">
+        <h3 class="clear-title">MVP Spotlight</h3>
+    </div>
+
+    <drag-scroll class="pt-3" *ngIf="display" style="width: 100%; height: 930px; background: rgba(128, 128, 128, 0.4); cursor: all-scroll;">
+        <ng-container *ngFor="let data of display">
+            <div class="col-sm-12 col-md-12 col-lg-4" drag-scroll-item>
+                <div style="cursor: auto;">
+                    <app-potg-display [potg]="data" [showPotg]="true" [showMvp]="true"></app-potg-display>
+                </div>
+            </div>
+        </ng-container>
+    </drag-scroll>
+
+</div>
+<!--End Items Club video -->

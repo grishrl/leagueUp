@@ -53,6 +53,7 @@ import { CasterPageComponent } from "./caster-tools/caster-page/caster-page.comp
 import { LogsViewerComponent } from './admin/logs-viewer/logs-viewer.component';
 import { MatchupHistoryComponent } from './match/matchup-history/matchup-history.component';
 import { PotgPageComponent } from "./potg-page/potg-page.component";
+import { MvpPageComponent } from "./mvp-page/mvp-page.component";
 
 const APP_ROUTES: Routes = [
   { path: "challonge", component: ChallongeTournComponent },
@@ -223,6 +224,7 @@ const APP_ROUTES: Routes = [
   { path: "tournament", component: TournamentViewComponent },
   { path: "page/:id", component: StaticHtmlLoaderComponent },
   { path: "potg", component: PotgPageComponent },
+  { path: "mvp", component: MvpPageComponent },
   {
     path: "**",
     component: StaticHtmlLoaderComponent,

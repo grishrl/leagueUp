@@ -13,6 +13,7 @@ export class HomeComponent implements OnInit {
   index = 0;
 
   ngOnInit() {
+
   }
 
 }

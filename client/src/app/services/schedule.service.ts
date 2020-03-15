@@ -56,6 +56,11 @@ export class ScheduleService {
     return this.httpService.httpPost(url, payload, false);
   }
 
+  getLiveMatches(){
+    let url = "schedule/get/matches/casted/playing";
+    return this.httpService.httpGet(url, [], false);
+  }
+
   //returns matches that match criteria of season, division
   getDivisionScheduleMatches(season, division: string) {
     let url = 'schedule/get/division/matches';
