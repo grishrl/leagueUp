@@ -225,7 +225,6 @@ function sortMatchesByTime(matches) {
 
 function objectify(obj) {
     if (obj) {
-        console.log('OBJ > ', obj)
         try {
             return obj.toObject();
         } catch {

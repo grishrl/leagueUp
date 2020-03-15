@@ -41,7 +41,7 @@ async function getList({
     query[type] = {
         $in: listArr
     };
-    console.log(query);
+
     return Mvp.find(query).lean().then(
         found => {
             return found;
@@ -158,10 +158,9 @@ async function deleteById({
 }
 
 async function like(id, likerId) {
-    console.log('>>>>>', id, likerId);
+
     return Mvp.findOne({ match_id: id }).then(
         found => {
-            console.log('found ', found);
             if (found) {
                 let foundObj = utils.objectify(found);
                 let canLike = true;
