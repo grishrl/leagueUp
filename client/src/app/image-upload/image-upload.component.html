@@ -10,9 +10,11 @@
                 <img class="img-fluid" [src]="imageToDisplay" alt="" />
             </div>
         </div>
-        <div class="row" [hidden]="!_showEdit">
+        <div class="row mt-1" [hidden]="!_showEdit">
             <div class="col">
-                <span class="finger"><i (click)="editClicked=!editClicked" class="material-icons">launch</i></span>
+                <span class="finger" (click)="editClicked=!editClicked"><i class="material-icons">launch</i>
+                  <span style="position: absolute;">Upload New Image</span>
+                </span>
             </div>
             <div class="col" *ngIf="_embedded">
                 <span class="finger" (click)="removeImage()"><i class="fas fa-ban"></i> Remove Image</span>
