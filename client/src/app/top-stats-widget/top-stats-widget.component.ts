@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HeroesProfileService } from '../services/heroes-profile.service';
 import { UserService } from '../services/user.service';
 import { forEach as _forEach } from 'lodash';
+import { TimeserviceService } from '../services/timeservice.service';
 
 @Component({
   selector: 'app-top-stats-widget',
@@ -10,7 +11,17 @@ import { forEach as _forEach } from 'lodash';
 })
 export class TopStatsWidgetComponent implements OnInit {
 
-  constructor(private hp: HeroesProfileService, public user: UserService) { }
+  offSeason:boolean = false;
+  constructor(private hp: HeroesProfileService, public user: UserService, private timeService:TimeserviceService) {
+            this.timeService.getSesasonInfo().subscribe(res => {
+              if (Date.now() < res["data"].seasonStartDate) {
+                this.offSeason = true;
+              }
+              // this.seasonStartDate = ;
+              // this.registrationOpen = res["data"].registrationOpen;
+              this.ngOnInit();
+            });
+   }
 
   stats = []
   currStat;
@@ -204,26 +215,28 @@ export class TopStatsWidgetComponent implements OnInit {
     this.currStat = this.statList[randomInt];
 
     this.displayStat = this.currStat.displayText;
-    this.hp.getTopStats(this.currStat.stat).subscribe(
-      res => {
-        if (res) {
-          let object = res.data;
-          _forEach(object, (value, key) => {
-            let tO = {};
+    if(!this.offSeason){
+          this.hp.getTopStats(this.currStat.stat).subscribe(
+            res => {
+              if (res) {
+                let object = res.data;
+                _forEach(object, (value, key) => {
+                  let tO = {};
 
-            tO['name'] = value['battletag'];
-            tO['points'] = value[this.currStat.hpKey];
-            this.stats.push(tO);
-          });
-        } else {
-          console.warn("TopStatsWidgetComponent: no stats found");
-        }
+                  tO["name"] = value["battletag"];
+                  tO["points"] = value[this.currStat.hpKey];
+                  this.stats.push(tO);
+                });
+              } else {
+                console.warn("TopStatsWidgetComponent: no stats found");
+              }
+            },
+            err => {
+              console.log(err);
+            }
+          );
+    }
 
-      },
-      err => {
-        console.log(err);
-      }
-    )
   }
 
 }

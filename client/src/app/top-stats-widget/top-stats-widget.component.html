@@ -1,6 +1,6 @@
 <div class="player-ranking">
     <h5><span>{{displayStat}}</span></h5>
-    <div class="info-player">
+    <div class="info-player" *ngIf="!offSeason else offSeasonTemplate">
         <ul>
             <li *ngFor="let stat of stats; let i = index">
                 <span class="position">
@@ -16,4 +16,10 @@
             </li>
         </ul>
     </div>
+    <ng-template #offSeasonTemplate>
+        <div class="text-center no-division-box-padding">
+            <h5>We're in off season now!</h5>
+            <h6 class="text-white">Check back later!</h6>
+        </div>
+    </ng-template>
 </div>

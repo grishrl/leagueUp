@@ -3,6 +3,7 @@ import { StandingsService } from '../services/standings.service';
 import { TeamService } from '../services/team.service';
 import { AuthService } from '../services/auth.service';
 import { DivisionService } from '../services/division.service';
+import { TimeserviceService } from '../services/timeservice.service';
 
 @Component({
   selector: 'app-division-standings',
@@ -11,7 +12,17 @@ import { DivisionService } from '../services/division.service';
 })
 export class DivisionStandingsComponent implements OnInit {
 
-  constructor(private standingsService: StandingsService, public team: TeamService, private auth: AuthService, private DivisionService: DivisionService) { }
+  offSeason:boolean=false;
+  constructor(private standingsService: StandingsService, public team: TeamService, private auth: AuthService, private DivisionService: DivisionService, private timeService:TimeserviceService) {
+        this.timeService.getSesasonInfo().subscribe(res => {
+          if(Date.now() < res["data"].seasonStartDate ){
+            this.offSeason=true;
+          }
+          // this.seasonStartDate = ;
+          // this.registrationOpen = res["data"].registrationOpen;
+          this.ngOnInit();
+        });
+   }
 
   standings = [];
   passDiv ;
@@ -37,7 +48,8 @@ export class DivisionStandingsComponent implements OnInit {
 
   ngOnInit() {
 
-    if (this.auth.getTeam()){
+
+    if (!this.offSeason && this.auth.getTeam()){
       this.team.getTeam(this.auth.getTeam()).subscribe(
         res => {
           if (res.divisionConcat){
