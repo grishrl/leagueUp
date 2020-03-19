@@ -101,7 +101,9 @@ export class MatchEditComponent implements OnInit {
     }
     this.mvpServ.getMvpById("match_id", this.matchId).subscribe(
       res => {
-        this.mvpObj = res;
+        if(res){
+          this.mvpObj = res;
+        }
       },
       err => {
         console.log("err", err);
@@ -162,7 +164,6 @@ export class MatchEditComponent implements OnInit {
               this.filePendingUpload = null;
               this.matchRound = null;
               this.winner = null;
-              console.log(res);
               this.ngOnInit();
             },
             err=>{

@@ -6,6 +6,7 @@ import { merge } from 'lodash';
 import { BlogCommonService } from 'src/app/services/blog-common.service';
 import { WordpressService, Author } from 'src/app/services/wordpress.service';
 import { Post } from 'src/app/services/wordpress.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-blog-view',
@@ -21,7 +22,7 @@ export class BlogViewComponent implements OnInit {
   displayAuthor:Author
   slug:string
 
-  constructor(private contentfulService:ContentfulService, private route: ActivatedRoute, public md:MarkdownParserService, public blogCommon:BlogCommonService, private WP:WordpressService) {
+  constructor(private contentfulService:ContentfulService, private route: ActivatedRoute, public md:MarkdownParserService, public blogCommon:BlogCommonService, private WP:WordpressService, public sanitizer:DomSanitizer) {
     //gets the ID from the url route
     if(this.route.snapshot.params['id']){
       this.recId = this.route.snapshot.params['id'];
