@@ -22,7 +22,6 @@ export class MatchupInfoEmbeddableComponent implements OnInit {
   matches = [];
 
   ngOnInit() {
-    console.log(this.teamA, this.teamB);
     this.teamService.getTeam(null, null, this.teamA).subscribe(
       res => {
         this.teamAinf = res;

@@ -142,31 +142,113 @@
                 </div>
             </div>
 
-            <div class="row mt-4">
+            <div class="row mt-3">
                 <div class="col">
+                    <h3>Replay Info:</h3>
+                </div>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Data</th>
+                        <th scope="col">URL</th>
+                        <th scope="col">HP Url</th>
+                        <th scope="col">Manage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container *ngFor="let replay of match.replays | keyvalue">
+                        <tr *ngIf="replay.key != '_id'">
+                            <th scope="row">{{replay.key}}</th>
+                            <td>{{replay.value.data}}</td>
+                            <td>{{replay.value.url}}</td>
+                            <td>{{replay.value.parsedUrl}}</td>
+                            <td> <button class="btn btn-danger" (click)="deleteReplay(replay.key)">Delete</button> </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+
+            <div class="row mt-3">
+                <div class="col">
+                    <h3>Replay Upload:</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div *ngIf="filePendingUpload"><strong>File Name: </strong>File{{filePendingUpload.name}}</div>
+                    <div *ngIf="matchRound"><strong>Round: </strong>{{matchRound}}</div>
+                    <div *ngIf="winner"><strong>Winner: </strong>{{winner}}</div>
+                    <div class="col" *ngIf="!filePendingUpload">
+                        Select file*:
+                        <input type="file" ngf accept=".StormReplay" [(file)]="filePendingUpload">
+                    </div>
+                    <div class="col" *ngIf="filePendingUpload && !matchRound">
+
+                        <mat-form-field class="mat-FullWidth">
+                            <mat-select placeholder="Round:" [(ngModel)]="matchRound" disableOptionCentering>
+                                <mat-option [value]="1">1</mat-option>
+                                <mat-option [value]="2">2</mat-option>
+                                <mat-option [value]="3">3</mat-option>
+                                <mat-option [value]="4">4</mat-option>
+                                <mat-option [value]="5">5</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col" *ngIf="filePendingUpload && matchRound && !winner">
+                        <div class="row m-t-5 ">
+                            <div>
+                                <h5>Winner:</h5>
+                            </div>
+                            <div class="col ">
+                                <mat-radio-group [(ngModel)]='winner'>
+                                    <mat-radio-button class="example-margin" value="home"> Home
+                                    </mat-radio-button>
+                                </mat-radio-group>
+                            </div>
+                            <div class="col ">
+
+                            </div>
+                            <div class="col ">
+                                <mat-radio-group [(ngModel)]='winner'>
+                                    <mat-radio-button class="example-margin" value="away">Away
+                                    </mat-radio-button>
+                                </mat-radio-group>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col" *ngIf="winner">
+                        <button class="btn btn-success" (click)="uploadReplay()">Submit</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4 ">
+                <div class="col ">
                     <h4>Match MVP Info:</h4>
                 </div>
             </div>
-            <div class="row mt-2">
-                <div class="col">
+            <div class="row mt-2 ">
+                <div class="col ">
                     <strong>MVP Player: </strong> {{this.mvpObj.displayName}}
                 </div>
             </div>
-            <div class="row mt-2">
-                <div class="col">
+            <div class="row mt-2 ">
+                <div class="col ">
                     <strong>PotG Link:  </strong>
-                    <mat-form-field class="mat-60-width">
-                        <!-- [formControl]="casterUrlControl" -->
-                        <input matInput placeholder="PotG Clip URL" [(ngModel)]="this.mvpObj.potg_link">
-                        <!-- <mat-error *ngIf="casterUrlControl.hasError('required')">
+                    <mat-form-field class="mat-60-width ">
+                        <!-- [formControl]="casterUrlControl " -->
+                        <input matInput placeholder="PotG Clip URL " [(ngModel)]="this.mvpObj.potg_link ">
+                        <!-- <mat-error *ngIf="casterUrlControl.hasError( 'required') ">
                                             PotG Error!
                                         </mat-error> -->
                     </mat-form-field>
                 </div>
             </div>
-            <div class="row mt-2">
-                <div class="col">
-                    <button class="btn btn-primary" (click)="saveMVP(this.mvpObj)"> Save MVP Info </button>
+            <div class="row mt-2 ">
+                <div class="col ">
+                    <button class="btn btn-primary " (click)="saveMVP(this.mvpObj) "> Save MVP Info </button>
                 </div>
             </div>
         </div>

@@ -73,7 +73,7 @@ router.get('/getSeasonInfo', (req, res) => {
                     if (process) {
                         res.status(200).send(util.returnMessaging(path, "Found the season schedule.", false, process, null));
                     } else {
-                        res.status(500).send(util.returnMessaging(path, "Error finding season schedule.", err, null, null));
+                        res.status(500).send(util.returnMessaging(path, "Error finding season schedule.", false, null, null));
                     }
                 }
             )

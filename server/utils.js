@@ -71,8 +71,14 @@ returnMessaging = function(route, message, err, obj, additional, logInfo) {
         "route": route,
         "message": message
     };
+
     if (!isNullorUndefined(err) && err) {
-        ret.err = err;
+        if (err.hasOwnProperty('toString')) {
+            ret.err = err.toString();
+        } else {
+            ret.err = JSON.stringify(err);
+        }
+
     }
     if (!isNullorUndefined(obj) && obj) {
         ret.returnObject = obj;

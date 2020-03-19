@@ -45,6 +45,9 @@ export class MatchEditComponent implements OnInit {
     displayName: "",
     potg_link: ""
   };
+  filePendingUpload;
+  matchRound;
+  winner;
 
   constructor(
     private route: ActivatedRoute,
@@ -61,6 +64,7 @@ export class MatchEditComponent implements OnInit {
   ngOnInit() {
     this.scheduleService.getMatchInfo(this.matchId).subscribe(
       res => {
+        console.log(res);
         this.match = res;
         if (this.match.away.score || this.match.home.score) {
           this.homeScore = this.match.home.score;
@@ -106,30 +110,72 @@ export class MatchEditComponent implements OnInit {
   }
 
   saveMVP(obj) {
-    if(obj.potg_link){
+    if (obj.potg_link) {
       let valObj = this.util.validateClipUrl(obj.potg_link);
-      if(valObj.valid){
+      if (valObj.valid) {
         obj.potg_link = valObj.returnClip;
-            this.mvpServ.upsertMvp(obj).subscribe(
-              res => {
-                this.mvpObj = res;
-              },
-              err => {
-                console.log("MVP Submit: ", err);
-              }
-            );
+        this.mvpServ.upsertMvp(obj).subscribe(
+          res => {
+            this.mvpObj = res;
+          },
+          err => {
+            console.log("MVP Submit: ", err);
+          }
+        );
       }
-    }else{
-                  this.mvpServ.upsertMvp(obj).subscribe(
-                    res => {
-                      this.mvpObj = res;
-                    },
-                    err => {
-                      console.log("MVP Submit: ", err);
-                    }
-                  );
+    } else {
+      this.mvpServ.upsertMvp(obj).subscribe(
+        res => {
+          this.mvpObj = res;
+        },
+        err => {
+          console.log("MVP Submit: ", err);
+        }
+      );
     }
+  }
 
+  deleteReplay(key) {
+    this.adminService.deleteReplay(this.match.matchId, key).subscribe(
+      res=>{
+        this.ngOnInit();
+      },
+      err=>{
+        console.log(err);
+      }
+    )
+  }
+
+  uploadReplay() {
+    console.log(this.filePendingUpload);
+    if(this.match.replays.hasOwnProperty(this.matchRound)){
+      alert('This match all ready has info for the provided round!');
+    }else{
+      this.match.other[this.matchRound].winner = this.winner;
+      this.adminService.matchUpdate(this.match).subscribe(
+        res => {
+          //now lets do some replay magic...
+          let report = { "matchId":this.match.matchId, "round": this.matchRound}
+          report[`replay${this.matchRound}`] = this.filePendingUpload;
+          this.adminService.uploadReplay(report).subscribe(
+            res=>{
+              this.filePendingUpload = null;
+              this.matchRound = null;
+              this.winner = null;
+              console.log(res);
+              this.ngOnInit();
+            },
+            err=>{
+              console.log(err);
+
+            }
+          )
+        },
+        err => {
+          console.log(err);
+        }
+      );
+    }
   }
 
   saveMatch(match) {

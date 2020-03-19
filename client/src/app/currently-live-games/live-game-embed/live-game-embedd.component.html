@@ -2,9 +2,11 @@
     <div *ngIf="embedLink.length>0" class="pt-2">
         <!-- Widget Text-->
         <div class="panel-box">
-            <div class="titles no-margin">
+            <div class="titles no-margin text-center">
                 <div style="white-space: normal;">
-                    <h4>{{match.home.teamName}} VS {{match.away.teamName}}</h4>
+                    <h4>{{match.home.teamName}}
+                        <br> -VS-
+                        <br> {{match.away.teamName}}</h4>
                 </div>
                 <div>
                     <h4>Casted by: {{match.casterName}}</h4>

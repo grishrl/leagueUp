@@ -77,16 +77,13 @@ export class MvpReportComponent implements OnInit {
   }
 
   report(){
-    console.log('click');
     if(!this.disableSubmit){
       if(this.validate(this.origRes, this.mvpObj)){
         if(!this.mvpObj.match_id){
           this.mvpObj.match_id = this.matchIdVal;
         }
         //require some input before creating the post...
-        console.log(this.mvpObj);
         if (this.mvpObj.displayName || this.mvpObj.potg_link) {
-          console.log("click1");
           if (this.mvpObj.potg_link) {
             let urlObj = this.util.validateClipUrl(this.mvpObj.potg_link);
             if (urlObj.valid) {
@@ -118,7 +115,6 @@ export class MvpReportComponent implements OnInit {
 }
 
   private validate(obj1, obj2) {
-  console.log(obj1, obj2);
   if (obj1) {
     let valid = true;
     forEach(obj1, (val, key) => {

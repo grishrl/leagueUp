@@ -19,7 +19,6 @@ export class MatchupHistoryComponent implements OnInit {
 
     this.aR.paramMap.subscribe(
       params=>{
-        console.log(params);
         this.teamA = params['params'].teamAid;
         this.teamB = params['params'].teamBid;
       }

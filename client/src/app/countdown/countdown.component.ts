@@ -1,12 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ScheduleService } from '../services/schedule.service';
 import { UtilitiesService } from '../services/utilities.service';
-import { DivisionService } from '../services/division.service';
 import { TeamService } from '../services/team.service';
 import { CountdownService } from '../services/countdown.service';
 import { Iinterval } from '../model/iinterval';
 import { TimeserviceService } from '../services/timeservice.service';
-import * as moment from 'moment-timezone';
 
 
 @Component({
