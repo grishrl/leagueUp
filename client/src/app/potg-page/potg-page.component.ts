@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MvpService } from '../services/mvp.service';
 import { TimeserviceService } from '../services/timeservice.service';
+import { last } from 'rxjs/operators';
 
 @Component({
   selector: 'app-potg-page',
@@ -27,6 +28,25 @@ export class PotgPageComponent implements OnInit {
         });
 
 
+  }
+
+  invert = 1;
+  lastChoice;
+  sort(sortBy){
+    if(this.lastChoice == sortBy){
+      this.invert = -1*this.invert;
+    }else{
+      this.invert = 1;
+    }
+    this.mvpList = this.mvpList.sort(
+      (a,b)=>{
+        if(a[sortBy]>b[sortBy]){
+          return 1*this.invert;
+        }else{
+          return -1*this.invert;
+        }
+      }
+    )
   }
 
 }

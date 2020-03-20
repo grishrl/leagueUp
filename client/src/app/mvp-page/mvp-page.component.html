@@ -19,6 +19,12 @@
                         <div class="col-lg-4" *ngFor="let mvp of mvpList">
                             <app-potg-display [potg]="mvp" [showPotg]="false" [showMvp]="true"></app-potg-display>
                         </div>
+
+                        <div class="col-12" *ngIf="mvpList.length==0">
+                            <div class="p-5">
+                                No MPVs Yet!
+                            </div>
+                        </div>
                     </div>
                     <!-- End Post Item -->
                 </div>
