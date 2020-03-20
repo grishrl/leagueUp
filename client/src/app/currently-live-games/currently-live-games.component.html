@@ -4,9 +4,8 @@
             <div class="col">
                 <div class="panel-box">
                     <div class="titles no-margin">
-                        <h4>Live NGS Matches : {{liveList.length}} games currently streaming!</h4>
+                        <h4>NGS LIVE: {{liveList.length}} currently streaming content!</h4>
                     </div>
-
                     <drag-scroll *ngIf="liveList" class="liveGamesContainer" style="background: rgba(128, 128, 128, 0.4); cursor: all-scroll;">
                         <ng-container *ngFor="let match of liveList">
                             <div class="col-sm-12 col-md-12 col-lg-4" drag-scroll-item>

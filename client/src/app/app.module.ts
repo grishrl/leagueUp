@@ -178,6 +178,7 @@ import { LiveGameEmbeddComponent } from './currently-live-games/live-game-embed/
 import { MvpDisplayComponent } from './mvp-display/mvp-display.component';
 import { PlayerDisplayComponent } from './potg-page/potg-display/player-display/player-display.component';
 import { MvpPageComponent } from './mvp-page/mvp-page.component';
+import { StreamManagerComponent } from './admin/stream-manager/stream-manager.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -342,7 +343,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     LiveGameEmbeddComponent,
     MvpDisplayComponent,
     PlayerDisplayComponent,
-    MvpPageComponent
+    MvpPageComponent,
+    StreamManagerComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

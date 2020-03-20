@@ -53,6 +53,8 @@ const matchSchema = new Schema({
     "round": Number,
     "home": team,
     "away": team,
+    "title": String,
+    "streamOnly": Boolean,
     "scheduledTime": scheduleSubSchema,
     "replays": replaySchema,
     "casterName": String,

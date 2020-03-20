@@ -205,6 +205,23 @@ router.post('/get/matches/all',
         });
     });
 
+
+//match query route
+router.post('/query/matches',
+    passport.authenticate('jwt', {
+        session: false
+    }), (req, res) => {
+        const path = '/query/matches';
+        Match.find(req.body).lean().then(
+            found => {
+                res.status(200).send(util.returnMessaging(path, 'Query results', false, found));
+            },
+            err => {
+                res.status(500).send(util.returnMessaging(path, 'Query Error', err))
+            }
+        )
+    });
+
 router.get('/get/matches/casted/playing', (req, res) => {
     const path = 'schedule/get/matches/casted/playing';
     let now = Date.now();

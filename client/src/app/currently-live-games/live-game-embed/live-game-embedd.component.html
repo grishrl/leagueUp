@@ -3,10 +3,13 @@
         <!-- Widget Text-->
         <div class="panel-box">
             <div class="titles no-margin text-center">
-                <div style="white-space: normal;">
+                <div style="white-space: normal;" *ngIf="match.home && match.home.teamName">
                     <h4>{{match.home.teamName}}
                         <br> -VS-
                         <br> {{match.away.teamName}}</h4>
+                </div>
+                <div style="white-space: normal;" *ngIf="match.title">
+                    <h4>{{match.title}}</h4>
                 </div>
                 <div>
                     <h4>Casted by: {{match.casterName}}</h4>

@@ -13,6 +13,11 @@ export class ScheduleService {
 
    }
 
+   matchQuery(obj){
+    let url = "schedule/query/matches";
+    return this.httpService.httpPost(url, obj);
+   }
+
   //returns all generated matches
   getAllMatches(){
     let url = 'schedule/get/matches/all';

@@ -54,6 +54,7 @@ import { LogsViewerComponent } from './admin/logs-viewer/logs-viewer.component';
 import { MatchupHistoryComponent } from './match/matchup-history/matchup-history.component';
 import { PotgPageComponent } from "./potg-page/potg-page.component";
 import { MvpPageComponent } from "./mvp-page/mvp-page.component";
+import { StreamManagerComponent } from './admin/stream-manager/stream-manager.component';
 
 const APP_ROUTES: Routes = [
   { path: "challonge", component: ChallongeTournComponent },
@@ -140,6 +141,12 @@ const APP_ROUTES: Routes = [
   {
     path: "_admin/matchMgmt",
     component: MatchManagementComponent,
+    canActivate: [AuthGuardService],
+    data: { role: "match" }
+  },
+  {
+    path: "_admin/streamMgmt",
+    component: StreamManagerComponent,
     canActivate: [AuthGuardService],
     data: { role: "match" }
   },

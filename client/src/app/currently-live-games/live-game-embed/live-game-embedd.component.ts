@@ -19,6 +19,7 @@ export class LiveGameEmbeddComponent implements OnInit {
 
   eleHeight;
   ngAfterViewInit(){
+    console.log(this.match);
             this.eleHeight =
               (this.container.nativeElement.offsetWidth / 16) * 9;
         let TLD = "twitch.tv/";
@@ -30,6 +31,7 @@ export class LiveGameEmbeddComponent implements OnInit {
             this.match.casterUrl.length
           );
           this.embedLink = `https://player.twitch.tv/?channel=${channelID}&autoplay=false;&muted=true`;
+          console.log(this.embedLink);
         }
 
 

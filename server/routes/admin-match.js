@@ -12,6 +12,7 @@ const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 const logger = require('../subroutines/sys-logging-subs');
 const ParsedReplay = require('../models/replay-parsed-models');
 const uploadMethods = require('../methods/replayUpload');
+const streamMethod = require('../methods/streamEventCreator');
 
 
 router.post('/match/update', passport.authenticate('jwt', {
@@ -417,6 +418,70 @@ router.post('/match/uploadreplay', passport.authenticate('jwt', {
         )
     });
 });
+
+router.post('/match/deletereplay', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.matchLevel, util.appendResHeader, (req, res) => {
+    let logInfo = {};
+
+    const path = 'admin/match/deletereplay'
+
+    logInfo.action = 'delete replay from match';
+    logInfo.admin = 'ADMIN';
+    logInfo.actor = req.user.displayName;
+    logInfo.target = `${req.body.match} : replay prop ${req.body.replayProp}`;
+
+    // res.status(200).send("Under construction");
+    if (req.body.matchId && req.body.replayProp) {
+        deleteReplay(req.body.matchId, req.body.replayProp).then(
+            answer => {
+                res.status(200).send(util.returnMessaging(path, 'Replay Deleted', false, answer, null, logInfo));
+            },
+            err => {
+                console.log('err', err);
+                res.status(500).send(util.returnMessaging(path, 'Delete replay failed', err));
+            }
+        )
+    } else {
+        res.status(500).send(util.returnMessaging(path, 'Bad parameters', null));
+    }
+});
+
+
+router.post('/match/create/stream/link', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.matchLevel, util.appendResHeader, (req, res) => {
+    const path = '/match/create/stream/link';
+
+    streamMethod.createStreamEvent(req.body).then(
+        answer => {
+            res.status(200).send(util.returnMessaging(path, 'Stream info created', false, answer));
+        },
+        err => {
+            if (err instanceof Error) {
+                err = err.message;
+            }
+            res.status(500).send(util.returnMessaging(path, 'Stream info failed', err));
+        }
+    )
+});
+
+router.post('/match/delete/stream/link', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.matchLevel, util.appendResHeader, (req, res) => {
+    const path = '/match/delete/stream/link';
+
+    let query = { "$and": [{ "matchId": req.body.matchId }, { "streamOnly": true }] };
+    Match.findOneAndDelete(query).then(
+        deleted => {
+            res.status(200).send(util.returnMessaging(path, 'Stream info deleted', false, deleted));
+        },
+        err => {
+            res.status(500).send(util.returnMessaging(path, 'Stream info delete failed', err));
+        }
+    )
+});
+
 
 module.exports = router;
 

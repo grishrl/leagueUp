@@ -1,0 +1,155 @@
+<div class="container">
+
+
+    <div class="row forceFull">
+        <div class="col">
+
+            <div class="row mt-3">
+                <div class="col">
+                    <a [routerLink]="['/_admin/dashboard']">Back to Dashboard</a>
+                </div>
+            </div>
+
+            <h3>Current Non-Match Streaming Items</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Title or Team Names</th>
+                        <th scope="col">Caster</th>
+                        <th scope="col">Caster URL</th>
+                        <th scope="col">Start Time</th>
+                        <th scope="col">End Time</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container *ngFor="let streami of streams">
+                        <tr>
+                            <th scope="row">
+                                <span *ngIf="streami.title">{{streami.title}}</span>
+                                <span *ngIf="streami.home && streami.home.teamName">{{streami.home.teamName}} <br> vs <br> {{streami.away.teamName}}</span>
+                            </th>
+                            <td>{{streami.casterName}}</td>
+                            <td>{{streami.casterUrl}}</td>
+                            <td>{{util.getFormattedDate(streami.scheduledTime.startTime, 'MM/DD/YYYY hh:mm A')}}</td>
+                            <td>{{util.getFormattedDate(streami.scheduledTime.endTime, 'MM/DD/YYYY hh:mm A')}}</td>
+                            <td> <button class="btn btn-danger" (click)="deleteStream(streami.matchId)">Delete</button>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+
+            <div class="row mt-2">
+                <div class="col text-center">
+                    <h3>Create or Modify Stream:</h3>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col">
+                    <div><strong>Stream Title:</strong></div>
+                    <mat-form-field class="mat-FullWidth">
+                        <input matInput placeholder="Stream Title" [(ngModel)]="stream.title">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div>
+                <h4>OR</h4>
+            </div>
+            <div class="row mt-2">
+                <div class="col">
+                    <div><strong>Team Names</strong></div>
+                    <mat-form-field class="mat-FullWidth">
+                        <input matInput placeholder="Home Team Name" [(ngModel)]="stream.team1Name">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col">
+                    <mat-form-field class="mat-FullWidth">
+                        <input matInput placeholder="Away Team Name" [(ngModel)]="stream.team2Name">
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col ">
+                    <h3>Stream Time Info:</h3>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col">
+                    <mat-checkbox [(ngModel)]="startNow">Starts Now!</mat-checkbox>
+                </div>
+
+
+            </div>
+            <div class="row mt-2">
+                <div class="col">
+                    <h4>Or:</h4>
+                    <div><strong> Stream Start Time</strong></div>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col">
+
+                    <app-date-picker [(date)]="friendlyDate"></app-date-picker>
+                </div>
+                <div class="col">
+                    <mat-form-field class="mat-FullWidth">
+                        <mat-select placeholder="Start Time:" [(ngModel)]="friendlyTime">
+                            <mat-option *ngFor="let time of times" [value]="time">
+                                {{time}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-form-field class="mat-FullWidth">
+                        <mat-select placeholder="AM/PM:" [(ngModel)]="friendlySuffix">
+                            <mat-option *ngFor="let suffix of amPm" [value]="suffix">
+                                {{suffix}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col">
+                    <strong>Duration in minutes (default is 90 if not provided)</strong>
+                    <mat-form-field class="mat-FullWidth">
+                        <input matInput placeholder="Duration" [(ngModel)]="stream.runTime">
+                    </mat-form-field>
+
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col">
+                    <strong>Caster Info:</strong>
+                    <mat-form-field class="mat-FullWidth">
+                        <input matInput placeholder="Caster Name" [(ngModel)]="stream.casterName">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col">
+                    <div>
+                    </div>
+                    <mat-form-field class="mat-FullWidth">
+                        <input matInput placeholder="Caster Url:" [(ngModel)]="stream.casterUrl">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col">
+                    <button class="btn btn-success" (click)="saveStream()"> Save Stream </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

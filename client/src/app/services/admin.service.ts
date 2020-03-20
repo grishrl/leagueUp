@@ -315,4 +315,15 @@ export class AdminService {
 
     return this.httpService.httpPost(url, input, true);
   }
+
+  createStream(obj){
+    let url = "/admin/match/create/stream/link";
+    return this.httpService.httpPost(url, obj, true);
+  }
+
+  deleteStream(id){
+    let url = "/admin/match/delete/stream/link";
+    let payload = {matchId:id};
+    return this.httpService.httpPost(url, payload, true);
+  }
 }
