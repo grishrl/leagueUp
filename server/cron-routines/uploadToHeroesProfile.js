@@ -237,7 +237,8 @@ async function sendToHp(postObj, divisions, matchCopy, match, matchObj, postedRe
                 let localKey = j + 1;
                 postObj['game'] = (j + 1).toString();
                 let replayObj = matchCopy.replays[(j + 1).toString()];
-                if (!util.isNullorUndefined(replayObj)) {
+                if (!util.isNullorUndefined(replayObj) && !util.returnBoolByPath(replayObj, 'parsedUrl')) {
+
                     postObj['replay_url'] = process.env.heroProfileReplay + replayObj.url;
                     logObj.target = 'Match Id: ' + matchObj.matchId;
                     if (replayObj.data) {
