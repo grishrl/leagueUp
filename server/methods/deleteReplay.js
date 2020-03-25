@@ -2,10 +2,10 @@ const Match = require('../models/match-model');
 const Replay = require('../models/replay-parsed-models');
 const Team = require('../models/team-models');
 const utls = require('../utils');
-const lodash = require('lodash');
 const User = require('../models/user-models');
 const AWS = require('aws-sdk');
 const logger = require('../subroutines/sys-logging-subs');
+const HP = require('./heroesProfileAPI');
 
 AWS.config.update({
     accessKeyId: process.env.S3accessKeyId,
@@ -43,7 +43,7 @@ async function deleteReplay(matchId, indexProp) {
 
     let replayDeleteResult;
     let removedFromTeamResult = [];
-    let removedFromUserResult;
+    let removeFromHPResult;
     let removedFromS3Result;
 
     if (replayToDelete) {
@@ -71,6 +71,14 @@ async function deleteReplay(matchId, indexProp) {
 
             if (replayToDelete.parsedUrl) {
                 //remove from hero profile
+                removeFromHPResult = await HP.deleteReplayAPI(replayToDelete.parsedUrl).then(
+                    res => {
+                        return true;
+                    },
+                    err => {
+                        return 'Error occured deleting this replay';
+                    }
+                );
             }
 
             delete matchObj.replays[indexProp];
@@ -89,6 +97,7 @@ async function deleteReplay(matchId, indexProp) {
                 replayDeleteResult,
                 removedFromTeamResult,
                 removedFromS3Result,
+                removeFromHPResult,
                 matchMod
             };
 

@@ -18,6 +18,8 @@ const playerHeroStat = 'NGS/Hero/Stat?battletag={btag}&region=1&hero={hero}&seas
 
 const ngsPlayerProfile = 'NGS/Player/Profile?battletag={btag}&region=1';
 
+const replayDeleteUri = 'NGS/Games/Delete?replayID={replayId}';
+
 const ngsPlayerProfileParams = {
     division: '&division={division}',
     season: '&season={season}'
@@ -53,6 +55,26 @@ async function matchUploadFn(postObj) {
     return returnUrl;
 
 };
+
+function deleteReplayAPI(replayUrl) {
+    let url = hpAPIbase + replayDeleteUri;
+
+    let replayId = getIdFromUrl(replayUrl);
+
+    url = url.replace('{replayId}', encodeURIComponent(replayId));
+
+    url = appendApiToken(url);
+
+    return axios.get(url).then(
+        (reply) => {
+            return reply.data;
+        },
+        (err) => {
+            util.errLogger('HeroProfileAPI: deleteReplayAPI', err);
+            throw err;
+        }
+    );
+}
 
 function playerMmrAPI(battletag) {
     let url = hpAPIbase + playerMmr;
@@ -118,12 +140,50 @@ function appendApiToken(url) {
         url += '?';
     }
     url += 'api_token=' + process.env.heroProfileAPIkey;
+    url += `&mode=${process.env.heroProfileMode}`;
     return url;
 }
+
+function getIdFromUrl(url) {
+
+    let locate = '?replayID=';
+
+    if (url.includes(locate)) {
+        let ind = url.indexOf(locate);
+
+        let nextChar = returnNextCharInd(url, ind);
+
+        let endIndex = nextChar > -1 ? nextChar : url.length;
+
+        let id = url.substring(ind + locate.length, endIndex);
+
+        return id;
+    }
+
+
+
+}
+
+function returnNextCharInd(str, startingIndex, searchChars) {
+    if (searchChars == undefined || searchChars == null) {
+        searchChars = ['?', '/', '&'];
+    }
+    if (startingIndex == undefined || startingIndex == null) {
+        startingIndex = 0;
+    }
+    let index = -1;
+    searchChars.forEach(
+        (char) => {
+            index = str.indexOf(char, startingIndex);
+        });
+    return index;
+}
+
 
 module.exports = {
     matchUpload: matchUploadFn,
     playerMmrAPI: playerMmrAPI,
     playerProfile: playerProfileFn,
-    highestStat: highestStatFn
+    highestStat: highestStatFn,
+    deleteReplayAPI: deleteReplayAPI
 };

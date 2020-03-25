@@ -435,6 +435,7 @@ router.post('/match/deletereplay', passport.authenticate('jwt', {
     if (req.body.matchId && req.body.replayProp) {
         deleteReplay(req.body.matchId, req.body.replayProp).then(
             answer => {
+                util.errLogger(path, null, answer);
                 res.status(200).send(util.returnMessaging(path, 'Replay Deleted', false, answer, null, logInfo));
             },
             err => {
