@@ -1,9 +1,1 @@
-
--admin need a log browser
-
-> Server, 
->post to discord when someone is looking for team 
->post to discord when team is looking for someone
-
-> free agent page ; update info blocks with hero profile mmr; and links
-> team market ; maybe robustify this so that someone can't request to join a team over and over?
+Check out User-Deck ; see about adding hero profile links there.

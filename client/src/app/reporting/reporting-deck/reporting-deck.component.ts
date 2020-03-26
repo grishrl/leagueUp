@@ -28,6 +28,10 @@ export class ReportingDeckComponent implements OnInit {
   awayTeam
   homeTeamPlayer
   awayTeamPlayer
+
+  homeLogo;
+  awayLogo;
+
   allPlayers = [];
 
   @Input() set match(match){
@@ -42,7 +46,7 @@ export class ReportingDeckComponent implements OnInit {
       this.team.getTeam(match.home.teamName).subscribe(
         res=>{
           this.homeTeam = res;
-
+          this.homeLogo = this.team.imageFQDN(this.homeTeam.logo);
           this.allPlayers = this.allPlayers.concat(this.homeTeam.teamMembers);
         },
         err=>{
@@ -52,7 +56,7 @@ export class ReportingDeckComponent implements OnInit {
       this.team.getTeam(match.away.teamName).subscribe(
         res => {
           this.awayTeam = res;
-
+          this.awayLogo = this.team.imageFQDN(this.awayTeam.logo);
           this.allPlayers = this.allPlayers.concat(this.awayTeam.teamMembers);
         },
         err => {

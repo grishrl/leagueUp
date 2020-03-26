@@ -28,9 +28,11 @@ export class BlogHeadlineComponent implements OnInit {
   constructor(public util: UtilitiesService, public md: MarkdownParserService, public blogCommon: BlogCommonService, public WP:WordpressService) { }
 
   dateObject
+  date;
   ngOnInit() {
     if (this.blog  && this.blog.date){
       this.dateObject = moment(this.blog.date);
+      this.date = this.dateObject.format("MMMM DD, YYYY");
     }
 
     if(this.blog && this.blog.postThumbnail){

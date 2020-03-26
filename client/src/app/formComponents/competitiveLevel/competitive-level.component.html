@@ -20,7 +20,7 @@
 <div class="row" *ngIf="edit">
     <div class="col">
         <span class="h6">Competitive Level: </span><span *ngIf="competitiveLevelValue else nullTemplate">
-          {{getDisplay(competitiveLevelValue)}} </span>
+          {{competitiveLevelDisplay}} </span>
     </div>
 </div>
 <ng-template #nullTemplate>

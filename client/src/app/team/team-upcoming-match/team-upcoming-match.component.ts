@@ -52,6 +52,11 @@ export class TeamUpcomingMatchComponent implements OnInit {
             this.next4matches.push(match);
           }
         });
+
+        this.next4matches.forEach(match=>{
+          match.home.logo = this.teamServ.imageFQDN(match.home.logo);
+          match.away.logo = this.teamServ.imageFQDN(match.away.logo);
+        })
       },
       err=>{
         console.log(err);

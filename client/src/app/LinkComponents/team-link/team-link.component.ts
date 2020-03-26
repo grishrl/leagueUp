@@ -27,6 +27,11 @@ export class TeamLinkComponent implements OnInit {
   //'/teamProfile/', routeFriendlyName, seasonVal
   routerLinkVal = []
 
+  targetVal;
+  @Input() set target(val){
+    this.targetVal = val ? val : '_self';
+  }
+
   teamVal:string
   @Input() set team(val){
     if(val){

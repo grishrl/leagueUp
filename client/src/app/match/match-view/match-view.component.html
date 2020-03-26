@@ -6,7 +6,7 @@
                 <div class="col-5">
                     <div class="row">
                         <div class="col">
-                            <img class="img-fluid" src="{{team.imageFQDN(match.home.logo)}}" width="150" alt="Team Logo">
+                            <img class="img-fluid" src="{{homeLogo}}" width="150" alt="Team Logo">
                         </div>
                         <div class="col vertical-middle">
                             <div *ngIf="match.home.teamName">
@@ -34,7 +34,7 @@
                             </div>
                         </div>
                         <div class="col">
-                            <img class="img-fluid" src="{{team.imageFQDN(match.away.logo)}}" width="150" alt="Team Logo">
+                            <img class="img-fluid" src="{{awayLogo}}" width="150" alt="Team Logo">
                         </div>
                     </div>
                 </div>
@@ -53,7 +53,7 @@
                 <div class="col-7 text-center">
                     <strong>Scheduled Time: </strong>
                     <span *ngIf="match.scheduledTime && match.scheduledTime.startTime != null else tbd">
-                        {{util.getFormattedDate(match.scheduledTime.startTime, "dddd M/D/YYYY h:mm A zz")}}
+                        {{match.scheduledTime.startTime | commonPipe:util.getFormattedDate:"dddd M/D/YYYY h:mm A zz"}}
                     </span>
                     <ng-template #tbd><span> TBD </span></ng-template>
                     <div *ngIf="Auth.isCaster()"><strong>Match ID: </strong>{{match.matchId}}</div>
@@ -65,7 +65,8 @@
             <div class="row" *ngIf="match.casterName && match.casterUrl">
                 <div class="col"></div>
                 <div class="col-7 text-center">
-                    <strong> Casted by:</strong> {{match.casterName}} : <a href="{{util.prePendHttp(match.casterUrl)}}" target="_blank">{{match.casterUrl}}</a>
+                    <strong> Casted by:</strong> {{match.casterName}} :
+                    <a href="{{match.casterUrl| commonPipe:util.prePendHttp}}" target="_blank">{{match.casterUrl}}</a>
                 </div>
                 <div class="col"></div>
             </div>
@@ -80,7 +81,7 @@
         <div class="col">
             <div class="row">
                 <div class="col-2">
-                    <img class="img-fluid" src="{{team.imageFQDN(match.home.logo)}}" alt="Team Logo">
+                    <img class="img-fluid" src="{{homeLogo}}" alt="Team Logo">
                 </div>
                 <div class="col text-center">
                     <app-team-link [team]="match.home.teamName">{{match.home.teamName}}</app-team-link>
@@ -98,7 +99,7 @@
             </div>
             <div class="row">
                 <div class="col-2">
-                    <img class="img-fluid" src="{{team.imageFQDN(match.away.logo)}}" alt="Team Logo">
+                    <img class="img-fluid" src="{{awayLogo}}" alt="Team Logo">
                 </div>
                 <div class="col text-center">
                     <app-team-link [team]="match.away.teamName">{{match.away.teamName}}</app-team-link>
@@ -111,13 +112,13 @@
             </div>
             <div class="row">
                 <div class="col text-center">
-                    Scheduled Time: <span *ngIf="match.scheduledTime && match.scheduledTime.startTime != null  else tbd">{{util.getFormattedDate(match.scheduledTime.startTime, "dddd M/D/YYYY h:mm A zz")}}</span>
+                    Scheduled Time: <span *ngIf="match.scheduledTime && match.scheduledTime.startTime != null  else tbd">{{match.scheduledTime.startTime | commonPipe:util.getFormattedDate:"dddd M/D/YYYY h:mm A zz"}}</span>
                     <ng-template #tbd><span> TBD </span></ng-template>
                 </div>
             </div>
             <div class="row" *ngIf="match.casterName">
                 <div class="col text-center">
-                    <span> Casted by:</span> {{match.casterName}} : <a href="{{util.prePendHttp(match.casterUrl)}}" target="_blank">{{match.casterUrl}}</a>
+                    <span> Casted by:</span> {{match.casterName}} : <a href="{{match.casterUrl | commonPipe:util.prePendHttp}}" target="_blank">{{match.casterUrl}}</a>
                 </div>
             </div>
         </div>

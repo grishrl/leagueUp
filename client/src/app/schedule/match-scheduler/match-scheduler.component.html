@@ -40,7 +40,7 @@
                                                     <div class="row mt-2">
                                                         <div class="col-lg-4 col-sm-12 text-center">
                                                             <div *ngIf="homeTeam">
-                                                                <img class="img-fluid" src="{{team.imageFQDN(homeTeam.logo)}}">
+                                                                <img class="img-fluid" src="{{homeLogo}}">
                                                                 <br>
                                                                 <app-team-link [team]="match.home.teamName">
                                                                     {{match.home.teamName}}
@@ -52,7 +52,7 @@
                                                         </div>
                                                         <div class="col-lg-4 col-sm-12 text-center">
                                                             <div *ngIf="awayTeam">
-                                                                <img class="img-fluid" src="{{team.imageFQDN(awayTeam.logo)}}">
+                                                                <img class="img-fluid" src="{{awayLogo}}">
                                                                 <br>
                                                                 <app-team-link [team]="match.away.teamName">
                                                                     {{match.away.teamName}}

@@ -36,6 +36,7 @@ export class TextInputComponent implements OnInit {
   }
 
   updateValue(){
+    this.getDisplay(this.competitiveLevelValue);
     this.competitiveLevelChange.emit(this.competitiveLevelValue);
   }
 
@@ -49,12 +50,16 @@ export class TextInputComponent implements OnInit {
     if(!ret){
       ret = 'Error in compettive level method';
     }
-    return ret;
+    this.competitiveLevelDisplay = ret;
   }
 
   constructor() { }
 
+  competitiveLevelDisplay;
   ngOnInit() {
+    if(this.competitiveLevelValue){
+      this.getDisplay(this.competitiveLevel);
+    }
   }
 
 }

@@ -18,16 +18,18 @@ export class CasterDashboardMatchDisplayComponent implements OnInit {
 
   @Input() set recMatch(val) {
     if(val){
-      console.log('val', val);
       this.match = val;
     }
   }
 
   match = new Match();
 
+  casterValid;
   @Input() ind;
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.casterValid = this.checkRights();
+  }
 
   claimMatch(match) {
     this.scheduleService.addCasterOcc(match).subscribe(
@@ -77,17 +79,4 @@ export class CasterDashboardMatchDisplayComponent implements OnInit {
     return ret;
   }
 
-  showCasterNameUrl(match) {
-    let ret = false;
-    if (this.util.returnBoolByPath(match, "casterName")) {
-      if (match.casterName.length > 0) {
-        ret = true;
-      } else {
-        ret = false;
-      }
-    } else {
-      ret = false;
-    }
-    return ret;
-  }
 }

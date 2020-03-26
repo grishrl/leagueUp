@@ -29,6 +29,10 @@ export class MatchResultsViewComponent implements OnInit {
   seasonVal;
 
 
+  homeScore;
+  awayScore;
+  homeLogo;
+  awayLogo;
 
   ngOnInit() {
 
@@ -42,6 +46,16 @@ export class MatchResultsViewComponent implements OnInit {
             if (this.match.season != currentSeason) {
               this.seasonVal = this.match.season;
             }
+            this.homeLogo = this.team.imageFQDN(
+              this.match.home.logo,
+              this.seasonVal
+            );
+            this.awayLogo = this.team.imageFQDN(
+              this.match.away.logo,
+              this.seasonVal
+            );
+            this.homeScore = this.reportScore(this.match, 'home');
+            this.awayScore = this.reportScore(this.match, "away");
           },
           err => {
 

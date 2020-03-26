@@ -1,7 +1,7 @@
 <div>
     <div class="item-player" style="height: 492px; margin-bottom: 0px;">
         <div class="head-player">
-            <img src="{{user.avatarFQDN(returnedProfile.avatar)}}" alt="player-avatar">
+            <img src="{{returnedProfile.avatar | commonPipe:user.avatarFQDN}}" alt="player-avatar">
             <div style="height: 200px"></div>
         </div>
         <div class="info-player">
@@ -37,21 +37,21 @@
             <ul class="social-player">
                 <li *ngIf="returnedProfile.twitch">
                     <div>
-                        <a href="{{util.prePendHttp(returnedProfile.twitch)}}" target="_blank" class="facebook">
+                        <a href="{{returnedProfile.twitch | commonPipe:util.prePendHttp}}" target="_blank" class="facebook">
                             <i class="fab fa-twitch"></i>
                         </a>
                     </div>
                 </li>
                 <li *ngIf="returnedProfile.twitter">
                     <div>
-                        <a href="{{util.prePendHttp(returnedProfile.twitter)}}" target="_blank" class="twitter-icon">
+                        <a href="{{returnedProfile.twitter | commonPipe:util.prePendHttp}}" target="_blank" class="twitter-icon">
                             <i class="fab fa-twitter"></i>
                         </a>
                     </div>
                 </li>
                 <li>
                     <div *ngIf="returnedProfile.youtube">
-                        <a href="{{util.prePendHttp(returnedProfile.youtube)}}" target="_blank" class="youtube">
+                        <a href="{{returnedProfile.youtube | commonPipe:util.prePendHttp}}" target="_blank" class="youtube">
                             <i class="fab fa-youtube"></i>
                         </a>
                     </div>

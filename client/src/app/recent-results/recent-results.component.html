@@ -6,7 +6,7 @@
                 <span class="head" style="overflow: hidden">
       {{match.home.ticker}} Vs {{match.away.ticker}}
       <span *ngIf="match.scheduledTime && match.scheduledTime.startTime"
-            class="date">{{util.getFormattedDate(match.scheduledTime.startTime, 'DD MMM YYYY')}}</span>
+            class="date">{{match.scheduledTime.startTime | commonPipe:util.getFormattedDate:'DD MMM YYYY'}}</span>
                 </span>
                 <div class="goals-result">
                     <app-team-link [team]="match.home.teamName">

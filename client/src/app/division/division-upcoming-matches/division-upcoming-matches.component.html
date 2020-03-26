@@ -9,10 +9,11 @@
         <li *ngFor="let match of next4matches">
             <h6>
                 <!--GROUP A  --><span>
-          {{util.getFormattedDate(match.scheduledTime.startTime, "ddd MMM DD YYYY - hh:mm A zz")}}</span></h6>
+          {{match.scheduledTime.startTime | commonPipe:util.getFormattedDate:"ddd MMM DD YYYY - hh:mm A zz"}}</span>
+            </h6>
             <ul class="club-logo">
                 <li>
-                    <img src="{{teamServ.imageFQDN(match.home.logo)}}" alt="">
+                    <img src="{{match.home.logo}}" alt="">
 
                     <app-team-link [team]="match.home.teamName">
                         <span class="obnoxious-long-name-band-aid">
@@ -23,7 +24,7 @@
 
                 </li>
                 <li>
-                    <img src="{{teamServ.imageFQDN(match.away.logo)}}" alt="">
+                    <img src="{{match.away.logo}}" alt="">
 
                     <app-team-link [team]="match.away.teamName">
                         <span class="obnoxious-long-name-band-aid">

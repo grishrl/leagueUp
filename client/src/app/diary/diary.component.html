@@ -5,10 +5,12 @@
     </div>
     <ul class="list-diary">
         <li *ngFor="let match of next4matches">
-            <h6>{{match.divisionDisplayName}}<span>{{util.getFormattedDate(match.scheduledTime.startTime, "DD MMM - hh:mm A zz")}}</span></h6>
+            <h6>
+                {{match.divisionDisplayName}}<span>{{match.scheduledTime.startTime | commonPipe:util.getFormattedDate:"DD MMM - hh:mm A zz"}}</span>
+            </h6>
             <ul class="club-logo">
                 <li>
-                    <img src="{{team.imageFQDN(match.home.logo)}}" alt="">
+                    <img src="{{match.home.logo}}" alt="">
                     <app-team-link [team]="match.home.teamName">
                         <span class="obnoxious-long-name-band-aid">
                                             {{match.home.teamName}}
@@ -17,7 +19,7 @@
 
                 </li>
                 <li>
-                    <img src="{{team.imageFQDN(match.away.logo)}}" alt="">
+                    <img src="{{match.away.logo}}" alt="">
                     <app-team-link [team]="match.away.teamName">
                         <span class="obnoxious-long-name-band-aid">
                                             {{match.away.teamName}}

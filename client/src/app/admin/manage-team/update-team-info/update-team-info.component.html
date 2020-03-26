@@ -23,7 +23,7 @@
                     <button type="button" (click)="adminRefreshMMR()" class="mt-1 btn btn-info">Update Team MMR</button>
                 </div>
                 <div class="col">
-                    <button type="button" (click)="adminSave()" class="mt-1 btn btn-success ">Save</button>
+                    <button type="button" [disabled]="!updateTeamControlGroup.valid" (click)="adminSave()" class="mt-1 btn btn-success ">Save</button>
                 </div>
             </div>
         </div>
@@ -35,15 +35,7 @@
             <div class="mt-2">
                 <strong>Team Id:</strong>{{returnedProfile._id}}
             </div>
-            <mat-form-field class="mat-FullWidth ">
-                <input matInput placeholder="Team Name " [formControl]="nameControl " [(ngModel)]="returnedProfile.teamName " (ngModelChange)="nameChange()">
-                <mat-error *ngIf="nameControl.hasError( 'invalidCharacters') ">
-                    Invalid character entered
-                </mat-error>
-                <mat-error *ngIf="nameControl.hasError( 'required') ">
-                    Team name is required
-                </mat-error>
-            </mat-form-field>
+            <app-team-name [formControl]="nameControl" [(ngModel)]="returnedProfile.teamName"></app-team-name>
             <mat-slide-toggle [disabled]="disabled" [(ngModel)]="returnedProfile.lookingForMore">
                 Looking for More.
             </mat-slide-toggle>
@@ -93,9 +85,9 @@
             <div class="row mt-3 " *ngFor="let player of displayMembersLeft ">
                 <!-- player name -->
                 <div class="col-7 verticalAlign ">
-                    <a [routerLink]="[ '/profile/', user.routeFriendlyUsername(player.displayName)] ">
+                    <app-player-link [player]="player.displayName">
                         <i *ngIf=" team.captainLevel(returnedProfile, player.displayName) " class="fas fa-crown "></i> {{player.displayName}}
-                    </a>
+                    </app-player-link>
                 </div>
                 <!-- remove from team : shows for admin and captain -->
                 <div *ngIf="!disabled " class="col ">
@@ -107,9 +99,9 @@
             <div class="row mt-3 " *ngFor="let player of displayMembersRight ">
                 <!-- player name -->
                 <div class="col ">
-                    <a [routerLink]="[ '/profile/', user.routeFriendlyUsername(player.displayName)] ">
+                    <app-player-link [player]="player.displayName">
                         <i *ngIf=" team.captainLevel(returnedProfile , player.displayName)" class="fas fa-crown "></i> {{player.displayName}}
-                    </a>
+                    </app-player-link>
                 </div>
                 <!-- remove from team : shows for admin and captain -->
                 <div *ngIf="!disabled " class="col ">
@@ -130,16 +122,18 @@
             <div class="col ">
                 <div class="row mt-3 " *ngFor="let player of displayPendingMembersLeft ">
                     <div class="col-7 verticalAlign ">
-                        <a [routerLink]="[ '/profile/', user.routeFriendlyUsername(player.displayName)] ">{{player.displayName}}</a>
-
+                        <app-player-link [player]="player.displayName">
+                            {{player.displayName}}
+                        </app-player-link>
                     </div>
-
                 </div>
             </div>
             <div class="col ">
                 <div class="row mt-3 " *ngFor="let player of displayPendingMembersRight ">
                     <div class="col ">
-                        <a [routerLink]="[ '/profile/', user.routeFriendlyUsername(player.displayName)] ">{{player.displayName}}</a>
+                        <app-player-link [player]="player.displayName">
+                            {{player.displayName}}
+                        </app-player-link>
                     </div>
 
                 </div>

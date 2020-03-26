@@ -17,7 +17,7 @@
                                 <div class="col-10 finger" (click)="selectMessage(message)">
                                     <div class="row">
                                         <div class="col"><strong>Sender:</strong> {{message.sender}}</div>
-                                        <div class="col"><strong>Time:</strong> {{util.getFormattedDate(message.timeStamp, 'MM/DD/YYYY hh:mm A')}}
+                                        <div class="col"><strong>Time:</strong> {{message.timeStamp | commonPipe :util.getFormattedDate:'MM/DD/YYYY hh:mm A'}}
                                         </div>
                                     </div>
                                     <div class="row">
@@ -57,7 +57,7 @@
                             <strong>Sender:</strong> {{selectedMessage.sender}}
                         </div>
                         <div class="col">
-                            <strong>Time:</strong> {{util.getDateFromMS(selectedMessage.timeStamp)}} {{util.getTimeFromMS(selectedMessage.timeStamp)}} {{util.getSuffixFromMS(selectedMessage.timeStamp)}}
+                            <strong>Time:</strong> {{selectedMessage.timeStamp | commonPipe:util.getFormattedDate:'dddd M/D/YYYY h:mm A zz'}}
                         </div>
                     </div>
                     <div class="row mt-2">

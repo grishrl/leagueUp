@@ -4,7 +4,7 @@
             <span>
 
               <app-team-link [team]="teamAinf.teamName">
-                <img src="{{team.imageFQDN(teamAinf.logo)}}" alt="">
+                <img src="{{teamALogo}}" alt="">
                 <div>{{teamAinf.teamName}}</div>
               </app-team-link>
 
@@ -18,7 +18,7 @@
               <!-- <i *ngIf="dominator(match, 'away')" style="position: absolute;"
                     class="fas fa-crown"></i> -->
               <app-team-link [team]="teamBinf.teamName">
-                <img src="{{team.imageFQDN(teamBinf.logo)}}" alt="">
+                <img src="{{teamALogo}}" alt="">
                 <div>
                   {{teamBinf.teamName}}
                 </div>

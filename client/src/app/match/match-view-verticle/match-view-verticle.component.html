@@ -15,10 +15,10 @@
             Result
         </div>
     </div>
-    <div class="row p-2 font-ad" [ngClass]="winningClass('home', match)">
+    <div class="row p-2 font-ad" [ngClass]=" 'home' | commonPipe:winningClass:match">
 
         <div class="col text-center  my-auto">
-            <img class="img-fluid" src="{{team.imageFQDN(match.home.logo)}}" alt="Team Logo">
+            <img class="img-fluid" src="{{homeLogo}}" alt="Team Logo">
         </div>
         <div class="col text-center  my-auto">
             <div *ngIf="match.home.teamName">
@@ -56,9 +56,9 @@
         -
     </ng-template>
 
-    <div class="row p-2 font-ad" [ngClass]="winningClass('away', match)">
+    <div class="row p-2 font-ad" [ngClass]="'away' | commonPipe:winningClass:match">
         <div class="col text-center my-auto">
-            <img class="img-fluid" src="{{team.imageFQDN(match.away.logo)}}" alt="Team Logo">
+            <img class="img-fluid" src="{{awayLogo}}" alt="Team Logo">
         </div>
         <div class="col text-center my-auto">
             <div *ngIf="match.away.teamName; else bye">
@@ -89,7 +89,7 @@
         </div>
         <div class="col-7 text-center">
             <strong>Scheduled Time: </strong><span *ngIf="match.scheduledTime && match.scheduledTime.startTime != null else tbd">
-            {{util.getFormattedDate(match.scheduledTime.startTime, "dddd M/D/YYYY h:mm A zz")}}
+            {{match.scheduledTime.startTime | commonPipe:util.getFormattedDate:"dddd M/D/YYYY h:mm A zz"}}
           </span>
             <ng-template #tbd><span> TBD </span></ng-template>
         </div>
@@ -100,7 +100,7 @@
     <div class="row" *ngIf="match.casterName && match.casterUrl">
         <div class="col"></div>
         <div class="col-7 text-center">
-            <strong> Casted by:</strong> {{match.casterName}} : <a href="{{util.prePendHttp(match.casterUrl)}}" target="_blank">{{match.casterUrl}}</a>
+            <strong> Casted by:</strong> {{match.casterName}} : <a href="{{match.casterUrl | commonPipe:util.prePendHttp}}" target="_blank">{{match.casterUrl}}</a>
         </div>
         <div class="col"></div>
     </div>
@@ -144,7 +144,7 @@
             </div>
             <div class="row" *ngFor="let replay of match.replays | keyvalue">
                 <div class="col text-center">
-                    <a href="{{util.replayFQDN(replay.value.url)}}" target="_blank"> Replay {{replay.key}}</a>
+                    <a href="{{replay.value.url | commonPipe:util.replayFQDN}}" target="_blank"> Replay {{replay.key}}</a>
                 </div>
             </div>
             <div class="row">
@@ -166,10 +166,10 @@
 <div class="d-block d-sm-none match-border">
     <div class="row mt-4 p-3">
         <div class="col">
-            <div class="row" [ngClass]="winningClass('home', match)">
+            <div class="row" [ngClass]="'home'|commonPipe:winningClass:match">
 
                 <div class="col">
-                    <img class="img-fluid" src="{{team.imageFQDN(match.home.logo)}}" alt="Team Logo">
+                    <img class="img-fluid" src="{{homeLogo}}" alt="Team Logo">
                 </div>
                 <div class="col text-center">
                     <div class="row">
@@ -189,9 +189,9 @@
                     {{match.home.score}}
                 </div>
             </div>
-            <div class="row" [ngClass]="winningClass('away', match)">
+            <div class="row" [ngClass]="'away' | commonPipe:winningClass:match">
                 <div class="col">
-                    <img class="img-fluid" src="{{team.imageFQDN(match.away.logo)}}" alt="Team Logo">
+                    <img class="img-fluid" src="{{awayLogo}}" alt="Team Logo">
                 </div>
                 <div class="col text-center">
                     <div class="row">
@@ -216,13 +216,13 @@
     </div>
     <div class="row">
         <div class="col text-center">
-            Scheduled Time: <span *ngIf="match.scheduledTime && match.scheduledTime.startTime != null  else tbd">{{util.getFormattedDate(match.scheduledTime.startTime, "dddd M/D/YYYY h:mm A zz")}}</span>
+            Scheduled Time: <span *ngIf="match.scheduledTime && match.scheduledTime.startTime != null  else tbd">{{match.scheduledTime.startTime | commonPipe:util.getFormattedDate:"dddd M/D/YYYY h:mm A zz"}}</span>
             <ng-template #tbd><span> TBD </span></ng-template>
         </div>
     </div>
     <div class="row" *ngIf="match.casterName">
         <div class="col text-center">
-            <span> Casted by:</span> {{match.casterName}} : <a href="{{util.prePendHttp(match.casterUrl)}}" target="_blank">{{match.casterUrl}}</a>
+            <span> Casted by:</span> {{match.casterName}} : <a href="{{match.casterUrl| commonPipe:util.prePendHttp}}" target="_blank">{{match.casterUrl}}</a>
         </div>
     </div>
 

@@ -36,8 +36,7 @@
         </div>
         <div class="row mt-2 ">
             <div class="col ">
-                <span class="h6">Scheduled Time: </span><span *ngIf="match.scheduledTime !=undefined && match.scheduledTime !=null else notScheduled
-                                  ">{{util.getFormattedDate(match.scheduledTime.startTime, "M/D/YYYY h:mm A zz")}}</span>
+                <span class="h6">Scheduled Time: </span><span *ngIf="match.scheduledTime?.startTime else notScheduled">{{match.scheduledTime.startTime | commonPipe:util.getFormattedDate:'M/D/YYYY h:mm A zz'}}</span>
                 <ng-template #notScheduled>
                     <span>Not Yet Scheduled</span>
                 </ng-template>
@@ -52,7 +51,7 @@
         </div>
         <div class="row mt-2 ">
             <div class="col ">
-                <div *ngIf="showCasterNameUrl(match) else addCasterButton ">
+                <div *ngIf="match | commonPipe:util.returnBoolByPath:'casterName' else addCasterButton ">
                     <div class="row ">
                         <div class="col ">
                             Caster: {{match.casterName}}
@@ -61,11 +60,11 @@
                             </div>
                         </div>
                         <div class="col ">
-                            <span *ngIf="checkRights()">
-                <button class="btn btn-danger" (click)="removeCaster(match) "><i class="fas fa-ban"></i>
-                  Remove caster</button>
-              </span>
-
+                            <span *ngIf="casterValid">
+                              <button class="btn btn-danger" (click)="removeCaster(match) ">
+                                <i class="fas fa-ban"></i> Remove caster
+                              </button>
+                            </span>
                         </div>
                     </div>
 
@@ -73,13 +72,11 @@
                 <ng-template #addCasterButton>
                     <div class="row">
                         <div class="col">
-                            <app-caster-inputs [(match)]="match" [matchId]="match.matchId ">
-                            </app-caster-inputs>
+                            <app-caster-inputs [(match)]="match" [matchId]="match.matchId"></app-caster-inputs>
                         </div>
                         <!-- NOTE: caster changes -->
                         <div class="col">
-                            <button class="btn btn-success" (click)="claimMatch(match.matchId)">One Click
-                Claim</button>
+                            <button class="btn btn-success" (click)="claimMatch(match.matchId)">One Click Claim</button>
                         </div>
                     </div>
 

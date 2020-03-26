@@ -6,24 +6,16 @@
             <div class="col-md-6 col-lg-4 col-xl-3 " *ngFor="let item of _teams">
                 <div class="item-team">
                     <div class="head-team">
-                        <img src="{{team.imageFQDN(item.logo, _season)}}" alt="location-team">
+                        <img src="{{item.logo}}" alt="location-team">
                         <div class="overlay">
                             <app-team-link [team]="item.teamName" [season]="_season">+</app-team-link>
                         </div>
                     </div>
                     <div class="info-team">
                         <span class="logo-team">
-              <img src="{{team.imageFQDN(item.logo, _season)}}" alt="logo-team">
-            </span>
+                          <img src="{{item.logo}}" alt="logo-team">
+                        </span>
                         <h4>{{item.teamName}}</h4>
-                        <!-- <span class="location-team">
-              <i class="fa fa-map-marker" aria-hidden="true"></i>
-              Stadium
-            </span>
-                        <span class="group-team">
-              <i class="fa fa-trophy" aria-hidden="true"></i>
-              Group A
-            </span> -->
                     </div>
                     <app-team-link [season]="_season" [team]="item.teamName">
                         <span class="btn">Team

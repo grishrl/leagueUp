@@ -8,13 +8,13 @@
         </div>
         <div class="row">
             <div class="col text-center">
-                {{returnDate()}}
+                {{_event.eventDate | commonPipe:util.getFormattedDate:'MM/DD/YYYY hh:mm A'}}
             </div>
         </div>
         <div class="row">
             <div class="col text-center">
                 <div *ngIf="_showImage else text">
-                    <img class="img-fluid" src="{{imgUrl()}}">
+                    <img class="img-fluid" src="{{_event.eventImage | commonPipe:util.generalImageFQDN}}">
                 </div>
                 <ng-template #text>
                     {{_event.eventImage}}
@@ -33,7 +33,7 @@
         </div>
         <div class="row">
             <div class="col text-center">
-                <a href="{{eventUrl()}}" target="_blank">{{_event.eventLink}}</a>
+                <a href="{{ _event.eventLink | commonPipe:util.prePendHttp }}" target="_blank">{{_event.eventLink}}</a>
             </div>
         </div>
 

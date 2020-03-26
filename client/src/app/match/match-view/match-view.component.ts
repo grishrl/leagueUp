@@ -35,6 +35,10 @@ export class MatchViewComponent implements OnInit {
     casterName:'',
     casterUrl:''
   }
+
+  homeLogo;
+  awayLogo;
+
   @Input() set passMatch(_match){
     if(_match != undefined && _match != null){
       this.match = _match;
@@ -63,6 +67,9 @@ export class MatchViewComponent implements OnInit {
           this.match.away.logo = null;
         }
       }
+
+      this.homeLogo = this.team.imageFQDN(this.match.home.logo);
+      this.awayLogo = this.team.imageFQDN(this.match.away.logo);
       this.divisionService.getDivision(this.match.divisionConcat).subscribe(
         res=>{
           this.divisionDisplayName=res.displayName;

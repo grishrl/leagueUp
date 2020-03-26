@@ -1,1 +1,7 @@
-{{authorInfo.name}}
+<span *ngIf="link else noLink">
+  <a [routerLink]="['/blog/author/', authorId]">
+    {{authorInfo.name}}
+  </a>
+</span>
+
+<ng-template #noLink>{{authorInfo.name}}</ng-template>

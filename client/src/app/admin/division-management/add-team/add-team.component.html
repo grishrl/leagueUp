@@ -85,7 +85,11 @@
                                     {{team.questionnaire.eastWest}}
                                 </div>
                                 <div class="col">
-                                    <div><strong><a target="_blank" [routerLink]="['/_admin/manageTeam/', teamService.routeFriendlyTeamName(team.teamName)]">Team Profile</a></strong></div>
+                                    <div>
+                                        <strong>
+                                        <app-team-link [team]="team.teamName" [target]="'_blank'">Team Profile</app-team-link>
+                                      </strong>
+                                    </div>
                                 </div>
                             </div>
                         </div>

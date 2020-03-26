@@ -1,0 +1,13 @@
+<mat-form-field class="mat-FullWidth">
+    <input matInput placeholder="Team Name*" [formControl]="controlDir.control" [(ngModel)]="value">
+    <mat-error *ngIf="controlDir.hasError('invalidChacters')">
+        <!-- *ngIf="controlDir && controlDir.hasError('minlength')" -->
+        Invalid character entered
+    </mat-error>
+    <mat-error *ngIf="controlDir.hasError('required')">
+        Team name is required
+    </mat-error>
+    <mat-error *ngIf="controlDir.hasError('taken')">
+        Team name is taken.
+    </mat-error>
+</mat-form-field>

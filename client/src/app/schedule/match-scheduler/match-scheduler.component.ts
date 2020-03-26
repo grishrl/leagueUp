@@ -35,7 +35,8 @@ export class MatchSchedulerComponent implements OnInit {
     this.matchId = this.route.snapshot.params['id'];
    }
 
-
+homeLogo;
+awayLogo;
 
 index = 0;
   ngOnInit() {
@@ -46,11 +47,13 @@ index = 0;
         this.match = res;
         this.team.getTeam(res.home.teamName).subscribe(homeTeam => {
           this.homeTeam = homeTeam
+          this.homeLogo = this.team.imageFQDN(this.homeTeam.logo);
         }, err => {
           console.log(err);
         });
         this.team.getTeam(res.away.teamName).subscribe(awayTeam => {
           this.awayTeam = awayTeam
+          this.awayLogo = this.team.imageFQDN(this.awayTeam.logo);
         }, err => {
           console.log(err);
         })

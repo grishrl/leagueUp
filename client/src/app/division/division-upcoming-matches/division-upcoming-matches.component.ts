@@ -50,6 +50,8 @@ export class DivisionUpcomingMatchesComponent implements OnInit {
         });
         matches.forEach((match, ind) => {
           if (ind < 4) {
+            match.home.logo = this.teamServ.imageFQDN(match.home.logo);
+            match.away.logo = this.teamServ.imageFQDN(match.away.logo);
             this.next4matches.push(match);
           }
         });

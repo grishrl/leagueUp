@@ -1,6 +1,5 @@
 <app-banner-image [bannerTitle]="'Match Overview'"></app-banner-image>
 
-<!-- Section Area - Content Central -->
 <section class="content-info">
 
     <div class="container paddings-mini">
@@ -8,38 +7,28 @@
         <div class="row p-5 mb-5">
             <div class="col text-center my-auto">
                 <span>
-                    <!-- <i *ngIf="dominator(match, 'home')" style="position: absolute;"
-                    class="fas fa-crown"></i> -->
                     <app-team-link [team]="match.home.teamName">
-                        <img src="{{team.imageFQDN(match.home.logo, seasonVal)}}" alt="">
+                        <img src="{{homeLogo}}" alt="">
                         <div>{{match.home.teamName}}</div>
                     </app-team-link>
-                    <!-- <div>Record: {{match.home.wins}}-{{match.home.losses}}</div> -->
                 </span>
             </div>
             <div class="col text-center my-auto">
                 <span>
-                    <b>{{reportScore(match, 'home')}}</b> - <b>{{reportScore(match, 'away')}}</b>
+                    <b>{{homeScore}}</b> - <b>{{awayScore}}</b>
                 </span>
             </div>
             <div class="col text-center my-auto">
                 <span>
-                    <!-- <i *ngIf="dominator(match, 'away')" style="position: absolute;"
-                    class="fas fa-crown"></i> -->
                     <app-team-link [team]="match.away.teamName">
-                        <img src="{{team.imageFQDN(match.away.logo, seasonVal)}}" alt="">
+                        <img src="{{awayLogo}}" alt="">
                         <div>
                             {{match.away.teamName}}
                         </div>
                     </app-team-link>
-
-                    <!-- <div>Record: {{match.away.wins}}-{{match.away.losses}}</div> -->
                 </span>
             </div>
         </div>
-        <!-- Content Text-->
         <app-games-information [match]="match"></app-games-information>
-        <!-- End Content Text-->
     </div>
 </section>
-<!-- End Section Area -  Content Central -->

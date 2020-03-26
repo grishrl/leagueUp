@@ -25,14 +25,14 @@
             <div class="col-md-6 col-lg-4 col-xl-3 group-a" *ngFor="let team of displayTeams">
                 <div class="item-team">
                     <div class="head-team">
-                        <img src="{{TeamService.imageFQDN(team.logo)}}" alt="location-team">
+                        <img src="{{team.logo}}" alt="location-team">
                         <div class="overlay">
                             <app-team-link [team]="team.teamName">+</app-team-link>
                         </div>
                     </div>
                     <div class="info-team">
                         <span class="logo-team">
-                  <img src="{{TeamService.imageFQDN(team.logo)}}" alt="logo-team">
+                  <img src="{{team.logo}}" alt="logo-team">
                 </span>
                         <h4>{{team.teamName}}</h4>
                         <span class="location-team">

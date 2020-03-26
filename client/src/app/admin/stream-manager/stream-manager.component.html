@@ -31,8 +31,12 @@
                             </th>
                             <td>{{streami.casterName}}</td>
                             <td>{{streami.casterUrl}}</td>
-                            <td>{{util.getFormattedDate(streami.scheduledTime.startTime, 'MM/DD/YYYY hh:mm A')}}</td>
-                            <td>{{util.getFormattedDate(streami.scheduledTime.endTime, 'MM/DD/YYYY hh:mm A')}}</td>
+                            <td>
+                                {{ streami.scheduledTime.startTime | commonPipe: util.getFormattedDate:'MM/DD/YYYY hh:mm A'}}
+                            </td>
+                            <td>
+                                {{ streami.scheduledTime.endTime | commonPipe : util.getFormattedDate:'MM/DD/YYYY hh:mm A'}}
+                            </td>
                             <td> <button class="btn btn-danger" (click)="deleteStream(streami.matchId)">Delete</button>
                             </td>
                         </tr>

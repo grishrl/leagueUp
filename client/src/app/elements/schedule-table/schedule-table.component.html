@@ -13,11 +13,11 @@
 
             <tr *ngFor="let match of matchesVal">
                 <td *ngIf="showRound">
-                    <span *ngIf="hasDeadline(match) || match.type == 'tournament' else free">{{match.round}}</span>
+                    <span *ngIf="match | commonPipe:hasDeadline || match.type == 'tournament' else free">{{match.round}}</span>
                     <ng-template #free>FLEX</ng-template>
                 </td>
                 <td>
-                    <img src="{{teamServ.imageFQDN(match.home.logo)}}" alt="icon">
+                    <img src="{{match.home.logo}}" alt="icon">
                     <strong>
                   <app-team-link [team]="match.home.teamName" [season]="seasonVal">
                     {{match.home.teamName}}
@@ -28,7 +28,7 @@
                 </td>
                 <td class="text-center">Vs</td>
                 <td>
-                    <img src="{{teamServ.imageFQDN(match.away.logo)}}" alt="icon1">
+                    <img src="{{match.away.logo}}" alt="icon1">
                     <strong>
             <app-team-link [team]="match.away.teamName" [season]="seasonVal">
               {{match.away.teamName}}
@@ -38,7 +38,7 @@
 
                 </td>
                 <td>
-                    <ng-container *ngIf="showCaster && auth.isCaster()">
+                    <ng-container *ngIf="showCaster && isCaster">
                         <strong>Match ID:</strong><span> {{match.matchId}}</span><br>
                         <strong>Division:</strong><span> {{match.divisionConcat}}</span><br>
                         <span *ngIf="!match.vodLinks || match.vodLinks.length==0">
@@ -50,23 +50,29 @@
                     </ng-container>
 
                     <span *ngIf="!match.reported else resultsButton">
-                      <span *ngIf="match.scheduledTime && match.scheduledTime.startTime else tbd"><strong>Scheduled Time: </strong>{{util.getFormattedDate(match.scheduledTime.startTime, "MMM DD hh:mm A zz")}}<br></span>
-                    <span><a [routerLink]="['/matchupHistory', {teamAid:match.home.id, teamBid:match.away.id}]">Match Up History</a> <br></span>
-                    <span *ngIf="match.casterName else casterButton"><small class="meta-text">Caster: {{match.casterName}}, <a href="{{util.prePendHttp(match.casterUrl)}}" target="_blank">{{match.casterUrl}}</a></small></span>
+                      <span *ngIf="match.scheduledTime && match.scheduledTime.startTime else tbd">
+                        <strong>Scheduled Time: </strong>{{match.scheduledTime.startTime | commonPipe:util.getFormattedDate:"MMM DD hh:mm A zz"}}
+                        <br>
+                      </span>
+                    <span>
+                      <a [routerLink]="['/matchupHistory', {teamAid:match.home.id, teamBid:match.away.id}]">Match Up History</a>
+                       <br>
+                    </span>
+                    <span *ngIf="match.casterName else casterButton">
+                      <small class="meta-text">Caster: {{match.casterName}}, 
+                        <a href="{{match.casterUrl | commonPipe:util.prePendHttp}}" target="_blank">{{match.casterUrl}}</a>
+                      </small>
+                    </span>
                     </span>
                 </td>
                 <!-- ng-templates -->
                 <ng-template #tbd>
                     <div class="" *ngIf="userCanSchedule(match) else userView">
-                        <span *ngIf="match.scheduleDeadline">Schedule by:
-              {{util.getFormattedDate(match.scheduleDeadline-604800000, "dddd M/D/YYYY")}}<br></span>
+                        <span *ngIf="match.scheduleDeadline">Schedule by: {{match.scheduleDeadline-604800000 | commonPipe:util.getFormattedDate:"dddd M/D/YYYY"}}<br></span>
                         <span *ngIf="match.friendlyDeadline">Play by: {{match.friendlyDeadline}}<br></span>
                         <span>Schedule this match<br></span>
-                        <span><button [disabled]="checkDate(match)" class="btn btn-sm btn-primary"
-                (click)="scheduleMatch(match.matchId)">Schedule this!</button></span>
-                        <span *ngIf="checkDate(match)"><br> <small class="text-danger">Schedule deadline was missed please contact
-                admin!</small> </span>
-
+                        <span><button [disabled]="checkDate(match)" class="btn btn-sm btn-primary" (click)="scheduleMatch(match.matchId)">Schedule this!</button></span>
+                        <span *ngIf="checkDate(match)"><br> <small class="text-danger">Schedule deadline was missed please contact admin!</small> </span>
                     </div>
 
                     <ng-template #userView>

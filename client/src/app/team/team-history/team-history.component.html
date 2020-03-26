@@ -15,7 +15,7 @@
             <tbody>
                 <tr *ngFor="let event of profile.history">
                     <td>
-                        {{timewrap(event.timestamp)}}
+                        {{event.timestamp | commonPipe:util.getFormattedDate:'MM/DD/YYYY'}}
                     </td>
                     <td>
                         {{event.season}}

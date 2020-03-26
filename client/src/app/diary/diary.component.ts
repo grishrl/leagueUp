@@ -13,6 +13,7 @@ export class DiaryComponent implements OnInit {
   constructor(private scheduleService: ScheduleService, public util:UtilitiesService, public team:TeamService) { }
 
   next4matches = [];
+
   ngOnInit() {
     this.scheduleService.getAllMatchesWithStartTime().subscribe(
       res => {
@@ -38,6 +39,8 @@ export class DiaryComponent implements OnInit {
         });
         matches.forEach( (match, ind)=>{
           if(ind<4){
+            match.home.logo = this.team.imageFQDN(match.home.logo);
+            match.away.logo = this.team.imageFQDN(match.away.logo);
             this.next4matches.push(match);
           }
         });

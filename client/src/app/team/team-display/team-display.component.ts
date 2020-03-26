@@ -45,6 +45,7 @@ export class TeamDisplayComponent implements OnInit {
             this._teams.push(element.object);
           });
           this._teams = this.util.sortTeams(this._teams);
+          this.getLogos();
         },
         err => {
           console.log(err);
@@ -54,10 +55,19 @@ export class TeamDisplayComponent implements OnInit {
       this.team.getTeams(this._teamList).subscribe((retn) => {
         retn = this.util.sortTeams(retn);
         this._teams = retn;
+        this.getLogos();
       }, (error) => {
         console.log(error);
       });
     }
+  }
+
+  getLogos(){
+    this._teams.forEach(
+      team=>{
+        team.logo = this.team.imageFQDN(team.logo, this._season);
+      }
+    )
   }
 
   rows: Array<any> = [];

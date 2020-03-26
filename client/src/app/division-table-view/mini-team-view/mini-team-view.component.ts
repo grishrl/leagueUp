@@ -23,6 +23,11 @@ export class MiniTeamViewComponent implements OnInit {
   initTeams(teams){
     this.teamService.getTeams(teams).subscribe(
       res=>{
+        res.forEach(
+          team=>{
+            team.logo = this.teamService.imageFQDN(team.logo);
+          }
+        );
         this.teamList=res;
       },
       err=>{

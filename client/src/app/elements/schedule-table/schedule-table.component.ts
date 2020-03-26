@@ -17,7 +17,14 @@ export class ScheduleTableComponent implements OnInit {
   matchesVal = [];
   @Input() set matches(val){
     if(val){
+      val.forEach(
+        match=>{
+          match.home.logo = this.teamServ.imageFQDN(match.home.logo);
+          match.away.logo = this.teamServ.imageFQDN(match.away.logo);
+        }
+      )
       this.matchesVal = val;
+
     }else{
       this.matchesVal = [];
     }
@@ -28,8 +35,10 @@ export class ScheduleTableComponent implements OnInit {
   @Input() recTeam;
   todayDate;
 
+  isCaster:Boolean=false;
   ngOnInit() {
     this.todayDate = new Date().getTime();
+    this.isCaster = this.auth.isCaster();
   }
 
   hasDeadline(match) {

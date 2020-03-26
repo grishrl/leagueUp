@@ -21,15 +21,20 @@ export class MatchupInfoEmbeddableComponent implements OnInit {
   teamBinf = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null); //local team profile - blank team profile;
   matches = [];
 
+  teamALogo;
+  teamBLogo;
+
   ngOnInit() {
     this.teamService.getTeam(null, null, this.teamA).subscribe(
       res => {
         this.teamAinf = res;
+        this.teamALogo = this.team.imageFQDN(this.teamAinf.logo);
       }
     );
     this.teamService.getTeam(null, null, this.teamB).subscribe(
       res => {
         this.teamBinf = res;
+        this.teamBLogo = this.team.imageFQDN(this.teamBinf.logo);
       }
     );
     this.scheduleService.getMatchupHistory(this.teamA, this.teamB).subscribe(

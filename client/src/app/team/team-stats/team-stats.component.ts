@@ -81,9 +81,11 @@ export class TeamStatsComponent implements OnInit {
   }
 
   teamName:string;
+  hpLink:string;
   @Input() set team(val){
     if(val){
       this.teamName = val;
+      this.hpLink = this.hotsProfile.getHPTeamLink(this.teamName);
       this.initTeamStats(val);
     }
   }

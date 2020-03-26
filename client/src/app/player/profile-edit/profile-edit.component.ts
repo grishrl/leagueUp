@@ -222,7 +222,7 @@ export class ProfileEditComponent implements OnInit {
      }
    }
 
-  private updateUserMMR() {
+  updateUserMMR() {
     this.user.updateUserMmr().subscribe(
       res => {
         merge(this.returnedProfile, res);

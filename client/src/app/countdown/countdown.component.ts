@@ -60,6 +60,9 @@ export class CountdownComponent implements OnInit {
 
   startDate;
 
+  homeImage;
+  awayImage;
+
   preSeason;
 
   initCountdown(){
@@ -86,6 +89,8 @@ export class CountdownComponent implements OnInit {
             nearestMatch.scheduledTime.startTime = parseInt(nearestMatch.scheduledTime.startTime);
             this.startDate = nearestMatch.scheduledTime.startTime;
             this.targetMatch = nearestMatch;
+            this.homeImage = this.team.imageFQDN(this.targetMatch.home.logo);
+            this.awayImage = this.team.imageFQDN(this.targetMatch.away.logo);
             this.validMatch = true;
             this.initCountdown();
           }

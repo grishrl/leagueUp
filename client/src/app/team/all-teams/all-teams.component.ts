@@ -22,7 +22,11 @@ export class AllTeamsComponent implements OnInit {
     this.TeamService.getRegisteredTeams().subscribe(
       res=>{
         res = this.util.sortTeams(res);
+        res.forEach(team => {
+          team.logo = this.TeamService.imageFQDN(team.logo);
+        });
         this.allTeams = res;
+
         this.displayTeams = res;
         this.loading = false;
       },

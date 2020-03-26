@@ -5,28 +5,28 @@
                 <span class="head" style="overflow: auto;">
           {{match.home.teamName}} Vs {{match.away.teamName}} <span
             *ngIf="match.scheduledTime && match.scheduledTime.startTime"
-            class="date">{{util.getFormattedDate(match.scheduledTime.startTime, "ddd MMM DD YYYY")}}</span>
+            class="date">{{match.scheduledTime.startTime | commonPipe:util.getFormattedDate:"ddd MMM DD YYYY"}}</span>
                 </span>
 
 
                 <div class="goals-result">
                     <span>
-                    <i *ngIf="dominator(match, 'home')" style="position: absolute; top: 70px;" class="fas fa-lg fa-crown"></i>
-                    <i *ngIf="forfeit(match, 'home')" style="position: absolute; top: 70px;" class="far fa-lg fa-flag"></i>
+                    <i *ngIf="match | commonPipe:dominator:'home'" style="position: absolute; top: 70px;" class="fas fa-lg fa-crown"></i>
+                    <i *ngIf="match | commonPipe:forfeit:'home'" style="position: absolute; top: 70px;" class="far fa-lg fa-flag"></i>
                     <app-team-link [team]="match.home.teamName" [season]="seasonVal">
                       <img src="{{team.imageFQDN(match.home.logo, seasonVal)}}" alt=""> {{match.home.ticker}}
                     </app-team-link>
                     </span>
 
                     <span class="goals">
-                      <div style="color:black; height: 28px;">{{resultText(match)}}
+                      <div style="color:black; height: 28px;">{{match | commonPipe:resultText}}
                       </div>
-                      <b>{{reportScore(match, 'home')}}</b> - <b>{{reportScore(match, 'away')}}</b>
+                      <b>{{match | commonPipe:reportScore:'home'}}</b> - <b>{{match | commonPipe:reportScore:'away'}}</b>
                     <a [routerLink]="['/match/view/', match.matchId]" class="btn theme">View More</a>
                     </span>
                     <span>
-                      <i *ngIf="dominator(match, 'away')" style="position: absolute; top: 70px;" class="fas fa-lg fa-crown"></i>
-                      <i *ngIf="forfeit(match, 'away')" style="position: absolute; top: 70px;" class="far fa-lg fa-flag"></i>
+                      <i *ngIf="match | commonPipe:dominator:'away'" style="position: absolute; top: 70px;" class="fas fa-lg fa-crown"></i>
+                      <i *ngIf="match | commonPipe:forfeit:'away'" style="position: absolute; top: 70px;" class="far fa-lg fa-flag"></i>
                       <app-team-link [team]="match.away.teamName" [season]="seasonVal">
                           <img src="{{team.imageFQDN(match.away.logo, seasonVal)}}" alt=""> {{match.away.ticker}}
                       </app-team-link>

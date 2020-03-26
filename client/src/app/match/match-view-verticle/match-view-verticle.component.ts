@@ -44,6 +44,8 @@ export class MatchViewVerticleComponent implements OnInit {
     casterUrl: '',
     replays:null
   }
+  homeLogo;
+  awayLogo;
   @Input() set passMatch(_match) {
     if (_match != undefined && _match != null) {
       this.match = _match;
@@ -53,6 +55,8 @@ export class MatchViewVerticleComponent implements OnInit {
       if (this.util.returnBoolByPath(this.match, 'replays._id')) {
         delete this.match.replays._id;
       }
+      this.homeLogo = this.team.imageFQDN(this.match.home.logo);
+      this.awayLogo = this.team.imageFQDN(this.match.away.logo);
     }
   }
 

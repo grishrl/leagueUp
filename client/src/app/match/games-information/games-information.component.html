@@ -45,7 +45,8 @@
                     </div>
                     <div class="row no-gutter ">
                         <div class="col-sm text-center">
-                            <span>{{util.getFormattedDate(match.scheduledTime.startTime, "MM/DD/YYYY hh:mm A ")}}</span>
+                            <span><span
+                                *ngIf="match?.scheduledTime?.startTime">{{match.scheduledTime.startTime | commonPipe:util.getFormattedDate:"MM/DD/YYYY hh:mm A "}}</span></span>
                         </div>
                     </div>
                 </div>

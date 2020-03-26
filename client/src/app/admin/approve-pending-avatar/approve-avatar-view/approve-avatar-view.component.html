@@ -3,7 +3,7 @@
         {{queueItem.displayName}}
     </div>
     <div class="col">
-        <img class="img-fluid" src="{{User.avatarFQDN(queueItem.fileName)}}">
+        <img class="img-fluid" src="{{ queueItem.fileName | commonPipe: User.avatarFQDN}}">
     </div>
     <div class="col">
         <div class="text-center">

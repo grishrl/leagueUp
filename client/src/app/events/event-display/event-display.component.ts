@@ -9,7 +9,7 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 })
 export class EventDisplayComponent implements OnInit {
 
-  constructor(private eventService:EventsService, private util: UtilitiesService) { }
+  constructor(private eventService:EventsService, public util: UtilitiesService) { }
 
   _eventID;
   _event;

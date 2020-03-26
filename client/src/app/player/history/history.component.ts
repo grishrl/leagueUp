@@ -16,10 +16,6 @@ export class HistoryComponent implements OnInit {
   ngOnInit() {
   }
 
-  timewrap(time){
-    return this.util.getFormattedDate(time, 'MM/DD/YYYY')
-  }
-
   profile = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
   @Input() set playerProfile(_source) {

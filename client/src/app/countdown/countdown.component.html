@@ -20,8 +20,7 @@
             <span>Registration Open Now!</span>
         </div>
         <ul class="post-options">
-            <li><i class="fa fa-calendar"></i>{{util.getFormattedDate(startDate, "DD MMMM, YYYY")}}</li>
-            <!-- <li><i class="fa fa-clock-o"></i>Draft Starts, {{util.getFormattedDate(startDate, "hh:mm A zz")}}</li> -->
+            <li><i class="fa fa-calendar"></i>{{startDate|commonPipe: util.getFormattedDate:"DD MMMM, YYYY"}}</li>
         </ul>
 
     </div>
@@ -37,8 +36,8 @@
                 <span>{{timeRemaining.seconds}} <br> <small>sec</small></span>
             </div>
             <ul class="post-options">
-                <li><i class="fa fa-calendar"></i>{{util.getFormattedDate(startDate, "DD MMMM, YYYY")}}</li>
-                <li><i class="fa fa-clock-o"></i>Draft Starts, {{util.getFormattedDate(startDate, "hh:mm A zz")}}</li>
+                <li><i class="fa fa-calendar"></i>{{startDate|commonPipe:util.getFormattedDate:"DD MMMM, YYYY"}}</li>
+                <li><i class="fa fa-clock-o"></i>Draft Starts,{{startDate | commonPipe:util.getFormattedDate:"hh:mm A zz"}}</li>
             </ul>
 
             <div class="list-groups">
@@ -49,7 +48,7 @@
                     </div>
 
                     <div class="col-md-5">
-                        <img src="{{team.imageFQDN(targetMatch.home.logo)}}" alt="">
+                        <img [src]="homeImage" alt="">
                         <span class="obnoxious-long-name-band-aid">{{targetMatch.home.teamName}}</span>
                     </div>
 
@@ -58,13 +57,13 @@
                     </div>
 
                     <div class="col-md-5">
-                        <img src="{{team.imageFQDN(targetMatch.away.logo)}}" alt="">
+                        <img [src]="awayImage" alt="">
                         <span class="obnoxious-long-name-band-aid">{{targetMatch.away.teamName}}</span>
                     </div>
                 </div>
             </div>
 
-            <a *ngIf="targetMatch.casterUrl" class="btn btn-primary" href="{{util.prePendHttp(targetMatch.casterUrl)}}" target="_blank">
+            <a *ngIf="targetMatch.casterUrl" class="btn btn-primary" href="{{targetMatch.casterUrl | commonPipe:util.prePendHttp}}" target="_blank">
       Watch At
       <i class="fab fa-twitch"></i>
     </a>

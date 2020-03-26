@@ -10,15 +10,12 @@
     </div>
     <div class="col-md-8">
         <h5><a class="finger" (click)="blogCommon.goToBlogPage(blog)">{{blog.title}}</a></h5>
-        <span class="data-info">{{util.getFormattedDate(dateObject, "MMMM DD, YYYY")}} / <span
-            *ngIf="util.returnBoolByPath(blog,
-            'author')"> <a [routerLink]="['/blog/author/', blog.author]">
+        <span class="data-info">{{date}} /
+          <span *ngIf="blog | commonPipe:util.returnBoolByPath:'author'"> 
               <app-author-name [authorId]="blog.author"></app-author-name>
-              </a>
            </span> </span>
         <span>
-          <p *ngIf="util.returnBoolByPath(blog, 'excerpt')"
-            [innerHTML]="blog.excerpt"></p>
+          <p *ngIf="blog | commonPipe:util.returnBoolByPath:'excerpt'" [innerHTML]="blog.excerpt"></p>
           <span class="finger post-item linkColor" (click)="blogCommon.goToBlogPage(blog)">Read More [+]</span>
         </span>
     </div>

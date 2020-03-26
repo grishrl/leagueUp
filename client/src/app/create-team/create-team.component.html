@@ -29,19 +29,7 @@
             </div>
             <div class="row mt-3">
                 <div class="col">
-                    <mat-form-field class="mat-FullWidth">
-                        <input matInput placeholder="Team Name*" [formControl]="nameContorl" [(ngModel)]="returnedProfile.teamName" (blur)="checkNameFree(returnedProfile.teamName)" (ngModelChange)="checkNameFree(returnedProfile.teamName)">
-                        <mat-error *ngIf="nameContorl.hasError('invalidCharacters')">
-                            Invalid character entered
-                        </mat-error>
-                        <mat-error *ngIf="nameContorl.hasError('required')">
-                            Team name is required
-                        </mat-error>
-                        <mat-error *ngIf="nameContorl.hasError('taken')">
-                            Team name is taken.
-                        </mat-error>
-                    </mat-form-field>
-
+                    <app-team-name name="teamName" [(ngModel)]="returnedProfile.teamName" [formControl]="nameControl"></app-team-name>
                 </div>
             </div>
             <div class="row mt-3">
