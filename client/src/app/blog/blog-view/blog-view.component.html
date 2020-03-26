@@ -40,7 +40,7 @@
 
                     <div class="info-panel">
                         <div [innerHTML]="displayBlog.excerpt"></div>
-                        <div id="markedBody" [innerHTML]="sanitizer.bypassSecurityTrustHtml(displayBlog.content)"></div>
+                        <div id="markedBody" [innerHTML]="sanatizedBlogContent"></div>
                     </div>
                 </div>
                 <!-- End Content Text-->
