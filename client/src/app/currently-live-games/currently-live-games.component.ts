@@ -14,7 +14,6 @@ export class CurrentlyLiveGamesComponent implements OnInit {
   ngOnInit(): void {
     timer(0, 600000).subscribe(timer => {
       this.scheduleServ.getLiveMatches().subscribe(res => {
-        console.log(res);
         this.liveList = res;
       });
     });
