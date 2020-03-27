@@ -216,7 +216,9 @@
                                     </div>
                                     <div class="row">
                                         <div class="col">
-                                            <app-image-upload [showEdit]="true" [teamName]="returnedProfile.teamName" [width]="500" [height]="350" [existingImage]="returnedProfile.logo" [imageType]="'teamlogo'"></app-image-upload>
+                                            <div>
+                                                <app-image-upload [showEdit]="true" [teamName]="returnedProfile.teamName" [width]="500" [height]="350" [existingImage]="returnedProfile.logo" [imageType]="'teamlogo'"></app-image-upload>
+                                            </div>
                                             <div class="mt-3">
                                                 <app-twitch [(twitch)]="returnedProfile.twitch"></app-twitch>
                                             </div>

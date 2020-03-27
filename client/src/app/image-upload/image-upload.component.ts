@@ -173,18 +173,20 @@ export class ImageUploadComponent implements OnInit {
   croppieObject;
   ngAfterViewInit() {
     console.log(this.widthPx, this.heightPx);
+    let wB = this.widthPx*1.2;
+    let hB = this.heightPx*1.2;
     this.croppieObject = $("#cropImg").croppie({
       viewport: {
         width: this.widthPx,
-        height: this.heightPx
+        height: this.heightPx,
+        type:'square'
       },
       boundary: {
-        width: this.widthPx*1.1,
-        height: this.heightPx*1.1
+        width: wB,
+        height: hB
       },
-      enforceBoundary: false
+      enforceBoundary:true
     });
-    this.croppieObject.croppie.bind({ url: this.imageToDisplay });
   }
 
   saveImageFromCroppie() {
@@ -192,7 +194,7 @@ export class ImageUploadComponent implements OnInit {
       .croppie("result", {
         type: "base64",
         size: "viewport",
-        format: "png",
+        format: "jpeg",
         quality: 0.8
       })
       .then(
@@ -296,8 +298,9 @@ export class ImageUploadComponent implements OnInit {
     const fr = new FileReader();
     fr.onloadend = loadEvent => {
       this.croppieImage = "";
+      this.croppieHidden = false;
       this.croppieObject.croppie("bind", { url: fr.result }).then(res => {
-        this.croppieHidden = false;
+
       });
     };
     fr.readAsDataURL(file);

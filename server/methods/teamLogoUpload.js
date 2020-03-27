@@ -30,13 +30,12 @@ async function uploadTeamLogo(path, dataURI, teamName) {
         var stamp = Date.now();
         stamp = stamp.toString();
         stamp = stamp.slice(stamp.length - 4, stamp.length);
-        uploadedFileName += teamName + stamp + "_logo.png";
+        uploadedFileName += teamName + stamp + "_logo.jpg";
         var buf = new Buffer.from(dataURI.replace(/^data:image\/\w+;base64,/, ""), 'base64');
         var data = {
             Key: uploadedFileName,
             Body: buf,
-            ContentEncoding: 'base64',
-            ContentType: 'image/png'
+            ContentEncoding: 'base64'
         };
         let successObject = {};
         let putObjectPromise = s3Bucket.putObject(data).promise();

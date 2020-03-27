@@ -290,8 +290,7 @@ router.post('/image/upload', passport.authenticate('jwt', {
         var data = {
             Key: uploadedFileName,
             Body: buf,
-            ContentEncoding: 'base64',
-            ContentType: 'image/png'
+            ContentEncoding: 'base64'
         };
         s3Bucket.putObject(data, function(err, data) {
             if (err) {

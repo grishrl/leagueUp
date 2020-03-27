@@ -37,8 +37,7 @@ async function uploadAvatar(path, dataURI, displayName) {
         var data = {
             Key: avatarFolder + uploadedFileName,
             Body: buf,
-            ContentEncoding: 'base64',
-            ContentType: 'image/png'
+            ContentEncoding: 'base64'
         };
         let successObject = {};
         let putObjectPromise = s3Bucket.putObject(data).promise();
