@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col">
                 Name:
-                <app-player-link [player]="player.displayName">{{player.displayName}}</app-player-link>
+                <app-player-link [player]="player.displayName" [target]="'_blank'">{{player.displayName}}</app-player-link>
             </div>
         </div>
         <div class="row" *ngIf="player.smurfAccount">
