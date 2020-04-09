@@ -10,7 +10,6 @@ make sure that the users in this team are marked as a member (we will use the te
 check the teams division, if it is not in that division, remove the marker from the team (we will use the divisions list as a trusted source)
 */
 async function updateTeamsNotTouched(days, limit) {
-
     //generate the timestamp to compare to
     let date = new Date().getTime();
     let pastDate = 1000 * 60 * 60 * 24 * days;
@@ -55,7 +54,13 @@ async function updateTeamsNotTouched(days, limit) {
 
             //update the team mmr
             // console.log('team to update ', team);
-            let mmrUpdate = await teamSub.updateTeamMmrAsynch(team);
+            let mmrUpdate
+            try {
+                mmrUpdate = await teamSub.updateTeamMmrAsynch(team);
+            } catch (e) {
+                throw e;
+            }
+
 
             if (mmrUpdate) {
                 // console.log(team, ' mmr updated')
@@ -73,6 +78,7 @@ async function updateTeamsNotTouched(days, limit) {
                     return null;
                 }
             );
+
             if (usersTeamNameUpdate) {
                 // console.log(' updated users profile to belong to team ');
             }
