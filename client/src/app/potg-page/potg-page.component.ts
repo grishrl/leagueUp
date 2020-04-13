@@ -18,6 +18,7 @@ export class PotgPageComponent implements OnInit {
         this.timeService.getSesasonInfo().subscribe(res => {
           this.mvpServ.getMvpById('season', res["value"]).subscribe(
             mvps=>{
+              console.log(mvps);
               mvps.forEach(m=>{
                 if(m.potg_link && m.potg_link.length>0){
                    this.mvpList.push(m);
@@ -32,21 +33,48 @@ export class PotgPageComponent implements OnInit {
 
   invert = 1;
   lastChoice;
-  sort(sortBy){
-    if(this.lastChoice == sortBy){
-      this.invert = -1*this.invert;
-    }else{
-      this.invert = 1;
-    }
-    this.mvpList = this.mvpList.sort(
-      (a,b)=>{
-        if(a[sortBy]>b[sortBy]){
-          return 1*this.invert;
-        }else{
-          return -1*this.invert;
-        }
-      }
-    )
-  }
+  // sort(sortBy){
+  //   console.log('lastChoice', this.lastChoice)
+  //   console.log("sortBy", sortBy);
+  //   if(this.lastChoice == sortBy){
+  //     this.invert = -1*this.invert;
+  //   }else{
+  //     this.invert = 1;
+  //   }
+  //   console.log("invert", this.invert);
+  //   this.lastChoice = sortBy;
+  //   this.mvpList = this.mvpList.sort(
+  //     (a,b)=>{
+  //       let retVal = 0;
+  //       if(a[sortBy] && b[sortBy]){
+  //        retVal = this.invert*(a[sortBy] - b[sortBy]);
+  //       }
+  //       return retVal;
+  //     }
+  //   );
+  //   // if(this.invert<0){
+  //   //   this.mvpList = this.mvpList.reverse();
+  //   // }
+  // }
+
+  sort(prop){
+              if (this.lastChoice == prop) {
+                this.invert = -1 * this.invert;
+              } else {
+                this.invert = 1;
+              }
+              this.lastChoice = prop;
+
+              this.mvpList = this.mvpList.sort((a, b) => {
+                let retVal = 0;
+                if (a[prop] && b[prop]) {
+                  retVal = a[prop] - b[prop];
+                }
+                return retVal;
+              });
+              if (this.invert < 0) {
+                this.mvpList = this.mvpList.reverse();
+              }
+            }
 
 }
