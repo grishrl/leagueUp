@@ -154,7 +154,7 @@ async function gsRun(client) {
     if (updateRequired) {
         //update this ID to the new sheet season over season!
         const updateOpts = {
-            spreadsheetId: '1-EYgbPXWCCFbgXv6S5lHLPBnPLHWyx7E4Qy7NNKR73w',
+            spreadsheetId: '1ESTJWL8003KFvZC-PNFhROEO5DxXrq5LbTI_0idkaQE',
             range: 'Form Responses 1!A2:Z100000',
             valueInputOption: 'USER_ENTERED',
             resource: {
