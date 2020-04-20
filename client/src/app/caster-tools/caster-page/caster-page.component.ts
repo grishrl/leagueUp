@@ -69,7 +69,7 @@ export class CasterPageComponent implements OnInit {
 
               let linkDisplayName = div.displayName.replace(' ', '-');
 
-              let prefilLink = `https://docs.google.com/forms/d/e/1FAIpQLScnwl5T2FEGqJuWx8Bmv3SuwK9huMjHX_ta3-NThY1CQSkZUA/viewform?usp=pp_url&entry.2005620554=${match.casterName}&entry.1547019665=${match.matchId}&entry.302704006=${linkDisplayName}`;
+              let prefilLink = `https://docs.google.com/forms/d/e/1FAIpQLSf0EVM6OqOPXU6yArfopIfvtVgyl_Sbi6eCY8rl9hjWkBm6Jw/viewform?usp=pp_url&entry.2005620554=${match.casterName}&entry.1547019665=${match.matchId}&entry.302704006=${linkDisplayName}`;
               match.reportLink = prefilLink;
               // console.log(prefilLink);
 
