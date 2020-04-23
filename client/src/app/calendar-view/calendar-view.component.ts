@@ -12,51 +12,72 @@ import { TeamService } from '../services/team.service';
 import { AuthService } from '../services/auth.service';
 
 const colors: any = {
-  heroic: {  //navy
-    primary: '#001f3f',
-    name: 'Heroic Division',
-    sortOder:1
+  heroic: {
+    //navy
+    primary: "#001f3f",
+    name: "Heroic Division",
+    sortOder: 1,
   },
-  a: { //red
-    primary: '#FF4136',
-    name: 'Division A',
-    sortOder: 2
+  "a-east": {
+    //red
+    primary: "#FF4136",
+    name: "Division A East",
+    sortOder: 2,
   },
-  'b-east':{ //teal
-    primary:'#39CCCC',
-    name: 'Division B East',
-    sortOder: 3
+  "a-west": {
+    //red
+    primary: "#d30c00",
+    name: "Division A West",
+    sortOder: 2,
   },
-  'b-west': { //aqua
-    primary: '#7FDBFF',
-    name: 'Division B West',
-    sortOder: 4
+  "b-east": {
+    //teal
+    primary: "#39CCCC",
+    name: "Division B East",
+    sortOder: 3,
   },
-  'c-east': { //fuchsia
-    primary: '#F012BE',
-    name: 'Division C East',
-    sortOder: 5
+  "b-west": {
+    //aqua
+    primary: "#7FDBFF",
+    name: "Division B West",
+    sortOder: 4,
   },
-  'c-west':{ //PURPLE
-    primary: '#B10DC9',
-    name: 'Division C West',
-    sortOder: 6
+  "c-east": {
+    //fuchsia
+    primary: "#F012BE",
+    name: "Division C East",
+    sortOder: 5,
   },
-  'd-east': { //green
-    primary: '#2ECC40',
-    name: 'Division D East',
-    sortOder: 7
+  "c-west": {
+    //PURPLE
+    primary: "#B10DC9",
+    name: "Division C West",
+    sortOder: 6,
   },
-  'd-west': { //lime
-    primary: '#01FF70',
-    name: 'Division D West',
-    sortOder: 8
+  "d-east": {
+    //green
+    primary: "#2ECC40",
+    name: "Division D East",
+    sortOder: 7,
   },
-  'event':{ //orange
-    primary:'#FF851B',
-    name: 'NGS Event',
-    sortOder: 9
-  }
+  "d-west": {
+    //lime
+    primary: "#01FF70",
+    name: "Division D West",
+    sortOder: 8,
+  },
+  e: {
+    //purple
+    primary: "#FAD165",
+    name: "Division E",
+    sortOder: 8,
+  },
+  event: {
+    //orange
+    primary: "#FF851B",
+    name: "NGS Event",
+    sortOder: 9,
+  },
 };
 
 @Component({
