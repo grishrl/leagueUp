@@ -109,42 +109,34 @@ router.post('/reassignCaptain', passport.authenticate('jwt', {
     logObj.target = team + ' : ' + newCpt;
     logObj.logLevel = 'ADMIN';
 
-    Team.findOne({ teamName_lower: team }).then((foundTeam) => {
-        if (foundTeam) {
-            let members = util.returnByPath(foundTeam.toObject(), 'teamMembers');
-            let cont = false;
-            if (members) {
-                members.forEach(element => {
-                    if (element.displayName == newCpt) {
-                        cont = true;
-                    }
-                })
+    const assignNewCaptain = require('../methods/team/assignCaptain').assignNewCaptain;
+
+    assignNewCaptain(team, newCpt).then(
+        success => {
+            let message = 'Default success.';
+
+            if (success.message) {
+                message = success.message;
             }
-            if (cont) {
-                let oldCpt = foundTeam.captain;
-                foundTeam.captain = newCpt;
-                foundTeam.save().then((savedTeam) => {
-                    if (savedTeam) {
-                        UserSub.toggleCaptain(oldCpt);
-                        UserSub.toggleCaptain(savedTeam.captain);
-                        res.status(200).send(util.returnMessaging(path, 'Team captain changed', false, savedTeam, null, logObj));
-                    } else {
-                        logObj.logLevel = 'ERROR';
-                        logObj.error = 'Error saving team';
-                        res.status(500).send(util.returnMessaging(path, 'Error saving team captain changes', null, null, null, logObj));
-                    }
-                }, (err) => {
-                    res.status(500).send(util.returnMessaging(path, 'Error changing the team captian', err, null, null, logObj));
-                })
-            } else {
-                logObj.logLevel = 'ERROR';
-                logObj.error = 'User was not found in team members';
-                res.status(400).send(util.returnMessaging(path, 'User was not found in team members', null, null, null, logObj));
+
+            res.status(200).send(util.returnMessaging(path, message, false, success.foundTeam, null, logObj));
+
+        },
+        fail => {
+            if (fail.error) {
+                logObj.error = fail.error;
             }
+            if (fail.logLevel) {
+                logObj.logLevel = fail.logLevel;
+            }
+            let message = 'Default error message';
+            if (fail.message) {
+                message = fail.message;
+            }
+
+            res.status(400).send(util.returnMessaging(path, message, fail.error, null, null, logObj));
         }
-    }, (err) => {
-        res.status(500).send(util.returnMessaging(path, 'Error finding team!', err, null, null, logObj));
-    })
+    )
 });
 
 //approves a pending team member queue, removes the item from the queue and adds the member to the team

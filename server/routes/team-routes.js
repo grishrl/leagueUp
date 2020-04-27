@@ -652,7 +652,7 @@ router.post('/removeMember', passport.authenticate('jwt', {
                 message = fail.message;
             }
 
-            res.status(400).send(util.returnMessaging(path, message, false, null, null, logObj));
+            res.status(400).send(util.returnMessaging(path, message, fail.error, null, null, logObj));
         }
     );
 
@@ -701,52 +701,34 @@ router.post('/reassignCaptain', passport.authenticate('jwt', {
     logObj.target = team + ': new capt: ' + newCapt + ' old capt: ' + req.user.displayName;
     logObj.logLevel = 'STD';
 
-    Team.findOne({ teamName_lower: team }).then(
-        (foundTeam) => {
-            if (foundTeam) {
-                if (foundTeam.assistantCaptain && foundTeam.assistantCaptain.indexOf(req.user.displayName) > -1) {
-                    logObj.error = 'Assistant Captain may not reassign Captain';
-                    res.status(500).send(util.returnMessaging(path, 'Assistant Captain may not reassign captain; contact an admin', false, null, null, logObj));
-                } else {
-                    let members = util.returnByPath(foundTeam.toObject(), 'teamMembers');
-                    let cont = false;
-                    if (members) {
-                        members.forEach(element => {
-                            if (element.displayName == newCapt) {
-                                cont = true;
-                            }
-                        });
-                    }
-                    if (cont) {
-                        let oldCpt = foundTeam.captain;
-                        foundTeam.captain = newCapt;
-                        foundTeam.save().then(
-                            (savedTeam) => {
-                                if (savedTeam) {
-                                    UserSub.toggleCaptain(oldCpt);
-                                    UserSub.toggleCaptain(savedTeam.captain);
-                                    res.status(200).send(util.returnMessaging(path, 'Team captain changed', false, savedTeam, null, logObj));
-                                } else {
-                                    logObj.logLevel = 'ERROR';
-                                    logObj.error = 'Error occured in save';
-                                    res.status(500).send(util.returnMessaging(path, 'Team captain not changed', false, null, null, logObj));
-                                }
-                            }, (err) => {
-                                res.status(500).send(util.returnMessaging(path, 'Error changing team captain', err, null, null, logObj));
-                            });
+    const assignNewCaptain = require('../methods/team/assignCaptain').assignNewCaptain;
 
-                    } else {
-                        logObj.logLevel = 'ERROR';
-                        logObj.error = 'Provided user was not a member of the team';
-                        res.status(400).send(util.returnMessaging(path, 'Provided user was not a member of the team', false, null, null, logObj));
-                    }
-                }
+    assignNewCaptain(team, newCapt, req.user.displayName).then(
+        success => {
+            let message = 'Default success.';
 
+            if (success.message) {
+                message = success.message;
             }
-        }, (err) => {
-            res.status(500).send(util.returnMessaging(path, 'Error finding team', err, null, null, logObj));
+
+            res.status(200).send(util.returnMessaging(path, message, false, success.foundTeam, null, logObj));
+
+        },
+        fail => {
+            if (fail.error) {
+                logObj.error = fail.error;
+            }
+            if (fail.logLevel) {
+                logObj.logLevel = fail.logLevel;
+            }
+            let message = 'Default error message';
+            if (fail.message) {
+                message = fail.message;
+            }
+
+            res.status(400).send(util.returnMessaging(path, message, fail.error, null, null, logObj));
         }
-    )
+    );
 });
 
 //system
