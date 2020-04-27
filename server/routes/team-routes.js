@@ -576,6 +576,27 @@ router.post('/save', passport.authenticate('jwt', {
 
 });
 
+//
+// function getIndiciesToRemove(membersArray, predicateMember) {
+//   let indiciesToRemove = [];
+//   if (Array.isArray(predicateMember)) {
+
+//     for (var i = 0; i < membersArray.length; i++) {
+//       if (predicateMember.indexOf(membersArray[i].displayName) > -1) {
+//         indiciesToRemove.push(i);
+//       }
+//     }
+
+//   } else {
+//     for (var i = 0; i < membersArray.length; i++) {
+//       if (predicateMember == membersArray[i].displayName) {
+//         indiciesToRemove.push(i);
+//       }
+//     }
+//   }
+//   return indiciesToRemove;
+// }
+//
 
 //post
 // path: /team/removeMemver
@@ -586,6 +607,8 @@ router.post('/removeMember', passport.authenticate('jwt', {
 }), confirmCanRemove, (req, res) => {
 
     const path = '/team/removeMember';
+
+    const removeTeamMembers = require('../methods/team/removeMemebers').removeTeamMembers;
 
     var payloadTeamName = req.body.teamName;
     var payloadUser = req.body.remove;
@@ -605,69 +628,34 @@ router.post('/removeMember', passport.authenticate('jwt', {
 
 
     let lower = payloadTeamName.toLowerCase();
-    Team.findOne({
-        teamName_lower: lower
-    }).then((foundTeam) => {
-        if (foundTeam) {
-            var indiciesToRemove = [];
-            var usersRemoved = [];
-            if (Array.isArray(payloadUser)) {
-                if (payloadUser.indexOf(foundTeam.captain) > -1) {
-                    logObj.logLevel = 'ERROR';
-                    logObj.error = 'Tried to remove captain';
-                    res.status(400).send(util.returnMessaging(path, "Can not remove team captain.", false, null, null, logObj));
-                }
-                for (var i = 0; i < foundTeam.teamMembers.length; i++) {
-                    if (payloadUser.indexOf(foundTeam.teamMembers[i].displayName) > -1) {
-                        indiciesToRemove.push(i);
-                    }
-                }
-            } else {
-                if (payloadUser == foundTeam.captain) {
-                    logObj.logLevel = 'ERROR';
-                    logObj.error = 'Tried to remove captain'
-                    res.status(400).send(util.returnMessaging(path, "Can not remove team captain.", false, null, null, logObj));
-                }
-                for (var i = 0; i < foundTeam.teamMembers.length; i++) {
-                    if (payloadUser == foundTeam.teamMembers[i].displayName) {
-                        indiciesToRemove.push(i);
-                    }
-                }
+
+    removeTeamMembers(lower, payloadUser, true).then(
+        success => {
+            let message = 'Default success.';
+
+            if (success.message) {
+                message = success.message;
             }
-            if (indiciesToRemove.length == 0) {
-                logObj.level = 'ERROR';
-                logObj.error = 'User not found on team';
-                res.status(400).send(
-                    util.returnMessaging(path, "User not found on team.", false, foundTeam, null, logObj)
-                );
-            } else {
-                indiciesToRemove.forEach(function(index) {
-                    usersRemoved = usersRemoved.concat(foundTeam.teamMembers.splice(index, 1));
-                });
-                UserSub.clearUsersTeam(usersRemoved);
-                foundTeam.save().then((savedTeam) => {
-                    if (savedTeam) {
-                        TeamSub.updateTeamMmr(foundTeam);
-                        res.status(200).send(
-                            util.returnMessaging(path, "Users removed from team", false, savedTeam, null, logObj)
-                        );
-                    } else {
-                        logObj.logLevel = 'ERROR';
-                        logObj.error = 'Error occured during save'
-                        res.status(400).send(
-                            util.returnMessaging(path, "users not removed from team", false, savedTeam, null, logObj));
-                    }
-                }, (err) => {
-                    res.status(400).send(util.returnMessaging(path, "Unable to save team", err, null, null, logObj));
-                });
+
+            res.status(200).send(util.returnMessaging(path, message, false, success.foundTeam, null, logObj));
+
+        },
+        fail => {
+            if (fail.error) {
+                logObj.error = fail.error;
             }
-        } else {
-            //res.status(500).send(util.returnMessaging(path, 'Error saving user', err, null, null, logObj))
-            res.status(400).send(util.returnMessaging(path, "User not found on team.", false, null, null, logObj));
+            if (fail.logLevel) {
+                logObj.logLevel = fail.logLevel;
+            }
+            let message = 'Default error message';
+            if (fail.message) {
+                message = fail.message;
+            }
+
+            res.status(400).send(util.returnMessaging(path, message, false, null, null, logObj));
         }
-    }, (err) => {
-        res.status(400).send(util.returnMessaging(path, "Error finding team.", err));
-    });
+    );
+
 });
 
 //post
