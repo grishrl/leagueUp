@@ -181,6 +181,7 @@ import { MvpPageComponent } from './mvp-page/mvp-page.component';
 import { StreamManagerComponent } from './admin/stream-manager/stream-manager.component';
 import { CommonPipePipe } from './common/common-pipe.pipe';
 import { TeamNameComponent } from './formComponents/team-name/team-name.component';
+import { TeamRegisteredComponent } from './team/team-registered/team-registered.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -348,7 +349,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     MvpPageComponent,
     StreamManagerComponent,
     CommonPipePipe,
-    TeamNameComponent
+    TeamNameComponent,
+    TeamRegisteredComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
