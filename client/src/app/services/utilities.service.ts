@@ -296,7 +296,7 @@ export class UtilitiesService {
   }
 
   sortMatchesByTime(matches) {
-    matches.sort((a, b) => {
+    return matches.sort((a, b) => {
       let ret = 0;
       if (!this.returnBoolByPath(a, "scheduledTime.startTime")) {
         ret = -1;
@@ -314,7 +314,7 @@ export class UtilitiesService {
       }
       return ret;
     });
-    return matches;
+
   }
 
   hasMapBans(match: Match): boolean {
