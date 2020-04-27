@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminService } from 'src/app/services/admin.service';
 import * as moment from 'moment-timezone';
+import { UtilitiesService } from 'src/app/services/utilities.service';
 
 @Component({
   selector: 'app-set-deadline',
@@ -13,7 +14,7 @@ export class SetDeadlineComponent implements OnInit {
   weeks:any[]=[];
   friendlyDate
   selectedWeek
-  constructor( private admin:AdminService) { }
+  constructor( private admin:AdminService, private utils:UtilitiesService) { }
 
   ngOnInit() {
 
@@ -21,16 +22,8 @@ export class SetDeadlineComponent implements OnInit {
 
   selected(selectedDivision){
     let number;
-    this.weeks = [];
     this.selectedDivision = selectedDivision;
-    if(selectedDivision.teams % 2 == 0){
-      number = selectedDivision.teams.length-1;
-    }else{
-      number = selectedDivision.teams.length;
-    }
-    for(var i = 0; i<number; i++){
-      this.weeks.push(i+1);
-    }
+    this.weeks = this.utils.calculateRounds(this.selectedDivision);
   }
 
   createDeadline(){
