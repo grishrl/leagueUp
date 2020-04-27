@@ -49,7 +49,7 @@
 
         <ng-template #matches let-list="list">
             <div *ngIf="list.size>0 else noMatches">
-                <div class="panel-box padding-b" *ngFor="let day of list | keyvalue">
+                <div class="panel-box padding-b" *ngFor="let day of list | keyvalue:asIsOrder">
                     <div class="titles">
                         <h4>{{day.key}}</h4>
                     </div>
