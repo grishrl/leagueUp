@@ -13,9 +13,9 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-12">
+            <!-- <div class="col-12">
                 <div *ngIf="player.averageMmr; else noMmr">Hots Logs MMR: {{player.averageMmr}}</div>
-            </div>
+            </div> -->
             <div class="col-12">
                 <div *ngIf="player.heroesProfileMmr; else nohpMmr">Heros-Profile MMR: {{player.heroesProfileMmr}}</div>
                 <div *ngIf="player.lowReplays">! This player has few replays !</div>
@@ -23,9 +23,9 @@
             <div class="col-12">
                 <div *ngIf="player.ngsMmr; else nongsMmr">NGS MMR: {{player.ngsMmr}}</div>
             </div>
-            <ng-template #noMmr>
+            <!-- <ng-template #noMmr>
                 Warning: Player does not have a hotslogs mmr!
-            </ng-template>
+            </ng-template> -->
             <ng-template #nohpMmr>
                 Warning: Player does not have a heroes profile mmr!
             </ng-template>

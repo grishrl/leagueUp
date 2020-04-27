@@ -11,10 +11,10 @@
 </div>
 <div class="row mt-2">
     <div class="col">
-        <span class="titles">MMR:</span> {{player.averageMmr}}
+        <span class="titles">MMR:</span> {{player.heroesProfileMmr}}
     </div>
     <div class="col">
-        <span class="titles">Hots Logs:</span><a href="{{player.hotsLogsPlayerID | commonPipe:hotsLogsService.returnProfileLink}}" target="_blank"> Link</a>
+        <span class="titles">Heroes Profile:</span><a href="{{hpLink}}" target="_blank"> Link</a>
     </div>
 </div>
 <div class="row mt-2">

@@ -133,6 +133,7 @@ router.get('/user/update', (req, res) => {
             found.forEach(user => {
                 mmrMethods.comboMmr(user.displayName).then(
                     processed => {
+                        //leaving this here incase it stops any errors
                         if (util.returnBoolByPath(processed, 'hotsLogs')) {
                             user.averageMmr = processed.hotsLogs.mmr;
                             user.hotsLogsPlayerID = processed.hotsLogs.playerId;

@@ -7,7 +7,6 @@ import { Profile } from '../../classes/profile.class';
 import { Subscription } from 'rxjs';
 import { FormControl, FormGroup } from '@angular/forms';
 import { merge } from 'lodash';
-import { HotsLogsService } from '../../services/hots-logs.service';
 import { Router } from '@angular/router';
 import { DeleteConfrimModalComponent } from '../../modal/delete-confrim-modal/delete-confrim-modal.component'
 import { UtilitiesService } from '../../services/utilities.service';
@@ -28,7 +27,7 @@ export class ProfileEditComponent implements OnInit {
   mvpCounts = 0;
 
   constructor(public user: UserService, public auth: AuthService, private router: Router, private route: ActivatedRoute,
-    public hotsLogsService: HotsLogsService, public dialog: MatDialog, public util:UtilitiesService, public hotsProfile: HeroesProfileService, public team:TeamService, private admin:AdminService,
+    public dialog: MatDialog, public util:UtilitiesService, public hotsProfile: HeroesProfileService, public team:TeamService, private admin:AdminService,
     private mvpServ:MvpService, private tabTracker:TabTrackerService) {
 
       //so that people can manually enter different tags from currently being on a profile page; we can reinitialize the component with the new info

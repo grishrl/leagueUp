@@ -6,7 +6,6 @@ import { TimezoneService } from 'src/app/services/timezone.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TeamService } from 'src/app/services/team.service';
 import { RequestService } from 'src/app/services/request.service';
-import { HotsLogsService } from 'src/app/services/hots-logs.service';
 import { HeroesProfileService } from 'src/app/services/heroes-profile.service';
 
 @Component({
@@ -32,11 +31,15 @@ export class UserDeckComponent implements OnInit {
 
   hpLink;
 
-  constructor(public hotsLogsService:HotsLogsService, private divisionService: DivisionService, private auth: AuthService, public _userService: UserService, public timezone: TimezoneService, private util: UtilitiesService, public _team: TeamService,
+  constructor( private divisionService: DivisionService, private auth: AuthService, public _userService: UserService, public timezone: TimezoneService, private util: UtilitiesService, public _team: TeamService,
     private request: RequestService, public heroprofile:HeroesProfileService) { }
 
   ngOnInit() {
     this.showInviteButton(this.player);
+
+        this.heroprofile.getHPProfileLinkStream.subscribe((subj) => {
+          this.hpLink = subj;
+        });
   }
 
   showInvButton(){

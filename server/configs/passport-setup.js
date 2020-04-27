@@ -136,6 +136,7 @@ function createNewProfile(userObj, logObj, done) {
     //get the players MMRs!
     mmrMethods.comboMmr(userObj.displayName).then(
         processed => {
+            //leaving this here in case it catches errors?? 
             if (util.returnBoolByPath(processed, 'hotsLogs')) {
                 userObj.averageMmr = processed.hotsLogs.mmr;
                 userObj.hotsLogsPlayerID = processed.hotsLogs.playerId;

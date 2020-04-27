@@ -134,6 +134,7 @@ router.post('/save', passport.authenticate('jwt', {
                     if (util.returnBoolByPath(sentUser, 'hlRankDivision')) {
                         found.hlRankDivision = sentUser.hlRankDivision
                     }
+                    //leaving this here, just in case it catches and prevents any errors
                     if (util.returnBoolByPath(sentUser, 'hotsLogsURL')) {
                         found.hotsLogsURL = sentUser.hotsLogsURL;
                     }
@@ -190,6 +191,7 @@ router.get('/update/mmr', passport.authenticate('jwt', {
                 mmrResponse => {
                     User.findOne({ displayName: req.user.displayName }).then(found => {
                         if (found) {
+                            //leaving these here in case by being here they might catch any errors.
                             if (mmrResponse.hotsLogs && mmrResponse.hotsLogs.playerId) {
                                 found.hotsLogsPlayerID = mmrResponse.hotsLogs.playerId;
                             }

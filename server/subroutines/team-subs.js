@@ -125,9 +125,11 @@ async function updateTeamMmrAsynch(team) {
                     player.heroesProfileMmr = -1 * mmrInfo.heroesProfile;
                 }
                 player.ngsMmr = mmrInfo.ngsMmr;
+                //leaving this hotslogs logic here in case it catches any errors
                 if (util.returnBoolByPath(mmrInfo, 'hotsLogs.mmr')) {
                     player.averageMmr = mmrInfo.hotsLogs.mmr;
                 }
+                //leaving this hotslogs logic here in case it catches any errors
                 if (util.returnBoolByPath(mmrInfo, 'hotsLogs.playerId')) {
                     player.hotsLogsPlayerID = mmrInfo.hotsLogs.playerId;
                 }
