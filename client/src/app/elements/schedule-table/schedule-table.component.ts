@@ -34,6 +34,7 @@ export class ScheduleTableComponent implements OnInit {
   @Input() showCaster = false;
   @Input() recTeam;
   todayDate;
+  @Input() divColumn = false;
 
   isCaster:Boolean=false;
   ngOnInit() {
