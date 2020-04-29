@@ -94,7 +94,11 @@ returnMessaging = function(route, message, err, obj, additional, logInfo) {
     let logObj = {};
     if (!isNullorUndefined(err) && err) {
         logObj.logLevel = 'ERROR';
-        logObj.error = err;
+        if (err.hasOwnProperty('toString')) {
+            logObj.error = err.toString();
+        } else {
+            logObj.error = JSON.stringify(err);
+        }
     } else {
         logObj.logLevel = 'STD';
     }

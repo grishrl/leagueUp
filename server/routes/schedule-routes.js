@@ -455,52 +455,60 @@ router.post('/update/match/time', passport.authenticate('jwt', {
     logObj.target = matchId;
     logObj.logLevel = 'STD';
 
-    Match.findOne({ matchId: matchId }).then((foundMatch) => {
-        if (foundMatch) {
-            let teams = findTeamIds([foundMatch.toObject()]);
-            Team.find({
-                _id: {
-                    $in: teams
-                }
-            }).lean().then((foundTeams) => {
-                let isCapt = returnIsCapt(foundTeams, requester);
-                if (isCapt) {
-                    if (util.returnBoolByPath(foundMatch.toObject(), 'scheduledTime')) {
-                        if (foundMatch.scheduledTime.priorScheduled) {
-                            logObj.logLevel = 'ERROR';
-                            logObj.error = 'Match has all ready been scheduled';
-                            res.status(400).send(util.returnMessaging(path, 'Match has all ready been scheduled', false, null, null, logObj));
+    try {
+        Match.findOne({
+            matchId: matchId
+        }).then((foundMatch) => {
+            if (foundMatch) {
+                let teams = findTeamIds([foundMatch.toObject()]);
+                Team.find({
+                    _id: {
+                        $in: teams
+                    }
+                }).lean().then((foundTeams) => {
+                    let isCapt = returnIsCapt(foundTeams, requester);
+                    if (isCapt) {
+                        if (util.returnBoolByPath(foundMatch.toObject(), 'scheduledTime')) {
+                            if (foundMatch.scheduledTime.priorScheduled) {
+                                logObj.logLevel = 'ERROR';
+                                logObj.error = 'Match has all ready been scheduled';
+                                res.status(400).send(util.returnMessaging(path, 'Match has all ready been scheduled', false, null, null, logObj));
+                            } else {
+                                foundMatch.scheduledTime.priorScheduled = true;
+                                foundMatch.scheduledTime.startTime = scheduledStartTime;
+                                foundMatch.scheduledTime.endTime = scheduledEndTime;
+                            }
                         } else {
+                            foundMatch.scheduledTime = {};
                             foundMatch.scheduledTime.priorScheduled = true;
                             foundMatch.scheduledTime.startTime = scheduledStartTime;
                             foundMatch.scheduledTime.endTime = scheduledEndTime;
                         }
+                        foundMatch.markModified('scheduledTime');
+                        foundMatch.save((saved) => {
+                            res.status(200).send(util.returnMessaging(path, 'Match schedule saved', false, saved, null, logObj));
+                        }, (err) => {
+                            res.status(500).send(util.returnMessaging(path, 'Error updating match time.', err, null, null, logObj));
+                        })
                     } else {
-                        foundMatch.scheduledTime = {};
-                        foundMatch.scheduledTime.priorScheduled = true;
-                        foundMatch.scheduledTime.startTime = scheduledStartTime;
-                        foundMatch.scheduledTime.endTime = scheduledEndTime;
+                        logObj.logLevel = 'ERROR';
+                        logObj.error = 'Requester is not authorized';
+                        res.status(403).send(util.returnMessaging(path, 'Requester is not authorized', null, null, null, logObj));
                     }
-                    foundMatch.markModified('scheduledTime');
-                    foundMatch.save((saved) => {
-                        res.status(200).send(util.returnMessaging(path, 'Match schedule saved', false, saved, null, logObj));
-                    }, (err) => {
-                        res.status(500).send(util.returnMessaging(path, 'Error updating match time.', err, null, null, logObj));
-                    })
-                } else {
-                    logObj.logLevel = 'ERROR';
-                    logObj.error = 'Requester is not authorized';
-                    res.status(403).send(util.returnMessaging(path, 'Requester is not authorized', null, null, null, logObj));
-                }
-            }, (err) => {
+                }, (err) => {
+                    res.status(500).send(util.returnMessaging(path, 'Error updating match time.', err, null, null, logObj));
+                });
+            } else {
                 res.status(500).send(util.returnMessaging(path, 'Error updating match time.', err, null, null, logObj));
-            });
-        } else {
+            }
+        }, (err) => {
             res.status(500).send(util.returnMessaging(path, 'Error updating match time.', err, null, null, logObj));
-        }
-    }, (err) => {
-        res.status(500).send(util.returnMessaging(path, 'Error updating match time.', err, null, null, logObj));
-    });
+        });
+
+    } catch (e) {
+        util.errLogger(path, JSON.stringify(e));
+        res.status(500).send(util.returnMessaging(path, 'Error updating match time.', e, null, null, logObj));
+    }
 })
 
 /*
