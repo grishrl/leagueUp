@@ -3,6 +3,7 @@
         <thead>
             <tr>
                 <th *ngIf="showRound">R #</th>
+                <th *ngIf="divColumn">Div</th>
                 <th>Home</th>
                 <th class="text-center">VS</th>
                 <th>Away</th>
@@ -15,6 +16,9 @@
                 <td *ngIf="showRound">
                     <span *ngIf="match | commonPipe:hasDeadline || match.type == 'tournament' else free">{{match.round}}</span>
                     <ng-template #free>FLEX</ng-template>
+                </td>
+                <td *ngIf="divColumn">
+                    {{match.divisionDisplayName}}
                 </td>
                 <td>
                     <img src="{{match.home.logo}}" alt="icon">

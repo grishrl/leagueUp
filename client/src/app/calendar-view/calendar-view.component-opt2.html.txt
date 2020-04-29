@@ -85,7 +85,15 @@
                             </div>
                             <div class="info-panel">
 
-                                <app-schedule-table [divColumn]="true" [matches]="day.value" [showRound]="false"></app-schedule-table>
+                                <div *ngFor="let div of day.value | keyvalue: asIsOrder">
+                                    <div class="mb-5">
+                                        <h4>{{div.key}}</h4>
+                                        <app-schedule-table [matches]="div.value" [showRound]="false"></app-schedule-table>
+                                    </div>
+
+                                </div>
+
+                                <!-- <app-schedule-table [matches]="day.value" [showRound]="false"></app-schedule-table> -->
 
                             </div>
                         </div>
