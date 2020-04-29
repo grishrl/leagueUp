@@ -211,6 +211,7 @@ export class TopStatsWidgetComponent implements OnInit {
   ]
 
   ngOnInit() {
+    this.stats = [];
     let randomInt = Math.floor(Math.random() * this.statList.length);
     this.currStat = this.statList[randomInt];
 
