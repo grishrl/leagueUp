@@ -19,7 +19,7 @@ export class TopStatsWidgetComponent implements OnInit {
               }
               // this.seasonStartDate = ;
               // this.registrationOpen = res["data"].registrationOpen;
-              this.ngOnInit();
+              this.initialize();
             });
    }
 
@@ -211,14 +211,18 @@ export class TopStatsWidgetComponent implements OnInit {
   ]
 
   ngOnInit() {
-    this.stats = [];
-    let randomInt = Math.floor(Math.random() * this.statList.length);
-    this.currStat = this.statList[randomInt];
 
-    this.displayStat = this.currStat.displayText;
-    if(!this.offSeason){
+  }
+
+  initialize(){
+        this.stats = [];
+        let randomInt = Math.floor(Math.random() * this.statList.length);
+        this.currStat = this.statList[randomInt];
+
+        this.displayStat = this.currStat.displayText;
+        if (!this.offSeason) {
           this.hp.getTopStats(this.currStat.stat).subscribe(
-            res => {
+            (res) => {
               if (res) {
                 let object = res.data;
                 _forEach(object, (value, key) => {
@@ -232,11 +236,11 @@ export class TopStatsWidgetComponent implements OnInit {
                 console.warn("TopStatsWidgetComponent: no stats found");
               }
             },
-            err => {
+            (err) => {
               console.log(err);
             }
           );
-    }
+        }
 
   }
 
