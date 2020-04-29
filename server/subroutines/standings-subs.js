@@ -297,93 +297,98 @@ async function stdDivStanding(division, season, pastSeason) {
             standing['matchesPlayed'] = 0;
             //loop through the matches et all for division
             matchesForDivision.forEach(match => {
-                //match the team id
-                if (match.away.id == team) {
-                    //get team info from here
-                    standing['teamName'] = match.away.teamName;
-                    standing['logo'] = match.away.logo;
-                    //score from this game if team id was away
-                    let score = match.away.score
-                        //dominator variable
-                    let dominator = match.away.dominator;
+                //if the match is not reported; ignore it
+                if (util.returnBoolByPath(match, 'reported') == false) {
+                    return;
+                } else {
+                    //match the team id
+                    if (match.away.id == team) {
+                        //get team info from here
+                        standing['teamName'] = match.away.teamName;
+                        standing['logo'] = match.away.logo;
+                        //score from this game if team id was away
+                        let score = match.away.score
+                            //dominator variable
+                        let dominator = match.away.dominator;
 
-                    if (match.reported) {
-                        standing['matchesPlayed'] += 1;
-                    }
+                        if (match.reported) {
+                            standing['matchesPlayed'] += 1;
+                        }
 
-                    if (score != undefined && score != null) {
-                        //if the score was 2 
-                        if (score == 2) {
-                            //add 2 wins
-                            standing['wins'] += 2;
-                            //add 2 points
-                            standing['points'] += 2;
-                            //if you scored 2 but not a dominator then you won 2-1
-                            if (!dominator) {
-                                standing['losses'] += 1;
+                        if (score != undefined && score != null) {
+                            //if the score was 2 
+                            if (score == 2) {
+                                //add 2 wins
+                                standing['wins'] += 2;
+                                //add 2 points
+                                standing['points'] += 2;
+                                //if you scored 2 but not a dominator then you won 2-1
+                                if (!dominator) {
+                                    standing['losses'] += 1;
+                                }
+                            } else if (score == 1) {
+                                //if you scored 1
+                                //add 1 pt
+                                standing['points'] += 1;
+                                //add 1 win
+                                standing['wins'] += 1;
+                                //add 2 losses
+                                standing['losses'] += 2;
+                            } else {
+                                //else case score is zero, 
+                                //add 2 losses
+                                standing['losses'] += 2;
                             }
-                        } else if (score == 1) {
-                            //if you scored 1
-                            //add 1 pt
-                            standing['points'] += 1;
-                            //add 1 win
-                            standing['wins'] += 1;
-                            //add 2 losses
-                            standing['losses'] += 2;
-                        } else {
-                            //else case score is zero, 
-                            //add 2 losses
-                            standing['losses'] += 2;
                         }
-                    }
-                    //dominator bonus;
-                    //add 1 pt
-                    //add 1 dominations
-                    if (dominator) {
-                        standing['dominations'] += 1;
-                        standing['points'] += 1;
-                    }
-                } else if (match.home.id == team) {
-                    //get team info from here
-                    standing['teamName'] = match.home.teamName;
-                    standing['logo'] = match.home.logo;
-                    //score from this game if team id was home
-                    let score = match.home.score
-                        //dominator variable
-                    let dominator = match.home.dominator;
-                    if (match.reported) {
-                        standing['matchesPlayed'] += 1;
-                    }
-                    if (score != undefined && score != null) {
-                        //if the score was 2 
-                        if (score == 2) {
-                            //add 2 pts
-                            standing['points'] += 2;
-                            // add 2 wins
-                            standing['wins'] += 2;
-                            //if you scored 2 but not a dominator then you won 2-1
-                            if (!dominator) {
-                                standing['losses'] += 1;
-                            }
-                        } else if (score == 1) {
-                            //score was 1, you lost 1-2
-                            //add 1 pts
-                            standing['points'] += 1;
-                            //add 1 wins
-                            standing['wins'] += 1;
-                            //add 2 losses
-                            standing['losses'] += 2;
-                        } else {
-                            //score was zero, 
-                            //add 2 losses
-                            standing['losses'] += 2;
-                        }
-                        //dominator bonus
+                        //dominator bonus;
+                        //add 1 pt
                         //add 1 dominations
-                        //add 1 pts
                         if (dominator) {
                             standing['dominations'] += 1;
                             standing['points'] += 1;
+                        }
+                    } else if (match.home.id == team) {
+                        //get team info from here
+                        standing['teamName'] = match.home.teamName;
+                        standing['logo'] = match.home.logo;
+                        //score from this game if team id was home
+                        let score = match.home.score
+                            //dominator variable
+                        let dominator = match.home.dominator;
+                        if (match.reported) {
+                            standing['matchesPlayed'] += 1;
+                        }
+                        if (score != undefined && score != null) {
+                            //if the score was 2 
+                            if (score == 2) {
+                                //add 2 pts
+                                standing['points'] += 2;
+                                // add 2 wins
+                                standing['wins'] += 2;
+                                //if you scored 2 but not a dominator then you won 2-1
+                                if (!dominator) {
+                                    standing['losses'] += 1;
+                                }
+                            } else if (score == 1) {
+                                //score was 1, you lost 1-2
+                                //add 1 pts
+                                standing['points'] += 1;
+                                //add 1 wins
+                                standing['wins'] += 1;
+                                //add 2 losses
+                                standing['losses'] += 2;
+                            } else {
+                                //score was zero, 
+                                //add 2 losses
+                                standing['losses'] += 2;
+                            }
+                            //dominator bonus
+                            //add 1 dominations
+                            //add 1 pts
+                            if (dominator) {
+                                standing['dominations'] += 1;
+                                standing['points'] += 1;
+                            }
                         }
                     }
                 }
