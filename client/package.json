@@ -43,7 +43,7 @@
         "document-register-element": "^1.14.3",
         "font-awesome": "^4.7.0",
         "hammerjs": "^2.0.8",
-        "jquery": "^3.4.1",
+        "jquery": "^3.5.0",
         "lodash": "^4.17.15",
         "marked": "^0.7.0",
         "mmenu-js": "8.0.6",
