@@ -400,8 +400,9 @@ router.post('/addMember', passport.authenticate('jwt', {
                         if (!util.returnBoolByPath(foundTeam.toObject(), 'pendingMembers')) {
                             foundTeam.pendingMembers = [];
                         }
-
+                        let fuid = foundUser._id.toString();
                         foundTeam.pendingMembers.push({
+                            "id": fuid,
                             "displayName": foundUser.displayName
                         });
 

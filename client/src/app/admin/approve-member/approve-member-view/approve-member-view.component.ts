@@ -70,4 +70,16 @@ export class ApproveMemberViewComponent implements OnInit {
     });
   }
 
+  delete(queue){
+    if(confirm('This is a destructive process for user! It COULD remove them from a team, double check afterwards with the user to make sure!')){
+      this.admin.deleteQueueItem(queue).subscribe(
+        (res) => {
+          this.accountActioner();
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    }
+  }
 }

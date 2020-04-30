@@ -31,6 +31,32 @@ router.get('/pendingMemberQueue', passport.authenticate('jwt', {
     })
 });
 
+router.post('/pmq/delete', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
+    const path = '/admin/pmq/delete';
+    // const query = Admin.PendingQueue.find();
+    let queue = req.body.queue;
+
+    //log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = ' delete pending member queue ';
+    logObj.target = `pending member queue ${queue._id}`;
+    logObj.logLevel = 'ADMIN';
+
+
+    cleanUp(queue).then(
+        success => {
+            res.status(200).send(util.returnMessaging(path, 'Deleted queue item', false, success, null, logObj));
+        },
+        fail => {
+            res.status(500).send(util.returnMessaging(path, 'Failed to delete queue', fail, null, null, logObj));
+        }
+    );
+
+});
+
 router.get('/pendingAvatarQueue', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.userLevel, util.appendResHeader, (req, res) => {
@@ -172,122 +198,19 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
     msg.notSeen = true;
 
     //find team matching the team in question
-    Team.findOne({
-        _id: teamId
-    }).then((foundTeam) => {
-        //we found the team
-        if (foundTeam) {
-            //grab the user associated with this
-            User.findOne({
-                _id: member
-            }).then((foundUser) => {
-                logObj.target = foundTeam.teamName + ' : ' + foundUser.displayName + ' - ' + approved;
-                //we found the user
-                if (foundUser) {
-                    msg.recipient = foundUser._id.toString();
-                    var foundTeamObject = foundTeam.toObject();
-
-                    //double check that the user is in the pending members
-                    if (foundTeamObject.hasOwnProperty('pendingMembers') && foundTeamObject.pendingMembers.length > 0) {
-
-                        var index = null;
-                        for (var i = 0; i < foundTeamObject.pendingMembers.length; i++) {
-                            if (foundTeamObject.pendingMembers[i].displayName == foundUser.displayName) {
-                                index = i;
-                            }
-                        }
-                        //if we find the user in the pending members
-                        if (index != null && index != undefined && index > -1) {
-                            //we need to do some different things here for approved accounts and denied.
-                            if (approved) {
-                                //push the member into the team's actual members then splice them out of the pending members
-                                foundTeam.teamMembers.push(foundTeamObject.pendingMembers[index]);
-                                foundTeam.pendingMembers.splice(index, 1);
-                                if (foundTeam.history) {
-                                    foundTeam.history.push({
-                                        timestamp: Date.now(),
-                                        action: 'Joined team',
-                                        target: foundUser.displayName,
-                                        season: seasonNum
-                                    });
-                                } else {
-                                    foundTeam.history = [{
-                                        timestamp: Date.now(),
-                                        action: 'Joined team',
-                                        target: foundUser.displayName,
-                                        season: seasonNum
-                                    }];
-                                }
-                                //update the user with the team info
-                                foundUser.teamName = foundTeam.teamName;
-                                foundUser.teamId = foundTeam._id
-                                foundUser.pendingTeam = false;
-                                foundUser.lookingForGroup = false;
-                                if (foundUser.history) {
-                                    foundUser.history.push({
-                                        timestamp: Date.now(),
-                                        action: 'Joined team',
-                                        target: foundTeam.teamName,
-                                        season: seasonNum
-                                    });
-                                } else {
-                                    foundUser.history = [{
-                                        timestamp: Date.now(),
-                                        action: 'Joined team',
-                                        target: foundTeam.teamName,
-                                        season: seasonNum
-                                    }];
-                                }
-                            } else {
-                                //remove the member from the pending members
-                                foundTeam.pendingMembers.splice(index, 1);
-                                //make sure that the member's teaminfo is cleared.
-                                if (foundUser.teamName || foundUser.teamId) {
-                                    foundUser.teamName = null;
-                                    foundUser.teamId = null;
-                                }
-                                foundUser.pendingTeam = false;
-                            }
-                            //save the team and the user
-                            foundTeam.save().then((savedTeam) => {
-                                foundUser.save().then((savedUser) => {
-                                    res.status(200).send(util.returnMessaging(path, 'Team and User updated!', false, savedTeam, savedUser, logObj));
-                                    teamSub.updateTeamMmr(savedTeam);
-                                }, (userSaveErr) => {
-                                    res.status(500).send(util.returnMessaging(path, "Error saving user", userSaveErr, null, null, logObj));
-                                })
-                            }, (teamSaveErr) => {
-                                res.status(500).send(util.returnMessaging(path, 'Error saving team', teamSaveErr, null, null, logObj));
-                            });
-                            //this should fire whether the user was approved or denied, clean this item from the queue
-                            QueueSub.removePendingByTeamAndUser(util.returnIdString(foundTeam._id), foundTeam.teamName_lower, util.returnIdString(foundUser._id), foundUser.displayName);
-                        } else {
-                            logObj.logLevel = 'ERROR';
-                            logObj.error = 'User was not found in pending members of team';
-                            res.status(500).send(util.returnMessaging(path, "User \'" + foundUser.displayName + "\' was not found in pending members of team \'" + foundTeam.teamName + "\'", false, null, null, logObj));
-                        }
-                    } else {
-                        logObj.logLevel = 'ERROR';
-                        logObj.error = 'team had no pending members';
-                        res.status(500).send(util.returnMessaging(path, "The team " + foundTeam.teamName + " had no pending members!", null, null, null, logObj));
-                    }
-                    messageSub(msg);
-                } else {
-                    logObj.logLevel = 'ERROR';
-                    logObj.error = 'This user was not found';
-                    res.status(500).send(util.returnMessaging(path, "This user was not found", false, null, null, logObj));
-                }
-            }, (err) => {
-                res.status(500).send(util.returnMessaging(path, 'Error finding user', err, null, null, logObj));
-            });
-        } else {
-            logObj.logLevel = 'ERROR';
-            logObj.error = 'This team was not found';
-            res.status(500).send(util.returnMessaging(path, 'Team not found', null, null, null, logObj))
+    handleMemberQueue(teamId, member, logObj, approved, seasonNum, path).then(
+        success => {
+            if (success.user) {
+                msg.recipient = user._id.toString();
+                //sending message to user
+                messageSub(msg);
+            }
+            res.status(200).send(util.returnMessaging(path, 'Member added to team successfully.', false, success.team, success.user, logObj));
+        },
+        fail => {
+            res.status(500).send(util.returnMessaging(path, fail.message, fail, null, null, logObj));
         }
-    }, (err) => {
-        res.status(500).send(util.returnMessaging(path, 'Error finding team', err, null, null, logObj));
-    })
+    );
 
 });
 
@@ -780,3 +703,281 @@ router.post('/team/removeLogo', passport.authenticate('jwt', {
 });
 
 module.exports = router;
+
+async function handleMemberQueue(teamId, member, logObj, approved, seasonNum) {
+
+    let returnObject = {
+        team: null,
+        user: null
+    }
+
+    //get the team associated with this
+    let teamMong = await Team.findOne({
+        _id: teamId
+    }).then((foundTeam) => {
+        return foundTeam;
+    }, (err) => {
+        util.errLogger('handleMemberQueue - teamFind', err);
+        return null;
+    });
+
+    //grab the user associated with this
+    let userMong = await User.findOne({
+        _id: member
+    }).then((foundUser) => {
+        return foundUser;
+    }, (err) => {
+        util.errLogger('handleMemberQueue - userFind', err);
+        return null;
+    });
+
+    //found team and user 
+    if (teamMong && userMong) {
+        //join was approved;
+
+        //update the log object target with information
+        logObj.target = teamMong.teamName + ' : ' + userMong.displayName + ' - ' + approved;
+
+        var teamMongObject = teamMong.toObject();
+        //double check that the user is in the pending members
+        if (teamMongObject.hasOwnProperty('pendingMembers') && teamMongObject.pendingMembers.length > 0) {
+            var index = -1;
+            //loop through pending members and find the index of the user in question
+            for (var i = 0; i < teamMongObject.pendingMembers.length; i++) {
+                if (teamMongObject.pendingMembers[i].displayName == userMong.displayName) {
+                    index = i;
+                }
+            }
+            //if we find the user in the pending members
+            if (index > -1) {
+                //we need to do some different things here for approved accounts and denied.
+                if (approved) {
+                    //push the member into the team's actual members then splice them out of the pending members
+                    teamMong.teamMembers.push(teamMongObject.pendingMembers[index]);
+                    teamMong.pendingMembers.splice(index, 1);
+
+                    // create/update team history for this user joining
+                    if (teamMong.history) {
+                        teamMong.history.push({
+                            timestamp: Date.now(),
+                            action: 'Joined team',
+                            target: userMong.displayName,
+                            season: seasonNum
+                        });
+                    } else {
+                        teamMong.history = [{
+                            timestamp: Date.now(),
+                            action: 'Joined team',
+                            target: userMong.displayName,
+                            season: seasonNum
+                        }];
+                    }
+
+                    //update the user with the team info
+                    userMong.teamName = teamMong.teamName;
+                    userMong.teamId = teamMong._id;
+                    userMong.pendingTeam = false;
+                    userMong.lookingForGroup = false;
+
+                    // create/update the user history this team join
+                    if (userMong.history) {
+                        userMong.history.push({
+                            timestamp: Date.now(),
+                            action: 'Joined team',
+                            target: teamMong.teamName,
+                            season: seasonNum
+                        });
+                    } else {
+                        userMong.history = [{
+                            timestamp: Date.now(),
+                            action: 'Joined team',
+                            target: teamMong.teamName,
+                            season: seasonNum
+                        }];
+                    }
+
+                } else {
+
+                    //remove the member from the pending members
+                    teamMong.pendingMembers.splice(index, 1);
+
+                    //make sure that the member's teaminfo is cleared.
+                    if (userMong.teamName || userMong.teamId) {
+                        userMong.teamName = null;
+                        userMong.teamId = null;
+                    }
+                    userMong.pendingTeam = false;
+                }
+                //save the team and the user
+                let teamSavedMong = teamMong.save().then((savedTeam) => {
+                    teamSub.updateTeamMmr(savedTeam);
+                    return savedTeam;
+                }, (teamSaveErr) => {
+                    util.errLogger('handleMemberQueue - teamSave', teamSaveErr);
+                    return null;
+                });
+                let userSavedMong = await userMong.save().then((savedUser) => {
+                    return savedUser;
+                }, (userSaveErr) => {
+                    util.errLogger('handleMemberQueue - userSave', userSaveErr);
+                    return null;
+                });
+                //add this to the return object for sending back to caller;
+                returnObject.team = teamSavedMong;
+                returnObject.user = userSavedMong;
+                //this should fire whether the user was approved or denied, clean this item from the queue
+                QueueSub.removePendingByTeamAndUser(util.returnIdString(teamMong._id), teamMong.teamName_lower, util.returnIdString(userMong._id), userMong.displayName);
+            } else {
+                throw {
+                    error: `User ${member} not found in team ${teamId} pending members`,
+                    message: 'User was not found in pending members of team, investigate and delete?'
+                }
+            }
+        } else {
+            throw {
+                error: `Team ${teamId} had no pending members`,
+                message: "Team had no pending members, investigate and delete?"
+            }
+            //return something back now
+        }
+
+    }
+    //found team but not user
+    else if (teamMong && !userMong) {
+        //this is an usuall situation investigate and delete?
+        throw {
+            error: `Team ${teamId} not found.`,
+            message: "Team was found but user was not, investigate and delete?"
+        }
+    }
+    //found user but not team
+    else if (!teamMong && userMong) {
+        //this is an usuall situation investigate and delete?
+        throw {
+            error: `User ${member} not found.`,
+            message: "User was found but team was not, investigate and delete?"
+        }
+    }
+    //we found nothing
+    else {
+        //something went really wrong!
+        throw {
+            error: "Something really bad",
+            message: "Something is wrong with this Pending Member Add, investigate and delete?"
+        }
+    }
+
+    return returnObject;
+
+}
+
+async function cleanUp(queue) {
+
+    let returnObject = {
+        team: null,
+        user: null
+    }
+
+    //get the team associated with this
+    let teamMong = await Team.findOne({
+        _id: queue.teamId
+    }).then((foundTeam) => {
+        return foundTeam;
+    }, (err) => {
+        util.errLogger('handleMemberQueue - teamFind', err);
+        return null;
+    });
+
+    //grab the user associated with this
+    let userMong = await User.findOne({
+        _id: queue.userId
+    }).then((foundUser) => {
+        return foundUser;
+    }, (err) => {
+        util.errLogger('handleMemberQueue - userFind', err);
+        return null;
+    });
+
+    //found team and user 
+    if (teamMong && userMong) {
+        //join was approved;
+        var teamMongObject = teamMong.toObject();
+        //double check that the user is in the pending members
+        if (teamMongObject.hasOwnProperty('pendingMembers') && teamMongObject.pendingMembers.length > 0) {
+            var index = -1;
+            //loop through pending members and find the index of the user in question
+            for (var i = 0; i < teamMongObject.pendingMembers.length; i++) {
+                if (teamMongObject.pendingMembers[i].id == userMong._id.toString()) {
+                    index = i;
+                }
+            }
+            //if we find the user in the pending members
+            if (index > -1) {
+                //we need to do some different things here for approved accounts and denied.
+
+                //remove the member from the pending members
+                teamMong.pendingMembers.splice(index, 1);
+            }
+            //make sure that the member's teaminfo is cleared.
+            userMong.teamName = null;
+            userMong.teamId = null;
+            userMong.pendingTeam = false;
+        }
+    }
+    //found team but not user
+    else if (teamMong && !userMong) {
+        //this is an usuall situation investigate and delete?
+        //join was approved;
+        var teamMongObject = teamMong.toObject();
+        //double check that the user is in the pending members
+        if (teamMongObject.hasOwnProperty('pendingMembers') && teamMongObject.pendingMembers.length > 0) {
+            var index = -1;
+            //loop through pending members and find the index of the user in question
+            for (var i = 0; i < teamMongObject.pendingMembers.length; i++) {
+                if (teamMongObject.pendingMembers[i].id == member) {
+                    index = i;
+                }
+            }
+            //if we find the user in the pending members
+            if (index > -1) {
+                //we need to do some different things here for approved accounts and denied.
+
+                //remove the member from the pending members
+                teamMong.pendingMembers.splice(index, 1);
+            }
+        }
+    }
+    //found user but not team
+    else if (!teamMong && userMong) {
+        //this is an usuall situation investigate and delete?
+        //make sure that the member's teaminfo is cleared.
+        userMong.teamName = null;
+        userMong.teamId = null;
+        userMong.pendingTeam = false;
+    }
+
+    //save the team and the user
+    if (teamMong) {
+        let teamSavedMong = teamMong.save().then((savedTeam) => {
+            teamSub.updateTeamMmr(savedTeam);
+            return savedTeam;
+        }, (teamSaveErr) => {
+            util.errLogger('cleanUp - teamSave', teamSaveErr);
+            return null;
+        });
+        returnObject.team = teamSavedMong;
+    }
+    if (userMong) {
+        let userSavedMong = await userMong.save().then((savedUser) => {
+            return savedUser;
+        }, (userSaveErr) => {
+            util.errLogger('cleanUp - userSave', userSaveErr);
+            return null;
+        });
+        //add this to the return object for sending back to caller;
+        returnObject.user = userSavedMong;
+    }
+
+    return QueueSub.removePendingQueue(queue);
+
+}

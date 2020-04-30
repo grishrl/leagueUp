@@ -158,8 +158,9 @@ router.post('/team/join/response', passport.authenticate('jwt', {
                                 if (!util.returnBoolByPath(foundTeam.toObject(), 'pendingMembers')) {
                                     foundTeam.pendingMembers = [];
                                 }
-
+                                let fuid = foundUser._id.toString();
                                 foundTeam.pendingMembers.push({
+                                    "id": fuid,
                                     "displayName": foundUser.displayName
                                 });
 
@@ -386,7 +387,9 @@ router.post('/user/join/response', passport.authenticate('jwt', {
                                     foundTeam.pendingMembers = [];
                                 }
 
+                                let fuid = foundUser._id.toString()
                                 foundTeam.pendingMembers.push({
+                                    "id": fuid,
                                     "displayName": foundUser.displayName
                                 });
 

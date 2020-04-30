@@ -87,7 +87,7 @@ async function updateTeamsNotTouched(days, limit) {
             if (team.pendingMembers) {
                 let pendingMembers = [];
                 team.pendingMembers.forEach(member => {
-                    pendingMembers.push(member);
+                    pendingMembers.push(member.displayName);
                 });
                 //set the users data to reflect their pending queue to the team, if they exist in the pending member array
                 let usersPendingFlag = await User.updateMany({

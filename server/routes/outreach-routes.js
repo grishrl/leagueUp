@@ -106,14 +106,15 @@ router.post('/inviteResponseComplete', passport.authenticate('jwt', {
                             Team.findOne({
                                 teamName_lower: lower
                             }).then((foundTeam) => {
+                                let fuid = foundUser._id.toString();
+                                let pendingObj = {
+                                    "id": fuid,
+                                    "displayName": foundUser.displayName
+                                }
                                 if (foundTeam.pendingMembers) {
-                                    foundTeam.pendingMembers.push({
-                                        "displayName": foundUser.displayName
-                                    });
+                                    foundTeam.pendingMembers.push(pendingObj);
                                 } else {
-                                    foundTeam.pendingMembers = [{
-                                        "displayName": foundUser.displayName
-                                    }];
+                                    foundTeam.pendingMembers = [pendingObj];
                                 }
                                 UserSubs.togglePendingTeam(foundUser.displayName);
 

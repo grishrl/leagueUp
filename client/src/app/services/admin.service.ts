@@ -180,6 +180,15 @@ export class AdminService {
     return this.httpService.httpPost(url, payload, true);
   }
 
+  //delete pending member add queue item
+  deleteQueueItem(queueObj){
+    let url = "admin/pmq/delete";
+    let payload = {
+      queue:queueObj
+    };
+    return this.httpService.httpPost(url, payload, true);
+  }
+
   //returns to the pending member queue the admins approval or declining of a team member add
   avatarQueuePost(id: string, fileName: string, action: boolean) {
     let url = "admin/approveAvatar";
