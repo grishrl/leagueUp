@@ -118,24 +118,20 @@ export class MvpReportComponent implements OnInit {
   if (obj1) {
     let valid = true;
     forEach(obj1, (val, key) => {
-      console.log('val, key', val, key);
-      if (!this.util.isNullOrEmpty(obj2[key])) {
-        if(!this.util.isNullOrEmpty(val)){
-          if (val == obj2[key]) {
-            console.log(val, obj2[key], val == obj2[key]);
-            //the modified object same as original
-          } else {
-            valid = false;
-          }
-        }
-      } else {
 
-        console.log('obj2[key]' , obj2[key]);
-        //property was removed
-        valid = false;
-      }
+        if (obj2[key] != null || obj2[key]!=undefined) {
+          if (!this.util.isNullOrEmpty(val)) {
+            if (val == obj2[key]) {
+              //the modified object same as original
+            } else {
+              valid = false;
+            }
+          }
+        } else {
+          //property was removed
+          valid = false;
+        }
     });
-    console.log('valid ', valid);
     return valid;
   } else {
     return true;
