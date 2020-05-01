@@ -8,55 +8,67 @@ import { TimeserviceService } from '../services/timeservice.service';
 
 
 @Component({
-  selector: 'app-countdown',
-  templateUrl: './countdown.component.html',
-  styleUrls: ['./countdown.component.css']
+  selector: "app-countdown",
+  templateUrl: "./countdown.component.html",
+  styleUrls: ["./countdown.component.css"],
 })
 export class CountdownComponent implements OnInit {
+  constructor(
+    private scheduleService: ScheduleService,
+    public util: UtilitiesService,
+    public team: TeamService,
+    private countdownService: CountdownService,
+    private timeService: TimeserviceService
+  ) {
+    this.timeService.getSesasonInfo().subscribe((res) => {
+      console.log('res>>', res);
+      this.seasonStartDate = res["data"].seasonStartDate;
+      this.registrationEndDate = res["data"].registrationEndDate;
+      this.registrationOpen = res["data"].registrationOpen;
+      this.ngOnInit();
+    });
+  }
 
-  constructor(private scheduleService:ScheduleService, public util:UtilitiesService, public team: TeamService, private countdownService:CountdownService, private timeService:TimeserviceService) {
 
-    this.timeService.getSesasonInfo().subscribe(
-      res=>{
-        this.seasonStartDate = res['data'].seasonStartDate;
-        this.registrationOpen = res['data'].registrationOpen;
-        this.ngOnInit();
-      }
-    );
-
-   }
-
-   seasonStartDate;
-   registrationOpen;
+  seasonStartDate;
+  registrationOpen;
+  registrationEndDate
 
   validMatch = false;
   targetMatch = {
-    casterName:'',
-    casterUrl:'',
-    divisionConcat:'',
-    divisionDisplayName:'',
-    scheduledTime:{
-      startTime:0
+    casterName: "",
+    casterUrl: "",
+    divisionConcat: "",
+    divisionDisplayName: "",
+    scheduledTime: {
+      startTime: 0,
     },
-    away:{
-      teamName:'',
-      logo:''
+    away: {
+      teamName: "",
+      logo: "",
     },
     home: {
-      teamName: '',
-      logo: ''
-    }
+      teamName: "",
+      logo: "",
+    },
   };
   divisionInfo = {
-    displayName:''
-  }
+    displayName: "",
+  };
 
-  timeRemaining:Iinterval={
-    days:0,
-    hours:0,
-    minutes:0,
-    seconds:0
-  }
+  timeRemaining: Iinterval = {
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  };
+
+  registrationTimeRemaining: Iinterval = {
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  };
 
   startDate;
 
@@ -65,28 +77,37 @@ export class CountdownComponent implements OnInit {
 
   preSeason;
 
-  initCountdown(){
-    this.countdownService.getCountDown(this.targetMatch.scheduledTime.startTime).subscribe(
-      tick=>{
+  initCountdown() {
+    this.countdownService
+      .getCountDown(this.targetMatch.scheduledTime.startTime)
+      .subscribe((tick) => {
         this.timeRemaining = tick;
+      });
+      if(this.registrationEndDate){
+            this.countdownService
+              .getCountDown(this.registrationEndDate)
+              .subscribe((tick) => {
+                this.registrationTimeRemaining = tick;
+              });
       }
-    )
   }
 
   ngOnInit() {
     if (this.timeService.returnWeekNumber() > 0) {
       this.preSeason = false;
       this.scheduleService.getAllMatchesWithStartTime().subscribe(
-        res => {
+        (res) => {
           let matches = res;
-          matches = matches.filter(match => {
-            return this.util.returnBoolByPath(match, 'casterName');
+          matches = matches.filter((match) => {
+            return this.util.returnBoolByPath(match, "casterName");
           });
           let now = Date.now();
           let nearestMatch = nextDate(now, matches);
 
           if (nearestMatch) {
-            nearestMatch.scheduledTime.startTime = parseInt(nearestMatch.scheduledTime.startTime);
+            nearestMatch.scheduledTime.startTime = parseInt(
+              nearestMatch.scheduledTime.startTime
+            );
             this.startDate = nearestMatch.scheduledTime.startTime;
             this.targetMatch = nearestMatch;
             this.homeImage = this.team.imageFQDN(this.targetMatch.home.logo);
@@ -94,20 +115,22 @@ export class CountdownComponent implements OnInit {
             this.validMatch = true;
             this.initCountdown();
           }
-
         },
-        err => {
+        (err) => {
           console.log(err);
         }
-      )
+      );
     } else {
       this.startDate = this.seasonStartDate;
       this.targetMatch.scheduledTime.startTime = this.seasonStartDate;
       this.validMatch = false;
       this.preSeason = true;
+      let now = Date.now();
+      if(now>this.registrationEndDate){
+        this.registrationEndDate = null;
+      }
       this.initCountdown();
     }
-
   }
 }
 

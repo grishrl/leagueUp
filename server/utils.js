@@ -249,6 +249,8 @@ function objectify(obj) {
 //simple console log for server side errors that will give me more info from the papertrail than a simple console.log;
 //simple method to add a few peices of data together to log out
 function errLogger(location, err, add) {
+    err = objectify(err);
+    err = JSON.stringify(err);
     let errLog = `Log @ ${location} : `;
 
     if (err) {

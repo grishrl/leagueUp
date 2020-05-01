@@ -46,7 +46,7 @@ import { ApprovePendingAvatarComponent } from "./admin/approve-pending-avatar/ap
 import { AllTeamsComponent } from "./team/all-teams/all-teams.component";
 import { MatchResultsViewComponent } from './match/match-results-view/match-results-view.component';
 import { ChallongeTournComponent } from "./challonge-tourn/challonge-tourn.component";
-import { SeasonInfoManagerComponent } from "./admin/match-management/season-info-manager/season-info-manager.component";
+import { SeasonInfoManagerComponent } from "./admin/season-info-manager/season-info-manager.component";
 import { PastSeasonsComponent } from "./past-seasons/past-seasons.component";
 import { AuthorPageComponent } from "./blog/author-page/author-page.component";
 import { CasterPageComponent } from "./caster-tools/caster-page/caster-page.component";

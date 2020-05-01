@@ -31,7 +31,8 @@ router.post('/upsertSeasonInfo', passport.authenticate('jwt', {
         'data': {
             'registrationOpen': req.body.data.registrationOpen,
             'seasonStartDate': req.body.data.seasonStartDate,
-            'seasonEndDate': req.body.data.seasonEndDate
+            'seasonEndDate': req.body.data.seasonEndDate,
+            'registrationEndDate': req.body.data.registrationEndDate,
         }
     };
 

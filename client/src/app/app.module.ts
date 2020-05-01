@@ -153,7 +153,7 @@ import { DivisionTournamentResultsTilesComponent } from './division/division-tou
 import { DivisionCupScheduleComponent } from './division/division-cup-schedule/division-cup-schedule.component';
 import { TeamTournamentScheduleTableComponent } from './schedule/team-tournament-schedule-table/team-tournament-schedule-table.component';
 import { TeamTournamentResultsTilesComponent } from './team/team-tournament-results-tiles/team-tournament-results-tiles.component';
-import { SeasonInfoManagerComponent } from './admin/match-management/season-info-manager/season-info-manager.component';
+import { SeasonInfoManagerComponent } from './admin/season-info-manager/season-info-manager.component';
 import { DatePickerComponent } from './formComponents/date-picker/date-picker.component';
 import { AssistantCaptainMgmtComponent } from './modal/assistant-captain-mgmt/assistant-captain-mgmt.component';
 import { PastSeasonsComponent } from './past-seasons/past-seasons.component';

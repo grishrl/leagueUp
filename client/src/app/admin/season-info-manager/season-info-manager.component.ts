@@ -31,7 +31,8 @@ export class SeasonInfoManagerComponent implements OnInit {
             data:{
               'seasonStartDate':null,
               'seasonEndDate':null,
-              'registrationOpen':false
+              'registrationOpen':false,
+              'registrationEndDate':null
             }
           }
           this.showWarning = true;
