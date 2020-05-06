@@ -49,7 +49,7 @@ async function gsRun(client) {
     const gsapi = google.sheets({ version: 'v4', auth: client });
     //update this ID to the new sheet season over season!
     const opts = {
-        spreadsheetId: '1-EYgbPXWCCFbgXv6S5lHLPBnPLHWyx7E4Qy7NNKR73w',
+        spreadsheetId: process.env.caster_report_sheet_id,
         range: 'Form Responses 1!A2:Z100000'
     };
 
@@ -150,11 +150,13 @@ async function gsRun(client) {
 
     }
 
+
+
     //send a write to the sheet ONLY if we made read rows
     if (updateRequired) {
         //update this ID to the new sheet season over season!
         const updateOpts = {
-            spreadsheetId: '1ESTJWL8003KFvZC-PNFhROEO5DxXrq5LbTI_0idkaQE',
+            spreadsheetId: process.env.caster_report_sheet_id,
             range: 'Form Responses 1!A2:Z100000',
             valueInputOption: 'USER_ENTERED',
             resource: {
@@ -164,6 +166,8 @@ async function gsRun(client) {
 
         let update = await gsapi.spreadsheets.values.update(updateOpts);
     }
+
+    util.errLogger(location, null, `Read in VODs`);
 
     return returnStatus;
 
