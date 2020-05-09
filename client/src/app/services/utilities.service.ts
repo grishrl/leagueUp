@@ -417,7 +417,7 @@ export class UtilitiesService {
           let index = url.indexOf(twitchTLD);
           clipVal = url.substring(index + twitchTLD.length, url.length);
         }
-        if (clipVal.length > 0) {
+        if (clipVal.length > 0 && clipVal.includes('autoplay=false')==false) {
           returnClip += clipVal + `&autoplay=false`;
         }
       } else if (url.includes("youtu.be")) {

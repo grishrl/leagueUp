@@ -77,7 +77,6 @@ async function gsRun(client) {
 
     for (var i = 0; i < newDataArray.length; i++) {
         let obj = newDataArray[i];
-
         if (obj.matchId && (obj.youtubeURL || obj.vod1 || obj.vod2) && readInRow(obj.sysRead)) {
             updateRequired = true;
             x += 1;
