@@ -65,10 +65,10 @@ async function gsRun(client) {
             additionalCasters: r[2],
             matchId: r[3],
             division: r[4],
-            liveReplay: r[5],
-            youtubeURL: r[6],
-            vod1: r[7],
-            vod2: r[8],
+            youtubeURL: r[5],
+            vod1: r[6],
+            vod2: r[7],
+
             issues: r[9],
             sysRead: r[10]
         }
