@@ -24,6 +24,11 @@ export class AdminService {
     return this.httpService.httpGet(url, [], false);
   }
 
+  archiveSeason(){
+    let url = "admin/season/reset";
+    return this.httpService.httpPost(url, {}, true);
+  }
+
   teamLogoUpload(img, teamName?) {
     let url = "/admin/team/uploadLogo";
     let imgInput;

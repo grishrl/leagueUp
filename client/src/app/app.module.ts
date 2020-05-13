@@ -182,6 +182,7 @@ import { StreamManagerComponent } from './admin/stream-manager/stream-manager.co
 import { CommonPipePipe } from './common/common-pipe.pipe';
 import { TeamNameComponent } from './formComponents/team-name/team-name.component';
 import { TeamRegisteredComponent } from './team/team-registered/team-registered.component';
+import { ArchiveSeasonComponent } from './admin/archive-season/archive-season.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -350,7 +351,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     StreamManagerComponent,
     CommonPipePipe,
     TeamNameComponent,
-    TeamRegisteredComponent
+    TeamRegisteredComponent,
+    ArchiveSeasonComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
