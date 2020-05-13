@@ -252,14 +252,25 @@ async function updateUserName(id, newUserName) {
         return null;
     });
     if (team) {
+        //if the user was a captain update their user name in the captain property
         if (team.captain == user.displayName) {
             team.captain = newUserName;
         }
+        //update the user name in the team members array
         team.teamMembers.forEach(member => {
             if (member.displayName == user.displayName) {
                 member.displayName = newUserName;
             }
         });
+
+        //if the user was an AC - update their name in the ac array
+        if (team.assistantCaptain && team.assistantCaptain.length > 0) {
+            let index = team.assistantCaptain.indexOf(user.displayName);
+            if (index > -1) {
+                team.assistantCaptain.splice(index, 1);
+                team.assistantCaptain.push(newUserName);
+            }
+        }
         let teamSave = await team.save().then(
             (saved) => { return saved; },
             (err) => { return null; }

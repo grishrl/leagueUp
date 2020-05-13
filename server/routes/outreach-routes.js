@@ -8,6 +8,8 @@ const UserSubs = require('../subroutines/user-subs');
 const QueueSub = require('../subroutines/queue-subs');
 const User = require('../models/user-models');
 const message = require('../subroutines/message-subs');
+const hbs = require('nodemailer-express-handlebars');
+const path = require('path');
 
 var crypto = require('crypto'),
     algorithm = 'aes-256-ctr',
@@ -27,6 +29,18 @@ var transporter = nodemailer.createTransport({
         pass: process.env.outreachPw //update with env var
     }
 });
+
+const hbsOptions = {
+    viewEngine: {
+        extName: ".handlebars",
+        partialsDir: path.resolve(__dirname, "outreach-template"),
+        defaultLayout: false // <-----   added this
+    },
+    viewPath: path.resolve(__dirname, "outreach-template"),
+    extName: ".handlebars"
+};
+
+transporter.use('compile', hbs(hbsOptions));
 
 router.post('/invite', passport.authenticate('jwt', {
     session: false
@@ -56,18 +70,24 @@ router.post('/invite', passport.authenticate('jwt', {
         to: req.body.userEmail,
         subject: "A friend has invited you to join NGS!",
         text: "Hello \n Your friend " + req.user.displayName + " has invited you to join his team and us at the Nexus Gaming Series, amatuer Heroes of the Storm Leuage! \n" +
-            "Please join us by clicking this link and creating an account! \n " + callback + "/email/invite/" + data + ""
+            "Please join us by clicking this link and creating an account! \n " + callback + "/email/invite/" + data + "",
+        template: 'invitation',
+        context: {
+            username: req.user.displayName,
+            link: callback + "/email/invite/" + data
+        }
     }
 
     transporter.sendMail(mailOptions, function(err, info) {
         if (err) {
+            console.log(err);
             res.status(500).send(util.returnMessaging(path, 'We encountered an error, try again later or contact an admin.', err, null, null, logObj));
         } else {
             new Outreach({
                 key: data,
                 teamName: req.user.teamName
             }).save().then((saved) => {
-                res.status(200).send(util.returnMessaging(path, 'This user has been successfully invited, let them to know to be looking for an email from NGS!', false, saved, null, logObj));
+                res.status(200).send(util.returnMessaging(path, 'This user has been successfully invited, let them to know to be looking for an email from NGS! Check the spam filter!', false, saved, null, logObj));
             }, (err) => {
                 res.status(500).send(util.returnMessaging(path, 'We encountered an error, try again later or contact an admin.', err, null, null, logObj));
             })

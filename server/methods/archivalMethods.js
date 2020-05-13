@@ -7,10 +7,14 @@ const CustomError = require('./customError');
 const _ = require('lodash');
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 const util = require('../utils');
+const removeTeamsFromDivisions = require('../methods/division/removeTeamsFromDivision');
 
 const location = 'archivalMethod';
 
 async function archiveDivisions() {
+
+    let returnObject = {};
+
     let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
     let seasonNum = currentSeasonInfo.value;
     util.errLogger(location, null, 'finding divisions for archival...');
@@ -27,21 +31,25 @@ async function archiveDivisions() {
     );
 
     util.errLogger(location, null, 'found divisions ' + divisions.eo.length + ' for archival')
-
+    let dbTeams = {};
     if (divisions.cont) {
 
         for (var i = 0; i < divisions.eo.length; i++) {
 
             let division = divisions.eo[i];
             util.errLogger(location, null, 'archiving division ' + division.displayName)
-            new Archive({
+            let divArch = await new Archive({
                 type: 'division',
                 season: seasonNum,
                 object: division.toObject(),
                 timeStamp: Date.now()
             }).save();
+
+            //hide the division
+            division.public = false;
+            division.save();
             let divTeams = division.teams;
-            let dbTeams = await Team.find({ teamName: { $in: divTeams } }).then(
+            dbTeams = await Team.find({ teamName: { $in: divTeams } }).then(
                 foundTeams => {
                     return { cont: true, eo: foundTeams };
                 },
@@ -56,7 +64,7 @@ async function archiveDivisions() {
                     util.errLogger(location, null, 'archiving ' + team.teamName)
                     let teamObject = team.toObject();
                     teamObject.teamId = team._id.toString();
-                    new Archive({
+                    let teamArch = await new Archive({
                         type: 'team',
                         season: seasonNum,
                         object: teamObject,
@@ -72,17 +80,25 @@ async function archiveDivisions() {
                             }
                         )
                     }
+                    team.questionnaire = {};
+                    team.markModified('questionnaire');
+                    team.save().then();
                 }
+                removeTeamsFromDivisions(division.divisionConcat, '*');
             } else {
                 //error handling
             }
         }
-        playerSeasonFinalize();
+        let playerFinalized = await playerSeasonFinalize(suc => { return suc; });
+        returnObject.finalizedUsers = playerFinalized;
         util.errLogger(location, null, 'finished up archiving...')
 
     } else {
         //error handling
     }
+    returnObject.archivedDivisions = divisions.eo.length;
+    returnObject.archivedTeams = dbTeams.eo.length;
+    return returnObject;
 
 };
 
@@ -91,8 +107,9 @@ async function archiveDivisions() {
 async function playerSeasonFinalize() {
     let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
     let seasonNum = currentSeasonInfo.value;
-    User.find().then(
+    let userFinialize = await User.find().then(
         found => {
+            let count = 0;
             found.forEach(player => {
                 let save = false;
                 if (player.replays && player.replays.length > 0) {
@@ -118,14 +135,17 @@ async function playerSeasonFinalize() {
                     } else {
                         player.seasonsPlayed = 1;
                     }
+                    count++
                     player.save();
                 }
             });
+            return count;
         },
         err => {
             util.errLogger(location, err, 'playerSeasonFinalize');
         }
     )
+    return { message: `${userFinialize} Users season finalized` };
 }
 
 //USER ARCHIVE METHODS:

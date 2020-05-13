@@ -13,6 +13,7 @@ const logger = require('../subroutines/sys-logging-subs');
 const ParsedReplay = require('../models/replay-parsed-models');
 const uploadMethods = require('../methods/replayUpload');
 const streamMethod = require('../methods/streamEventCreator');
+const ArchiveMethods = require('../methods/archivalMethods');
 
 
 router.post('/match/update', passport.authenticate('jwt', {
@@ -145,33 +146,6 @@ router.post('/match/set/schedule/deadline', passport.authenticate('jwt', { sessi
     }, (err) => {
         res.status(500).send(util.returnMessaging(path, 'Error getting matches', err, null, null, logInfo));
     })
-
-    // Match.find({
-    //     divisionConcat: div
-    // }).then((foundMatches) => {
-    //     if (foundMatches) {
-    //         for (var i = 1; i <= endWeek; i++) {
-    //             foundMatches.forEach(match => {
-    //                 if (match.round == i) {
-    //                     match.scheduleDeadline = date;
-    //                 }
-    //             });
-    //             date = date + (1000 * 60 * 60 * 24 * 7);
-    //         }
-    //         foundMatches.save().then(saved => {
-    //             res.status(400).send(util.returnMessaging(path, 'Matches saved', false, saved, null, logInfo));
-    //         }, err => {
-    //             res.status(500).send(util.returnMessaging(path, 'Error saving matches', err, null, null, logInfo));
-    //         });
-
-    //     } else {
-    //         logInfo.logLevel = 'STD';
-    //         logInfo.error = 'Match not found';
-    //         res.status(400).send(util.returnMessaging(path, 'Match not found', false, null, null, logInfo));
-    //     }
-    // }, (err) => {
-    //     res.status(500).send(util.returnMessaging(path, 'Error getting matches', err, null, null, logInfo));
-    // })
 
 });
 
@@ -482,6 +456,41 @@ router.post('/match/delete/stream/link', passport.authenticate('jwt', {
         }
     )
 });
+
+router.post('/season/reset', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.matchLevel, util.appendResHeader, async(req, res) => {
+
+    const Division = require('../models/division-models');
+
+    let path = 'admin/season/reset';
+
+    let logObj = {};
+
+
+
+    let archived = await ArchiveMethods.archiveDivisions().then(
+        suc => {
+            return {
+                success: true,
+                data: suc
+            };
+        },
+        fail => {
+            return { success: false, data: fail };
+        }
+    );
+
+    if (archived.success) {
+
+        res.status(200).send(util.returnMessaging(path, 'Season Reset', false, archived, null, logObj));
+    } else {
+        res.status(500).send(util.returnMessaging(path, 'Error resetting teams registration division', teams.data, null, null, logObj));
+    }
+
+
+
+})
 
 
 module.exports = router;
