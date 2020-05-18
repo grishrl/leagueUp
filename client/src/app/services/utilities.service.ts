@@ -392,7 +392,6 @@ export class UtilitiesService {
 
   validateClipUrl(url) {
     const blacklist = [];
-    console.log(url);
     let valid = true;
     let returnClip = "";
     if (
@@ -417,8 +416,13 @@ export class UtilitiesService {
           let index = url.indexOf(twitchTLD);
           clipVal = url.substring(index + twitchTLD.length, url.length);
         }
-        if (clipVal.length > 0) {
+        if (
+          clipVal.length > 0 &&
+          clipVal.toLowerCase().includes("autoplay=false") == false
+        ) {
           returnClip += clipVal + `&autoplay=false`;
+        } else {
+          returnClip += clipVal;
         }
       } else if (url.includes("youtu.be")) {
         returnClip = "https://www.youtube.com/embed/";
