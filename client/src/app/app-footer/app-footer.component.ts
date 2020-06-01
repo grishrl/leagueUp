@@ -11,7 +11,11 @@ export class AppFooterComponent implements OnInit {
   constructor(private divisionService: DivisionService) { }
 
   divisions = [];
+  year;
   ngOnInit() {
+    let n = Date.now();
+    let nD = new Date(n);
+    this.year = nD.getFullYear();
     //get divisions for the division list drop down
     this.divisionService.getDivisionInfo().subscribe(res => {
       this.divisions = res;
