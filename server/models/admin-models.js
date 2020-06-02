@@ -21,7 +21,14 @@ const pendingMembersSchema = new Schema({
     "teamName": String,
     "userId": String,
     "userName": String,
-    "timestamp": Date
+    "timestamp": Date,
+    "notes": [pendingMemberNotes]
+});
+
+const pendingMemberNotes = new Schema({
+    "id": String,
+    "note": String,
+    "timeStamp": Number
 });
 
 const pendingAvatarSchema = new Schema({

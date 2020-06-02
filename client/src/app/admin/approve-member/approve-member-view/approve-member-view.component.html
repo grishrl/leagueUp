@@ -1,21 +1,30 @@
 <div class="row row-style">
     <div class="col">
-        <app-user-quick-view [userId]="player"></app-user-quick-view>
-    </div>
-    <div class="col">
-        <app-team-quick-view [teamName]="viewTeam"></app-team-quick-view>
-    </div>
-    <div class="col">
-        {{resultantMmr}}
-    </div>
-    <div class="col">
-        <div class="text-center">
-            <button [disabled]="player.smurfAccount" class="btn btn-success" (click)="actionAccount(true)">Approve</button>
-            <button class="btn btn-danger ml-1" (click)="actionAccount(false)">Deny</button>
-            <div class="mt-2">
-                <button class="btn btn-warning" (click)="delete(_info)"> Delete Queue Item</button>
+        <div class="row">
+            <div class="col">
+                <app-user-quick-view [userId]="player"></app-user-quick-view>
+            </div>
+            <div class="col">
+                <app-team-quick-view [teamName]="viewTeam"></app-team-quick-view>
+            </div>
+            <div class="col">
+                {{resultantMmr}}
+            </div>
+            <div class="col">
+                <div class="text-center">
+                    <button [disabled]="player.smurfAccount" class="btn btn-success" (click)="actionAccount(true)">Approve</button>
+                    <button class="btn btn-danger ml-1" (click)="actionAccount(false)">Deny</button>
+                    <div class="mt-2">
+                        <button class="btn btn-warning" (click)="delete(_info)"> Delete Queue Item</button>
+                    </div>
+                </div>
+
             </div>
         </div>
-
+        <div class="row">
+            <div class="col">
+                Notes:
+            </div>
+        </div>
     </div>
 </div>
