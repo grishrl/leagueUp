@@ -23,8 +23,12 @@
         </div>
         <div class="row">
             <div class="col">
-                Notes:
+                <strong>Enter admin notes:</strong>
+                <br>
+                <mat-form-field style="width: 450px;"><textarea matInput [(ngModel)]="note" placeholder="Notes...."></textarea></mat-form-field>
+                <button class="btn btn-success ml-2" [disabled]="note.length==0" (click)="submitNote()">Submit Note</button>
             </div>
         </div>
+        <app-notes [queueInfo]="_info"></app-notes>
     </div>
 </div>

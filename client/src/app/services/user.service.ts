@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, tap } from 'rxjs/operators';
+import { map, tap, share, shareReplay } from 'rxjs/operators';
 import { Profile } from  '../classes/profile.class';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { HttpServiceService } from './http-service.service';
 import { environment } from '../../environments/environment'
+import { CacheServiceService } from './cache-service.service';
 
 
 
@@ -19,6 +20,13 @@ export class UserService {
     let encodedID = encodeURIComponent(id);
     let params = [{user: encodedID}];
     return this.httpService.httpGet(this.userGetURL, params);
+  }
+
+  //return user name by id; or from cache if it exists
+  cachedGetUserNameFromId(id):Observable<Profile>{
+
+    return this.cache.getCached(id, this.getUserById(id));
+
   }
 
   //gets the user profile to match
@@ -179,5 +187,5 @@ export class UserService {
     return this.httpService.httpGet(url, [], true);
   }
 
-  constructor(private httpService: HttpServiceService) { }
+  constructor(private httpService: HttpServiceService, private cache:CacheServiceService) { }
 }

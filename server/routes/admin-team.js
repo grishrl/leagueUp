@@ -57,6 +57,50 @@ router.post('/pmq/delete', passport.authenticate('jwt', {
 
 });
 
+router.post('/pmq/addnote', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
+    const path = '/admin/pmq/addnote';
+    // const query = Admin.PendingQueue.find();
+    let queue = req.body.queue;
+    let newNoteText = req.body.note;
+
+    //log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = ' delete pending member queue ';
+    logObj.target = `pending member queue ${queue._id}`;
+    logObj.logLevel = 'ADMIN';
+
+    Admin.PendingQueue.findById(queue._id).then(
+        found => {
+            const newNote = {
+                id: req.user._id.toString(),
+                timeStamp: Date.now(),
+                note: newNoteText
+            }
+            if (util.returnBoolByPath(util.objectify(found), 'notes')) {
+                found.notes.push(newNote);
+            } else {
+                found.notes = [newNote];
+            }
+            found.markModified('notes');
+            found.save().then(
+                saved => {
+                    res.status(200).send(util.returnMessaging(path, 'Note updated', null, saved, null, logObj));
+                },
+                err => {
+                    res.status(500).send(util.returnMessaging(path, 'Failed to save note to queue', err, null, null, logObj));
+                }
+            )
+        },
+        err => {
+            res.status(500).send(util.returnMessaging(path, 'Failed to add note', err, null, null, logObj));
+        }
+    )
+
+});
+
 router.get('/pendingAvatarQueue', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.userLevel, util.appendResHeader, (req, res) => {

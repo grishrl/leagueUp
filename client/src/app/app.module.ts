@@ -183,6 +183,8 @@ import { CommonPipePipe } from './common/common-pipe.pipe';
 import { TeamNameComponent } from './formComponents/team-name/team-name.component';
 import { TeamRegisteredComponent } from './team/team-registered/team-registered.component';
 import { ArchiveSeasonComponent } from './admin/archive-season/archive-season.component';
+import { DisplayNameForIdComponent } from './elements/display-name-for-id/display-name-for-id.component';
+import { NotesComponent } from './admin/approve-member/approve-member-view/notes/notes.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -352,7 +354,9 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     CommonPipePipe,
     TeamNameComponent,
     TeamRegisteredComponent,
-    ArchiveSeasonComponent
+    ArchiveSeasonComponent,
+    DisplayNameForIdComponent,
+    NotesComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

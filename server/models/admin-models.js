@@ -16,6 +16,12 @@ const adminSchema = new Schema({
         //more as needed
 });
 
+const pendingMemberNotes = new Schema({
+    "id": String,
+    "note": String,
+    "timeStamp": Number
+});
+
 const pendingMembersSchema = new Schema({
     "teamId": String,
     "teamName": String,
@@ -23,12 +29,6 @@ const pendingMembersSchema = new Schema({
     "userName": String,
     "timestamp": Date,
     "notes": [pendingMemberNotes]
-});
-
-const pendingMemberNotes = new Schema({
-    "id": String,
-    "note": String,
-    "timeStamp": Number
 });
 
 const pendingAvatarSchema = new Schema({
