@@ -1,6 +1,6 @@
 <div class="pb-5 pt-5 mb-5">
     <div class="row">
-        <div class="col-8 offset-2">
+        <div class="col text-center">
             <div class="row">
                 <div class="col">
                     <div class="dropdown">
@@ -23,11 +23,18 @@
                     <button type="button" (click)="adminRefreshMMR()" class="mt-1 btn btn-info">Update Team MMR</button>
                 </div>
                 <div class="col">
+                    <button class="btn btn-warning" (click)="forfeit()"> Forfeit Matches </button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
                     <button type="button" [disabled]="!updateTeamControlGroup.valid" (click)="adminSave()" class="mt-1 btn btn-success ">Save</button>
                 </div>
             </div>
         </div>
     </div>
+
+
 
     <div class="row">
         <div class="col">

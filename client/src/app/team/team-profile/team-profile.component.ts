@@ -77,9 +77,9 @@ export class TeamProfileComponent implements OnInit {
       if (e instanceof NavigationEnd) {
         this.teamName = team.realTeamName(this.route.snapshot.params['id']);
         this.season = this.route.snapshot.params['season'];
-        console.log(this.route.snapshot.queryParams);
-        console.log(this.route.snapshot.queryParams['tab']);
-        this.setTab(this.route.snapshot.queryParams["tab"]);
+        if (this.route.snapshot.queryParams["tab"]){
+          this.setTab(this.route.snapshot.queryParams["tab"]);
+        }
         // this.index = this.route.snapshot.queryParams['tab'];
         this.ngOnInit();
       }

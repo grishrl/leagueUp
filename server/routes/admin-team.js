@@ -334,6 +334,34 @@ router.post('/delete/team', passport.authenticate('jwt', {
     })
 });
 
+//forfeits the team matches ... will be used for withdrawl or removed teams
+router.post('/forfeit/team', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
+    const path = '/admin/forfeit/team';
+    var team = req.body.teamName;
+    team = team.toLowerCase();
+
+    const forfeitTeamsMatches = require('../methods/matches/forfeitTeamsMatches');
+    //log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = 'team deletion';
+    logObj.target = team;
+    logObj.logLevel = 'ADMIN';
+
+    forfeitTeamsMatches.forfietTeam(team).then(
+        success => {
+            res.status(200).send(util.returnMessaging(path, 'Forfeited matches', false, success, null, logObj));
+        },
+        fail => {
+            console.log(fail);
+            res.status(500).send(util.returnMessaging(path, 'Error forfeiting matches', fail, null, null, logObj));
+        }
+    );
+
+});
+
 //Saves a supplied team
 router.post('/teamSave', passport.authenticate('jwt', {
     session: false

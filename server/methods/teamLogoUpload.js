@@ -30,7 +30,7 @@ async function uploadTeamLogo(path, dataURI, teamName) {
         var stamp = Date.now();
         stamp = stamp.toString();
         stamp = stamp.slice(stamp.length - 4, stamp.length);
-        uploadedFileName += teamName + stamp + "_logo.jpg";
+        uploadedFileName += teamName + stamp + "_logo.png";
         var buf = new Buffer.from(dataURI.replace(/^data:image\/\w+;base64,/, ""), 'base64');
         var data = {
             Key: uploadedFileName,

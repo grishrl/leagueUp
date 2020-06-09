@@ -97,6 +97,15 @@ export class AdminService {
     return this.httpService.httpPost(url, payload, true);
   }
 
+  //forfeit games
+  forfeitTeam(team: string) {
+    let url = "admin/forfeit/team";
+    let payload = {
+      teamName: team
+    };
+    return this.httpService.httpPost(url, payload, true);
+  }
+
   //admin function to remove memvers from team accepts team name and name of user to remove
   //member can be an array of strings or string
   removeMembers(team: string, member) {
