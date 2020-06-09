@@ -252,7 +252,7 @@ export class UpdateTeamInfoComponent implements OnInit {
       );
   }
 
-  removeInvite(player){
+  removeInvited(player){
 
     this.admin
       .removeInvitedMembers(this.returnedProfile.teamName_lower, player)
