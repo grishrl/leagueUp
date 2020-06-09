@@ -17,6 +17,7 @@ export class Team {
   teamMMRAvg: number; //added to display
   teamMembers: [{displayName:string}]; //added to display
   pendingMembers: [{displayName:string}];
+  invitedUsers:Array<any>;
   questionnaire: questionnaire;
   hpMmrAvg:number;
   ngsMmrAvg:number;
@@ -155,6 +156,7 @@ export class Team {
     this.twitch = null;
     this.twitter = null;
     this.youtube = null;
+    this.invitedUsers = [];
   }
 }
 

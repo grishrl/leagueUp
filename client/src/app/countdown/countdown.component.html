@@ -9,6 +9,7 @@
     <div class="content-counter content-counter-home" *ngIf="preSeason else season">
         <div id="event-one" class="counter" *ngIf="registrationOpen && registrationEndDate">
             <span>Registration Open Now!</span>
+            <span *ngIf="showRegBut"><a class="btn btn-success" [routerLink]="['/teamProfile',teamName]" [queryParams]="{tab:5}" >Register Now!</a></span>
         </div>
         <span *ngIf="registrationEndDate && registrationOpen">
           <p class="text-center">

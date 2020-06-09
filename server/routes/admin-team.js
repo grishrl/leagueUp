@@ -162,6 +162,53 @@ router.post('/team/removeMember', passport.authenticate('jwt', {
     );
 });
 
+//removes the supplied member from the invited array of team
+router.post('/team/removeInvitedMember', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
+    const path = '/admin/team/removeInvitedMember';
+    let teamName = req.body.teamName;
+    let payloadUser = req.body.removeUser;
+    teamName = teamName.toLowerCase();
+
+    const removeTeamMembers = require('../methods/team/removeInvitedMemebers').removeInvitedMembers;
+    //log object
+    let logObj = {};
+    logObj.actor = req.user.displayName;
+    logObj.action = 'remove invited user from team ';
+    logObj.target = teamName + ' : ' + payloadUser;
+    logObj.logLevel = 'ADMIN';
+
+    removeTeamMembers(teamName, payloadUser, false).then(
+        success => {
+
+            let message = 'Default success.';
+
+            if (success.message) {
+                message = success.message;
+            }
+
+            res.status(200).send(util.returnMessaging(path, message, false, success.foundTeam, null, logObj));
+
+        },
+        fail => {
+            if (fail.error) {
+                logObj.error = fail.error;
+            }
+            if (fail.logLevel) {
+                logObj.logLevel = fail.logLevel;
+            }
+            let message = 'Default error message';
+            if (fail.message) {
+                message = fail.message;
+            }
+
+            res.status(400).send(util.returnMessaging(path, message, false, null, null, logObj));
+        }
+    );
+});
+
+
 
 //reassigns captain from the supplied team to the supplied teammember
 router.post('/reassignCaptain', passport.authenticate('jwt', {

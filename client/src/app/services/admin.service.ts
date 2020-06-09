@@ -108,6 +108,15 @@ export class AdminService {
     return this.httpService.httpPost(url, payload, true);
   }
 
+  removeInvitedMembers(team: string, member) {
+    let url = "admin/team/removeInvitedMember";
+    let payload = {
+      teamName: team,
+      removeUser: member,
+    };
+    return this.httpService.httpPost(url, payload, true);
+  }
+
   //refreshes specified teams MMR
   refreshTeamMMR(team) {
     let url = "admin/team/refreshMmr";
@@ -190,7 +199,7 @@ export class AdminService {
     let url = "admin/pmq/addnote";
     let payload = {
       queue: queueObj,
-      note
+      note,
     };
     return this.httpService.httpPost(url, payload, true);
   }

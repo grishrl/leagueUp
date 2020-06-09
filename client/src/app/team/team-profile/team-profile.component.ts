@@ -18,6 +18,7 @@ import { DivisionService } from '../../services/division.service';
 import { AssistantCaptainMgmtComponent } from 'src/app/modal/assistant-captain-mgmt/assistant-captain-mgmt.component';
 import { HistoryService } from 'src/app/services/history.service';
 import { TabTrackerService } from 'src/app/services/tab-tracker.service';
+import { TimeserviceService } from 'src/app/services/timeservice.service';
 
 
 @Component({
@@ -37,6 +38,7 @@ export class TeamProfileComponent implements OnInit {
   message: string
   showDivision = false;
   season = null;
+  registrationOpen:boolean=false;
 
   errors=[];
 
@@ -67,7 +69,7 @@ export class TeamProfileComponent implements OnInit {
   //constructor
   constructor(public auth: AuthService, public user: UserService, public team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router: Router,
     private admin:AdminService, public util:UtilitiesService, private requestService:RequestService, public heroProfile: HeroesProfileService, private divisionServ: DivisionService,
-    private history:HistoryService, private tabTracker:TabTrackerService) {
+    private history:HistoryService, private tabTracker:TabTrackerService, private timeService:TimeserviceService) {
 
       //so that people can manually enter different tags from currently being on a profile page; we can reinitialize the component with the new info
     this.router.events.subscribe((e: any) => {
@@ -75,9 +77,16 @@ export class TeamProfileComponent implements OnInit {
       if (e instanceof NavigationEnd) {
         this.teamName = team.realTeamName(this.route.snapshot.params['id']);
         this.season = this.route.snapshot.params['season'];
+        console.log(this.route.snapshot.queryParams);
+        console.log(this.route.snapshot.queryParams['tab']);
+        this.setTab(this.route.snapshot.queryParams["tab"]);
+        // this.index = this.route.snapshot.queryParams['tab'];
         this.ngOnInit();
       }
     });
+        this.timeService.getSesasonInfo().subscribe((res) => {
+          this.registrationOpen = res["data"].registrationOpen;
+        });
 
   }
 

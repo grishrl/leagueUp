@@ -251,4 +251,19 @@ export class UpdateTeamInfoComponent implements OnInit {
         }
       );
   }
+
+  removeInvite(player){
+
+    this.admin
+      .removeInvitedMembers(this.returnedProfile.teamName_lower, player)
+      .subscribe(
+        (res) => {
+          // console.log('user removed');
+          this.init();
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+  }
 }

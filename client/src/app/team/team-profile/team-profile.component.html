@@ -89,11 +89,13 @@
                 <div class="col-xl-12 col-md-12">
                     <!-- Nav Tabs -->
                     <ul class="nav nav-tabs" id="myTab">
+                        <li *ngIf="registrationOpen" class="finger" [ngClass]="{'active': index==5}"><a (click)="setTab(5)">Registration</a></li>
                         <li class="finger" [ngClass]="{'active': index==0}"><a (click)="setTab(0)">Overview</a></li>
                         <li class="finger" [ngClass]="{'active': index==1}"><a (click)="setTab(1)">Squad</a></li>
                         <li class="finger" [ngClass]="{'active': index==2}"><a (click)="setTab(2)">Schedule</a></li>
                         <li class="finger" [ngClass]="{'active': index==3}"><a (click)="setTab(3)">Results</a></li>
                         <li class="finger" [ngClass]="{'active': index==4}"><a (click)="setTab(4)">Stats</a></li>
+
                     </ul>
                     <!-- End Nav Tabs -->
                 </div>
@@ -101,6 +103,16 @@
                 <div class="col-lg-9 padding-top-mini">
                     <!-- Content Tabs -->
                     <div class="tab-content pb-5">
+                        <div class="tab_pane" [ngClass]="{active: index==5}" *ngIf="index==5">
+                            <div *ngIf="registrationOpen">
+                                <div class="row mt-3">
+                                    <div class="col">
+                                        <app-questionnaire [team]="returnedProfile">
+                                        </app-questionnaire>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <!-- Tab One - overview -->
                         <div class="tab-pane" [ngClass]="{'active': index==0}" *ngIf="index==0">
                             <div>
@@ -291,15 +303,6 @@
                                             <div class="row mt-3">
                                                 <div class="col">
                                                     <app-timezone [(timezone)]="returnedProfile.timeZone" [disabled]="disabled" [(error)]="timezoneError"></app-timezone>
-                                                </div>
-                                            </div>
-
-                                            <div *ngIf="!disabled">
-                                                <div class="row mt-3">
-                                                    <div class="col">
-                                                        <app-questionnaire [team]="returnedProfile">
-                                                        </app-questionnaire>
-                                                    </div>
                                                 </div>
                                             </div>
 

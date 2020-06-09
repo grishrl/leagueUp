@@ -205,7 +205,7 @@ const APP_ROUTES: Routes = [
     path: "_admin/archiveSeason",
     component: ArchiveSeasonComponent,
     canActivate: [AuthGuardService],
-    data: { role: "schedulegen" }
+    data: { role: "schedulegen" },
   },
   {
     path: "_casterDashboard",

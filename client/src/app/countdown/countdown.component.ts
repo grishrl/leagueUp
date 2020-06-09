@@ -5,6 +5,7 @@ import { TeamService } from '../services/team.service';
 import { CountdownService } from '../services/countdown.service';
 import { Iinterval } from '../model/iinterval';
 import { TimeserviceService } from '../services/timeservice.service';
+import { AuthService } from '../services/auth.service';
 
 
 @Component({
@@ -18,10 +19,10 @@ export class CountdownComponent implements OnInit {
     public util: UtilitiesService,
     public team: TeamService,
     private countdownService: CountdownService,
-    private timeService: TimeserviceService
+    private timeService: TimeserviceService,
+    private auth:AuthService
   ) {
     this.timeService.getSesasonInfo().subscribe((res) => {
-      console.log('res>>', res);
       this.seasonStartDate = res["data"].seasonStartDate;
       this.registrationEndDate = res["data"].registrationEndDate;
       this.registrationOpen = res["data"].registrationOpen;
@@ -32,7 +33,8 @@ export class CountdownComponent implements OnInit {
 
   seasonStartDate;
   registrationOpen;
-  registrationEndDate
+  registrationEndDate;
+  teamName;
 
   validMatch = false;
   targetMatch = {
@@ -92,7 +94,10 @@ export class CountdownComponent implements OnInit {
       }
   }
 
+  showRegBut
   ngOnInit() {
+    this.teamName = this.team.routeFriendlyTeamName(this.auth.getTeam());
+    this.showRegBut = this.auth.getCaptain();
     if (this.timeService.returnWeekNumber() > 0) {
       this.preSeason = false;
       this.scheduleService.getAllMatchesWithStartTime().subscribe(
