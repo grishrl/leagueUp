@@ -16,6 +16,23 @@ router.get('/get', (req, res) => {
     });
 });
 
+router.get('/get/by/teamname', (req, res) => {
+    const path = '/division/get/by/teamname';
+    var teamName = decodeURIComponent(req.query.teamName);
+    Division.findOne({
+        teams: teamName
+    }).then((foundDiv) => {
+        if (foundDiv) {
+            res.status(200).send(util.returnMessaging(path, 'Return division info', false, foundDiv));
+        } else {
+            res.status(200).send(util.returnMessaging(path, 'Return division info', false, {}));
+        }
+
+    }, (err) => {
+        res.status(500).send(util.returnMessaging(path, 'Error finding division', err));
+    });
+});
+
 router.get('/get/all', (req, res) => {
     const path = '/division/get/all';
     Division.find({
