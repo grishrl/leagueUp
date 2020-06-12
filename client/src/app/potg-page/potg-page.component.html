@@ -25,7 +25,12 @@
                             </span>
                         </div>
 
-                        <div class="col-lg-4" *ngFor="let mvp of mvpList">
+                        <div class="col-12">
+                            <mat-paginator [length]="length" [pageSize]="pageSize" (page)="pageEventHandler($event)">
+
+                            </mat-paginator>
+                        </div>
+                        <div class="col-lg-4" *ngFor="let mvp of displayArray">
                             <app-potg-display [potg]="mvp"></app-potg-display>
                         </div>
                         <div class="col-12 text-center" *ngIf="mvpList.length == 0">
