@@ -15,6 +15,14 @@ export class CurrentlyLiveGamesComponent implements OnInit {
     timer(0, 600000).subscribe(timer => {
       this.scheduleServ.getLiveMatches().subscribe(res => {
         this.liveList = res;
+        // this.liveList.push(
+        //   {
+        //     home:{teamName:"A"},
+        //     away:{teamName:"B"},
+        //     caster:"bozoboi",
+        //     casterUrl:"twitch.tv/fanhots"
+        //   }
+        // )
       });
     });
   }

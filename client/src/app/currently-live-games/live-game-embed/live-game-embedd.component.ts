@@ -30,7 +30,8 @@ export class LiveGameEmbeddComponent implements OnInit {
             indexOf + stop,
             this.match.casterUrl.length
           );
-          this.embedLink = `https://player.twitch.tv/?channel=${channelID}&parent=nexusgamingseries.org&autoplay=false&muted=true`;
+          this.embedLink = `https://player.twitch.tv/?channel=${channelID}&parent=localhost&parent=ngs-herokuapp.com&parent=herokuapp.com&parent=nexusgamingseries.org&autoplay=false&muted=true`;
+          console.log(this.embedLink);
           // console.log(this.embedLink);
         }
 
