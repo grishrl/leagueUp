@@ -8,6 +8,7 @@ const adminSchema = new Schema({
     "USER": Boolean,
     "DIVISION": Boolean,
     "STANDINGS": Boolean,
+    "TOURNAMENT": Boolean,
     "CASTER": Boolean,
     "MATCH": Boolean,
     "ACL": Boolean,
