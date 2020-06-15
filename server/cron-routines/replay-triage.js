@@ -31,20 +31,31 @@ mongoose.connect(process.env.mongoURI, {
     console.log('connected to mongodb');
 });
 
+
+const findReplayQuery = {
+    $and: [{
+        season: 9
+    }, {
+        reported: true
+    }, {
+        $or: [{
+            forfeit: false
+        }, {
+            forfeit: {
+                $exists: false
+            }
+        }]
+    }, {
+        replays: {
+            $exists: true
+        }
+    }]
+};
+
 async function reparseReplays() {
     //vihxvnjxo096hu
 
-    let matches = await Match.find({
-        $and: [{
-            reported: true
-        }, {
-            season: 8
-        }, {
-            replays: {
-                $exists: true
-            }
-        }]
-    }).then(
+    let matches = await Match.find(findReplayQuery).then(
         found => {
             return found;
         },
