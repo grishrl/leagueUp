@@ -64,7 +64,6 @@ export class MatchEditComponent implements OnInit {
   ngOnInit() {
     this.scheduleService.getMatchInfo(this.matchId).subscribe(
       res => {
-        console.log(res);
         this.match = res;
         if (this.match.away.score || this.match.home.score) {
           this.homeScore = this.match.home.score;
@@ -153,7 +152,12 @@ export class MatchEditComponent implements OnInit {
     if(this.match.replays.hasOwnProperty(this.matchRound)){
       alert('This match all ready has info for the provided round!');
     }else{
-      this.match.other[this.matchRound].winner = this.winner;
+      if (this.match.other.hasOwnProperty(this.matchRound)){
+        this.match.other[this.matchRound].winner = this.winner;
+      }else{
+        this.match.other[this.matchRound] = { winner : this.winner };
+      }
+
       this.adminService.matchUpdate(this.match).subscribe(
         res => {
           //now lets do some replay magic...
@@ -205,7 +209,6 @@ export class MatchEditComponent implements OnInit {
     }
 
     if (submittable) {
-      console.log(match);
       this.adminService.matchUpdate(match).subscribe(
         res => {
           this.ngOnInit();

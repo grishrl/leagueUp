@@ -19,6 +19,7 @@ export class PotgPageComponent implements OnInit {
   length: number;
   pageSize: number = 9;
   displayArray = [];
+  potgLink:string = '';
 
   pageEventHandler(pageEvent: PageEvent) {
     let i = pageEvent.pageIndex * this.pageSize;
@@ -32,20 +33,25 @@ export class PotgPageComponent implements OnInit {
 
   mvpList = [];
   ngOnInit(): void {
-    this.timeService.getSesasonInfo().subscribe((res) => {
-      this.mvpServ.getMvpById("season", res["value"]).subscribe((mvps) => {
-        console.log(mvps);
-        mvps.forEach((m) => {
-          if (m.potg_link && m.potg_link.length > 0) {
-            this.mvpList.push(m);
-          }
-        });
-        this.displayArray = this.mvpList.slice(0,this.pageSize);
-        this.length = this.mvpList.length;
-        this.paginator.firstPage();
-      });
-    });
-  }
+                     this.timeService.getSesasonInfo().subscribe((res) => {
+                       this.mvpServ
+                         .getMvpById("season", res["value"])
+                         .subscribe((mvps) => {
+                           console.log(mvps);
+                           mvps.forEach((m) => {
+                             if (m.potg_link && m.potg_link.length > 0) {
+                               this.mvpList.push(m);
+                             }
+                           });
+                           this.displayArray = this.mvpList.slice(
+                             0,
+                             this.pageSize
+                           );
+                           this.length = this.mvpList.length;
+                           this.paginator.firstPage();
+                         });
+                     });
+                   }
 
   invert = 1;
   lastChoice;
