@@ -12,9 +12,29 @@ const util = require('../utils');
 const archive = require('../methods/archivalMethods');
 const _ = require('lodash');
 
-//options for our JWT
+var tokenExtractor = function(req) {
+        let token = null;
+        let header = req.headers.authorization;
+        if (header) {
+            const bearerStr = "Bearer ";
+            header = header.replace(bearerStr, '');
+            token = header;
+
+        } else if (req.body.apiKey) {
+            const apiKey = req.body.apiKey;
+            delete req.body.apiKey;
+            token = apiKey;
+
+        } else if (req.query.apiKey) {
+            const apiKey = req.query.apiKey;
+            token = apiKey;
+
+        }
+        return token;
+    }
+    //options for our JWT
 var jwtOptions = {
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    jwtFromRequest: tokenExtractor,
     secretOrKey: process.env.jwtToken
 }
 
