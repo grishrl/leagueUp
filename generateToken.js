@@ -12,7 +12,7 @@ const hpAPI = require('./server/methods/heroesProfileAPI');
 
 let tokenObject = {};
 // set this ID to the _id that the API key will be tied to
-tokenObject.id = "5c62f9d8a55a147ce08c9674";
+tokenObject.id = "5f0c6f9ec62c4b1b33f50493";
 //"5c633b8ea55a147ce08c96bc";
 //"5c62f9d8a55a147ce08c9674";
 
@@ -20,10 +20,10 @@ tokenObject.id = "5c62f9d8a55a147ce08c9674";
 //to remind you; the api key will only work in instances that are set to validate it IE it will fail jwt because
 //it isn't signed by a user; 
 //
-var api = false;
+var api = true;
 var token
 if (api) {
-    token = jwt.sign(tokenObject, process.env.apiKey);
+    token = jwt.sign(tokenObject, process.env.jwtToken);
 } else {
     token = jwt.sign(tokenObject, process.env.jwtToken, {
         expiresIn: '7d'
@@ -38,6 +38,20 @@ console.log('token ', token);
 mongoose.connect(process.env.mongoURI, () => {
     console.log('connected to mongodb');
 });
+
+new System.system({
+    'dataName': 'apiKey',
+    'value': token
+}).save().then(
+    saved => {
+        console.log('saved ', ' token ', token);
+        process.exit(0);
+    },
+    err => {
+        console.log('not saved ', ' token ', token);
+        process.exit(0);
+    }
+);
 
 // Archive.archiveDivisions().then(
 //     res => {
@@ -79,19 +93,7 @@ mongoose.connect(process.env.mongoURI, () => {
 // );
 
 
-// new System.system({
-//     'dataName': 'apiKey',
-//     'value': token
-// }).save().then(
-//     saved => {
-//         console.log('saved ', ' token ', token);
-//         process.exit(0);
-//     },
-//     err => {
-//         console.log('not saved ', ' token ', token);
-//         process.exit(0);
-//     }
-// );
+
 
 // let query = {
 
@@ -135,6 +137,7 @@ mongoose.connect(process.env.mongoURI, () => {
 // let limit = undefined;
 // let pastSeason = false;
 
+/**  */
 // Match.find(query).lean().then(
 //     found => {
 //         if (found) {
@@ -184,7 +187,7 @@ mongoose.connect(process.env.mongoURI, () => {
 //     }
 // )
 
-//9-10-19 - add zero gmt time to team info
+/*9-10-19 - add zero gmt time to team info*/
 // groupMakerTest.zeroTeamTimes().then(
 //     res => {
 //         console.log(res);
@@ -193,7 +196,8 @@ mongoose.connect(process.env.mongoURI, () => {
 //         console.log(err);
 //     }
 // )
-//9-10-19 - add zero gmt time to user info
+
+/*9-10-19 - add zero gmt time to user info*/
 // groupMakerTest.zeroUserTimes().then(
 //     res => {
 //         console.log(res);
@@ -203,7 +207,7 @@ mongoose.connect(process.env.mongoURI, () => {
 //     }
 // )
 
-//9-10-19 - add zero gmt time to team info
+/*9-10-19 - add zero gmt time to team info*/
 // groupMakerTest.suggestUserToTeam().then(
 //     res => {
 //         console.log(res);
@@ -213,6 +217,8 @@ mongoose.connect(process.env.mongoURI, () => {
 //     }
 // )
 
+
+// test
 // groupMakerTest.suggestUserToUser().then(
 //     res => {
 //         console.log(res);
