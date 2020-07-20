@@ -237,7 +237,7 @@ export class WordpressService {
     return this.http.httpPost(this.baseURL, payload).pipe(
       map(
         data => {
-        return this.Util.returnByPath(data, "guid.rendered");
+        return this.Util.returnByPath(data, "source_url");
       })
     );
   }
