@@ -185,7 +185,7 @@ export class ImageUploadComponent implements OnInit {
         width: wB,
         height: hB
       },
-      enforceBoundary:true
+      enforceBoundary:false
     });
   }
 

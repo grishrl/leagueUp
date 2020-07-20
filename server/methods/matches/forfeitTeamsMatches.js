@@ -38,6 +38,8 @@ async function forfietTeam(teamName) {
                         match.home.dominator = false;
                     }
                     match.forfeit = true;
+                    match.reported = true;
+                    match.postedToHP = true;
 
                     let savedMatch = await match.save().then(
                         saved => {

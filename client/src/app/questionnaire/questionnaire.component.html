@@ -223,12 +223,12 @@
                 </div>
             </div>
 
-            <div class="row mt-3">
+            <!-- <div class="row mt-3">
                 <div class="col">
                     <h5>Pick 9 maps for the NGS season {{seasonNumber}} map pool.*</h5>
                 </div>
-            </div>
-            <div class="row" *ngIf="pickedMaps.length<9">
+            </div> -->
+            <!-- <div class="row" *ngIf="pickedMaps.length<9">
                 <div class="col">
                     <mat-form-field class="mat-FullWidth">
                         <mat-select placeholder="Select a map:" [(ngModel)]="selectedMap" disableOptionCentering (ngModelChange)="addMap(selectedMap)">
@@ -253,7 +253,7 @@
                         </tr>
                     </table>
                 </div>
-            </div>
+            </div> -->
             <div class="row mt-3">
                 <div class="col">
                     <h5 style="text-decoration:underline">Change to where we're gathering MMR data</h5>
@@ -289,10 +289,10 @@
                                     <span *ngIf="!checkTeamMates()"><i class="material-icons text-danger">close</i></span><span *ngIf="checkTeamMates()" class="material-icons text-success">check</span>
                                 </td>
                             </tr>
-                            <tr>
+                            <!-- <tr>
                                 <td>Maps Picked for Pool</td>
                                 <td><span *ngIf="pickedMaps.length!=9"><i class="material-icons text-danger">close</i></span><span *ngIf="pickedMaps.length==9" class="material-icons text-success">check</span></td>
-                            </tr>
+                            </tr> -->
                             <tr>
                                 <td>Acknowledge that you are aware of the move to Heroes Profile and the need to upload replays via HotsAPI for accurate placement MMRs </td>
                                 <td><span *ngIf="!responses.acknowledge"><i class="material-icons text-danger">close</i></span><span *ngIf="responses.acknowledge" class="material-icons text-success">check</span></td>

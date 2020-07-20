@@ -292,7 +292,7 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
     handleMemberQueue(teamId, member, logObj, approved, seasonNum, path).then(
         success => {
             if (success.user) {
-                msg.recipient = user._id.toString();
+                msg.recipient = success.user._id.toString();
                 //sending message to user
                 messageSub(msg);
             }

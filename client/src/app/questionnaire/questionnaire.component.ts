@@ -69,18 +69,28 @@ export class QuestionnaireComponent implements OnInit {
 
 
   completeRegistration(){
-    if (this.checkTeamMates() && this.checkQuestionnaire() && this.pickedMaps.length == 9){
-      this.responses['pickedMaps'] = this.pickedMaps;
-      this.responses['registered']=true;
-      this.teamService.saveTeamQuestionnaire(this.passedTeam.teamName_lower, this.responses).subscribe(res => {
-
-      }, err => {
-        console.log(err);
-      })
-    }else{
-      alert('you tricked me');
-    }
-  }
+                          //&& this.pickedMaps.length == 9
+                          if (
+                            this.checkTeamMates() &&
+                            this.checkQuestionnaire()
+                          ) {
+                            // this.responses["pickedMaps"] = this.pickedMaps;
+                            this.responses["registered"] = true;
+                            this.teamService
+                              .saveTeamQuestionnaire(
+                                this.passedTeam.teamName_lower,
+                                this.responses
+                              )
+                              .subscribe(
+                                (res) => {},
+                                (err) => {
+                                  console.log(err);
+                                }
+                              );
+                          } else {
+                            alert("you tricked me");
+                          }
+                        }
 
   checkQuestionnaire(){
       if(this.responses.lastSeason=='yes'){
@@ -116,7 +126,8 @@ export class QuestionnaireComponent implements OnInit {
   }
 
   checkValid() {
-    return this.checkTeamMates() && this.checkQuestionnaire() && this.pickedMaps.length == 9 && this.responses.acknowledge == true;
+    //this.pickedMaps.length == 9
+    return this.checkTeamMates() && this.checkQuestionnaire() &&  this.responses.acknowledge == true;
   }
 
   remove(map){
@@ -136,7 +147,7 @@ export class QuestionnaireComponent implements OnInit {
   }
 
   save(){
-    this.responses['pickedMaps']=this.pickedMaps;
+    // this.responses['pickedMaps']=this.pickedMaps;
     this.teamService.saveTeamQuestionnaire(this.passedTeam.teamName_lower,this.responses).subscribe(res=>{
 
     },err=>{
