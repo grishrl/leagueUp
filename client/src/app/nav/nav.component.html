@@ -33,6 +33,9 @@
                                     <a class="finger linkColorFix">Community Spotlight</a>
                                     <ul class="sub-current" appHideMenu>
                                         <li>
+                                            <a href="https://matcherino.com/tournaments/29831/overview" target="_blank">Storm Division Matcherino</a>
+                                        </li>
+                                        <li>
                                             <a [routerLink]="['/volunteers']">Volunteers</a>
                                         </li>
                                         <li>
@@ -206,26 +209,20 @@
             </ul>
         </li>
         <li>
+            <a [routerLink]="['/pastSeasons']">Past Seasons</a>
+        </li>
+        <li>
             <a [routerLink]="['/blog']">Blog</a>
         </li>
         <li>
-            <a [routerLink]="['/pastSeasons']">Past Seasons</a>
-        </li>
-
-        <li>
             <a [routerLink]="['/allTeams']">Teams</a>
         </li>
-
         <li>
             <a [routerLink]="['/calendar']">Calendar</a>
         </li>
-
         <li [hidden]="Auth.isAuthenticated()">
             <a [routerLink]="['/login']">Login</a>
         </li>
-
-
-
         <li [hidden]="!Auth.isAuthenticated()">
             <a>
                 <span>{{Auth.getUser()}}</span>
