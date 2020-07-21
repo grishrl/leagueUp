@@ -119,7 +119,7 @@ export class CalendarViewComponent implements OnInit {
   }
 
   asIsOrder(a,b){
-    return 1;
+    return 0;
   }
 
   _matches = [];
