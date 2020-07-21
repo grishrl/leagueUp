@@ -108,28 +108,6 @@ async function promoteTournamentMatch(foundMatch) {
 
 async function reportToChallonge(match, winner, winnerID) {
     let returnVal = null;
-    // console.log(match.challonge_tournament_ref);
-    // let winnerRef = await Scheduling.findOne({
-    //     challonge_ref: parseInt(match.challonge_tournament_ref)
-    // }).lean().then(found => {
-    //     console.log(found);
-    //     return found;
-    // }, err => {
-    //     console.log(err);
-    //     return null;
-    // });
-    // console.log('winnerRef ', winnerRef)
-    // if (winnerRef) {
-
-    // let winnerID
-
-    // winnerRef.participantsRef.forEach(
-    //     reference => {
-    //         if (reference.id == winner.id) {
-    //             winnerID = reference.challonge_ref;
-    //         }
-    //     }
-    // )
 
     let challongeMatch = await challoneAPI.matchGet(match.challonge_tournament_ref, match.challonge_match_ref).then(
         res => {
@@ -142,10 +120,7 @@ async function reportToChallonge(match, winner, winnerID) {
     )
     let scores;
     if (challongeMatch) {
-        // console.log('challongeMatch ', challongeMatch);
-        // console.log('challongeMatch.match.player1_id ', challongeMatch.match.player1_id);
-        // console.log('winner obj ', winner);
-        // console.log('winnerID ', winnerID);
+
         if (winnerID == challongeMatch.match.player1_id) {
             if (winner.pos == 'home') {
                 scores = match.home.score + "-" + match.away.score
@@ -160,9 +135,6 @@ async function reportToChallonge(match, winner, winnerID) {
             }
         }
     }
-
-    // console.log('scores ', scores);
-
 
     if (winnerID) {
         let challongeRes = await challoneAPI.matchUpdate(match.challonge_tournament_ref, match.challonge_match_ref, scores, winnerID).then(
@@ -185,6 +157,20 @@ async function reportToChallonge(match, winner, winnerID) {
                 return false;
             }
         )
+        if (finalize) {
+            let tournamentRef = await Scheduling.findOne({
+                challonge_ref: parseInt(match.challonge_tournament_ref)
+            }).then(found => {
+                return found;
+            }, err => {
+                // console.log(err);
+                return null;
+            });
+            if (tournamentRef) {
+                tournamentRef.active = false;
+                tournamentRef.save();
+            }
+        }
     }
     // }
     return returnVal;

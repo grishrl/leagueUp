@@ -149,12 +149,15 @@ export class MatchEditComponent implements OnInit {
 
   uploadReplay() {
     console.log(this.filePendingUpload);
-    if(this.match.replays.hasOwnProperty(this.matchRound)){
+    if(this.util.returnBoolByPath(this.match, `replays.${this.matchRound}`)){
       alert('This match all ready has info for the provided round!');
     }else{
-      if (this.match.other.hasOwnProperty(this.matchRound)){
+      if (this.util.returnBoolByPath(this.match, `other.${this.matchRound}`)){
         this.match.other[this.matchRound].winner = this.winner;
       }else{
+        if(!this.util.returnBoolByPath(this.match, 'other')){
+          this.match.other = {};
+        }
         this.match.other[this.matchRound] = { winner : this.winner };
       }
 

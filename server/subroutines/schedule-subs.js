@@ -490,7 +490,8 @@ async function generateTournamentTwo(teams, season, division, cup, name, descrip
                             'matchesRef': matchesCrossRef,
                             'challonge_ref': tournamentId,
                             'challonge_url': url,
-                            'finalMatch': finalMatchRef
+                            'finalMatch': finalMatchRef,
+                            'active': true
                         }
                         if (cup) {
                             schedObj['cup'] = cup;

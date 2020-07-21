@@ -170,6 +170,14 @@ export class TeamService {
     return this.httpService.httpPost(url, payload);
   }
 
+  getActiveTournaments(teamId){
+    let url = "/schedule/fetch/team/tournament/active";
+        let payload = {
+          teamId: teamId,
+        };
+        return this.httpService.httpPost(url, payload)
+  }
+
   getTournamentMatches(teamId, name, season, division){
     let url = '/schedule/fetch/team/tournament/matches';
     let payload = {

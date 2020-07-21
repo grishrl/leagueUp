@@ -15,12 +15,22 @@ export class ScheduleTableComponent implements OnInit {
   constructor(public teamServ: TeamService, public util: UtilitiesService, private router: Router, public auth: AuthService, private scheduleService:ScheduleService) { }
 
   matchesVal = [];
+
+  evalutate(match){
+    return this.hasDeadline(match) || match.type == 'tournament';
+  }
+
   @Input() set matches(val){
     if(val){
       val.forEach(
         match=>{
-          match.home.logo = this.teamServ.imageFQDN(match.home.logo);
-          match.away.logo = this.teamServ.imageFQDN(match.away.logo);
+          if(this.util.returnBoolByPath(match, 'home.logo')){
+            match.home.logo = this.teamServ.imageFQDN(match.home.logo);
+          }
+          if(this.util.returnBoolByPath(match, 'away.logo')){
+            match.away.logo = this.teamServ.imageFQDN(match.away.logo);
+          }
+
         }
       )
       this.matchesVal = val;

@@ -146,33 +146,6 @@ router.post('/match/set/schedule/deadline', passport.authenticate('jwt', { sessi
         res.status(500).send(util.returnMessaging(path, 'Error getting matches', err, null, null, logInfo));
     })
 
-    // Match.find({
-    //     divisionConcat: div
-    // }).then((foundMatches) => {
-    //     if (foundMatches) {
-    //         for (var i = 1; i <= endWeek; i++) {
-    //             foundMatches.forEach(match => {
-    //                 if (match.round == i) {
-    //                     match.scheduleDeadline = date;
-    //                 }
-    //             });
-    //             date = date + (1000 * 60 * 60 * 24 * 7);
-    //         }
-    //         foundMatches.save().then(saved => {
-    //             res.status(400).send(util.returnMessaging(path, 'Matches saved', false, saved, null, logInfo));
-    //         }, err => {
-    //             res.status(500).send(util.returnMessaging(path, 'Error saving matches', err, null, null, logInfo));
-    //         });
-
-    //     } else {
-    //         logInfo.logLevel = 'STD';
-    //         logInfo.error = 'Match not found';
-    //         res.status(400).send(util.returnMessaging(path, 'Match not found', false, null, null, logInfo));
-    //     }
-    // }, (err) => {
-    //     res.status(500).send(util.returnMessaging(path, 'Error getting matches', err, null, null, logInfo));
-    // })
-
 });
 
 router.post('/match/deletereplay', passport.authenticate('jwt', {
@@ -389,21 +362,27 @@ router.post('/match/uploadreplay', passport.authenticate('jwt', {
                                             sysLog.target = '';
                                             sysLog.timeStamp = new Date().getTime();
                                             logger(sysLog);
-
-                                            foundMatch.reported = true;
-                                            foundMatch.postedToHP = false;
-                                            foundMatch.save((saved) => {
-                                                res.status(200).send(util.returnMessaging(path, 'Match reported', false, saved, null, logObj));
-                                            }, (err) => {
-                                                res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
-                                            })
                                         },
                                         (err) => {
-                                            res.status(500).send(util.returnMessaging(path, 'Error (2) reporting match result', err, null, null, logObj));
+                                            let sysLog = {};
+                                            sysLog.actor = 'SYS';
+                                            sysLog.action = ' parsed replay error';
+                                            sysLog.logLevel = 'ERROR';
+                                            sysLog.error = err;
+                                            sysLog.target = '';
+                                            sysLog.timeStamp = new Date().getTime();
+                                            logger(sysLog);
                                         }
                                     )
                                 }
                             );
+                            foundMatch.reported = true;
+                            foundMatch.postedToHP = false;
+                            foundMatch.save((saved) => {
+                                res.status(200).send(util.returnMessaging(path, 'Match reported', false, saved, null, logObj));
+                            }, (err) => {
+                                res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
+                            })
 
                         }, (err) => {
                             res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
