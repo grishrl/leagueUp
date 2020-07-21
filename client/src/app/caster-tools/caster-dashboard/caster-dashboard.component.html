@@ -1,91 +1,43 @@
 <app-banner-image [bannerTitle]="'Caster Dashboard'">
 </app-banner-image>
 
-
-<!-- Section Area - Content Central -->
 <section class="content-info">
 
-    <div class="container paddings-mini">
-        <!-- Content Text-->
-        <div class="panel-box padding-b">
+    <!-- Single Team Tabs -->
+    <div class="single-team-tabs">
+        <div class="container">
             <div class="row">
-                <div class="col">
-                    <div class="row">
-                        <div class="col">
-                            <h5>Filter Matches By:</h5>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <app-division-selector (selectedDiv)="selected($event)"></app-division-selector>
-                        </div>
-                        <div class="col">
-                            <mat-form-field class="mat-FullWidth">
-                                <mat-select placeholder="Round:" [(ngModel)]="roundFlt" (ngModelChange)="doFilterMatches()" disableOptionCentering>
-                                    <mat-option [value]="null"> </mat-option>
-                                    <mat-option *ngFor="let round of rounds" [value]="round">{{round}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
-                        <div class="col">
-                            <mat-form-field class="mat-FullWidth">
-                                <input matInput placeholder="Team Name" [(ngModel)]="teamFlt" (ngModelChange)="doFilterMatches()">
-                            </mat-form-field>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <mat-checkbox [(ngModel)]="scheduledOnlyFlt" (ngModelChange)="doFilterMatches()">Only Scheduled Matches.
-                            </mat-checkbox>
-                        </div>
-                        <div class="col">
-                            <mat-checkbox [(ngModel)]="tournamentOnlyFlt" (ngModelChange)="doFilterMatches()">Tournament Matches.
-                            </mat-checkbox>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <app-date-picker [(date)]="friendlyDate" (dateChange)="timeChanged()"></app-date-picker>
-                        </div>
-                        <div class="col ">
-                            <mat-form-field class="mat-FullWidth ">
-                                <mat-select placeholder="Start Time: " [(ngModel)]="friendlyTime" (ngModelChange)="timeChanged()">
-                                    <mat-option *ngFor="let time of times " [value]="time ">
-                                        {{time}}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
-                        <div class="col ">
-                            <mat-form-field class="mat-FullWidth ">
-                                <mat-select placeholder="AM/PM: " [(ngModel)]="suffix" (ngModelChange)="timeChanged()">
-                                    <mat-option *ngFor="let suffix of amPm " [value]="suffix ">
-                                        {{suffix}}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <span class="finger float-right badge badge-pill pill-shadow badge-light" (click)="resetTime()">Reset Time</span>
-                        </div>
-                    </div>
-                    <mat-paginator [length]="length " [pageIndex]="pageIndex " [pageSize]="pageSize " (page)="pageEventHandler($event) ">
+                <!-- Left Content - Tabs and Carousel -->
+                <div class="col-xl-12 col-md-12">
+                    <!-- Nav Tabs -->
+                    <ul class="nav nav-tabs" id="myTab">
+                        <li class="finger" [ngClass]="{'active': index==0}"><a (click)="setTab(0)">Live Casts</a></li>
+                        <li class="finger" [ngClass]="{'active': index==1}"><a (click)="setTab(1)">Replay Casts</a></li>
+                    </ul>
+                    <!-- End Nav Tabs -->
+                </div>
 
-                    </mat-paginator>
-                    <div *ngIf="displayArray.length==0 " style="height: 650px "></div>
-                    <ng-container *ngFor="let match of displayArray; let ind=index;">
-                        <app-caster-dashboard-match-display [recMatch]="match" [ind]="ind"></app-caster-dashboard-match-display>
-                    </ng-container>
+                <div class="col padding-top-mini">
+                    <!-- Content Tabs -->
+                    <div class="tab-content">
+                        <!-- Tab One - overview -->
+                        <div class="tab-pane" [ngClass]="{'active': index==0}" *ngIf="index==0">
+                            <app-live-casts></app-live-casts>
+                        </div>
+                        <!-- Tab One - overview -->
+
+                        <!-- Tab Two - squad -->
+                        <div class="tab-pane" [ngClass]="{'active': index==1}" *ngIf="index==1">
+                            <app-replay-casts></app-replay-casts>
+                        </div>
+                        <!-- End Tab Two - squad -->
+                    </div>
+                    <!-- Content Tabs -->
                 </div>
             </div>
         </div>
-        <!-- End Content Text-->
     </div>
+    <!-- Single Team Tabs -->
 
 </section>
 <!-- End Section Area -  Content Central -->
-<ng-template #tbd>
-    <span> TBD </span>
-</ng-template>

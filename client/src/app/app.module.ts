@@ -185,6 +185,9 @@ import { TeamRegisteredComponent } from './team/team-registered/team-registered.
 import { ArchiveSeasonComponent } from './admin/archive-season/archive-season.component';
 import { DisplayNameForIdComponent } from './elements/display-name-for-id/display-name-for-id.component';
 import { NotesComponent } from './admin/approve-member/approve-member-view/notes/notes.component';
+import { ReplayCastsComponent } from './caster-tools/replay-casts/replay-casts.component';
+import { LiveCastsComponent } from './caster-tools/live-casts/live-casts.component';
+import { MatchPaginatorComponent } from './caster-tools/match-paginator/match-paginator.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -356,7 +359,10 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     TeamRegisteredComponent,
     ArchiveSeasonComponent,
     DisplayNameForIdComponent,
-    NotesComponent
+    NotesComponent,
+    ReplayCastsComponent,
+    LiveCastsComponent,
+    MatchPaginatorComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
