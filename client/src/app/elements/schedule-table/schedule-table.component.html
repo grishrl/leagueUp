@@ -15,9 +15,8 @@
 
             <tr *ngFor="let match of matchesVal">
                 <!-- round column -->
-                <td *ngIf="showRound">
-                    <span *ngIf="match | commonPipe:evalutate else free">{{match.round}}</span>
-                    <ng-template #free>FLEX</ng-template>
+                <td>
+                    <app-round-column [match]="match"></app-round-column>
                 </td>
                 <!-- div column -->
                 <td *ngIf="divColumn">

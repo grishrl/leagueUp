@@ -16,9 +16,7 @@ export class ScheduleTableComponent implements OnInit {
 
   matchesVal = [];
 
-  evalutate(match){
-    return this.hasDeadline(match) || match.type == 'tournament';
-  }
+
 
   @Input() set matches(val){
     if(val){
@@ -50,10 +48,6 @@ export class ScheduleTableComponent implements OnInit {
   ngOnInit() {
     this.todayDate = new Date().getTime();
     this.isCaster = this.auth.isCaster();
-  }
-
-  hasDeadline(match) {
-    return match.hasOwnProperty("scheduleDeadline");
   }
 
   userCanSchedule(match) {
