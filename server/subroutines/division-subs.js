@@ -13,8 +13,9 @@ async function cupDivisionAggregator(teams, division) {
         }
     )
 
-    let dbDivisionObject = dbDivision.toObject();
-    if (dbDivisionObject) {
+
+    if (dbDivision) {
+        let dbDivisionObject = dbDivision.toObject();
         if (util.returnBoolByPath(dbDivisionObject, 'cupDiv') && dbDivisionObject.cupDiv) {
 
             let teamNames = [];
