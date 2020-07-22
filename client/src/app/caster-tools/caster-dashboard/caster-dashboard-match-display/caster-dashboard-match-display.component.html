@@ -49,7 +49,6 @@
                 </ng-template>
             </div>
         </div>
-        <span> |||| {{replayView}} ||| </span>
         <div class="row mt-2 " *ngIf="!replayView">
             <div class="col ">
                 <div *ngIf="match | commonPipe:util.returnBoolByPath:'casterName' else addCasterButton ">
@@ -70,56 +69,32 @@
                     </div>
 
                 </div>
-                <ng-template #addCasterButton>
-                    <div class="row">
-                        <div class="col">
-                            <app-caster-inputs [(match)]="match" [matchId]="match.matchId"></app-caster-inputs>
-                        </div>
-                        <!-- NOTE: caster changes -->
-                        <div class="col">
-                            <button class="btn btn-success" (click)="claimMatch(match.matchId)">One Click Claim</button>
-                        </div>
-                    </div>
 
-
-                </ng-template>
             </div>
         </div>
         <div class="row mt-2 " *ngIf="replayView">
             <div class="col ">
-                <div class="row mt-4">
-                    <div class="col-lg-6 col-sm-12">
-                        <app-date-picker [(date)]="castDate"></app-date-picker>
-                    </div>
-                    <div class="col-lg-6 col-sm-12">
-                        <div class="row">
-                            <div class="col">
-                                <mat-form-field class="mat-FullWidth">
-                                    <mat-select placeholder="Start Time:" [(ngModel)]="castTime">
-                                        <mat-option *ngFor="let time of times" [value]="time">
-                                            {{time}}
-                                        </mat-option>
-                                    </mat-select>
-                                    <mat-hint>Times are localized</mat-hint>
-                                </mat-form-field>
-                            </div>
-                            <div class="col">
-                                <mat-form-field class="mat-FullWidth">
-                                    <mat-select placeholder="AM/PM:" [(ngModel)]="suffix">
-                                        <mat-option *ngFor="let suffix of amPm" [value]="suffix">
-                                            {{suffix}}
-                                        </mat-option>
-                                    </mat-select>
-                                </mat-form-field>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <app-date-time-picker [(selectedTime)]="castTime"></app-date-time-picker>
             </div>
         </div>
+        <div *ngIf="castTime">
+            <ng-template [ngTemplateOutlet]="addCasterButton"></ng-template>
+        </div>
+
+
 
     </div>
 </div>
 <ng-template #tbd>
     <span> TBD </span>
+</ng-template>
+
+<ng-template #addCasterButton>
+    <div class="row">
+        <div class="col">
+            <app-caster-inputs [(match)]="match" [matchId]="match.matchId" [replayCastTime]="castTime" [replay]="replayView" (matchChange)="updateView($event)"></app-caster-inputs>
+        </div>
+    </div>
+
+
 </ng-template>

@@ -431,7 +431,7 @@ router.post('/match/deletereplay', passport.authenticate('jwt', {
 
 router.post('/match/create/stream/link', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.matchLevel, util.appendResHeader, (req, res) => {
+}), levelRestrict.multi(['MATCH', 'CASTER']), util.appendResHeader, (req, res) => {
     const path = '/match/create/stream/link';
 
     streamMethod.createStreamEvent(req.body).then(
@@ -439,6 +439,7 @@ router.post('/match/create/stream/link', passport.authenticate('jwt', {
             res.status(200).send(util.returnMessaging(path, 'Stream info created', false, answer));
         },
         err => {
+            console.log(err);
             if (err instanceof Error) {
                 err = err.message;
             }

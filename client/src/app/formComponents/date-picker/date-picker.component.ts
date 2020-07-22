@@ -14,10 +14,6 @@ export class DatePickerComponent implements OnInit {
 
   friendlyDate
 
-  @Input() set inDate(val){
-
-  }
-
   dateValue;
 
 
@@ -49,6 +45,10 @@ export class DatePickerComponent implements OnInit {
 
     }
 
+    this.dateChange.emit(this.dateValue);
+  }
+
+  update(){
     this.dateChange.emit(this.dateValue);
   }
 

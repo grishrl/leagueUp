@@ -41,6 +41,12 @@ function logs(req, res, next) {
     adminCheck('LOGS', req, res, next);
 }
 
+function multi(roleArray) {
+    return function(req, res, next) {
+        adminCheck(roleArray, req, res, next);
+    }
+}
+
 module.exports = {
     teamLevel: teamLevel,
     userLevel: userLevel,
@@ -50,5 +56,6 @@ module.exports = {
     scheduleGenerator: scheduleGenerator,
     userACL: userACL,
     events: events,
-    logs: logs
+    logs: logs,
+    multi: multi
 }

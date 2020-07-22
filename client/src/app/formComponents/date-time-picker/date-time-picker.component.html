@@ -1,0 +1,32 @@
+<div class="row mt-2 ">
+    <div class="col ">
+        <div class="row mt-4">
+            <div class="col-lg-6 col-sm-12">
+                <app-date-picker [(date)]="selectedDate" (dateChange)="calculateTimeStamp()"> </app-date-picker>
+            </div>
+            <div class="col-lg-6 col-sm-12">
+                <div class="row">
+                    <div class="col">
+                        <mat-form-field class="mat-FullWidth">
+                            <mat-select placeholder="Start Time:" [(ngModel)]="selectedHourMin" (ngModelChange)="calculateTimeStamp()">
+                                <mat-option *ngFor=" let time of times " [value]="time ">
+                                    {{time}}
+                                </mat-option>
+                            </mat-select>
+                            <mat-hint>Times are localized</mat-hint>
+                        </mat-form-field>
+                    </div>
+                    <div class="col ">
+                        <mat-form-field class="mat-FullWidth ">
+                            <mat-select placeholder="AM/PM: " [(ngModel)]="suffix " (ngModelChange)="calculateTimeStamp()">
+                                <mat-option *ngFor="let suffix of amPm " [value]="suffix ">
+                                    {{suffix}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

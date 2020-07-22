@@ -123,6 +123,8 @@ export class MatchPaginatorComponent implements OnInit {
 
     //set console to be filtered by todays date automatically
     if(this.replay){
+      this.displayArray = this.filterMatches.slice(0, 10);
+    }else{
       this.filterByFriendlyDateToMS();
     }
   }

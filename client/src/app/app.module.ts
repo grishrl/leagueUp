@@ -191,6 +191,7 @@ import { NotesComponent } from './admin/approve-member/approve-member-view/notes
 import { ReplayCastsComponent } from './caster-tools/replay-casts/replay-casts.component';
 import { LiveCastsComponent } from './caster-tools/live-casts/live-casts.component';
 import { MatchPaginatorComponent } from './caster-tools/match-paginator/match-paginator.component';
+import { DateTimePickerComponent } from './formComponents/date-time-picker/date-time-picker.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -367,7 +368,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     NotesComponent,
     ReplayCastsComponent,
     LiveCastsComponent,
-    MatchPaginatorComponent
+    MatchPaginatorComponent,
+    DateTimePickerComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
