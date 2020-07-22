@@ -23,6 +23,7 @@ export class BannerImageComponent implements OnInit {
   @Input() set special(val){
       if(val){
         this._specialCase = val;
+        this.bannerImage();
       }
   }
 
@@ -61,15 +62,21 @@ export class BannerImageComponent implements OnInit {
     if(this.providedBranch && this.providedLink && this.providedRoot){
       this.breadCrumb = true;
     }
-    if(this._specialCase){
-      if(this._specialCase.toLowerCase().includes('mongoose')){
+    this.bannerImage();
+  }
+
+
+  private bannerImage() {
+    if (this._specialCase) {
+      if (this._specialCase.toLowerCase().includes('mongoose')) {
         this.imgSrc = this.BannerImage.returnSpecialImage(this._specialCase);
-      }else{
-          this.imgSrc = this.BannerImage.returnImage();
       }
-    }else{
+      else {
+        this.imgSrc = this.BannerImage.returnImage();
+      }
+    }
+    else {
       this.imgSrc = this.BannerImage.returnImage();
     }
   }
-
 }

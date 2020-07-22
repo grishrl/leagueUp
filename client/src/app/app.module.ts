@@ -362,7 +362,7 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     TeamRegisteredComponent,
     ArchiveSeasonComponent,
     RoundColumnComponent,
-    ActiveTournamentViewerComponent
+    ActiveTournamentViewerComponent,
     DisplayNameForIdComponent,
     NotesComponent,
     ReplayCastsComponent,

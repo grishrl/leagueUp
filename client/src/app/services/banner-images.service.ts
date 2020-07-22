@@ -9,20 +9,16 @@ export class BannerImagesService {
 
   lastInd;
 
+  private url = `https://s3.amazonaws.com/${environment.s3bucketGeneralImage}/`;
   returnImage() {
     let ind = this.uniqueNumGen();
     let imageName = this.images[ind];
-    let url =
-      "https://s3.amazonaws.com/" +
-      environment.s3bucketGeneralImage +
-      "/" +
-      imageName;
-    return url;
+    return (this.url +imageName);
   }
 
-  returnSpecialImage(para){
-    if(para.includes('mongoose')){
-      return "DG_banner_image.jpg";
+  returnSpecialImage(para) {
+    if (para.toLowerCase().includes("mongoose")) {
+      return this.url + "DG_banner_image.jpg";
     }
   }
 
@@ -48,7 +44,7 @@ export class BannerImagesService {
     "Mp.jpg",
     "Pb.jpg",
     "nexomania_II_banner_image.jpg",
-    "mei_banner_image.jpg"
+    "mei_banner_image.jpg",
   ];
 
   uniqueNumGen(val?) {
