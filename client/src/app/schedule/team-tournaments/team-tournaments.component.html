@@ -1,4 +1,4 @@
-<div class="row forceFull">
+<div class="row forceFull" *ngIf="involvedTournaments.length>0 else noTourn">
     <div class="col">
         <div class="row">
             <div class="col">
@@ -23,3 +23,6 @@
         <app-schedule-table [matches]="selectedTournament.teamMatches"></app-schedule-table>
     </div>
 </div>
+<ng-template #noTourn>
+    <h4>This team involved in no tournaments</h4>
+</ng-template>

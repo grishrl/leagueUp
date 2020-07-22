@@ -1239,7 +1239,115 @@ router.post('/fetch/team/tournament', passport.authenticate('jwt', {
 
 });
 
-//this route takes a team id and returns all the active tournaments for the team; regarless of season.
+//this route takes a team id and returns all the active tournaments for the team; regardless of season.
+router.get('/fetch/tournament/active', passport.authenticate('jwt', {
+    session: false
+}), async(req, res) => {
+
+    const path = '/schedule/fetch/tournament/active';
+
+    let returnArray = [];
+
+    let pastSeason = false;
+
+    let tournaments = await Scheduling.find({
+        active: true
+    }).then(
+        (found) => {
+            return found;
+        },
+        (err) => {
+            return null;
+        }
+    );
+
+    if (tournaments) {
+        let tournIds = [];
+        _.forEach(tournaments, (tournament) => {
+            tournament = util.objectify(tournament);
+            tournIds.push(tournament.challonge_ref);
+            let returnObject = {};
+            returnObject['tournamentName'] = tournament.name;
+            returnObject['challonge_url'] = tournament.challonge_url;
+            returnObject['challonge_ref'] = tournament.challonge_ref;
+            returnArray.push(returnObject);
+        });
+
+        let queryObj = {
+            $and: [{
+                    "type": "tournament"
+                },
+                {
+                    'challonge_tournament_ref': {
+                        $in: tournIds
+                    }
+                }
+            ]
+        };
+
+        let matches = await Match.find(queryObj).lean().then(
+            (found) => {
+                if (pastSeason) {
+                    return matchCommon.addTeamInfoFromArchiveToMatch(found, season).then(
+                        processed => {
+                            return processed
+                                // res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
+                        },
+                        err => {
+                            return null;
+                            // res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
+                        })
+                } else {
+                    return matchCommon.addTeamInfoToMatch(found).then(
+                        processed => {
+                            return processed;
+                            // res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
+                        },
+                        err => {
+                            return null;
+                            // res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
+                        })
+                }
+
+            },
+            (err) => {
+                return null;
+                // res.status(500).send(util.returnMessaging(path, 'Error occured querying schedules', err));
+            }
+        )
+        if (matches) {
+
+            _.forEach(matches, (match) => {
+                match = util.objectify(match);
+
+                let tournObj = _.find(returnArray, function(ele) {
+                    if (ele.challonge_ref == match.challonge_tournament_ref) {
+                        return ele;
+                    }
+                });
+
+                if (tournObj) {
+                    if (util.returnBoolByPath(tournObj, 'teamMatches')) {
+                        tournObj['teamMatches'].push(match);
+                    } else {
+                        tournObj['teamMatches'] = [match];
+                    }
+                }
+
+
+            });
+
+            res.status(200).send(util.returnMessaging(path, 'Found these matches', null, returnArray));
+        } else {
+            res.status(500).send(util.returnMessaging(path, 'Error finding team tournament matches', null, returnArray));
+        }
+    } else {
+        res.status(500).send(util.returnMessaging(path, 'Error finding active tournaments', null, returnArray));
+    }
+
+});
+
+//this route takes a team id and returns all the active tournaments for the team; regardless of season.
 router.post('/fetch/team/tournament/active', passport.authenticate('jwt', {
     session: false
 }), async(req, res) => {
@@ -1259,6 +1367,139 @@ router.post('/fetch/team/tournament/active', passport.authenticate('jwt', {
             {
                 active: true
             }
+        ]
+    }).then(
+        (found) => {
+            return found;
+            // res.status(200).send(util.returnMessaging(path, 'Found tournament info', false, found));
+        },
+        (err) => {
+            return null;
+            // res.status(500).send(util.returnMessaging(path, 'Error occured querying schedules', err));
+        },
+    );
+
+    if (tournaments) {
+        let tournIds = [];
+        _.forEach(tournaments, (tournament) => {
+            tournament = util.objectify(tournament);
+            tournIds.push(tournament.challonge_ref);
+            let returnObject = {};
+            returnObject['tournamentName'] = tournament.name;
+            returnObject['challonge_url'] = tournament.challonge_url;
+            returnObject['challonge_ref'] = tournament.challonge_ref;
+            returnArray.push(returnObject);
+        });
+
+        let queryObj = {
+            $and: [{
+                    $or: [{
+                            "home.id": team
+                        },
+                        {
+                            "away.id": team
+                        }
+                    ]
+                },
+                {
+                    "type": "tournament"
+                },
+                {
+                    'challonge_tournament_ref': {
+                        $in: tournIds
+                    }
+                }
+            ]
+        };
+
+        let matches = await Match.find(queryObj).lean().then(
+            (found) => {
+                if (pastSeason) {
+                    return matchCommon.addTeamInfoFromArchiveToMatch(found, season).then(
+                        processed => {
+                            return processed
+                                // res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
+                        },
+                        err => {
+                            return null;
+                            // res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
+                        })
+                } else {
+                    return matchCommon.addTeamInfoToMatch(found).then(
+                        processed => {
+                            return processed;
+                            // res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
+                        },
+                        err => {
+                            return null;
+                            // res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
+                        })
+                }
+
+            },
+            (err) => {
+                return null;
+                // res.status(500).send(util.returnMessaging(path, 'Error occured querying schedules', err));
+            }
+        )
+        if (matches) {
+
+            _.forEach(matches, (match) => {
+                match = util.objectify(match);
+
+                let tournObj = _.find(returnArray, function(ele) {
+                    if (ele.challonge_ref == match.challonge_tournament_ref) {
+                        return ele;
+                    }
+                });
+
+                if (tournObj) {
+                    if (util.returnBoolByPath(tournObj, 'teamMatches')) {
+                        tournObj['teamMatches'].push(match);
+                    } else {
+                        tournObj['teamMatches'] = [match];
+                    }
+                }
+
+
+            });
+
+            res.status(200).send(util.returnMessaging(path, 'Found these matches', null, returnArray));
+        } else {
+            res.status(500).send(util.returnMessaging(path, 'Error finding team tournament matches', null, returnArray));
+        }
+    } else {
+        res.status(500).send(util.returnMessaging(path, 'Error finding active tournaments', null, returnArray));
+    }
+
+
+
+
+});
+
+//this route takes a team id and returns all the tournaments for the team; given a season
+router.post('/fetch/team/tournament/season', passport.authenticate('jwt', {
+    session: false
+}), async(req, res) => {
+
+    const path = '/schedule/fetch/team/tournament/season';
+
+    let team = req.body.teamId;
+    let season = req.body.season;
+
+    let returnArray = [];
+
+    let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+    let pastSeason = season != currentSeasonInfo.value;
+
+    let tournaments = await Scheduling.find({
+        $and: [{
+                participants: team
+            },
+            {
+                active: true
+            },
+            { season: season }
         ]
     }).then(
         (found) => {

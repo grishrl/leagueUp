@@ -30,7 +30,16 @@ export class ScheduleTableComponent implements OnInit {
           }
 
         }
-      )
+      );
+      val.sort( (a,b)=>{
+        if (!this.util.returnBoolByPath(a, "round") || !this.util.returnBoolByPath(b, "round")){
+          return 0;
+        }else if (a.round > b.round) {
+            return 1;
+          } else {
+            return -1;
+          }
+      } )
       this.matchesVal = val;
 
     }else{
@@ -43,6 +52,7 @@ export class ScheduleTableComponent implements OnInit {
   @Input() recTeam;
   todayDate;
   @Input() divColumn = false;
+  @Input() disallowSchedule = false;
 
   isCaster:Boolean=false;
   ngOnInit() {
@@ -53,7 +63,9 @@ export class ScheduleTableComponent implements OnInit {
   userCanSchedule(match) {
     let userTeam = this.auth.getTeam()
     let isCapt = this.auth.getCaptain();
-    if (match.home.teamName == userTeam || match.away.teamName == userTeam){
+    if(this.disallowSchedule){
+      return false
+    }else if (this.util.returnBoolByPath(match, 'home.teamName') && match.home.teamName == userTeam || this.util.returnBoolByPath(match, 'away.teamName') && match.away.teamName == userTeam){
       if(isCapt != 'false'){
         return true;
       }else{

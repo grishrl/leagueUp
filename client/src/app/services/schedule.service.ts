@@ -214,6 +214,11 @@ export class ScheduleService {
     return this.httpService.httpPost(url, payload);
   }
 
+  getActiveTournaments(){
+    let url = "/schedule/fetch/tournament/active";
+    return this.httpService.httpGet(url,[],false);
+  }
+
   //accepts an object that contains elements for reporting the match outcome:
   /*
     {

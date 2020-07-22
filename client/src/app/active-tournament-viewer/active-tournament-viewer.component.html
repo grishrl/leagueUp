@@ -1,0 +1,48 @@
+<!-- Section Title -->
+<app-banner-image [bannerTitle]="'Tournament Viewer'"></app-banner-image>
+<!-- End Section Title -->
+
+<!-- Section Area - Content Central -->
+<section class="content-info">
+
+    <div class="container paddings-mini">
+        <div class="panel-box">
+            <div class="row">
+                <div class="col" *ngIf="currentTournaments.length>0 else noTourn">
+
+                    <div class="row p-3">
+                        <div class="col text-center">
+                            <h3>Currently Running Tournaments</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col text-center">
+                            <mat-form-field class="mat-60-width">
+                                <mat-select placeholder="Tournament:" [(ngModel)]="selectedTournament" disableOptionCentering>
+                                    <mat-option *ngFor="let tourn of currentTournaments" [value]="tourn">
+                                        {{tourn.tournamentName}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <app-challonge-tourn [tournamentLink]="selectedTournament.challonge_url">
+                            </app-challonge-tourn>
+                        </div>
+                    </div>
+                    <div class="row pb-2" *ngIf="selectedTournament.teamMatches.length>0">
+                        <div class="col">
+                            <h3>Matches:</h3>
+                            <app-schedule-table [matches]="selectedTournament.teamMatches" [disallowSchedule]="true"></app-schedule-table>
+                        </div>
+                    </div>
+
+                </div>
+                <ng-template #noTourn>
+                    <h4>This team involved in no tournaments</h4>
+                </ng-template>
+            </div>
+        </div>
+    </div>

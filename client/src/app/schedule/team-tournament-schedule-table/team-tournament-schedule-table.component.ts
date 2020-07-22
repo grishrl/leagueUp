@@ -118,11 +118,10 @@ export class TeamTournamentScheduleTableComponent implements OnInit {
   getActiveTournaments() {
     this.teamServ.getActiveTournaments(this.teamObj._id).subscribe(
       (res) => {
-        console.log("getTournaments", res);
         this.activeTourns = res;
       },
       (err) => {
-        console.log("y ", err);
+        console.log(err);
       }
     );
   }

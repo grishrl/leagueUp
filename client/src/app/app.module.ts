@@ -182,6 +182,7 @@ import { StreamManagerComponent } from './admin/stream-manager/stream-manager.co
 import { CommonPipePipe } from './common/common-pipe.pipe';
 import { TeamNameComponent } from './formComponents/team-name/team-name.component';
 import { RoundColumnComponent } from './elements/schedule-table/round-column/round-column.component';
+import { ActiveTournamentViewerComponent } from './active-tournament-viewer/active-tournament-viewer.component';
 
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
@@ -351,7 +352,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     StreamManagerComponent,
     CommonPipePipe,
     TeamNameComponent,
-    RoundColumnComponent
+    RoundColumnComponent,
+    ActiveTournamentViewerComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

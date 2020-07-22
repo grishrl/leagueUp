@@ -28,15 +28,21 @@ export class TeamTournamentsComponent implements OnInit {
   ngOnInit() {
     if(this.season){
       //old news
+      this.teamServ.getSeasonTournaments(this.team._id, this.season).subscribe(
+        res=>{
+          this.involvedTournaments = res;
+        },
+        err=>{
+          console.log(err);
+        }
+      );
     }else{
-          console.log(this.team);
           this.teamServ.getActiveTournaments(this.team._id).subscribe(
             (res) => {
-              console.log("getActiveTournaments", res);
               this.involvedTournaments = res;
             },
             (err) => {
-              console.log("y ", err);
+              console.log(err);
             }
           );
     }

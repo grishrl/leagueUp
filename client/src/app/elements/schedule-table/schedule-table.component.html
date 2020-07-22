@@ -15,7 +15,7 @@
 
             <tr *ngFor="let match of matchesVal">
                 <!-- round column -->
-                <td>
+                <td *ngIf="showRound">
                     <app-round-column [match]="match"></app-round-column>
                 </td>
                 <!-- div column -->

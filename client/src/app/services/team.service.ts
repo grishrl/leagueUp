@@ -178,13 +178,11 @@ export class TeamService {
         return this.httpService.httpPost(url, payload)
   }
 
-  getTournamentMatches(teamId, name, season, division){
-    let url = '/schedule/fetch/team/tournament/matches';
+  getSeasonTournaments(teamId, season){
+    let url = "/schedule/fetch/team/tournament/season";
     let payload = {
       teamId:teamId,
-      name:name,
       season:season,
-      division:division
     }
     return this.httpService.httpPost(url, payload);
   }
