@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { TeamService } from 'src/app/services/team.service';
 
@@ -9,40 +9,45 @@ import { TeamService } from 'src/app/services/team.service';
 })
 export class TeamTournamentsComponent implements OnInit {
 
-  constructor(private auth:AuthService, private team: TeamService) { }
-  
+  constructor(private auth:AuthService, private teamServ: TeamService) { }
+
   selectedTournament = {
     'season':undefined,
     'division':undefined,
-    'name':undefined
+    'name':undefined,
+    'challonge_url':undefined,
+    'teamMatches':[]
   };
   involvedTournaments = [];
   matches = [];
   _team;
 
+  @Input() team;
+  @Input() season;
+
   ngOnInit() {
-    this._team = this.auth.getTeam();
-    this.team.getTournaments(this.auth.getTeamId()).subscribe(res=>{
-      this.involvedTournaments = res;
-    },err=>{
-      console.log('y ', err);
-    })
+    if(this.season){
+      //old news
+      this.teamServ.getSeasonTournaments(this.team._id, this.season).subscribe(
+        res=>{
+          this.involvedTournaments = res;
+        },
+        err=>{
+          console.log(err);
+        }
+      );
+    }else{
+          this.teamServ.getActiveTournaments(this.team._id).subscribe(
+            (res) => {
+              this.involvedTournaments = res;
+            },
+            (err) => {
+              console.log(err);
+            }
+          );
+    }
 
-  }
 
-  selected(){
-    this.getTeamTournamentMatches(this.selectedTournament);
-  }
-
-  getTeamTournamentMatches(tournament){
-    this.team.getTournamentMatches(this.auth.getTeamId(), tournament.name, tournament.season, tournament.division).subscribe(
-      res=>{
-        this.matches = res;
-      },
-      err=>{
-        console.log(err);
-      }
-    )
   }
 
 }

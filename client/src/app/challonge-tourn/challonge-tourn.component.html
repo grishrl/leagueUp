@@ -1,22 +1,21 @@
-<div class="container">
-    <div class="row" *ngIf="cupDiv">
-        <div class="col">
-            <mat-form-field>
-                <mat-select placeholder="Cup:" [(ngModel)]="selectedCup" (ngModelChange)="getTournLink()" disableOptionCentering>
-                    <mat-option *ngFor="let cup of this.localStoreTournaments; let i = index" [value]="i">{{cup.name}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
+<div class="row" *ngIf="cupDiv">
+    <div class="col">
+        <mat-form-field>
+            <mat-select placeholder="Cup:" [(ngModel)]="selectedCup" (ngModelChange)="getTournLink()" disableOptionCentering>
+                <mat-option *ngFor="let cup of this.localStoreTournaments; let i = index" [value]="i">{{cup.name}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        <div *ngIf="!noTourn" class="tourn-container">
+            <div class="tournament"></div>
+        </div>
+        <div *ngIf="noTourn">
+            <h4>No Tournaments Currently!</h4>
         </div>
     </div>
-    <div *ngIf="!noTourn" class="tourn-container">
-        <div class="tournament">
-
-        </div>
-    </div>
-
-    <div *ngIf="noTourn">
-        <h4>No Tournaments Currently!</h4>
-    </div>
-
 </div>

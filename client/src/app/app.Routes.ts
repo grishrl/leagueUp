@@ -15,7 +15,6 @@ import { ApproveMemberComponent } from "./admin/approve-member/approve-member.co
 import { ManageMemberComponent } from "./admin/manage-member/manage-member.component";
 import { ManageSelectTeamComponent } from "./admin/manage-team/manage-select-team.component";
 import { DivisionManagementComponent } from "./admin/division-management/division-management.component";
-import { ScheduleViewComponent } from "./schedule/schedule-view/schedule-view.component";
 import { MatchSchedulerComponent } from "./schedule/match-scheduler/match-scheduler.component";
 import { ReportingComponent } from "./reporting/reporting.component";
 import { DashboardComponent } from "./admin/dashboard/dashboard.component";
@@ -37,7 +36,6 @@ import { UserMarketplaceComponent } from "./marketplace/user-marketplace/user-ma
 import { GenerateSeasonComponent } from "./admin/match-management/generate-season/generate-season.component";
 import { TournamentGeneratorComponent } from "./admin/match-management/tournament-generator/tournament-generator.component";
 import { ReplayBrowserComponent } from "./replay-browser/replay-browser.component";
-import { TournamentViewComponent } from "./tournament-view/tournament-view.component";
 import { TeamScheduleComboComponent } from "./schedule/team-schedule-combo/team-schedule-combo.component";
 import { EventCreateComponent } from './admin/events/event-create/event-create.component';
 import { EventListComponent } from './admin/events/event-list/event-list.component';
@@ -56,6 +54,7 @@ import { PotgPageComponent } from "./potg-page/potg-page.component";
 import { MvpPageComponent } from "./mvp-page/mvp-page.component";
 import { StreamManagerComponent } from './admin/stream-manager/stream-manager.component';
 import { ArchiveSeasonComponent } from './admin/archive-season/archive-season.component';
+import { ActiveTournamentViewerComponent } from "./active-tournament-viewer/active-tournament-viewer.component";
 
 const APP_ROUTES: Routes = [
   { path: "challonge", component: ChallongeTournComponent },
@@ -235,7 +234,7 @@ const APP_ROUTES: Routes = [
   { path: "matchupHistory", component: MatchupHistoryComponent },
   { path: "findPlayers", component: UserMarketplaceComponent },
   { path: "replayBrowser", component: ReplayBrowserComponent },
-  { path: "tournament", component: TournamentViewComponent },
+  { path: "tournament", component: ActiveTournamentViewerComponent },
   { path: "page/:id", component: StaticHtmlLoaderComponent },
   { path: "potg", component: PotgPageComponent },
   { path: "mvp", component: MvpPageComponent },

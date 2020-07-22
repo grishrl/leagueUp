@@ -47,6 +47,11 @@
                         </ul>
 
                         <ul class="social-teams">
+                            <li>
+                                <a href="{{hpLink}}" target="_blank">
+                                    <img style="max-width: 30px;" src="/assets/heroesprofilelogo.png">
+                                </a>
+                            </li>
                             <li *ngIf="returnedProfile.twitch">
                                 <div>
                                     <a href="{{returnedProfile.twitch | commonPipe:util.prePendHttp }}" target="_blank" class="facebook">
@@ -94,7 +99,7 @@
                         <li class="finger" [ngClass]="{'active': index==1}"><a (click)="setTab(1)">Squad</a></li>
                         <li class="finger" [ngClass]="{'active': index==2}"><a (click)="setTab(2)">Schedule</a></li>
                         <li class="finger" [ngClass]="{'active': index==3}"><a (click)="setTab(3)">Results</a></li>
-                        <li class="finger" [ngClass]="{'active': index==4}"><a (click)="setTab(4)">Stats</a></li>
+                        <li class="finger" [ngClass]="{'active': index==4}"><a (click)="setTab(4)">Tournaments</a></li>
 
                     </ul>
                     <!-- End Nav Tabs -->
@@ -345,8 +350,7 @@
                             <div *ngIf=" index==2 ">
                                 <app-team-schedule-table [teamName]="returnedProfile.teamName " [season]="season "></app-team-schedule-table>
                                 <div class="mt-4 ">
-                                    <app-team-tournament-schedule-table [team]="returnedProfile " [season]="season ">
-                                    </app-team-tournament-schedule-table>
+                                    <app-team-tournament-schedule-table [team]="returnedProfile " [season]="season "></app-team-tournament-schedule-table>
                                 </div>
                             </div>
                         </div>
@@ -366,7 +370,7 @@
                         <!-- Tab Theree - stats -->
                         <div class="tab-pane " [ngClass]="{ 'active': index==4} " *ngIf="index==4">
                             <div *ngIf="index==4 ">
-                                <app-team-stats [team]="returnedProfile.teamName "></app-team-stats>
+                                <app-team-tournaments [team]="returnedProfile" [season]="season"></app-team-tournaments>
                             </div>
                         </div>
                         <!-- End Tab Theree - stats -->

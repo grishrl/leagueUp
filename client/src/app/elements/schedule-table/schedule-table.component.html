@@ -12,35 +12,43 @@
         </thead>
         <tbody>
 
+
             <tr *ngFor="let match of matchesVal">
+                <!-- round column -->
                 <td *ngIf="showRound">
-                    <span *ngIf="match | commonPipe:hasDeadline || match.type == 'tournament' else free">{{match.round}}</span>
-                    <ng-template #free>FLEX</ng-template>
+                    <app-round-column [match]="match"></app-round-column>
                 </td>
+                <!-- div column -->
                 <td *ngIf="divColumn">
                     {{match.divisionDisplayName}}
                 </td>
+                <!-- home team -->
                 <td>
+                    <span *ngIf="match.home else tbdteam">
                     <img src="{{match.home.logo}}" alt="icon">
                     <strong>
-                  <app-team-link [team]="match.home.teamName" [season]="seasonVal">
-                    {{match.home.teamName}}
-                  </app-team-link>
-
-          </strong><br>
-                    <!-- <small class="meta-text">GROUP H.</small> -->
+                      <app-team-link [team]="match.home.teamName" [season]="seasonVal">
+                        {{match.home.teamName}}
+                      </app-team-link>
+                    </strong>
+                    <br>
+                  </span>
                 </td>
+                <!--  VS columns -->
                 <td class="text-center">Vs</td>
+                <!-- away column -->
                 <td>
-                    <img src="{{match.away.logo}}" alt="icon1">
-                    <strong>
-            <app-team-link [team]="match.away.teamName" [season]="seasonVal">
-              {{match.away.teamName}}
-            </app-team-link>
-
-          </strong><br>
-
+                    <span *ngIf="match.away else tbdteam">
+                      <img src="{{match.away.logo}}" alt="icon1">
+                      <strong>
+                        <app-team-link [team]="match.away.teamName" [season]="seasonVal">
+                          {{match.away.teamName}}
+                        </app-team-link>
+                      </strong>
+                      <br>
+                   </span>
                 </td>
+                <!-- details column -->
                 <td>
                     <ng-container *ngIf="showCaster && isCaster">
                         <strong>Match ID:</strong><span> {{match.matchId}}</span><br>
@@ -59,11 +67,11 @@
                         <br>
                       </span>
                     <span>
-                      <a [routerLink]="['/matchupHistory', {teamAid:match.home.id, teamBid:match.away.id}]">Match Up History</a>
+                      <a *ngIf="match?.home?.id && match?.away?.id" [routerLink]="['/matchupHistory', {teamAid:match.home.id, teamBid:match.away.id}]">Match Up History</a>
                        <br>
                     </span>
                     <span *ngIf="match.casterName else casterButton">
-                      <small class="meta-text">Caster: {{match.casterName}}, 
+                      <small class="meta-text">Caster: {{match.casterName}},
                         <a href="{{match.casterUrl | commonPipe:util.prePendHttp}}" target="_blank">{{match.casterUrl}}</a>
                       </small>
                     </span>
@@ -96,3 +104,6 @@
         </tbody>
     </table>
 </div>
+<ng-template #tbdteam>
+    TBD
+</ng-template>

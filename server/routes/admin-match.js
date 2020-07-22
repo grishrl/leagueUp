@@ -363,21 +363,27 @@ router.post('/match/uploadreplay', passport.authenticate('jwt', {
                                             sysLog.target = '';
                                             sysLog.timeStamp = new Date().getTime();
                                             logger(sysLog);
-
-                                            foundMatch.reported = true;
-                                            foundMatch.postedToHP = false;
-                                            foundMatch.save((saved) => {
-                                                res.status(200).send(util.returnMessaging(path, 'Match reported', false, saved, null, logObj));
-                                            }, (err) => {
-                                                res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
-                                            })
                                         },
                                         (err) => {
-                                            res.status(500).send(util.returnMessaging(path, 'Error (2) reporting match result', err, null, null, logObj));
+                                            let sysLog = {};
+                                            sysLog.actor = 'SYS';
+                                            sysLog.action = ' parsed replay error';
+                                            sysLog.logLevel = 'ERROR';
+                                            sysLog.error = err;
+                                            sysLog.target = '';
+                                            sysLog.timeStamp = new Date().getTime();
+                                            logger(sysLog);
                                         }
                                     )
                                 }
                             );
+                            foundMatch.reported = true;
+                            foundMatch.postedToHP = false;
+                            foundMatch.save((saved) => {
+                                res.status(200).send(util.returnMessaging(path, 'Match reported', false, saved, null, logObj));
+                            }, (err) => {
+                                res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
+                            })
 
                         }, (err) => {
                             res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));

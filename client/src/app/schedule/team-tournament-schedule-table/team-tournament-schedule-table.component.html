@@ -1,9 +1,19 @@
-<div *ngIf="matches.length>0">
+<div *ngIf="historical else newTournTemp">
     <div class="row">
         <div class="col">
             <h5>Tournament Schedule</h5>
         </div>
     </div>
     <app-schedule-table [matches]="matches"></app-schedule-table>
-
 </div>
+<ng-template #newTournTemp>
+    <div class="row">
+        <div class="col">
+            <h5>Tournament Schedule</h5>
+        </div>
+    </div>
+    <div class="mt-3" *ngFor="let tourn of activeTourns">
+        <h4>{{tourn.tournamentName}}</h4>
+        <app-schedule-table [matches]="tourn.teamMatches"></app-schedule-table>
+    </div>
+</ng-template>

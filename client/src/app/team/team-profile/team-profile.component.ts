@@ -38,6 +38,7 @@ export class TeamProfileComponent implements OnInit {
   message: string
   showDivision = false;
   season = null;
+  hpLink;
   registrationOpen:boolean=false;
 
   errors=[];
@@ -156,6 +157,7 @@ export class TeamProfileComponent implements OnInit {
     let getProfile: string;
 
     if(this.season){
+
       this.history.getPastTeamsViaSeason([this.teamName], this.season).subscribe(
         res=>{
           merge(this.returnedProfile, res[0].object);
@@ -185,6 +187,8 @@ export class TeamProfileComponent implements OnInit {
         this.getTeamByString(getProfile);
       }
     }
+
+    this.hpLink = this.heroProfile.getHPTeamLink(this.teamName);
 
   }
 

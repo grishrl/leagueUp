@@ -8,96 +8,92 @@ import { Router } from '@angular/router';
 import { TimeserviceService } from 'src/app/services/timeservice.service';
 
 @Component({
-  selector: 'app-team-tournament-schedule-table',
-  templateUrl: './team-tournament-schedule-table.component.html',
-  styleUrls: ['./team-tournament-schedule-table.component.css']
+  selector: "app-team-tournament-schedule-table",
+  templateUrl: "./team-tournament-schedule-table.component.html",
+  styleUrls: ["./team-tournament-schedule-table.component.css"],
 })
 export class TeamTournamentScheduleTableComponent implements OnInit {
-
-
-  constructor(public teamServ: TeamService, private scheduleService: ScheduleService, public util: UtilitiesService, private standingsService: StandingsService, private Auth: AuthService, private router: Router, private timeService:TimeserviceService) { }
+  constructor(
+    public teamServ: TeamService,
+    private scheduleService: ScheduleService,
+    public util: UtilitiesService,
+    private standingsService: StandingsService,
+    private Auth: AuthService,
+    private router: Router,
+    private timeService: TimeserviceService
+  ) {}
 
   noMatches;
   rounds;
   roundsArray;
   matches = [];
-  initTeamSchedule(teamId, providedSeason) {
+  historical = false;
+  activeTourns = [];
 
-    this.scheduleService.getTeamTournamentGames(providedSeason, teamId).subscribe(
-          res => {
-            let matches = res;
-            //set the nomatches state
-            if (matches.length == 0) {
-              this.noMatches = true;
-            } else {
-              this.noMatches = false;
+  initHistoricalSchedule(teamId, providedSeason) {
+    this.historical = true;
+    this.scheduleService
+      .getTeamTournamentGames(providedSeason, teamId)
+      .subscribe(
+        (res) => {
+          console.log("getTeamTournamentGames", res);
+          let matches = res;
+          //set the nomatches state
+          if (matches.length == 0) {
+            this.noMatches = true;
+          } else {
+            this.noMatches = false;
+          }
+
+          matches.forEach((match) => {
+            if (match.scheduleDeadline) {
+              match["friendlyDeadline"] = this.util.getDateFromMS(
+                match.scheduleDeadline
+              );
             }
 
-            matches.forEach(match => {
-              if (match.scheduleDeadline) {
-                match['friendlyDeadline'] = this.util.getDateFromMS(match.scheduleDeadline);
-              }
+            if (match.scheduledTime) {
+              match["friendlyDate"] = this.util.getDateFromMS(
+                match.scheduledTime.startTime
+              );
+              match["friendlyTime"] = this.util.getTimeFromMS(
+                match.scheduledTime.startTime
+              );
+              match["suffix"] = this.util.getSuffixFromMS(
+                match.scheduledTime.startTime
+              );
+            }
 
-              if (match.scheduledTime) {
-                match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
-                match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
-                match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
-              }
+            if (
+              !this.util.returnBoolByPath(match, "home") &&
+              !this.util.returnBoolByPath(match, "home.name")
+            ) {
+              match.home = {
+                teamName: "TBD",
+              };
+            }
+            if (
+              !this.util.returnBoolByPath(match, "away") &&
+              !this.util.returnBoolByPath(match, "away.name")
+            ) {
+              match.away = {
+                teamName: "TBD",
+              };
+            }
+          });
 
-              if (!this.util.returnBoolByPath(match, 'home') && !this.util.returnBoolByPath(match, 'home.name')) {
-                match.home = {
-                  teamName: "TBD"
-                }
-              }
-              if (!this.util.returnBoolByPath(match, 'away') && !this.util.returnBoolByPath(match, 'away.name')) {
-                match.away = {
-                  teamName: "TBD"
-                }
-              }
-            });
-
-            // let div = matches[0].divisionConcat
-            // this.standingsService.getStandings(div).subscribe(
-            //   res => {
-            //     let standings = res;
-            //     matches.forEach(match => {
-            //       standings.forEach(standing => {
-            //         if (match.home.teamName == standing.teamName) {
-            //           match.home['losses'] = standing.losses;
-            //           match.home['wins'] = standing.wins;
-            //         }
-            //         if (match.away.teamName == standing.teamName) {
-            //           match.away['losses'] = standing.losses;
-            //           match.away['wins'] = standing.wins;
-            //         }
-            //       });
-            //       if (match.scheduleDeadline) {
-            //         match['friendlyDeadline'] = this.util.getDateFromMS(match.scheduleDeadline);
-            //       }
-
-            //       if (match.scheduledTime) {
-            //         match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
-            //         match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
-            //         match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
-            //       }
-            //     })
-            //   }, err => {
-            //     console.log(err);
-            //   });
-
-
-            this.matches = matches;
-
-          },
-          err => { console.log(err) }
-        )
+          this.matches = matches;
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
   }
 
   teamObj;
   @Input() set team(val) {
     if (val) {
       this.teamObj = val;
-      // this.initTeamSchedule(val._id);
     }
   }
 
@@ -105,35 +101,44 @@ export class TeamTournamentScheduleTableComponent implements OnInit {
   @Input() set season(val) {
     if (val) {
       this.seasonVal = val;
-      // this.initTeamSchedule(val._id);
     }
   }
 
   userCanSchedule() {
-    if (this.teamObj.teamName == this.Auth.getTeam() && this.Auth.getCaptain() != 'false') {
+    if (
+      this.teamObj.teamName == this.Auth.getTeam() &&
+      this.Auth.getCaptain() != "false"
+    ) {
       return true;
     } else {
       return false;
     }
   }
 
+  getActiveTournaments() {
+    this.teamServ.getActiveTournaments(this.teamObj._id).subscribe(
+      (res) => {
+        this.activeTourns = res;
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+
   todayDate;
   ngOnInit() {
     this.todayDate = new Date().getTime();
-    if(this.seasonVal){
-      this.initTeamSchedule(this.teamObj._id, this.seasonVal);
-    }else{
+    if (this.seasonVal) {
+      this.initHistoricalSchedule(this.teamObj._id, this.seasonVal);
+    } else {
       this.timeService.getSesasonInfo().subscribe(
-        res => {
-          let currentSeason = res['value'];
-          this.initTeamSchedule(this.teamObj._id, currentSeason);
+        (res) => {
+          let currentSeason = res["value"];
+          this.getActiveTournaments();
         },
-        err=>{
-
-        })
-
+        (err) => {}
+      );
     }
   }
-
-
 }
