@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MvpService } from '../services/mvp.service';
 import { ScheduleService } from '../services/schedule.service';
 import { find } from 'lodash';
+import { TimeserviceService } from '../services/timeservice.service';
 
 @Component({
   selector: "app-mvp-display",
@@ -11,13 +12,21 @@ import { find } from 'lodash';
 export class MvpDisplayComponent implements OnInit {
   constructor(
     private scheduleService: ScheduleService,
-    private mvpService: MvpService
-  ) {}
+    private mvpService: MvpService,
+    private timeService:TimeserviceService
+  ) {
+    this.timeService.getSesasonInfo().subscribe((res) => {
+      console.log("res>>", res);
+      this.currentSeason = res["value"];
+    });
+  }
+
+  currentSeason;
 
   display = [];
   ngOnInit(): void {
 
-    this.mvpService.getAll().subscribe(
+    this.mvpService.getBySeason(this.currentSeason).subscribe(
       res => {
         let reportedMvps=res;
         let arrayBounds = reportedMvps.length > 10 ? 10 : reportedMvps.length;

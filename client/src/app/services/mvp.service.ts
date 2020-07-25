@@ -13,6 +13,11 @@ export class MvpService {
       return this.http.httpGet(url, []);
   }
 
+  getBySeason(season){
+            let url = "/mvp/get";
+            return this.http.httpGet(url, [{season}]);
+  }
+
   getMvpById(type, id){
     let url = '/mvp/get';
     const payload = {
