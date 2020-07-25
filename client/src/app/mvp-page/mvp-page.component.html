@@ -14,13 +14,32 @@
                     <div class="titles">
                         <h4>MVP Awards</h4>
                     </div>
+
                     <div class="row">
+                        <div class="col text-center">
+                            <mat-form-field class="mat-60-width">
+                                <mat-select placeholder="Past Season:" [(ngModel)]="selectedSeason" disableOptionCentering (ngModelChange)="initMvps()">
+                                    <mat-option *ngFor="let season of seasonDropdown" [value]="season">
+                                        {{season}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-12">
+                            <mat-paginator [length]="length" [pageSize]="pageSize" (page)="pageEventHandler($event)">
+
+                            </mat-paginator>
+                        </div>
                         <!-- Post Item -->
-                        <div class="col-lg-4" *ngFor="let mvp of mvpList">
+                        <div class="col-lg-4" *ngFor="let mvp of displayArray">
                             <app-potg-display [potg]="mvp" [showPotg]="false" [showMvp]="true"></app-potg-display>
                         </div>
 
-                        <div class="col-12" *ngIf="mvpList.length==0">
+                        <div class="col-12" *ngIf="displayArray.length==0">
                             <div class="p-5">
                                 No MVPs Yet!
                             </div>
