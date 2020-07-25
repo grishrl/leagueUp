@@ -26,6 +26,20 @@
                         </div>
 
                         <div class="col-12">
+                            <div class="row">
+                                <div class="col text-center">
+                                    <mat-form-field class="mat-60-width">
+                                        <mat-select placeholder="Past Season:" [(ngModel)]="selectedSeason" disableOptionCentering (ngModelChange)="initPotgs()">
+                                            <mat-option *ngFor="let season of seasonDropdown" [value]="season">
+                                                {{season}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
                             <mat-paginator [length]="length" [pageSize]="pageSize" (page)="pageEventHandler($event)">
 
                             </mat-paginator>
