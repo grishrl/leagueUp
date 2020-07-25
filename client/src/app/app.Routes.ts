@@ -55,6 +55,7 @@ import { MvpPageComponent } from "./mvp-page/mvp-page.component";
 import { StreamManagerComponent } from './admin/stream-manager/stream-manager.component';
 import { ArchiveSeasonComponent } from './admin/archive-season/archive-season.component';
 import { ActiveTournamentViewerComponent } from "./active-tournament-viewer/active-tournament-viewer.component";
+import { GrandFinalGeneratorComponent } from './admin/grand-final-generator/grand-final-generator.component';
 
 const APP_ROUTES: Routes = [
   { path: "challonge", component: ChallongeTournComponent },
@@ -189,6 +190,12 @@ const APP_ROUTES: Routes = [
   {
     path: "_admin/eventMgmt/:id",
     component: EventCreateComponent,
+    canActivate: [AuthGuardService],
+    data: { role: "event" },
+  },
+  {
+    path: "_admin/grandFinalCreator",
+    component: GrandFinalGeneratorComponent,
     canActivate: [AuthGuardService],
     data: { role: "event" },
   },

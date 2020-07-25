@@ -1,0 +1,203 @@
+<!-- Section Area - Content Central -->
+<section class="content-info">
+
+    <div class="container paddings-mini">
+        <div class="panel-box">
+            <div class="row">
+                <div class="col">
+                    <div class="container">
+                        <div class="row forceFull">
+                            <div class="col">
+                                <div class="row mt-2">
+                                    <div class="col">
+                                        <a [routerLink]="['/_admin/dashboard']">Back to Dashboard</a>
+                                    </div>
+                                </div>
+
+                                <div class="text-center">
+                                    <h2>Grand Final Generator</h2>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col">
+                                                <h4>Select division:</h4>
+                                            </div>
+                                        </div>
+                                        <app-division-selector (selectedDiv)="selected($event)" [admin]="true">
+                                        </app-division-selector>
+                                    </div>
+                                    <div class="col">
+                                        <h5>Or select from all teams:</h5>
+                                        <div> <button (click)="revealAllTeams()" class="btn btn-info">Reveal all teams:</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div *ngIf="fetching" class="row">
+                                    <div class="col text-center">
+                                        <span>Fetching ... <i class="fas fa-sync fa-spin" style="font-size:24px"></i></span>
+                                    </div>
+                                </div>
+
+                                <div *ngIf="showAll" class="row">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col">
+                                                <mat-form-field class="mat-FullWidth">
+                                                    <input matInput placeholder="Filter by name" [(ngModel)]="filterName" (ngModelChange)="filterTeams(filterName)">
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                        <mat-paginator [length]="length" [pageSize]="pageSize" (page)="pageEventHandler($event)">
+
+                                        </mat-paginator>
+                                        <ng-template [ngTemplateOutlet]="teamTable">
+
+                                        </ng-template>
+                                    </div>
+                                </div>
+                                <ng-template *ngIf="!showAll" [ngTemplateOutlet]="teamTable">
+
+                                </ng-template>
+
+                                <ng-template #teamTable>
+                                    <div class="row">
+
+                                        <div class="col">
+                                            <div class="row">
+                                                <table>
+                                                    <tr>
+                                                        <th>
+                                                            Teams
+                                                        </th>
+                                                    </tr>
+                                                    <tbody>
+                                                        <tr *ngFor="let team of teamDisplay">
+                                                            <td>
+                                                                {{team.teamName}}
+                                                            </td>
+
+                                                            <td>
+                                                                <span>
+                                  <button class="btn btn-primary" (click)="assignTeam(team, 'home')">Add as
+                                    Home</button>
+                                </span>
+                                                            </td>
+                                                            <td>
+                                                                <span>
+                                  <button class="btn btn-warning" (click)="assignTeam(team, 'away')">Add as
+                                    Away</button>
+                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                                <hr>
+                                <div class="row mt-2">
+                                    <div class="col"><strong>Home Team</strong></div>
+                                    <div class="col"></div>
+                                    <div class="col"><strong>Away Team</strong></div>
+                                </div>
+                                <div class="row mt-1">
+                                    <div class="col">
+                                        <span *ngIf="finalMatch.home.teamName else notSelected">{{finalMatch.home.teamName}}
+                      <button class="ml-3 btn btn-danger" (click)="removeFromMatch('home')"> X </button>
+                    </span>
+                                    </div>
+                                    <div class="col text-center">
+                                        VS
+                                    </div>
+                                    <div class="col">
+                                        <span *ngIf="finalMatch.away.teamName else notSelected">{{finalMatch.away.teamName}}
+                      <button class="ml-3 btn btn-danger" (click)="removeFromMatch('away')"> X
+                      </button>
+                    </span>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-2">
+                                    <div class="col text-center">
+                                        <button (click)="reset()" class="btn btn-danger">Reset</button>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <mat-form-field class="mat-FullWidth">
+                                            <input matInput type="number" placeholder="Season" [(ngModel)]="finalMatch.season">
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <mat-form-field class="mat-FullWidth">
+                                            <input matInput type="number" placeholder="Best of # Series" [(ngModel)]="finalMatch.boX">
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div>Add a title for the match? Div X Grand Final?</div>
+                                        <mat-form-field class="mat-FullWidth">
+                                            <input matInput placeholder="Final Title:" [formControl]="titleControl" [(ngModel)]="finalMatch.title">
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <div>Caster:
+                                        </div>
+                                        <mat-form-field class="mat-FullWidth">
+                                            <input matInput placeholder="Caster:" [(ngModel)]="finalMatch.casterName">
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div>Caster Url:</div>
+                                        <mat-form-field class="mat-FullWidth">
+                                            <input matInput placeholder="Caster Url:" [(ngModel)]="finalMatch.casterUrl">
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <app-date-time-picker [(selectedTime)]="finalMatch.scheduledTime.startTime"></app-date-time-picker>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col text-center">
+                                        <button [disabled]="disableGenerate()" (click)="generate()" class="btn btn-success">
+                      Generate Finals Match
+                    </button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <ng-template #away>
+        Team assigned to Away
+    </ng-template>
+    <ng-template #home>
+        Team assigned to Home
+    </ng-template>
+    <ng-template #notSelected>
+        Team Not Selected
+    </ng-template>

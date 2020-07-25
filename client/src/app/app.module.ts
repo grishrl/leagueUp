@@ -192,6 +192,7 @@ import { ReplayCastsComponent } from './caster-tools/replay-casts/replay-casts.c
 import { LiveCastsComponent } from './caster-tools/live-casts/live-casts.component';
 import { MatchPaginatorComponent } from './caster-tools/match-paginator/match-paginator.component';
 import { DateTimePickerComponent } from './formComponents/date-time-picker/date-time-picker.component';
+import { GrandFinalGeneratorComponent } from './admin/grand-final-generator/grand-final-generator.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -369,7 +370,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     ReplayCastsComponent,
     LiveCastsComponent,
     MatchPaginatorComponent,
-    DateTimePickerComponent
+    DateTimePickerComponent,
+    GrandFinalGeneratorComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

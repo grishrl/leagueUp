@@ -18,6 +18,7 @@ export class Match {
   type:string;
   reported:boolean;
   notes:string;
+  title:string;
 
   constructor() {
     this.home = {
@@ -56,6 +57,7 @@ export class Match {
       homeOne: '',
       homeTwo: ''
     };
+    this.title = null;
     this.season=null;
     this.boX = null;
     this.reported = false;

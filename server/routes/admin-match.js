@@ -428,6 +428,58 @@ router.post('/match/deletereplay', passport.authenticate('jwt', {
     }
 });
 
+router.post('/match/create/grandfinal', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.multi(['MATCH']), util.appendResHeader, (req, res) => {
+    const path = '/match/create/grandfinal';
+
+    const logInfo = {}
+    logInfo.action = 'create grand final match';
+    logInfo.admin = 'ADMIN';
+    logInfo.actor = req.user.displayName;
+    logInfo.target = `${req.body.home.teamName} vs ${req.body.away.teamName}`;
+
+    new Match(req.body).save(
+        success => {
+            console.log('success', success)
+            res.status(200).send(util.returnMessaging(path, 'Match Created', false, success, null, logInfo));
+        },
+        err => {
+            logInfo.status = 'ERROR';
+            logInfo.error = err;
+            res.status(500).send(util.returnMessaging(path, 'Match Creation Failed', err, null, null, logInfo));
+        }
+    )
+
+
+});
+
+router.post('/match/delete/grandfinal', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.matchLevel, util.appendResHeader, (req, res) => {
+    const path = '/match/delete/grandfinal';
+
+    const logInfo = {}
+    logInfo.action = 'delete grand final match';
+    logInfo.admin = 'ADMIN';
+    logInfo.actor = req.user.displayName;
+    logInfo.target = `${req.body.matchId}`;
+
+    Match.findOneAndDelete({ matchId: req.body.matchId })
+        .then(
+            success => {
+                res.status(200).send(util.returnMessaging(path, 'Match Created', false, success, null, logInfo));
+            },
+            err => {
+                logInfo.status = 'ERROR';
+                logInfo.error = err;
+                res.status(500).send(util.returnMessaging(path, 'Match Creation Failed', err, null, null, logInfo));
+            }
+        )
+
+
+});
+
 
 router.post('/match/create/stream/link', passport.authenticate('jwt', {
     session: false
