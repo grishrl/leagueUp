@@ -18,23 +18,27 @@ export class MvpDisplayComponent implements OnInit {
     this.timeService.getSesasonInfo().subscribe((res) => {
       console.log("res>>", res);
       this.currentSeason = res["value"];
+      this.initMvps();
     });
   }
 
   currentSeason;
 
   display = [];
+
+  initMvps(){
+        this.mvpService.getBySeason(this.currentSeason).subscribe((res) => {
+          let reportedMvps = res;
+          let arrayBounds = reportedMvps.length > 10 ? 10 : reportedMvps.length;
+          for (let i = 0; i < arrayBounds; i++) {
+            this.display.push(reportedMvps[i]);
+          }
+        });
+  }
+
   ngOnInit(): void {
 
-    this.mvpService.getBySeason(this.currentSeason).subscribe(
-      res => {
-        let reportedMvps=res;
-        let arrayBounds = reportedMvps.length > 10 ? 10 : reportedMvps.length;
-                for (let i = 0; i < arrayBounds; i++) {
-                  this.display.push(reportedMvps[i]);
-                }
-      }
-    )
+
 
     // this.scheduleService.getReportedMatches("des", 20, false).subscribe(
     //   res => {
@@ -65,4 +69,6 @@ export class MvpDisplayComponent implements OnInit {
     //   }
     // );
   }
+
+
 }
