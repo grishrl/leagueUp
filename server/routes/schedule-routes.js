@@ -1218,9 +1218,7 @@ router.post('/fetch/team/tournament/matches', async(req, res) => {
 
 
 //this returns all the tournaments the team has particapted in
-router.post('/fetch/team/tournament', passport.authenticate('jwt', {
-    session: false
-}), (req, res) => {
+router.post('/fetch/team/tournament', (req, res) => {
 
     const path = '/schedule/fetch/team/tournament';
 
@@ -1240,9 +1238,7 @@ router.post('/fetch/team/tournament', passport.authenticate('jwt', {
 });
 
 //this route takes a team id and returns all the active tournaments for the team; regardless of season.
-router.get('/fetch/tournament/active', passport.authenticate('jwt', {
-    session: false
-}), async(req, res) => {
+router.get('/fetch/tournament/active', async(req, res) => {
 
     const path = '/schedule/fetch/tournament/active';
 
@@ -1348,9 +1344,7 @@ router.get('/fetch/tournament/active', passport.authenticate('jwt', {
 });
 
 //this route takes a team id and returns all the active tournaments for the team; regardless of season.
-router.post('/fetch/team/tournament/active', passport.authenticate('jwt', {
-    session: false
-}), async(req, res) => {
+router.post('/fetch/team/tournament/active', async(req, res) => {
 
     const path = '/schedule/fetch/team/tournament/active';
 
@@ -1478,9 +1472,7 @@ router.post('/fetch/team/tournament/active', passport.authenticate('jwt', {
 });
 
 //this route takes a team id and returns all the tournaments for the team; given a season
-router.post('/fetch/team/tournament/season', passport.authenticate('jwt', {
-    session: false
-}), async(req, res) => {
+router.post('/fetch/team/tournament/season', async(req, res) => {
 
     const path = '/schedule/fetch/team/tournament/season';
 
