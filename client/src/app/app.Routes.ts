@@ -68,16 +68,14 @@ const APP_ROUTES: Routes = [
     component: BlogViewComponent,
     data: { slug: "volunteers" },
   },
-  {
-    path: "rulestest",
-    component: StaticHtmlLoaderComponent,
-    data: { template: "rules", headerText: "Rules" },
-  },
   { path: "logout", component: LogoutComponent },
   {
     path: "faq",
-    component: StaticHtmlLoaderComponent,
-    data: { template: "faq", headerText: "Frequently Asked Questions" },
+    component: BlogViewComponent,
+    data: {
+      slug: "frequently-asked-questions",
+      headerText: "Frequently Asked Questions",
+    },
   },
   { path: "login/:token", component: LoginComponent },
   { path: "profile/:id", component: ProfileEditComponent },
