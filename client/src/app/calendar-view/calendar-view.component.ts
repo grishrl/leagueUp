@@ -78,6 +78,11 @@ const colors: any = {
     name: "NGS Event",
     sortOder: 9,
   },
+  tournament: {
+    primary: "#E5D800",
+    name:"Tournament",
+    sortOrder: 10
+  },
 };
 
 @Component({
@@ -140,9 +145,7 @@ export class CalendarViewComponent implements OnInit {
           let event: CalendarEvent = {
             'start': startDate,
             'end': endDate,
-            'title': (colors[match.divisionConcat] ? colors[match.divisionConcat].name : 'matchErr' )+ ': ' +
-            (this.util.returnBoolByPath(match, 'home.teamName') ? match.home.teamName : 'TBD') + ' vs ' +
-            (this.util.returnBoolByPath(match, 'away.teamName') ? match.away.teamName : 'TBD'),
+            'title': this.returnName(match),
             'meta':{ id: match.matchId, 'type':'match'}
           };
 
@@ -156,7 +159,7 @@ export class CalendarViewComponent implements OnInit {
             event['title'] = this.util.getFormattedDate(startDate, "hh:mm A zz") + ': ' + event['title'];
           }
 
-          event['color'] = colors[match.divisionConcat] ? colors[match.divisionConcat] : { primary: '#FFFFFF'} ;
+          event['color'] = this.returnColor(match);
 
           this.events.push(event);
 
@@ -213,6 +216,52 @@ export class CalendarViewComponent implements OnInit {
         console.log(err);
       }
     )
+  }
+
+  private returnColor(match){
+    let ret = { primary: "#FFFFFF", secondary: "#FFFFFF" };
+
+    if (match.divisionConcat) {
+          ret = colors[match.divisionConcat]
+            ? colors[match.divisionConcat]
+            : { primary: "#FFFFFF" };
+    }else if(match.type == 'tournament'){
+      ret = colors['tournament'];
+    }
+
+    return ret;
+  }
+
+  private returnName(match):string{
+    let retStr = '';
+
+    if(match.divisionConcat){
+      retStr = (colors[match.divisionConcat]
+        ? colors[match.divisionConcat].name
+        : "matchErr") +
+        ": " +
+        (this.util.returnBoolByPath(match, "home.teamName")
+          ? match.home.teamName
+          : "TBD") +
+        " vs " +
+        (this.util.returnBoolByPath(match, "away.teamName")
+          ? match.away.teamName
+          : "TBD");
+    }else{
+    retStr = (colors[match.divisionConcat]
+      ? colors[match.divisionConcat].name
+      : "Tournament") +
+      ": " +
+      (this.util.returnBoolByPath(match, "home.teamName")
+        ? match.home.teamName
+        : "TBD") +
+      " vs " +
+      (this.util.returnBoolByPath(match, "away.teamName")
+        ? match.away.teamName
+        : "TBD");
+    }
+
+    return retStr;
   }
 
   @ViewChild('modalContent', { static: false })
