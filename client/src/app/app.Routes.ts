@@ -62,11 +62,15 @@ const APP_ROUTES: Routes = [
   { path: "directory", component: DirectoryComponent },
   { path: "", component: HomeComponent },
   { path: "login", component: LoginComponent },
-  { path: "rules", component: BlogViewComponent, data: { slug: "rules" } },
+  {
+    path: "rules",
+    component: BlogViewComponent,
+    data: { slug: "rules", headerText: "Community Rules" },
+  },
   {
     path: "volunteers",
     component: BlogViewComponent,
-    data: { slug: "volunteers" },
+    data: { slug: "volunteers", headerText: "Community Volunteers" },
   },
   { path: "logout", component: LogoutComponent },
   {

@@ -21,6 +21,7 @@ export class BlogViewComponent implements OnInit {
   displayAuthor: Author;
   slug: string;
   sanatizedBlogContent;
+  headerText = "NGS Blog";
 
   constructor(
     private contentfulService: ContentfulService,
@@ -35,14 +36,21 @@ export class BlogViewComponent implements OnInit {
       this.recId = this.route.snapshot.params["id"];
     }
 
-    this.route.data.subscribe(res => {
-      if (res.blogId) {
-        this.recId = res.blogId;
-      }
-      if (res.slug) {
-        this.slug = res.slug;
-      }
-    });
+    if (this.route.snapshot.params["headerText"]){
+      this.headerText = this.route.snapshot.params["headerText"];
+    }
+
+      this.route.data.subscribe((res) => {
+        if (res.blogId) {
+          this.recId = res.blogId;
+        }
+        if (res.slug) {
+          this.slug = res.slug;
+        }
+        if(res.headerText){
+            this.headerText = res.headerText;
+        }
+      });
   }
   //sanitizer.bypassSecurityTrustHtml(displayBlog.content)
   ngOnInit() {

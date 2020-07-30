@@ -13,7 +13,6 @@ export class ArchiveSeasonComponent implements OnInit {
 
   constructor(private timeService:TimeserviceService, private admin:AdminService) {
         this.timeService.getSesasonInfo().subscribe((res) => {
-          console.log("res>>", res);
           this.currentSeason = res['value'];
         });
    }

@@ -16,7 +16,6 @@ export class MvpDisplayComponent implements OnInit {
     private timeService:TimeserviceService
   ) {
     this.timeService.getSesasonInfo().subscribe((res) => {
-      console.log("res>>", res);
       this.currentSeason = res["value"];
       this.initMvps();
     });
