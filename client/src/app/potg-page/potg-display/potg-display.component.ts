@@ -38,14 +38,12 @@ export class PotgDisplayComponent implements OnInit {
     }else if(this.match && !this.potg){
       this.matchInfo = this.match;
       this.MvpServ.getMvpById('match_id', this.match.matchId).subscribe(res=>{
-        console.log('potg ', res);
         this.potg = res;
         this.correctAutoPlay();
       })
     }else{
       this.matchInfo = this.match;
       this.correctAutoPlay();
-      console.log('potg_link', this.potg.potg_link);
     }
   }
 

@@ -54,7 +54,6 @@ export class PotgPageComponent implements OnInit {
       this.mvpServ
         .getMvpById("season",this.selectedSeason)
         .subscribe((mvps) => {
-          console.log(mvps);
           mvps.forEach((m) => {
             if (m.potg_link && m.potg_link.length > 0) {
               this.mvpList.push(m);

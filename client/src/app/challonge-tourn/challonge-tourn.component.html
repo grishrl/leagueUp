@@ -9,13 +9,10 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col">
-        <div *ngIf="!noTourn" class="tourn-container">
-            <div class="tournament"></div>
-        </div>
-        <div *ngIf="noTourn">
-            <h4>No Tournaments Currently!</h4>
-        </div>
-    </div>
+
+<div *ngIf="!noTourn" class="tourn-container">
+    <div class="tournament"></div>
+</div>
+<div *ngIf="noTourn">
+    <h4>No Tournaments Currently!</h4>
 </div>

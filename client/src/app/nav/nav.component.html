@@ -190,15 +190,23 @@
 
         <li><a [routerLink]="['/rules']">Rules</a></li>
         <li><a [routerLink]="['/faq']">FAQ</a></li>
-        <li><a [routerLink]="['/volunteers']">Volunteers</a></li>
         <li>
             <a>Community Spotlight</a>
             <ul>
+                <li>
+                    <a href="https://matcherino.com/tournaments/29831/overview" target="_blank">Storm Division Matcherino</a>
+                </li>
+                <li>
+                    <a [routerLink]="['/volunteers']">Volunteers</a>
+                </li>
                 <li>
                     <a [routerLink]="['/potg']">Play of the Game</a>
                 </li>
                 <li>
                     <a [routerLink]="['/mvp']">MVP</a>
+                </li>
+                <li>
+                    <a [routerLink]="['/tournament']">Active Tournaments</a>
                 </li>
             </ul>
         </li>

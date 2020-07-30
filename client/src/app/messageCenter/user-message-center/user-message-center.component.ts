@@ -51,11 +51,9 @@ export class UserMessageCenterComponent implements OnInit {
   }
 
   deleteMessage(message){
-    console.log('xxx ', message);
     if (this.util.returnBoolByPath(message,'request')){
       this.actionRequest(false, message);
     }else{
-      console.log('a');
       this.messageCenter.deleteMessage(message._id).subscribe(res => {
         let ind = -1;
         this.messages.forEach((element, index) => {
@@ -63,7 +61,6 @@ export class UserMessageCenterComponent implements OnInit {
             ind = index;
           }
         });
-        console.log(ind);
         if (ind > -1) {
           this.messages.splice(ind, 1);
           if (this.selectedMessage._id == message._id) {

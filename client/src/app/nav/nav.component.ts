@@ -103,9 +103,7 @@ createMobileNav(){
     //subscribe to the socket emiter if a user gets a message to update their information
     this.socket.fromEvent('newMessage').subscribe(
       res=>{
-        console.log('message from socket IO')
         this.userMessages+=1;
-        console.log(this.userMessages);
       },
       err=>{
         console.log(err);
