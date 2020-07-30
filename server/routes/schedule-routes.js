@@ -1035,7 +1035,9 @@ router.post('/check/valid',
 
         let season = req.body.season;
 
-        Scheduling.findOne({ season: season }).then(
+        queryScheduling({
+            season: season
+        }).then(
             found => {
                 if (found) {
                     res.status(200).send(util.returnMessaging(path, 'Schedules found', false, { "valid": false }));
@@ -1122,7 +1124,7 @@ router.post('/generate/tournament', passport.authenticate('jwt', {
     logObj.logLevel = 'STD';
     logObj.target = target;
 
-    Scheduling.findOne(checkObj).then(
+    queryScheduling(checkObj).then(
         found => {
             if (found) {
                 res.status(500).send(util.returnMessaging(path, 'Tournament previously generated', false, null, null, logObj));
@@ -1224,7 +1226,7 @@ router.post('/fetch/team/tournament', (req, res) => {
 
     let team = req.body.teamId;
 
-    Scheduling.find({
+    queryScheduling({
         participants: team
     }).then(
         (found) => {
@@ -1232,8 +1234,8 @@ router.post('/fetch/team/tournament', (req, res) => {
         },
         (err) => {
             res.status(500).send(util.returnMessaging(path, 'Error occured querying schedules', err));
-        },
-    )
+        }
+    );
 
 });
 
@@ -1246,28 +1248,14 @@ router.get('/fetch/tournament/active', async(req, res) => {
 
     let pastSeason = false;
 
-    let tournaments = await Scheduling.find({
+    let tournaments = await queryScheduling({
         active: true
-    }).then(
-        (found) => {
-            return found;
-        },
-        (err) => {
-            return null;
-        }
-    );
+    });
 
     if (tournaments) {
         let tournIds = [];
-        _.forEach(tournaments, (tournament) => {
-            tournament = util.objectify(tournament);
-            tournIds.push(tournament.challonge_ref);
-            let returnObject = {};
-            returnObject['tournamentName'] = tournament.name;
-            returnObject['challonge_url'] = tournament.challonge_url;
-            returnObject['challonge_ref'] = tournament.challonge_ref;
-            returnArray.push(returnObject);
-        });
+
+        parseTournamentReturnObjects(tournaments, returnArray, tournIds);
 
         let queryObj = {
             $and: [{
@@ -1281,57 +1269,11 @@ router.get('/fetch/tournament/active', async(req, res) => {
             ]
         };
 
-        let matches = await Match.find(queryObj).lean().then(
-            (found) => {
-                if (pastSeason) {
-                    return matchCommon.addTeamInfoFromArchiveToMatch(found, season).then(
-                        processed => {
-                            return processed
-                                // res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
-                        },
-                        err => {
-                            return null;
-                            // res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
-                        })
-                } else {
-                    return matchCommon.addTeamInfoToMatch(found).then(
-                        processed => {
-                            return processed;
-                            // res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
-                        },
-                        err => {
-                            return null;
-                            // res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
-                        })
-                }
+        let matches = await returnFullMatchInfo(queryObj, pastSeason);
 
-            },
-            (err) => {
-                return null;
-                // res.status(500).send(util.returnMessaging(path, 'Error occured querying schedules', err));
-            }
-        )
         if (matches) {
 
-            _.forEach(matches, (match) => {
-                match = util.objectify(match);
-
-                let tournObj = _.find(returnArray, function(ele) {
-                    if (ele.challonge_ref == match.challonge_tournament_ref) {
-                        return ele;
-                    }
-                });
-
-                if (tournObj) {
-                    if (util.returnBoolByPath(tournObj, 'teamMatches')) {
-                        tournObj['teamMatches'].push(match);
-                    } else {
-                        tournObj['teamMatches'] = [match];
-                    }
-                }
-
-
-            });
+            associateTournamentsAndMatches(matches, returnArray);
 
             res.status(200).send(util.returnMessaging(path, 'Found these matches', null, returnArray));
         } else {
@@ -1354,7 +1296,7 @@ router.post('/fetch/team/tournament/active', async(req, res) => {
 
     let pastSeason = false;
 
-    let tournaments = await Scheduling.find({
+    let tournaments = await queryScheduling({
         $and: [{
                 participants: team
             },
@@ -1362,28 +1304,12 @@ router.post('/fetch/team/tournament/active', async(req, res) => {
                 active: true
             }
         ]
-    }).then(
-        (found) => {
-            return found;
-            // res.status(200).send(util.returnMessaging(path, 'Found tournament info', false, found));
-        },
-        (err) => {
-            return null;
-            // res.status(500).send(util.returnMessaging(path, 'Error occured querying schedules', err));
-        },
-    );
+    });
 
     if (tournaments) {
         let tournIds = [];
-        _.forEach(tournaments, (tournament) => {
-            tournament = util.objectify(tournament);
-            tournIds.push(tournament.challonge_ref);
-            let returnObject = {};
-            returnObject['tournamentName'] = tournament.name;
-            returnObject['challonge_url'] = tournament.challonge_url;
-            returnObject['challonge_ref'] = tournament.challonge_ref;
-            returnArray.push(returnObject);
-        });
+
+        parseTournamentReturnObjects(tournaments, returnArray, tournIds);
 
         let queryObj = {
             $and: [{
@@ -1406,57 +1332,11 @@ router.post('/fetch/team/tournament/active', async(req, res) => {
             ]
         };
 
-        let matches = await Match.find(queryObj).lean().then(
-            (found) => {
-                if (pastSeason) {
-                    return matchCommon.addTeamInfoFromArchiveToMatch(found, season).then(
-                        processed => {
-                            return processed
-                                // res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
-                        },
-                        err => {
-                            return null;
-                            // res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
-                        })
-                } else {
-                    return matchCommon.addTeamInfoToMatch(found).then(
-                        processed => {
-                            return processed;
-                            // res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
-                        },
-                        err => {
-                            return null;
-                            // res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
-                        })
-                }
+        let matches = await returnFullMatchInfo(queryObj, pastSeason);
 
-            },
-            (err) => {
-                return null;
-                // res.status(500).send(util.returnMessaging(path, 'Error occured querying schedules', err));
-            }
-        )
         if (matches) {
 
-            _.forEach(matches, (match) => {
-                match = util.objectify(match);
-
-                let tournObj = _.find(returnArray, function(ele) {
-                    if (ele.challonge_ref == match.challonge_tournament_ref) {
-                        return ele;
-                    }
-                });
-
-                if (tournObj) {
-                    if (util.returnBoolByPath(tournObj, 'teamMatches')) {
-                        tournObj['teamMatches'].push(match);
-                    } else {
-                        tournObj['teamMatches'] = [match];
-                    }
-                }
-
-
-            });
+            associateTournamentsAndMatches(matches, returnArray);
 
             res.status(200).send(util.returnMessaging(path, 'Found these matches', null, returnArray));
         } else {
@@ -1465,8 +1345,6 @@ router.post('/fetch/team/tournament/active', async(req, res) => {
     } else {
         res.status(500).send(util.returnMessaging(path, 'Error finding active tournaments', null, returnArray));
     }
-
-
 
 
 });
@@ -1484,7 +1362,7 @@ router.post('/fetch/team/tournament/season', async(req, res) => {
     let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
     let pastSeason = season != currentSeasonInfo.value;
 
-    let tournaments = await Scheduling.find({
+    let tournaments = await queryScheduling({
         $and: [{
                 participants: team
             },
@@ -1493,28 +1371,12 @@ router.post('/fetch/team/tournament/season', async(req, res) => {
             },
             { season: season }
         ]
-    }).then(
-        (found) => {
-            return found;
-            // res.status(200).send(util.returnMessaging(path, 'Found tournament info', false, found));
-        },
-        (err) => {
-            return null;
-            // res.status(500).send(util.returnMessaging(path, 'Error occured querying schedules', err));
-        },
-    );
+    });
 
     if (tournaments) {
         let tournIds = [];
-        _.forEach(tournaments, (tournament) => {
-            tournament = util.objectify(tournament);
-            tournIds.push(tournament.challonge_ref);
-            let returnObject = {};
-            returnObject['tournamentName'] = tournament.name;
-            returnObject['challonge_url'] = tournament.challonge_url;
-            returnObject['challonge_ref'] = tournament.challonge_ref;
-            returnArray.push(returnObject);
-        });
+
+        parseTournamentReturnObjects(tournaments, returnArray, tournIds);
 
         let queryObj = {
             $and: [{
@@ -1537,57 +1399,11 @@ router.post('/fetch/team/tournament/season', async(req, res) => {
             ]
         };
 
-        let matches = await Match.find(queryObj).lean().then(
-            (found) => {
-                if (pastSeason) {
-                    return matchCommon.addTeamInfoFromArchiveToMatch(found, season).then(
-                        processed => {
-                            return processed
-                                // res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
-                        },
-                        err => {
-                            return null;
-                            // res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
-                        })
-                } else {
-                    return matchCommon.addTeamInfoToMatch(found).then(
-                        processed => {
-                            return processed;
-                            // res.status(200).send(util.returnMessaging(path, 'Found these matches', null, processed));
-                        },
-                        err => {
-                            return null;
-                            // res.status(400).send(util.returnMessaging(path, 'Error compiling match info', err));
-                        })
-                }
+        let matches = await returnFullMatchInfo(queryObj, pastSeason);
 
-            },
-            (err) => {
-                return null;
-                // res.status(500).send(util.returnMessaging(path, 'Error occured querying schedules', err));
-            }
-        )
         if (matches) {
 
-            _.forEach(matches, (match) => {
-                match = util.objectify(match);
-
-                let tournObj = _.find(returnArray, function(ele) {
-                    if (ele.challonge_ref == match.challonge_tournament_ref) {
-                        return ele;
-                    }
-                });
-
-                if (tournObj) {
-                    if (util.returnBoolByPath(tournObj, 'teamMatches')) {
-                        tournObj['teamMatches'].push(match);
-                    } else {
-                        tournObj['teamMatches'] = [match];
-                    }
-                }
-
-
-            });
+            associateTournamentsAndMatches(matches, returnArray);
 
             res.status(200).send(util.returnMessaging(path, 'Found these matches', null, returnArray));
         } else {
@@ -1638,45 +1454,26 @@ router.post('/fetch/tournament', (req, res) => {
         });
     }
 
-    // res.status(200).send(path, 'received this', false, { "hey": "hello" });
+    if (req.body.tournamentIds) {
+        let tournIds = [];
+        req.body.tournamentIds.forEach(id => {
+            tournIds.push(parseInt(id));
+        })
+        checkObj.$and.push({
+            challonge_ref: {
+                $in: tournIds
+            }
+        });
+    }
 
-
-    Scheduling.find(checkObj).then(
+    queryScheduling(checkObj).then(
         found => {
             if (found) {
-                if (found.hasOwnProperty('toObject')) {
-                    found = found.toObject();
-                }
+                found = util.objectify(found);
                 res.status(200).send(util.returnMessaging(path, 'Found tournament info', false, {
                     tournInfo: found
                 }));
 
-                // Match.find({
-                //     matchId: {
-                //         $in: found.matches
-                //     }
-                // }).lean().then(
-                //     matches => {
-                //         if (matches) {
-                //             let teams = findTeamIds(matches);
-                //             addTeamNamesToMatch(teams, matches).then((processed) => {
-                //                 res.status(200).send(util.returnMessaging(path, 'Found tournament info', false, {
-                //                     tournInfo: found,
-                //                     tournMatches: processed
-                //                 }));
-                //             }, err => {
-                //                 res.status(500).send(util.returnMessaging(path, 'Error occured querying tournament matches', err));
-                //             })
-                //         } else {
-                //             //mathces not found
-                //             res.status(500).send(util.returnMessaging(path, 'Error occured querying tournament matches', err));
-                //         }
-                //     },
-                //     err => {
-                //         //matches query error
-                //         res.status(500).send(util.returnMessaging(path, 'Error occured querying tournament matches', err));
-                //     }
-                // )
             } else {
                 res.status(200).send(util.returnMessaging(path, 'No tournament info found', false, found));
                 //match not found
@@ -1880,4 +1677,74 @@ async function getDivisionNames(found) {
         err => { return null; }
     );
     return divInfo;
+}
+
+function queryScheduling(query) {
+    return Scheduling.find(query).then(
+        (found) => {
+            return found;
+        },
+        (err) => {
+            throw err;
+        },
+    );
+}
+
+function returnFullMatchInfo(queryObj, pastSeason) {
+    return Match.find(queryObj).lean().then(
+        (found) => {
+            if (pastSeason) {
+                return matchCommon.addTeamInfoFromArchiveToMatch(found, season).then(
+                    processed => {
+                        return processed
+                    },
+                    err => {
+                        throw err;
+                    })
+            } else {
+                return matchCommon.addTeamInfoToMatch(found).then(
+                    processed => {
+                        return processed;
+                    },
+                    err => {
+                        throw err;
+                    })
+            }
+        },
+        (err) => {
+            throw err;
+        }
+    )
+}
+
+function associateTournamentsAndMatches(matches, returnArray) {
+    _.forEach(matches, (match) => {
+        match = util.objectify(match);
+
+        let tournObj = _.find(returnArray, function(ele) {
+            if (ele.challonge_ref == match.challonge_tournament_ref) {
+                return ele;
+            }
+        });
+
+        if (tournObj) {
+            if (util.returnBoolByPath(tournObj, 'teamMatches')) {
+                tournObj['teamMatches'].push(match);
+            } else {
+                tournObj['teamMatches'] = [match];
+            }
+        }
+    });
+}
+
+function parseTournamentReturnObjects(tournaments, returnArray, tournamentIdsArray) {
+    _.forEach(tournaments, (tournament) => {
+        tournament = util.objectify(tournament);
+        tournamentIdsArray.push(tournament.challonge_ref);
+        let returnObject = {};
+        returnObject['tournamentName'] = tournament.name;
+        returnObject['challonge_url'] = tournament.challonge_url;
+        returnObject['challonge_ref'] = tournament.challonge_ref;
+        returnArray.push(returnObject);
+    });
 }

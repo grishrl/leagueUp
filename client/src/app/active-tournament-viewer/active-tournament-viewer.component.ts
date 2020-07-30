@@ -18,7 +18,6 @@ export class ActiveTournamentViewerComponent implements OnInit {
   ngOnInit(): void {
     this.scheduleServ.getActiveTournaments().subscribe((res) => {
       this.currentTournaments = res;
-      console.log(this.currentTournaments);
     });
   }
 }

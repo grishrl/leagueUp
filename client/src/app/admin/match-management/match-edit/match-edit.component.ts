@@ -148,7 +148,6 @@ export class MatchEditComponent implements OnInit {
   }
 
   uploadReplay() {
-    console.log(this.filePendingUpload);
     if(this.util.returnBoolByPath(this.match, `replays.${this.matchRound}`)){
       alert('This match all ready has info for the provided round!');
     }else{

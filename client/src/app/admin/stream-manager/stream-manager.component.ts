@@ -39,9 +39,7 @@ export class StreamManagerComponent implements OnInit {
     let query = { streamOnly: true };
     this.scheduleService.matchQuery(query).subscribe(
       res => {
-
         this.streams = res;
-        console.log(this.streams)
       },
       err => {
         console.warn(err);

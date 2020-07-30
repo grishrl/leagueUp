@@ -10,6 +10,7 @@ import { EventsService } from '../services/events.service';
 import { UtilitiesService } from '../services/utilities.service';
 import { TeamService } from '../services/team.service';
 import { AuthService } from '../services/auth.service';
+import { find } from 'lodash';
 
 const colors: any = {
   heroic: {
@@ -101,6 +102,7 @@ export class CalendarViewComponent implements OnInit {
   list = new Map<String, [object]>();
 
   key = colors;
+  tournamentRefs;
 
   constructor(private matches: ScheduleService, public dialog: MatDialog, private router:Router, private eventService:EventsService, public util: UtilitiesService, public teamServ:TeamService, public auth:AuthService, private scheduleService:ScheduleService) { }
 
@@ -139,43 +141,69 @@ export class CalendarViewComponent implements OnInit {
 
         let now = Date.now()
 
-        matches.forEach(match => {
-          let startDate: Date = new Date(parseInt(match.scheduledTime.startTime));
-          let endDate: Date = new Date(parseInt(match.scheduledTime.startTime)+1);
-          let event: CalendarEvent = {
-            'start': startDate,
-            'end': endDate,
-            'title': this.returnName(match),
-            'meta':{ id: match.matchId, 'type':'match'}
-          };
+        console.log(matches);
 
+        let tournamentRefs = [];
 
-          if (this.showCasterNameUrl(match)){
-            event['meta'].casted = true;
-          }
-
-          if (this.shouldShowTimeInEventTitle())
-          {
-            event['title'] = this.util.getFormattedDate(startDate, "hh:mm A zz") + ': ' + event['title'];
-          }
-
-          event['color'] = this.returnColor(match);
-
-          this.events.push(event);
-
-          if (now <= match.scheduledTime.startTime) {
-            let formatDate = this.util.getFormattedDate(match.scheduledTime.startTime, 'dddd MMM D');
-            if (this.list.has(formatDate)) {
-              let tempArr = this.list.get(formatDate);
-              tempArr.push(match);
-              this.list.set(formatDate, tempArr);
-              // this.list[formatDate].push(match);
-            } else {
-              this.list.set(formatDate, [match]);
+        matches.forEach( match => {
+          if (!match.divisionConcat && match.challonge_tournament_ref){
+            if (tournamentRefs.indexOf(match.challonge_tournament_ref) == -1){
+              tournamentRefs.push(match.challonge_tournament_ref);
             }
           }
+        } );
 
-        });
+        this.matches.getTournamentsByIds(tournamentRefs).subscribe(
+          res=>{
+            this.tournamentRefs = res;
+                  matches.forEach((match) => {
+                    let startDate: Date = new Date(
+                      parseInt(match.scheduledTime.startTime)
+                    );
+                    let endDate: Date = new Date(
+                      parseInt(match.scheduledTime.startTime) + 1
+                    );
+                    let event: CalendarEvent = {
+                      start: startDate,
+                      end: endDate,
+                      title: this.returnName(match),
+                      meta: { id: match.matchId, type: "match" },
+                    };
+
+                    if (this.showCasterNameUrl(match)) {
+                      event["meta"].casted = true;
+                    }
+
+                    if (this.shouldShowTimeInEventTitle()) {
+                      event["title"] =
+                        this.util.getFormattedDate(startDate, "hh:mm A zz") +
+                        ": " +
+                        event["title"];
+                    }
+
+                    event["color"] = this.returnColor(match);
+
+                    this.events.push(event);
+
+                    if (now <= match.scheduledTime.startTime) {
+                      let formatDate = this.util.getFormattedDate(
+                        match.scheduledTime.startTime,
+                        "dddd MMM D"
+                      );
+                      if (this.list.has(formatDate)) {
+                        let tempArr = this.list.get(formatDate);
+                        tempArr.push(match);
+                        this.list.set(formatDate, tempArr);
+                        // this.list[formatDate].push(match);
+                      } else {
+                        this.list.set(formatDate, [match]);
+                      }
+                    }
+                  });
+          }
+        )
+
+
 
         this.eventService.getAll().subscribe(
           reply=>{
@@ -248,21 +276,28 @@ export class CalendarViewComponent implements OnInit {
           ? match.away.teamName
           : "TBD");
     }else{
-    retStr = (colors[match.divisionConcat]
-      ? colors[match.divisionConcat].name
-      : "Tournament") +
-      ": " +
-      (this.util.returnBoolByPath(match, "home.teamName")
+
+      retStr = '';
+
+      let t = find(this.tournamentRefs.tournInfo, (itr)=>{
+        if(itr.challonge_ref==match.challonge_tournament_ref){
+          return true;
+        }
+      });
+
+      retStr+= (this.util.returnBoolByPath(t, 'name')) ? `${this.util.returnByPath(t, 'name')}: ` : "Tournament: "
+
+      retStr += (this.util.returnBoolByPath(match, "home.teamName")
         ? match.home.teamName
         : "TBD") +
       " vs " +
       (this.util.returnBoolByPath(match, "away.teamName")
         ? match.away.teamName
         : "TBD");
-    }
 
     return retStr;
   }
+}
 
   @ViewChild('modalContent', { static: false })
   modalContent: TemplateRef<any>;
