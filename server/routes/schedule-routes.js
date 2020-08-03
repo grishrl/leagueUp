@@ -1124,9 +1124,10 @@ router.post('/generate/tournament', passport.authenticate('jwt', {
     logObj.logLevel = 'STD';
     logObj.target = target;
 
+
     queryScheduling(checkObj).then(
         found => {
-            if (found) {
+            if (found && found.length > 0) {
                 res.status(500).send(util.returnMessaging(path, 'Tournament previously generated', false, null, null, logObj));
             } else {
                 scheduleGenerator.generateTournamentTwo(teams, season, division, cupNumber, tournamentName, description).then((process) => {
