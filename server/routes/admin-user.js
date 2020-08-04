@@ -12,6 +12,7 @@ const mmrMethods = require('../methods/mmrMethods');
 const messageSub = require('../subroutines/message-subs');
 const QueueSubs = require('../subroutines/queue-subs');
 const _ = require('lodash');
+const notesMethods = require('../methods/notes/notes');
 
 router.post('/delete/user', passport.authenticate('jwt', {
     session: false
@@ -45,6 +46,7 @@ router.post('/delete/user', passport.authenticate('jwt', {
                     foundUser.remove().then((removed) => {
                         res.status(200).send(util.returnMessaging(path, 'User removed', null, removed, null, logObj));
                         UserSub.scrubUser(removed.displayName);
+                        notesMethods.deleteAllNotesWhere(removed._id.toString());
                     }, (remErr) => {
                         res.status(500).send(util.returnMessaging(path, 'Error removing user', remErr, null, null, logObj));
                     });

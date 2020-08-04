@@ -23,6 +23,7 @@ const eventRoutes = require('./server/routes/event-routes');
 const history = require('./server/routes/historical-routes');
 const blog = require('./server/routes/blog-routes');
 const mvp = require('./server/routes/mvp-routes');
+const notes = require('./server/routes/notes-routes');
 
 //load mongoose and other utilities 
 const mongoose = require('mongoose');
@@ -67,6 +68,7 @@ app.use('/events', eventRoutes);
 app.use('/history', history);
 app.use('/blog', blog);
 app.use('/mvp', mvp);
+app.use('/admin', notes);
 
 //this is a special route that can be used for seeding teams and users into a dev env when needed
 // const seeding = require('./server/routes/seeding-route');

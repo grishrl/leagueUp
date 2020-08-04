@@ -193,6 +193,8 @@ import { LiveCastsComponent } from './caster-tools/live-casts/live-casts.compone
 import { MatchPaginatorComponent } from './caster-tools/match-paginator/match-paginator.component';
 import { DateTimePickerComponent } from './formComponents/date-time-picker/date-time-picker.component';
 import { GrandFinalGeneratorComponent } from './admin/grand-final-generator/grand-final-generator.component';
+import { NotesViewComponent } from './notes/notes-view/notes-view.component';
+import { NotesCreateComponent } from './notes/notes-create/notes-create.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -371,7 +373,9 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     LiveCastsComponent,
     MatchPaginatorComponent,
     DateTimePickerComponent,
-    GrandFinalGeneratorComponent
+    GrandFinalGeneratorComponent,
+    NotesViewComponent,
+    NotesCreateComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

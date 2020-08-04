@@ -14,6 +14,7 @@ const messageSub = require('../subroutines/message-subs');
 const uploadTeamLogo = require('../methods/teamLogoUpload').uploadTeamLogo;
 const deleteFile = require('../methods/teamLogoUpload').deleteFile;
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
+const notesMethods = require('../methods/notes/notes');
 
 //returns the lists of users who are awaiting admin attention to complete the team join process
 router.get('/pendingMemberQueue', passport.authenticate('jwt', {
@@ -327,6 +328,7 @@ router.post('/delete/team', passport.authenticate('jwt', {
             UserSub.clearUsersTeam(deleted.teamMembers);
             teamSub.updateTeamMatches(deleted.toObject());
             DivSub.updateTeamNameDivision(deleted.teamName, deleted.teamName + ' (withdrawn)');
+            notesMethods.deleteAllNotesWhere(deleted._id.toString());
             res.status(200).send(util.returnMessaging(path, 'Team deleted', false, deleted, null, logObj));
         }
     }, (err) => {

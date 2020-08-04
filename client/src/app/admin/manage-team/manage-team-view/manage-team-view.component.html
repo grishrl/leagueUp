@@ -1,12 +1,14 @@
-<div class="container">
-    <div class="row">
-        <div class="col">
-            <a [routerLink]="['/_admin/manageTeam']">Back to Team Select</a>
+<div class="container paddings-mini">
+    <div class="panel-box">
+        <div class="row">
+            <div class="col">
+                <a [routerLink]="['/_admin/manageTeam']">Back to Team Select</a>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <app-update-team-info [teamName]="recievedProfile"></app-update-team-info>
+        <div class="row">
+            <div class="col">
+                <app-update-team-info [teamName]="recievedProfile"></app-update-team-info>
+            </div>
         </div>
     </div>
 </div>

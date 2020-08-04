@@ -12,7 +12,7 @@ const hpAPI = require('./server/methods/heroesProfileAPI');
 
 let tokenObject = {};
 // set this ID to the _id that the API key will be tied to
-tokenObject.id = "5f0c6f9ec62c4b1b33f50493";
+tokenObject.id = "5f29560ebc72845259ccb3f9";
 //"5c633b8ea55a147ce08c96bc";
 //"5c62f9d8a55a147ce08c9674";
 

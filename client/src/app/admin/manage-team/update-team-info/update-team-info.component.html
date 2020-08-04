@@ -173,6 +173,18 @@
 
     <div class="row mt-3">
         <div class="col">
+            <h3>Notes:</h3>
+            <app-notes-view [id]="returnedProfile._id"></app-notes-view>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <app-notes-create [id]="returnedProfile._id"></app-notes-create>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col">
             Over ride registration status:
             <mat-checkbox [(ngModel)]="returnedProfile.questionnaire.registered">Registered</mat-checkbox>
         </div>

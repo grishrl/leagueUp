@@ -1,5 +1,4 @@
 const MvpMethods = require('../methods/mvpMethods');
-const utils = require('../utils');
 
 const {
     confirmCaptain
@@ -90,7 +89,7 @@ router.post('/upsert', passport.authenticate('jwt', {
     const path = '/mvp/upsert';
     MvpMethods.upsert(req.body).then(
         found => {
-            found = utils.objectify(found);
+            found = util.objectify(found);
             if (req.body.displayName) {
                 found.displayName = req.body.displayName;
             }
@@ -114,7 +113,7 @@ router.post('/like', passport.authenticate('jwt', {
     const path = '/mvp/like';
     MvpMethods.like(req.body.id, req.user._id).then(
         found => {
-            found = utils.objectify(found);
+            found = util.objectify(found);
             res.status(200).send(
                 util.returnMessaging(path, 'Record updated', false, found)
             );
