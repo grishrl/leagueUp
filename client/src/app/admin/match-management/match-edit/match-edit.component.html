@@ -7,25 +7,25 @@
                 </div>
             </div>
             <div class="row mt-3">
-                <div class="col"><strong>Match ID:</strong> {{match.matchId}}</div>
+                <div class="col"><strong>Match ID:</strong> {{match?.matchId}}</div>
             </div>
             <div class="row mt-3">
-                <div class="col"><strong>Season:</strong> {{match.season}}</div>
-                <div class="col"><strong>Round</strong>: {{match.round}}</div>
+                <div class="col"><strong>Season:</strong> {{match?.season}}</div>
+                <div class="col"><strong>Round</strong>: {{match?.round}}</div>
             </div>
             <div class="row mt-3">
                 <div class="col">
-                    <strong>Division:</strong> {{match.divisionConcat}}
+                    <strong>Division:</strong> {{match?.divisionConcat}}
                 </div>
             </div>
             <div class="row mt-3">
                 <div class="col">
                     <div><strong>HOME</strong></div>
-                    <div *ngIf="match.home.teamName!=null&&match.home.teamName!=undefined&&match.home.teamName.length>0 else bye">{{match.home.teamName}}</div>
+                    <div *ngIf="match?.home?.teamName!=null&&match?.home?.teamName!=undefined&&match?.home?.teamName.length>0 else bye">{{match?.home?.teamName}}</div>
                 </div>
                 <div class="col">
                     <div><strong>AWAY</strong></div>
-                    <div *ngIf="match.away.teamName!=null&&match.away.teamName!=undefined&&match.away.teamName.length>0 else bye">{{match.away.teamName}}</div>
+                    <div *ngIf="match?.away?.teamName!=null&&match?.away?.teamName!=undefined&&match?.away?.teamName.length>0 else bye">{{match?.away?.teamName}}</div>
                 </div>
                 <ng-template #bye> BYE </ng-template>
             </div>
@@ -39,7 +39,7 @@
                     <div class="row">
                         <div class="col">
                             <mat-form-field class="mat-FullWidth">
-                                <mat-select placeholder="{{match.home.teamName}} Score:" [(ngModel)]="homeScore" disableOptionCentering>
+                                <mat-select placeholder="{{match?.home?.teamName}} Score:" [(ngModel)]="homeScore" disableOptionCentering>
                                     <mat-option [value]="0">0</mat-option>
                                     <mat-option [value]="1">1</mat-option>
                                     <mat-option [value]="2">2</mat-option>
@@ -55,7 +55,7 @@
                     <div class="row">
                         <div class="col">
                             <mat-form-field class="mat-FullWidth">
-                                <mat-select placeholder="{{match.away.teamName}} Score:" [(ngModel)]="awayScore" disableOptionCentering>
+                                <mat-select placeholder="{{match?.away?.teamName}} Score:" [(ngModel)]="awayScore" disableOptionCentering>
                                     <mat-option [value]="0">0</mat-option>
                                     <mat-option [value]="1">1</mat-option>
                                     <mat-option [value]="2">2</mat-option>
@@ -85,9 +85,9 @@
                     <h3>Time:</h3>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" *ngIf="match?.scheduledTime.startTime">
                 <div class="col">
-                    <app-date-picker [(date)]="match.scheduledTime.startTime"></app-date-picker>
+                    <app-date-picker [(date)]="match?.scheduledTime.startTime"></app-date-picker>
                 </div>
                 <div class="col">
                     <mat-form-field class="mat-FullWidth">
@@ -158,7 +158,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <ng-container *ngFor="let replay of match.replays | keyvalue">
+                    <ng-container *ngFor="let replay of match?.replays | keyvalue">
                         <tr *ngIf="replay.key != '_id'">
                             <th scope="row">{{replay.key}}</th>
                             <td>{{replay.value.data}}</td>

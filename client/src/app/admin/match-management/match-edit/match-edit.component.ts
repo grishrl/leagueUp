@@ -65,9 +65,13 @@ export class MatchEditComponent implements OnInit {
     this.scheduleService.getMatchInfo(this.matchId).subscribe(
       res => {
         this.match = res;
-        if (this.match.away.score || this.match.home.score) {
+        if (
+          this.util.returnBoolByPath(this.match, 'away.score')){
+            this.awayScore = this.match.away.score;
+          }
+
+          if(this.util.returnBoolByPath(this.match, 'home.score')){
           this.homeScore = this.match.home.score;
-          this.awayScore = this.match.away.score;
         }
         if (!this.match.hasOwnProperty("scheduledTime")) {
           this.match.scheduledTime = {

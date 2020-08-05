@@ -5,6 +5,7 @@ import { MatPaginator, PageEvent } from '@angular/material';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TimeserviceService } from 'src/app/services/timeservice.service';
 import { FilterService } from 'src/app/services/filter.service';
+import { find } from 'lodash';
 
 @Component({
   selector: 'app-match-management',
@@ -34,6 +35,7 @@ export class MatchManagementComponent implements OnInit, AfterViewInit {
   }
 
   currentSeason;
+  tourns = [];
   ngOnInit() {
     this.adminService.getDivisionList().subscribe((res) => {
       this.divisions = res;
@@ -43,19 +45,31 @@ export class MatchManagementComponent implements OnInit, AfterViewInit {
           this.scheduleService.getScheduleMatches(this.currentSeason, null, null).subscribe(
             (sched) => {
               this.originalMatches = sched;
-              this.filterMatches = sched;
-              this.filterMatches.forEach(match => {
-                match.submitCaster = {
-                  "name": '',
-                  "URL": ''
+              this.scheduleService.getActiveTournaments().subscribe(
+                tourns=>{
+                  this.tourns = tourns;
+                  this.mergeTournMatches();
+                  this.filterMatches = sched;
+                  this.filterMatches.forEach((match) => {
+                    match.submitCaster = {
+                      name: "",
+                      URL: "",
+                    };
+                    if (this.rounds.indexOf(match.round) < 0) {
+                      this.rounds.push(match.round);
+                    }
+                  });
+                  this.rounds.sort();
+                  this.length = this.filterMatches.length;
+                  this.displayArray = this.filterMatches.slice(
+                    0,
+                    this.pageSize
+                  );
+                },
+                err=>{
+                  console.log(err);
                 }
-                if (this.rounds.indexOf(match.round) < 0) {
-                  this.rounds.push(match.round);
-                }
-              });
-              this.rounds.sort();
-              this.length = this.filterMatches.length;
-              this.displayArray = this.filterMatches.slice(0, this.pageSize);
+              );
             }
           )
         }
@@ -64,6 +78,24 @@ export class MatchManagementComponent implements OnInit, AfterViewInit {
     }, (err) => {
       console.log(err);
     });
+  }
+
+  mergeTournMatches(){
+    let i = 0;
+    this.tourns.forEach(
+      tourn=>{
+        tourn.teamMatches.forEach( match => {
+          let ind = find(this.originalMatches, (o)=>{
+            return o.matchId == match.matchId;
+          });
+          if(!ind){
+            i++;
+            this.originalMatches.push(match);
+          }
+        });
+      }
+    );
+    console.log(`${i} matches merged`);
   }
 
   displayArray = [];
