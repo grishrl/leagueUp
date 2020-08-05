@@ -149,6 +149,7 @@ async function reportToChallonge(match, winner, winnerID) {
         )
     }
     if (!match.parentId) {
+        console.log('>>>>> finalizing tournament');
         let finalize = challoneAPI.finalizeTournament(match.challonge_tournament_ref).then(
             res => {
                 return true;
@@ -157,6 +158,7 @@ async function reportToChallonge(match, winner, winnerID) {
                 return false;
             }
         )
+        console.log(`>>>>> finalizing tournament variable : ${finalize}`);
         if (finalize) {
             let tournamentRef = await Scheduling.findOne({
                 challonge_ref: parseInt(match.challonge_tournament_ref)
@@ -168,6 +170,8 @@ async function reportToChallonge(match, winner, winnerID) {
             });
             if (tournamentRef) {
                 tournamentRef.active = false;
+                tournamentRef.markModified('active');
+                console.log(`>>>>> finalizing tournament save? : ${JSON.stringify(util.objectify(tournamentRef))}`);
                 tournamentRef.save();
             }
         }
