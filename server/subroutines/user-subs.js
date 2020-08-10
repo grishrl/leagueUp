@@ -141,6 +141,64 @@ function upsertUserTeamName(user, team, teamid) {
 
 }
 
+function setCaptain(user) {
+    let logObj = {};
+    logObj.actor = 'SYSTEM; toggleCaptain ';
+    logObj.action = 'set Team Captain Status';
+    logObj.target = user;
+    logObj.timeStamp = new Date().getTime();
+    logObj.logLevel = 'STD';
+    User.findOne({
+        displayName: user
+    }).then((foundUser) => {
+
+        foundUser.isCaptain = true;
+
+        foundUser.save().then((save) => {
+            logger(logObj);
+        }, (err) => {
+            logObj.logLevel = 'ERROR';
+            logObj.error = err;
+            logger(logObj);
+        });
+
+
+    }, (err) => {
+        logObj.logLevel = 'ERROR';
+        logObj.error = err;
+        logger(logObj);
+    });
+}
+
+function removeCaptain(user) {
+    let logObj = {};
+    logObj.actor = 'SYSTEM; toggleCaptain ';
+    logObj.action = 'remove Team Captain Status';
+    logObj.target = user;
+    logObj.timeStamp = new Date().getTime();
+    logObj.logLevel = 'STD';
+    User.findOne({
+        displayName: user
+    }).then((foundUser) => {
+
+        foundUser.isCaptain = false;
+
+        foundUser.save().then((save) => {
+            logger(logObj);
+        }, (err) => {
+            logObj.logLevel = 'ERROR';
+            logObj.error = err;
+            logger(logObj);
+        });
+
+
+    }, (err) => {
+        logObj.logLevel = 'ERROR';
+        logObj.error = err;
+        logger(logObj);
+    });
+}
+
 
 function toggleCaptain(user) {
     let logObj = {};
@@ -298,6 +356,8 @@ module.exports = {
     clearUsersTeam: clearUsersTeam,
     upsertUsersTeamName: upsertUsersTeamName,
     toggleCaptain: toggleCaptain,
+    setCaptain: setCaptain,
+    removeCaptain: removeCaptain,
     togglePendingTeam: togglePendingTeam,
     updateUserName: updateUserName
 }

@@ -1,0 +1,37 @@
+<!-- Section Title -->
+<app-banner-image [bannerTitle]="'Tournament Viewer'"></app-banner-image>
+<!-- End Section Title -->
+
+<!-- Section Area - Content Central -->
+<section class="content-info">
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <ul class="nav nav-tabs" id="myTab">
+                    <li [ngClass]="{'active': index==0}"><a href="#active" data-toggle="tab" (click)="index=0">Active</a></li>
+                    <li [ngClass]="{'active': index==1}"><a href="#tournment" data-toggle="tab" (click)="index=1">Past</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="tab-content">
+
+            <div class="tab-pane" [ngClass]="{'active':index==0}" id="active">
+                <div class="panel-box" style="margin-bottom: 80px;">
+                    <app-active-tournament-viewer></app-active-tournament-viewer>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="tab-content">
+
+            <div class="tab-pane" [ngClass]="{'active':index==1}" id="active">
+                <div class="panel-box" *ngIf="index == 1">
+                    <app-past-tournament-viewer></app-past-tournament-viewer>
+                </div>
+            </div>
+
+        </div>
+    </div>

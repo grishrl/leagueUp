@@ -27,11 +27,12 @@ export class TextInputComponent implements OnInit {
 
   @Input()
   get competitiveLevel() {
-    return this.competitiveLevel;
+    return this.competitiveLevelValue;
   }
 
   set competitiveLevel(val) {
     this.competitiveLevelValue = val;
+    this.getDisplay(val);
     this.competitiveLevelChange.emit(this.competitiveLevelValue);
   }
 

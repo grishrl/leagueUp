@@ -25,7 +25,6 @@ export class MatchPaginatorComponent implements OnInit {
 
   @Input() set matches(inp) {
     if (inp) {
-      console.log(inp);
       this.originalMatches = inp;
       this.initSchedule();
     }
@@ -36,7 +35,6 @@ export class MatchPaginatorComponent implements OnInit {
     if (!this.util.isNullOrEmpty(inp)) {
       if(inp){
               this.startTimeFlt = null;
-              console.log(inp);
               this.replay = inp;
       }
     }
@@ -187,14 +185,6 @@ export class MatchPaginatorComponent implements OnInit {
         });
       }
       if (
-        !this.util.isNullOrEmpty(this.scheduledOnlyFlt) &&
-        this.scheduledOnlyFlt
-      ) {
-        this.filterMatches = this.filterMatches.filter((match) => {
-          return this.filterService.testScheduled(match);
-        });
-      }
-      if (
         !this.util.isNullOrEmpty(this.tournamentOnlyFlt) &&
         this.tournamentOnlyFlt
       ) {
@@ -202,15 +192,28 @@ export class MatchPaginatorComponent implements OnInit {
           return this.filterService.testTournament(match);
         });
       }
-      if (!this.util.isNullOrEmpty(this.startTimeFlt)) {
+      if (
+        !this.util.isNullOrEmpty(this.scheduledOnlyFlt) &&
+        this.scheduledOnlyFlt
+      ) {
         this.filterMatches = this.filterMatches.filter((match) => {
-          return this.filterService.testTime(
-            match,
-            this.startTimeFlt,
-            this.endTimeFlt
-          );
+          return this.filterService.testScheduled(match);
+        });
+        if (!this.util.isNullOrEmpty(this.startTimeFlt)) {
+          this.filterMatches = this.filterMatches.filter((match) => {
+            return this.filterService.testTime(
+              match,
+              this.startTimeFlt,
+              this.endTimeFlt
+            );
+          });
+        }
+      } else {
+        this.filterMatches = this.filterMatches.filter((match) => {
+          return !this.filterService.testScheduled(match);
         });
       }
+
       this.filterMatches = this.util.sortMatchesByTime(this.filterMatches);
       this.length = this.filterMatches.length;
       this.displayArray = this.filterMatches.slice(

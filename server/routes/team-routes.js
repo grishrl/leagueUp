@@ -551,8 +551,8 @@ router.post('/save', passport.authenticate('jwt', {
                 foundTeam.assistantCaptain = tempAc;
 
                 toggle.forEach(ele => {
-                    UserSub.toggleCaptain(ele);
-                })
+                    UserSub.setCaptain(ele);
+                });
                 foundTeam.markModified('assistantCaptain');
             }
 

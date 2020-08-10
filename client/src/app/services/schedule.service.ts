@@ -18,6 +18,12 @@ export class ScheduleService {
     return this.httpService.httpPost(url, obj);
   }
 
+
+  getPastNonSeasonalTournaments(){
+    let url = "/schedule/fetch/tournament/past";
+    return this.httpService.httpGet(url, []);
+  }
+
   //returns all generated matches
   getAllMatches() {
     let url = "schedule/get/matches/all";

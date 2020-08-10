@@ -316,7 +316,9 @@
             <div *ngIf="auth.getUser()==passedTeam.captain">
                 <div class="text-center text-success p-5"> Thanks for registering for NGS Season {{seasonNumber}}! Good Luck and We'll see you in the Nexus</div>
             </div>
-
+            <div *ngIf="auth.getUser()!=passedTeam.captain">
+                <div class="text-center text-warning p-5"> Only the captain can register the team!</div>
+            </div>
         </ng-template>
 
     </div>

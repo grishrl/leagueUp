@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ScheduleService } from '../services/schedule.service';
+import { ScheduleService } from '../../services/schedule.service';
 
 @Component({
   selector: "app-active-tournament-viewer",
@@ -8,6 +8,8 @@ import { ScheduleService } from '../services/schedule.service';
 })
 export class ActiveTournamentViewerComponent implements OnInit {
   constructor(private scheduleServ: ScheduleService) {}
+
+  index = 0;
 
   currentTournaments = [];
   selectedTournament = {

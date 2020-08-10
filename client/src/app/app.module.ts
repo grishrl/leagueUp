@@ -182,7 +182,7 @@ import { StreamManagerComponent } from './admin/stream-manager/stream-manager.co
 import { CommonPipePipe } from './common/common-pipe.pipe';
 import { TeamNameComponent } from './formComponents/team-name/team-name.component';
 import { RoundColumnComponent } from './elements/schedule-table/round-column/round-column.component';
-import { ActiveTournamentViewerComponent } from './active-tournament-viewer/active-tournament-viewer.component';
+import { ActiveTournamentViewerComponent } from './tournament-viewer/active-tournament-viewer/active-tournament-viewer.component';
 
 import { TeamRegisteredComponent } from './team/team-registered/team-registered.component';
 import { ArchiveSeasonComponent } from './admin/archive-season/archive-season.component';
@@ -195,6 +195,9 @@ import { DateTimePickerComponent } from './formComponents/date-time-picker/date-
 import { GrandFinalGeneratorComponent } from './admin/grand-final-generator/grand-final-generator.component';
 import { NotesViewComponent } from './notes/notes-view/notes-view.component';
 import { NotesCreateComponent } from './notes/notes-create/notes-create.component';
+import { TournamentViewerComponent } from './tournament-viewer/tournament-viewer.component';
+import { PastTournamentViewerComponent } from './tournament-viewer/past-tournament-viewer/past-tournament-viewer.component';
+import { CasterReportComponent } from './caster-tools/caster-report/caster-report.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -375,7 +378,10 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     DateTimePickerComponent,
     GrandFinalGeneratorComponent,
     NotesViewComponent,
-    NotesCreateComponent
+    NotesCreateComponent,
+    TournamentViewerComponent,
+    PastTournamentViewerComponent,
+    CasterReportComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

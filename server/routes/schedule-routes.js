@@ -1218,6 +1218,91 @@ router.post('/fetch/team/tournament/matches', async(req, res) => {
 
 });
 
+//get past tournaments
+//this route takes a team id and returns all the active tournaments for the team; regardless of season.
+router.get('/fetch/tournament/past', async(req, res) => {
+
+    const path = '/schedule/fetch/tournament/past';
+
+    let returnArray = [];
+
+    let pastSeason = false;
+
+    let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+
+    let tournaments = await queryScheduling({
+        $and: [{
+            active: false
+        }, {
+            "division": null
+        }]
+    });
+
+    if (tournaments) {
+        let tournIds = [];
+
+        parseTournamentReturnObjects(tournaments, returnArray, tournIds);
+
+        let queryObj = {
+            $and: [{
+                    "type": "tournament"
+                },
+                {
+                    'challonge_tournament_ref': {
+                        $in: tournIds
+                    }
+                }
+            ]
+        };
+
+        let matches = await Match.find(queryObj).then(found => { return found; }, err => { throw err; });
+        // let matches = await returnFullMatchInfo(queryObj, pastSeason);
+        let pastSeasonMatches = {};
+        let currentSeasonMatches = [];
+        matches.forEach(
+            match => {
+                if (match.season == currentSeasonInfo.value) {
+                    currentSeasonMatches.push(match);
+                } else {
+                    if (!util.returnBoolByPath(pastSeasonMatches, match.season.toString())) {
+                        pastSeasonMatches[match.season] = [match];
+                    } else {
+                        pastSeasonMatches[match.season].push(match);
+                    }
+                }
+            }
+        );
+
+        currentSeasonMatches = await matchCommon.addTeamInfoToMatch(currentSeasonMatches).then(proc => { return proc; });
+
+        let keys = Object.keys(pastSeasonMatches);
+
+        for (var i = 0; i < keys.length; i++) {
+            let key = keys[i];
+            pastSeasonMatches[key] = await matchCommon.addTeamInfoFromArchiveToMatch(pastSeasonMatches[key], key).then(proc => { return proc; });
+        }
+
+        let concatMatches = [];
+        concatMatches = concatMatches.concat(currentSeasonMatches);
+        for (var i = 0; i < keys.length; i++) {
+            let key = keys[i];
+            concatMatches = concatMatches.concat(pastSeasonMatches[key]);
+        }
+
+
+        if (concatMatches) {
+
+            associateTournamentsAndMatches(concatMatches, returnArray);
+
+            res.status(200).send(util.returnMessaging(path, 'Found these matches', null, returnArray));
+        } else {
+            res.status(500).send(util.returnMessaging(path, 'Error finding team tournament matches', null, returnArray));
+        }
+    } else {
+        res.status(500).send(util.returnMessaging(path, 'Error finding active tournaments', null, returnArray));
+    }
+
+});
 
 
 //this returns all the tournaments the team has particapted in
@@ -1367,9 +1452,6 @@ router.post('/fetch/team/tournament/season', async(req, res) => {
         $and: [{
                 participants: team
             },
-            {
-                active: true
-            },
             { season: season }
         ]
     });
@@ -1400,7 +1482,7 @@ router.post('/fetch/team/tournament/season', async(req, res) => {
             ]
         };
 
-        let matches = await returnFullMatchInfo(queryObj, pastSeason);
+        let matches = await returnFullMatchInfo(queryObj, pastSeason, season);
 
         if (matches) {
 
@@ -1691,7 +1773,7 @@ function queryScheduling(query) {
     );
 }
 
-function returnFullMatchInfo(queryObj, pastSeason) {
+function returnFullMatchInfo(queryObj, pastSeason, season) {
     return Match.find(queryObj).lean().then(
         (found) => {
             if (pastSeason) {

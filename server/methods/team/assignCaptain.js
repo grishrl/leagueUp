@@ -38,8 +38,8 @@ async function assignNewCaptain(teamName, newCaptName, requestor) {
                     return foundTeam.save().then(
                         (savedTeam) => {
                             if (savedTeam) {
-                                UserSub.toggleCaptain(oldCpt);
-                                UserSub.toggleCaptain(savedTeam.captain);
+                                UserSub.removeCaptain(oldCpt);
+                                UserSub.setCaptain(savedTeam.captain);
                                 returnObject.foundTeam = savedTeam;
                                 returnObject.message = 'Team captain changed';
                                 return returnObject;

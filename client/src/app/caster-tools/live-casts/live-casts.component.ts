@@ -51,7 +51,6 @@ export class LiveCastsComponent implements OnInit {
     this.scheduleService
       .getScheduleMatches(this.currentSeason, null, null)
       .subscribe((sched) => {
-        console.log(sched);
         this.filterMatches = sched;
         this.filterMatches.forEach((match) => {
           match.submitCaster = {

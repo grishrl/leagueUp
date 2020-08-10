@@ -148,6 +148,7 @@ async function reportToChallonge(match, winner, winnerID) {
             }
         )
     }
+    console.log('???? finalizing tourn? ', match);
     if (!match.parentId) {
         console.log('>>>>> finalizing tournament');
         let finalize = challoneAPI.finalizeTournament(match.challonge_tournament_ref).then(
