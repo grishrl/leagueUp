@@ -56,7 +56,7 @@ export class TeamService {
 
   //retuns teams from an array of team names
   getTeams(names){
-    let url = 'team/getTeams';
+    let url = 'team/fetch/teams';
     let payload = {teams:names}
     return this.httpService.httpPost(url, payload)
   }
@@ -251,12 +251,12 @@ export class TeamService {
 
   }
 
-    getStatistics(username){
-    let encodedID = encodeURIComponent(username);
-    let url = '/team/statistics';
-    let params = [{ id: encodedID }];
-    return this.httpService.httpGet(url, params);
-  }
+  //   getStatistics(username){
+  //   let encodedID = encodeURIComponent(username);
+  //   let url = '/team/statistics';
+  //   let params = [{ id: encodedID }];
+  //   return this.httpService.httpGet(url, params);
+  // }
 
   constructor(private httpService: HttpServiceService, private charServ: SpecialCharactersService, private timeService:TimeserviceService) { }
 }

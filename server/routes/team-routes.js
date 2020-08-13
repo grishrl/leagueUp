@@ -61,15 +61,22 @@ router.get('/get', (req, res) => {
     let query = {};
     if (id) {
         query = { "_id": id }
-    } else if (team && ticker) {
-        query['$and'] = [];
-        query['$and'].push({ 'teamName_lower': team });
-        query['$and'].push({ 'ticker': ticker });
-    } else if (team && !ticker) {
-        query['teamName_lower'] = team;
     } else {
-        query['ticker_lower'] = ticker;
+        query['$and'] = [];
+        if (team) {
+
+            query['$and'].push({
+                'teamName_lower': team
+            });
+
+        }
+        if (ticker) {
+            query['$and'].push({
+                'ticker_lower': ticker
+            });
+        }
     }
+
 
     Team.findOne(query).lean().then(
         (foundTeam) => {
@@ -115,17 +122,40 @@ router.get('/get/registered', (req, res) => {
 // URI query param - team
 // finds team of passed team name
 // returns found team
-router.post('/getTeams', (req, res) => {
-    const path = '/team/getTeams';
+router.post('/fetch/teams', (req, res) => {
+    const path = '/team/fetch/teams';
     var teams = req.body.teams;
 
-    let searchArray = [];
-    teams.forEach(element => {
-        searchArray.push(element.toLowerCase());
-    });
-    Team.find({
-        teamName_lower: { $in: searchArray }
-    }).lean().then(
+    let query = {};
+
+    if (util.returnBoolByPath(req.body, 'teams')) {
+        let searchArray = [];
+        teams.forEach(element => {
+            searchArray.push(element.toLowerCase());
+        });
+        query['teamName_lower'] = {
+            $in: searchArray
+        };
+    } else if (util.returnBoolByPath(req.body, 'teamIds')) {
+        let searchArray = [];
+        teams.forEach(element => {
+            searchArray.push(element.toLowerCase());
+        });
+        query['_ids'] = {
+            $in: searchArray
+        };
+    } else if (util.returnBoolByPath(req.body, 'teamTickers')) {
+        let searchArray = [];
+        teams.forEach(element => {
+            searchArray.push(element.toLowerCase());
+        });
+        query['ticker_lower'] = {
+            $in: searchArray
+        };
+    }
+
+
+    Team.find(query).lean().then(
         (foundTeams) => {
             if (foundTeams && foundTeams.length > 0) {
                 res.status(200).send(util.returnMessaging(path, 'Found team', false, foundTeams));
@@ -784,39 +814,6 @@ router.post('/questionnaire/save', passport.authenticate('jwt', {
     }, err => {
         res.status(500).send(util.returnMessaging(path, 'error querying team', err, null, null, logObj));
     })
-});
-
-router.get('/statistics', (req, res) => {
-
-    const path = '/team/statistics';
-    var id = decodeURIComponent(req.query.id);
-
-    Team.findOne({
-        teamName: id
-    }).then(
-        found => {
-            if (found) {
-                let id = found._id.toString();
-                Stats.find({
-                    associateId: id
-                }).then(
-                    foundStats => {
-                        res.status(200).send(util.returnMessaging(path, 'Found stat', false, foundStats));
-                    },
-                    err => {
-                        res.status(400).send(util.returnMessaging(path, 'Error finding stats.', err, null, null));
-                    }
-                )
-            } else {
-                res.status(400).send(util.returnMessaging(path, 'User ID not found.', false, null, null));
-            }
-        },
-        err => {
-            res.status(400).send(util.returnMessaging(path, 'Error finding user.', err, null, null));
-        }
-    )
-
-
 });
 
 //this confirms the calling user is the captain OR is themselves, for removing from team
