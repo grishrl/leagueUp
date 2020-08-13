@@ -132,36 +132,10 @@ async function heroesProfile(btag) {
     return val;
 }
 
-//todo replace with hpAPI methods
-let ngsMmrUrL = 'https://heroesprofile.com/API/MMR/NGS/Player/?api_key=' + process.env.heroProfileAPIkey + '&p_b=';
-
-async function heroesProfileNGS(btag) {
-
-    let reply = null;
-    const response = await axios.get(ngsMmrUrL + encodeURIComponent(btag));
-    if (util.returnBoolByPath(response.data, btag.toString())) {
-        let data = response.data[btag.toString()];
-        if (util.returnBoolByPath(data, 'NGS')) {
-            data = data['NGS'];
-            reply = data.mmr;
-        }
-    }
-
-    return reply;
-
-}
-
 async function comboMmr(btag) {
 
     let hp = await heroesProfile(btag);
-    // let hl = await hotslogs(btag);
-    // let ngs = await heroesProfileNGS(btag);
 
-    // return {
-    //     'heroesProfile': hp,
-    //     'hotsLogs': hl,
-    //     'ngsMmr': ngs
-    // };
     return {
         'heroesProfile': hp
     };
@@ -170,6 +144,5 @@ async function comboMmr(btag) {
 module.exports = {
     hotslogsMMR: hotslogs,
     heroesProfileMMR: heroesProfile,
-    heroesProfileNGS: heroesProfileNGS,
     comboMmr: comboMmr
 }
