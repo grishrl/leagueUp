@@ -75,7 +75,14 @@ router.get('/get', (req, res) => {
                 'ticker_lower': ticker
             });
         }
+        }
+        if (ticker) {
+            query['$and'].push({
+                'ticker_lower': ticker
+            });
+        }
     }
+
 
 
     Team.findOne(query).lean().then(
@@ -152,6 +159,10 @@ router.post('/fetch/teams', (req, res) => {
         query['ticker_lower'] = {
             $in: searchArray
         };
+    }
+
+
+    Team.find(query).lean().then(
     }
 
 
