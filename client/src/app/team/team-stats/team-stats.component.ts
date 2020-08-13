@@ -35,29 +35,29 @@ export class TeamStatsComponent implements OnInit {
   heroesPlayed = 0;
   uniqueHeros = [];
   initTeamStats(id){
-    this.teamServ.getStatistics(id).subscribe(
-      res=>{
-        if(res && res.length>0){
-          res.forEach(stats=>{
-            this.totalGames += stats.stats.totalMatches;
-            this.totalWins += stats.stats.wins;
-            this.takedowns += stats.stats.takedowns.total;
-            let heroPlayedKeys = Object.keys(stats.stats.heroes);
-            heroPlayedKeys.forEach(element=>{
-              if(this.uniqueHeros.indexOf(element)==-1){
-                this.uniqueHeros.push(element);
-              }
-            })
-          });
-          this.heroesPlayed = this.uniqueHeros.length;
-          this.statistics = res[0];
-          this.roundTree(this.statistics);
-        }
-      },
-      err=>{
+    // this.teamServ.getStatistics(id).subscribe(
+    //   res=>{
+    //     if(res && res.length>0){
+    //       res.forEach(stats=>{
+    //         this.totalGames += stats.stats.totalMatches;
+    //         this.totalWins += stats.stats.wins;
+    //         this.takedowns += stats.stats.takedowns.total;
+    //         let heroPlayedKeys = Object.keys(stats.stats.heroes);
+    //         heroPlayedKeys.forEach(element=>{
+    //           if(this.uniqueHeros.indexOf(element)==-1){
+    //             this.uniqueHeros.push(element);
+    //           }
+    //         })
+    //       });
+    //       this.heroesPlayed = this.uniqueHeros.length;
+    //       this.statistics = res[0];
+    //       this.roundTree(this.statistics);
+    //     }
+    //   },
+    //   err=>{
 
-      }
-    )
+    //   }
+    // )
   }
 
   //moves recursively through an objects structure rounding numbers it finds.

@@ -1,0 +1,79 @@
+Template:
+Route: 
+Method: 
+Auth: 
+Params: 
+Return: 
+
+
+Route: /team/get
+Method: get
+Auth: Open
+Params: team (team name), id (team id), ticker (team ticker)
+Return: Specified team object if found
+
+Route: /team/get/registered
+Method: get
+Auth: Open
+Params: NONE
+Return: All team objects that are registered for current season
+
+Route: /team/fetch/teams
+Method: post
+Auth: Open
+Params: teams (Array) - Team Names OR teamIds (Array) - Team ids OR teamTickers (Array) - Team Tickers
+Return: All team objects that match received specifications.
+
+Route: /team/delete
+Method: post
+Auth: Authenticated, Must be team captain
+Params: teamName (string) - Name of team
+Return: 200 status; null return
+
+Route: /team/create
+Method: post
+Auth: Authenticated 
+Params: teamObject
+Return: 200 status; team object of created team
+
+Route: /team/addMember
+Method: post
+Auth: Authenticated, Captain
+Params: teamName (string) - name of team AND addMember (string) - display name of user to add
+Return: 200 status; team object
+
+Route: /team/save
+Method: post
+Auth: Authenticated, Captain
+Params: team object (object)
+Return: saved team object
+
+Route: /team/removeMember
+Method: post
+Auth: Authenticated, must be captain or member of team
+Params: teamName (string), AND remove (string or Array of strings) - users to be removed from team
+Return: saved team with members removed
+
+Route: /team/uploadLogo
+Method: post
+Auth: Authenticated, captain
+Params: multipart form;
+Return: returns saved team with updated logo string
+
+Route: /team/reassignCaptain
+Method: post
+Auth: Authenticated, captain
+Params: username (string) new captain username AND teamName (string) team name
+Return: returns saved team with new captain
+
+Route: /team/get/sys/dat
+Method: post
+Auth: Authenticated
+Params: data (string) - data to request
+Return: system data that matches the requested datum
+
+Route: /team/questionnaire/save
+Method: post
+Auth: Authenticated
+Params: teamName (string) AND questionnaire (objcet)
+Return: saved team object
