@@ -20,17 +20,17 @@ export class ScheduleService {
 
 
   getPastNonSeasonalTournaments(){
-    let url = "/schedule/fetch/tournament/past";
+    let url = "/schedule/get/tournament/past";
     return this.httpService.httpGet(url, []);
   }
 
   //returns all generated matches
   getAllMatches() {
-    let url = "schedule/get/matches/all";
+    let url = "schedule/fetch/matches/all";
     let payload = {};
     return this.httpService.httpPost(url, payload);
   }
-  //schedule/get/matches/scheduled
+
   getAllMatchesWithStartTime() {
     let url = "schedule/get/matches/scheduled";
     return this.timeService.getSesasonInfo().pipe(
@@ -44,7 +44,7 @@ export class ScheduleService {
   }
 
   getMatchupHistory(teamAid: string, teamBid: string) {
-    let url = "schedule/get/matchup/history";
+    let url = "schedule/fetch/matchup/history";
     let payload = {
       teamAid,
       teamBid,
@@ -53,7 +53,7 @@ export class ScheduleService {
   }
 
   getMatchList(matches, season?) {
-    let url = "schedule/get/match/list";
+    let url = "schedule/fetch/match/list";
     let payload = { matches: matches };
     if (season) {
       payload["season"] = season;
@@ -68,7 +68,7 @@ export class ScheduleService {
 
   //returns matches that match criteria of season, division
   getDivisionScheduleMatches(season, division: string) {
-    let url = "schedule/get/division/matches";
+    let url = "schedule/fetch/division/matches";
     let payload = {
       season: season,
       division: division,
@@ -78,7 +78,7 @@ export class ScheduleService {
 
   //returns matches that match criteria of season, division, round
   getScheduleMatches(season, division: string, round: number) {
-    let url = "schedule/get/matches";
+    let url = "schedule/fetch/matches";
     let payload = {
       season: season,
       division: division,
@@ -89,7 +89,7 @@ export class ScheduleService {
 
   //returns matches that match criteria of provided season and team
   getTeamSchedules(season: number, team: string) {
-    let url = "schedule/get/matches/team";
+    let url = "schedule/fetch/matches/team";
     team = team.toLowerCase();
     let payload = {
       season: season,
@@ -100,7 +100,7 @@ export class ScheduleService {
 
   //returns a match given the matchId and season
   getMatchInfo(matchId: string) {
-    let url = "schedule/get/match";
+    let url = "schedule/fetch/match";
     let payload = {
       matchId: matchId,
     };
@@ -125,7 +125,7 @@ export class ScheduleService {
   }
 
   getReportedMatches(sort?, limit?, showSnack?) {
-    let url = "schedule/get/reported/matches";
+    let url = "schedule/fetch/reported/matches";
 
     if (showSnack != undefined) {
       showSnack = showSnack;
@@ -150,7 +150,7 @@ export class ScheduleService {
   }
 
   getReportedMatchesByDivision(division, showSnack?) {
-    let url = "schedule/get/reported/matches";
+    let url = "schedule/fetch/reported/matches";
 
     if (showSnack != undefined) {
       showSnack = showSnack;
@@ -169,7 +169,7 @@ export class ScheduleService {
   }
 
   getReportedMatchesByDivisionAndSeason(division, season, showSnack?) {
-    let url = "schedule/get/reported/matches";
+    let url = "schedule/fetch/reported/matches";
 
     if (showSnack != undefined) {
       showSnack = showSnack;

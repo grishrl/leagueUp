@@ -6,8 +6,8 @@ const passport = require("passport");
 //gets the standings for provided division a divisionConcat,
 //calculates the standings based on reported matches associated with provided division
 
-router.post('/get/division', (req, res) => {
-    const path = 'standings/get/division'
+router.post('/fetch/division', (req, res) => {
+    const path = 'standings/fetch/division'
     let division = req.body.division;
     let season = req.body.season;
     let pastSeason = req.body.pastSeason;

@@ -10,7 +10,7 @@ export class StandingsService {
 
   //accepts the divisionConcat and returns the standings of the division based on reported matches
   getStandings(div:string){
-    let url = 'standings/get/division';
+    let url = 'standings/fetch/division';
     return this.timeService.getSesasonInfo().pipe(
       switchMap(
         res=>{
@@ -26,7 +26,7 @@ export class StandingsService {
   }
 
   getPastStandings(div: string, season) {
-    let url = 'standings/get/division';
+    let url = 'standings/fetch/division';
     let payload = {
       division: div,
       season: season,

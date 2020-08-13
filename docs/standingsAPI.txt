@@ -1,0 +1,12 @@
+Template:
+Route: 
+Method: 
+Auth: 
+Params: 
+Return: 
+
+Route: /standings/fetch/division
+Method: post
+Auth: Open
+Params: season (number or string), pastSeason (boolean), division (string)
+Return: Standings object 

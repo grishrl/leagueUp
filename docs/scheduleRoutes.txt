@@ -1,0 +1,162 @@
+Template:
+Route: 
+Method: 
+Auth: 
+Params: 
+Return: 
+
+Route: /schedule/fetch/matches
+Method: post
+Auth: Open
+Params: season (string or number), round (string or number), division (string)
+Return: Matches that match the query info
+
+Route: /schedule/fetch/reported/matches
+Method: post
+Auth: Open
+Params: season (string or number), division (string)
+Return: Reported matches that match the query info for current season
+
+Route: /schedule/fetch/division/matches
+Method: post
+Auth: Authenticated
+Params: season (string or number), division (string)
+Return: Reported matches that match the query
+
+Route: /schedule/fetch/matches/all
+Method: post
+Auth: Authenticated
+Params: 
+Return: Returns all matches
+
+Route: /schedule/query/matches
+Method: post
+Auth: Authenticated
+Params: (The body of this request is a mongodb query)
+Return: Returns matches that fit the query
+
+Route: /schedule/get/matches/casted/playing
+Method: get
+Auth: open
+Params: none
+Return: Returns matches are currently being played
+
+Route: /schedule/fetch/matchup/history
+Method: post
+Auth: open
+Params: teamAid (string) teamBid (string)
+Return: Returns matches that the two teams have played historically
+
+Route: /schedule/fetch/matches/team
+Method: post
+Auth: open
+Params: team (string) season (string or number)
+Return: Returns non-tournament matches for the provided query params
+
+Route: /schedule/get/matches/scheduled
+Method: get
+Auth: open
+Params: season
+Return: Returns scheduled matches for season
+
+Route: /schedule/update/match/time
+Method: post
+Auth: Authenticated, must be captain of either team
+Params: matchId (string), scheduledStartTime (string), scheduledEndTime (string)
+Return: Returns scheduled matches for season
+
+Route: /schedule/fetch/match
+Method: post
+Auth: Open
+Params: matchId (string)
+Return: Returns match for id
+
+Route: /schedule/fetch/match/list
+Method: post
+Auth: Open
+Params: matches (Array of matchId string)
+Return: Returns matches for ids
+
+Route: /schedule/report/match
+Method: post
+Auth: Authenticated, must be captain of either team
+Params: mutlipartform
+Return: Returns match update with scores and parsed replay IDs if available and URL of s3 replay
+
+Route: /schedule/match/add/caster
+Method: post
+Auth: Authenticated, caster
+Params: matchId (string), casterName (string), casterUrl (string)
+Return: Returns match update with caster info
+
+Route: /schedule/match/fetch/mycasted
+Method: post
+Auth: Authenticated, caster
+Params: None
+Return: Returns matches that the requestor is casting
+
+Route: /schedule/match/add/caster/occ
+Method: post
+Auth: Authenticated, caster
+Params: matchId (string)
+Return: Returns match updated with the requestors casting info
+
+Route: /schedule/generate/schedules
+Method: post
+Auth: Authenticated, scheduleGenerator
+Params: season (string)
+Return: Returns message of success or error of the schedule generator
+
+Route: /schedule/check/valid
+Method: post
+Auth: Authenticated, scheduleGenerator
+Params: season (string)
+Return: Returns true or false; if the selected season number has been generated previously
+
+Route: /schedule/generate/tournament
+Method: post
+Auth: Authenticated, scheduleGenerator
+Params: season (string) and tournamentName (string) and teams (array of team ids) and (optional) description (string) and (optional) division (string) and (optional) cupNumber (string)
+Return: Returns message regard the success or failure of generating a new tournament
+
+Route: /schedule/fetch/team/tournament/matches
+Method: post
+Auth: Open
+Params: team (string) season (string) (optional) division (string)
+Return: Returns the tournament matches of a team matching parameters
+
+Route: /schedule/get/tournament/past
+Method: get
+Auth: Open
+Params: none
+Return: Returns tournaments and matches of tournaments (non-season/division finals) set to active=false
+
+Route: /schedule/fetch/team/tournament
+Method: post
+Auth: Open
+Params: teamId (string - must be teamId)
+Return: Returns tournaments and matches of those tournaments that team has participated in
+
+Route: /schedule/fetch/tournament/active
+Method: post
+Auth: Open
+Params: none
+Return: Returns tournaments and matches of those tournaments that active = true
+
+Route: /schedule/fetch/team/tournament/active
+Method: post
+Auth: Open
+Params: teamId (string - must be teamId)
+Return: Returns tournaments and matches of those tournaments that team is participant in where active=true
+
+Route: /schedule/fetch/team/tournament/season
+Method: post
+Auth: Open
+Params: teamId (string - must be teamId) season (string)
+Return: Returns tournaments and matches of those tournaments that team is participant of season
+
+Route: /schedule/fetch/tournament
+Method: post
+Auth: Open
+Params: season (string) , (optional) division (string), (optional) tournamentName (string), (optional) tournamentIds (array of strings)
+Return: Returns tournaments and matches of those tournaments that team is participant of season
