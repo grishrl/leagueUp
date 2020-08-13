@@ -36,12 +36,12 @@ export class UserService {
     return this.httpService.httpGet(this.userGetURL, params);
   }
 
-    getStatistics(username){
-    let encodedID = encodeURIComponent(username);
-    let url = '/user/statistics';
-    let params = [{ id: encodedID }];
-    return this.httpService.httpGet(url, params);
-  }
+  //   getStatistics(username){
+  //   let encodedID = encodeURIComponent(username);
+  //   let url = '/user/statistics';
+  //   let params = [{ id: encodedID }];
+  //   return this.httpService.httpGet(url, params);
+  // }
 
   //sends the information to the outreach route
   emailOutreach(email){

@@ -55,22 +55,22 @@ export class PlayerStatsComponent implements OnInit {
   };
 
   initStats() {
-    this.user.getStatistics(this.displayName).subscribe(
-      res => {
-        if (res.length > 0) {
-          this.statistics = res[0];
-          this.roundTree(this.statistics);
-          this.losses =
-            this.statistics.stats.games - this.statistics.stats.wins;
-        } else {
-          this.noStats = true;
-        }
-      },
-      err => {
-        this.noStats = true;
-        console.log(err);
-      }
-    );
+    // this.user.getStatistics(this.displayName).subscribe(
+    //   res => {
+    //     if (res.length > 0) {
+    //       this.statistics = res[0];
+    //       this.roundTree(this.statistics);
+    //       this.losses =
+    //         this.statistics.stats.games - this.statistics.stats.wins;
+    //     } else {
+    //       this.noStats = true;
+    //     }
+    //   },
+    //   err => {
+    //     this.noStats = true;
+    //     console.log(err);
+    //   }
+    // );
   }
 
   roundTree(obj) {

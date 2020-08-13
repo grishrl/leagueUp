@@ -64,7 +64,6 @@ router.get('/get', (req, res) => {
     } else {
         query['$and'] = [];
         if (team) {
-
             query['$and'].push({
                 'teamName_lower': team
             });
@@ -75,15 +74,7 @@ router.get('/get', (req, res) => {
                 'ticker_lower': ticker
             });
         }
-        }
-        if (ticker) {
-            query['$and'].push({
-                'ticker_lower': ticker
-            });
-        }
     }
-
-
 
     Team.findOne(query).lean().then(
         (foundTeam) => {
@@ -160,11 +151,6 @@ router.post('/fetch/teams', (req, res) => {
             $in: searchArray
         };
     }
-
-
-    Team.find(query).lean().then(
-    }
-
 
     Team.find(query).lean().then(
         (foundTeams) => {
@@ -773,7 +759,7 @@ router.post('/reassignCaptain', passport.authenticate('jwt', {
     );
 });
 
-//system
+//needs to be move to its own API path
 router.post('/get/sys/dat', passport.authenticate('jwt', {
     session: false
 }), (req, res) => {
