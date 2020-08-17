@@ -929,6 +929,7 @@ async function handleMemberQueue(teamId, member, logObj, approved, seasonNum) {
                     }
                     userMong.pendingTeam = false;
                 }
+                teamMong.markModified('pendingMembers');
                 //save the team and the user
                 let teamSavedMong = teamMong.save().then((savedTeam) => {
                     teamSub.updateTeamMmr(savedTeam);

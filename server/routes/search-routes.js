@@ -568,8 +568,10 @@ function createUserSearchObject(obj, reqUser) {
             user.availability = obj.times
             if (util.returnBoolByPath(obj, 'timezone')) {
                 user.timeZone = obj.timezone;
-            } else {
+            } else if (util.returnBoolByPath(reqUser, 'timeZone')) {
                 user.timeZone = reqUser.timeZone;
+            } else {
+                user.timeZone = (-6);
             }
 
             if (util.returnBoolByPath(user, 'availability')) {

@@ -252,11 +252,11 @@ router.post('/user/join', passport.authenticate('jwt', {
     //do some spot checking on the team to make sure it has not exceeded the maximum team members
     Team.findOne({ teamName_lower: teamName_lower }).then(
         foundTeam => {
+            let teamObj = util.objectify(foundTeam);
             let memberCount = 0;
-            if (foundTeam.pendingMembers) {
-                memberCount += foundTeam.pendingMembers.length;
+            if (util.returnBoolByPath(teamObj, 'pendingMembers')) {
+                memberCount += teamObj.pendingMembers.length;
             }
-            memberCount += foundTeam.teamMembers.length;
             if (memberCount >= 9) {
                 logObj.logLevel = "ERROR";
                 logObj.error = 'Too many members on team to invite members';
