@@ -8,7 +8,7 @@ Return:
 Route: /user/get
 Method: get
 Auth: Open
-Params: user or userId 
+Params: user or userId or users (comma delmited list for multiple users) or userIds (comma delmited list for multiple users)
 Return: User Profile matching the query
 
 Route: /user/delete
