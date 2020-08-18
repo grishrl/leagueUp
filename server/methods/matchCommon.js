@@ -45,7 +45,6 @@ async function promoteTournamentMatch(foundMatch) {
             //get the parent match's information from challonge;
             let parentChallongeMatch = await challoneAPI.matchGet(parentMatchObj.challonge_tournament_ref, parentMatchObj.challonge_match_ref).then(
                 res => {
-                    // console.log('res ', res);
                     return res;
                 },
                 err => {
@@ -60,7 +59,6 @@ async function promoteTournamentMatch(foundMatch) {
                 }).lean().then(found => {
                     return found;
                 }, err => {
-                    // console.log(err);
                     return null;
                 });
                 if (winnerRef) {
@@ -73,8 +71,6 @@ async function promoteTournamentMatch(foundMatch) {
                         }
                     );
 
-                    console.log(parentChallongeMatch);
-
                     //match up the challonge parent match ID with the winner match
                     //this will allow us to have proper teams always promoted into a matching position to challonge
                     if (parentChallongeMatch.match.player1_prereq_match_id == foundMatch.challonge_match_ref) {
@@ -85,11 +81,7 @@ async function promoteTournamentMatch(foundMatch) {
                         parentMatch.markModified('away');
                     }
 
-                    parentMatch.save().then(saved => {
-                        //  console.log(saved);
-                    }, err => {
-                        // console.log(err);
-                    });
+                    parentMatch.save().then(saved => {}, err => {});
 
                 }
 
@@ -99,9 +91,7 @@ async function promoteTournamentMatch(foundMatch) {
             console.log('the parent match was not found');
         }
 
-        reportToChallonge(foundMatch, winner, winnerID).then(returned => {
-            // console.log('returned ', returned);
-        })
+        reportToChallonge(foundMatch, winner, winnerID).then(returned => {})
 
     }
 }
@@ -111,7 +101,6 @@ async function reportToChallonge(match, winner, winnerID) {
 
     let challongeMatch = await challoneAPI.matchGet(match.challonge_tournament_ref, match.challonge_match_ref).then(
         res => {
-            // console.log('res ', res);
             return res;
         },
         err => {
@@ -139,19 +128,16 @@ async function reportToChallonge(match, winner, winnerID) {
     if (winnerID) {
         let challongeRes = await challoneAPI.matchUpdate(match.challonge_tournament_ref, match.challonge_match_ref, scores, winnerID).then(
             res => {
-                // console.log(res);
                 return true;
             },
             err => {
-                // console.log(err);
                 return false;
             }
         )
     }
-    console.log('???? finalizing tourn? ', match);
+
     if (!match.parentId) {
-        console.log('>>>>> finalizing tournament');
-        let finalize = challoneAPI.finalizeTournament(match.challonge_tournament_ref).then(
+        let finalize = await challoneAPI.finalizeTournament(match.challonge_tournament_ref).then(
             res => {
                 return true;
             },
@@ -159,20 +145,17 @@ async function reportToChallonge(match, winner, winnerID) {
                 return false;
             }
         )
-        console.log(`>>>>> finalizing tournament variable : ${finalize}`);
+
         if (finalize) {
             let tournamentRef = await Scheduling.findOne({
                 challonge_ref: parseInt(match.challonge_tournament_ref)
             }).then(found => {
                 return found;
             }, err => {
-                // console.log(err);
                 return null;
             });
             if (tournamentRef) {
-                tournamentRef.active = false;
-                tournamentRef.markModified('active');
-                console.log(`>>>>> finalizing tournament save? : ${JSON.stringify(util.objectify(tournamentRef))}`);
+                tournamentRef['active'] = false;
                 tournamentRef.save();
             }
         }

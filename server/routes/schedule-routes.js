@@ -1025,11 +1025,20 @@ router.post('/check/valid',
 
         let season = req.body.season;
 
-        queryScheduling({
-            season: season
-        }).then(
+        let query = {
+            $and: [{
+                    season: season
+                },
+                {
+                    type: { $ne: "tournament" }
+                }
+            ]
+        }
+
+        queryScheduling(query).then(
             found => {
-                if (found) {
+                console.log(found);
+                if (found && found.length > 0) {
                     res.status(200).send(util.returnMessaging(path, 'Schedules found', false, { "valid": false }));
 
                 } else {

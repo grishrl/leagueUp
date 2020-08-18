@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 
 const matchSchema = new Schema({
     "season": Number,
-    "division": Object
+    "division": Object,
+    "active": Boolean
 }, { strict: false, useNestedStrict: false });
 
 /*
