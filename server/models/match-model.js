@@ -74,7 +74,8 @@ const matchSchema = new Schema({
     "vodLinks": [String],
     "challonge_match_ref": String, //new properties for reference challonge matches
     "challonge_tournament_ref": String, //new properties for reference challonge matches
-    "challonge_idChildren": [String] //new properties for reference challonge matches
+    "challonge_idChildren": [String], //new properties for reference challonge matches
+    "loserPath": String //new property for double elims, must track the loss path
 }, { useNestedStrict: false });
 
 

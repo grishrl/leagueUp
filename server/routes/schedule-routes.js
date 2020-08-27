@@ -1123,13 +1123,15 @@ router.post('/generate/tournament', passport.authenticate('jwt', {
     logObj.logLevel = 'STD';
     logObj.target = target;
 
+    let type = req.body.type;
+
 
     queryScheduling(checkObj).then(
         found => {
             if (found && found.length > 0) {
                 res.status(500).send(util.returnMessaging(path, 'Tournament previously generated', false, null, null, logObj));
             } else {
-                scheduleGenerator.generateTournamentTwo(teams, season, division, cupNumber, tournamentName, description).then((process) => {
+                scheduleGenerator.generateTournamentTwo(teams, season, division, cupNumber, tournamentName, description, type).then((process) => {
                     if (process) {
                         res.status(200).send(util.returnMessaging(path, 'Tournament generated', false, process, null, logObj));
                     } else {

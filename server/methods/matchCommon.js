@@ -10,18 +10,26 @@ async function promoteTournamentMatch(foundMatch) {
     if (foundMatch.hasOwnProperty('toObject')) {
         foundMatch = foundMatch.toObject();
     }
-    let winnerID
-        //grab the winner score and their position from the match
+    let winnerID;
+    let loserID;
+    //grab the winner score and their position from the match
     if (foundMatch.type == 'tournament') {
         let winner = {};
+        let loser = {};
         if (foundMatch.home.score > foundMatch.away.score) {
             winner['id'] = foundMatch.home.id;
             winner['pos'] = 'home';
             winner['teamName'] = foundMatch.home.teamName;
+            loser['id'] = foundMatch.away.id;
+            loser['pos'] = 'away';
+            loser['teamName'] = foundMatch.away.teamName;
         } else {
             winner['id'] = foundMatch.away.id;
             winner['pos'] = 'away';
             winner['teamName'] = foundMatch.away.teamName;
+            loser['id'] = foundMatch.home.id;
+            loser['pos'] = 'home';
+            loser['teamName'] = foundMatch.home.teamName;
         }
 
 
@@ -37,6 +45,21 @@ async function promoteTournamentMatch(foundMatch) {
         }, err => {
             return null;
         });
+
+        let lossPathMatch
+        if (util.returnBoolByPath(foundMatch, 'loserPath')) {
+            lossPathMatch = await Match.findOne({
+                matchId: foundMatch.loserPath
+            }).then(found => {
+                if (found) {
+                    return found;
+                } else {
+                    return null;
+                }
+            }, err => {
+                return null;
+            });
+        }
 
         //make sure we have a parent match before we continue;
         if (parentMatch) {
@@ -91,6 +114,60 @@ async function promoteTournamentMatch(foundMatch) {
             console.log('the parent match was not found');
         }
 
+        //make sure we have a parent match before we continue;
+        if (lossPathMatch) {
+
+            let lossPathMatchObj = lossPathMatch.toObject();
+            //get the parent match's information from challonge;
+            let parentChallongeMatch = await challoneAPI.matchGet(lossPathMatchObj.challonge_tournament_ref, lossPathMatchObj.challonge_match_ref).then(
+                res => {
+                    return res;
+                },
+                err => {
+                    return null;
+                }
+            )
+
+            if (parentChallongeMatch) {
+                //get the all the references from the schedule; and lets get the winner's partipants reference.
+                let loserRef = await Scheduling.findOne({
+                    challonge_ref: parseInt(lossPathMatchObj.challonge_tournament_ref)
+                }).lean().then(found => {
+                    return found;
+                }, err => {
+                    return null;
+                });
+                if (loserRef) {
+                    //loop through the references
+                    loserRef.participantsRef.forEach(
+                        reference => {
+                            if (reference.id == winner.id) {
+                                loserID = reference.challonge_ref;
+                            }
+                        }
+                    );
+
+                    //match up the challonge parent match ID with the winner match
+                    //this will allow us to have proper teams always promoted into a matching position to challonge
+                    if (parentChallongeMatch.match.player1_prereq_match_id == foundMatch.challonge_match_ref) {
+                        lossPathMatch.home = loser;
+                        lossPathMatch.markModified('home');
+                    } else {
+                        lossPathMatch.away = loser;
+                        lossPathMatch.markModified('away');
+                    }
+
+                    lossPathMatch.save().then(saved => {}, err => {});
+
+                }
+
+            }
+
+        } else {
+            console.log('the loss path match was not found');
+        }
+
+        //hope reporting winner only does the trick
         reportToChallonge(foundMatch, winner, winnerID).then(returned => {})
 
     }

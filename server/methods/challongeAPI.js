@@ -50,13 +50,14 @@ function matchUpdate(tournamentId, matchId, scores, winner) {
     });
 }
 
-function createTournament(name, url, description) {
+function createTournament(name, url, description, type) {
     let postObj = {
         api_key: process.env.challongeApiKey,
         tournament: {
             name: name,
             url: url,
-            description: description
+            description: description,
+            tournament_type: type
         }
     }
     return axios.post(tournamnetCreateAPI, postObj).then(response => { return response.data; }, err => { return err.response.data });

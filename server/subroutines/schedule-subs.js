@@ -248,7 +248,10 @@ function returnTeamInfo(fullTeamsInfo, finalParticipantArray, challongeRef) {
     return returnTeam;
 }
 
-async function generateTournamentTwo(teams, season, division, cup, name, description) {
+const SINGLE_ELIMINATION = 'single elimination';
+const DOUBLE_ELIMINATION = 'double elimination';
+
+async function generateTournamentTwo(teams, season, division, cup, name, description, type) {
 
     divSubs.cupDivisionAggregator(teams, division);
 
@@ -287,8 +290,12 @@ async function generateTournamentTwo(teams, season, division, cup, name, descrip
     //sets a default for description if none was provided
     description = description ? description : 'No description provided';
 
+    type = type ? type.toLowerCase() : SINGLE_ELIMINATION;
+
+    console.log('TYPE', type);
+
     //create a new tournament in the challonge system and get the response
-    let newTournament = await challonge.createTournament(name, url, description).then(response => {
+    let newTournament = await challonge.createTournament(name, url, description, type).then(response => {
         return response;
     });
 
@@ -419,12 +426,28 @@ async function generateTournamentTwo(teams, season, division, cup, name, descrip
                                 id: ngsID,
                                 challonge_ref: match.id
                             });
+
                             //if this is the final match of the tournament save it to the finalMatchRef
-                            let iter = match.suggested_play_order;
-                            if (iter == chalMatches.length) {
-                                finalMatchRef['matchId'] = ngsID;
-                                finalMatchRef['challonge_ref'] = match.id
+                            //this would only apply to the SE tournament
+                            if (type == SINGLE_ELIMINATION) {
+                                let iter = match.suggested_play_order;
+                                if (iter == chalMatches.length) {
+                                    finalMatchRef['matchId'] = ngsID;
+                                    finalMatchRef['challonge_ref'] = match.id
+                                }
                             }
+
+                            //double elimination data
+                            if (type == DOUBLE_ELIMINATION) {
+                                to['loserChildren'] = [];
+                                if (match.player1_is_prereq_match_loser) {
+                                    to['loserChildren'].push(match.player1_prereq_match_id);
+                                }
+                                if (match.player2_is_prereq_match_loser) {
+                                    to['loserChildren'].push(match.player2_prereq_match_id);
+                                }
+                            }
+
                             //add the ngs match id to the list
                             matchIDsArray.push(ngsID);
                             //save the children IDs to array
@@ -456,8 +479,24 @@ async function generateTournamentTwo(teams, season, division, cup, name, descrip
                                     brackets.forEach(matchInner => {
                                         //if this second loop of match id's challonge ref equals the current challonge Id;
                                         if (matchInner.challonge_match_ref == challongeIdChild) {
-                                            //set this match parentId to the outer match
-                                            matchInner.parentId = matchOuter.matchId;
+                                            if (type == SINGLE_ELIMINATION) {
+                                                //set this match parentId to the outer match
+                                                matchInner.parentId = matchOuter.matchId;
+                                            } else {
+                                                console.log('matchInner.challonge_match_ref', matchInner.challonge_match_ref);
+                                                console.log('challongeIdChild', challongeIdChild);
+                                                console.log('matchOuter.loserChildren', matchOuter.loserChildren)
+                                                if (matchOuter.loserChildren) {
+                                                    console.log('typeof matchOuter.loserChildren[0]', typeof matchOuter.loserChildren[0]);
+                                                    console.log('typeof matchInner.challonge_match_ref', typeof matchInner.challonge_match_ref);
+                                                }
+                                                console.log('test', matchOuter.loserChildren, matchOuter.loserChildren.indexOf(parseInt(matchInner.challonge_match_ref)));
+                                                if (matchOuter.loserChildren && matchOuter.loserChildren.indexOf(parseInt(matchInner.challonge_match_ref)) > -1) {
+                                                    matchInner.loserPath = matchOuter.matchId;
+                                                } else {
+                                                    matchInner.parentId = matchOuter.matchId;
+                                                }
+                                            }
                                             //push the inner match id into the outer match children array
                                             matchOuter.idChildren.push(matchInner.matchId);
                                         }
@@ -465,6 +504,7 @@ async function generateTournamentTwo(teams, season, division, cup, name, descrip
                                 });
                             }
                         });
+
                         //was all that necessary?
 
 

@@ -76,7 +76,7 @@ export class AdminService {
   teams, season, division, cupNumber, tournamentName, description
   */
 
-  generateTournament(teams, season, name, division, cupNumber, description) {
+  generateTournament(teams, season, name, division, cupNumber, description, type) {
     let url = "/schedule/generate/tournament";
     let payload = {
       teams: teams,
@@ -85,6 +85,7 @@ export class AdminService {
       division: division,
       cupNumber: cupNumber,
       description: description,
+      type:type
     };
     return this.httpService.httpPost(url, payload, true);
   }

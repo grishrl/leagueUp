@@ -155,7 +155,12 @@
 
             <div class="row">
                 <div class="col">
-
+                    <mat-form-field class="mat-FullWidth">
+                        <mat-select placeholder="Division:" [(ngModel)]="selectedType" (ngModelChange)="typeSelected(selectedDivision)" disableOptionCentering>
+                            <mat-option *ngFor="let type of tournTypes" [value]="type.type">
+                                {{type.display}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
                 </div>
             </div>
 
