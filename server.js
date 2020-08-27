@@ -46,6 +46,13 @@ mongoose.connect(process.env.mongoURI, { useNewUrlParser: true }, () => {
     console.log('connected to mongodb');
 });
 
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
+
 //setup Routes
 app.use('/auth', authRoutes);
 app.use('/user', profileRoutes);
