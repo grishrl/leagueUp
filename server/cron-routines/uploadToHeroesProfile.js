@@ -6,7 +6,12 @@ const _ = require('lodash');
 const util = require('../utils');
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 const logger = require('../subroutines/sys-logging-subs');
+const Scheduling = require('../models/schedule-models');
 
+const TOURNAMENT = 'tournament';
+const GRANDFINAL = 'grandfinal';
+const SIMPLE = 'simple';
+const NONSEAON = 'nonSeasonalTourn';
 
 const location = 'uploadToHeroesProfileHandler'
 
@@ -186,7 +191,6 @@ function promiseQueue() {
             Promise.resolve(worker.apply()).then(
                 doWorkResolved => {
                     promiseQueue.active = false;
-                    // console.log('doWorkResolved ', doWorkResolved);
                     promiseQueue.doWork();
                 });
         }
@@ -206,7 +210,39 @@ async function sendToHp(postObj, divisions, matchCopy, match, matchObj, postedRe
     try {
         postObj['mode'] = process.env.heroProfileMode;
         //util.errLogger(location, null, 'matchCopy '+ matchCopy);
-        postObj['division'] = getDivisionNameFromConcat(divisions, matchCopy.divisionConcat);
+
+
+
+        let det = await determineDivision(matchCopy, divisions).then(
+            ret => {
+                return ret;
+            }
+        );
+
+
+
+        if (det.type == SIMPLE) {
+            postObj['team_one_division'] = det.divName;
+            postObj['team_two_division'] = det.divName;
+
+        } else if (det.type == NONSEAON) {
+            postObj['tournament'] = det.divName;
+
+        } else if (det.type == GRANDFINAL) {
+            postObj['team_one_division'] = _.find(det.divName, val => {
+                if (val.teamName == matchCopy.home.teamName) {
+                    return true;
+                }
+            }).divName;
+            postObj['team_two_division'] = _.find(det.divName, val => {
+                if (val.teamName == matchCopy.away.teamName) {
+                    return true;
+                }
+            }).divName;
+        } else {
+            postObj['division'] = undefined;
+        }
+
         postObj['team_one_name'] = matchCopy.home.teamName;
         postObj['team_one_image_url'] = process.env.heroProfileImage + matchCopy.home.logo;
         postObj['team_two_name'] = matchCopy.away.teamName;
@@ -221,7 +257,7 @@ async function sendToHp(postObj, divisions, matchCopy, match, matchObj, postedRe
             postObj['team_two_map_ban_1'] = matchCopy.mapBans.awayOne;
             postObj['team_two_map_ban_2'] = matchCopy.mapBans.awayTwo;
         }
-        if (matchCopy.type == 'tournament') {
+        if (matchCopy.type == TOURNAMENT) {
             postObj['round'] = 'T-' + matchCopy.round.toString();
         } else {
             postObj['round'] = matchCopy.round.toString();
@@ -231,6 +267,7 @@ async function sendToHp(postObj, divisions, matchCopy, match, matchObj, postedRe
         util.errLogger(location, e);
     } finally {
         if (util.returnBoolByPath(matchCopy, 'replays')) {
+
             let replayKeys = Object.keys(matchCopy.replays);
             //util.errLogger(location, null, 'replayKeys '+ replayKeys)
             for (var j = 0; j < replayKeys.length; j++) {
@@ -250,6 +287,10 @@ async function sendToHp(postObj, divisions, matchCopy, match, matchObj, postedRe
                     if (screenPostObject(postObj)) {
                         // if (false) {
                         //     // call to hotsprofile
+
+
+                        //>>>>>>>>>>>>>>>>>>>>>>>>
+                        console.log(postObj);
                         let posted = await hpAPI.matchUpload(postObj).then(reply => {
                             return reply;
                         }, err => {
@@ -292,7 +333,6 @@ async function sendToHp(postObj, divisions, matchCopy, match, matchObj, postedRe
                     }
                 }
                 if (fallThroughCheck) {
-                    console.log('localKey', localKey);
                     logObj.logLevel = "WARNING";
                     logObj.error = "This replay did nothing, needs investigation.";
                     logger(logObj);
@@ -345,4 +385,51 @@ function getDivisionNameFromConcat(divisionList, divConcat) {
         }
     });
     return returnDiv;
+}
+
+async function determineDivision(match, divisions) {
+    let divisionReturn = {};
+    if (match.divisionConcat) {
+        divisionReturn['type'] = SIMPLE;
+        divisionReturn['divName'] = getDivisionNameFromConcat(divisions, match.divisionConcat);
+    } else {
+        if (match.type == TOURNAMENT) {
+            divisionReturn['type'] = NONSEAON;
+            let tournName = await Scheduling.findOne({
+                challonge_ref: parseInt(match.challonge_tournament_ref)
+            }).then(
+                found => {
+                    return util.returnByPath(util.objectify(found), 'name');
+                },
+                err => {
+                    return undefined;
+                }
+            );
+
+            divisionReturn['divName'] = tournName
+
+        } else if (match.type == GRANDFINAL) {
+            divisionReturn['type'] = GRANDFINAL;
+            divisionReturn['divName'] = []
+
+            divisionReturn.divName.push({
+                teamName: match.away.teamName,
+                divName: getDivisionByTeamName(divisions, match.away.teamName).displayName
+            });
+
+            divisionReturn.divName.push({
+                teamName: match.home.teamName,
+                divName: getDivisionByTeamName(divisions, match.home.teamName).displayName
+            });
+        }
+    }
+    return divisionReturn;
+}
+
+function getDivisionByTeamName(divisionList, teamName) {
+    return _.find(divisionList, function(v) {
+        if (v.teams.indexOf(teamName) > -1) {
+            return true;
+        }
+    });
 }

@@ -369,4 +369,9 @@ export class AdminService {
     let payload = { matchId: id };
     return this.httpService.httpPost(url, payload, true);
   }
+
+  createGrandFinal(obj){
+    let url = "/admin/match/create/grandfinal";
+    return this.httpService.httpPost(url, obj, true);
+  }
 }

@@ -173,10 +173,16 @@ export class GrandFinalGeneratorComponent implements OnInit {
 
   generate() {
     this.finalMatch.type = 'grandfinal';
-    console.log(this.finalMatch, JSON.stringify(this.finalMatch));
-    //submit for save....
+    this.admin.createGrandFinal(this.finalMatch).subscribe(
+      res=>{
+        this.ngOnInit();
+      },err=>{
+        console.log(err);
+      }
+    )
   }
 
   ngOnInit(): void {
+    this.finalMatch = new Match();
   }
 }

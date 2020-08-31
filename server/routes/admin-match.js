@@ -431,7 +431,7 @@ router.post('/match/deletereplay', passport.authenticate('jwt', {
 router.post('/match/create/grandfinal', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.multi(['MATCH']), util.appendResHeader, (req, res) => {
-    const path = '/match/create/grandfinal';
+    const path = 'admin/match/create/grandfinal';
 
     const logInfo = {}
     logInfo.action = 'create grand final match';
