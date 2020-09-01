@@ -56,6 +56,7 @@ import { StreamManagerComponent } from './admin/stream-manager/stream-manager.co
 import { ArchiveSeasonComponent } from './admin/archive-season/archive-season.component';
 import { TournamentViewerComponent } from './tournament-viewer/tournament-viewer.component';
 import { GrandFinalGeneratorComponent } from './admin/grand-final-generator/grand-final-generator.component';
+import { GrandChampionsViewerComponent } from "./grand-champions-viewer/grand-champions-viewer.component";
 
 const APP_ROUTES: Routes = [
   { path: "challonge", component: ChallongeTournComponent },
@@ -87,6 +88,7 @@ const APP_ROUTES: Routes = [
   { path: "teamProfile/:id/:season", component: TeamProfileComponent },
   { path: "allTeams", component: AllTeamsComponent },
   { path: "pastSeasons", component: PastSeasonsComponent },
+  { path: "grandchamps", component: GrandChampionsViewerComponent },
   { path: "teamCreate", component: CreateTeamComponent },
   {
     path: "division/:division",

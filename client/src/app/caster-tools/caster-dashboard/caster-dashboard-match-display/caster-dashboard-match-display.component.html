@@ -43,10 +43,11 @@
             </div>
             <div class="col ">
                 <span class="h6">Game Type: </span>
-                <span *ngIf="match.type=='tournament' else seasonal ">Tournament Match</span>
-                <ng-template #seasonal>
-                    <span>Regular Season Game</span>
-                </ng-template>
+                <ng-container [ngSwitch]="match.type">
+                    <span class="h5" *ngSwitchCase="'tournament'">Tournament Match</span>
+                    <span class="h4" *ngSwitchCase="'grandfinal'">Grand Finals Match</span>
+                    <span *ngSwitchDefault>Regular Season Game</span>
+                </ng-container>
             </div>
         </div>
         <div class="row mt-2 " *ngIf="!replayView">

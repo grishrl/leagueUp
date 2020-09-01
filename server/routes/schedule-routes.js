@@ -77,6 +77,83 @@ router.post('/fetch/matches', async(req, res) => {
     });
 });
 
+router.get('/get/grandchampions', async(req, res) => {
+
+    const path = '/schedule/get/grandchampions'
+
+    let query = {
+        $and: [{
+                type: 'grandfinal'
+            },
+            {
+                reported: true
+            }
+        ]
+    };
+
+    let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+
+    let foundMatches = await Match.find(query).lean().then(
+        found => {
+            return found;
+        },
+        err => {
+            res.status(500).send(util.returnMessaging(path, 'Error finding matches', err));
+        }
+    );
+
+    if (foundMatches) {
+        let finalsBySeason = {};
+
+        foundMatches = foundMatches.sort((a, b) => {
+            if (a > b) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+
+        for (var i = 1; i < currentSeasonInfo.value; i++) {
+
+            foundMatches.forEach(m => {
+                if (m.season == i) {
+                    if (util.returnBoolByPath(finalsBySeason, `${i}.rawMatches`)) {
+                        finalsBySeason[i].rawMatches.push(m);
+                    } else {
+                        finalsBySeason[i] = {
+                            rawMatches: [m]
+                        };
+                    }
+                }
+            });
+
+        }
+
+        let keys = Object.keys(finalsBySeason);
+
+        for (var i = 0; i < keys.length; i++) {
+            let key = keys[i];
+            let matches = finalsBySeason[key].rawMatches;
+            let processedMatches = await matchCommon.addTeamInfoFromArchiveToMatch(matches, key).then(
+                processed => {
+                    return processed;
+                },
+                err => {
+                    return null;
+                }
+            );
+
+            finalsBySeason[key]['processedMatches'] = processedMatches;
+        }
+
+        res.status(200).send(util.returnMessaging(path, 'Found these matches', null, finalsBySeason));
+
+    } else {
+        res.status(200).send(util.returnMessaging(path, 'Found these matches', null, []));
+    }
+
+});
+
 router.post('/fetch/reported/matches', async(req, res) => {
 
     const path = 'schedule/fetch/reported/matches';

@@ -1,0 +1,13 @@
+<div class="row mt-2">
+    <div class="col text-center">
+        <h5>{{match.title}}</h5>
+    </div>
+</div>
+<app-match-results-header [match]="match"></app-match-results-header>
+<div class="text-center">
+    <span *ngIf="hide" class="finger text-primary" (click)="hide=!hide"><a>Show More</a></span>
+    <span *ngIf="!hide" class="finger text-primary" (click)="hide=!hide"><a>Show Less</a></span>
+</div>
+<div [hidden]="hide">
+    <app-games-information [match]="match"></app-games-information>
+</div>

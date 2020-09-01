@@ -4,31 +4,7 @@
 
     <div class="container paddings-mini">
 
-        <div class="row p-5 mb-5">
-            <div class="col text-center my-auto">
-                <span>
-                    <app-team-link [team]="match.home.teamName">
-                        <img src="{{homeLogo}}" alt="">
-                        <div>{{match.home.teamName}}</div>
-                    </app-team-link>
-                </span>
-            </div>
-            <div class="col text-center my-auto">
-                <span>
-                    <b>{{homeScore}}</b> - <b>{{awayScore}}</b>
-                </span>
-            </div>
-            <div class="col text-center my-auto">
-                <span>
-                    <app-team-link [team]="match.away.teamName">
-                        <img src="{{awayLogo}}" alt="">
-                        <div>
-                            {{match.away.teamName}}
-                        </div>
-                    </app-team-link>
-                </span>
-            </div>
-        </div>
+        <app-match-results-header [match]="match"></app-match-results-header>
         <app-games-information [match]="match"></app-games-information>
     </div>
 </section>

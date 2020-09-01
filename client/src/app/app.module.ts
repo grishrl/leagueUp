@@ -198,6 +198,9 @@ import { NotesCreateComponent } from './notes/notes-create/notes-create.componen
 import { TournamentViewerComponent } from './tournament-viewer/tournament-viewer.component';
 import { PastTournamentViewerComponent } from './tournament-viewer/past-tournament-viewer/past-tournament-viewer.component';
 import { CasterReportComponent } from './caster-tools/caster-report/caster-report.component';
+import { GrandChampionsViewerComponent } from './grand-champions-viewer/grand-champions-viewer.component';
+import { ChampExpanderComponent } from './grand-champions-viewer/champ-expander/champ-expander.component';
+import { MatchResultsHeaderComponent } from './match/match-results-view/match-results-header/match-results-header.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -381,7 +384,10 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     NotesCreateComponent,
     TournamentViewerComponent,
     PastTournamentViewerComponent,
-    CasterReportComponent
+    CasterReportComponent,
+    GrandChampionsViewerComponent,
+    ChampExpanderComponent,
+    MatchResultsHeaderComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

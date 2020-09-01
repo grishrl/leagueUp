@@ -272,4 +272,9 @@ export class ScheduleService {
     let url = "schedule/match/fetch/mycasted";
     return this.httpService.httpPost(url, payload, false);
   }
+
+  getGrandFinals(){
+    let url = "/schedule/get/grandchampions";
+    return this.httpService.httpGet(url, [], false);
+  }
 }

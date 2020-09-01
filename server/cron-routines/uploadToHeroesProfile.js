@@ -290,7 +290,6 @@ async function sendToHp(postObj, divisions, matchCopy, match, matchObj, postedRe
 
 
                         //>>>>>>>>>>>>>>>>>>>>>>>>
-                        console.log(postObj);
                         let posted = await hpAPI.matchUpload(postObj).then(reply => {
                             return reply;
                         }, err => {
