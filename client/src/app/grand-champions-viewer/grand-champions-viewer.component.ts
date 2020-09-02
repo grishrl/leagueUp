@@ -15,7 +15,7 @@ export class GrandChampionsViewerComponent implements OnInit {
   selectedSeason;
   seasonArray = [];
   matches;
-  show=false;
+  doneLoading=false;
   constructor(
     private sched: ScheduleService,
     private timeServ: TimeserviceService
@@ -31,10 +31,10 @@ export class GrandChampionsViewerComponent implements OnInit {
       }
     });
         this.sched.getGrandFinals().subscribe((res) => {
-
           forEach(res, (v, k) => {
             this.grandFinals[k] = v;
           });
+          this.doneLoading = true;
           this.createMatches();
         });
   }

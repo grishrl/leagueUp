@@ -18,21 +18,29 @@
 
                 <div class="row">
                     <div class="col">
-                        <div *ngIf="matches?.processedMatches else notAvailable">
-                            <div *ngFor="let champion of sortMatchesCorrectly(matches.processedMatches); let i = index">
-                                <br *ngIf="i>0">
-                                <app-champ-expander [match]="champion"></app-champ-expander>
+                        <ng-container *ngIf="doneLoading else loadingTemplate">
+                            <div *ngIf="matches?.processedMatches else notAvailable">
+                                <div *ngFor="let champion of sortMatchesCorrectly(matches.processedMatches); let i = index">
+                                    <br *ngIf="i>0">
+                                    <app-champ-expander [match]="champion"></app-champ-expander>
+                                </div>
                             </div>
-                        </div>
-                        <ng-template #notAvailable>
-                            <div class="text-center">
-                                <h5>Looks like we don't have that information</h5>
-                                <img src="/assets/obiwan.jpg">
-                            </div>
-                        </ng-template>
+                            <ng-template #notAvailable>
+                                <div class="text-center">
+                                    <h5>Looks like we don't have that information</h5>
+                                    <img src="/assets/obiwan.jpg">
+                                </div>
+                            </ng-template>
+                        </ng-container>
                     </div>
                 </div>
-
+                <ng-template #loadingTemplate>
+                    <div class="col text-center">
+                        <div class="loading-box mx-auto mt-5">
+                            <div class="loading-text"><i class="fas fa-spin fa-spinner"></i> Loading..</div>
+                        </div>
+                    </div>
+                </ng-template>
 
 
                 <!-- <div class="row mt-3" *ngFor="let season of grandFinals | keyvalue:sortOrder">

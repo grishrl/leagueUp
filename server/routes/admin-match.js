@@ -450,7 +450,6 @@ router.post('/match/create/grandfinal', passport.authenticate('jwt', {
         }
     )
 
-
 });
 
 router.post('/match/delete/grandfinal', passport.authenticate('jwt', {
