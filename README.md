@@ -9,7 +9,7 @@ Clone the repo to your local machine,
 Run npm install in the top level directroy - this install any dependecies for the server
 Run npm install in the client directory - this install any dependencies for the client
 
-Install the heroku local CLI
+Install the heroku local CLI https://devcenter.heroku.com/articles/heroku-cli#download-and-install
 
 Request a copy of the .env file for the node server
 
