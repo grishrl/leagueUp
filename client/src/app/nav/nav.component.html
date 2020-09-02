@@ -72,19 +72,17 @@
                                     </ul>
                                 </li>
 
-                                <li class="current">
-                                    <a [routerLink]="['/pastSeasons']">Past Seasons</a>
 
-                                    <!--<a class="linkColorFix finger">Past Seasons
-                                    </a>
+                                <li class="current">
+                                    <a class="finger linkColorFix">Past Seaons</a>
                                     <ul class="sub-current" appHideMenu>
                                         <li>
-                                            <a [routerLink]="['/pastSeasons']">Past Seasons</a>
+                                            <a [routerLink]="['/pastSeasons']">Past Divison</a>
                                         </li>
-                                         <li>
-                                            <a>Hall of Fame</a>
+                                        <li>
+                                            <a [routerLink]="['/grandchamps']">NGS GOATs</a>
                                         </li>
-                                    </ul> -->
+                                    </ul>
                                 </li>
                                 <li>
                                     <a [routerLink]="['/blog']">Blog</a>
@@ -220,8 +218,17 @@
             </ul>
         </li>
         <li>
-            <a [routerLink]="['/pastSeasons']">Past Seasons</a>
+            <a>Past Seasons</a>
+            <ul>
+                <li>
+                    <a [routerLink]="['/pastSeasons']">Past Divisons</a>
+                </li>
+                <li>
+                    <a [routerLink]="['/grandchamps']">NGS GOATs</a>
+                </li>
+            </ul>
         </li>
+
         <li>
             <a [routerLink]="['/blog']">Blog</a>
         </li>
