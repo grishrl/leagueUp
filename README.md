@@ -22,9 +22,9 @@ Connect to localhost:5000
 
 ### Prerequisites
 
-Heroku Local CLI
-NPM
-Clone the repo to your local machine 
+* Heroku Local CLI
+* NPM,
+* Clone the repo to your local machine 
 
 
 ### Running locally
