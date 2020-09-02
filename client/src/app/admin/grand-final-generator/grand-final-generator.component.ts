@@ -124,7 +124,6 @@ export class GrandFinalGeneratorComponent implements OnInit {
       }
       return true;
     });
-    console.log(this.teamDisplay);
   }
 
   removeFromMatch(side) {

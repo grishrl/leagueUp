@@ -19,7 +19,7 @@
                 <div class="row">
                     <div class="col">
                         <div *ngIf="matches?.processedMatches else notAvailable">
-                            <div *ngFor="let champion of matches.processedMatches; let i = index">
+                            <div *ngFor="let champion of sortMatchesCorrectly(matches.processedMatches); let i = index">
                                 <br *ngIf="i>0">
                                 <app-champ-expander [match]="champion"></app-champ-expander>
                             </div>
@@ -29,7 +29,6 @@
                                 <h5>Looks like we don't have that information</h5>
                                 <img src="/assets/obiwan.jpg">
                             </div>
-
                         </ng-template>
                     </div>
                 </div>
