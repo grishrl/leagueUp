@@ -13,6 +13,12 @@ import { AuthService } from '../services/auth.service';
 import { find } from 'lodash';
 
 const colors: any = {
+  storm: {
+    //navy
+    primary: "#c5e610",
+    name: "Storm Division",
+    sortOder: 1,
+  },
   heroic: {
     //navy
     primary: "#001f3f",
@@ -37,52 +43,64 @@ const colors: any = {
     name: "Division B East",
     sortOder: 3,
   },
+  "b-northeast": {
+    //teal
+    primary: "#0f8c8c",
+    name: "Division B North East",
+    sortOder: 4,
+  },
+  "b-southeast": {
+    //teal
+    primary: "#15e8e8",
+    name: "Division B South East",
+    sortOder: 5,
+  },
   "b-west": {
     //aqua
     primary: "#7FDBFF",
     name: "Division B West",
-    sortOder: 4,
+    sortOder: 6,
   },
   "c-east": {
     //fuchsia
     primary: "#F012BE",
     name: "Division C East",
-    sortOder: 5,
+    sortOder: 7,
   },
   "c-west": {
     //PURPLE
     primary: "#B10DC9",
     name: "Division C West",
-    sortOder: 6,
+    sortOder: 8,
   },
   "d-east": {
     //green
     primary: "#2ECC40",
     name: "Division D East",
-    sortOder: 7,
+    sortOder: 9,
   },
   "d-west": {
     //lime
     primary: "#01FF70",
     name: "Division D West",
-    sortOder: 8,
+    sortOder: 10,
   },
   e: {
     //purple
     primary: "#FAD165",
     name: "Division E",
-    sortOder: 8,
+    sortOder: 11,
   },
   event: {
     //orange
     primary: "#FF851B",
     name: "NGS Event",
-    sortOder: 9,
+    sortOder: 12,
   },
   tournament: {
     primary: "#E5D800",
-    name:"Tournament",
-    sortOrder: 10
+    name: "Tournament",
+    sortOrder: 13,
   },
 };
 
@@ -140,8 +158,6 @@ export class CalendarViewComponent implements OnInit {
         matches = this.util.sortMatchesByTime(matches);
 
         let now = Date.now()
-
-        console.log(matches);
 
         let tournamentRefs = [];
 
@@ -264,21 +280,13 @@ export class CalendarViewComponent implements OnInit {
     let retStr = '';
 
     if(match.divisionConcat){
-      retStr = (colors[match.divisionConcat]
-        ? colors[match.divisionConcat].name
-        : "matchErr") +
-        ": " +
-        (this.util.returnBoolByPath(match, "home.teamName")
-          ? match.home.teamName
-          : "TBD") +
-        " vs " +
-        (this.util.returnBoolByPath(match, "away.teamName")
-          ? match.away.teamName
-          : "TBD");
+      retStr += colors[match.divisionConcat] ? colors[match.divisionConcat].name : "matchErr";
+      retStr += ": ";
+      retStr += this.util.returnBoolByPath(match, "home.teamName") ? match.home.teamName : "TBD";
+      retStr +=" vs " ;
+      retStr += this.util.returnBoolByPath(match, "away.teamName") ? match.away.teamName : "TBD";
     }else{
-
       retStr = '';
-
       let t = find(this.tournamentRefs.tournInfo, (itr)=>{
         if(itr.challonge_ref==match.challonge_tournament_ref){
           return true;
@@ -295,8 +303,8 @@ export class CalendarViewComponent implements OnInit {
         ? match.away.teamName
         : "TBD");
 
-    return retStr;
   }
+  return retStr;
 }
 
   @ViewChild('modalContent', { static: false })
