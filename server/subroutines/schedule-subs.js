@@ -11,6 +11,8 @@ const divSubs = require('./division-subs');
 const lodash = require('lodash');
 
 
+const SEASONAL = 'seasonal';
+const TOURNAMENT = 'tournament';
 
 /* Match report format required for the generator
     {
@@ -100,6 +102,7 @@ async function generateSeason(season) {
         // create the schedule object
         let schedObj = {
                 "season": season,
+                "type": SEASONAL,
                 "division": divObj
             }
             //save the schedule object to db
@@ -139,10 +142,17 @@ function generateRoundRobinSchedule(season) {
     logObj.timeStamp = new Date().getTime();
     logObj.logLevel = 'STD';
 
+    const query = {
+        $and: [{
+                "season": season
+            },
+            {
+                'type': SEASONAL
+            }
+        ]
+    };
     //grab the schedule of the season in question
-    Scheduling.findOne({
-        "season": season
-    }).then((found) => {
+    Scheduling.findOne(query).then((found) => {
         //get the divisions
         let divisions = found.division;
         //make an array of the divisions as keys to iterate through
@@ -520,7 +530,7 @@ async function generateTournamentTwo(teams, season, division, cup, name, descrip
                         //create a schedule object to go along with this tournament
                         //give it particpants and the matches asscoated with this tournament
                         let schedObj = {
-                            'type': 'tournament',
+                            'type': TOURNAMENT,
                             'name': name,
                             'division': division,
                             'season': season,
