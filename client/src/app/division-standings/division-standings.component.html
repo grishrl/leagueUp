@@ -8,18 +8,20 @@
                 <app-division-selector [inputDiv]="passDiv" (selectedDiv)="selectedDiv($event)"></app-division-selector>
             </div>
             <ul *ngIf="!noDivisions else showNoDivisions">
-                <li *ngFor="let standing of standings">
-                    <span class="position">
-                                {{standing.standing}}
-                              </span>
-                    <div style="width: 200px; display: inline-flex;" class="obnoxious-long-name-band-aid">
-                        <app-team-link [team]="standing.teamName">
-                            {{standing.teamName}}</app-team-link>
-                    </div>
-                    <span class="points">
-                                {{standing.points}}
-                              </span>
-                </li>
+                <ng-container *ngIf="standings.length>0 else noReported">
+                    <li *ngFor="let standing of standings">
+                        <span class="position">
+                                  {{standing.standing}}
+                                </span>
+                        <div style="width: 200px; display: inline-flex;" class="obnoxious-long-name-band-aid">
+                            <app-team-link [team]="standing.teamName">
+                                {{standing.teamName}}</app-team-link>
+                        </div>
+                        <span class="points">
+                                  {{standing.points}}
+                                </span>
+                    </li>
+                </ng-container>
             </ul>
         </div>
 
@@ -38,3 +40,7 @@
         </ng-template>
     </div>
 </div>
+
+<ng-template #noReported>
+    <span>No Reported Matches Yet</span>
+</ng-template>

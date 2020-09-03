@@ -31,7 +31,7 @@ async function calulateStandings(division, season, pastSeason) {
 
         return standings;
     } catch (e) {
-        util.errLogger('standings-subs', e);
+        util.errLogger('standings-subs, calulateStandings', e);
     }
 
 
@@ -199,10 +199,10 @@ async function cupDivStanding(division, season) {
             ).then(
                 saved => {
                     //needs to be replaced with dB log if ever used.
-                    util.errLogger('standings-subs', null, 'standings upserted');
+                    util.errLogger('standings-subs, cupDivStanding', null, 'standings upserted');
                 },
                 err => {
-                    util.errLogger('standings-subs', err);
+                    util.errLogger('standings-subs, cupDivStanding', err);
                 }
             );
         }
@@ -283,8 +283,16 @@ async function stdDivStanding(division, season, pastSeason) {
     );
 
     let standings = [];
+    let nonReportedMatchCount = 0;
     //calcualte the standings of the teams
     if (matchesForDivision != false) {
+
+        //loop through the matches and check if we have any reported matches; no division standings without matches reported.
+        matchesForDivision.forEach(match => {
+            if (util.returnBoolByPath(match, 'reported') == false) {
+                nonReportedMatchCount++;
+            }
+        });
         //loop through the list of team ids
         teams.forEach(team => {
             //create a response object per team..
@@ -297,6 +305,13 @@ async function stdDivStanding(division, season, pastSeason) {
             standing['matchesPlayed'] = 0;
             //loop through the matches et all for division
             matchesForDivision.forEach(match => {
+                if (match.away.id == team) {
+                    standing['teamName'] = match.away.teamName;
+                    standing['logo'] = match.away.logo;
+                } else if (match.home.id == team) {
+                    standing['teamName'] = match.home.teamName;
+                    standing['logo'] = match.home.logo;
+                }
                 //if the match is not reported; ignore it
                 if (util.returnBoolByPath(match, 'reported') == false) {
                     return;
@@ -304,8 +319,8 @@ async function stdDivStanding(division, season, pastSeason) {
                     //match the team id
                     if (match.away.id == team) {
                         //get team info from here
-                        standing['teamName'] = match.away.teamName;
-                        standing['logo'] = match.away.logo;
+                        // standing['teamName'] = match.away.teamName;
+                        // standing['logo'] = match.away.logo;
                         //score from this game if team id was away
                         let score = match.away.score
                             //dominator variable
@@ -349,8 +364,8 @@ async function stdDivStanding(division, season, pastSeason) {
                         }
                     } else if (match.home.id == team) {
                         //get team info from here
-                        standing['teamName'] = match.home.teamName;
-                        standing['logo'] = match.home.logo;
+                        // standing['teamName'] = match.home.teamName;
+                        // standing['logo'] = match.home.logo;
                         //score from this game if team id was home
                         let score = match.home.score
                             //dominator variable
@@ -396,17 +411,22 @@ async function stdDivStanding(division, season, pastSeason) {
             standings.push(standing);
         });
     }
-    //sort resultant standings by points
-    standings.sort((a, b) => {
-        if (a.points > b.points) {
-            return -1;
-        } else {
-            return 1;
+
+    if (nonReportedMatchCount == matchesForDivision.length) {
+        standings = [];
+    } else {
+        //sort resultant standings by points
+        standings.sort((a, b) => {
+            if (a.points > b.points) {
+                return -1;
+            } else {
+                return 1;
+            }
+        });
+        //add a position property 1st,....
+        for (var i = 0; i < standings.length; i++) {
+            standings[i]['standing'] = i + 1;
         }
-    });
-    //add a position property 1st,....
-    for (var i = 0; i < standings.length; i++) {
-        standings[i]['standing'] = i + 1;
     }
     return standings;
 }

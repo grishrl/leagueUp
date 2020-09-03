@@ -1,36 +1,48 @@
-<div class="table-responsive">
-    <table class="table-striped  table-hover result-point">
-        <thead class="point-table-head">
-            <tr>
-                <th class="text-left">Rank</th>
-                <th class="text-left">Team</th>
-                <th class="text-center">Points</th>
-                <th class="text-center">Dominations</th>
-                <th class="text-center">Games<br>Won</th>
-                <th class="text-center">Games<br>Lost</th>
-                <th class="text-center">Matches<br>Played</th>
-            </tr>
-        </thead>
+<ng-container *ngIf="standings.length>0 else noStandings">
+    <div class="table-responsive">
+        <table class="table-striped  table-hover result-point">
+            <thead class="point-table-head">
+                <tr>
+                    <th class="text-left">Rank</th>
+                    <th class="text-left">Team</th>
+                    <th class="text-center">Points</th>
+                    <th class="text-center">Dominations</th>
+                    <th class="text-center">Games<br>Won</th>
+                    <th class="text-center">Games<br>Lost</th>
+                    <th class="text-center">Matches<br>Played</th>
+                </tr>
+            </thead>
 
-        <tbody class="text-center">
-            <tr *ngFor="let standing of standings">
-                <td class="text-left number">{{standing.standing}}
-                    <!-- todo: figure up or down if possible -->
-                    <!-- <i class="fa fa-caret-up" aria-hidden="true"></i>-->
-                </td>
-                <td class="text-left">
-                    <!-- <img src="img/clubs-logos/colombia.png" alt="Colombia"> -->
-                    <span>
-                      <app-team-link [team]="standing.teamName" [season]="seasonVal">{{standing.teamName}}</app-team-link>
-                    </span>
-                </td>
-                <td>{{standing.points}}</td>
-                <td>{{standing.dominations}}</td>
-                <td>{{standing.wins}}</td>
-                <td>{{standing.losses}}</td>
-                <td>{{standing.matchesPlayed}}</td>
-            </tr>
 
-        </tbody>
-    </table>
-</div>
+            <tbody class="text-center">
+                <tr *ngFor="let standing of standings">
+                    <td class="text-left number">{{standing.standing}}
+                        <!-- todo: figure up or down if possible -->
+                        <!-- <i class="fa fa-caret-up" aria-hidden="true"></i>-->
+                    </td>
+                    <td class="text-left">
+                        <!-- <img src="img/clubs-logos/colombia.png" alt="Colombia"> -->
+                        <span>
+                        <app-team-link [team]="standing.teamName" [season]="seasonVal">{{standing.teamName}}</app-team-link>
+                      </span>
+                    </td>
+                    <td>{{standing.points}}</td>
+                    <td>{{standing.dominations}}</td>
+                    <td>{{standing.wins}}</td>
+                    <td>{{standing.losses}}</td>
+                    <td>{{standing.matchesPlayed}}</td>
+                </tr>
+
+            </tbody>
+
+
+        </table>
+    </div>
+</ng-container>
+<ng-template #noStandings>
+    <div class="col text-center">
+        <div class="loading-box mx-auto mt-5">
+            <div class="loading-text">No Matches Reported Yet</div>
+        </div>
+    </div>
+</ng-template>
