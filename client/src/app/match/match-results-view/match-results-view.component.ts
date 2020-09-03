@@ -19,19 +19,25 @@ export class MatchResultsViewComponent implements OnInit {
 
   constructor(
     private timeService: TimeserviceService,
-    private scheduleService: ScheduleService
-  ) {}
+    private scheduleService: ScheduleService,
+    private route: ActivatedRoute
+  ) {
+        if (this.route.snapshot.params["id"]) {
+          this.recId = this.route.snapshot.params["id"];
+        }
+  }
 
   match: Match = new Match();
   seasonVal;
 
   ngOnInit(): void {
-      this.scheduleService.getMatchInfo(this.recId).subscribe(
-        (res) => {
-          this.match = res;
-        },
-        (err) => {}
-      );
+    console.log("this", this.match, this.recId);
+    this.scheduleService.getMatchInfo(this.recId).subscribe(
+      (res) => {
+        this.match = res;
+      },
+      (err) => {}
+    );
   }
   // recId;
   // constructor(public util: UtilitiesService, private scheduleService:ScheduleService, private route: ActivatedRoute, public team: TeamService,  private timeService:TimeserviceService) {

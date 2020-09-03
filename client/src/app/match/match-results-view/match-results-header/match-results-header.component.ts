@@ -15,17 +15,23 @@ export class MatchResultsHeaderComponent implements OnInit {
   seasonVal;
   constructor(
     public util: UtilitiesService,
-    private scheduleService: ScheduleService,
-    private route: ActivatedRoute,
     public team: TeamService,
     private timeService: TimeserviceService
   ) {
     this.timeService.getSesasonInfo().subscribe((time) => {
       this.seasonVal = time.value;
+      this.init();
     });
   }
 
-  @Input() match: Match = new Match();
+  matchVal: Match = new Match();
+
+  @Input() set match(val){
+    if(val){
+      this.matchVal = val;
+      this.init();
+    }
+  }
 
   homeScore;
   awayScore;
@@ -33,17 +39,18 @@ export class MatchResultsHeaderComponent implements OnInit {
   awayLogo;
 
   ngOnInit() {
-    if(this.match.season){
-      this.seasonVal = this.match.season
-    }
-    this.init();
+
   }
 
   init() {
-    this.homeLogo = this.team.imageFQDN(this.match.home.logo, this.seasonVal);
-    this.awayLogo = this.team.imageFQDN(this.match.away.logo, this.seasonVal);
-    this.homeScore = this.reportScore(this.match, "home");
-    this.awayScore = this.reportScore(this.match, "away");
+    if (this.util.returnBoolByPath(this.matchVal, "season")) {
+      this.seasonVal = this.matchVal.season;
+    }
+
+    this.homeLogo = this.team.imageFQDN(this.matchVal.home.logo, this.seasonVal);
+    this.awayLogo = this.team.imageFQDN(this.matchVal.away.logo, this.seasonVal);
+    this.homeScore = this.reportScore(this.matchVal, "home");
+    this.awayScore = this.reportScore(this.matchVal, "away");
   }
 
   reportScore(match, side) {
