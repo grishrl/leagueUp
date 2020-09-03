@@ -14,15 +14,14 @@ export class RoundColumnComponent implements OnInit {
 
   showRound;
   ngOnInit(): void {
-
     if(this.match){
-      let deadline = this.util.returnBoolByPath(this.match, 'hasDeadline');
-      let type = false;
       if(this.util.returnBoolByPath(this.match, 'type')){
-        type = this.match.type == 'tournament';
+        if(this.match.type == 'tournament'){
+          this.showRound = true;
+        }
+      }else if(!this.util.returnBoolByPath(this.match, 'type')){
+        this.showRound = this.util.returnBoolByPath(this.match, "scheduleDeadline");
       }
-      this.showRound = deadline || type;
     }
-
   }
   }
