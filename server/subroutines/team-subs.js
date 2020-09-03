@@ -25,7 +25,7 @@ function upsertTeamsDivision(teams, division) {
 //division : object, division obhect
 function upsertTeamDivision(team, division) {
     let logObj = {};
-    logObj.actor = 'SYSTEM; Update Team Divison';
+    logObj.actor = 'SYSTEM; Update Team Division';
     logObj.action = ' updating team division ';
 
     logObj.timeStamp = new Date().getTime();
@@ -499,8 +499,8 @@ function scrubUserFromTeams(username) {
     );
 };
 
-//will update all received teams history that they have been added to a divison once the division has been set to public:
-function updateDivisionHistory(teams, divisonName) {
+//will update all received teams history that they have been added to a division once the division has been set to public:
+function updateDivisionHistory(teams, divisionName) {
 
     let logObj = {};
     logObj.actor = 'SYSTEM; updateDivisionHistory';
@@ -523,14 +523,14 @@ function updateDivisionHistory(teams, divisonName) {
                             foundTeams[i].history = [{
                                 timestamp: Date.now(),
                                 action: 'Added to division',
-                                target: divisonName,
+                                target: divisionName,
                                 season: seasonNum
                             }]
                         } else {
                             foundTeams[i].history.push({
                                 timestamp: Date.now(),
                                 action: 'Added to division',
-                                target: divisonName,
+                                target: divisionName,
                                 season: seasonNum
                             })
                         }

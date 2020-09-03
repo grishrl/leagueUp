@@ -103,7 +103,7 @@ router.post('/match/update', passport.authenticate('jwt', {
 });
 
 
-router.post('/match/set/schedule/deadline', passport.authenticate('jwt', { session: false }), levelRestrict.matchLevel, util.appendResHeader, (req, res) => {
+router.post('/match/set/schedule/deadline', passport.authenticate('jwt', { session: false }), levelRestrict.matchLevel, util.appendResHeader, async(req, res) => {
     const path = 'admin/match/set/schedule/deadline';
     let div = req.body.division;
     let date = req.body.date;
@@ -116,7 +116,15 @@ router.post('/match/set/schedule/deadline', passport.authenticate('jwt', { sessi
     logInfo.actor = req.user.displayName;
     logInfo.target = div;
 
-    Match.find({ divisionConcat: div }).then((found) => {
+    let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+    let season = currentSeasonInfo.value;
+
+    const query = {
+        divisionConcat: div,
+        season: season
+    };
+
+    Match.find(query).then((found) => {
         if (found) {
             let updateFound;
             updateFoundAsync(endWeek, found, date).then(updated => {
