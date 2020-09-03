@@ -1,9 +1,9 @@
 <div class="row p-5 mb-5">
     <div class="col text-center my-auto">
         <span>
-              <app-team-link [team]="match.home.teamName">
+              <app-team-link [team]="matchVal.home.teamName">
                 <img src="{{homeLogo}}" alt="">
-                <div>{{match.home.teamName}}</div>
+                <div>{{matchVal.home.teamName}}</div>
               </app-team-link>
             </span>
     </div>
@@ -14,10 +14,10 @@
     </div>
     <div class="col text-center my-auto">
         <span>
-              <app-team-link [team]="match.away.teamName">
+              <app-team-link [team]="matchVal.away.teamName">
                 <img src="{{awayLogo}}" alt="">
                 <div>
-                  {{match.away.teamName}}
+                  {{matchVal.away.teamName}}
                 </div>
               </app-team-link>
             </span>
