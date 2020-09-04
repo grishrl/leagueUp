@@ -447,6 +447,8 @@ router.post('/match/create/grandfinal', passport.authenticate('jwt', {
     logInfo.actor = req.user.displayName;
     logInfo.target = `${req.body.home.teamName} vs ${req.body.away.teamName}`;
 
+    req.body.matchId = uniqid();
+
     new Match(req.body).save(
         success => {
             res.status(200).send(util.returnMessaging(path, 'Match Created', false, success, null, logInfo));
