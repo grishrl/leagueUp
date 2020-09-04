@@ -56,7 +56,7 @@ export class HeroesProfileService {
       let blizz_id = splitToonHandle[3];
       let splitName = displayName.split('#');
       let battletag = splitName[0];
-      return environment.heroesProfilePlayer + 'region=' + region + '&blizz_id=' + blizz_id + '&battletag=' + battletag;
+      return environment.heroesProfilePlayer + 'region=' + region + '&blizz_id=' + blizz_id + '&battletag=' + battletag + '&season=';
     }
   }
 
