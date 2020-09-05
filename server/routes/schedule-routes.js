@@ -16,6 +16,7 @@ const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 const archiveMethods = require('../methods/archivalMethods');
 const uploadMethod = require('../methods/replayUpload');
 
+
 /**
  * returns matches that are generated
  * accepts season, division, round
@@ -1647,6 +1648,72 @@ router.post('/fetch/tournament', (req, res) => {
         }
     )
 
+
+});
+
+router.get('/zipmatch', (req, res) => {
+    const fs = require('fs')
+    const join = require('path').join
+    const s3Zip = require('s3-zip')
+    const AWS = require('aws-sdk');
+
+    AWS.config.update({
+        accessKeyId: process.env.S3accessKeyId,
+        secretAccessKey: process.env.S3secretAccessKey,
+        region: process.env.S3region
+    });
+
+    const s3replayBucket = new AWS.S3({
+        params: {
+            Bucket: process.env.s3bucketReplays
+        }
+    });
+
+    const s3makezipBucket = new AWS.S3({
+        params: {
+            Bucket: 'dev-ngs-makezip'
+        }
+    });
+
+    s3replayBucket.listObjects({
+        Prefix: 'ngs_2-27-2019Disturbance_vs_LD'
+    }, function(err, data) {
+        console.log('err', err);
+        console.log('data', data);
+
+
+    });
+
+    // AWS.config.update({
+    //     accessKeyId: process.env.S3accessKeyId,
+    //     secretAccessKey: process.env.S3secretAccessKey,
+    //     region: process.env.S3region
+    // });
+
+    // const output = fs.createWriteStream(join(__dirname, 'use-s3-zip.zip'))
+
+    // res.writeHead(200, {
+    //     'Content-Type': 'application/zip'
+    // });
+
+    // const archiveFiles = [{
+    //         name: 'matchFiles/bans.txt'
+    //     },
+    //     {
+    //         name: 'matchFiles/game1/ngs_2-27-2019Disturbance_vs_LD_Alterac_Pass.stormReplay'
+    //     }, {
+    //         name: 'matchFiles/game2/ngs_2-27-2019Disturbance_vs_LD_Alterac_Pass.stormReplay'
+    //     }, {
+    //         name: 'matchFiles/game1/x.stormReplay'
+    //     }
+    // ]
+
+    // s3Zip
+    //     .archive({
+    //         region: process.env.S3region,
+    //         bucket: process.env.s3bucketReplays
+    //     }, '', [null, 'ngs_2-27-2019Disturbance_vs_LD_Alterac_Pass.stormReplay', 'ngs_2-27-2019Disturbance_vs_LD_Alterac_Pass.stormReplay', null], archiveFiles)
+    //     .pipe(res);
 
 });
 
