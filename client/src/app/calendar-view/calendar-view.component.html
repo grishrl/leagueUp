@@ -39,35 +39,38 @@
                     </div>
                 </div>
                 <br>
-                <div [ngSwitch]="view">
-                    <mwl-calendar-month-view *ngSwitchCase="CalendarView.Month" [viewDate]="viewDate" [events]="events" [refresh]="refresh" [activeDayIsOpen]="activeDayIsOpen" (dayClicked)="dayClicked($event.day)" (eventClicked)="handleEvent('Clicked', $event.event)" [openDayEventsTemplate]="customOpenDayEventsTemplate"
-                        (eventTimesChanged)="eventTimesChanged($event)">
-                    </mwl-calendar-month-view>
-                    <mwl-calendar-week-view *ngSwitchCase="CalendarView.Week" [viewDate]="viewDate" [events]="events" [refresh]="refresh" (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
-                    </mwl-calendar-week-view>
-                    <mwl-calendar-day-view *ngSwitchCase="CalendarView.Day" [viewDate]="viewDate" [events]="events" [refresh]="refresh" (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
-                    </mwl-calendar-day-view>
-                </div>
+                <app-loading [showLoading]="!isLoaded"></app-loading>
+                <div *ngIf="isLoaded">
+                    <div [ngSwitch]=" view ">
+                        <mwl-calendar-month-view *ngSwitchCase="CalendarView.Month " [viewDate]="viewDate " [events]="events " [refresh]="refresh " [activeDayIsOpen]="activeDayIsOpen " (dayClicked)="dayClicked($event.day) " (eventClicked)="handleEvent(
+                    'Clicked', $event.event) " [openDayEventsTemplate]="customOpenDayEventsTemplate " (eventTimesChanged)="eventTimesChanged($event) ">
+                        </mwl-calendar-month-view>
+                        <mwl-calendar-week-view *ngSwitchCase="CalendarView.Week " [viewDate]="viewDate " [events]="events " [refresh]="refresh " (eventClicked)="handleEvent( 'Clicked', $event.event) " (eventTimesChanged)="eventTimesChanged($event) ">
+                        </mwl-calendar-week-view>
+                        <mwl-calendar-day-view *ngSwitchCase="CalendarView.Day " [viewDate]="viewDate " [events]="events " [refresh]="refresh " (eventClicked)="handleEvent( 'Clicked', $event.event) " (eventTimesChanged)="eventTimesChanged($event) ">
+                        </mwl-calendar-day-view>
+                    </div>
 
+                </div>
                 <br><br>
-                <div class="row">
-                    <div class="col">
+                <div class="row ">
+                    <div class="col ">
                         <h4>Event Key</h4>
                     </div>
                 </div>
-                <div class="row mt-2">
-                    <div class="col-3">
-                        <table class="table">
+                <div class="row mt-2 ">
+                    <div class="col-3 ">
+                        <table class="table ">
                             <thead>
                                 <tr>
-                                    <th scope="col">Color</th>
-                                    <th scope="col">Division / Event</th>
+                                    <th scope="col ">Color</th>
+                                    <th scope="col ">Division / Event</th>
 
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let item of key|keyvalue:sortOrder">
-                                    <td [style.background-color]="item.value.primary"></td>
+                                <tr *ngFor="let item of key|keyvalue:sortOrder ">
+                                    <td [style.background-color]="item.value.primary "></td>
                                     <td>{{item.value.name}}</td>
                                 </tr>
                             </tbody>
@@ -76,38 +79,38 @@
                 </div>
 
                 <!-- NOTE: caster changes -->
-                <div class="row mt-2">
-                    <div class="col">
+                <div class="row mt-2 ">
+                    <div class="col ">
                         <h4>Upcoming Matches:</h4>
-                        <div class="panel-box padding-b" *ngFor="let day of list | keyvalue: asIsOrder">
-                            <div class="titles">
+                        <div class="panel-box padding-b " *ngFor="let day of list | keyvalue: asIsOrder ">
+                            <div class="titles ">
                                 <h4>{{day.key}}</h4>
                             </div>
-                            <div class="info-panel">
+                            <div class="info-panel ">
 
-                                <app-schedule-table [divColumn]="true" [matches]="day.value" [showRound]="false"></app-schedule-table>
+                                <app-schedule-table [divColumn]="true " [matches]="day.value " [showRound]="false "></app-schedule-table>
 
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <ng-template #customOpenDayEventsTemplate let-events="events" let-eventClicked="eventClicked" let-isOpen="isOpen">
-                    <div class="cal-open-day-events" [@collapse] *ngIf="isOpen">
-                        <div *ngFor="let event of events;  trackBy:event;" [ngClass]="event?.cssClass" mwlDraggable [dropData]="{event: event}" [dragAxis]="{x: event.draggable, y: event.draggable}">
-                            <span class="cal-event" [style.background-color]="event.color.primary"></span>
-                            <mwl-calendar-event-title [event]="event" [customTemplate]="eventTitleTemplate" view="month" (mwlClick)="eventClicked.emit({event: event})">
+                <ng-template #customOpenDayEventsTemplate let-events="events " let-eventClicked="eventClicked " let-isOpen="isOpen ">
+                    <div class="cal-open-day-events " [@collapse] *ngIf="isOpen ">
+                        <div *ngFor="let event of events; trackBy:event; " [ngClass]="event?.cssClass " mwlDraggable [dropData]="{event: event} " [dragAxis]="{x: event.draggable, y: event.draggable} ">
+                            <span class="cal-event " [style.background-color]="event.color.primary "></span>
+                            <mwl-calendar-event-title [event]="event " [customTemplate]="eventTitleTemplate " view="month " (mwlClick)="eventClicked.emit({event: event}) ">
                             </mwl-calendar-event-title>
 
                         </div>
                     </div>
 
                 </ng-template>
-                <ng-template #eventTitleTemplate let-event="event" let-view="month" let-mwlClick="mwlClick">
-                    <span class="finger"> {{event.title}}
+                <ng-template #eventTitleTemplate let-event="event " let-view="month " let-mwlClick="mwlClick ">
+                    <span class="finger "> {{event.title}}
 
-                      <span *ngIf="event.meta.casted">
-                      &nbsp;<i style="color:#F2692E" class="fab fa-twitch"></i>&nbsp;
+                      <span *ngIf="event.meta.casted ">
+                      &nbsp;<i style="color:#F2692E " class="fab fa-twitch "></i>&nbsp;
 
                     </span>
                     </span>

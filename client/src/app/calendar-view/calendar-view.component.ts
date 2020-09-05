@@ -147,9 +147,12 @@ export class CalendarViewComponent implements OnInit {
     return 0;
   }
 
+  isLoaded = false;
+
   _matches = [];
   ngOnInit(){
     this.list = new Map<String, [object]>();
+    this.isLoaded = false;
     this.matches.getAllMatchesWithStartTime().subscribe(
       res=>{
         let matches = res;
@@ -253,6 +256,7 @@ export class CalendarViewComponent implements OnInit {
             console.log(err);
           }
         )
+        this.isLoaded=true;
 
 
       },

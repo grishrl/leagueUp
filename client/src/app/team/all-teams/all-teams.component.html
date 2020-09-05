@@ -15,11 +15,7 @@
     <div class="container padding-top">
         <div class="row portfolioContainer mb-5">
 
-            <div class="col text-center" *ngIf="loading">
-                <div class="loading-box mx-auto mt-5">
-                    <div class="loading-text"><i class="fas fa-spin fa-spinner"></i> Loading..</div>
-                </div>
-            </div>
+            <app-loading [showLoading]="loading"></app-loading>
 
             <!-- Item Team Group A-->
             <div class="col-md-6 col-lg-4 col-xl-3 group-a" *ngFor="let team of displayTeams">
