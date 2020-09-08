@@ -130,6 +130,9 @@ returnMessaging = function(route, message, err, obj, additional, logInfo) {
 }
 
 returnByPath = function(obj, path) {
+    if (isNullOrEmpty(obj)) {
+        return null;
+    }
     //path is a string representing a dot notation object path;
     //create an array of the string for easier manipulation
     let pathArr = path.split('.');
@@ -162,6 +165,10 @@ returnByPath = function(obj, path) {
 }
 
 returnBoolByPath = function(obj, path) {
+    //short circuit for a null object passed;
+    if (isNullorUndefined(obj)) {
+        return null;
+    }
 
     if (obj.hasOwnProperty('toObject')) {
         obj = obj.toObject();
