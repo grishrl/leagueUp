@@ -69,7 +69,8 @@ export class CasterPageComponent implements OnInit {
 
               let linkDisplayName = div.displayName.replace(' ', '-');
 
-              let prefilLink = `https://docs.google.com/forms/d/e/1FAIpQLSf0EVM6OqOPXU6yArfopIfvtVgyl_Sbi6eCY8rl9hjWkBm6Jw/viewform?usp=pp_url&entry.2005620554=${match.casterName}&entry.1547019665=${match.matchId}&entry.302704006=${linkDisplayName}`;
+              // LG 9/7/2020: caster report form link - needs to be updated every season
+              let prefilLink = `https://docs.google.com/forms/d/e/1sjRH3AV8OdMXWQBVEsFC0q-RVU_8cXeKY-F7E2-3pbw/viewform?usp=pp_url&entry.2005620554=${match.casterName}&entry.1547019665=${match.matchId}&entry.302704006=${linkDisplayName}`;
               match.reportLink = prefilLink;
               // console.log(prefilLink);
 
