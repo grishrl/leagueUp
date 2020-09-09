@@ -1,5 +1,4 @@
 import { Component, OnInit, EventEmitter, Output } from '@angular/core';
-import { ContentfulService } from 'src/app/services/contentful.service';
 import { WordpressService } from 'src/app/services/wordpress.service';
 
 @Component({
@@ -9,7 +8,7 @@ import { WordpressService } from 'src/app/services/wordpress.service';
 })
 export class CategoriesComponent implements OnInit {
 
-  constructor(private contentfulService: ContentfulService, private WP:WordpressService) { }
+  constructor( private WP:WordpressService) { }
   categories: any[]
   selectedCat:string = 'all';
 
@@ -17,9 +16,6 @@ export class CategoriesComponent implements OnInit {
 
 
   ngOnInit() {
-    // this.contentfulService.getCategories().then(res => {
-    //   this.categories = res;
-    // });
 
     this.WP.getCategories().subscribe(
       (res: any[])=>{

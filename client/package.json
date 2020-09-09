@@ -37,7 +37,6 @@
     "angular-file": "^3.0.0",
     "bootstrap": "^4.4.1",
     "browser-image-compression": "^1.0.6",
-    "contentful": "^7.13.0",
     "core-js": "^3.6.2",
     "croppie": "^2.6.4",
     "date-fns": "^1.30.1",
