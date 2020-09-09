@@ -11,14 +11,17 @@
         </div>
     </div>
     <!-- End Nav Filters -->
-
+    <div class="row">
+        <div class="col">
+            <app-loading [showLoading]="loading"></app-loading>
+        </div>
+    </div>
     <div class="container padding-top">
         <div class="row portfolioContainer mb-5">
 
-            <app-loading [showLoading]="loading"></app-loading>
-
             <!-- Item Team Group A-->
             <div class="col-md-6 col-lg-4 col-xl-3 group-a" *ngFor="let team of displayTeams">
+
                 <div class="item-team">
                     <div class="head-team">
                         <img src="{{team.logo}}" alt="location-team">

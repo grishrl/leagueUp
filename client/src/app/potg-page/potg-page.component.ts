@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MvpService } from '../services/mvp.service';
 import { TimeserviceService } from '../services/timeservice.service';
-import { PageEvent, MatPaginator } from "@angular/material";
+import { PageEvent, MatPaginator } from "@angular/material/paginator";
 
 @Component({
   selector: "app-potg-page",

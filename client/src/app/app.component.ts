@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import * as $ from 'jquery';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { NotificationService } from './services/notification.service';
 import { Router, NavigationEnd } from '@angular/router';
 

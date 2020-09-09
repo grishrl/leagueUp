@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { AdminService } from 'src/app/services/admin.service';
-import { MatPaginator, PageEvent } from '@angular/material';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TimeserviceService } from 'src/app/services/timeservice.service';
 import { FilterService } from 'src/app/services/filter.service';

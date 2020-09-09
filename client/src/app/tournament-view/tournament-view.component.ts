@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { ScheduleService } from '../services/schedule.service';
 import { TeamService } from '../services/team.service';
 import { UtilitiesService } from '../services/utilities.service';
-import { MatDialog, MatDialogRef, MatDialogConfig } from '@angular/material'
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatchViewModalComponent } from '../modal/match-view-modal/match-view-modal.component';
 
 @Component({

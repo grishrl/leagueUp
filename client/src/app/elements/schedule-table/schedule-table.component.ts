@@ -23,7 +23,6 @@ export class ScheduleTableComponent implements OnInit {
 
 
   @Input() set matches(val){
-    console.log("sortOrder", this.sortOrder);
     if(val){
       val.forEach(
         match=>{

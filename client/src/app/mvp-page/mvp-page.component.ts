@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MvpService } from '../services/mvp.service';
 import { TimeserviceService } from '../services/timeservice.service';
-import { PageEvent } from '@angular/material';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: "app-mvp-page",

@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarView, collapseAnimation } from 'angular-calendar';
 import { ScheduleService } from '../services/schedule.service';
 import { EventModalComponent } from './event-modal/event-modal.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { EventsService } from '../services/events.service';
 import { UtilitiesService } from '../services/utilities.service';

@@ -34,11 +34,15 @@ export class TeamTournamentResultsTilesComponent implements OnInit {
     )
   }
 
+  header;
 
-
-  @Input() headerText;
-
-  header = this.headerText ? this.headerText : 'Tournament Match Results';
+  @Input() set headerText(val){
+    if(val){
+      this.header = 'Tournament Match Results'
+    }else{
+      this.header = val;
+    }
+  }
 
   showHead = true;
   @Input() set showHeader(val) {

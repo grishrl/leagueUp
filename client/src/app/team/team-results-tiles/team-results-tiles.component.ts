@@ -5,47 +5,53 @@ import { TeamService } from 'src/app/services/team.service';
 import { TimeserviceService } from 'src/app/services/timeservice.service';
 
 @Component({
-  selector: 'app-team-results-tiles',
-  templateUrl: './team-results-tiles.component.html',
-  styleUrls: ['./team-results-tiles.component.css']
+  selector: "app-team-results-tiles",
+  templateUrl: "./team-results-tiles.component.html",
+  styleUrls: ["./team-results-tiles.component.css"],
 })
 export class TeamResultsTilesComponent implements OnInit {
+  currentSeason;
+  constructor(
+    private scheduleService: ScheduleService,
+    public util: UtilitiesService,
+    public teamServ: TeamService,
+    private timeService: TimeserviceService
+  ) {}
 
-  currentSeason
-  constructor(private scheduleService:ScheduleService, public util:UtilitiesService, public teamServ:TeamService, private timeService:TimeserviceService) {
-   }
-
-
-  fetching=false;
+  fetching = false;
   displayArray = [];
 
-  getTeamMatches(season,teamName){
+  getTeamMatches(season, teamName) {
     this.fetching = true;
     this.displayArray = [];
     this.scheduleService.getTeamSchedules(season, teamName).subscribe(
-      res=>{
+      (res) => {
         this.fetching = false;
-        if(res && res.length>0){
-          res.forEach( match => {
-            if(match.reported){
+        if (res && res.length > 0) {
+          res.forEach((match) => {
+            if (match.reported) {
               this.displayArray.push(match);
             }
-          })
+          });
         }
       },
-      err=>{}
-    )
+      (err) => {}
+    );
   }
 
+  header;
 
+  @Input() set headerText(val) {
+    if (val) {
+      this.header = "Season Match Results";
+    } else {
+      this.header = val;
+    }
+  }
 
-  @Input() headerText;
-
-  header = this.headerText ? this.headerText : 'Season Match Results';
-
-  showHead=true;
-  @Input() set showHeader(val){
-    if(val!=null||val!=undefined){
+  showHead = true;
+  @Input() set showHeader(val) {
+    if (val != null || val != undefined) {
       this.showHead = val;
     }
   }
@@ -54,7 +60,7 @@ export class TeamResultsTilesComponent implements OnInit {
     let ret;
     if (match.forfeit) {
       if (match[side].score == 0) {
-        ret = 'F';
+        ret = "F";
       } else {
         ret = 0;
       }
@@ -65,13 +71,13 @@ export class TeamResultsTilesComponent implements OnInit {
   }
 
   teamVal;
-  @Input() set team(val){
-    if(val){
+  @Input() set team(val) {
+    if (val) {
       this.teamVal = val;
     }
   }
 
-  seasonVal
+  seasonVal;
   @Input() set season(val) {
     if (val) {
       this.seasonVal = val;
@@ -79,16 +85,13 @@ export class TeamResultsTilesComponent implements OnInit {
   }
 
   ngOnInit() {
-    if(this.seasonVal){
+    if (this.seasonVal) {
       this.getTeamMatches(this.seasonVal, this.teamVal);
-    }else{
-      this.timeService.getSesasonInfo().subscribe(
-        res => {
-          let currentSeason = res['value'];
-          this.getTeamMatches(currentSeason, this.teamVal);
-        }
-      );
+    } else {
+      this.timeService.getSesasonInfo().subscribe((res) => {
+        let currentSeason = res["value"];
+        this.getTeamMatches(currentSeason, this.teamVal);
+      });
     }
   }
-
 }
