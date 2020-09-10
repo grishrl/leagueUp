@@ -10,18 +10,12 @@ isNullOrEmpty = function(dat) {
             return true;
         }
     } else if (typeof dat == 'object') {
-        var noe = false;
+        var noe = true;
         _.forEach(dat, (value, key) => {
-            if (isNullOrEmpty(value)) {
-                noe = true;
+            if (!isNullOrEmpty(value)) {
+                noe = false;
             }
         });
-        // var keys = Object.keys(dat);
-        // keys.forEach(function(key) {
-        //     if (isNullOrEmpty(dat[key])) {
-        //         noe = true;
-        //     }
-        // });
         return noe;
     } else if (typeof dat == "string") {
         return dat.length == 0;

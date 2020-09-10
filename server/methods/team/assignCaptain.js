@@ -11,16 +11,20 @@ async function assignNewCaptain(teamName, newCaptName, requestor) {
     }).then(
         (foundTeam) => {
             if (foundTeam) {
+                let foundTeamObj = util.objectify(foundTeam);
                 if (requestor) {
-                    if (foundTeam.assistantCaptain && foundTeam.assistantCaptain.indexOf(requestor) > -1) {
+                    if (foundTeamObj.assistantCaptain && foundTeamObj.assistantCaptain.indexOf(requestor) > -1) {
                         returnObject.logLevel = 'ERROR';
                         returnObject.error = 'Assistant Captain may not reassign Captain';
                         returnObject.message = 'Assistant Captain may not reassign captain; contact an admin';
                         throw returnObject;
                     }
                 }
-                let members = util.returnByPath(foundTeam.toObject(), 'teamMembers');
+
+                let members = util.returnByPath(foundTeamObj, 'teamMembers');
+
                 let cont = false;
+
                 if (members) {
                     members.forEach(element => {
                         if (element.displayName == newCaptName) {
@@ -28,6 +32,7 @@ async function assignNewCaptain(teamName, newCaptName, requestor) {
                         }
                     });
                 }
+
                 if (cont) {
                     let oldCpt = foundTeam.captain;
                     foundTeam.captain = newCaptName;
