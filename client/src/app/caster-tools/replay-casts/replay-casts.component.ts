@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TimeserviceService } from 'src/app/services/timeservice.service';
 import { ScheduleService } from 'src/app/services/schedule.service';
+import { UtilitiesService } from 'src/app/services/utilities.service';
 
 @Component({
   selector: 'app-replay-casts',
@@ -11,7 +12,7 @@ export class ReplayCastsComponent implements OnInit {
 
   currentSeason;
   unCastedMatches;
-  constructor(private timeService:TimeserviceService, private scheduleService:ScheduleService) {
+  constructor(private timeService:TimeserviceService, private scheduleService:ScheduleService, private util:UtilitiesService) {
         this.timeService.getSesasonInfo().subscribe((res) => {
           this.currentSeason = res["value"];
           this.initSchedule();
@@ -51,6 +52,8 @@ export class ReplayCastsComponent implements OnInit {
     };
     this.scheduleService.matchQuery(query).subscribe(
       res=>{
+        res = this.util.sortMatchesByTime(res);
+        res.reverse();
         this.unCastedMatches=res;
       },
       err=>{
