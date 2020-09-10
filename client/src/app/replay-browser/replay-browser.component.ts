@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ScheduleService } from '../services/schedule.service';
-import { PageEvent } from '@angular/material';
+import { PageEvent } from '@angular/material/paginator';
 import { environment } from 'src/environments/environment';
 import { UtilitiesService } from '../services/utilities.service';
 

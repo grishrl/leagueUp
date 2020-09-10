@@ -1,5 +1,4 @@
 import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
-import { ContentfulService } from '../services/contentful.service';
 import { Router } from '@angular/router';
 import { MarkdownParserService } from '../services/markdown-parser.service';
 import { UtilitiesService } from '../services/utilities.service';
@@ -18,7 +17,7 @@ export class LargeCarouselComponent implements OnInit {
 
 
 
-  constructor(private contentfulService: ContentfulService, private router: Router, public md: MarkdownParserService, public util: UtilitiesService, private builder: AnimationBuilder, private WP:WordpressService) { }
+  constructor(private router: Router, public md: MarkdownParserService, public util: UtilitiesService, private builder: AnimationBuilder, private WP:WordpressService) { }
 
   //helper for monitoring time of the carousel
   private reset$: BehaviorSubject<any>;
@@ -141,12 +140,6 @@ timing = 300;
 
 
   ngOnInit() {
-    // this.contentfulService.getBlogs((Object.assign({ content_type: 'blogPost' }, { links_to_entry: environment.contentful.categoryIDs.jumbotron, order: '-sys.createdAt', limit: 3 }))).then(res => {
-    //   this.carousel = res;
-    //   this.assignSlide(this.currentPointer);
-    // })
-    //{ 'filter[orderby]': 'date' });
-    //query.push({ 'order': 'desc' }
     this.WP.getBlogPosts([{ categories: '9' }, { 'filter[orderby]': 'date' }, { 'order': 'desc' }, { per_page: 3 }]).subscribe(
       res=>{
         this.carousel = res.posts;
@@ -183,7 +176,6 @@ timing = 300;
   }
 
   goToBlogPage(blog) {
-    // this.contentfulService.cacheBlog(blog);
     this.router.navigate(['/blog', blog.slug]);
   }
 

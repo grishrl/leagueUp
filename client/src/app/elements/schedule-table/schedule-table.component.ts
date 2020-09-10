@@ -5,6 +5,9 @@ import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { ScheduleService } from 'src/app/services/schedule.service';
 
+const ROUND = 'round';
+const SCHEDULEDTIME = 'scheduledTime';
+
 @Component({
   selector: 'app-schedule-table',
   templateUrl: './schedule-table.component.html',
@@ -16,6 +19,7 @@ export class ScheduleTableComponent implements OnInit {
 
   matchesVal = [];
 
+@Input() sortOrder = 'round';
 
 
   @Input() set matches(val){
@@ -31,15 +35,23 @@ export class ScheduleTableComponent implements OnInit {
 
         }
       );
-      val.sort( (a,b)=>{
-        if (!this.util.returnBoolByPath(a, "round") || !this.util.returnBoolByPath(b, "round")){
-          return 0;
-        }else if (a.round > b.round) {
-            return 1;
-          } else {
-            return -1;
-          }
-      } )
+      if(this.sortOrder == ROUND){
+              val.sort((a, b) => {
+                if (
+                  !this.util.returnBoolByPath(a, "round") ||
+                  !this.util.returnBoolByPath(b, "round")
+                ) {
+                  return 0;
+                } else if (a.round > b.round) {
+                  return 1;
+                } else {
+                  return -1;
+                }
+              });
+      }else if(this.sortOrder == SCHEDULEDTIME){
+          val = this.util.sortMatchesByTime(val);
+      }
+
       this.matchesVal = val;
 
     }else{
@@ -58,6 +70,7 @@ export class ScheduleTableComponent implements OnInit {
   ngOnInit() {
     this.todayDate = new Date().getTime();
     this.isCaster = this.auth.isCaster();
+    console.log("sortOrder",this.sortOrder);
   }
 
   userCanSchedule(match) {

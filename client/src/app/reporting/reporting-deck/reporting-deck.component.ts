@@ -97,7 +97,7 @@ export class ReportingDeckComponent implements OnInit {
   constructor(private scheduleService: ScheduleService, private util: UtilitiesService, public team:TeamService) { }
 
   maps = {
-  ControlPoints: 'Sky Temple',
+  // ControlPoints: 'Sky Temple',
   TowersOfDoom: 'Towers of Doom',
   // HauntedMines: 'Haunted Mines',
   BattlefieldOfEternity: 'Battlefield of Eternity',
@@ -110,7 +110,7 @@ export class ReportingDeckComponent implements OnInit {
   Volskaya: 'Volskaya Foundry',
   // 'Warhead Junction': 'Warhead Junction',   // blizz why
   BraxisHoldout: 'Braxis Holdout',
-  // Hanamura: 'Hanamura',
+  Hanamura: 'Hanamura',
   AlteracPass: 'Alterac Pass'
 };
 

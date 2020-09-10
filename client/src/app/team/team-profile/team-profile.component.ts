@@ -1,5 +1,4 @@
 import { Component, OnInit, Input} from '@angular/core';
-import { MatDialog } from '@angular/material';
 import { DeleteConfrimModalComponent } from '../../modal/delete-confrim-modal/delete-confrim-modal.component'
 import { ChangeCaptainModalComponent } from '../../modal/change-captain-modal/change-captain-modal.component';
 import { TeamService } from '../../services/team.service';
@@ -19,6 +18,7 @@ import { AssistantCaptainMgmtComponent } from 'src/app/modal/assistant-captain-m
 import { HistoryService } from 'src/app/services/history.service';
 import { TabTrackerService } from 'src/app/services/tab-tracker.service';
 import { TimeserviceService } from 'src/app/services/timeservice.service';
+import { MatDialog } from "@angular/material/dialog";
 
 
 @Component({

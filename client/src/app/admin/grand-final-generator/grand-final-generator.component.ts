@@ -4,7 +4,7 @@ import { TeamService } from 'src/app/services/team.service';
 import { Match } from '../../classes/match.class';
 import { isThisTypeNode } from 'typescript';
 import { AdminService } from 'src/app/services/admin.service';
-import { MatPaginator } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator'
 
 @Component({
   selector: "app-grand-final-generator",

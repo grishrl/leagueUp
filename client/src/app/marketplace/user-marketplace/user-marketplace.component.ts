@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PageEvent } from '@angular/material';
+import { PageEvent } from '@angular/material/paginator';
 import { AuthService } from 'src/app/services/auth.service';
 import { TimezoneService } from 'src/app/services/timezone.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';

@@ -1,5 +1,4 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { ContentfulService } from 'src/app/services/contentful.service';
 import { WordpressService } from 'src/app/services/wordpress.service';
 
 @Component({
@@ -9,7 +8,7 @@ import { WordpressService } from 'src/app/services/wordpress.service';
 })
 export class AuthorListComponent implements OnInit {
 
-  constructor(private contentfulService: ContentfulService, private WP:WordpressService) { }
+  constructor(private WP:WordpressService) { }
 
   @Output() currentAuthor = new EventEmitter();
 

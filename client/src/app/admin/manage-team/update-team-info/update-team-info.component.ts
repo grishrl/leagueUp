@@ -8,7 +8,7 @@ import { ConfirmRemoveMemberComponent } from '../../../modal/confirm-remove-memb
 import { ChangeCaptainModalComponent } from '../../../modal/change-captain-modal/change-captain-modal.component';
 import { DeleteConfrimModalComponent } from '../../../modal/delete-confrim-modal/delete-confrim-modal.component'
 import { AuthService } from 'src/app/services/auth.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
 @Component({

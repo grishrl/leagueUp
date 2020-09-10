@@ -1,17 +1,12 @@
 import { Injectable } from '@angular/core';
-import { createClient, Entry } from 'contentful';
-import { environment } from '../../environments/environment';
-import { merge } from 'lodash';
+// import { createClient, Entry } from 'contentful';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ContentfulService {
 
-  private client = createClient({
-    space: environment.contentful.spaceID,
-    accessToken: environment.contentful.token
-  });
+/*
   localCategories: any[] = [];
 
   constructor() {
@@ -75,5 +70,5 @@ export class ContentfulService {
     }
 
   }
-
+  */
 }

@@ -1,11 +1,11 @@
 {
     "name": "ngsMeanCore",
-    "version": "2.2.0",
+    "version": "2.2.2",
     "description": "Large package encompassing several capabilities for e-sports leagues",
     "main": "server.js",
     "scripts": {
         "start": "node server.js",
-        "heroku-postbuild": "node node_modules/heroprotocol/postinstall.js && cd client && npm install"
+        "heroku-postbuild": "node node_modules/heroprotocol-fallback/postinstall.js && cd client && npm install"
     },
     "engines": {
         "node": "13.8.0",
@@ -21,11 +21,11 @@
         "express-https-redirect": "^1.0.0",
         "formidable": "^1.2.2",
         "googleapis": "^39.2.0",
-        "hots-parser": "^7.50.5",
+        "hots-parser": "^7.52.1",
         "image-data-uri": "^2.0.1",
         "jimp": "^0.9.8",
         "jsonwebtoken": "^8.5.1",
-        "lodash": "^4.17.15",
+        "lodash": "^4.17.20",
         "mongoose": "^5.9.12",
         "nodemailer": "^4.7.0",
         "nodemailer-express-handlebars": "^4.0.0",

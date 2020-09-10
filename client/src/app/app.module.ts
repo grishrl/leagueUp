@@ -201,6 +201,7 @@ import { CasterReportComponent } from './caster-tools/caster-report/caster-repor
 import { GrandChampionsViewerComponent } from './grand-champions-viewer/grand-champions-viewer.component';
 import { ChampExpanderComponent } from './grand-champions-viewer/champ-expander/champ-expander.component';
 import { MatchResultsHeaderComponent } from './match/match-results-view/match-results-header/match-results-header.component';
+import { LoadingComponent } from './elements/loading/loading.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -387,7 +388,8 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     CasterReportComponent,
     GrandChampionsViewerComponent,
     ChampExpanderComponent,
-    MatchResultsHeaderComponent
+    MatchResultsHeaderComponent,
+    LoadingComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

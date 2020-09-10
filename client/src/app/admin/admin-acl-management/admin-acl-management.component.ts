@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { AdminService } from 'src/app/services/admin.service';
 import { AclServiceService } from './acl-service.service';
-import { PageEvent, MatPaginator } from '@angular/material';
+import { PageEvent, MatPaginator } from '@angular/material/paginator'
 import { UtilitiesService } from 'src/app/services/utilities.service';
 
 @Component({

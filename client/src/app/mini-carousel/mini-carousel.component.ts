@@ -1,5 +1,4 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ContentfulService } from '../services/contentful.service';
 import { Router } from '@angular/router';
 import { MarkdownParserService } from '../services/markdown-parser.service';
 import { UtilitiesService } from '../services/utilities.service';
@@ -14,7 +13,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class MiniCarouselComponent implements OnInit {
 
-  constructor(private contentfulService: ContentfulService, private router: Router, public md: MarkdownParserService, public util:UtilitiesService, private http: HttpClient) { }
+  constructor( private router: Router, public md: MarkdownParserService, public util:UtilitiesService, private http: HttpClient) { }
 
   carousel: any = [];
 
@@ -67,10 +66,6 @@ export class MiniCarouselComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.contentfulService.getBlogs((Object.assign({ content_type: 'blogPost' }, { links_to_entry: this.categoryID, order: '-sys.createdAt', limit: 3 }))).then(res => {
-    //   this.carousel = res;
-    // });
-
     let url = 'https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=3&playlistId=' + this.listId + '&key=AIzaSyD2eeQyVPBpeCIgytCPdie3jd6YAEzCUNc';
     this.http.get(url).subscribe(
       res=>{
@@ -80,13 +75,10 @@ export class MiniCarouselComponent implements OnInit {
   }
 
   goToBlogPage(blog) {
-    //
     let videoId = blog.snippet.resourceId.videoId;
     let playlistId = blog.snippet.playlistId;
     let url = 'https://www.youtube.com/watch?v='+videoId+'&list='+playlistId;
     window.open(url,'_blank');
-    // this.contentfulService.cacheBlog(blog);
-    // this.router.navigate(['/blog', blog.sys.id]);
   }
 
 }

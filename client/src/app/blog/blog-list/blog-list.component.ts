@@ -1,10 +1,9 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ContentfulService } from '../../services/contentful.service';
 import { MarkdownParserService } from '../../services/markdown-parser.service';
 import { UtilitiesService } from '../../services/utilities.service';
 import { WordpressService } from 'src/app/services/wordpress.service';
-import { PageEvent, MatPaginator } from '@angular/material';
+import { PageEvent, MatPaginator } from "@angular/material/paginator";
 
 @Component({
   selector: 'app-blog-list',
@@ -15,7 +14,7 @@ import { PageEvent, MatPaginator } from '@angular/material';
 export class BlogListComponent implements OnInit, AfterViewInit {
   perColumn: number = 3;
   posts = [];
-  constructor(private router: Router, private contentfulService: ContentfulService, public md: MarkdownParserService, public util: UtilitiesService, private WP:WordpressService) { }
+  constructor(private router: Router, public md: MarkdownParserService, public util: UtilitiesService, private WP:WordpressService) { }
   rows: any []=[];
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
@@ -139,7 +138,6 @@ export class BlogListComponent implements OnInit, AfterViewInit {
 
 
   goToBlogPage(blog){
-    this.contentfulService.cacheBlog(blog);
     this.router.navigate(['/blog', blog.sys.id]);
   }
 

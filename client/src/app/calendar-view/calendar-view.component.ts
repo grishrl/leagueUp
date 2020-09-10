@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarView, collapseAnimation } from 'angular-calendar';
 import { ScheduleService } from '../services/schedule.service';
 import { EventModalComponent } from './event-modal/event-modal.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { EventsService } from '../services/events.service';
 import { UtilitiesService } from '../services/utilities.service';
@@ -147,9 +147,12 @@ export class CalendarViewComponent implements OnInit {
     return 0;
   }
 
+  isLoaded = false;
+
   _matches = [];
   ngOnInit(){
     this.list = new Map<String, [object]>();
+    this.isLoaded = false;
     this.matches.getAllMatchesWithStartTime().subscribe(
       res=>{
         let matches = res;
@@ -253,6 +256,7 @@ export class CalendarViewComponent implements OnInit {
             console.log(err);
           }
         )
+        this.isLoaded=true;
 
 
       },

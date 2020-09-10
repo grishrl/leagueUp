@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { TimezoneService } from 'src/app/services/timezone.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TeamService } from 'src/app/services/team.service';
-import { PageEvent } from '@angular/material';
+import { PageEvent } from '@angular/material/paginator';
 import { AuthService } from 'src/app/services/auth.service';
 import { RequestService } from 'src/app/services/request.service';
 import { Team } from 'src/app/classes/team.class';

@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { ContentfulService } from '../../services/contentful.service';
 import { ActivatedRoute } from '@angular/router';
 import { MarkdownParserService } from '../../services/markdown-parser.service';
 import { merge } from 'lodash';
@@ -24,7 +23,6 @@ export class BlogViewComponent implements OnInit {
   headerText = "NGS Blog";
 
   constructor(
-    private contentfulService: ContentfulService,
     private route: ActivatedRoute,
     public md: MarkdownParserService,
     public blogCommon: BlogCommonService,
