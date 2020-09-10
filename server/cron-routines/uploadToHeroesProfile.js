@@ -5,7 +5,7 @@ const hpAPI = require('../methods/heroesProfileAPI');
 const _ = require('lodash');
 const util = require('../utils');
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
-const logger = require('../subroutines/sys-logging-subs');
+const logger = require('../subroutines/sys-logging-subs').logger;
 const Scheduling = require('../models/schedule-models');
 
 const TOURNAMENT = 'tournament';

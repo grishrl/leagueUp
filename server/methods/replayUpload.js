@@ -1,7 +1,7 @@
 const fs = require('fs');
 const n_util = require('util');
 const AWS = require('aws-sdk');
-const logger = require('../subroutines/sys-logging-subs');
+const logger = require('../subroutines/sys-logging-subs').logger;
 const util = require('../utils');
 
 const path = 'S3ReplayUploader';

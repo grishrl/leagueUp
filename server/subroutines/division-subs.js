@@ -1,6 +1,6 @@
 const Division = require('../models/division-models');
 const util = require('../utils');
-const logger = require('../subroutines/sys-logging-subs');
+const logger = require('../subroutines/sys-logging-subs').logger;
 
 
 //this method is for adding any non-regular teams into the particpants list of the cup divisions

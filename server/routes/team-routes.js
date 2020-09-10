@@ -13,7 +13,7 @@ const passport = require("passport");
 const sysModels = require('../models/system-models');
 const uploadTeamLogo = require('../methods/teamLogoUpload').uploadTeamLogo;
 const Stats = require('../models/stats-model');
-const logger = require('../subroutines/sys-logging-subs');
+const logger = require('../subroutines/sys-logging-subs').logger;
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 const TeamMethods = require('../methods/teamCommon');
 

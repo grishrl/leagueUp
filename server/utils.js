@@ -1,4 +1,4 @@
-const logger = require('./subroutines/sys-logging-subs');
+const logger = require('./subroutines/sys-logging-subs').logger;
 const _ = require('lodash');
 
 isNullOrEmpty = function(dat) {

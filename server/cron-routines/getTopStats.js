@@ -1,5 +1,5 @@
 const System = require('../models/system-models').system;
-const logger = require('../subroutines/sys-logging-subs');
+const logger = require('../subroutines/sys-logging-subs').logger;
 const hpAPI = require('../methods/heroesProfileAPI');
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 const utls = require('../utils');

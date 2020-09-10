@@ -27,4 +27,27 @@ function logger(logObj, actor, action, target, error, deepLogging) {
     }
 }
 
-module.exports = logger;
+function newLogger() {
+
+    const logger = {
+        logObj: {
+            logLevel: '',
+            actor: '',
+            target: '',
+            timeStamp: '',
+            target: '',
+            error: '',
+            deepLoging: '',
+            location: ''
+        },
+        log: function() {
+            logger(this.logObj)
+        }
+    };
+    return logger;
+}
+
+module.exports = {
+    logger,
+    newLogger
+};

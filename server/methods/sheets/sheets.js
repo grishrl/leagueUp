@@ -4,7 +4,7 @@ const {
     google
 } = require('googleapis');
 const Match = require('../../models/match-model');
-const logger = require('../../subroutines/sys-logging-subs');
+const logger = require('../../subroutines/sys-logging-subs').logger;
 const util = require('../../utils');
 
 const location = 'sheets.js';

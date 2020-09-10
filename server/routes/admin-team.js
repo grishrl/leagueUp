@@ -582,16 +582,20 @@ router.post('/resultantmmr', passport.authenticate('jwt', {
                 if (processed) {
                     res.status(200).send(util.returnMessaging(path, "Team MMR calculated.", false, { resultantMmr: processed }));
                 } else {
+                    console.log('failed the teamSub Processing');
                     res.status(400).send(util.returnMessaging(path, "Team MMR not calculated."));
                 }
             }, (err) => {
                 res.status(400).send(util.returnMessaging(path, "Team MMR not calculated.", err));
+                util.errLogger(path, err, '590');
             })
         } else {
             res.status(400).send(util.returnMessaging(path, "Team not found"));
+            util.errLogger(path, err, '594');
         }
     }, (err) => {
         res.status(500).send(util.returnMessaging(path, 'Error finding team', err));
+        util.errLogger(path, err, '598');
     })
 
 });

@@ -1,6 +1,6 @@
 const Team = require("../models/team-models");
 const AWS = require('aws-sdk');
-const logger = require('../subroutines/sys-logging-subs');
+const logger = require('../subroutines/sys-logging-subs').logger;
 const CustomError = require('./customError');
 
 AWS.config.update({

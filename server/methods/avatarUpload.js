@@ -1,6 +1,6 @@
 const User = require('../models/user-models');
 const AWS = require('aws-sdk');
-const logger = require('../subroutines/sys-logging-subs');
+const logger = require('../subroutines/sys-logging-subs').logger;
 const CustomError = require('../methods/customError');
 
 const avatarFolder = 'player-avatar/'

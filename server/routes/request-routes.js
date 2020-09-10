@@ -8,7 +8,7 @@ const QueueSub = require('../subroutines/queue-subs');
 const UserSub = require('../subroutines/user-subs');
 const Team = require("../models/team-models");
 const passport = require("passport");
-const logger = require('../subroutines/sys-logging-subs');
+const logger = require('../subroutines/sys-logging-subs').logger;
 const messageSub = require('../subroutines/message-subs');
 const Message = require('../models/message-models');
 

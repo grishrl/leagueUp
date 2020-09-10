@@ -4,7 +4,7 @@ const Team = require('../models/team-models');
 const utls = require('../utils');
 const User = require('../models/user-models');
 const AWS = require('aws-sdk');
-const logger = require('../subroutines/sys-logging-subs');
+const logger = require('../subroutines/sys-logging-subs').logger;
 const HP = require('./heroesProfileAPI');
 
 AWS.config.update({

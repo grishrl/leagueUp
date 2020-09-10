@@ -1,5 +1,5 @@
 const Outreach = require('../models/outreach-model');
-const logger = require('../subroutines/sys-logging-subs');
+const logger = require('../subroutines/sys-logging-subs').logger;
 
 
 //this updates the team name in the outreach queue  so that if a team name changes and there 
