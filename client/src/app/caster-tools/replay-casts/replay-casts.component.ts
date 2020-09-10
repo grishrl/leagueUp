@@ -38,7 +38,7 @@ export class ReplayCastsComponent implements OnInit {
               },
             },
             {
-              forfiet: false,
+              forfeit: false,
             },
           ],
         },

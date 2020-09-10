@@ -16,9 +16,11 @@ export class CasterDashboardMatchDisplayComponent implements OnInit {
     private Auth: AuthService
   ) {}
 
+  fileLink = '';
   @Input() set recMatch(val) {
     if (val) {
       this.match = val;
+
     }
   }
 
@@ -32,6 +34,9 @@ export class CasterDashboardMatchDisplayComponent implements OnInit {
 
   ngOnInit(): void {
     this.casterValid = this.checkRights();
+          if (this.replayView) {
+            this.fileLink = `/schedule/matchfiles?match=${this.match.matchId}`;
+          }
   }
 
   updateView(match){

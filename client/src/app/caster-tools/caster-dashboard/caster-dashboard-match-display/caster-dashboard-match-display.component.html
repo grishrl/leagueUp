@@ -50,6 +50,11 @@
                 </ng-container>
             </div>
         </div>
+        <div class="row mt-2" *ngIf="replayView">
+            <div class="col">
+                <a [href]="fileLink" target="_blank">Download Match Files</a>
+            </div>
+        </div>
         <div class="row mt-2 " *ngIf="!replayView">
             <div class="col ">
                 <div *ngIf="match | commonPipe:util.returnBoolByPath:'casterName' else addCasterButton ">

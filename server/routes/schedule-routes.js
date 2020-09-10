@@ -992,10 +992,6 @@ router.post('/match/fetch/mycasted', passport.authenticate('jwt', {
             ]
         };
 
-
-
-
-
         Match.find(query).lean().then((found) => {
 
             if (found) {
@@ -1651,11 +1647,30 @@ router.post('/fetch/tournament', (req, res) => {
 
 });
 
-router.get('/zipmatch', (req, res) => {
-    const fs = require('fs')
-    const join = require('path').join
+router.get('/matchfiles', async(req, res) => {
     const s3Zip = require('s3-zip')
     const AWS = require('aws-sdk');
+    const path = 'schedule/matchfiles';
+    let match = req.query.match;
+
+    //get the match requested from the data
+    let matchData = await Match.findOne({ matchId: match }).lean().then(
+        found => {
+            return found
+        },
+        err => {
+            res.status(500).send(util.returnMessaging(path, 'Error getting match', err))
+        }
+    );
+
+    if (util.isNullorUndefined(matchData)) {
+        res.status(404).send(util.returnMessaging(path, 'Match not found'));
+    }
+
+    //use the match ID as the folder name
+    var folderName = matchData.matchId;
+    //create bans text string
+    let bansText = `${matchData.home.teamName}: Bans ${matchData.mapBans.homeOne}, ${matchData.mapBans.homeTwo} \n${matchData.away.teamName}: Bans ${matchData.mapBans.awayOne}, ${matchData.mapBans.awayTwo}  `;
 
     AWS.config.update({
         accessKeyId: process.env.S3accessKeyId,
@@ -1671,49 +1686,128 @@ router.get('/zipmatch', (req, res) => {
 
     const s3makezipBucket = new AWS.S3({
         params: {
-            Bucket: 'dev-ngs-makezip'
+            Bucket: process.env.s3bucketMakeZip
         }
     });
 
-    s3replayBucket.listObjects({
-        Prefix: 'ngs_2-27-2019Disturbance_vs_LD'
-    }, function(err, data) {
-        console.log('err', err);
-        console.log('data', data);
+    //create a buffer from the bans text
+    let buffer = Buffer.from(bansText, "utf-8");
 
+    let data = {
+        Key: `${folderName}/bans.txt`,
+        Body: buffer
+    };
+    //spool these all into a promise array so i can better track their resolution (times at least)..
+    var promiseArray = [];
 
+    //write bans text to S3 zip directory
+    promiseArray.push(s3makezipBucket.putObject(data).promise());
+
+    //copy the replays into the temp directory...
+    let tempReplays = JSON.parse(JSON.stringify(matchData.replays));
+    delete tempReplays._id;
+
+    let replayKeys = Object.keys(tempReplays);
+
+    let i = 0;
+    for (i; i < replayKeys.length; i++) {
+        let key = replayKeys[i];
+        let replayInf = tempReplays[key];
+        let toCopy = replayInf.url;
+        const param = {
+            CopySource: `${process.env.s3bucketReplays}/${toCopy}`,
+            Bucket: process.env.s3bucketMakeZip,
+            Key: `${folderName}/game${i+1}/${toCopy}`
+        }
+        promiseArray.push(
+            s3makezipBucket.copyObject(param).promise()
+        );
+    }
+    let bestOf = util.returnBoolByPath(matchData.boX) ? matchData.boX : 3;
+    if (i < bestOf) {
+        buffer = Buffer.from("pulled a sneaky on you", "utf-8");
+        let data = {
+            Key: `${folderName}/game${i+1}/sneak.txt`,
+            Body: buffer
+        };
+        promiseArray.push(
+            s3makezipBucket.putObject(data).promise()
+        );
+    }
+
+    //resolve the writes to the makezip bucket...
+    Promise.all(promiseArray).then(
+        function(success) {
+            if (success) {
+                console.log(path, ' create a make zip file for match.. ', matchData.matchId);
+
+                //now that we've create the directory to zip for this match, lets zip and send to client
+                //get a list of files in this bucket/folder
+                s3makezipBucket.listObjects({
+                    Prefix: folderName
+                }).promise().then(
+                    list => {
+                        //loop through the list of files in this bucket/folder and create the array of files we need for the zip library
+                        let archiveFiles = [];
+                        let filesList = [];
+                        list.Contents.forEach(
+                            content => {
+                                let tO = {};
+                                tO.name = content.Key;
+                                archiveFiles.push(tO);
+                                filesList.push(content.Key);
+                            }
+                        )
+                        res.writeHead(200, {
+                            'Content-Type': 'application/zip'
+                        });
+
+                        //zip and return to client; the response is sent here.
+                        s3Zip
+                            .archive({
+                                region: process.env.S3region,
+                                bucket: process.env.s3bucketMakeZip
+                            }, '', filesList, archiveFiles)
+                            .pipe(res);
+
+                        //now that we've sent the zip to the client nuke this out of S3
+                        s3makezipBucket.listObjects({
+                            Prefix: folderName
+                        }).promise().then(
+                            list => {
+                                let params = {
+                                    Delete: {
+                                        Objects: []
+                                    }
+                                };
+                                list.Contents.forEach(
+                                    content => {
+                                        params.Delete.Objects.push({
+                                            Key: content.Key
+                                        });
+                                    }
+                                );
+                                s3makezipBucket.deleteObjects(params).promise().then(
+                                    success => {
+                                        console.log(path, ' delete s3 zip directory for match ', matchData.matchId);
+                                    },
+                                    err => {
+                                        console.log(path, ' delete FAIL ', matchData.matchId);
+                                    }
+                                )
+                            }
+                        )
+
+                    },
+                    err => {
+                        console.log(path, ' s3makezipBucket err ', err);
+                    }
+                )
+            }
+        }
+    ).catch(function(err) {
+        console.log(path, ' copy err ', err);
     });
-
-    // AWS.config.update({
-    //     accessKeyId: process.env.S3accessKeyId,
-    //     secretAccessKey: process.env.S3secretAccessKey,
-    //     region: process.env.S3region
-    // });
-
-    // const output = fs.createWriteStream(join(__dirname, 'use-s3-zip.zip'))
-
-    // res.writeHead(200, {
-    //     'Content-Type': 'application/zip'
-    // });
-
-    // const archiveFiles = [{
-    //         name: 'matchFiles/bans.txt'
-    //     },
-    //     {
-    //         name: 'matchFiles/game1/ngs_2-27-2019Disturbance_vs_LD_Alterac_Pass.stormReplay'
-    //     }, {
-    //         name: 'matchFiles/game2/ngs_2-27-2019Disturbance_vs_LD_Alterac_Pass.stormReplay'
-    //     }, {
-    //         name: 'matchFiles/game1/x.stormReplay'
-    //     }
-    // ]
-
-    // s3Zip
-    //     .archive({
-    //         region: process.env.S3region,
-    //         bucket: process.env.s3bucketReplays
-    //     }, '', [null, 'ngs_2-27-2019Disturbance_vs_LD_Alterac_Pass.stormReplay', 'ngs_2-27-2019Disturbance_vs_LD_Alterac_Pass.stormReplay', null], archiveFiles)
-    //     .pipe(res);
 
 });
 
