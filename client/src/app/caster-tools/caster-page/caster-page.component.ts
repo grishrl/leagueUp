@@ -60,22 +60,26 @@ export class CasterPageComponent implements OnInit {
             let now = Date.now();
             res = this.util.sortMatchesByTime(res);
             res.forEach(match => {
-
               //create prefill link
 
-              let div = find(divisions, { divisionConcat: match.divisionConcat });
+              let div = find(divisions, {
+                divisionConcat: match.divisionConcat,
+              });
 
               // console.log('div ',div);
 
-              let linkDisplayName = div.displayName.replace(' ', '-');
+              let linkDisplayName = div.displayName.replace(" ", "-");
 
               // LG 9/7/2020: caster report form link - needs to be updated every season
-              let prefilLink = `https://docs.google.com/forms/d/e/1sjRH3AV8OdMXWQBVEsFC0q-RVU_8cXeKY-F7E2-3pbw/viewform?usp=pp_url&entry.2005620554=${match.casterName}&entry.1547019665=${match.matchId}&entry.302704006=${linkDisplayName}`;
+              let prefilLink = `https://docs.google.com/forms/d/e/1FAIpQLScvq7QAt9V1cEN0_SNQNALt7rAgM9iXVchrpUjNu4ID1APIeg/viewform?usp=pp_url&entry.2005620554=${match.casterName}&entry.1547019665=${match.matchId}`;
               match.reportLink = prefilLink;
               // console.log(prefilLink);
 
               if (now <= match.scheduledTime.startTime) {
-                let formatDate = this.util.getFormattedDate(match.scheduledTime.startTime, 'dddd MMM D hh:mm');
+                let formatDate = this.util.getFormattedDate(
+                  match.scheduledTime.startTime,
+                  "dddd MMM D hh:mm"
+                );
                 if (this.upcomingList.has(formatDate)) {
                   let tempArr = this.upcomingList.get(formatDate);
                   tempArr.push(match);
@@ -88,7 +92,10 @@ export class CasterPageComponent implements OnInit {
                 let thirtyDaysInMs = 2592000000;
                 let thirtdayDaysAgo = now - thirtyDaysInMs;
                 if (match.scheduledTime.startTime > thirtdayDaysAgo) {
-                  let formatDate = this.util.getFormattedDate(match.scheduledTime.startTime, 'dddd MMM D hh:mm');
+                  let formatDate = this.util.getFormattedDate(
+                    match.scheduledTime.startTime,
+                    "dddd MMM D hh:mm"
+                  );
                   if (this.pastList.has(formatDate)) {
                     let tempArr = this.pastList.get(formatDate);
                     tempArr.push(match);
@@ -98,7 +105,6 @@ export class CasterPageComponent implements OnInit {
                     this.pastList.set(formatDate, [match]);
                   }
                 }
-
               }
             });
           },
