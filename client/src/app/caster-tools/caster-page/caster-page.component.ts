@@ -66,14 +66,9 @@ export class CasterPageComponent implements OnInit {
                 divisionConcat: match.divisionConcat,
               });
 
-              // console.log('div ',div);
-
-              let linkDisplayName = div.displayName.replace(" ", "-");
-
               // LG 9/7/2020: caster report form link - needs to be updated every season
               let prefilLink = `https://docs.google.com/forms/d/e/1FAIpQLScvq7QAt9V1cEN0_SNQNALt7rAgM9iXVchrpUjNu4ID1APIeg/viewform?usp=pp_url&entry.2005620554=${match.casterName}&entry.1547019665=${match.matchId}`;
               match.reportLink = prefilLink;
-              // console.log(prefilLink);
 
               if (now <= match.scheduledTime.startTime) {
                 let formatDate = this.util.getFormattedDate(
@@ -89,7 +84,9 @@ export class CasterPageComponent implements OnInit {
                   this.upcomingList.set(formatDate, [match]);
                 }
               } else {
-                let thirtyDaysInMs = 2592000000;
+                // let thirtyDaysInMs = 2592000000;
+                //temp making this 1 year
+                let thirtyDaysInMs = 31536000000;
                 let thirtdayDaysAgo = now - thirtyDaysInMs;
                 if (match.scheduledTime.startTime > thirtdayDaysAgo) {
                   let formatDate = this.util.getFormattedDate(

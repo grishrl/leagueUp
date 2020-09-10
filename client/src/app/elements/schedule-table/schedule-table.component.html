@@ -54,7 +54,7 @@
                         <strong>Match ID:</strong><span> {{match.matchId}}</span><br>
                         <strong>Division:</strong><span> {{match.divisionConcat}}</span><br>
                         <span *ngIf="!match.vodLinks || match.vodLinks.length==0">
-                          <a class="btn btn-primary" [href]="match.reportLink" target="_blank">
+                          <a class="btn btn-primary mb-2" [href]="match.reportLink" target="_blank">
                              Report Form
                           </a>
                           <br>
