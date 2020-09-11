@@ -13,7 +13,7 @@ export class BannerImagesService {
   returnImage() {
     let ind = this.uniqueNumGen();
     let imageName = this.images[ind];
-    return (this.url +imageName);
+    return this.url + imageName;
   }
 
   returnSpecialImage(para) {
@@ -45,6 +45,8 @@ export class BannerImagesService {
     "Pb.jpg",
     "nexomania_II_banner_image.jpg",
     "mei_banner_image.jpg",
+    "Ice_Crown_Citadel.png",
+    "Arthas_v_Artanis.png",
   ];
 
   uniqueNumGen(val?) {
