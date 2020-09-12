@@ -26,19 +26,22 @@ export class MatchPaginatorComponent implements OnInit {
   @Input() set matches(inp) {
     if (inp) {
       this.originalMatches = inp;
+      // console.log('>>',this.replay)
       this.initSchedule();
     }
   }
 
-  replay = false;
-  @Input() set replayList(inp) {
-    if (!this.util.isNullOrEmpty(inp)) {
-      if(inp){
-              this.startTimeFlt = null;
-              this.replay = inp;
-      }
-    }
-  }
+
+  @Input() replay: boolean = false;
+  // (inp) {
+  //   if (!this.util.isNullOrEmpty(inp)) {
+  //     if(inp){
+  //             this.startTimeFlt = null;
+  //             this.replay = inp;
+  //             this.initSchedule();
+  //     }
+  //   }
+  // }
 
   hideForm = true;
   selectedRound: any;
@@ -121,7 +124,8 @@ export class MatchPaginatorComponent implements OnInit {
 
     //set console to be filtered by todays date automatically
     if(this.replay){
-      this.displayArray = this.filterMatches.slice(0, 10);
+      this.startTimeFlt = null;
+      this.doFilterMatches();
     }else{
       this.filterByFriendlyDateToMS();
     }
@@ -167,39 +171,55 @@ export class MatchPaginatorComponent implements OnInit {
   //filters the matches based on selected criteria
   endTimeFlt;
   doFilterMatches() {
+    // console.log(this.originalMatches);
     this.filterMatches = this.originalMatches;
+    //do we have matches?
     if (this.filterMatches && this.filterMatches.length > 0) {
+      // console.log('a')
+      //division filter
       if (!this.util.isNullOrEmpty(this.divFlt)) {
+        // console.log("b");
         this.filterMatches = this.filterMatches.filter((match) => {
           return this.filterService.testDivision(match, this.divFlt);
         });
       }
+      //round filter
       if (!this.util.isNullOrEmpty(this.roundFlt)) {
+        // console.log("c");
         this.filterMatches = this.filterMatches.filter((match) => {
           return this.filterService.testRound(match, this.roundFlt);
         });
       }
+      //team name filter
       if (!this.util.isNullOrEmpty(this.teamFlt)) {
+        // console.log("d");
         this.filterMatches = this.filterMatches.filter((match) => {
           return this.filterService.testName(match, this.teamFlt);
         });
       }
+      //tournament filter
       if (
         !this.util.isNullOrEmpty(this.tournamentOnlyFlt) &&
         this.tournamentOnlyFlt
       ) {
+        // console.log("e");
         this.filterMatches = this.filterMatches.filter((match) => {
           return this.filterService.testTournament(match);
         });
       }
+      //scheduled matches only
       if (
         !this.util.isNullOrEmpty(this.scheduledOnlyFlt) &&
         this.scheduledOnlyFlt
       ) {
+        // console.log("f");
         this.filterMatches = this.filterMatches.filter((match) => {
           return this.filterService.testScheduled(match);
         });
+        //matches that match a given start time
         if (!this.util.isNullOrEmpty(this.startTimeFlt)) {
+
+          // console.log("g", this.startTimeFlt);
           this.filterMatches = this.filterMatches.filter((match) => {
             return this.filterService.testTime(
               match,
@@ -209,12 +229,19 @@ export class MatchPaginatorComponent implements OnInit {
           });
         }
       } else {
+        // console.log("h");
+        // EVERY MATCH SCHEDULED OR NOT
         this.filterMatches = this.filterMatches.filter((match) => {
           return !this.filterService.testScheduled(match);
         });
       }
-
+      //sort by time;
       this.filterMatches = this.util.sortMatchesByTime(this.filterMatches);
+      if(this.replay){
+        // console.log("i");
+        this.filterMatches.reverse();
+      }
+      // console.log('this.filterMatches ',this.filterMatches);
       this.length = this.filterMatches.length;
       this.displayArray = this.filterMatches.slice(
         0,

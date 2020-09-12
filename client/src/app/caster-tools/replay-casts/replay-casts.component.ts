@@ -52,7 +52,7 @@ export class ReplayCastsComponent implements OnInit {
     };
     this.scheduleService.matchQuery(query).subscribe(
       res=>{
-        res = this.util.sortMatchesByTime(res);
+        // res = this.util.sortMatchesByTime(res);
         this.unCastedMatches=res;
       },
       err=>{
