@@ -497,15 +497,11 @@ function bestOfX(matchesForDivision, nonReportedMatchCount, teams, standings) {
                         if (score != undefined && score != null) {
 
                             standing['wins'] += score;
+                            standing['losses'] += match.home.score;
 
                             if (score >= maxWins) {
                                 standing['points'] += 1
                             }
-
-                            if (score < maxWins) {
-                                standing['losses'] += boX - score;
-                            }
-
 
                         } else {
                             standing['losses'] = maxLosses;
@@ -525,13 +521,10 @@ function bestOfX(matchesForDivision, nonReportedMatchCount, teams, standings) {
                         if (score != undefined && score != null) {
 
                             standing['wins'] += score;
+                            standing['losses'] += match.away.score;
 
                             if (score >= maxWins) {
                                 standing['points'] += 1
-                            }
-
-                            if (score < maxWins) {
-                                standing['losses'] += boX - score;
                             }
 
 
