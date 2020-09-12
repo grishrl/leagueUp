@@ -108,10 +108,14 @@
 
                 </div>
                 <div class="col mt-2 ">
-                    <div><strong>Replay File:</strong> <a href="{{util.replayFQDN(replay.value.url)}} ">Stored
-              Replay</a></div>
-                    <div><strong>Heroes Profile:</strong> <a href="{{replay.value.parsedUrl}} " target="_blank "> Match
-              Link</a></div>
+                    <div *ngIf="replay.value.url">
+                        <strong>Replay File:</strong>
+                        <a href="{{util.replayFQDN(replay.value.url)}} "> Stored Replay</a>
+                    </div>
+                    <div *ngIf="replay.value.parsedUrl">
+                        <strong>Heroes Profile:</strong>
+                        <a href="{{replay.value.parsedUrl}} " target="_blank "> Match Link</a>
+                    </div>
                 </div>
             </div>
             <div class="row mt-3 " *ngIf="match.vodLinks ">
