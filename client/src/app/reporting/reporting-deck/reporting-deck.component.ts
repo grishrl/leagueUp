@@ -110,7 +110,7 @@ export class ReportingDeckComponent implements OnInit {
   Volskaya: 'Volskaya Foundry',
   // 'Warhead Junction': 'Warhead Junction',   // blizz why
   BraxisHoldout: 'Braxis Holdout',
-  Hanamura: 'Hanamura',
+  Hanamura: 'Hanamura Temple',
   AlteracPass: 'Alterac Pass'
 };
 

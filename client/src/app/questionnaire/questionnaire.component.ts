@@ -49,7 +49,7 @@ export class QuestionnaireComponent implements OnInit {
     Volskaya: 'Volskaya Foundry',
     'Warhead Junction': 'Warhead Junction',
     BraxisHoldout: 'Braxis Holdout',
-    Hanamura: 'Hanamura',
+    Hanamura: 'Hanamura Temple',
     AlteracPass: 'Alterac Pass'
   };
 
