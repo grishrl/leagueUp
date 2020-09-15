@@ -40,7 +40,8 @@
                 </div>
                 <br>
                 <app-loading [showLoading]="!isLoaded"></app-loading>
-                <div *ngIf="isLoaded">
+                <div [hidden]="!isLoaded">
+
                     <div [ngSwitch]=" view ">
                         <mwl-calendar-month-view *ngSwitchCase="CalendarView.Month " [viewDate]="viewDate " [events]="events " [refresh]="refresh " [activeDayIsOpen]="activeDayIsOpen " (dayClicked)="dayClicked($event.day) " (eventClicked)="handleEvent(
                     'Clicked', $event.event) " [openDayEventsTemplate]="customOpenDayEventsTemplate " (eventTimesChanged)="eventTimesChanged($event) ">

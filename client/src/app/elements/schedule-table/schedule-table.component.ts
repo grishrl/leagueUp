@@ -70,7 +70,6 @@ export class ScheduleTableComponent implements OnInit {
   ngOnInit() {
     this.todayDate = new Date().getTime();
     this.isCaster = this.auth.isCaster();
-    console.log("sortOrder",this.sortOrder);
   }
 
   userCanSchedule(match) {

@@ -151,119 +151,119 @@ export class CalendarViewComponent implements OnInit {
 
   _matches = [];
   ngOnInit(){
+    this.initEvents();
+  }
+
+  private initEvents() {
     this.list = new Map<String, [object]>();
     this.isLoaded = false;
     this.matches.getAllMatchesWithStartTime().subscribe(
-      res=>{
+      res => {
         let matches = res;
         this._matches = res;
 
         matches = this.util.sortMatchesByTime(matches);
 
-        let now = Date.now()
+        let now = Date.now();
 
         let tournamentRefs = [];
 
-        matches.forEach( match => {
-          if (!match.divisionConcat && match.challonge_tournament_ref){
-            if (tournamentRefs.indexOf(match.challonge_tournament_ref) == -1){
+        matches.forEach(match => {
+          if (!match.divisionConcat && match.challonge_tournament_ref) {
+            if (tournamentRefs.indexOf(match.challonge_tournament_ref) == -1) {
               tournamentRefs.push(match.challonge_tournament_ref);
             }
           }
-        } );
+        });
 
         this.matches.getTournamentsByIds(tournamentRefs).subscribe(
-          res=>{
+          res => {
             this.tournamentRefs = res;
-                  matches.forEach((match) => {
-                    let startDate: Date = new Date(
-                      parseInt(match.scheduledTime.startTime)
-                    );
-                    let endDate: Date = new Date(
-                      parseInt(match.scheduledTime.startTime) + 1
-                    );
-                    let event: CalendarEvent = {
-                      start: startDate,
-                      end: endDate,
-                      title: this.returnName(match),
-                      meta: { id: match.matchId, type: "match" },
-                    };
-
-                    if (this.showCasterNameUrl(match)) {
-                      event["meta"].casted = true;
-                    }
-
-                    if (this.shouldShowTimeInEventTitle()) {
-                      event["title"] =
-                        this.util.getFormattedDate(startDate, "hh:mm A zz") +
-                        ": " +
-                        event["title"];
-                    }
-
-                    event["color"] = this.returnColor(match);
-
-                    this.events.push(event);
-
-                    if (now <= match.scheduledTime.startTime) {
-                      let formatDate = this.util.getFormattedDate(
-                        match.scheduledTime.startTime,
-                        "dddd MMM D"
-                      );
-                      if (this.list.has(formatDate)) {
-                        let tempArr = this.list.get(formatDate);
-                        tempArr.push(match);
-                        this.list.set(formatDate, tempArr);
-                        // this.list[formatDate].push(match);
-                      } else {
-                        this.list.set(formatDate, [match]);
-                      }
-                    }
-                  });
-          }
-        )
-
-
-
-        this.eventService.getAll().subscribe(
-          reply=>{
-
-            reply.forEach(rep=>{
+            matches.forEach((match) => {
+              let startDate: Date = new Date(
+                parseInt(match.scheduledTime.startTime)
+              );
+              let endDate: Date = new Date(
+                parseInt(match.scheduledTime.startTime) + 1
+              );
               let event: CalendarEvent = {
-                'start': new Date(parseInt(rep.eventDate)),
-                'title': rep.eventName,
-                'meta': { id: rep.uuid, 'type': 'event' }
+                start: startDate,
+                end: endDate,
+                title: this.returnName(match),
+                meta: { id: match.matchId, type: "match" },
               };
 
-              event['color'] = colors.event;
+              if (this.showCasterNameUrl(match)) {
+                event["meta"].casted = true;
+              }
+
+              if (this.shouldShowTimeInEventTitle()) {
+                event["title"] =
+                  this.util.getFormattedDate(startDate, "hh:mm A zz") +
+                  ": " +
+                  event["title"];
+              }
+
+              event["color"] = this.returnColor(match);
+
               this.events.push(event);
 
-
-            });
-
-            this.events = this.events.sort((a,b)=>{
-              let retVal = 0;
-              if (a.start > b.start) {
-                retVal = 1;
-              } else {
-                retVal = -1;
+              if (now <= match.scheduledTime.startTime) {
+                let formatDate = this.util.getFormattedDate(
+                  match.scheduledTime.startTime,
+                  "dddd MMM D"
+                );
+                if (this.list.has(formatDate)) {
+                  let tempArr = this.list.get(formatDate);
+                  tempArr.push(match);
+                  this.list.set(formatDate, tempArr);
+                  // this.list[formatDate].push(match);
+                }
+                else {
+                  this.list.set(formatDate, [match]);
+                }
               }
-              return retVal;
             });
+             this.eventService.getAll().subscribe(
+               (reply) => {
+                 reply.forEach((rep) => {
+                   let event: CalendarEvent = {
+                     start: new Date(parseInt(rep.eventDate)),
+                     title: rep.eventName,
+                     meta: { id: rep.uuid, type: "event" },
+                   };
 
-            this.refresh.next();
-          },
-          err=>{
-            console.log(err);
+                   event["color"] = colors.event;
+                   this.events.push(event);
+                 });
+
+                 this.events = this.events.sort((a, b) => {
+                   let retVal = 0;
+                   if (a.start > b.start) {
+                     retVal = 1;
+                   } else {
+                     retVal = -1;
+                   }
+                   return retVal;
+                 });
+                 this.isLoaded = true;
+                 this.refresh.next();
+               },
+               (err) => {
+                 console.log(err);
+               }
+             );
           }
-        )
-        this.isLoaded=true;
+        );
+
+
 
 
       },
-      err=>{
+      err => {
         console.log(err);
       }
-    )
+    );
   }
 
   private returnColor(match){
