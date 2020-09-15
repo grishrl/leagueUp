@@ -25,29 +25,10 @@ export class ReplayCastsComponent implements OnInit {
   initSchedule(){
     let query = {
       $and: [
-        {
-          season: this.currentSeason,
-        },
-        {
-          reported: true,
-        },
-        {
-          $or: [
-            {
-              forfeit: {
-                $exists: false,
-              },
-            },
-            {
-              forfeit: false,
-            },
-          ],
-        },
-        {
-          casterName: {
-            $exists: false,
-          },
-        },
+        { season: 10 },
+        { reported: true },
+        { $or: [{ forfeit: { $exists: false } }, { forfeit: false }] },
+        { $or: [{ casterName: { $exists: false } }, { casterName: "" }] },
       ],
     };
     this.scheduleService.matchQuery(query).subscribe(
