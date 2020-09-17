@@ -27,6 +27,7 @@
         "jsonwebtoken": "^8.5.1",
         "lodash": "^4.17.20",
         "mongoose": "^5.9.12",
+        "newrelic": "^6.13.0",
         "nodemailer": "^4.7.0",
         "nodemailer-express-handlebars": "^4.0.0",
         "passport": "^0.4.1",
