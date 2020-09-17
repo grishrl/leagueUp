@@ -8,6 +8,8 @@ isNullOrEmpty = function(dat) {
     if (Array.isArray(dat)) {
         if (dat.length == 0) {
             return true;
+        } else {
+            return false;
         }
     } else if (typeof dat == 'object') {
         var noe = true;

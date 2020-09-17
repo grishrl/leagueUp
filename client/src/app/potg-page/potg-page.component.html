@@ -18,9 +18,11 @@
                         <!-- Post Item -->
                         <div class="col-12 mb-2">
                             <span>
-                              <button data-toggle="tooltip" data-placement="top" title="Sort by smiles." (click)="sort('likes')"><i
+                              <button [ngClass]="{'btn-outline-primary':currentChoice=='likes'}" data-toggle="tooltip" data-placement="top" title="Sort by smiles." (click)="sort('likes')"><i
                                   class="far fa-laugh-squint"></i></button>
-                              <button data-toggle="tooltip" data-placement="top" title="Sort by recent." (click)="sort('timeStamp')"> <i
+                              <button class="m-1" [ngClass]="{'btn-outline-primary':currentChoice=='timeStamp'}"
+                                data-toggle="tooltip"
+                                data-placement="top" title="Sort by recent." (click)="sort('timeStamp')"> <i
                                   class="fas fa-clock"></i></button>
                             </span>
                         </div>

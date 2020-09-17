@@ -63,12 +63,12 @@ export class ReportingDeckComponent implements OnInit {
           console.log(err);
         }
       )
+      //if match is boX we need different match numbers logic
       if(match.boX){
         this.totalGames = match.boX;
-
-
       }
-      this.requiredScore = (this.totalGames + 1) / 2;
+
+      this.requiredScore = Math.ceil(this.totalGames / 2);
       this.offScore = this.totalGames - this.requiredScore;
 
     }
@@ -225,30 +225,41 @@ showReportButton(){
     });
 
     if(homeScore == this.requiredScore){
-      if (awayScore <= this.offScore){
-        disable = false;
-        this.scoreError = '';
-      }else{
-        disable = true;
-        this.scoreError = 'Invalid Score';
-      }
-    } else if (homeScore == this.offScore){
-      if (awayScore == this.requiredScore){
-        disable = false;
-        this.scoreError = '';
-      }else{
-        disable = true;
-        this.scoreError = 'Invalid Score';
-      }
-    }else if(homeScore == 0){
-      if (awayScore == this.requiredScore){
-        disable = false;
-        this.scoreError = '';
-      }else{
-        disable = true;
-        this.scoreError = 'Invalid Score';
-      }
+      disable = false;
+      this.scoreError = "";
+    }else if(awayScore == this.requiredScore){
+      disable = false;
+      this.scoreError = "";
+    }else{
+      disable = true;
+      this.scoreError = "Invalid Score";
     }
+
+    // if(homeScore == this.requiredScore){
+    //   if (awayScore <= this.offScore){
+    //     disable = false;
+    //     this.scoreError = '';
+    //   }else{
+    //     disable = true;
+    //     this.scoreError = 'Invalid Score';
+    //   }
+    // } else if (homeScore == this.offScore){
+    //   if (awayScore == this.requiredScore){
+    //     disable = false;
+    //     this.scoreError = '';
+    //   }else{
+    //     disable = true;
+    //     this.scoreError = 'Invalid Score';
+    //   }
+    // }else if(homeScore == 0){
+    //   if (awayScore == this.requiredScore){
+    //     disable = false;
+    //     this.scoreError = '';
+    //   }else{
+    //     disable = true;
+    //     this.scoreError = 'Invalid Score';
+    //   }
+    // }
 
     // if (this.thirdReplayRequired) {
     //   if (this.homeScore != null && this.awayScore != null && this.replay1 != null && this.replay2 != null && this.replay3 != null) {

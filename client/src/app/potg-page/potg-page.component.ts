@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MvpService } from '../services/mvp.service';
 import { TimeserviceService } from '../services/timeservice.service';
 import { PageEvent, MatPaginator } from "@angular/material/paginator";
+import { UtilitiesService } from '../services/utilities.service';
 
 @Component({
   selector: "app-potg-page",
@@ -11,7 +12,8 @@ import { PageEvent, MatPaginator } from "@angular/material/paginator";
 export class PotgPageComponent implements OnInit {
   constructor(
     private mvpServ: MvpService,
-    private timeService: TimeserviceService
+    private timeService: TimeserviceService,
+    private util:UtilitiesService
   ) {
                 this.timeService.getSesasonInfo().subscribe((res) => {
                   this.currentSeason = res["value"];
@@ -59,37 +61,42 @@ export class PotgPageComponent implements OnInit {
               this.mvpList.push(m);
             }
           });
-          this.displayArray = this.mvpList.slice(
-            0,
-            this.pageSize
-          );
+          this.sort('timeStamp');
+          // this.displayArray = this.mvpList.slice(
+          //   0,
+          //   this.pageSize
+          // );
+          this.currentChoice = 'timeStamp';
           this.length = this.mvpList.length;
           this.paginator.firstPage();
         });
 
   }
 
-  invert = 1;
+  invert = true;
   lastChoice;
+  currentChoice;
 
   sort(prop) {
+    this.currentChoice = prop;
     if (this.lastChoice == prop) {
-      this.invert = -1 * this.invert;
+      this.invert = !this.invert;
     } else {
-      this.invert = 1;
+      this.invert = true;
     }
     this.lastChoice = prop;
-
     this.mvpList = this.mvpList.sort((a, b) => {
       let retVal = 0;
-      if (a[prop] && b[prop]) {
+      if (this.util.returnBoolByPath(a, prop) && this.util.returnBoolByPath(b, prop)) {
         retVal = a[prop] - b[prop];
       }
       return retVal;
     });
-    if (this.invert < 0) {
+
+    if (this.invert) {
       this.mvpList = this.mvpList.reverse();
     }
+
     this.paginator.firstPage();
     this.displayArray = this.mvpList.slice(0, this.pageSize);
   }
