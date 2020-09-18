@@ -135,48 +135,46 @@ router.get('/users/filtered/total', passport.authenticate('jwt', {
 }), (req, res) => {
     const path = '/search/users/filtered/total';
     let teamName = req.user.teamName;
-    teamName = teamName.toLowerCase();
-    //userUnteamedFilterInvited
     let myFilterObj = userUnteamed();
-    Team.findOne({ teamName_lower: teamName }).then(
-        foundTeam => {
-            if (foundTeam) {
-                if (foundTeam.invitedUsers.length > 0) {
-                    myFilterObj.$and.push({
-                        "displayName": {
-                            $not: {
-                                $in: foundTeam.invitedUsers
+    if (teamName) {
+        teamName = teamName.toLowerCase();
+        Team.findOne({
+            teamName_lower: teamName
+        }).then(
+            foundTeam => {
+                if (foundTeam) {
+                    if (foundTeam.invitedUsers.length > 0) {
+                        myFilterObj.$and.push({
+                            "displayName": {
+                                $not: {
+                                    $in: foundTeam.invitedUsers
+                                }
                             }
-                        }
-                    })
-
-                    let userNum = User.countDocuments(myFilterObj);
-                    userNum.exec().then(
-                        ret => {
-                            res.status(200).send(util.returnMessaging(path, 'Found users', null, ret));
-                        },
-                        err => {
-                            res.status(500).send(util.returnMessaging(path, 'Error finding users', err));
-                        }
-                    )
+                        })
+                    }
+                    queryUsersAndReturn();
                 } else {
-                    let userNum = User.countDocuments(myFilterObj);
-                    userNum.exec().then(
-                        ret => {
-                            res.status(200).send(util.returnMessaging(path, 'Found users', null, ret));
-                        },
-                        err => {
-                            res.status(500).send(util.returnMessaging(path, 'Error finding users', err));
-                        }
-                    )
+                    queryUsersAndReturn();
                 }
-            } else {
-                res.status(200).send(util.returnMessaging(path, 'Found users', null, ret));
+            }, err => {
+                res.status(500).send(util.returnMessaging(path, 'Error finding users', err));
             }
-        }, err => {
-            res.status(500).send(util.returnMessaging(path, 'Error finding users', err));
-        }
-    )
+        )
+    } else {
+        queryUsersAndReturn();
+    }
+
+    function queryUsersAndReturn() {
+        let userNum = User.countDocuments(myFilterObj);
+        userNum.exec().then(
+            ret => {
+                res.status(200).send(util.returnMessaging(path, 'Found users', null, ret));
+            },
+            err => {
+                res.status(500).send(util.returnMessaging(path, 'Error finding users', err));
+            }
+        )
+    }
 });
 
 //paginate users
@@ -189,44 +187,52 @@ router.post('/user/filtered/paginate', passport.authenticate('jwt', {
     let teamName = req.user.teamName;
     //userUnteamedFilterInvited
     let myFilterObj = userUnteamed();
-    teamName = teamName.toLowerCase();
-    Team.findOne({
-        teamName_lower: teamName
-    }).then(
-        foundTeam => {
-            if (foundTeam) {
-                if (foundTeam.invitedUsers.length > 0) {
-                    myFilterObj.$and.push({
-                        "displayName": {
-                            $not: {
-                                $in: foundTeam.invitedUsers
+
+    if (teamName) {
+        teamName = teamName.toLowerCase();
+        Team.findOne({
+            teamName_lower: teamName
+        }).then(
+            foundTeam => {
+                if (foundTeam) {
+                    if (foundTeam.invitedUsers.length > 0) {
+                        myFilterObj.$and.push({
+                            "displayName": {
+                                $not: {
+                                    $in: foundTeam.invitedUsers
+                                }
                             }
-                        }
-                    });
-                }
-                let query = User.find(myFilterObj).skip(page * perPage).limit(perPage);
-                query.exec().then(
-                    found => {
-                        res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, found));
-                    }, err => {
-                        res.status(500).send(util.returnMessaging(path, "Error finding teams", err));
+                        });
                     }
-                )
-            } else {
-
+                    performQueryAndReturn();
+                } else {
+                    performQueryAndReturn
+                }
+            }, err => {
+                performQueryAndReturn();
             }
-        }, err => {
+        );
+    } else {
+        performQueryAndReturn()
+    }
 
-        }
-    );
-
-
+    function performQueryAndReturn() {
+        let query = User.find(myFilterObj).skip(page * perPage).limit(perPage);
+        query.exec().then(
+            found => {
+                res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, found));
+            }, err => {
+                res.status(500).send(util.returnMessaging(path, "Error finding teams", err));
+            });
+    }
 });
 
 //get users total number this returns all unteamed users
 router.get('/users/all/total', (req, res) => {
     const path = '/search/users/total';
+    console.log('xd');
     let userNum = User.estimatedDocumentCount(userUnteamed());
+    console.log(userNum);
     userNum.exec().then(
         ret => {
             res.status(200).send(util.returnMessaging(path, 'Found users', null, ret))
@@ -248,14 +254,6 @@ router.post('/user/paginate', passport.authenticate('jwt', {
     query.exec().then(
         found => {
             res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, found));
-            // filterInvitedUsers(req, found).then(
-            //     parsed => {
-            //         res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, parsed));
-            //     },
-            //     err => {
-            //         res.status(200).send(util.returnMessaging(path, "Fetched next page.", null, found));
-            //     }
-            // )
 
         }, err => {
             res.status(500).send(util.returnMessaging(path, "Error finding teams", err));

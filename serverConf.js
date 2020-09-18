@@ -16,6 +16,7 @@ let server = app.listen(port, hostname, () => {
 
 //create socket server from express server
 let socketIo = io(server);
+socketIo.set('heartbeat timeout', 30);
 
 //export these to be used in other configs; 1 for the routes for http and the other for socket.IO methods
 module.exports = {
