@@ -49,8 +49,6 @@ export class MatchResultsHeaderComponent implements OnInit {
       this.seasonVal = this.matchVal.season;
     }
 
-    console.log(this.matchVal);
-
     if(this.seasonVal != this.timeVal){
       this.homeLogo = this.team.imageFQDN(
         this.matchVal.home.logo,

@@ -19,10 +19,23 @@ export class EventDisplayComponent implements OnInit {
   }
 
   _showImage = true;
+  showVal = true;
   @Input() set showImage(show){
-    if(!this.util.isNullOrEmpty(show)){
-      this._showImage = show;
+    if(this.util.isNullOrEmpty(show)){
+      this.showVal = show;
     }
+  }
+
+  determineShowImage(){
+        if (!this.util.isNullOrEmpty(this.showVal) && this.showVal) {
+          if (!this.util.isNullOrEmpty(this._event.eventImage)) {
+            this._showImage = this.showVal;
+          }else{
+            this._showImage = false;
+          }
+        }else{
+          this._showImage=false;
+        }
   }
 
   @Input() set event(_event){
@@ -38,11 +51,14 @@ export class EventDisplayComponent implements OnInit {
       this.eventService.getEventById(this._eventID).subscribe(
         res=>{
           this._event = res;
+           this.determineShowImage();
         },
         err=>{
           console.log(err);
         }
       )
+    }else{
+      this.determineShowImage();
     }
   }
 
