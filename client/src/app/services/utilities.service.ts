@@ -58,10 +58,10 @@ export class UtilitiesService {
         return true;
       }
     } else if (typeof dat == "object") {
-      let noe = false;
+      let noe = true;
       for (let key in dat) {
         if (this.isNullOrEmpty(dat[key])) {
-          noe = true;
+          noe = false;
         }
       }
       return noe;
