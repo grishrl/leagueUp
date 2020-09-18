@@ -182,6 +182,7 @@ export class MatchPaginatorComponent implements OnInit {
         this.filterMatches = this.filterMatches.filter((match) => {
           return this.filterService.testDivision(match, this.divFlt);
         });
+        // console.log(JSON.stringify(this.filterMatches));
       }
       //round filter
       if (!this.util.isNullOrEmpty(this.roundFlt)) {

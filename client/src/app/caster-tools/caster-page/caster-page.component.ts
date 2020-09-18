@@ -69,8 +69,19 @@ export class CasterPageComponent implements OnInit {
               // LG 9/7/2020: caster report form link - needs to be updated every season
               let prefilLink = `https://docs.google.com/forms/d/e/1FAIpQLScvq7QAt9V1cEN0_SNQNALt7rAgM9iXVchrpUjNu4ID1APIeg/viewform?usp=pp_url&entry.2005620554=${match.casterName}&entry.1547019665=${match.matchId}`;
               match.reportLink = prefilLink;
-
-              if (now <= match.scheduledTime.startTime) {
+              if(!this.util.returnBoolByPath(match, 'scheduledTime.startTime')){
+                let formatDate = 'UNKNOWN TIME';
+                if (this.pastList.has(formatDate)) {
+                  let tempArr = this.pastList.get(
+                    formatDate
+                  );
+                  tempArr.push(match);
+                  this.pastList.set(formatDate, tempArr);
+                  // this.list[formatDate].push(match);
+                } else {
+                  this.pastList.set(formatDate, [match]);
+                }
+              }else if (now <= match.scheduledTime.startTime) {
                 let formatDate = this.util.getFormattedDate(
                   match.scheduledTime.startTime,
                   "dddd MMM D hh:mm"

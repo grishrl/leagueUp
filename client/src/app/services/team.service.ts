@@ -211,8 +211,7 @@ export class TeamService {
     let imgFQDN = 'https://s3.amazonaws.com/' + environment.s3bucketImages + '/';
     if (img) {
       imgFQDN += img;
-    }
-    else {
+    } else {
       imgFQDN += 'defaultTeamLogo.png';
     }
     return encodeURI(imgFQDN);
