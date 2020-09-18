@@ -67,7 +67,6 @@ import { SetDeadlineComponent } from './admin/match-management/set-deadline/set-
 import { MatchViewComponent } from './match/match-view/match-view.component';
 import { DropDownTimeComponent } from './formComponents/times-available/drop-down-time/drop-down-time.component';
 import { UserMessageCenterComponent } from './messageCenter/user-message-center/user-message-center.component';
-import { RulesComponent } from './rules/rules.component';
 import { TeamMarketComponent } from './marketplace/team-market/team-market.component';
 import { UserMarketplaceComponent } from './marketplace/user-marketplace/user-marketplace.component';
 import { UserDeckComponent } from './marketplace/user-marketplace/user-deck/user-deck.component';
@@ -265,7 +264,6 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     MatchViewModalComponent,
     DropDownTimeComponent,
     UserMessageCenterComponent,
-    RulesComponent,
     TeamMarketComponent,
     UserMarketplaceComponent,
     UserDeckComponent,

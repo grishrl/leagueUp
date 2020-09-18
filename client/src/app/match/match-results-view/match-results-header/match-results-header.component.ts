@@ -13,6 +13,7 @@ import { Match } from 'src/app/classes/match.class';
 })
 export class MatchResultsHeaderComponent implements OnInit {
   seasonVal;
+  timeVal;
   constructor(
     public util: UtilitiesService,
     public team: TeamService,
@@ -20,6 +21,7 @@ export class MatchResultsHeaderComponent implements OnInit {
   ) {
     this.timeService.getSesasonInfo().subscribe((time) => {
       this.seasonVal = time.value;
+      this.timeVal = time.value;
       this.init();
     });
   }
@@ -47,8 +49,26 @@ export class MatchResultsHeaderComponent implements OnInit {
       this.seasonVal = this.matchVal.season;
     }
 
-    this.homeLogo = this.team.imageFQDN(this.matchVal.home.logo, this.seasonVal);
-    this.awayLogo = this.team.imageFQDN(this.matchVal.away.logo, this.seasonVal);
+    console.log(this.matchVal);
+
+    if(this.seasonVal != this.timeVal){
+      this.homeLogo = this.team.imageFQDN(
+        this.matchVal.home.logo,
+        this.seasonVal
+      );
+      this.awayLogo = this.team.imageFQDN(
+        this.matchVal.away.logo,
+        this.seasonVal
+      );
+    }else{
+      this.homeLogo = this.team.imageFQDN(
+        this.matchVal.home.logo
+      );
+      this.awayLogo = this.team.imageFQDN(
+        this.matchVal.away.logo
+      );
+    }
+
     this.homeScore = this.reportScore(this.matchVal, "home");
     this.awayScore = this.reportScore(this.matchVal, "away");
   }
