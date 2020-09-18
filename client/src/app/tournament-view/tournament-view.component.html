@@ -7,7 +7,7 @@
                         <section class="round wombo">
                             <div class="winners" *ngIf="tournamentObject.rol16_1 && tournamentObject.rol16_2">
                                 <div class="matchups">
-                                    <div class="matchup" *ngIf="tournamentObject.rol16_1" (click)="ClickMatch(tournamentObject.rol16_1)">
+                                    <div class="matchup" *ngIf="tournamentObject.rol16_1">
                                         <div class="participants border border-secondary">
                                             <div class="participant" [ngClass]="{'winner': winner(tournamentObject.rol16_1, 'home')}">
                                                 <span *ngIf="tournamentObject.rol16_1.home else tbd">
@@ -23,11 +23,11 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="matchup" *ngIf="tournamentObject.rol16_2" (click)="ClickMatch(tournamentObject.rol16_2)">
+                                    <div class="matchup" *ngIf="tournamentObject.rol16_2">
                                         <div class="participants border border-secondary">
                                             <div class="participant" [ngClass]="{'winner': winner(tournamentObject.rol16_2, 'home')}">
                                                 <span *ngIf="tournamentObject.rol16_2.home else tbd">
-                                                    <img class="imgThumb img-fluid" src="{{_team.imageFQDN(tournamentObject.rol16_2.home.logo)}}" *ngIf="tournamentObject.rol16_2.home.teamName != 'BYE'"> 
+                                                    <img class="imgThumb img-fluid" src="{{_team.imageFQDN(tournamentObject.rol16_2.home.logo)}}" *ngIf="tournamentObject.rol16_2.home.teamName != 'BYE'">
                                                     <span>{{tournamentObject.rol16_2.home.teamName}}</span>
                                                 </span>
                                             </div>
@@ -45,7 +45,7 @@
                                     <div class="line"></div>
                                 </div>
                             </div>
-                            <div class="winners" *ngIf="tournamentObject.rol16_3 && tournamentObject.rol16_4" (click)="ClickMatch(tournamentObject.rol16_4)">
+                            <div class="winners" *ngIf="tournamentObject.rol16_3 && tournamentObject.rol16_4">
                                 <div class="matchups">
                                     <div class="matchup" *ngIf="tournamentObject.rol16_3">
                                         <div class="participants border border-secondary">

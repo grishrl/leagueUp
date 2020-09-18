@@ -7,7 +7,16 @@
                     <h3>Match Details</h3>
                 </div>
             </div> -->
-            <app-match-view [passMatch]="match"></app-match-view>
+            <div class="panel-box pb-4">
+                <div class="text-center pt-4 pb-4">
+                    <h4>Match Up</h4>
+                </div>
+                <app-match-results-header [match]="match"></app-match-results-header>
+                <app-match-view [passMatch]="match"></app-match-view>
+                <div *ngIf="match.away.score || match.home.score" class="p-2">
+                    <app-games-information [match]="match"></app-games-information>
+                </div>
+            </div>
         </div>
     </div>
     <div class="row mt-4" *ngIf="event">

@@ -1,130 +1,40 @@
-<!-- this block is only visible on large screens -->
-<div class="d-none d-sm-none d-md-block">
-    <div class="row mt-3">
-        <div class="col">
-            <div class="row">
-                <div class="col-5">
-                    <div class="row">
-                        <div class="col">
-                            <img class="img-fluid" src="{{homeLogo}}" width="150" alt="Team Logo">
-                        </div>
-                        <div class="col vertical-middle">
-                            <div *ngIf="match.home.teamName">
-                                <app-team-link [team]="match.home.teamName">{{match.home.teamName}}</app-team-link>
-                            </div>
-
-                        </div>
-                        <div class="col vertical-middle">
-                            <span> {{match.home.wins}} - {{match.home.losses}} </span>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="col-2 vertical-middle text-center">
-                    - VS -
-                </div>
-                <div class="col-5">
-                    <div class="row">
-                        <div class="col vertical-middle">
-                            <span> {{match.away.wins}} - {{match.away.losses}} </span>
-                        </div>
-                        <div class="col vertical-middle">
-                            <div *ngIf="match.away.teamName; else bye">
-                                <app-team-link [team]="match.away.teamName">{{match.away.teamName}}</app-team-link>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <img class="img-fluid" src="{{awayLogo}}" width="150" alt="Team Logo">
-                        </div>
-                    </div>
-                </div>
+<div class="pl-5 pr-5">
+    <div class="row">
+        <div class="col-12 text-center">
+            <span class="font-weight-bold">Record</span>
+        </div>
+        <div class="col text-center">
+            <span> {{match.home.wins}} - {{match.home.losses}} </span>
+        </div>
+        <div class="col text-center">
+            - VS -
+        </div>
+        <div class="col text-center">
+            <span> {{match.away.wins}} - {{match.away.losses}} </span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-center">
+            <div class="mt-2">
+                <strong> Division:</strong> {{divisionDisplayName}}
             </div>
-            <div class="row" *ngIf="match.casterName && match.casterUrl">
-                <div class="col"></div>
-                <div class="col-7 text-center">
-                    <strong> Division:</strong> {{divisionDisplayName}}
-                </div>
-                <div class="col"></div>
-            </div>
-            <div class="row">
-                <div class="col">
 
-                </div>
-                <div class="col-7 text-center">
-                    <strong>Scheduled Time: </strong>
-                    <span *ngIf="match.scheduledTime && match.scheduledTime.startTime != null else tbd">
-                        {{match.scheduledTime.startTime | commonPipe:util.getFormattedDate:"dddd M/D/YYYY h:mm A zz"}}
-                    </span>
-                    <ng-template #tbd><span> TBD </span></ng-template>
-                    <div *ngIf="Auth.isCaster()"><strong>Match ID: </strong>{{match.matchId}}</div>
-                </div>
-                <div class="col">
-
-                </div>
+            <div class="mt-2">
+                <strong>Scheduled Time: </strong>
+                <span *ngIf="match.scheduledTime && match.scheduledTime.startTime != null else tbd">
+                                {{match.scheduledTime.startTime | commonPipe:util.getFormattedDate:"dddd M/D/YYYY h:mm A zz"}}
+                              </span>
+                <ng-template #tbd><span> TBD </span></ng-template>
             </div>
-            <div class="row" *ngIf="match.casterName && match.casterUrl">
-                <div class="col"></div>
-                <div class="col-7 text-center">
-                    <strong> Casted by:</strong> {{match.casterName}} :
-                    <a href="{{match.casterUrl| commonPipe:util.prePendHttp}}" target="_blank">{{match.casterUrl}}</a>
-                </div>
-                <div class="col"></div>
+
+            <div class="mt-2" *ngIf="Auth.isCaster()">
+                <strong>Match ID: </strong>{{match.matchId}}
+            </div>
+
+            <div class="mt-2" *ngIf="match.casterName && match.casterUrl">
+                <strong> Casted by:</strong> {{match.casterName}} :
+                <a href="{{match.casterUrl| commonPipe:util.prePendHttp}}" target="_blank">{{match.casterUrl}}</a>
             </div>
         </div>
     </div>
 </div>
-<!-- End large screen block -->
-
-<!-- this block is only visible on small screens -->
-<div class="d-block d-sm-none">
-    <div class="row mt-4 p-3">
-        <div class="col">
-            <div class="row">
-                <div class="col-2">
-                    <img class="img-fluid" src="{{homeLogo}}" alt="Team Logo">
-                </div>
-                <div class="col text-center">
-                    <app-team-link [team]="match.home.teamName">{{match.home.teamName}}</app-team-link>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col text-center">
-                    <span> {{match.home.wins}} - {{match.home.losses}} </span>
-                </div>
-            </div>
-            <div class="row p-1">
-                <div class="col text-center">
-                    VS
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-2">
-                    <img class="img-fluid" src="{{awayLogo}}" alt="Team Logo">
-                </div>
-                <div class="col text-center">
-                    <app-team-link [team]="match.away.teamName">{{match.away.teamName}}</app-team-link>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col text-center">
-                    <span> {{match.away.wins}} - {{match.away.losses}} </span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col text-center">
-                    Scheduled Time: <span *ngIf="match.scheduledTime && match.scheduledTime.startTime != null  else tbd">{{match.scheduledTime.startTime | commonPipe:util.getFormattedDate:"dddd M/D/YYYY h:mm A zz"}}</span>
-                    <ng-template #tbd><span> TBD </span></ng-template>
-                </div>
-            </div>
-            <div class="row" *ngIf="match.casterName">
-                <div class="col text-center">
-                    <span> Casted by:</span> {{match.casterName}} : <a href="{{match.casterUrl | commonPipe:util.prePendHttp}}" target="_blank">{{match.casterUrl}}</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<ng-template #bye>
-    BYE
-</ng-template>

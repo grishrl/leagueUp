@@ -1,9 +1,16 @@
 <app-banner-image [bannerTitle]="'Match Overview'"></app-banner-image>
 
-<section class="content-info">
+<div class="container paddings-mini">
+    <section class="content-info">
+        <div class="panel-box">
 
-    <div class="container paddings-mini">
-        <app-match-results-header [match]="match"></app-match-results-header>
-        <app-games-information [match]="match"></app-games-information>
-    </div>
-</section>
+            <div class="pt-5">
+                <app-match-results-header [match]="match"></app-match-results-header>
+            </div>
+            <div class="mt-4 p-2">
+                <app-games-information [match]="match"></app-games-information>
+            </div>
+
+        </div>
+    </section>
+</div>

@@ -1,3 +1,7 @@
+/*
+9-18-2020 - LG
+This component is currently used for scheduling matches; the teams use this componenet to perform match scheduling
+*/
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ScheduleService } from 'src/app/services/schedule.service';
@@ -6,6 +10,7 @@ import { environment } from '../../../environments/environment';
 import { AuthService } from 'src/app/services/auth.service';
 import * as moment from 'moment-timezone';
 import { UtilitiesService } from 'src/app/services/utilities.service';
+
 
 
 @Component({

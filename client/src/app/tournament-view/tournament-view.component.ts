@@ -3,7 +3,6 @@ import { ScheduleService } from '../services/schedule.service';
 import { TeamService } from '../services/team.service';
 import { UtilitiesService } from '../services/utilities.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatchViewModalComponent } from '../modal/match-view-modal/match-view-modal.component';
 
 @Component({
   selector: 'app-tournament-view',
@@ -15,7 +14,6 @@ export class TournamentViewComponent implements OnInit {
   _bracket;
 
   hasBracket=true;
-  dialogRef: MatDialogRef<MatchViewModalComponent>;
 
   constructor(private scheduleService:ScheduleService, public _team:TeamService, private util: UtilitiesService, private dialog: MatDialog) {
    }
@@ -52,6 +50,9 @@ export class TournamentViewComponent implements OnInit {
     //  }
    }
 
+   ClickMatch(){
+     console.log('xxx');
+   }
 
   matches: any = [];
   tournamentObject:any;
@@ -98,14 +99,6 @@ export class TournamentViewComponent implements OnInit {
       return false;
     }
 
-  }
-
-  ClickMatch(match: any)
-  {
-    this.dialog.closeAll();
-    this.dialogRef = this.dialog.open(MatchViewModalComponent, {
-      data: { match: match }
-    });
   }
 
   championship:any;
