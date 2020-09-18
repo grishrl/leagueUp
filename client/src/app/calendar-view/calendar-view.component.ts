@@ -11,6 +11,7 @@ import { UtilitiesService } from '../services/utilities.service';
 import { TeamService } from '../services/team.service';
 import { AuthService } from '../services/auth.service';
 import { find } from 'lodash';
+import { CalendarCacheService } from './calendar-cache.service';
 
 const colors: any = {
   storm: {
@@ -122,7 +123,7 @@ export class CalendarViewComponent implements OnInit {
   key = colors;
   tournamentRefs;
 
-  constructor(private matches: ScheduleService, public dialog: MatDialog, private router:Router, private eventService:EventsService, public util: UtilitiesService, public teamServ:TeamService, public auth:AuthService, private scheduleService:ScheduleService) { }
+  constructor(private cache:CalendarCacheService, private matches: ScheduleService, public dialog: MatDialog, private router:Router, private eventService:EventsService, public util: UtilitiesService, public teamServ:TeamService, public auth:AuthService, private scheduleService:ScheduleService) { }
 
   showCasterNameUrl(match) {
     let ret = false;
@@ -149,9 +150,19 @@ export class CalendarViewComponent implements OnInit {
 
   isLoaded = false;
 
+  calendarInfo = 'calendarInfo';
+
   _matches = [];
   ngOnInit(){
-    this.initEvents();
+    let cache = this.cache.getCache(this.calendarInfo);
+    if(cache=='getNewData' || cache == null){
+      this.initEvents();
+    }else{
+      this.isLoaded = true;
+      this.events = cache;
+      this.refresh.next();
+    }
+
   }
 
   private initEvents() {
@@ -190,7 +201,7 @@ export class CalendarViewComponent implements OnInit {
                 start: startDate,
                 end: endDate,
                 title: this.returnName(match),
-                meta: { id: match.matchId, type: "match" },
+                meta: { id: match.matchId, type: "match", obj:match },
               };
 
               if (this.showCasterNameUrl(match)) {
@@ -230,7 +241,7 @@ export class CalendarViewComponent implements OnInit {
                    let event: CalendarEvent = {
                      start: new Date(parseInt(rep.eventDate)),
                      title: rep.eventName,
-                     meta: { id: rep.uuid, type: "event" },
+                     meta: { id: rep.uuid, type: "event", obj:rep },
                    };
 
                    event["color"] = colors.event;
@@ -246,6 +257,7 @@ export class CalendarViewComponent implements OnInit {
                    }
                    return retVal;
                  });
+                 this.cache.setCache(this.calendarInfo, this.events);
                  this.isLoaded = true;
                  this.refresh.next();
                },
@@ -388,8 +400,18 @@ export class CalendarViewComponent implements OnInit {
   handleEvent(action: string, event: CalendarEvent): void {
 
     this.eventService.setLocalEvent(event.meta);
-    this.router.navigate(['event/']);
+    let url = '';
+    if(event.meta.type == 'match'){
+      this.router.navigate(["event/match/",event.meta.id]);
+      url = this.router.serializeUrl(this.router.createUrlTree(["event/match/", event.meta.id]));
+    }else{
+      this.router.navigate(["event/event/", event.meta.id]);
+      url = this.router.serializeUrl(
+        this.router.createUrlTree(["event/event/", event.meta.id])
+      );
+    }
 
+    // window.open(url, '_blank');
 
   }
 

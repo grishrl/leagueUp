@@ -1,41 +1,43 @@
-<div class="row">
-    <div class="col">
+<div class="panel-box">
+    <div class="row p-5">
+        <div class="col">
 
-        <div class="row">
-            <div class="col text-center">
-                <h3>{{_event.eventName}}</h3>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col text-center">
-                {{_event.eventDate | commonPipe:util.getFormattedDate:'MM/DD/YYYY hh:mm A'}}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col text-center">
-                <div *ngIf="_showImage else text">
-                    <img class="img-fluid" src="{{_event.eventImage | commonPipe:util.generalImageFQDN}}">
+            <div class="row mt-2">
+                <div class="col text-center">
+                    <h3>{{_event.eventName}}</h3>
                 </div>
-                <ng-template #text>
-                    {{_event.eventImage}}
-                </ng-template>
             </div>
-        </div>
-        <div class="row">
-            <div class="col text-center">
-                {{_event.eventBlurb}}
+            <div class="row">
+                <div class="col text-center">
+                    <span class="font-weight-bold">{{_event.eventDate | commonPipe:util.getFormattedDate:'MM/DD/YYYY hh:mm A'}}</span>
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col text-center">
-                {{_event.eventDescription}}
+            <div class="row">
+                <div class="col text-center">
+                    <div *ngIf="_showImage else text">
+                        <img class="img-fluid" src="{{_event.eventImage | commonPipe:util.generalImageFQDN}}">
+                    </div>
+                    <ng-template #text>
+                        {{_event.eventImage}}
+                    </ng-template>
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col text-center">
-                <a href="{{ _event.eventLink | commonPipe:util.prePendHttp }}" target="_blank">{{_event.eventLink}}</a>
+            <div class="row mt-1">
+                <div class="col text-center">
+                    {{_event.eventBlurb}}
+                </div>
             </div>
-        </div>
+            <div class="row mt-1">
+                <div class="col text-center">
+                    {{_event.eventDescription}}
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col text-center">
+                    <a href="{{ _event.eventLink | commonPipe:util.prePendHttp }}" target="_blank">{{_event.eventLink}}</a>
+                </div>
+            </div>
 
+        </div>
     </div>
 </div>
