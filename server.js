@@ -1,6 +1,10 @@
 //import the express server from file
 const app = require('./serverConf')['app'];
-require('newrelic');
+if (process.env.runNewRelic != 'false') {
+    console.log('run');
+    require('newrelic');
+}
+
 //load route files
 const authRoutes = require('./server/routes/auth-routes');
 const searchRoutes = require('./server/routes/search-routes');
