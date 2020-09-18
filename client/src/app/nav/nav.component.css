@@ -66,3 +66,7 @@
 .linkColorBigDropDown:not([href]):not([tabindex]) {
     color: #666;
 }
+
+.sf-menu .sub-current .sub-current {
+    left: -100%;
+}

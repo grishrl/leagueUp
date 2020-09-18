@@ -97,9 +97,72 @@
                                     <a [routerLink]="['/login']">Login</a>
                                 </li>
                                 <!-- <ng-template #loggedIn> -->
-                                <li [hidden]="!Auth.isAuthenticated()">
+                                <li class="current" [hidden]="!Auth.isAuthenticated()">
                                     <a class="linkColorFix finger">{{Auth.getUser()}}</a>
-                                    <div class="sf-mega" appHideMenu>
+                                    <ul class="sub-current" appHideMenu>
+                                        <li>
+                                            <a [routerLink]="['/messageCenter']">
+                                                <div>
+                                                    <span>Message Center</span>
+                                                    <span class="badge badge-pill ml-1 badge-success" *ngIf="userMessages>0">{{userMessages}}</span>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li class="current">
+                                            <a>Team</a>
+                                            <ul class="sub-current">
+                                                <ng-template #noTeam>
+                                                    <li>
+                                                        <a [routerLink]="['/teamCreate']">Create Team</a>
+                                                    </li>
+                                                    <li>
+                                                        <a [routerLink]="['/findTeams']">Find Team</a>
+                                                    </li>
+                                                </ng-template>
+                                                <ng-container *ngIf="Auth.getTeam(); else noTeam">
+                                                    <li>
+                                                        <app-team-link [team]="Auth.getTeam()">
+                                                            Profile
+                                                        </app-team-link>
+                                                    </li>
+                                                    <li>
+                                                        <a [routerLink]="['/reporting',team.routeFriendlyTeamName( Auth.getTeam() )]">Result Reporting</a>
+                                                    </li>
+                                                </ng-container>
+
+                                            </ul>
+                                        </li>
+                                        <li class="current">
+                                            <a>Player</a>
+                                            <ul class="sub-current">
+                                                <li>
+                                                    <app-player-link [player]="Auth.getUser()">My Profile
+                                                    </app-player-link>
+                                                </li>
+                                                <li><a [routerLink]="['/findPlayers']">Find Free Agents</a></li>
+                                            </ul>
+                                        </li>
+                                        <li *ngIf="Auth.getCaster()" class="current">
+                                            <a>Caster Tools</a>
+                                            <ul class="sub-current">
+                                                <li>
+                                                    <a [routerLink]="['/_casterDashboard']">Caster Dashboard</a>
+                                                </li>
+                                                <li>
+                                                    <a [routerLink]="['/_casterPage']">My Casts</a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li><a [routerLink]="['/replayBrowser']">Replay Browser</a></li>
+                                        <li *ngIf="Auth.getAdmin() && Auth.getAdmin().length>0">
+                                            <a [routerLink]="['/_admin/dashboard']">Admin Dashboard</a>
+                                        </li>
+                                        <li><a class="finger linkColorBigDropDown" (click)="logout()">Logout</a></li>
+                                        <ul>
+
+                                        </ul>
+                                    </ul>
+                                    <!-- <div class="sf-mega" appHideMenu>
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <h5>Team</h5>
@@ -107,8 +170,6 @@
                                                     <li>
                                                         <app-team-link [team]="Auth.getTeam()">Profile</app-team-link>
                                                     </li>
-                                                    <!-- <li><a [routerLink]="['/schedule/teamSchedule']">Schedule</a>
-                                                        </li> -->
                                                     <li><a [routerLink]="['/reporting',team.routeFriendlyTeamName( Auth.getTeam() )]">Result
                                                             Reporting</a></li>
 
@@ -149,7 +210,6 @@
                                                     <li><a [routerLink]="['/replayBrowser']">Replay Browser</a></li>
                                                     <li *ngIf="Auth.getCaster()"><a [routerLink]="['/_casterDashboard']">Caster Dashboard</a>
                                                     </li>
-                                                    <!-- NOTE: caster changes -->
                                                     <li *ngIf="Auth.getCaster()"><a [routerLink]="['/_casterPage']">My Casts</a>
                                                     </li>
                                                     <li *ngIf="Auth.getAdmin() && Auth.getAdmin().length>0"><a [routerLink]="['/_admin/dashboard']">Admin Dashboard</a>
@@ -158,7 +218,7 @@
                                                 </ul>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </li>
                                 <!-- </ng-template> -->
 
