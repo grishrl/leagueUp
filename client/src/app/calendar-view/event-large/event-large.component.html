@@ -13,9 +13,11 @@
                 </div>
                 <app-match-results-header [match]="match"></app-match-results-header>
                 <app-match-view [passMatch]="match"></app-match-view>
-                <div *ngIf="match.away.score || match.home.score" class="p-2">
+                <!-- <div *ngIf="match.away.score || match.home.score" class="p-2">
                     <app-games-information [match]="match"></app-games-information>
-                </div>
+                </div> -->
+                <div class="text-center mb-5 mt-5"><span class="h4">Match Up History:</span></div>
+                <app-matchup-info-embeddable [teamA]="match.home.id" [teamB]="match.away.id" [hideLogos]="true"></app-matchup-info-embeddable>
             </div>
         </div>
     </div>

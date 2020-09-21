@@ -14,6 +14,7 @@ export class MatchupInfoEmbeddableComponent implements OnInit {
   constructor( private scheduleService: ScheduleService, private teamService: TeamService, public team:TeamService, private flt:FilterService) { }
 
 
+  @Input() hideLogos = false;
   @Input() teamA;
   @Input() teamB;
 

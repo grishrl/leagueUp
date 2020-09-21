@@ -9,7 +9,6 @@
             <div class="col-xl-12 col-md-12">
                 <ul class="nav nav-tabs" id="myTab">
                     <li [ngClass]="{'active': index==0}"><a href="#season" data-toggle="tab" (click)="index=0">Season</a></li>
-                    <!-- <li [ngClass]="{'active': index==1}"><a href="#tournament" data-toggle="tab" (click)="index=1">Tournament</a></li> -->
                 </ul>
                 <div class="tab-content">
                     <!-- Content Text-->
@@ -35,33 +34,7 @@
                                             </div>
                                             <!-- end error message -->
                                             <!-- match info: -->
-                                            <div class="row" *ngIf="match">
-                                                <div class="col">
-                                                    <div class="row mt-2">
-                                                        <div class="col-lg-4 col-sm-12 text-center">
-                                                            <div *ngIf="homeTeam">
-                                                                <img class="img-fluid" src="{{homeLogo}}">
-                                                                <br>
-                                                                <app-team-link [team]="match.home.teamName">
-                                                                    {{match.home.teamName}}
-                                                                </app-team-link>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-4 col-sm-12 text-center my-auto">
-                                                            <span class="large-font font-weight-bold">- VS -</span>
-                                                        </div>
-                                                        <div class="col-lg-4 col-sm-12 text-center">
-                                                            <div *ngIf="awayTeam">
-                                                                <img class="img-fluid" src="{{awayLogo}}">
-                                                                <br>
-                                                                <app-team-link [team]="match.away.teamName">
-                                                                    {{match.away.teamName}}
-                                                                </app-team-link>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <app-match-results-header [match]="match"></app-match-results-header>
                                             <!-- end match info -->
                                             <!-- schedule form components -->
                                             <div class="row mt-4">
@@ -102,8 +75,7 @@
                                             <!-- show team schedules -->
                                             <div class="row mt-2">
                                                 <div class="col text-center">
-                                                    <button class="btn btn-primary" (click)="getTeamSchedules()">Load Team
-                                      Schedules</button>
+                                                    <button class="btn btn-primary" (click)="getTeamSchedules()">Load Team Schedules</button>
                                                 </div>
                                             </div>
                                             <div class="row mt-3" *ngIf="showSchedules">

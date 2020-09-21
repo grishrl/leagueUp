@@ -35,7 +35,6 @@ export class TeamNameComponent implements OnInit, ControlValueAccessor {
   }
 
   set value(val) {
-    console.log('val', val);
     this.val = val;
     this.onChange(val);
     this.onTouched();
@@ -71,12 +70,13 @@ export class TeamNameComponent implements OnInit, ControlValueAccessor {
     return (
       control: AbstractControl
     ): Observable<{ [key: string]: any } | null> => {
+      let trimmedVal = this.controlDir.value.trim();
       if (this.originalValue == control.value) {
-        this.originalValue = this.controlDir.value;
+        this.originalValue = trimmedVal;
         return of(null);
       } else {
-        return this.team.getTeam(control.value).pipe(
-          map(res => {
+        return this.team.getTeam(trimmedVal).pipe(
+          map((res) => {
             let keys = Object.keys(res);
             if (keys.length > 0) {
               return { taken: true };
@@ -90,7 +90,7 @@ export class TeamNameComponent implements OnInit, ControlValueAccessor {
   checkInvalidCharacters(): ValidatorFn {
     return (control: FormControl) => {
       let regEx = new RegExp(/[%_\/\\`#]/gm);
-      if (regEx.test(control.value)) {
+      if (regEx.test(control.value.trim())) {
         return { invalidCharacters: true };
       } else {
         return null;
