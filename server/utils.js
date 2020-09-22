@@ -249,6 +249,10 @@ function objectify(obj) {
 
 }
 
+function JSONCopy(obj) {
+    return JSON.parse(JSON.stringify(obj));
+}
+
 //simple console log for server side errors that will give me more info from the papertrail than a simple console.log;
 //simple method to add a few peices of data together to log out
 function errLogger(location, err, add) {
@@ -277,5 +281,6 @@ module.exports = {
     sortMatchesByTime: sortMatchesByTime,
     objectify: objectify,
     removeInactiveTeams: removeInactiveTeams,
-    errLogger: errLogger
+    errLogger: errLogger,
+    JSONCopy: JSONCopy
 };

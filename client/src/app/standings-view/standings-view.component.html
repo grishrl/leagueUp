@@ -17,8 +17,9 @@
             <tbody class="text-center">
                 <tr *ngFor="let standing of standings">
                     <td class="text-left number">{{standing.standing}}
-                        <!-- todo: figure up or down if possible -->
-                        <!-- <i class="fa fa-caret-up" aria-hidden="true"></i>-->
+
+                        <i class="fa" [class.fa-caret-up]="standing.change=='up'" [class.fa-caret-down]="standing.change == 'down'" [class.fa-circle]="standing.change=='none'"></i>
+
                     </td>
                     <td class="text-left">
                         <!-- <img src="img/clubs-logos/colombia.png" alt="Colombia"> -->
@@ -26,7 +27,9 @@
                         <app-team-link [team]="standing.teamName" [season]="seasonVal">{{standing.teamName}}</app-team-link>
                       </span>
                     </td>
-                    <td>{{standing.points}}</td>
+                    <td>
+                        {{standing.points}}
+                    </td>
                     <td>{{standing.dominations}}</td>
                     <td>{{standing.wins}}</td>
                     <td>{{standing.losses}}</td>

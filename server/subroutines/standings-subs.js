@@ -7,6 +7,7 @@ const challonge = require('../methods/challongeAPI');
 const Division = require('../models/division-models');
 const _ = require('lodash');
 const MatchCommon = require('../methods/matchCommon');
+const jsonDiff = require('deep-object-diff');
 
 
 //takes the provided division and season and calcuates the current standings of the teams
@@ -23,7 +24,7 @@ async function calulateStandings(division, season, pastSeason) {
                     return answer;
                 });
             } else {
-                standings = await stdDivStanding(division, season, pastSeason).then(answer => {
+                standings = await stdDivStanding(dbDiv, season, pastSeason).then(answer => {
                     return answer;
                 });
             }
@@ -238,7 +239,7 @@ async function stdDivStanding(division, season, pastSeason) {
     //grab all amtches that match the season and division and are not tournament matches
     let matchesForDivision = await Match.find({
         $and: [{
-            divisionConcat: division
+            divisionConcat: division.divisionConcat
         }, {
             season: season
         }, {
@@ -309,6 +310,116 @@ async function stdDivStanding(division, season, pastSeason) {
         for (var i = 0; i < standings.length; i++) {
             standings[i]['standing'] = i + 1;
         }
+
+        let query = {
+            dataName: `${division.divisionConcat}`,
+            span: season
+        }
+
+        let data = await System.findOne(
+            query
+        ).then(
+            saved => {
+                return saved;
+            },
+            err => {
+                util.errLogger('standings-subs, cupDivStanding', err);
+                return null;
+            }
+        );
+
+        //add standings change data;
+        if (data) {
+
+            let oldData = util.objectify(data);
+            oldData = oldData.data.standings;
+            _.forEach(oldData, (oldDataV, oldDataK) => {
+                let storedStanding = oldDataV;
+
+                _.forEach(standings, (standingV, standingK) => {
+
+                    let calcStanding = standingV;
+
+                    if (storedStanding.id == calcStanding.id) {
+                        if (calcStanding.standing == storedStanding.standing) {
+                            calcStanding['change'] = 'none';
+                        } else if (calcStanding.standing > storedStanding.standing) {
+                            calcStanding['change'] = 'up';
+                        } else if (calcStanding.standing < storedStanding.standing) {
+                            calcStanding['change'] = 'down';
+                        }
+                    }
+                })
+            })
+        } else {
+
+            query.data = { standings, timeStamp: Date.now() };
+            new System(
+                query
+            ).save().then(
+                res => {
+                    util.errLogger('standings-subs', res, 'first save last standings');
+                },
+                err => {
+                    util.errLogger('standings-subs', err, 'error first saving last standings');
+                }
+            )
+        }
+
+        //update the standings i guess
+        if (data) {
+            try {
+                let dataObj = util.objectify(data);
+                let diff = jsonDiff.diff(dataObj.data.standings, standings);
+
+                let updateDocument = util.JSONCopy(query);
+                updateDocument.data = {
+                    standings,
+                    timeStamp: Date.now()
+                };
+                if (Object.keys(diff).length > 0) {
+                    System.findOneAndUpdate(
+                        query, updateDocument, {
+                            new: true,
+                            upsert: true
+                        }
+                    ).then(
+                        saved => {
+                            //needs to be replaced with dB log if ever used.
+                            util.errLogger('standings-subs', null, 'last standings upserted');
+                        },
+                        err => {
+                            util.errLogger('standings-subs, last standing', err);
+                        }
+                    );
+
+
+                } else {
+                    //dont save
+                }
+            } catch (e) {
+                util.errLogger('standings-subs', e, 'error in last standings');
+            }
+
+
+        }
+
+        //update the standings info object
+        //  let data = System.findOneAndUpdate(
+        //       query, standings, {
+        //           new: true,
+        //           upsert: true
+        //       }
+        //   ).then(
+        //       saved => {
+        //           //needs to be replaced with dB log if ever used.
+        //           util.errLogger('standings-subs, cupDivStanding', null, 'standings upserted');
+        //       },
+        //       err => {
+        //           util.errLogger('standings-subs, cupDivStanding', err);
+        //       }
+        //   );
+
     }
     return standings;
 }
@@ -335,14 +446,19 @@ function bestOfThree(matchesForDivision, nonReportedMatchCount, teams, standings
             standing['dominations'] = 0;
             standing['id'] = team;
             standing['matchesPlayed'] = 0;
+            standing['logo'] = null;
             //loop through the matches et all for division
             matchesForDivision.forEach(match => {
                 if (match.away.id == team) {
                     standing['teamName'] = match.away.teamName;
-                    standing['logo'] = match.away.logo;
+                    if (util.returnBoolByPath(match, 'away.logo')) {
+                        standing['logo'] = match.away.logo;
+                    }
                 } else if (match.home.id == team) {
                     standing['teamName'] = match.home.teamName;
-                    standing['logo'] = match.home.logo;
+                    if (util.returnBoolByPath(match, 'home.logo')) {
+                        standing['logo'] = match.home.logo;
+                    }
                 }
                 //if the match is not reported; ignore it
                 if (util.returnBoolByPath(match, 'reported') == false) {
@@ -443,7 +559,7 @@ function bestOfThree(matchesForDivision, nonReportedMatchCount, teams, standings
             standings.push(standing);
         })
     } catch (e) {
-        console.log('>>>>>>>>>>>', e);
+        util.errLogger('standings-subs', e, 'bestOfThree');
     }
     return nonReportedMatchCount;
 }
@@ -465,15 +581,20 @@ function bestOfX(matchesForDivision, nonReportedMatchCount, teams, standings) {
             standing['dominations'] = 0;
             standing['id'] = team;
             standing['matchesPlayed'] = 0;
+            standing['logo'] = null;
             //loop through the matches et all for division
             matchesForDivision.forEach(match => {
                 let boX = match.boX;
                 if (match.away.id == team) {
                     standing['teamName'] = match.away.teamName;
-                    standing['logo'] = match.away.logo;
+                    if (util.returnBoolByPath(match, 'away.logo')) {
+                        standing['logo'] = match.away.logo;
+                    }
                 } else if (match.home.id == team) {
                     standing['teamName'] = match.home.teamName;
-                    standing['logo'] = match.home.logo;
+                    if (util.returnBoolByPath(match, 'home.logo')) {
+                        standing['logo'] = match.home.logo;
+                    }
                 }
                 //if the match is not reported; ignore it
                 if (util.returnBoolByPath(match, 'reported') == false) {
@@ -538,7 +659,7 @@ function bestOfX(matchesForDivision, nonReportedMatchCount, teams, standings) {
             standings.push(standing);
         });
     } catch (e) {
-        console.log('/////', e)
+        util.errLogger('standings-subs', e, 'bestOfX');
     }
 
     return nonReportedMatchCount;
