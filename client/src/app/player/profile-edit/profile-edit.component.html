@@ -106,7 +106,6 @@
                     <ul class="nav nav-tabs" id="myTab">
                         <li class="finger" [ngClass]="{'active': index==0}"><a (click)="setTab(0)">Overview</a></li>
                         <li class="finger" [ngClass]="{'active': index==1}"><a (click)="setTab(1)">History</a></li>
-                        <li class="finger" [ngClass]="{'active': index==2}"><a (click)="setTab(2)">STATS</a></li>
                     </ul>
                     <!-- End Nav Tabs -->
 
@@ -272,14 +271,6 @@
                         </div>
                         <!-- Tab Theree - career -->
 
-                        <!-- Tab Theree - stats -->
-                        <div class="tab-pane pb-5" [ngClass]="{'active': index==2}" *ngIf="index==2">
-                            <div *ngIf="index==2">
-                                <app-player-stats [playerID]="returnedProfile.displayName" [playerToon]="returnedProfile.toonHandle">
-                                </app-player-stats>
-                            </div>
-                        </div>
-                        <!-- End Tab Theree - stats -->
                     </div>
                     <!-- Content Tabs -->
                 </div>
