@@ -7,6 +7,7 @@ import { Division } from '../classes/division';
 import { TeamService } from '../services/team.service';
 import { TimeserviceService } from '../services/timeservice.service';
 import { TabTrackerService } from '../services/tab-tracker.service';
+import { environment } from "../../environments/environment";
 
 
 
@@ -26,6 +27,7 @@ export class DivisionComponent implements OnInit, OnChanges {
   navigationSubscription
   divDisplay = new Division();
   teamAggregate = [];
+  divisionImage;
 
 
 
@@ -100,6 +102,7 @@ export class DivisionComponent implements OnInit, OnChanges {
     this.divSub = this.division.getDivision(this.param).subscribe((res) => {
       if(res!=undefined&&res!=null){
         this.divDisplay = res;
+        this.divisionImage = `${environment.awsTld}/${environment.s3bucketGeneralImage}/divimg/${this.divDisplay.divisionConcat}.png`;
         if(this.divDisplay.cupDiv){
           this.teamAggregate = this.divDisplay.teams.concat(this.divDisplay.participants);
         }else{
