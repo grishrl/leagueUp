@@ -11,7 +11,7 @@
             <div class="row">
                 <!-- Side info single team-->
                 <div class="col-lg-4 col-xl-3">
-
+                    <!--  -->
                     <div class="item-player single-player">
                         <div class="head-player">
                             <img src="{{returnedProfile.avatar| commonPipe:user.avatarFQDN}}" alt="player-avatar">
@@ -20,7 +20,7 @@
                         <div class="info-player">
                             <span class="number-player">
 
-              </span>
+                            </span>
                             <h4>
                                 {{returnedProfile.displayName}}
                                 <!-- <span>Main Role</span> -->
@@ -74,7 +74,29 @@
                                 </li>
                             </ul>
                         </div>
+                        <div class="row p-3">
+
+                            <div class="col text-center" *ngIf="returnedProfile.toonHandle && returnedProfile.displayName">
+
+                                <a style="transition:none; touch-action: none;" href="{{hotsProfile.getNgsHpPlayerLink(returnedProfile.toonHandle,returnedProfile.displayName)}}" target="_blank">
+                                    <img style="max-width: 30px; transition:none; touch-action: none;" src="/assets/heroesprofilelogo.png">
+                                    <p style="font-size: .65rem;">League Heroes Profile</p>
+                                    <!-- <i class="fab fa-twitter"></i> -->
+                                </a>
+                            </div>
+
+
+                            <div class="col text-center">
+                                <a href="{{hpProfileLink}}" target="_blank">
+                                    <img style="max-width: 30px;" src="/assets/heroesprofilelogo.png">
+                                    <p style="font-size: .65rem;">General Heroes Profile</p>
+                                    <!-- <i class="fab fa-youtube"></i> -->
+                                </a>
+                            </div>
+
+                        </div>
                     </div>
+
 
                 </div>
                 <!-- end Side info single team-->
