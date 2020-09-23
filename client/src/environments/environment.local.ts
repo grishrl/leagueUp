@@ -4,12 +4,14 @@
 
 export const environment = {
   production: true,
-  s3bucketImages: 'dev-ngs-image-storage',
-  s3bucketReplays: 'dev-ngs-replay-storage',
-  s3bucketGeneralImage:'dev-ngs-general-image',
-  s3bucketArchiveImage: 'dev-ngs-archive-image',
-  socketURL:'localhost:5000',
-  heroesProfilePlayer:"https://www.heroesprofile.com/NGS/Profile/?",
+  },
+  s3bucketImages: "dev-ngs-image-storage",
+  s3bucketReplays: "dev-ngs-replay-storage",
+  s3bucketGeneralImage: "dev-ngs-general-image",
+  s3bucketArchiveImage: "dev-ngs-archive-image",
+  awsTld: "https://s3.amazonaws.com/",
+  socketURL: "localhost:5000",
+  heroesProfilePlayer: "https://www.heroesprofile.com/NGS/Profile/?",
   heroesProfile: "https://www.heroesprofile.com/Profile/?",
   heroesProfileTeam: "https://heroesprofile.com/NGS/Team/Single/?team=",
 };
