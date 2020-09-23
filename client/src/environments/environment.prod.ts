@@ -1,6 +1,5 @@
 export const environment = {
   production: true,
-  },
   s3bucketImages: "ngs-image-storage",
   s3bucketReplays: "ngs-replay-storage",
   s3bucketGeneralImage: "ngs-general-image",
