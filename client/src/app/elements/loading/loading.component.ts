@@ -23,4 +23,6 @@ export class LoadingComponent implements OnInit {
     }
   }
 
+  @Input() displayText = 'Loading'
+
 }
