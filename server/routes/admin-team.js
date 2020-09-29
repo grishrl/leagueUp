@@ -116,6 +116,20 @@ router.get('/pendingAvatarQueue', passport.authenticate('jwt', {
     })
 });
 
+router.get('/pendingRankQueues', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.userLevel, util.appendResHeader, (req, res) => {
+    const path = '/admin/pendingRankQueues';
+    const query = Admin.PendingRankQueue.find();
+    query.sort('-timestamp');
+    query.limit(20);
+    query.exec().then((reply) => {
+        res.status(200).send(util.returnMessaging(path, 'Found queues', false, reply));
+    }, (err) => {
+        res.status(500).send(util.returnMessaging(path, 'Couldn\'t get the queues', err));
+    })
+});
+
 //removes the supplied member from the supplied team
 router.post('/team/removeMember', passport.authenticate('jwt', {
     session: false

@@ -1,0 +1,44 @@
+<div class="container pt-4 forceFull">
+    <div class="">
+        <div class="row bg-white">
+            <div class="col pb-4">
+                <div class="row">
+                    <div class="col">
+                        <a [routerLink]="['/_admin/dashboard']">Back to Dashboard</a>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <h4>Rank Submission Pending Validation:</h4>
+                    </div>
+                </div>
+                <div class="row header-style">
+                    <div class="col">
+                        Player Name
+                    </div>
+                    <div class="col">
+                        Image
+                    </div>
+                    <div class="col text-center">
+                        Actions
+                    </div>
+                </div>
+                <div *ngIf="queue.length>0 else empty">
+                    <div *ngFor="let queueItem of queue">
+                        <!-- <app-approve-avatar-view [info]="queueItem" (avatarActioned)="updateView($event)">
+                      </app-approve-avatar-view> -->
+                        <app-approve-rank-view [info]="queueItem" (rankActioner)="handleAction($event)"></app-approve-rank-view>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--  -->
+    </div>
+</div>
+<ng-template #empty>
+
+    <div class="mt-5">
+        <h5>All done here... for now.</h5>
+    </div>
+</ng-template>

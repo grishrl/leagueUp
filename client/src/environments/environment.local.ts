@@ -8,6 +8,7 @@ export const environment = {
   s3bucketReplays: "dev-ngs-replay-storage",
   s3bucketGeneralImage: "dev-ngs-general-image",
   s3bucketArchiveImage: "dev-ngs-archive-image",
+  s3bucketRankVerification: "dev-ngs-general-image/player-ranks-images",
   awsTld: "https://s3.amazonaws.com/",
   socketURL: "localhost:5000",
   heroesProfilePlayer: "https://www.heroesprofile.com/NGS/Profile/?",

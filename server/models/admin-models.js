@@ -39,12 +39,23 @@ const pendingAvatarSchema = new Schema({
     'timestamp': Date
 });
 
+
+const pendingRankSchema = new Schema({
+    'userId': String,
+    "year": String,
+    "season": String,
+    'fileName': String,
+    'timestamp': Date
+});
+
 const Admin = mongoose.model('admin', adminSchema);
 const PendingQueue = mongoose.model('pendingQueue', pendingMembersSchema);
 const PendingAvatarQueue = mongoose.model('pendingAvatarQueue', pendingAvatarSchema);
+const PendingRankQueue = mongoose.model('pendingRankQueue', pendingRankSchema);
 
 module.exports = {
     AdminLevel: Admin,
     PendingQueue: PendingQueue,
-    PendingAvatarQueue: PendingAvatarQueue
+    PendingAvatarQueue: PendingAvatarQueue,
+    PendingRankQueue: PendingRankQueue
 };

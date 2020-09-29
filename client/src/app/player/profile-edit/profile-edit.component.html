@@ -233,9 +233,27 @@
                                 <!-- storm league rank -->
                                 <div class="row mt-5">
                                     <div class="col">
+
+                                        <h6>Verified Storm League Rankings:</h6>
+                                        <div class="row">
+                                            <div class="col">
+                                                <app-verified-storm-league-ranks-view [userId]="returnedProfile._id" [teamName]="returnedProfile.teamName" [verifiedUserRanks]="returnedProfile.verifiedRankHistory">
+                                                </app-verified-storm-league-ranks-view>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+
+                                    <!-- <div class="col">
+                                        <app-storm-league [disabled]="disabled" [(division)]="returnedProfile.hlRankMetal" [(rank)]="returnedProfile.hlRankDivision"></app-storm-league>
+                                    </div> -->
+                                </div>
+                                <!-- <div class="row mt-5">
+                                    <div class="col">
                                         <app-storm-league [disabled]="disabled" [(division)]="returnedProfile.hlRankMetal" [(rank)]="returnedProfile.hlRankDivision"></app-storm-league>
                                     </div>
-                                </div>
+                                </div> -->
                                 <!-- looking for group -->
                                 <div class="row mt-5" *ngIf="hideLookingForGroup()">
                                     <div class="col">

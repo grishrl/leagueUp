@@ -33,6 +33,7 @@ export class Profile {  //addition of stats for future plans
   twitter: string;
   youtube: string;
   casterName:string;
+  verifiedRankHistory:Array<object>;
   __v: string;//useless
 
 
@@ -178,6 +179,7 @@ export class Profile {  //addition of stats for future plans
     this.twitter = null;
     this.youtube = null;
     this.casterName = null;
+    this.verifiedRankHistory = [];
 }
 }
 

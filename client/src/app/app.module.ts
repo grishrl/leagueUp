@@ -199,6 +199,10 @@ import { GrandChampionsViewerComponent } from './grand-champions-viewer/grand-ch
 import { ChampExpanderComponent } from './grand-champions-viewer/champ-expander/champ-expander.component';
 import { MatchResultsHeaderComponent } from './match/match-results-view/match-results-header/match-results-header.component';
 import { LoadingComponent } from './elements/loading/loading.component';
+import { RankRequirementsComponent } from './admin/rank-requirements/set-rank-requirements/rank-requirements.component';
+import { ValidateRankComponent } from './admin/rank-requirements/validate-rank/validate-rank.component';
+import { ApproveRankViewComponent } from './admin/rank-requirements/validate-rank/approve-rank-view/approve-rank-view.component';
+import { VerifiedStormLeagueRanksViewComponent } from './verified-storm-league-ranks-view/verified-storm-league-ranks-view.component';
 
 const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -383,7 +387,11 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
     GrandChampionsViewerComponent,
     ChampExpanderComponent,
     MatchResultsHeaderComponent,
-    LoadingComponent
+    LoadingComponent,
+    RankRequirementsComponent,
+    ValidateRankComponent,
+    ApproveRankViewComponent,
+    VerifiedStormLeagueRanksViewComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

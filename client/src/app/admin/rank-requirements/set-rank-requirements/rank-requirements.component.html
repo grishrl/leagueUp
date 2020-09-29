@@ -1,0 +1,71 @@
+<div class="container pt-4 forceFull">
+    <div class="">
+        <div class="row bg-white">
+            <div class="col pb-4">
+                <div class="row">
+                    <div class="col">
+                        <a [routerLink]="['/_admin/dashboard']">Back to Dashboard</a>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <h4>Season Info Requirements:</h4>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <mat-form-field class="mat-FullWidth">
+                            <mat-select placeholder="Year:" [(ngModel)]="year">
+                                <mat-option *ngFor="let year of years" [value]="year">
+                                    {{year}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col">
+                        <mat-form-field class="mat-FullWidth">
+                            <mat-select placeholder="Season:" [(ngModel)]="season">
+                                <mat-option *ngFor="let season of seasons" [value]="season">
+                                    {{season}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col">
+                        <button class="btn btn-primary" (click)="submitNew()">Submit</button>
+                    </div>
+                </div>
+
+                <div class="row" *ngIf="requiredSeasons?.data.length>0">
+                    <div class="col">
+                        <table class=" table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Year</th>
+                                    <th>Season</th>
+                                    <th>Required</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ng-container *ngFor="let reqSeason of requiredSeasons.data">
+                                    <tr>
+                                        <td>{{reqSeason.year}}</td>
+                                        <td>{{reqSeason.season}}</td>
+                                        <td>
+                                            <mat-checkbox [(ngModel)]="reqSeason.required" (ngModelChange)="update()">
+                                                Required</mat-checkbox>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!--  -->
+    </div>
+</div>

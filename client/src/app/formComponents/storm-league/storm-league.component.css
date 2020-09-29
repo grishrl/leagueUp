@@ -1,6 +1,6 @@
 .medal {
     height: 200px;
-    width: 200px;
+    width: 100%;
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
@@ -9,7 +9,7 @@
 .rank {
     position: absolute;
     top: 50px;
-    left: 90px;
+    left: 71px;
     color: #F2692E;
     font-size: 80px;
     font-weight: 900;
@@ -20,7 +20,7 @@
 .masterKplusRank {
     position: absolute;
     top: 50px;
-    left: 25px;
+    left: 0px;
     color: #F2692E;
     font-size: 80px;
     font-weight: 900;
@@ -31,7 +31,7 @@
 .masterCplusRank {
     position: absolute;
     top: 50px;
-    left: 45px;
+    left: 25px;
     color: #F2692E;
     font-size: 80px;
     font-weight: 900;
@@ -42,7 +42,7 @@
 .masterXplusRank {
     position: absolute;
     top: 40px;
-    left: 69px;
+    left: 49px;
     color: #F2692E;
     font-size: 80px;
     font-weight: 900;

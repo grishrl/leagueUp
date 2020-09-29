@@ -13,6 +13,7 @@ const messageSub = require('../subroutines/message-subs');
 const QueueSubs = require('../subroutines/queue-subs');
 const _ = require('lodash');
 const notesMethods = require('../methods/notes/notes');
+const prMethods = require('../methods/player-rank-upload');
 
 router.post('/delete/user', passport.authenticate('jwt', {
     session: false
@@ -376,5 +377,50 @@ router.post('/approveAvatar', passport.authenticate('jwt', {
     })
 
 });
+
+
+router.post('/approveRank', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.userLevel, util.appendResHeader, (req, res) => {
+
+    const path = '/admin/approveRank';
+
+    /*
+      userId
+      hlRankMetal
+      hlRankDivision
+      seasonInf
+      verified 
+    */
+
+    let rankObj = req.body;
+
+    if (rankObj.verified) {
+
+        //method to handle this sit
+        prMethods.playerRankApproved(rankObj).then(
+            success => {
+                res.status(200).send(util.returnMessaging(path, 'User updated', null, success, null));
+            },
+            err => {
+                res.status(500).send(util.returnMessaging(path, 'User not updated', err, null, null))
+            }
+        )
+
+    } else {
+
+        //method to handle this sit
+        prMethods.playerRankDenied(rankObj).then(
+            success => {
+                res.status(200).send(util.returnMessaging(path, 'User updated', null, success, null));
+            },
+            err => {
+                res.status(500).send(util.returnMessaging(path, 'User not updated', err, null, null))
+            }
+        )
+
+    }
+
+})
 
 module.exports = router;

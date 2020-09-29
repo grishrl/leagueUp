@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, SimpleChange } from '@angular/core';
+import { Component, OnInit, Input, SimpleChange, Output, EventEmitter } from '@angular/core';
 import { TeamService } from '../services/team.service';
 import { UtilitiesService } from '../services/utilities.service';
 import { AdminService } from '../services/admin.service';
@@ -95,6 +95,8 @@ export class ImageUploadComponent implements OnInit {
   widthPx;
   heightPx;
 
+  @Output() imageParsed = new EventEmitter();
+
   @Input() set width(w) {
     if (this.util.isNullOrEmpty(w)) {
       this.widthPx = "350";
@@ -167,6 +169,9 @@ export class ImageUploadComponent implements OnInit {
     } else if (this._imageType == "avatar") {
       this.imageHeader = "Avatar Image:";
       this.actionText = "Upload New Avatar:";
+    }else if (this._imageType == "stormVerification") {
+      this.imageHeader = "Verification Image:";
+      this.actionText = "Upload New Image:";
     }
   }
 
@@ -260,6 +265,13 @@ export class ImageUploadComponent implements OnInit {
                 console.log(err);
               }
             );
+          }else if(this._imageType == "stormVerification"){
+            //do a kick flip!
+            //this is unheard of but... i want this image string outside of this component.
+            this.currentImage = result;
+            this.croppieImage = null;
+            this.editClicked = true;
+            this.imageParsed.emit(result);
           }
         },
         err => {

@@ -4,7 +4,25 @@ const Schema = mongoose.Schema;
 const archiveSchema = new Schema({
     season: Number,
     replays: [String]
-})
+});
+
+const seasonInf = new Schema({
+    "year": String,
+    "season": String
+});
+
+//this will hold the ranks of the player verified by the new rank check system
+const rankSchema = new Schema({
+    "hlRankMetal": String,
+    "hlRankDivision": Number,
+    "season": String,
+    "year": String,
+    "status": String, //pending, verified
+    "level": {
+        type: Number,
+        required: false
+    }
+});
 
 const userSchema = new Schema({
     "bNetId": String,
@@ -44,7 +62,8 @@ const userSchema = new Schema({
     "casterName": String,
     "twitter": String,
     "youtube": String,
-    "patron": String
+    "patron": String,
+    "verifiedRankHistory": [rankSchema]
 });
 
 
