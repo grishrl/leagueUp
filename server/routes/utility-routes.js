@@ -14,6 +14,7 @@ const readInVods = require('../methods/sheets/sheets');
 const groupMaker = require('../cron-routines/groupMaker');
 const hpUploadHandler = require('../cron-routines/uploadToHeroesProfile');
 const { s3deleteFile } = require('../methods/aws-s3/delete-s3-file');
+const { s3putObject } = require('../methods/aws-s3/put-s3-file');
 
 
 AWS.config.update({
@@ -22,7 +23,7 @@ AWS.config.update({
     region: process.env.S3region
 });
 
-const s3Bucket = new AWS.S3({
+const PLAYERRANKFOLDER = new AWS.S3({
     params: {
         Bucket: process.env.s3bucketGeneralImages
     }
@@ -281,42 +282,26 @@ router.post('/image/upload', passport.authenticate('jwt', {
         stamp = stamp.toString();
         stamp = stamp.slice(stamp.length - 4, stamp.length);
 
-        //the file name will be the objectID 
-        uploadedFileName += id + ".png";
+        //the file name will be the objectID
+        uploadedFileName += id;
+
+        if (png > -1) {
+            uploadedFileName += ".png";
+        } else if (jpg > -1) {
+            uploadedFileName += ".jpg";
+        } else if (jpeg > -1) {
+            uploadedFileName += ".jpeg";
+        } else if (gif > -1) {
+            uploadedFileName += ".gif";
+        } else {
+            uploadedFileName += ".png";
+        }
 
 
         var buf = new Buffer.from(dataURI.replace(/^data:image\/\w+;base64,/, ""), 'base64');
-        // var buf = new Buffer.from(dataURI, 'base64');
 
-        var data = {
-            Key: uploadedFileName,
-            Body: buf,
-            ContentEncoding: 'base64'
-        };
-        s3Bucket.putObject(data, function(err, data) {
-            if (err) {
-                //log object
-                let sysObj = {};
-                sysObj.actor = 'SYSTEM';
-                sysObj.action = 'error uploading to AWS ';
-                sysObj.logLevel = 'ERROR';
-                sysObj.error = err;
-                sysObj.location = path;
-                sysObj.target = id;
-                sysObj.timeStamp = new Date().getTime();
-                logger(sysObj);
-            } else {
-                //log object
-                let sysObj = {};
-                sysObj.actor = 'SYSTEM';
-                sysObj.action = 'uploaded to AWS ';
-                sysObj.logLevel = 'STD';
-                sysObj.location = path;
-                sysObj.target = id;
-                sysObj.timeStamp = new Date().getTime();
-                logger(sysObj);
-            }
-        });
+        s3putObject(process.env.s3bucketGeneralImages, null, uploadedFileName, buf);
+
 
         //this will have to be changed to adjust model depending on the type that has been sent
         if (type == 'event') {

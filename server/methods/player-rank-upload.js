@@ -1,11 +1,11 @@
 const User = require('../models/user-models');
-const AWS = require('aws-sdk');
 const logger = require('../subroutines/sys-logging-subs').logger;
 const CustomError = require('./customError');
 const utils = require('../utils');
 const PendingRankQueue = require('../models/admin-models').PendingRankQueue;
 const _ = require('lodash');
 const s3deleteFile = require('../methods/aws-s3/delete-s3-file').s3deleteFile;
+const { s3putObject } = require('../methods/aws-s3/put-s3-file');
 
 function rankToNumber(hlRankMetal, hlRankDivision) {
     let num = 0;
@@ -37,19 +37,7 @@ function rankToNumber(hlRankMetal, hlRankDivision) {
     return num;
 }
 
-const folder = 'player-ranks-images/';
-
-AWS.config.update({
-    accessKeyId: process.env.S3accessKeyId,
-    secretAccessKey: process.env.S3secretAccessKey,
-    region: process.env.S3region
-});
-
-const s3Bucket = new AWS.S3({
-    params: {
-        Bucket: process.env.s3bucketGeneralImages
-    }
-});
+const PLAYERRANKFOLDER = 'player-ranks-images/';
 
 //upload image and return the path where the image will be stored
 async function uploadRankImage(dataURI, user_id, seasonInfo) {
@@ -91,16 +79,23 @@ async function uploadRankImage(dataURI, user_id, seasonInfo) {
         var stamp = Date.now();
         stamp = stamp.toString();
         stamp = stamp.slice(stamp.length - 4, stamp.length);
-        uploadedFileName += `${user_id}_${seasonInfo.year}_${seasonInfo.season}_${stamp}.png`;
-        var buf = new Buffer.from(dataURI.replace(/^data:image\/\w+;base64,/, ""), 'base64');
-        var data = {
-            Key: folder + uploadedFileName,
-            Body: buf,
-            ContentEncoding: 'base64'
-        };
+        uploadedFileName += `${user_id}_${seasonInfo.year}_${seasonInfo.season}_${stamp}`;
 
-        let putObjectPromise = s3Bucket.putObject(data).promise();
-        let s3await = await putObjectPromise.then(
+        if (png > -1) {
+            uploadedFileName += ".png";
+        } else if (jpg > -1) {
+            uploadedFileName += ".jpg";
+        } else if (jpeg > -1) {
+            uploadedFileName += ".jpeg";
+        } else if (gif > -1) {
+            uploadedFileName += ".gif";
+        } else {
+            uploadedFileName += ".png";
+        }
+
+        var buf = new Buffer.from(dataURI.replace(/^data:image\/\w+;base64,/, ""), 'base64');
+
+        let s3await = await s3putObject(process.env.s3bucketGeneralImages, PLAYERRANKFOLDER, uploadedFileName, buf).then(
             s3pass => {
                 return {
                     "cont": true,
@@ -142,7 +137,7 @@ async function uploadRankImage(dataURI, user_id, seasonInfo) {
             );
             successObject['savedQueue'] = saved;
 
-            s3deleteFile(process.env.s3bucketGeneralImages, folder, fileToDelete);
+            s3deleteFile(process.env.s3bucketGeneralImages, PLAYERRANKFOLDER, fileToDelete);
         } catch (e) {
             console.log(e);
         }
@@ -305,7 +300,7 @@ async function playerRankApproved(rankObj) {
                     }
                 )
 
-                s3deleteFile(process.env.s3bucketGeneralImages, folder, foundQ.fileName);
+                s3deleteFile(process.env.s3bucketGeneralImages, PLAYERRANKFOLDER, foundQ.fileName);
 
                 successObject.saved = saved;
                 successObject.success = true;
@@ -390,7 +385,7 @@ async function playerRankDenied(rankObj) {
                     }
                 )
 
-                s3deleteFile(process.env.s3bucketGeneralImages, folder, foundQ.fileName)
+                s3deleteFile(process.env.s3bucketGeneralImages, PLAYERRANKFOLDER, foundQ.fileName)
 
                 successObject.success = true;
 

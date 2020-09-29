@@ -1,21 +1,10 @@
 const User = require('../models/user-models');
-const AWS = require('aws-sdk');
 const CustomError = require('../methods/customError');
 const { s3deleteFile } = require('./aws-s3/delete-s3-file');
+const { s3putObject } = require('./aws-s3/put-s3-file');
 
 const avatarFolder = 'player-avatar/'
 
-AWS.config.update({
-    accessKeyId: process.env.S3accessKeyId,
-    secretAccessKey: process.env.S3secretAccessKey,
-    region: process.env.S3region
-});
-
-const s3Bucket = new AWS.S3({
-    params: {
-        Bucket: process.env.s3bucketGeneralImages
-    }
-});
 
 async function uploadAvatar(path, dataURI, displayName) {
     let uploadedFileName = '';
@@ -32,16 +21,25 @@ async function uploadAvatar(path, dataURI, displayName) {
         var stamp = Date.now();
         stamp = stamp.toString();
         stamp = stamp.slice(stamp.length - 4, stamp.length);
-        uploadedFileName += displayName + stamp + "_avatar.png";
+        uploadedFileName += displayName + stamp + "_avatar";
+
+        if (png > -1) {
+            uploadedFileName += ".png";
+        } else if (jpg > -1) {
+            uploadedFileName += ".jpg";
+        } else if (jpeg > -1) {
+            uploadedFileName += ".jpeg";
+        } else if (gif > -1) {
+            uploadedFileName += ".gif";
+        } else {
+            uploadedFileName += ".png";
+        }
+
         var buf = new Buffer.from(dataURI.replace(/^data:image\/\w+;base64,/, ""), 'base64');
-        var data = {
-            Key: avatarFolder + uploadedFileName,
-            Body: buf,
-            ContentEncoding: 'base64'
-        };
+
         let successObject = {};
-        let putObjectPromise = s3Bucket.putObject(data).promise();
-        let s3await = await putObjectPromise.then(
+
+        let s3await = await s3putObject(process.env.s3bucketGeneralImages, avatarFolder, uploadedFileName, buf).then(
             s3pass => {
                 return {
                     "cont": true,
@@ -54,7 +52,8 @@ async function uploadAvatar(path, dataURI, displayName) {
                     "eo": s3fail
                 };
             }
-        )
+        );
+
         if (s3await.cont) {
 
             successObject.fileName = uploadedFileName;
