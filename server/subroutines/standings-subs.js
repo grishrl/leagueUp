@@ -329,42 +329,79 @@ async function stdDivStanding(division, season, pastSeason) {
         );
 
         //add standings change data;
-        if (data) {
+        let dataChanged = false;
+        try {
+            if (data) {
 
-            let oldData = util.objectify(data);
-            oldData = oldData.data.standings;
-            _.forEach(oldData, (oldDataV, oldDataK) => {
-                let storedStanding = oldDataV;
-
-                _.forEach(standings, (standingV, standingK) => {
-
-                    let calcStanding = standingV;
-
-                    if (storedStanding.id == calcStanding.id) {
-                        if (calcStanding.standing == storedStanding.standing) {
-                            calcStanding['change'] = 'none';
-                        } else if (calcStanding.standing > storedStanding.standing) {
-                            calcStanding['change'] = 'up';
-                        } else if (calcStanding.standing < storedStanding.standing) {
-                            calcStanding['change'] = 'down';
+                let oldData = util.objectify(data);
+                oldData = oldData.data.standings;
+                _.forEach(oldData, (oldDataV, oldDataK) => {
+                    let storedStanding = oldDataV;
+                    _.forEach(standings, (standingV, standingK) => {
+                        let calcStanding = standingV;
+                        if (storedStanding.id == calcStanding.id) {
+                            if (calcStanding.standing == storedStanding.standing) {
+                                //no changes
+                            } else {
+                                //changed
+                                dataChanged = true;
+                            }
                         }
-                    }
-                })
-            })
-        } else {
+                    })
+                });
 
-            query.data = { standings, timeStamp: Date.now() };
-            new System(
-                query
-            ).save().then(
-                res => {
-                    util.errLogger('standings-subs', res, 'first save last standings');
-                },
-                err => {
-                    util.errLogger('standings-subs', err, 'error first saving last standings');
+                if (dataChanged) {
+                    _.forEach(oldData, (oldDataV, oldDataK) => {
+                        let storedStanding = oldDataV;
+
+                        _.forEach(standings, (standingV, standingK) => {
+
+                            let calcStanding = standingV;
+
+                            if (storedStanding.id == calcStanding.id) {
+                                if (calcStanding.standing == storedStanding.standing) {
+                                    calcStanding['change'] = 'none';
+                                } else if (calcStanding.standing > storedStanding.standing) {
+                                    calcStanding['change'] = 'down';
+                                } else if (calcStanding.standing < storedStanding.standing) {
+                                    calcStanding['change'] = 'up';
+                                }
+                            }
+                        })
+                    })
+                } else {
+                    _.forEach(oldData, (oldDataV, oldDataK) => {
+                        let storedStanding = oldDataV;
+
+                        _.forEach(standings, (standingV, standingK) => {
+
+                            let calcStanding = standingV;
+
+                            if (storedStanding.id == calcStanding.id) {
+                                calcStanding['change'] = storedStanding['change'];
+                            }
+                        })
+                    })
                 }
-            )
-        }
+
+            } else {
+
+                query.data = {
+                    standings,
+                    timeStamp: Date.now()
+                };
+                new System(
+                    query
+                ).save().then(
+                    res => {
+                        util.errLogger('standings-subs', res, 'first save last standings');
+                    },
+                    err => {
+                        util.errLogger('standings-subs', err, 'error first saving last standings');
+                    }
+                )
+            }
+        } catch (e) { console.log(e) }
 
         //update the standings i guess
         if (data) {
@@ -377,6 +414,7 @@ async function stdDivStanding(division, season, pastSeason) {
                     standings,
                     timeStamp: Date.now()
                 };
+                console.log(diff, Object.keys(diff).length > 0);
                 if (Object.keys(diff).length > 0) {
                     System.findOneAndUpdate(
                         query, updateDocument, {
