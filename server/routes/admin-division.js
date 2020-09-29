@@ -122,7 +122,6 @@ router.post('/upsertDivision', passport.authenticate('jwt', {
     if (name == division.divisionConcat) {
         //division name not changed
     } else {
-        //division name changed
         runSubs = true;
     }
 
@@ -143,10 +142,6 @@ router.post('/upsertDivision', passport.authenticate('jwt', {
             _.forEach(division, (value, key) => {
                 found[key] = value;
             });
-            // let keys = Object.keys(division);
-            // keys.forEach(key => {
-            //     found[key] = division[key];
-            // });
 
             found.save().then(
                 (saved) => {

@@ -3,22 +3,9 @@ const Replay = require('../models/replay-parsed-models');
 const Team = require('../models/team-models');
 const utls = require('../utils');
 const User = require('../models/user-models');
-const AWS = require('aws-sdk');
 const logger = require('../subroutines/sys-logging-subs').logger;
 const HP = require('./heroesProfileAPI');
 const { s3deleteFile } = require('../methods/aws-s3/delete-s3-file');
-
-AWS.config.update({
-    accessKeyId: process.env.S3accessKeyId,
-    secretAccessKey: process.env.S3secretAccessKey,
-    region: process.env.S3region
-});
-
-const s3replayBucket = new AWS.S3({
-    params: {
-        Bucket: process.env.s3bucketReplays
-    }
-});
 
 const notFound = 'not found';
 

@@ -63,11 +63,6 @@ router.post('/match/update', passport.authenticate('jwt', {
         Match.findOne({ matchId: match.matchId }).then(
             (found) => {
                 if (found) {
-                    // found = match;
-                    // let keys = Object.keys(match);
-                    // keys.forEach(key => {
-                    //     found[key] = match[key];
-                    // });
                     _.forEach(match, (value, key) => {
                         found[key] = value;
                     });
@@ -157,39 +152,10 @@ router.post('/match/set/schedule/deadline', passport.authenticate('jwt', { sessi
 
 });
 
-router.post('/match/deletereplay', passport.authenticate('jwt', {
-    session: false
-}), levelRestrict.matchLevel, util.appendResHeader, (req, res) => {
-    let logInfo = {};
-
-    const path = 'admin/match/deletereplay'
-
-    logInfo.action = 'delete replay from match';
-    logInfo.admin = 'ADMIN';
-    logInfo.actor = req.user.displayName;
-    logInfo.target = `${req.body.match} : replay prop ${req.body.replayProp}`;
-
-    // res.status(200).send("Under construction");
-    if (req.body.matchId && req.body.replayProp) {
-        deleteReplay(req.body.matchId, req.body.replayProp).then(
-            answer => {
-                res.status(200).send(util.returnMessaging(path, 'Replay Deleted', false, answer, null, logInfo));
-            },
-            err => {
-                console.log('err', err);
-                res.status(500).send(util.returnMessaging(path, 'Delete replay failed', err));
-            }
-        )
-    } else {
-        res.status(500).send(util.returnMessaging(path, 'Bad parameters', null));
-    }
-});
-
-
 router.post('/match/uploadreplay', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.matchLevel, util.appendResHeader, (req, res) => {
-    const path = '/schedule/report/match';
+    const path = 'admin/match/uploadreplay';
     const formidable = require('formidable');
     const parser = require('hots-parser');
     let form = new formidable.IncomingForm();
@@ -465,7 +431,7 @@ router.post('/match/create/grandfinal', passport.authenticate('jwt', {
 router.post('/match/delete/grandfinal', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.matchLevel, util.appendResHeader, (req, res) => {
-    const path = '/match/delete/grandfinal';
+    const path = 'admin/match/delete/grandfinal';
 
     const logInfo = {}
     logInfo.action = 'delete grand final match';
@@ -485,14 +451,13 @@ router.post('/match/delete/grandfinal', passport.authenticate('jwt', {
             }
         )
 
-
 });
 
 
 router.post('/match/create/stream/link', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.multi(['MATCH', 'CASTER']), util.appendResHeader, (req, res) => {
-    const path = '/match/create/stream/link';
+    const path = 'admin/match/create/stream/link';
 
     streamMethod.createStreamEvent(req.body).then(
         answer => {
@@ -511,7 +476,7 @@ router.post('/match/create/stream/link', passport.authenticate('jwt', {
 router.post('/match/delete/stream/link', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.matchLevel, util.appendResHeader, (req, res) => {
-    const path = '/match/delete/stream/link';
+    const path = 'admin/match/delete/stream/link';
 
     let query = { "$and": [{ "matchId": req.body.matchId }, { "streamOnly": true }] };
     Match.findOneAndDelete(query).then(
@@ -534,30 +499,36 @@ router.post('/season/reset', passport.authenticate('jwt', {
 
     let logObj = {};
 
+    let password = req.body.password
 
+    if (password == 'resetseason') {
+        let archived = await ArchiveMethods.archiveDivisions().then(
+            suc => {
+                return {
+                    success: true,
+                    data: suc
+                };
+            },
+            fail => {
+                return {
+                    success: false,
+                    data: fail
+                };
+            }
+        );
 
-    let archived = await ArchiveMethods.archiveDivisions().then(
-        suc => {
-            return {
-                success: true,
-                data: suc
-            };
-        },
-        fail => {
-            return { success: false, data: fail };
+        if (archived.success) {
+
+            res.status(200).send(util.returnMessaging(path, 'Season Reset', false, archived, null, logObj));
+        } else {
+            res.status(500).send(util.returnMessaging(path, 'Error resetting teams registration division', teams.data, null, null, logObj));
         }
-    );
 
-    if (archived.success) {
-
-        res.status(200).send(util.returnMessaging(path, 'Season Reset', false, archived, null, logObj));
     } else {
-        res.status(500).send(util.returnMessaging(path, 'Error resetting teams registration division', teams.data, null, null, logObj));
+        res.status(500).send(util.returnMessaging(path, 'Password incorrect', null, null, {}));
     }
 
-
-
-})
+});
 
 
 module.exports = router;
@@ -571,7 +542,6 @@ async function updateFoundAsync(endWeek, found, date) {
                 let update = await found[j].save().then(saved => { return saved; }, err => { return null; });
                 updateFound.push(update);
             }
-
         }
         date += (1000 * 60 * 60 * 24 * 7);
     }

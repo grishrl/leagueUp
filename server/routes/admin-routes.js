@@ -21,10 +21,11 @@ router.post('/upsertSeasonInfo', passport.authenticate('jwt', {
     logObj.timeStamp = Date.now();
 
     let scheduleQuery = {
-
-        'dataName': 'seasonInfo',
-        'value': season
-    }
+        $and: [
+            { 'dataName': 'seasonInfo' },
+            { 'value': season }
+        ]
+    };
     let postedInfo = {
         'dataName': 'seasonInfo',
         'value': season,

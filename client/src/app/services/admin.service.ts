@@ -180,7 +180,7 @@ export class AdminService {
 
   //returns list of all divisions
   getDivisionList() {
-    let url = "admin/getDivisionInfo";
+    let url = "/getDivisionInfo";
 
     return this.httpService.httpGet(url, []).pipe(
       map((res) => {
