@@ -4,6 +4,7 @@ const logger = require('../subroutines/sys-logging-subs').logger;
 const CustomError = require('./customError');
 const { s3deleteFile } = require('../methods/aws-s3/delete-s3-file');
 const { s3putObject } = require('../methods/aws-s3/put-s3-file');
+const { prepImage } = require('./image-upload-common');
 
 AWS.config.update({
     accessKeyId: process.env.S3accessKeyId,
@@ -14,39 +15,13 @@ AWS.config.update({
 
 
 async function uploadTeamLogo(path, dataURI, teamName) {
-    let uploadedFileName = '';
-    var decoded = Buffer.byteLength(dataURI, 'base64');
 
-    if (decoded.length > 2500000) {
-        let error = new CustomError('fileSize', 'File is too big!');
-        throw error;
-    } else {
-        var png = dataURI.indexOf('png');
-        var jpg = dataURI.indexOf('jpg');
-        var jpeg = dataURI.indexOf('jpeg');
-        var gif = dataURI.indexOf('gif');
-        var stamp = Date.now();
-        stamp = stamp.toString();
-        stamp = stamp.slice(stamp.length - 4, stamp.length);
-        uploadedFileName += teamName + stamp + "_logo";
+    let preppedImage = await prepImage(dataURI, { teamName });
 
-        if (png > -1) {
-            uploadedFileName += ".png";
-        } else if (jpg > -1) {
-            uploadedFileName += ".jpg";
-        } else if (jpeg > -1) {
-            uploadedFileName += ".jpeg";
-        } else if (gif > -1) {
-            uploadedFileName += ".gif";
-        } else {
-            uploadedFileName += ".png";
-        }
-
-        var buf = new Buffer.from(dataURI.replace(/^data:image\/\w+;base64,/, ""), 'base64');
-
+    if (preppedImage) {
         let successObject = {};
 
-        let s3await = await s3putObject(process.env.s3bucketImages, null, uploadedFileName, buf).then(
+        let s3await = await s3putObject(process.env.s3bucketImages, null, preppedImage.fileName, preppedImage.buffer).then(
             s3pass => {
                 return {
                     "cont": true,
@@ -61,19 +36,13 @@ async function uploadTeamLogo(path, dataURI, teamName) {
             }
         );
 
+        //continue if s3 upload worked
         if (s3await.cont) {
             let lower = teamName.toLowerCase();
             let foundTeam = await Team.findOne({
                 teamName_lower: lower
             }).then((foundTeam) => {
                 if (foundTeam) {
-                    var logoToDelete;
-                    if (foundTeam.logo) {
-                        logoToDelete = foundTeam.logo;
-                    }
-                    if (logoToDelete) {
-                        s3deleteFile(process.env.s3bucketImages, null, logoToDelete);
-                    }
                     return foundTeam;
                 } else {
                     let error = new CustomError('queryError', 'Team not found!');
@@ -84,13 +53,19 @@ async function uploadTeamLogo(path, dataURI, teamName) {
                 throw error;
             });
             if (foundTeam) {
-                foundTeam.logo = uploadedFileName;
+                //delete the exising logo
+                var logoToDelete;
+                if (foundTeam.logo) {
+                    logoToDelete = foundTeam.logo;
+                }
+                if (logoToDelete) {
+                    s3deleteFile(process.env.s3bucketImages, null, logoToDelete);
+                }
+                //set the team info to the new logo filename
+                foundTeam.logo = preppedImage.fileName;
                 let bubbleUp = await foundTeam.save().then((savedTeam) => {
-                    if (savedTeam) {
-                        return savedTeam;
-                    }
+                    return savedTeam;
                 }, (err) => {
-
                     let error = new CustomError('genErr', 'Error uploading file!');
                     throw error;
                 });
@@ -99,15 +74,18 @@ async function uploadTeamLogo(path, dataURI, teamName) {
                     successObject.eo = bubbleUp.toObject();
                 }
             }
-
         } else {
             let error = new CustomError('uploadError', 's3 upload failure!');
             throw error;
         }
-
         return successObject;
+    } else {
+        let error = new CustomError('fileSize', 'File is too big!');
+        throw error;
     }
+
 }
+
 
 async function teamLogoArchive(logo) {
     let aws = new AWS.S3({

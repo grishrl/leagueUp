@@ -2,44 +2,19 @@ const User = require('../models/user-models');
 const CustomError = require('../methods/customError');
 const { s3deleteFile } = require('./aws-s3/delete-s3-file');
 const { s3putObject } = require('./aws-s3/put-s3-file');
+const { prepImage } = require('./image-upload-common');
 
 const avatarFolder = 'player-avatar/'
 
 
 async function uploadAvatar(path, dataURI, displayName) {
-    let uploadedFileName = '';
-    var decoded = Buffer.byteLength(dataURI, 'base64');
 
-    if (decoded.length > 2500000) {
-        let error = new CustomError('fileSize', 'File is too big!');
-        throw error;
-    } else {
-        var png = dataURI.indexOf('png');
-        var jpg = dataURI.indexOf('jpg');
-        var jpeg = dataURI.indexOf('jpeg');
-        var gif = dataURI.indexOf('gif');
-        var stamp = Date.now();
-        stamp = stamp.toString();
-        stamp = stamp.slice(stamp.length - 4, stamp.length);
-        uploadedFileName += displayName + stamp + "_avatar";
+    let preppedImage = await prepImage(dataURI, { displayName });
 
-        if (png > -1) {
-            uploadedFileName += ".png";
-        } else if (jpg > -1) {
-            uploadedFileName += ".jpg";
-        } else if (jpeg > -1) {
-            uploadedFileName += ".jpeg";
-        } else if (gif > -1) {
-            uploadedFileName += ".gif";
-        } else {
-            uploadedFileName += ".png";
-        }
-
-        var buf = new Buffer.from(dataURI.replace(/^data:image\/\w+;base64,/, ""), 'base64');
-
+    if (preppedImage) {
         let successObject = {};
 
-        let s3await = await s3putObject(process.env.s3bucketGeneralImages, avatarFolder, uploadedFileName, buf).then(
+        let s3await = await s3putObject(process.env.s3bucketGeneralImages, avatarFolder, preppedImage.fileName, preppedImage.buffer).then(
             s3pass => {
                 return {
                     "cont": true,
@@ -53,30 +28,32 @@ async function uploadAvatar(path, dataURI, displayName) {
                 };
             }
         );
-
+        //if upload to s3 succedded
         if (s3await.cont) {
 
-            successObject.fileName = uploadedFileName;
+            successObject.fileName = preppedImage.fileName;
             let foundUser = await User.findOne({
                 displayName: displayName
             }).then((foundUser) => {
                 if (foundUser) {
                     return foundUser;
                 } else {
-
+                    //user was not found delete the image we just saved..
                     s3deleteFile(process.env.s3bucketGeneralImages, avatarFolder, filePath);
                     let error = new CustomError('queryError', 'User not found!');
                     throw error;
                 }
             }, (err) => {
-
+                //the query err'ed delete the image we just saved
                 s3deleteFile(process.env.s3bucketGeneralImages, avatarFolder, filePath);
                 let error = new CustomError('queryError', 'User not found!');
                 throw error;
             });
+            //we found a user
             if (foundUser) {
                 let userObj = foundUser.toObject();
                 if (userObj.avatar && userObj.avatar != 'defaultAvatar.png' && userObj.avatar != 'pendingAvatar') {
+                    //dont delete or replace the current avatar if the user has one
                     // foundUser.avatar = foundUser.avatar
                 } else {
                     foundUser.avatar = 'pendingAvatar.png';
@@ -104,7 +81,12 @@ async function uploadAvatar(path, dataURI, displayName) {
         }
 
         return successObject;
+    } else {
+        //throw file size error
+        let error = new CustomError('fileSize', 'File is too big!');
+        throw error;
     }
+
 }
 
 //wrapping my new dry function because I'm dumb and screwed up. this is easier

@@ -15,6 +15,7 @@ const groupMaker = require('../cron-routines/groupMaker');
 const hpUploadHandler = require('../cron-routines/uploadToHeroesProfile');
 const { s3deleteFile } = require('../methods/aws-s3/delete-s3-file');
 const { s3putObject } = require('../methods/aws-s3/put-s3-file');
+const { prepImage } = require('../methods/image-upload-common');
 
 
 AWS.config.update({
@@ -250,7 +251,6 @@ router.post('/image/upload', passport.authenticate('jwt', {
     session: false
 }), (req, res) => {
     const path = '/utility/image/upload';
-    let uploadedFileName = "";
 
     //the file name will be the objectID    
     let id = req.body.id;
@@ -258,84 +258,53 @@ router.post('/image/upload', passport.authenticate('jwt', {
 
     let dataURI = req.body.image;
 
-    var decoded = Buffer.byteLength(dataURI, 'base64');
-
-    //construct log object
     let logObj = {};
     logObj.actor = req.user.displayName;
     logObj.action = 'upload team logo ';
     logObj.target = id;
     logObj.logLevel = 'STD';
 
-    if (decoded.length > 2500000) {
-        logObj.logLevel = 'ERROR';
-        logObj.error = 'File was too big';
-        res.status(500).send(util.returnMessaging(path, "File is too big!", false, null, null, logObj));
-    } else {
-
-        var png = dataURI.indexOf('png');
-        var jpg = dataURI.indexOf('jpg');
-        var jpeg = dataURI.indexOf('jpeg');
-        var gif = dataURI.indexOf('gif');
-
-        var stamp = Date.now()
-        stamp = stamp.toString();
-        stamp = stamp.slice(stamp.length - 4, stamp.length);
-
-        //the file name will be the objectID
-        uploadedFileName += id;
-
-        if (png > -1) {
-            uploadedFileName += ".png";
-        } else if (jpg > -1) {
-            uploadedFileName += ".jpg";
-        } else if (jpeg > -1) {
-            uploadedFileName += ".jpeg";
-        } else if (gif > -1) {
-            uploadedFileName += ".gif";
-        } else {
-            uploadedFileName += ".png";
-        }
-
-
-        var buf = new Buffer.from(dataURI.replace(/^data:image\/\w+;base64,/, ""), 'base64');
-
-        s3putObject(process.env.s3bucketGeneralImages, null, uploadedFileName, buf);
-
-
-        //this will have to be changed to adjust model depending on the type that has been sent
-        if (type == 'event') {
-            Event.findById(id).then(
-                foundEvent => {
-                    if (foundEvent) {
-                        var imageToDelete;
-                        if (foundEvent.eventImage) {
-                            imageToDelete = foundEvent.eventImage;
-                        }
-                        if (imageToDelete) {
-                            s3deleteFile(process.env.s3bucketImages, null, imageToDelete);
-                        }
-                        foundEvent.eventImage = uploadedFileName;
-                        foundEvent.save().then((savedEvent) => {
-                            if (savedEvent) {
-                                res.status(200).send(util.returnMessaging(path, "File uploaded", false, savedEvent, null, logObj));
+    prepImage(dataURI, { id }).then(
+        preppedImage => {
+            s3putObject(process.env.s3bucketGeneralImages, null, preppedImage.fileName, preppedImage.buffer);
+            //this will have to be changed to adjust model depending on the type that has been sent
+            if (type == 'event') {
+                Event.findById(id).then(
+                    foundEvent => {
+                        if (foundEvent) {
+                            var imageToDelete;
+                            if (foundEvent.eventImage) {
+                                imageToDelete = foundEvent.eventImage;
                             }
-                        }, (err) => {
-                            res.status(500).send(util.returnMessaging(path, "Error uploading file", err, null, null, logObj));
-                        })
-                    } else {
-                        logObj.logLevel = 'ERROR';
-                        logObj.error = 'Event was not found';
-                        res.status(500).send(util.returnMessaging(path, "Error uploading file", false, null, null, logObj));
+                            if (imageToDelete) {
+                                s3deleteFile(process.env.s3bucketImages, null, imageToDelete);
+                            }
+                            foundEvent.eventImage = preppedImage.fileName;
+                            foundEvent.save().then((savedEvent) => {
+                                if (savedEvent) {
+                                    res.status(200).send(util.returnMessaging(path, "File uploaded", false, savedEvent, null, logObj));
+                                }
+                            }, (err) => {
+                                res.status(500).send(util.returnMessaging(path, "Error uploading file", err, null, null, logObj));
+                            })
+                        } else {
+                            logObj.logLevel = 'ERROR';
+                            logObj.error = 'Event was not found';
+                            res.status(500).send(util.returnMessaging(path, "Error uploading file", false, null, null, logObj));
+                        }
+                    },
+                    err => {
+                        res.status(500).send(util.returnMessaging(path, "Error uploading file", err, null, null, logObj));
                     }
-                },
-                err => {
-                    res.status(500).send(util.returnMessaging(path, "Error uploading file", err, null, null, logObj));
-                }
-            )
+                )
+            }
+        },
+        err => {
+            logObj.logLevel = 'ERROR';
+            logObj.error = 'File was too big';
+            res.status(500).send(util.returnMessaging(path, "File is too big!", false, null, null, logObj));
         }
-
-    }
+    );
 
 });
 

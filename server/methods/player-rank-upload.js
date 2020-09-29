@@ -6,6 +6,7 @@ const PendingRankQueue = require('../models/admin-models').PendingRankQueue;
 const _ = require('lodash');
 const s3deleteFile = require('../methods/aws-s3/delete-s3-file').s3deleteFile;
 const { s3putObject } = require('../methods/aws-s3/put-s3-file');
+const { prepImage } = require('../methods/image-upload-common');
 
 function rankToNumber(hlRankMetal, hlRankDivision) {
     let num = 0;
@@ -41,11 +42,6 @@ const PLAYERRANKFOLDER = 'player-ranks-images/';
 
 //upload image and return the path where the image will be stored
 async function uploadRankImage(dataURI, user_id, seasonInfo) {
-    let uploadedFileName = '';
-    var decoded = Buffer.byteLength(dataURI, 'base64');
-    const successObject = {};
-
-
 
     let query = {
         $and: [{
@@ -68,34 +64,17 @@ async function uploadRankImage(dataURI, user_id, seasonInfo) {
         }
     );
 
-    if (decoded.length > 2500000) {
-        let error = new CustomError('fileSize', 'File is too big!');
-        throw error;
-    } else {
-        var png = dataURI.indexOf('png');
-        var jpg = dataURI.indexOf('jpg');
-        var jpeg = dataURI.indexOf('jpeg');
-        var gif = dataURI.indexOf('gif');
-        var stamp = Date.now();
-        stamp = stamp.toString();
-        stamp = stamp.slice(stamp.length - 4, stamp.length);
-        uploadedFileName += `${user_id}_${seasonInfo.year}_${seasonInfo.season}_${stamp}`;
+    let preppedImage = await prepImage(dataURI, {
+        user_id: user_id,
+        year: seasonInfo.year,
+        season: seasonInfo.season,
+    });
 
-        if (png > -1) {
-            uploadedFileName += ".png";
-        } else if (jpg > -1) {
-            uploadedFileName += ".jpg";
-        } else if (jpeg > -1) {
-            uploadedFileName += ".jpeg";
-        } else if (gif > -1) {
-            uploadedFileName += ".gif";
-        } else {
-            uploadedFileName += ".png";
-        }
+    if (preppedImage) {
 
-        var buf = new Buffer.from(dataURI.replace(/^data:image\/\w+;base64,/, ""), 'base64');
+        const successObject = {};
 
-        let s3await = await s3putObject(process.env.s3bucketGeneralImages, PLAYERRANKFOLDER, uploadedFileName, buf).then(
+        let s3await = await s3putObject(process.env.s3bucketGeneralImages, PLAYERRANKFOLDER, preppedImage.fileName, preppedImage.buffer).then(
             s3pass => {
                 return {
                     "cont": true,
@@ -108,121 +87,128 @@ async function uploadRankImage(dataURI, user_id, seasonInfo) {
                     "eo": s3fail
                 };
             }
-        )
+        );
 
+        //did the s3 upload succeed?
         if (s3await.cont) {
 
-            successObject['fileName'] = `${uploadedFileName}`;
+            successObject['fileName'] = `${preppedImage.fileName}`;
+
+            //update the existing pending queue
+            if (existingPendingQueue) {
+                try {
+
+                    //this user had a pending all ready - we have to update the existing
+                    let fileToDelete = existingPendingQueue.fileName;
+                    existingPendingQueue.fileName = successObject.fileName;
+                    let saved = await existingPendingQueue.save().then(
+                        saved => {
+                            //saved..
+                            return saved;
+                        }, err => {
+                            throw err;
+                        }
+                    );
+                    successObject['savedQueue'] = saved;
+
+                    s3deleteFile(process.env.s3bucketGeneralImages, PLAYERRANKFOLDER, fileToDelete);
+                } catch (e) {
+                    console.log(e);
+                }
+
+            } else {
+                try {
+
+                    // we need to make a new pending item;
+                    let newQ = await new PendingRankQueue({
+                        userId: user_id,
+                        year: seasonInfo.year,
+                        season: seasonInfo.season,
+                        fileName: successObject.fileName,
+                        timestamp: Date.now().toString()
+                    }).save().then(
+                        newQ => {
+
+                            return newQ;
+                        },
+                        err => {
+
+                            throw err;
+                        }
+                    );
+                    successObject['savedQueue'] = newQ;
+                } catch (e) {
+                    console.log(e);
+                }
+
+
+            }
+
+            if (utils.returnBoolByPath(successObject, 'savedQueue')) {
+
+                User.findById(user_id).then(
+                    foundUser => {
+                        if (foundUser) {
+                            let userObj = utils.objectify(foundUser);
+                            let addObject;
+                            if (utils.returnBoolByPath(userObj, 'verifiedRankHistory')) {
+                                let ind = _.findIndex(userObj.verifiedRankHistory, (i) => {
+                                    if (i.season == seasonInfo.season && i.year == seasonInfo.year) {
+                                        return true;
+                                    }
+                                });
+
+                                if (ind > -1) {
+                                    let obj = userObj.verifiedRankHistory[ind];
+                                    obj['status'] = 'pending';
+                                    userObj.verifiedRankHistory[ind] = obj;
+                                } else {
+                                    addObject = {
+                                        hlRankMetal: 'nil',
+                                        hlRankDivision: 0,
+                                        season: seasonInfo.season,
+                                        year: seasonInfo.year,
+                                        status: 'pending'
+                                    };
+                                    userObj.verifiedRankHistory.push(addObject);
+                                }
+                            } else {
+
+                                userObj.verifiedRankHistory = [addObject];
+                            }
+
+                            foundUser.verifiedRankHistory = userObj.verifiedRankHistory;
+
+                            foundUser.markModified('verifiedRankHistory');
+                            foundUser.save().then(
+                                saved => {
+                                    console.log('rank: user saved ok')
+                                },
+                                err => {
+                                    console.log('rank: user save failed')
+                                }
+                            )
+                        }
+                    },
+                    err => {
+                        throw err;
+                    }
+                )
+
+            }
+            return successObject;
 
         } else {
+
             let error = new CustomError('uploadError', 's3 upload failure!');
             throw error;
-        }
 
-    }
-
-    if (existingPendingQueue) {
-        try {
-
-            //this user had a pending all ready - we have to update the existing
-            let fileToDelete = existingPendingQueue.fileName;
-            existingPendingQueue.fileName = successObject.fileName;
-            let saved = await existingPendingQueue.save().then(
-                saved => {
-                    //saved..
-                    return saved;
-                }, err => {
-                    throw err;
-                }
-            );
-            successObject['savedQueue'] = saved;
-
-            s3deleteFile(process.env.s3bucketGeneralImages, PLAYERRANKFOLDER, fileToDelete);
-        } catch (e) {
-            console.log(e);
         }
 
     } else {
-        try {
-
-            // we need to make a new pending item;
-            let newQ = await new PendingRankQueue({
-                userId: user_id,
-                year: seasonInfo.year,
-                season: seasonInfo.season,
-                fileName: successObject.fileName,
-                timestamp: Date.now().toString()
-            }).save().then(
-                newQ => {
-
-                    return newQ;
-                },
-                err => {
-
-                    throw err;
-                }
-            );
-            successObject['savedQueue'] = newQ;
-        } catch (e) {
-            console.log(e);
-        }
-
-
+        let error = new CustomError('fileSize', 'File is too big!');
+        throw error;
     }
-
-    if (utils.returnBoolByPath(successObject, 'savedQueue')) {
-
-        User.findById(user_id).then(
-            foundUser => {
-                if (foundUser) {
-                    let userObj = utils.objectify(foundUser);
-                    let addObject;
-                    if (utils.returnBoolByPath(userObj, 'verifiedRankHistory')) {
-                        let ind = _.findIndex(userObj.verifiedRankHistory, (i) => {
-                            if (i.season == seasonInfo.season && i.year == seasonInfo.year) {
-                                return true;
-                            }
-                        });
-
-                        if (ind > -1) {
-                            let obj = userObj.verifiedRankHistory[ind];
-                            obj['status'] = 'pending';
-                            userObj.verifiedRankHistory[ind] = obj;
-                        } else {
-                            addObject = {
-                                hlRankMetal: 'nil',
-                                hlRankDivision: 0,
-                                season: seasonInfo.season,
-                                year: seasonInfo.year,
-                                status: 'pending'
-                            };
-                            userObj.verifiedRankHistory.push(addObject);
-                        }
-                    } else {
-
-                        userObj.verifiedRankHistory = [addObject];
-                    }
-
-                    foundUser.verifiedRankHistory = userObj.verifiedRankHistory;
-
-                    foundUser.markModified('verifiedRankHistory');
-                    foundUser.save().then(
-                        saved => {
-                            console.log('rank: user saved ok')
-                        },
-                        err => {
-                            console.log('rank: user save failed')
-                        }
-                    )
-                }
-            },
-            err => {
-                throw err;
-            }
-        )
-
-    }
-    return successObject;
 
 }
 
