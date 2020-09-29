@@ -5,6 +5,7 @@ const CustomError = require('./customError');
 const utils = require('../utils');
 const PendingRankQueue = require('../models/admin-models').PendingRankQueue;
 const _ = require('lodash');
+const s3deleteFile = require('../methods/aws-s3/delete-s3-file').s3deleteFile;
 
 function rankToNumber(hlRankMetal, hlRankDivision) {
     let num = 0;
@@ -140,7 +141,8 @@ async function uploadRankImage(dataURI, user_id, seasonInfo) {
                 }
             );
             successObject['savedQueue'] = saved;
-            deleteFile(fileToDelete);
+
+            s3deleteFile(process.env.s3bucketGeneralImages, folder, fileToDelete);
         } catch (e) {
             console.log(e);
         }
@@ -229,38 +231,6 @@ async function uploadRankImage(dataURI, user_id, seasonInfo) {
 
 }
 
-function deleteFile(path) {
-
-    let data = {
-        Bucket: process.env.s3bucketGeneralImages,
-        Key: folder + path
-    };
-    s3Bucket.deleteObject(data, (err, data) => {
-        if (err) {
-            //log object
-            let sysObj = {};
-            sysObj.actor = 'SYSTEM';
-            sysObj.action = 'error deleting from AWS ';
-            sysObj.location = 'player-rank-deleteFile'
-            sysObj.logLevel = 'ERROR';
-            sysObj.error = err;
-            sysObj.target = path;
-            sysObj.timeStamp = new Date().getTime();
-            logger(sysObj);
-        } else {
-            //log object
-            let sysObj = {};
-            sysObj.actor = 'SYSTEM';
-            sysObj.action = 'deleted from AWS ';
-            sysObj.location = 'player-rank-deleteFile'
-            sysObj.logLevel = 'STD';
-            sysObj.target = path;
-            sysObj.timeStamp = new Date().getTime();
-            logger(sysObj);
-        }
-    })
-}
-
 async function playerRankApproved(rankObj) {
 
     let successObject = {
@@ -335,7 +305,7 @@ async function playerRankApproved(rankObj) {
                     }
                 )
 
-                deleteFile(foundQ.fileName);
+                s3deleteFile(process.env.s3bucketGeneralImages, folder, foundQ.fileName);
 
                 successObject.saved = saved;
                 successObject.success = true;
@@ -420,7 +390,7 @@ async function playerRankDenied(rankObj) {
                     }
                 )
 
-                deleteFile(foundQ.fileName);
+                s3deleteFile(process.env.s3bucketGeneralImages, folder, foundQ.fileName)
 
                 successObject.success = true;
 
@@ -437,7 +407,6 @@ async function playerRankDenied(rankObj) {
 
 module.exports = {
     uploadRankImage,
-    deleteFile,
     playerRankApproved,
     playerRankDenied,
 };

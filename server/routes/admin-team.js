@@ -12,7 +12,7 @@ const passport = require("passport");
 const levelRestrict = require("../configs/admin-leveling");
 const messageSub = require('../subroutines/message-subs');
 const uploadTeamLogo = require('../methods/teamLogoUpload').uploadTeamLogo;
-const deleteFile = require('../methods/teamLogoUpload').deleteFile;
+const teamLogoDelete = require('../methods/teamLogoUpload').teamLogoDelete;
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 const notesMethods = require('../methods/notes/notes');
 
@@ -814,7 +814,7 @@ router.post('/team/removeLogo', passport.authenticate('jwt', {
                 if (found.logo) {
                     let path = found.logo;
                     found.logo = null;
-                    deleteFile(path);
+                    teamLogoDelete(path);
                     found.save().then(
                         saved => {
                             res.status(200).send(util.returnMessaging(path, 'Logo removed.', null, null, saved, logObj));

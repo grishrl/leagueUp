@@ -6,6 +6,7 @@ const User = require('../models/user-models');
 const AWS = require('aws-sdk');
 const logger = require('../subroutines/sys-logging-subs').logger;
 const HP = require('./heroesProfileAPI');
+const { s3deleteFile } = require('../methods/aws-s3/delete-s3-file');
 
 AWS.config.update({
     accessKeyId: process.env.S3accessKeyId,
@@ -64,7 +65,7 @@ async function deleteReplay(matchId, indexProp) {
 
             if (replayToDelete.url) {
                 //remove from s3
-                removedFromS3Result = await deleteFile(replayToDelete.url).then(answer => {
+                removedFromS3Result = await s3deleteFile(process.env.s3bucketReplays, null, replayToDelete.url).then(answer => {
                     return answer;
                 });
             }
@@ -240,42 +241,6 @@ async function removeParsedFileFromUser(userName, replayId) {
         savedResult = notFound;
     }
     return savedResult;
-}
-//remove file from S3 
-async function deleteFile(path) {
-    let data = {
-        Bucket: process.env.s3bucketReplays,
-        Key: path
-    };
-    return new Promise((resolve, reject) => {
-        s3replayBucket.deleteObject(data, (err, data) => {
-            let returnVal = false;
-            if (err) {
-                //log object
-                let sysObj = {};
-                sysObj.actor = 'SYSTEM';
-                sysObj.action = 'error deleting from AWS ';
-                sysObj.location = 'delete replay'
-                sysObj.logLevel = 'ERROR';
-                sysObj.error = err;
-                sysObj.target = path;
-                sysObj.timeStamp = new Date().getTime();
-                logger(sysObj);
-            } else {
-                returnVal = true;
-                //log object
-                let sysObj = {};
-                sysObj.actor = 'SYSTEM';
-                sysObj.action = 'deleted from AWS ';
-                sysObj.location = 'delete replay'
-                sysObj.logLevel = 'STD';
-                sysObj.target = path;
-                sysObj.timeStamp = new Date().getTime();
-                logger(sysObj);
-            }
-            resolve(returnVal);
-        });
-    });
 }
 
 //remove the reference from match

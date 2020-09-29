@@ -1,7 +1,7 @@
 const User = require('../models/user-models');
 const AWS = require('aws-sdk');
-const logger = require('../subroutines/sys-logging-subs').logger;
 const CustomError = require('../methods/customError');
+const { s3deleteFile } = require('./aws-s3/delete-s3-file');
 
 const avatarFolder = 'player-avatar/'
 
@@ -62,21 +62,16 @@ async function uploadAvatar(path, dataURI, displayName) {
                 displayName: displayName
             }).then((foundUser) => {
                 if (foundUser) {
-                    // var logoToDelete;
-                    // if (foundUser.avatar) {
-                    //     logoToDelete = foundUser.avatar;
-                    // }
-                    // if (logoToDelete) {
-                    //     deleteFile(logoToDelete);
-                    // }
                     return foundUser;
                 } else {
-                    deleteFile(filePath);
+
+                    s3deleteFile(process.env.s3bucketGeneralImages, avatarFolder, filePath);
                     let error = new CustomError('queryError', 'User not found!');
                     throw error;
                 }
             }, (err) => {
-                deleteFile(filePath);
+
+                s3deleteFile(process.env.s3bucketGeneralImages, avatarFolder, filePath);
                 let error = new CustomError('queryError', 'User not found!');
                 throw error;
             });
@@ -93,7 +88,8 @@ async function uploadAvatar(path, dataURI, displayName) {
                         return savedUser;
                     }
                 }, (err) => {
-                    deleteFile(filePath);
+
+                    s3deleteFile(process.env.s3bucketGeneralImages, avatarFolder, filePath);
                     let error = new CustomError('genErr', 'Error uploading file!');
                     throw error;
                 });
@@ -112,38 +108,12 @@ async function uploadAvatar(path, dataURI, displayName) {
     }
 }
 
-function deleteFile(path) {
-    let data = {
-        Bucket: process.env.s3bucketGeneralImages,
-        Key: avatarFolder + path
-    };
-    s3Bucket.deleteObject(data, (err, data) => {
-        if (err) {
-            //log object
-            let sysObj = {};
-            sysObj.actor = 'SYSTEM';
-            sysObj.action = 'error deleting from AWS ';
-            sysObj.location = 'user-route-deleteFile'
-            sysObj.logLevel = 'ERROR';
-            sysObj.error = err;
-            sysObj.target = path;
-            sysObj.timeStamp = new Date().getTime();
-            logger(sysObj);
-        } else {
-            //log object
-            let sysObj = {};
-            sysObj.actor = 'SYSTEM';
-            sysObj.action = 'deleted from AWS ';
-            sysObj.location = 'user-route-deleteFile'
-            sysObj.logLevel = 'STD';
-            sysObj.target = path;
-            sysObj.timeStamp = new Date().getTime();
-            logger(sysObj);
-        }
-    })
+//wrapping my new dry function because I'm dumb and screwed up. this is easier
+function deleteAvatar(path) {
+    return s3deleteFile(process.env.s3bucketGeneralImages, avatarFolder, path);
 }
 
 module.exports = {
     uploadAvatar: uploadAvatar,
-    deleteFile: deleteFile
+    deleteAvatar: deleteAvatar
 };

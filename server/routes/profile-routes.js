@@ -373,7 +373,7 @@ router.post('/upload/avatar', passport.authenticate('jwt', {
     }).then(
         found => {
             for (var i = 0; i < found.length; i++) {
-                Avatar.deleteFile(found[i].fileName);
+                Avatar.deleteAvatar(found[i].fileName);
                 PendingAvatarQueue.findByIdAndDelete(found[i]._id).then(
                     deleted => {
                         //empty return from promise

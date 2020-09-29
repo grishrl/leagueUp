@@ -341,7 +341,7 @@ router.post('/approveAvatar', passport.authenticate('jwt', {
                 foundUser.avatar = fileName;
                 //if the image was approved delete the old profile; if it wasn't the pending or default image
                 if (oldAvatar && oldAvatar != 'pendingAvatar.png' && oldAvatar != 'defaultAvatar.png') {
-                    Avatar.deleteFile(oldAvatar);
+                    Avatar.deleteAvatar(oldAvatar);
                 }
             } else {
                 //not approved image
@@ -351,7 +351,7 @@ router.post('/approveAvatar', passport.authenticate('jwt', {
                 } else {
                     foundUser.avatar = 'defaultAvatar.png';
                 }
-                Avatar.deleteFile(fileName);
+                Avatar.deleteAvatar(fileName);
             }
 
             foundUser.save().then(

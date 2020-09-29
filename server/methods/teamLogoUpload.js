@@ -2,6 +2,7 @@ const Team = require("../models/team-models");
 const AWS = require('aws-sdk');
 const logger = require('../subroutines/sys-logging-subs').logger;
 const CustomError = require('./customError');
+const { s3fileDelete, s3deleteFile } = require('../methods/aws-s3/delete-s3-file');
 
 AWS.config.update({
     accessKeyId: process.env.S3accessKeyId,
@@ -64,16 +65,14 @@ async function uploadTeamLogo(path, dataURI, teamName) {
                         logoToDelete = foundTeam.logo;
                     }
                     if (logoToDelete) {
-                        deleteFile(logoToDelete);
+                        s3deleteFile(process.env.s3bucketImages, null, logoToDelete);
                     }
                     return foundTeam;
                 } else {
-                    deleteFile(filePath);
                     let error = new CustomError('queryError', 'Team not found!');
                     throw error;
                 }
             }, (err) => {
-                deleteFile(filePath);
                 let error = new CustomError('queryError', 'Team not found!');
                 throw error;
             });
@@ -84,7 +83,7 @@ async function uploadTeamLogo(path, dataURI, teamName) {
                         return savedTeam;
                     }
                 }, (err) => {
-                    deleteFile(filePath);
+
                     let error = new CustomError('genErr', 'Error uploading file!');
                     throw error;
                 });
@@ -139,39 +138,13 @@ async function teamLogoArchive(logo) {
     return successObject;
 }
 
-function deleteFile(path) {
-    let data = {
-        Bucket: process.env.s3bucketImages,
-        Key: path
-    };
-    s3Bucket.deleteObject(data, (err, data) => {
-        if (err) {
-            //log object
-            let sysObj = {};
-            sysObj.actor = 'SYSTEM';
-            sysObj.action = 'error deleting from AWS ';
-            sysObj.location = 'team-route-deleteFile'
-            sysObj.logLevel = 'ERROR';
-            sysObj.error = err;
-            sysObj.target = path;
-            sysObj.timeStamp = new Date().getTime();
-            logger(sysObj);
-        } else {
-            //log object
-            let sysObj = {};
-            sysObj.actor = 'SYSTEM';
-            sysObj.action = 'deleted from AWS ';
-            sysObj.location = 'team-route-deleteFile'
-            sysObj.logLevel = 'STD';
-            sysObj.target = path;
-            sysObj.timeStamp = new Date().getTime();
-            logger(sysObj);
-        }
-    })
+//using this as a wrapper for my dry function
+function teamLogoDelete(path) {
+    return s3deleteFile(process.env.s3bucketImages, null, path);
 }
 
 module.exports = {
     uploadTeamLogo: uploadTeamLogo,
     archiveTeamLogo: teamLogoArchive,
-    deleteFile: deleteFile
+    teamLogoDelete: teamLogoDelete
 };

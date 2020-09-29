@@ -13,6 +13,7 @@ const getTopStats = require('../cron-routines/getTopStats');
 const readInVods = require('../methods/sheets/sheets');
 const groupMaker = require('../cron-routines/groupMaker');
 const hpUploadHandler = require('../cron-routines/uploadToHeroesProfile');
+const { s3deleteFile } = require('../methods/aws-s3/delete-s3-file');
 
 
 AWS.config.update({
@@ -327,7 +328,7 @@ router.post('/image/upload', passport.authenticate('jwt', {
                             imageToDelete = foundEvent.eventImage;
                         }
                         if (imageToDelete) {
-                            deleteFile(imageToDelete);
+                            s3deleteFile(process.env.s3bucketImages, null, imageToDelete);
                         }
                         foundEvent.eventImage = uploadedFileName;
                         foundEvent.save().then((savedEvent) => {
@@ -335,18 +336,15 @@ router.post('/image/upload', passport.authenticate('jwt', {
                                 res.status(200).send(util.returnMessaging(path, "File uploaded", false, savedEvent, null, logObj));
                             }
                         }, (err) => {
-                            deleteFile(filePath);
                             res.status(500).send(util.returnMessaging(path, "Error uploading file", err, null, null, logObj));
                         })
                     } else {
-                        deleteFile(filePath);
                         logObj.logLevel = 'ERROR';
                         logObj.error = 'Event was not found';
                         res.status(500).send(util.returnMessaging(path, "Error uploading file", false, null, null, logObj));
                     }
                 },
                 err => {
-                    deleteFile(filePath);
                     res.status(500).send(util.returnMessaging(path, "Error uploading file", err, null, null, logObj));
                 }
             )
@@ -503,37 +501,6 @@ router.post('/groupmaker', (req, res) => {
 });
 
 module.exports = router;
-
-function deleteFile(path) {
-    let data = {
-        Bucket: process.env.s3bucketImages,
-        Key: path
-    };
-    s3Bucket.deleteObject(data, (err, data) => {
-        if (err) {
-            //log object
-            let sysObj = {};
-            sysObj.actor = 'SYSTEM';
-            sysObj.action = 'error deleting from AWS ';
-            sysObj.location = 'team-route-deleteFile'
-            sysObj.logLevel = 'ERROR';
-            sysObj.error = err;
-            sysObj.target = path;
-            sysObj.timeStamp = new Date().getTime();
-            logger(sysObj);
-        } else {
-            //log object
-            let sysObj = {};
-            sysObj.actor = 'SYSTEM';
-            sysObj.action = 'deleted from AWS ';
-            sysObj.location = 'team-route-deleteFile'
-            sysObj.logLevel = 'STD';
-            sysObj.target = path;
-            sysObj.timeStamp = new Date().getTime();
-            logger(sysObj);
-        }
-    })
-}
 
 async function checkApiKey(key) {
     return await System.system.findOne({
