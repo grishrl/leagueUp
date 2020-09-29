@@ -1,2 +1,13 @@
-<span *ngIf="showRound else free">{{match.round}}</span>
-<ng-template #free>FLEX</ng-template>
+<ng-container [ngSwitch]="showRound">
+    <ng-container *ngSwitchCase="'round'">
+        <span>{{match.round}}</span>
+    </ng-container>
+    <ng-container *ngSwitchCase="'flex'">
+        <span>FLEX</span>
+    </ng-container>
+    <ng-container *ngSwitchCase="'bye'">
+        <span>BYE</span>
+    </ng-container>
+</ng-container>
+
+<ng-template #free></ng-template>

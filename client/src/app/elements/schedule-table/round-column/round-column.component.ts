@@ -17,10 +17,12 @@ export class RoundColumnComponent implements OnInit {
     if(this.match){
       if(this.util.returnBoolByPath(this.match, 'type')){
         if(this.match.type == 'tournament'){
-          this.showRound = true;
+          this.showRound = 'round';
+        }else{
+          this.showRound = "round";
         }
       }else if(!this.util.returnBoolByPath(this.match, 'type')){
-        this.showRound = this.util.returnBoolByPath(this.match, "scheduleDeadline");
+        this.showRound = this.util.returnBoolByPath( this.match, "scheduleDeadline" ) ? "round" : "flex";
       }
     }
   }
