@@ -189,8 +189,9 @@ function updateTeamMmr(team) {
         });
         topMemberMmr(members).then((processed) => {
             if (processed) {
-                foundTeam.teamMMRAvg = processed.averageMmr;
                 foundTeam.hpMmrAvg = processed.heroesProfileAvgMmr;
+                foundTeam.teamMMRAvg = processed.averageMmr;
+                foundTeam.stormRankAvg = processed.stormRankAvg;
                 foundTeam.ngsMmrAvg = processed.ngsAvgMmr;
                 foundTeam.save().then(saved => {
                     //empty promises
@@ -357,7 +358,7 @@ async function topMemberMmr(members) {
 //userMmrToadd: string or number of the average mmr of a player who is being added to a team
 //members:string array of the current members of a team
 async function resultantMMR(userMmrToAdd, members, newPlayerName) {
-    console.log('1')
+
     let returnObject = {};
     //get the members from the db
     members.push(newPlayerName)
@@ -370,7 +371,7 @@ async function resultantMMR(userMmrToAdd, members, newPlayerName) {
     }, (err) => {
         return null
     });
-    console.log('2')
+
     if (users) {
         if (users && users.length > 0) {
             let mmrArr = [];
@@ -382,8 +383,8 @@ async function resultantMMR(userMmrToAdd, members, newPlayerName) {
                     }
                 }
             });
-            console.log('3')
-                //add the mmr of the player to add
+
+            //add the mmr of the player to add
             mmrArr.push(userMmrToAdd);
             if (mmrArr.length > 1) {
                 mmrArr.sort((a, b) => {
@@ -403,17 +404,17 @@ async function resultantMMR(userMmrToAdd, members, newPlayerName) {
                 for (let i = 0; i < membersUsed; i++) {
                     total += mmrArr[i];
                 }
-                console.log('total', total, 'membersUsed', membersUsed)
+
                 let average = total / membersUsed;
                 if (!isNaN(average)) {
                     average = Math.round(average);
                 }
                 returnObject.resultantMmr = average;
-                console.log('4')
+
                 returnObject.stormRankAvg = await playerRankMethods.getTeamAvgFromMembers(users);
-                console.log('5', returnObject)
+
             } else {
-                console.log('6')
+
                 return null;
             }
         }
