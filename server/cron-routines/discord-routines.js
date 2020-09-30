@@ -39,8 +39,6 @@ async function getTodaysMatchesLean() {
     let dayStartMS = dayStart.getTime();
     let dayEndMS = dayEnd.getTime();
 
-    console.log(dayEndMS, dayStartMS);
-
     let query = {
         $and: [{
                 'scheduledTime.startTime': {

@@ -595,11 +595,9 @@ router.post('/resultantmmr', passport.authenticate('jwt', {
                 members.push(element.displayName);
             });
             teamSub.resultantMMR(userMmr, members, newPlayerdDsplayName).then((processed) => {
-                console.log('processed', processed)
                 if (processed) {
                     res.status(200).send(util.returnMessaging(path, "Team MMR calculated.", false, { resultantMmr: processed }));
                 } else {
-                    console.log('failed the teamSub Processing');
                     res.status(400).send(util.returnMessaging(path, "Team MMR not calculated."));
                 }
             }, (err) => {
@@ -633,9 +631,7 @@ router.post('/team/refreshMmr', passport.authenticate('jwt', {
             })
             teamSub.returnTeamMMR(members).then(
                 (processed) => {
-                    console.log('processed', processed);
                     if (processed) {
-                        console.log('processed', processed);
                         // playerRanksMethods.teamRankAverage(members).then(
                         //     rankAvg => {
                         foundTeam.stormRankAvg = processed.stormRankAvg;
@@ -643,29 +639,21 @@ router.post('/team/refreshMmr', passport.authenticate('jwt', {
                         foundTeam.hpMmrAvg = processed.heroesProfileAvgMmr;
                         foundTeam.ngsMmrAvg = processed.ngsAvgMmr;
                         foundTeam.save().then(
-                                (saved) => {
-                                    res.status(200).send(util.returnMessaging(path, 'Recalculated Team', false, {
-                                        newMMR: processed
-                                    }));
-                                },
-                                (err) => {
-                                    res.status(500).send(util.returnMessaging(path, 'Error saving team', err));
-                                }
-                            )
-                            //     },
-                            //     err => {
-                            //         console.log('player ranks methods failed ', err);
-                            //     }
-                            // );
-
-
+                            (saved) => {
+                                res.status(200).send(util.returnMessaging(path, 'Recalculated Team', false, {
+                                    newMMR: processed
+                                }));
+                            },
+                            (err) => {
+                                res.status(500).send(util.returnMessaging(path, 'Error saving team', err));
+                            }
+                        )
 
                     } else {
                         res.status(500).send(util.returnMessaging(path, 'Error processing mmr team'));
                     }
                 },
                 (err) => {
-                    console.log('err:A', err)
                     res.status(500).send(util.returnMessaging(path, 'Error processing team mmr', err));
                 }
             )
