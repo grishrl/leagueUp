@@ -28,7 +28,7 @@
                     <ng-container *ngFor="let r of player.verifiedRankHistory">
                         <div class="border p-2" *ngIf="r?.status == 'verified'">
                             <div>Year {{r.year}} Season {{r.season}}</div>
-                            Hero League: {{r?.hlRankMetal}} - {{r?.hlRankDivision}}
+                            Storm League: {{r?.hlRankMetal}} - {{r?.hlRankDivision}}
                             <div>NGS Level: {{r.level}}</div>
                             <div>
                                 <app-storm-league [ngsRankNumber]="r.level"></app-storm-league>
