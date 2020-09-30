@@ -2,7 +2,7 @@ export class Team {
   _id: string;
   logo: string;
   teamName: string; //added to display form
-  teamName_lower: string ;
+  teamName_lower: string;
   divisionDisplayName: string;
   divisionConcat: string;
   //"stats": string; //later addition of team statistics
@@ -15,24 +15,37 @@ export class Team {
   captain: string;
   history: Array<history>;
   teamMMRAvg: number; //added to display
-  teamMembers: [{displayName:string}]; //added to display
-  pendingMembers: [{displayName:string}];
-  invitedUsers:Array<any>;
+  teamMembers: [{ displayName: string }]; //added to display
+  pendingMembers: [{ displayName: string }];
+  invitedUsers: Array<any>;
   questionnaire: questionnaire;
-  hpMmrAvg:number;
-  ngsMmrAvg:number;
-  assistantCaptain:Array<string>;
+  hpMmrAvg: number;
+  ngsMmrAvg: number;
+  assistantCaptain: Array<string>;
   ticker: string;
-  twitch:string;
-  twitter:string;
-  youtube:string;
+  twitch: string;
+  twitter: string;
+  youtube: string;
+  stormRankAvg: number;
 
-
-
-  constructor(id: string, logo:string, teamName: string, lookingForMore: Boolean, availability:schedule,
-    competitiveLevel: number, rolesNeeded: roles, descriptionOfTeam: string, timeZone: string,
-    teamMembers: [{ displayName: string }], pendingMembers: [{ displayName: string }], captain: string, teamMMRAvg:number,
-    divisionDisplayName: string, divisionConcat: string, questionnaire: questionnaire) {
+  constructor(
+    id: string,
+    logo: string,
+    teamName: string,
+    lookingForMore: Boolean,
+    availability: schedule,
+    competitiveLevel: number,
+    rolesNeeded: roles,
+    descriptionOfTeam: string,
+    timeZone: string,
+    teamMembers: [{ displayName: string }],
+    pendingMembers: [{ displayName: string }],
+    captain: string,
+    teamMMRAvg: number,
+    divisionDisplayName: string,
+    divisionConcat: string,
+    questionnaire: questionnaire
+  ) {
     if (id != null && id != undefined && id.length > 0) {
       this._id = id;
     } else {
@@ -40,74 +53,81 @@ export class Team {
     }
     if (teamName != null && teamName != undefined && teamName.length > 0) {
       this.teamName = teamName;
-      this.teamName_lower = teamName.toLowerCase()
+      this.teamName_lower = teamName.toLowerCase();
     } else {
-      this.teamName, this.teamName_lower = "";
+      this.teamName, (this.teamName_lower = "");
     }
     if (lookingForMore != null && lookingForMore != undefined) {
       this.lookingForMore = lookingForMore;
     } else {
       this.lookingForMore = false;
     }
-    if(availability != null && availability != undefined){
+    if (availability != null && availability != undefined) {
       this.availability = availability;
-    }else{
+    } else {
       this.availability = {
-        "monday": {
-          "available": false,
-          "startTime": null,
-          "endTime": null
+        monday: {
+          available: false,
+          startTime: null,
+          endTime: null,
         },
-        "tuesday": {
-          "available": false,
-          "startTime": null,
-          "endTime": null
+        tuesday: {
+          available: false,
+          startTime: null,
+          endTime: null,
         },
-        "wednesday": {
-          "available": false,
-          "startTime": null,
-          "endTime": null
-        }
-        , "thursday": {
-          "available": false,
-          "startTime": null,
-          "endTime": null
-        }
-        , "friday": {
-          "available": false,
-          "startTime": null,
-          "endTime": null
-        }
-        , "saturday": {
-          "available": false,
-          "startTime": null,
-          "endTime": null
-        }
-        , "sunday": {
-          "available": false,
-          "startTime": null,
-          "endTime": null
-        }
-      }
+        wednesday: {
+          available: false,
+          startTime: null,
+          endTime: null,
+        },
+        thursday: {
+          available: false,
+          startTime: null,
+          endTime: null,
+        },
+        friday: {
+          available: false,
+          startTime: null,
+          endTime: null,
+        },
+        saturday: {
+          available: false,
+          startTime: null,
+          endTime: null,
+        },
+        sunday: {
+          available: false,
+          startTime: null,
+          endTime: null,
+        },
+      };
     }
-    if (competitiveLevel != null && competitiveLevel != undefined){
+    if (competitiveLevel != null && competitiveLevel != undefined) {
       this.competitiveLevel = competitiveLevel;
-    }else{
+    } else {
       this.competitiveLevel = null;
     }
-    if(descriptionOfTeam!=null&&descriptionOfTeam!=undefined){
+    if (descriptionOfTeam != null && descriptionOfTeam != undefined) {
       this.descriptionOfTeam = descriptionOfTeam;
-    }else{
+    } else {
       this.descriptionOfTeam = null;
     }
-    if(rolesNeeded!=null&&rolesNeeded!=undefined){
+    if (rolesNeeded != null && rolesNeeded != undefined) {
       this.rolesNeeded = rolesNeeded;
-    }else{
-      this.rolesNeeded = { "tank": false, "meleeassassin": false, "rangedassassin": false, "support": false, "offlane": false, "flex": false };
+    } else {
+      this.rolesNeeded = {
+        tank: false,
+        meleeassassin: false,
+        rangedassassin: false,
+        support: false,
+        offlane: false,
+        flex: false,
+      };
     }
-    if(timeZone!=null&&timeZone!=undefined){
-      this.timeZone=timeZone;
-    }else{
+    if (timeZone != null && timeZone != undefined) {
+      this.timeZone = timeZone;
+    } else {
       this.timeZone = "";
     }
     if (teamMembers != null && teamMembers != undefined) {
@@ -115,26 +135,26 @@ export class Team {
     } else {
       this.teamMembers = null;
     }
-    if(pendingMembers != null && pendingMembers != undefined){
-      this.pendingMembers = pendingMembers
-    }else{
+    if (pendingMembers != null && pendingMembers != undefined) {
+      this.pendingMembers = pendingMembers;
+    } else {
       this.pendingMembers = null;
     }
-      if(captain != null && captain != undefined){
-        this.captain = captain;
-      }else{
-        this.captain = null;
-      }
-      if(teamMMRAvg != null && teamMMRAvg != undefined){
-        this.teamMMRAvg = teamMMRAvg
-      }else{
-        this.teamMMRAvg = 0;
-      }
-      if(divisionDisplayName!=null && divisionDisplayName !=undefined){
-        this.divisionDisplayName = divisionDisplayName;
-      }else{
-        this.divisionDisplayName = null;
-      }
+    if (captain != null && captain != undefined) {
+      this.captain = captain;
+    } else {
+      this.captain = null;
+    }
+    if (teamMMRAvg != null && teamMMRAvg != undefined) {
+      this.teamMMRAvg = teamMMRAvg;
+    } else {
+      this.teamMMRAvg = 0;
+    }
+    if (divisionDisplayName != null && divisionDisplayName != undefined) {
+      this.divisionDisplayName = divisionDisplayName;
+    } else {
+      this.divisionDisplayName = null;
+    }
     if (divisionConcat != null && divisionConcat != undefined) {
       this.divisionConcat = divisionConcat;
     } else {
@@ -144,19 +164,20 @@ export class Team {
       this.questionnaire = questionnaire;
     } else {
       this.questionnaire = {
-        registered:null,
-        pickedMaps:[]
+        registered: null,
+        pickedMaps: [],
       };
     }
-    this.assistantCaptain = []
-    this.ticker=null;
-    this.history=[];
+    this.assistantCaptain = [];
+    this.ticker = null;
+    this.history = [];
     this.hpMmrAvg = null;
     this.ngsMmrAvg = null;
     this.twitch = null;
     this.twitter = null;
     this.youtube = null;
     this.invitedUsers = [];
+    this.stormRankAvg = 0;
   }
 }
 

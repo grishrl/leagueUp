@@ -147,10 +147,11 @@ export class AdminService {
   }
 
   //calculates the teams MMR based on the provided usersMmr and the team's name
-  resultantMmr(userMmr, teamName) {
+  resultantMmr(userMmr, userName, teamName) {
     let url = "/admin/resultantmmr";
     let payload = {
       userMmr: userMmr,
+      displayName:userName,
       teamName: teamName,
     };
     return this.httpService.httpPost(url, payload, true);

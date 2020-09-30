@@ -175,7 +175,12 @@
                     </div>
                 </div>
             </div>
-
+            <!-- if there are no results -->
+            <div class="row mt-4" *ngIf="displayArray.length == 0">
+                <div class="col text-center">
+                    <h3>No Free Agents Currently!</h3>
+                </div>
+            </div>
             <div class="info-panel">
                 <div class="row">
                     <div class="col-md-12">
@@ -186,6 +191,7 @@
 
         </div>
         <!-- End Content Text-->
+
     </div>
 </section>
 <!-- End Section Area -  Content Central -->

@@ -89,6 +89,7 @@ export class ApproveMemberViewComponent implements OnInit {
           this.admin
             .resultantMmr(
               this.player.heroesProfileMmr,
+              this.player.displayName,
               this.viewTeam.teamName_lower
             )
             .subscribe(

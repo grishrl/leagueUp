@@ -7,9 +7,10 @@
 }
 
 .rank {
-    position: absolute;
+    /* position: absolute;
     top: 50px;
-    left: 71px;
+    left: 71px; */
+    text-align: center !important;
     color: #F2692E;
     font-size: 80px;
     font-weight: 900;
@@ -18,9 +19,10 @@
 }
 
 .masterKplusRank {
-    position: absolute;
+    /* position: absolute;
     top: 50px;
-    left: 0px;
+    left: 0px; */
+    text-align: center !important;
     color: #F2692E;
     font-size: 80px;
     font-weight: 900;
@@ -29,9 +31,10 @@
 }
 
 .masterCplusRank {
-    position: absolute;
+    /* position: absolute;
     top: 50px;
-    left: 25px;
+    left: 25px; */
+    text-align: center !important;
     color: #F2692E;
     font-size: 80px;
     font-weight: 900;

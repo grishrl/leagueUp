@@ -58,6 +58,7 @@ export class UpdateTeamInfoComponent implements OnInit {
         this.returnedProfile.teamMMRAvg = res.newMMR.averageMmr;
         this.returnedProfile.hpMmrAvg = res.newMMR.heroesProfileAvgMmr;
         this.returnedProfile.ngsMmrAvg = res.newMMR.ngsAvgMmr;
+        this.returnedProfile.stormRankAvg = res.newMMR.stormRankAvg;
       },
       err => {
         console.log(err);

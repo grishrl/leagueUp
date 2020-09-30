@@ -44,7 +44,7 @@
             <h6>Storm League Ranking:</h6>
             <div *ngIf="divisionValue != 'Unranked' else unranked">
                 <div class="medal" [ngStyle]="{'background-image':'url(assets/medals/' + assetLookup[divisionValue] + ')'}">
-                    <div [ngClass]="rankClass()">{{rankValue}}</div>
+                    <div class="pt-3" [ngClass]="rankClass()">{{rankValue}}</div>
                 </div>
             </div>
             <ng-template #unranked>
@@ -56,3 +56,4 @@
             <!-- <img class="img-fluid" src="{{'assets/medals/'+assetLookup[divisionValue]}}"> -->
         </div>
     </div>
+</div>

@@ -1,69 +1,96 @@
-// const PlayerRank = require('../models/player-rank-models');
+const System = require('../../models/system-models').system;
+const User = require('../../models/user-models');
+const utils = require('../../utils');
 
-// function getPlayerRankData(id) {
-//     return PlayerRank.findOne({ playerId: id }).then(
-//         found => {
-//             return found;
-//         },
-//         err => {
-//             throw err;
-//         }
-//     )
-// }
+async function getNgsAvgRank(verifiedRankHistory) {
 
-// async function playerRankCRUD(id, data) {
-//     let playerRank = await getPlayerRankData(id);
-//     if (playerRank) {
-//         playerRank.ranks.push(data)
-//         return playerRank.save().then(
-//             saved => {
-//                 return saved;
-//             },
-//             err => {
-//                 throw err;
-//             }
-//         );
-//     } else {
-//         return new PlayerRank({
-//             playerId: id,
-//             ranks: [
-//                 data
-//             ]
-//         }).save().then(
-//             saved => {
-//                 return saved;
-//             },
-//             err => {
-//                 throw err;
-//             }
-//         );
-//     }
-// }
+    let requiredRanks = await System.findOne({ dataName: "requiredRankInfo" });
 
-// async function deletePlayerRankData(id, data) {
-//     let playerRank = await getPlayerRankData(id);
-//     if (playerRank) {
-//         playerRank.ranks.forEach((item, index) => {
-//             if (item.season == data.season) {
-//                 playerRank.ranks.splice(index, 1);
-//                 playerRank.markModified('ranks');
-//             }
-//         });
-//         return playerRank.save().then(
-//             saved => {
-//                 return saved;
-//             },
-//             err => {
-//                 throw err;
-//             }
-//         )
-//     } else {
-//         return null;
-//     }
-// }
+    let highest = 0;
 
-// module.exports = {
-//     getPlayerRankData,
-//     playerRankCRUD,
-//     deletePlayerRankData
-// }
+    if (requiredRanks) {
+
+        let requiredRanksArray = [];
+
+        requiredRanks.data.forEach(rr => {
+            if (rr.required) {
+                verifiedRankHistory.forEach(vh => {
+                    if (rr.year == vh.year && rr.season == vh.season && vh.status == 'verified') {
+                        requiredRanksArray.push(vh);
+                    }
+                });
+            }
+        });
+
+        requiredRanksArray.forEach(vr => {
+            if (vr.level > highest) {
+                highest = vr.level;
+            }
+        });
+
+        return highest;
+
+    } else {
+
+        throw new Error('Error finding required ranks');
+
+    }
+}
+
+async function teamRankAverage(teamMembers) {
+    let promArr = [];
+    teamMembers.forEach(
+        member => {
+            promArr.push(
+                User.findOne({
+                    displayName: member
+                }));
+        }
+    );
+    return Promise.all(promArr).then(
+        members => {
+            return getTeamAvgFromMembers(members);
+        },
+        err => {
+            throw err;
+        }
+    )
+
+}
+
+async function getTeamAvgFromMembers(membersArray) {
+
+    let secondArr = [];
+    membersArray.forEach(member => {
+        let memberObj = utils.objectify(member);
+        if (utils.returnBoolByPath(memberObj, 'verifiedRankHistory')) {
+            secondArr.push(getNgsAvgRank(memberObj.verifiedRankHistory));
+        }
+    });
+    return Promise.all(secondArr).then(
+        secondArrReturn => {
+            let numerator = 0;
+            let avg = 0;
+            secondArrReturn.sort();
+            secondArrReturn.reverse();
+            let runTo = secondArrReturn.length >= 4 ? 4 : secondArrReturn.length;
+            for (var i = 0; i < runTo; i++) {
+                numerator += secondArrReturn[i];
+            }
+            if (runTo == 4) {
+                avg = Math.floor(numerator / runTo);
+            }
+            return avg;
+        },
+        err => {
+            throw err;
+        }
+    )
+
+}
+
+module.exports = {
+    getNgsAvgRank,
+    teamRankAverage,
+    getTeamAvgFromMembers
+}

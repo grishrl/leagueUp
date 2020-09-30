@@ -5,6 +5,7 @@ const Match = require('../models/match-model');
 const logger = require('./sys-logging-subs');
 const mmrMethods = require('../methods/mmrMethods');
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
+const playerRankMethods = require('../methods/player-ranks/playerRankMethods');
 
 const location = 'team-subs.js';
 
@@ -216,7 +217,8 @@ async function topMemberMmr(members) {
         let returnVal = {
             'averageMmr': null,
             'heroesProfileAvgMmr': null,
-            'ngsAvgMmr': null
+            'ngsAvgMmr': null,
+            'stormRankAvg': null
         };
         let users = await User.find({
             displayName: {
@@ -232,6 +234,8 @@ async function topMemberMmr(members) {
             let mmrArr = [];
             let hpMmrArr = [];
             let ngsMmrArr = [];
+            //new ngs rank average 
+            returnVal.stormRankAvg = await playerRankMethods.getTeamAvgFromMembers(users);
             //get all users mmrs
             users.forEach(user => {
                 if (util.returnBoolByPath(user, 'averageMmr')) {
@@ -352,22 +356,34 @@ async function topMemberMmr(members) {
 //this is used to calculate MMRS on the fly for admin to apporve a team add
 //userMmrToadd: string or number of the average mmr of a player who is being added to a team
 //members:string array of the current members of a team
-async function resultantMMR(userMmrToAdd, members) {
+async function resultantMMR(userMmrToAdd, members, newPlayerName) {
+    console.log('1')
+    let returnObject = {};
     //get the members from the db
-    let usersMmr = await User.find({
+    members.push(newPlayerName)
+    let users = await User.find({
         displayName: {
             $in: members
         }
     }).lean().then((users) => {
+        return users;
+    }, (err) => {
+        return null
+    });
+    console.log('2')
+    if (users) {
         if (users && users.length > 0) {
             let mmrArr = [];
             //get all the users MMR
             users.forEach(user => {
-                if (util.returnBoolByPath(user, 'averageMmr')) {
-                    mmrArr.push(user.averageMmr);
+                if (user.displayName != newPlayerName) {
+                    if (util.returnBoolByPath(user, 'heroesProfileMmr')) {
+                        mmrArr.push(user.heroesProfileMmr);
+                    }
                 }
             });
-            //add the mmr of the player to add
+            console.log('3')
+                //add the mmr of the player to add
             mmrArr.push(userMmrToAdd);
             if (mmrArr.length > 1) {
                 mmrArr.sort((a, b) => {
@@ -387,21 +403,23 @@ async function resultantMMR(userMmrToAdd, members) {
                 for (let i = 0; i < membersUsed; i++) {
                     total += mmrArr[i];
                 }
-
+                console.log('total', total, 'membersUsed', membersUsed)
                 let average = total / membersUsed;
                 if (!isNaN(average)) {
                     average = Math.round(average);
                 }
-                return average;
+                returnObject.resultantMmr = average;
+                console.log('4')
+                returnObject.stormRankAvg = await playerRankMethods.getTeamAvgFromMembers(users);
+                console.log('5', returnObject)
             } else {
+                console.log('6')
                 return null;
             }
         }
-    }, (err) => {
-        return null
-    });
+    }
     //return the avg
-    return usersMmr;
+    return returnObject;
 }
 
 

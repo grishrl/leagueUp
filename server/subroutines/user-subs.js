@@ -3,7 +3,7 @@ const User = require('../models/user-models');
 const TeamSubs = require('./team-subs');
 const Team = require('../models/team-models');
 const QueueSubs = require('./queue-subs');
-const logger = require('./sys-logging-subs');
+const logger = require('./sys-logging-subs').logger;
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 
 //sub to handle complete removal of user from data locations:

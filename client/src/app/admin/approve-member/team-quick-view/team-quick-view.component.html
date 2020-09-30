@@ -2,13 +2,13 @@
     <div class="col">
         <div class="row">
             <div class="col">
-                Name:
+                <strong>Name:</strong>
                 <app-team-link [team]="disTeam.teamName" [target]="'_blank'">{{disTeam.teamName}}</app-team-link>
             </div>
         </div>
         <div class="row">
             <div class="col">
-                {{disTeam.divisionConcat}}
+                <strong>Division:</strong> {{disTeam.divisionConcat}}
             </div>
         </div>
         <div class="row">
@@ -17,10 +17,14 @@
                 Average hotsLogs MMR: {{disTeam.teamMMRAvg}}
             </div> -->
             <div class="col-12">
-                Average heroProfile MMR: {{disTeam.hpMmrAvg}}
+                <strong>Average heroProfile MMR:</strong> {{disTeam.hpMmrAvg}}
             </div>
             <div class="col-12">
-                Average ngs MMR: {{disTeam.ngsMmrAvg}}
+                <strong>Storm League Avg:</strong> {{disTeam.stormRankAvg}}
+                <div>
+                    <app-storm-league [ngsRankNumber]="disTeam.stormRankAvg"></app-storm-league>
+                </div>
+
             </div>
         </div>
     </div>

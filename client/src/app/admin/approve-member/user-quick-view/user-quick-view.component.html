@@ -2,7 +2,7 @@
     <div class="col">
         <div class="row">
             <div class="col">
-                Name:
+                <strong>Name:</strong>
                 <app-player-link [player]="player.displayName" [target]="'_blank'">{{player.displayName}}</app-player-link>
             </div>
         </div>
@@ -14,7 +14,7 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <div *ngIf="player.heroesProfileMmr; else nohpMmr">Heros-Profile MMR: {{player.heroesProfileMmr}}</div>
+                <div *ngIf="player.heroesProfileMmr; else nohpMmr"><strong>Heros-Profile MMR:</strong> {{player.heroesProfileMmr}}</div>
                 <div *ngIf="player.lowReplays">! This player has few replays !</div>
             </div>
             <ng-template #nohpMmr>
@@ -23,11 +23,23 @@
         </div>
         <div class="row">
             <div class="col">
-                <div *ngIf="player.hlRankMetal && player.hlRankDivision; else noMetalDiv">
-                    Hero League: {{player.hlRankMetal}} - {{player.hlRankDivision}}
+                <div *ngIf="player.verifiedRankHistory && player.verifiedRankHistory.length>0; else noMetalDiv">
+                    <div> <strong>Storm Leauge Ranks:</strong></div>
+                    <ng-container *ngFor="let r of player.verifiedRankHistory">
+                        <div class="border p-2" *ngIf="r?.status == 'verified'">
+                            <div>Year {{r.year}} Season {{r.season}}</div>
+                            Hero League: {{r?.hlRankMetal}} - {{r?.hlRankDivision}}
+                            <div>NGS Level: {{r.level}}</div>
+                            <div>
+                                <app-storm-league [ngsRankNumber]="r.level"></app-storm-league>
+                            </div>
+                        </div>
+                    </ng-container>
+
+
                 </div>
                 <ng-template #noMetalDiv>
-                    Player has not recorded an ingame metal/div in their profile, please contact them!
+                    Player has no verified in game ranks!
                 </ng-template>
             </div>
         </div>

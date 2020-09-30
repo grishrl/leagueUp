@@ -15,6 +15,7 @@ const uploadTeamLogo = require('../methods/teamLogoUpload').uploadTeamLogo;
 const teamLogoDelete = require('../methods/teamLogoUpload').teamLogoDelete;
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 const notesMethods = require('../methods/notes/notes');
+const playerRanksMethods = require('../methods/player-ranks/playerRankMethods');
 
 //returns the lists of users who are awaiting admin attention to complete the team join process
 router.get('/pendingMemberQueue', passport.authenticate('jwt', {
@@ -583,6 +584,7 @@ router.post('/resultantmmr', passport.authenticate('jwt', {
     const path = '/admin/resultantmmr'
     let userMmr = req.body.userMmr;
     let teamName = req.body.teamName;
+    let newPlayerdDsplayName = req.body.displayName
 
     Team.findOne({
         teamName_lower: teamName.toLowerCase()
@@ -592,7 +594,8 @@ router.post('/resultantmmr', passport.authenticate('jwt', {
             foundTeam.teamMembers.forEach(element => {
                 members.push(element.displayName);
             });
-            teamSub.resultantMMR(userMmr, members).then((processed) => {
+            teamSub.resultantMMR(userMmr, members, newPlayerdDsplayName).then((processed) => {
+                console.log('processed', processed)
                 if (processed) {
                     res.status(200).send(util.returnMessaging(path, "Team MMR calculated.", false, { resultantMmr: processed }));
                 } else {
@@ -630,27 +633,39 @@ router.post('/team/refreshMmr', passport.authenticate('jwt', {
             })
             teamSub.returnTeamMMR(members).then(
                 (processed) => {
+                    console.log('processed', processed);
                     if (processed) {
-
+                        console.log('processed', processed);
+                        // playerRanksMethods.teamRankAverage(members).then(
+                        //     rankAvg => {
+                        foundTeam.stormRankAvg = processed.stormRankAvg;
                         foundTeam.teamMMRAvg = processed.averageMmr;
                         foundTeam.hpMmrAvg = processed.heroesProfileAvgMmr;
                         foundTeam.ngsMmrAvg = processed.ngsAvgMmr;
                         foundTeam.save().then(
-                            (saved) => {
-                                res.status(200).send(util.returnMessaging(path, 'Recalculated Team', false, {
-                                    newMMR: processed
-                                }));
-                            },
-                            (err) => {
-                                res.status(500).send(util.returnMessaging(path, 'Error saving team', err));
-                            }
-                        )
+                                (saved) => {
+                                    res.status(200).send(util.returnMessaging(path, 'Recalculated Team', false, {
+                                        newMMR: processed
+                                    }));
+                                },
+                                (err) => {
+                                    res.status(500).send(util.returnMessaging(path, 'Error saving team', err));
+                                }
+                            )
+                            //     },
+                            //     err => {
+                            //         console.log('player ranks methods failed ', err);
+                            //     }
+                            // );
+
+
 
                     } else {
                         res.status(500).send(util.returnMessaging(path, 'Error processing mmr team'));
                     }
                 },
                 (err) => {
+                    console.log('err:A', err)
                     res.status(500).send(util.returnMessaging(path, 'Error processing team mmr', err));
                 }
             )

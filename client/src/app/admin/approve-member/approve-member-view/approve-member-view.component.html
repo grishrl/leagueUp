@@ -7,10 +7,12 @@
             <div class="col">
                 <app-team-quick-view [teamName]="viewTeam"></app-team-quick-view>
             </div>
-            <div class="col">
-                {{resultantMmr}}
+            <div class="col-2">
+                <strong>Resultant MMR</strong> {{resultantMmr.resultantMmr}}
+                <div><strong>Resultant Storm League Avg:</strong> {{resultantMmr.stormRankAvg}}</div>
+                <app-storm-league [ngsRankNumber]="resultantMmr.stormRankAvg"></app-storm-league>
             </div>
-            <div class="col">
+            <div class="col-2">
                 <div class="text-center">
                     <button [disabled]="player.smurfAccount" class="btn btn-success" (click)="actionAccount(true)">Approve</button>
                     <button class="btn btn-danger ml-1" (click)="actionAccount(false)">Deny</button>
@@ -21,7 +23,7 @@
 
             </div>
         </div>
-        <div class="row">
+        <div class="row mt-2">
             <div class="col">
                 <strong>Enter admin notes:</strong>
                 <br>

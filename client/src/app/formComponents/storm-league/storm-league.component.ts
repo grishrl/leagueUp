@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { UtilitiesService } from 'src/app/services/utilities.service';
 
 @Component({
   selector: 'app-storm-league',
@@ -8,7 +9,7 @@ import { FormControl } from '@angular/forms';
 })
 export class StormLeagueComponent implements OnInit {
 
-  constructor() { }
+  constructor(private util:UtilitiesService) { }
 
   hlMedals = ['Grand Master', 'Master', 'Diamond', 'Platinum', 'Gold', 'Silver', 'Bronze', 'Unranked'];
   hlDivision = [1, 2, 3, 4, 5];
@@ -23,6 +24,8 @@ export class StormLeagueComponent implements OnInit {
   }
 
   edit: boolean = false;
+
+  @Input() ngsRankNumber;
 
   @Input() set disabled(val) {
     this.edit = val;
@@ -104,6 +107,36 @@ export class StormLeagueComponent implements OnInit {
   ]);
 
   ngOnInit() {
+    if(!this.util.isNullOrEmpty(this.ngsRankNumber)){
+      this.edit = true;
+      this.numberToRank(this.ngsRankNumber);
+    }
+
   }
 
+  private numberToRank(number) {
+
+    if (number == 27) {
+      //gm
+      this.divisionValue = "Grand Master";
+    } else if (number == 26) {
+      //m
+      this.divisionValue = "Master";
+    } else if (number <= 25 && number >= 21) {
+      this.divisionValue = "Diamond";
+      this.rankValue = (26 - number).toString();
+    } else if (number <= 20 && number >= 16) {
+      this.divisionValue = "Platinum";
+      this.rankValue = (21 - number).toString();
+    } else if (number <= 15 && number >= 11) {
+      this.divisionValue = "Gold";
+      this.rankValue = (16 - number).toString();
+    } else if (number <= 10 && number >= 6) {
+      this.divisionValue = "Silver";
+      this.rankValue = (11 - number).toString();
+    } else if (number <= 5 && number >= 1) {
+      this.divisionValue = "Bronze";
+      this.rankValue = (6 - number).toString();
+    }
+}
 }

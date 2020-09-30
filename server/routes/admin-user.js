@@ -14,6 +14,8 @@ const QueueSubs = require('../subroutines/queue-subs');
 const _ = require('lodash');
 const notesMethods = require('../methods/notes/notes');
 const prMethods = require('../methods/player-rank-upload');
+const playerRankMethods = require('../methods/player-ranks/playerRankMethods');
+const { getNgsAvgRank } = require("../methods/player-ranks/playerRankMethods");
 
 router.post('/delete/user', passport.authenticate('jwt', {
     session: false
@@ -155,6 +157,7 @@ router.get('/user/update', (req, res) => {
                         if (util.returnBoolByPath(processed, 'ngsMmr')) {
                             user.ngsMmr = processed.ngsMmr;
                         }
+
                         user.save().then(
                             save => {
                                 ammountUpdated += 1;
