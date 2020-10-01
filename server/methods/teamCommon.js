@@ -29,6 +29,21 @@ function nameContains(teamName, check) {
     return match;
 };
 
+async function getCptId(cptName) {
+    let cptID = await User.findOne({
+        displayName: cptName
+    }).then(
+        res => {
+            return res;
+        },
+        err => {
+            return err;
+        }
+    );
+    return cptID;
+}
+
 module.exports = {
-    removeDegenerateTeams: removeDegenerateTeams
+    removeDegenerateTeams,
+    getCptId
 }

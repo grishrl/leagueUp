@@ -4,6 +4,7 @@ const User = require('../models/user-models');
 const Team = require('../models/team-models');
 const passport = require("passport");
 const lodash = require('lodash');
+const milTime = require('../methods/timeMethods');
 
 router.post('/user', passport.authenticate('jwt', {
     session: false
@@ -579,14 +580,14 @@ function createUserSearchObject(obj, reqUser) {
                     if (unit.available) {
                         if (util.returnBoolByPath(unit, 'startTime')) {
                             let searchKey = 'availability.' + key + '.startTime';
-                            let searchValue = '$gte: ' + zeroGMT(unit.startTime, user.timeZone);
+                            let searchValue = '$gte: ' + milTime.zeroGMT(unit.startTime, user.timeZone);
                             let tO = {};
                             tO[searchKey] = searchValue;
                             returnObj['$and'].push(tO);
                         }
                         if (util.returnBoolByPath(unit, 'endTime')) {
                             let searchKey = 'availability.' + key + '.endTime';
-                            let searchValue = '$lte: ' + zeroGMT(unit.endTime, user.timeZone);
+                            let searchValue = '$lte: ' + milTime.zeroGMT(unit.endTime, user.timeZone);
                             let tO = {};
                             tO[searchKey] = searchValue;
                             returnObj['$and'].push(tO);
@@ -782,14 +783,14 @@ function createTeamSearchObject(obj, reqUser) {
                     if (unit.available) {
                         if (util.returnBoolByPath(unit, 'startTime')) {
                             let searchKey = 'availability.' + key + '.startTime';
-                            let searchValue = '$gte: ' + zeroGMT(unit.startTime, user.timeZone);
+                            let searchValue = '$gte: ' + milTime.zeroGMT(unit.startTime, user.timeZone);
                             let tO = {};
                             tO[searchKey] = searchValue;
                             returnObj['$and'].push(tO);
                         }
                         if (util.returnBoolByPath(unit, 'endTime')) {
                             let searchKey = 'availability.' + key + '.endTime';
-                            let searchValue = '$lte: ' + zeroGMT(unit.endTime, user.timeZone);
+                            let searchValue = '$lte: ' + milTime.zeroGMT(unit.endTime, user.timeZone);
                             let tO = {};
                             tO[searchKey] = searchValue;
                             returnObj['$and'].push(tO);
@@ -810,27 +811,6 @@ function createTeamSearchObject(obj, reqUser) {
     return returnObj;
 }
 
-
-function convertToMil(time) {
-    if (typeof time === 'string') {
-        let colonSplit = time.split(':');
-        return parseInt(colonSplit[0]) * 100 + parseInt(colonSplit[1]);
-    } else {
-        return null;
-    }
-}
-
-function zeroGMT(time, timezone) {
-
-    let localTime = time;
-    if (typeof localTime === 'string') {
-        localTime = convertToMil(localTime);
-    }
-    timezone = parseInt(timezone);
-    let correct = localTime - (timezone * 100);
-
-    return correct;
-}
 
 async function getUserProfile(id) {
     let user = await User.findById(id).then(

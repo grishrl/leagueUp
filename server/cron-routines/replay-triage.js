@@ -1,3 +1,10 @@
+/**
+ * These methods are used occasionally from local nodes in order to correct and discrepancy in replays and replay parsing
+ * Since the JS parser sometimes struggles with running on linux from time to time we will have no parses on replays..
+ * while we generally dont keep up with that data since heroes profile runs a great parsing service it is nice to have the data for things 
+ * like showing how many minions have been killed in NGS.
+ * 
+ */
 const mongoose = require('mongoose')
 const Replay = require('../models/replay-parsed-models');
 const Team = require('../models/team-models');

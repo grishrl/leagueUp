@@ -11,6 +11,7 @@ const passport = require("passport");
 const logger = require('../subroutines/sys-logging-subs').logger;
 const messageSub = require('../subroutines/message-subs');
 const Message = require('../models/message-models');
+const { getCptId } = require('../methods/teamCommon');
 
 
 router.post('/team/join', passport.authenticate('jwt', {
@@ -496,14 +497,6 @@ router.post('/user/join/response', passport.authenticate('jwt', {
 });
 
 module.exports = router;
-
-async function getCptId(cptName) {
-    let cptID = await User.findOne({ displayName: cptName }).then(
-        res => { return res; },
-        err => { return err; }
-    );
-    return cptID;
-}
 
 function deleteOutstandingRequests(user) {
     Message.find({ sender: user }).then(

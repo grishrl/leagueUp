@@ -1,3 +1,8 @@
+/**
+ * This methods is wrapped by crons from teporize;
+ * check teams who have not been touched or have not been touched in 5 days keeps the team MMR fresh and current and some other team house keeping
+ * 
+ */
 const Team = require('../models/team-models');
 const teamSub = require('../subroutines/team-subs');
 const User = require('../models/user-models');

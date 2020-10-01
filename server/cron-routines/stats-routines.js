@@ -1,3 +1,8 @@
+/**
+ * These methods are wrapped by crons from teporize; they mainly handle the business of associating replays to teams and users and also tabulating the league 
+ * "fun stats" which are things like minions killed globes gathered etc..
+ * 
+ */
 const Replay = require('../models/replay-parsed-models');
 const User = require('../models/user-models');
 const Team = require('../models/team-models');

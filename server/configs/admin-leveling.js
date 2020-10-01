@@ -1,7 +1,13 @@
 /*
 These wrappers ostensibly simplify the admin checking we want to do by
-wrapping the whole function
+wrapping the whole function 
+Add these into the router request as middleware and presto; you've got route security for given permission.
+
+reviewed: 9/30/2020
+revier: wraith
  */
+
+
 
 const adminCheck = require("../adminCheck");
 
