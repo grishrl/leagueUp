@@ -1,3 +1,9 @@
+/**
+ * CHALLONGE API WRAPPERS
+ * 
+ * reviewed:10-2-2020
+ * reviewer:wraith
+ */
 const axios = require('axios');
 const util = require('../utils');
 
@@ -15,11 +21,26 @@ const matchUpdateAPI = 'https://api.challonge.com/v1/tournaments/{tournament}/ma
 
 const matchGetAPI = 'https://api.challonge.com/v1/tournaments/{tournament}/matches/{match_id}.json';
 
-function replaceTournamentApi(api, param, key) {
-    let s = api;
-    return s.replace(param, key);
+/**
+ * @name replaceTournamentApi
+ * @function
+ * @description replace params in api strings
+ * @param {string} api 
+ * @param {string} target 
+ * @param {string} value 
+ */
+function replaceTournamentApi(api, target, value) {
+    return api.replace(target, value);
 }
 
+
+/**
+ * @name matchGet
+ * @function
+ * @description get match from challonge
+ * @param {string} tournamentId 
+ * @param {string} matchId 
+ */
 function matchGet(tournamentId, matchId) {
     let url = replaceTournamentApi(matchUpdateAPI, '{tournament}', tournamentId);
     url = replaceTournamentApi(url, '{match_id}', matchId);
@@ -31,6 +52,15 @@ function matchGet(tournamentId, matchId) {
     });
 }
 
+/**
+ * @name matchUpdate
+ * @function
+ * @description update challonge match scores and winners
+ * @param {string} tournamentId string of challonge tournament id
+ * @param {string} matchId string of challonge match id
+ * @param {string} scores string of score
+ * @param {string} winner id of winning participant
+ */
 function matchUpdate(tournamentId, matchId, scores, winner) {
     let url = replaceTournamentApi(matchUpdateAPI, '{tournament}', tournamentId);
     url = replaceTournamentApi(url, '{match_id}', matchId);
@@ -63,6 +93,12 @@ function createTournament(name, url, description, type) {
     return axios.post(tournamnetCreateAPI, postObj).then(response => { return response.data; }, err => { return err.response.data });
 }
 
+/**
+ * @name startTournament
+ * @function
+ * @description starts tournament on challonger
+ * @param {string} tournamentId challonge tournmanet id
+ */
 function startTournament(tournamentId) {
     let url = replaceTournamentApi(tournamentStartAPI, '{tournament}', tournamentId);
     let postObj = {
@@ -77,6 +113,12 @@ function startTournament(tournamentId) {
     });;
 }
 
+/**
+ * @name showTournament
+ * @function
+ * @description returns tournament info and matches info
+ * @param {string} tournamentId challonge tournament id
+ */
 function showTournament(tournamentId) {
     let url = replaceTournamentApi(tournamnetShowAPI, '{tournament}', tournamentId);
     url += '?api_key=' + process.env.challongeApiKey;
@@ -89,6 +131,12 @@ function showTournament(tournamentId) {
     });;
 }
 
+/**
+ * @name finalizeTournament
+ * @function
+ * @description closes the tournament in challonge system
+ * @param {string} tournamentId challonge tournament id
+ */
 function finalizeTournament(tournamentId) {
     let url = replaceTournamentApi(tournamnetFinalizeAPI, '{tournament}', tournamentId);
     let postObj = {
@@ -101,6 +149,13 @@ function finalizeTournament(tournamentId) {
     });;
 }
 
+/**
+ * @name bulkParticpantsAdd
+ * @function
+ * @description adds array of ids as participants to a challonge tournament
+ * @param {string} tournamnetId id of the challonge tournament
+ * @param {Array.<string>} particpantsArray array of strings of participants to add
+ */
 function bulkParticpantsAdd(tournamnetId, particpantsArray) {
     let url = replaceTournamentApi(participantBulkAddAPI, '{tournament}', tournamnetId);
 
@@ -116,6 +171,12 @@ function bulkParticpantsAdd(tournamnetId, particpantsArray) {
     });;
 }
 
+/**
+ * @name retriveTournaments
+ * @function
+ * @description returns info on provided lists of challonge tournament ids
+ * @param {Array.<string>} tournamentIds array of challonge tournament ids
+ */
 async function retriveTournaments(tournamentIds) {
     let promArr = [];
     for (var i = 0; i < tournamentIds.length; i++) {

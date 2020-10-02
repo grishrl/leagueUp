@@ -1,3 +1,8 @@
+/**
+ * DELETE REPLAY
+ * reviewed 10-2-2020
+ * reviewer wraith
+ */
 const Match = require('../models/match-model');
 const Replay = require('../models/replay-parsed-models');
 const Team = require('../models/team-models');
@@ -9,8 +14,16 @@ const { s3deleteFile } = require('../methods/aws-s3/delete-s3-file');
 
 const notFound = 'not found';
 
+/**
+ * @name deleteReplay
+ * @function
+ * @description deletes the replay information of the match of the index provided; removes from heroes profile as well
+ * @param {string} matchId 
+ * @param {string} indexProp 
+ */
 async function deleteReplay(matchId, indexProp) {
 
+    //get match
     let match = await Match.findOne({ matchId: matchId }).then(
         found => {
             if (found) {
@@ -38,13 +51,16 @@ async function deleteReplay(matchId, indexProp) {
         try {
             if (replayToDelete.data) {
 
+                //remove the parsed data from database
                 replayDeleteResult = await removeParsedFileFromDatabase(replayToDelete.data).then(res => {
                     return res;
                 });
 
+                //remove association from home team
                 removedFromTeamResult[0] = await removeParsedIdFromTeam(matchObj.home.id, replayToDelete.data).then(res => {
                     return res;
                 });
+                //remove association from away team
                 removedFromTeamResult[1] = await removeParsedIdFromTeam(matchObj.away.id, replayToDelete.data).then(res => {
                     return res;
                 });
@@ -100,8 +116,13 @@ async function deleteReplay(matchId, indexProp) {
 
 }
 
-//remove parsed file from database;
 
+/**
+ * @name removeParsedFileFromDatabase
+ * @function
+ * @description remove parsed file from database
+ * @param {string} dataId parsed replay id
+ */
 async function removeParsedFileFromDatabase(dataId) {
     return Replay.findOneAndDelete({ systemId: dataId }).lean().then(
         deleted => {
@@ -117,8 +138,16 @@ async function removeParsedFileFromDatabase(dataId) {
     )
 }
 
-//remove references to parsed file from team
+
+/**
+ * @name removeParsedIdFromTeam
+ * @function
+ * @description remove references to parsed file from team
+ * @param {string} teamId 
+ * @param {string} replayId 
+ */
 async function removeParsedIdFromTeam(teamId, replayId) {
+    //get team
     let team = await Team.findById(teamId).then(
         found => {
             if (found) {
@@ -133,9 +162,11 @@ async function removeParsedIdFromTeam(teamId, replayId) {
     );
     let teamObj = utls.objectify(team);
     let savedResult;
+    //check replays array 
     if (utls.returnBoolByPath(teamObj, 'replays')) {
         let replayArr = utls.returnByPath(teamObj, 'replays');
         let index = replayArr.indexOf(replayId);
+        //remove the replay id from the array if its there
         if (index > -1) {
             replayArr = replayArr.splice(index);
             team.replays = replayArr;
@@ -163,6 +194,8 @@ async function removeParsedIdFromTeam(teamId, replayId) {
     teamObj.teamMembers.forEach(teamMemb => {
         players.push(teamMemb.displayName);
     });
+
+    //remove the replay ID from the team's players
     removedFromUsers = await removeParsedFileFromUsersList(players, replayId);
 
 
@@ -173,6 +206,13 @@ async function removeParsedIdFromTeam(teamId, replayId) {
     };
 }
 
+/**
+ * @name removeParsedFileFromUsersList
+ * @function
+ * @description removes association of provided replay from the list of users
+ * @param {Array.<string>} users array of user displaynames
+ * @param {string} replayid id of replay
+ */
 async function removeParsedFileFromUsersList(users, replayid) {
     let promArr = [];
     users.forEach(user => {
@@ -188,7 +228,14 @@ async function removeParsedFileFromUsersList(users, replayid) {
     return x;
 }
 
-//remove reference to parsed file from player
+
+/**
+ * @name removeParsedFileFromUser
+ * @function
+ * @description remove reference to parsed file from player
+ * @param {string} userName 
+ * @param {string} replayId 
+ */
 async function removeParsedFileFromUser(userName, replayId) {
     let user = await User.findOne({ displayName: userName }).then(
         found => {
@@ -229,10 +276,5 @@ async function removeParsedFileFromUser(userName, replayId) {
     }
     return savedResult;
 }
-
-//remove the reference from match
-
-
-//delete replay info from heroesprofile
 
 module.exports = { deleteReplay };

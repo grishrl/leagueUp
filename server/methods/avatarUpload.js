@@ -1,3 +1,9 @@
+/*
+Methods for uploading player avatar images
+
+reviewed: 10-2-2020
+reviewer: wraith
+*/
 const User = require('../models/user-models');
 const CustomError = require('../methods/customError');
 const { s3deleteFile } = require('./aws-s3/delete-s3-file');
@@ -7,13 +13,23 @@ const { prepImage } = require('./image-upload-common');
 const avatarFolder = 'player-avatar/'
 
 
-async function uploadAvatar(path, dataURI, displayName) {
+/**
+ * @name uploadAvatar
+ * @function
+ * @description upload avatar image to s3 and create a pending approval queue
+ * 
+ * @param {string} dataURI 
+ * @param {string} displayName 
+ */
+async function uploadAvatar(dataURI, displayName) {
 
+    //prep image for upload
     let preppedImage = await prepImage(dataURI, { displayName });
 
     if (preppedImage) {
         let successObject = {};
 
+        //upload to s3 bucket
         let s3await = await s3putObject(process.env.s3bucketGeneralImages, avatarFolder, preppedImage.fileName, preppedImage.buffer).then(
             s3pass => {
                 return {
@@ -89,7 +105,13 @@ async function uploadAvatar(path, dataURI, displayName) {
 
 }
 
-//wrapping my new dry function because I'm dumb and screwed up. this is easier
+/**
+ * @name deleteAvatar
+ * @function
+ * @description wrapped delete function
+ * @deprecated
+ * @param {string} path 
+ */
 function deleteAvatar(path) {
     return s3deleteFile(process.env.s3bucketGeneralImages, avatarFolder, path);
 }

@@ -171,7 +171,15 @@ passport.use(new BnetStrategy({
     })
 }));
 
-//helper method to create a new profile
+//
+/**
+ * @name
+ * @function
+ * @description helper method to create a new profile
+ * @param {Object} userObj 
+ * @param {Object} logObj 
+ * @callback done 
+ */
 function createNewProfile(userObj, logObj, done) {
     //get the players MMRs!
     mmrMethods.comboMmr(userObj.displayName).then(
@@ -213,10 +221,12 @@ function createNewProfile(userObj, logObj, done) {
 }
 
 /**
- * generateNewToken - 
- * this method will generate the JWT token used for authorization / api key of an auth'ed user
- * @param {*} prof user-object
- * @param {*} admin admin-object
+ * @name generateNewToken
+ * @function
+ * @description this method will generate the JWT token user for authorization / api key of an auth 'ed user
+ * 
+ * @param {User} prof user-object
+ * @param {Admin} admin admin-object
  */
 //helper method to generate new JWT token
 function generateNewToken(prof, admin) {
@@ -240,6 +250,13 @@ function generateNewToken(prof, admin) {
 }
 
 //middleware helper function for log-in
+/**
+ * @name returnUserToClient
+ * @function
+ * @description middleware to return info to client
+ * @param {User} prof 
+ * @callback done 
+ */
 function returnUserToClient(prof, done) {
     Admin.AdminLevel.findOne({
         adminId: prof._id
@@ -253,7 +270,12 @@ function returnUserToClient(prof, done) {
     });
 }
 
-//helper method to remove unwanteds from the admin object
+/**
+ * @name compressAdmin
+ * @function
+ * @description helper method to remove unwanteds from the admin object
+ * @param {Object} obj 
+ */
 function compressAdmin(obj) {
     let retVal = [];
     _.forEach(obj, (value, key) => {
