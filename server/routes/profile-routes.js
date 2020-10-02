@@ -140,7 +140,7 @@ router.post('/save', passport.authenticate('jwt', {
                     if (util.returnBoolByPath(sentUser, 'averageMmr')) {
                         found.averageMmr = sentUser.averageMmr;
                         if (found.teamName) {
-                            TeamSub.updateTeamMmr(found.teamName);
+                            TeamSub.updateTeamMmrAsynch(found.teamName);
                         }
                     }
 

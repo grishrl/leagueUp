@@ -1,6 +1,6 @@
 const util = require('../utils');
 const router = require('express').Router();
-const Standings = require('../subroutines/standings-subs');
+const Standings = require('../methods/standings-methods');
 const passport = require("passport");
 
 //gets the standings for provided division a divisionConcat,

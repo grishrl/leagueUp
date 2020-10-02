@@ -341,7 +341,7 @@ router.post('/delete/team', passport.authenticate('jwt', {
     Team.findOneAndDelete({ teamName_lower: team }).then((deleted) => {
         if (deleted) {
             UserSub.clearUsersTeam(deleted.teamMembers);
-            teamSub.updateTeamMatches(deleted.toObject());
+            teamSub.markTeamWithdrawnInMatches(deleted.toObject());
             DivSub.updateTeamNameDivision(deleted.teamName, deleted.teamName + ' (withdrawn)');
             notesMethods.deleteAllNotesWhere(deleted._id.toString());
             res.status(200).send(util.returnMessaging(path, 'Team deleted', false, deleted, null, logObj));
@@ -953,7 +953,7 @@ async function handleMemberQueue(teamId, member, logObj, approved, seasonNum) {
                 teamMong.markModified('pendingMembers');
                 //save the team and the user
                 let teamSavedMong = teamMong.save().then((savedTeam) => {
-                    teamSub.updateTeamMmr(savedTeam);
+                    teamSub.updateTeamMmrAsynch(savedTeam);
                     return savedTeam;
                 }, (teamSaveErr) => {
                     util.errLogger('handleMemberQueue - teamSave', teamSaveErr);
@@ -1102,7 +1102,7 @@ async function cleanUp(queue) {
     //save the team and the user
     if (teamMong) {
         let teamSavedMong = teamMong.save().then((savedTeam) => {
-            teamSub.updateTeamMmr(savedTeam);
+            teamSub.updateTeamMmrAsynch(savedTeam);
             return savedTeam;
         }, (teamSaveErr) => {
             util.errLogger('cleanUp - teamSave', teamSaveErr);

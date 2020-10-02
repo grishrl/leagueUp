@@ -7,7 +7,7 @@ const util = require('../utils');
 const UserSubs = require('../subroutines/user-subs');
 const QueueSub = require('../subroutines/queue-subs');
 const User = require('../models/user-models');
-const message = require('../subroutines/message-subs');
+const messageSub = require('../subroutines/message-subs');
 const hbs = require('nodemailer-express-handlebars');
 const path = require('path');
 
@@ -152,7 +152,7 @@ router.post('/inviteResponseComplete', passport.authenticate('jwt', {
                             });
                         } else {
                             res.status(500).send(util.returnMessaging(path, "User was all ready a member of the team", null, null, null, logObj));
-                            message(foundUser._id.toString(), 'Email Invite', 'Your email invite was processed properly but you were all ready on a team.', 'SYSTEM');
+                            messageSub(foundUser._id.toString(), 'Email Invite', 'Your email invite was processed properly but you were all ready on a team.', 'SYSTEM');
                         }
 
 

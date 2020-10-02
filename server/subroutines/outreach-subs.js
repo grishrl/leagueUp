@@ -1,9 +1,21 @@
+/**
+ * Outreach subroutine; 
+ * 
+ * reviewed: 10-1-2020
+ * reviewer: wraith
+ */
+
 const Outreach = require('../models/outreach-model');
 const logger = require('../subroutines/sys-logging-subs').logger;
 
-
-//this updates the team name in the outreach queue  so that if a team name changes and there 
-// was an outstanding invite, the connection can still be made.
+/**
+ * @name updateOutreachTeamname
+ * @function
+ * @description this updates the team name in the outreach queue so that if a team name changes and there was an outstanding invite, the connection can still be made.
+ * 
+ * @param {string} oldteamName 
+ * @param {string} newteamName 
+ */
 function updateOutreachTeamname(oldteamName, newteamName) {
     let logObj = {};
     logObj.logLevel = 'STD';

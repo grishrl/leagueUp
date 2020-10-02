@@ -1,3 +1,12 @@
+/**
+ *  Scheudle subroutines - methods for adminsitering the queues; the creation of the season schedules occurs here; the tournaments are created here too!
+ * 
+ * 
+ * reviewed: 10-1-2020
+ * reviewer: wraith
+ * it's high time generatetournamenttwo became generatetournament dont you think
+ */
+
 const TeamModel = require('../models/team-models');
 const Division = require('../models/division-models');
 const Scheduling = require('../models/schedule-models');
@@ -14,22 +23,15 @@ const lodash = require('lodash');
 const SEASONAL = 'seasonal';
 const TOURNAMENT = 'tournament';
 
-/* Match report format required for the generator
-    {
-      round: 1,
-      home: {
-        id: 1,
-        points: 1
-      },
-      away: {
-        id: 3,
-        points: 1
-      }
-    }
-*/
 
-//this function generates the framework for scheduling for the season.  should only be run once ever per season;
-//after this is ran, division changes should not be performed!!!!!!!
+
+/**
+ * @name generateSeason
+ * @function
+ * @description generates the framework for scheduling for the season.  should only be run once ever per season;
+ * !!!after this is ran, division changes should not be performed!!!!!!!
+ * @param {number} season 
+ */
 async function generateSeason(season) {
 
     let logObj = {};
@@ -58,16 +60,20 @@ async function generateSeason(season) {
         }).lean().then((res) => {
             return res;
         });
+
         //loop through the divisions
         for (var i = 0; i < getDivision.length; i++) {
+
             //local div variable
             let thisDiv = getDivision[i];
             divObj[thisDiv.divisionConcat] = {};
+
             //create an array of teams from the division
             let lowerTeam = [];
             thisDiv.teams.forEach(iterTeam => {
                 lowerTeam.push(iterTeam.toLowerCase());
             });
+
             //pull the teams info from the dB and create an array of strings of the teams _ids
             // let participants = [];
             let participants = await TeamModel.find({
@@ -84,6 +90,7 @@ async function generateSeason(season) {
                 }
                 return returnParticipants;
             });
+
             //schedule object will have
             /*
             {
@@ -132,8 +139,14 @@ async function generateSeason(season) {
 }
 
 
-//this method generates a round robin schedule
+//
 //season:string - the season for which to generate the matches
+/**
+ * @name generateRoundRobinSchedule
+ * @function
+ * @description generates a round robin schedule
+ * @param {number} season 
+ */
 function generateRoundRobinSchedule(season) {
     let logObj = {};
     logObj.actor = 'Schedule Generater Sub; generateRoundRobinSchedule';
@@ -151,12 +164,16 @@ function generateRoundRobinSchedule(season) {
             }
         ]
     };
+
     //grab the schedule of the season in question
     Scheduling.findOne(query).then((found) => {
+
         //get the divisions
         let divisions = found.division;
+
         //make an array of the divisions as keys to iterate through
         let keys = Object.keys(divisions);
+
         //loop through each division and create the matches for it
         for (var i = 0; i < keys.length; i++) {
 
@@ -174,7 +191,6 @@ function generateRoundRobinSchedule(season) {
 
                 //for a double round robin division >>>>
                 if (util.returnByPath(divisions[key], 'DRR')) {
-                    console.log('>>>>> here <<<<<<');
                     let dbl = lodash.clone(roundRobin);
                     dbl.forEach(
                         r => {
@@ -223,12 +239,10 @@ function generateRoundRobinSchedule(season) {
         found.markModified('division');
         found.save().then((saved) => {
             logger(logObj);
-            // console.log('season saved');
         }, (err) => {
             logObj.logLevel = 'ERROR';
             logObj.error = err;
             logger(logObj);
-            // console.log('season save error!');
         })
 
     });
@@ -261,7 +275,19 @@ function returnTeamInfo(fullTeamsInfo, finalParticipantArray, challongeRef) {
 const SINGLE_ELIMINATION = 'single elimination';
 const DOUBLE_ELIMINATION = 'double elimination';
 
-async function generateTournamentTwo(teams, season, division, cup, name, description, type) {
+/**
+ * @name generateTournament
+ * @function
+ * @description generates the tournaments calling upon the powers of challonge
+ * @param {Array.<string> | Array<Object>} teams 
+ * @param {number} season 
+ * @param {string} [division] 
+ * @param {boolean} [cup] 
+ * @param {string} [name='uuid'] 
+ * @param {string} [description]
+ * @param {string} [type='single elimination'] 
+ */
+async function generateTournament(teams, season, division, cup, name, description, type) {
 
     divSubs.cupDivisionAggregator(teams, division);
 
@@ -316,8 +342,7 @@ async function generateTournamentTwo(teams, season, division, cup, name, descrip
             //will probably need some logging or throws to alert client
         })
     } else {
-        // console.log('newTournament ', newTournament);
-        //tournamnet create ok
+        // challonge tournamnet create ok
         /*
         {
           tournament:{
@@ -340,8 +365,7 @@ async function generateTournamentTwo(teams, season, division, cup, name, descrip
                 //will probably need some logging or throws to alert client 
             })
         } else {
-            // console.log('addParticpants ', addParticipants);
-            //partipants add ok
+            //challonge ; partipants add ok
             /*
             return as [
               {
@@ -493,14 +517,9 @@ async function generateTournamentTwo(teams, season, division, cup, name, descrip
                                                 //set this match parentId to the outer match
                                                 matchInner.parentId = matchOuter.matchId;
                                             } else {
-                                                console.log('matchInner.challonge_match_ref', matchInner.challonge_match_ref);
-                                                console.log('challongeIdChild', challongeIdChild);
-                                                console.log('matchOuter.loserChildren', matchOuter.loserChildren)
                                                 if (matchOuter.loserChildren) {
-                                                    console.log('typeof matchOuter.loserChildren[0]', typeof matchOuter.loserChildren[0]);
-                                                    console.log('typeof matchInner.challonge_match_ref', typeof matchInner.challonge_match_ref);
+                                                    //if i have empty if statements does that mean I wrote stupid code?   
                                                 }
-                                                console.log('test', matchOuter.loserChildren, matchOuter.loserChildren.indexOf(parseInt(matchInner.challonge_match_ref)));
                                                 if (matchOuter.loserChildren && matchOuter.loserChildren.indexOf(parseInt(matchInner.challonge_match_ref)) > -1) {
                                                     matchInner.loserPath = matchOuter.matchId;
                                                 } else {
@@ -576,254 +595,5 @@ async function generateTournamentTwo(teams, season, division, cup, name, descrip
 module.exports = {
     generateSeason: generateSeason,
     generateRoundRobinSchedule: generateRoundRobinSchedule,
-    generateTournamentTwo: generateTournamentTwo
+    generateTournament: generateTournament
 };
-
-//helper method, accpets a match object, 
-//checks if home or away has a bye in it and returns true if so, false if not
-// function hasBye(match) {
-//     return util.returnByPath(match, 'away.teamName') === 'BYE' || util.returnByPath(match, 'home.teamName') === 'BYE'
-// }
-
-//helper method to promote a bye matched tournament game
-//promotes any team to paired with bye to the parent match 
-// function promoteFromBye(match, matches) {
-//     let team;
-//     if (util.returnByPath(match, 'away.teamName') !== 'BYE') {
-//         team = util.returnByPath(match, 'away');
-//     }
-//     if (util.returnByPath(match, 'home.teamName') !== 'BYE') {
-//         team = util.returnByPath(match, 'home');
-//     }
-
-//     if (team != null || team != undefined) {
-//         let parent = match.parentId;
-
-//         matches.forEach(matchIt => {
-//             if (matchIt.matchId == parent) {
-//                 if (!util.returnBoolByPath(matchIt, 'away')) {
-//                     matchIt['away'] = team;
-//                 } else {
-//                     matchIt['home'] = team;
-//                 }
-
-//             }
-//         })
-
-//     }
-
-// }
-
-
-//helper method that arranges the seeding into the proper ordering
-// function splitSeeded(arr) {
-//     var topHalf = [];
-//     var bottomHalf = [];
-//     //this will grab the odd matches and push them into the top half of the bracket
-//     //IE first pair of teams, 0,1 then 4,5 etc, etc
-//     for (var i = 0; i < arr.length; i = i + 4) {
-//         topHalf.push(arr[i]);
-//         topHalf.push(arr[i + 1]);
-//     }
-//     //this will grab the even matches and push them into the bottom half of the bracket
-//     //IE second pair of teams, 2,3 then 6,7 etc.
-//     for (var i = 2; i < arr.length; i = i + 4) {
-//         bottomHalf.push(arr[i]);
-//         bottomHalf.push(arr[i + 1]);
-//     }
-//     //combine the arrays and return them back
-//     arr = [];
-//     arr = topHalf.concat(bottomHalf);
-//     return arr;
-// }
-
-// //generate tournament schedules
-// //accepts 
-// //teams: array of team objects, {id or _id, teamName, logo}
-// //season: number, the season that this tournament is for or the iteration of the tournament
-// //division: the division info the tournament is for, if it is for one
-// //name: name of tournament
-
-// async function generateTournament(teams, season, division, cup, name) {
-//   //the bracket function requires of an array of special team objects, 
-//   let _teams = [];
-
-//   //there are a couple of ways we can get teams and their ids, to make sure we get the ids depening of format
-//   //run through teams and grab the id, depending on where it was send to us:  we use this array as the participants 
-//   //for the schedule object
-//   let teamIds = [];
-//   teams.forEach(team => {
-//     let teamid = team._id ? team._id : team.id
-//     if (teamIds.indexOf(teamid)) {
-//       teamIds.push(teamid);
-//     }
-//     //create the special team object and add it to the _team array
-//     _teams.push(
-//       new Team(teamid, team.teamName, team.logo)
-//     );
-//   });
-
-
-//   //generate a bracket tree that's a good round number, 2, 4, 8, 16 (fill the odds with byes)
-//   let expTeamLength = Math.pow(2, Math.ceil(Math.log2(_teams.length)));
-
-//   //create byes to fill any empty spaces in our team numbers 
-//   while (_teams.length < expTeamLength) {
-//     _teams.push(
-//       new Team(null, 'BYE')
-//     )
-//   }
-
-//   //this will hold our seeded teams
-//   //the bracket creator creates the match trees ingesting the array
-//   //creating the first matches, then building the tree upwards to the final round
-//   //we must pair the seeds properly then, split the array in halfs to make sure the bracket populates properly
-//   let seeded = [];
-//   do {
-//     //take the team in the top of the array (ie top seed)
-//     let topSeed = _teams.splice(0, 1);
-//     //take the team at the bottom of the array (ie bottom seed)
-//     let bottomSeed = _teams.splice(_teams.length - 1, _teams.length);
-//     //pair them together in the seeded array
-//     seeded = seeded.concat([topSeed[0], bottomSeed[0]]);
-
-//   }
-//   while (_teams.length > 0);
-
-//   //arrange the top and bottom half of the bracket correctly
-//   seeded = splitSeeded(seeded);
-
-//   //create the tournament and brackets
-//   let tournament = new Tournament(seeded, name);
-//   let brackets = tournament.generateBrackets();
-
-//   //brackets are returned as objects with thier on properties, 
-//   //add the properties to the object that our other matches have
-
-
-//   brackets.forEach(bracket => {
-//     bracket['type'] = 'tournament';
-//     if (division) {
-//       bracket['divisionConcat'] = division;
-//     }
-//     if (season) {
-//       bracket['season'] = season;
-//     }
-//     if (name) {
-//       bracket['name'] = name;
-//     }
-//     //if the match had idChildren, add a property parentId to each of the children
-//     let parent = bracket.id;
-//     if (bracket.idChildren.length > 0) {
-//       //loop through each child
-//       bracket.idChildren.forEach(id => {
-//         //loop through all brackets to see which ids match the current child
-//         brackets.forEach(subBrack => {
-//           if (id == subBrack.id) {
-//             subBrack.parentId = parent;
-//           }
-//         })
-//       })
-//     }
-//   });
-
-//   //loop through the bracket objects and replace the current ID with a uuid matchId
-//   let matchIDsArray = [];
-//   brackets.forEach(bracket => {
-//     let newId = uniqid();
-//     let id = bracket.id;
-//     bracket['matchId'] = newId;
-//     matchIDsArray.push(newId);
-//     delete bracket.id;
-//     brackets.forEach(subBrack => {
-//       if (subBrack.parentId == id) {
-//         subBrack.parentId = newId;
-//       }
-//       let ind = subBrack.idChildren.indexOf(id);
-//       if (ind > -1) {
-//         subBrack.idChildren[ind] = newId;
-//       }
-//     });
-//     //if the match has a bye game, promote the team against the bye forward automatically
-//     if (hasBye(bracket)) {
-//       promoteFromBye(bracket, brackets);
-//     }
-//   });
-
-
-//   //insert the formed up bracked objects into the matches table
-//   let matches = await Match.insertMany(brackets).then(res => {
-//     console.log('matches inserted!');
-//     return res;
-//   }, err => {
-//     console.log(err);
-//     console.log('error inserting matches ', err);
-//     return err;
-//   });
-
-//   //create a schedule object to go along with this tournament
-//   //give it particpants and the matches asscoated with this tournament
-//   let schedObj = {
-//     'type': 'tournament',
-//     'name': name,
-//     'division': division,
-//     'season': season,
-//     'participants': teamIds,
-//     'matches': matchIDsArray
-//   }
-//   let schedule = await new Scheduling(
-//     schedObj
-//   ).save().then((saved) => {
-//     // console.log('fin', JSON.stringify(saved));
-//     return saved;
-//   }, (err) => {
-//     // console.log(err);
-//     return err;
-//   });
-
-//   return {
-//     'matches': matches,
-//     'schedule': schedule
-//   };
-
-// }
-
-//2-15-19 : not currently in use as we do not anticipate swiss scheduling
-//this method generates a particular round of a tournament with the swiss system
-//NOTE - the matches must be reported, regardless of outcome in order for the swiss
-//to properly generate a schedule!
-// function generateRoundSchedules(season, round) {
-//   Scheduling.findOne({
-//     "season": season
-//   }).then((found) => {
-//     let divisions = found.division;
-//     let keys = Object.keys(divisions);
-//     //get data from the found object
-//     for (var i = 0; i < keys.length; i++) {
-//       let key = keys[i];
-//       //get data should be of a divsison
-//       let participants = divisions[key].participants;
-//       let matches = divisions[key].matches;
-//       let roundSchedules = divisions[key].roundSchedules;
-//       let schedule = swiss.getMatchups(round, participants, matches);
-//       //if a schedule was generated, save it to the round schedules
-//       if (schedule.length > 0) {
-//         //if round schedles didn't exist on the object before, create it
-//         if (roundSchedules == undefined || roundSchedules == null) {
-//           divisions[key].roundSchedules = {};
-//           roundSchedules = divisions[key].roundSchedules;
-//         }
-//         round = round.toString();
-//         roundSchedules[round] = schedule;
-//       }
-//     }
-
-//     //save the schedule object.
-//     found.markModified('division');
-//     found.save().then((saved) => {
-//       // console.log('fin  schedules');
-//     }, (err) => {
-//       // console.log('ERROR : ', err);
-//     })
-//   });
-// }

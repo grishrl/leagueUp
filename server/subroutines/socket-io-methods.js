@@ -1,3 +1,13 @@
+/**
+ * socket io - methods for doing socket io... for whatever its used for... do we need this???
+ * ostensibly it should send a ping to the clients socket IO connection to cause their messages counter to update; 
+ * also performs a heartbeat to check the API key and see if they may have left client opened on a terminal for an extended amount of time; this causes
+ * disgruntled users but .. if they left their ngs open on a shared terminal then they might expose their battle.net account and no one wants that.
+ * 
+ * 
+ * reviewed: 10-1-2020
+ * reviewer: wraith
+ */
 //import the config of socket IO
 const socketIo = require('./socket-io-config');
 

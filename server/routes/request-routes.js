@@ -8,7 +8,6 @@ const QueueSub = require('../subroutines/queue-subs');
 const UserSub = require('../subroutines/user-subs');
 const Team = require("../models/team-models");
 const passport = require("passport");
-const logger = require('../subroutines/sys-logging-subs').logger;
 const messageSub = require('../subroutines/message-subs');
 const Message = require('../models/message-models');
 const { getCptId } = require('../methods/teamCommon');
@@ -55,15 +54,6 @@ router.post('/team/join', passport.authenticate('jwt', {
 
                             messageSub(msg);
                             res.status(200).send(util.returnMessaging(path, 'Message sent', null, null, null, logObj));
-
-                            // new Message(msg).save().then(
-                            //     (newmsg) => {
-                            //         dispatchMessage(msg.recipient)
-
-                            //     }, (err) => {
-                            //         res.status(500).send(util.returnMessaging(path, 'There was an error sending request', err, null, null, logObj));
-                            //     }
-                            // )
 
                         } else {
                             logObj.logLevel = 'ERROR';
@@ -181,14 +171,6 @@ router.post('/team/join/response', passport.authenticate('jwt', {
                                     msg.timeStamp = new Date().getTime();
 
                                     messageSub(msg);
-                                    // new Message(msg).save().then(
-                                    //     (newmsg) => {
-                                    //         dispatchMessage(msg.recipient)
-                                    //             //log or nah?
-                                    //     }, (err) => {
-                                    //         //log or nah?
-                                    //     }
-                                    // )
 
                                 }, (teamSaveErr) => {
                                     logObj.logLevel = 'ERROR';
@@ -415,14 +397,7 @@ router.post('/user/join/response', passport.authenticate('jwt', {
                                             msg.timeStamp = new Date().getTime();
 
                                             messageSub(msg);
-                                            // new Message(msg).save().then(
-                                            //     (newmsg) => {
-                                            //         dispatchMessage(msg.recipient);
-                                            //         //log or nah?
-                                            //     }, (err) => {
-                                            //         //log or nah?
-                                            //     }
-                                            // )
+
                                         },
                                         err => {
 

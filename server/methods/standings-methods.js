@@ -1,12 +1,20 @@
+/**
+ * Standings Calculation > Calculates division standings
+ * 
+ * 
+ * reviewed: 10-1-2020
+ * reviewer: wraith
+ * - > moved from subs because this was not exactly a sub; we waited on this return ... 
+ */
 const Match = require('../models/match-model');
 const util = require('../utils');
 const Team = require('../models/team-models');
 const System = require('../models/system-models').system;
 const Schedules = require('../models/schedule-models');
-const challonge = require('../methods/challongeAPI');
+const challonge = require('./challongeAPI');
 const Division = require('../models/division-models');
 const _ = require('lodash');
-const MatchCommon = require('../methods/matchCommon');
+const MatchCommon = require('./matchCommon');
 const jsonDiff = require('deep-object-diff');
 
 
@@ -316,6 +324,7 @@ async function stdDivStanding(division, season, pastSeason) {
             span: season
         }
 
+        //pull saved standings data from the database
         let data = await System.findOne(
             query
         ).then(
@@ -331,8 +340,9 @@ async function stdDivStanding(division, season, pastSeason) {
         //add standings change data;
         let dataChanged = false;
         try {
-            if (data) {
 
+            if (data) {
+                //check the data didnt change first
                 let oldData = util.objectify(data);
                 oldData = oldData.data.standings;
                 _.forEach(oldData, (oldDataV, oldDataK) => {
@@ -350,6 +360,7 @@ async function stdDivStanding(division, season, pastSeason) {
                     })
                 });
 
+                //if the standings changed; update the deltas of the teams
                 if (dataChanged) {
                     _.forEach(oldData, (oldDataV, oldDataK) => {
                         let storedStanding = oldDataV;
@@ -370,6 +381,7 @@ async function stdDivStanding(division, season, pastSeason) {
                         })
                     })
                 } else {
+                    //assign the database version of standings deltas to teams
                     _.forEach(oldData, (oldDataV, oldDataK) => {
                         let storedStanding = oldDataV;
 
@@ -385,6 +397,8 @@ async function stdDivStanding(division, season, pastSeason) {
                 }
 
             } else {
+
+                //we had no data so how can we have changes.. save this and carry on
 
                 query.data = {
                     standings,
@@ -406,6 +420,7 @@ async function stdDivStanding(division, season, pastSeason) {
         //update the standings i guess
         if (data) {
             try {
+                //diff the database object against the finalized standings object; if their is a delta save the standings to the db
                 let dataObj = util.objectify(data);
                 let diff = jsonDiff.diff(dataObj.data.standings, standings);
 
@@ -414,7 +429,7 @@ async function stdDivStanding(division, season, pastSeason) {
                     standings,
                     timeStamp: Date.now()
                 };
-                console.log(diff, Object.keys(diff).length > 0);
+
                 if (Object.keys(diff).length > 0) {
                     System.findOneAndUpdate(
                         query, updateDocument, {
@@ -423,7 +438,6 @@ async function stdDivStanding(division, season, pastSeason) {
                         }
                     ).then(
                         saved => {
-                            //needs to be replaced with dB log if ever used.
                             util.errLogger('standings-subs', null, 'last standings upserted');
                         },
                         err => {
@@ -442,22 +456,6 @@ async function stdDivStanding(division, season, pastSeason) {
 
         }
 
-        //update the standings info object
-        //  let data = System.findOneAndUpdate(
-        //       query, standings, {
-        //           new: true,
-        //           upsert: true
-        //       }
-        //   ).then(
-        //       saved => {
-        //           //needs to be replaced with dB log if ever used.
-        //           util.errLogger('standings-subs, cupDivStanding', null, 'standings upserted');
-        //       },
-        //       err => {
-        //           util.errLogger('standings-subs, cupDivStanding', err);
-        //       }
-        //   );
-
     }
     return standings;
 }
@@ -467,6 +465,13 @@ module.exports = {
     calulateStandings: calulateStandings
 };
 
+/**
+ * Method for calculating the points and standings of the standard Bo3 series for NGS scoring
+ * @param {*} matchesForDivision -> array of match objects
+ * @param {*} nonReportedMatchCount -> a count of matches not reported
+ * @param {*} teams -> array of team objects
+ * @param {*} standings -> standings object to return
+ */
 function bestOfThree(matchesForDivision, nonReportedMatchCount, teams, standings) {
     try {
         matchesForDivision.forEach(match => {
@@ -505,8 +510,6 @@ function bestOfThree(matchesForDivision, nonReportedMatchCount, teams, standings
                     //match the team id
                     if (match.away.id == team) {
                         //get team info from here
-                        // standing['teamName'] = match.away.teamName;
-                        // standing['logo'] = match.away.logo;
                         //score from this game if team id was away
                         let score = match.away.score;
                         //dominator variable
@@ -550,8 +553,6 @@ function bestOfThree(matchesForDivision, nonReportedMatchCount, teams, standings
                         }
                     } else if (match.home.id == team) {
                         //get team info from here
-                        // standing['teamName'] = match.home.teamName;
-                        // standing['logo'] = match.home.logo;
                         //score from this game if team id was home
                         let score = match.home.score;
                         //dominator variable
@@ -602,6 +603,13 @@ function bestOfThree(matchesForDivision, nonReportedMatchCount, teams, standings
     return nonReportedMatchCount;
 }
 
+/**
+ * Method for scoring divisions and returning scores for NON-Bo3 matches of NGS ... IE Storm division
+ * @param {*} matchesForDivision -> array of match objects
+ * @param {*} nonReportedMatchCount -> a count of matches not reported
+ * @param {*} teams -> array of team objects
+ * @param {*} standings -> standings object to return
+ */
 function bestOfX(matchesForDivision, nonReportedMatchCount, teams, standings) {
     try {
         matchesForDivision.forEach(match => {
@@ -643,9 +651,6 @@ function bestOfX(matchesForDivision, nonReportedMatchCount, teams, standings) {
                     let maxLosses = Math.floor(boX / 2);
 
                     if (match.away.id == team) {
-                        //get team info from here
-                        // standing['teamName'] = match.away.teamName;
-                        // standing['logo'] = match.away.logo;
                         //score from this game if team id was away
                         let score = match.away.score;
 
@@ -667,13 +672,9 @@ function bestOfX(matchesForDivision, nonReportedMatchCount, teams, standings) {
                         }
 
                     } else if (match.home.id == team) {
-                        //get team info from here
-                        // standing['teamName'] = match.home.teamName;
-                        // standing['logo'] = match.home.logo;
                         //score from this game if team id was home
                         let score = match.home.score;
-                        //dominator variable
-                        let dominator = match.home.dominator;
+
                         if (match.reported) {
                             standing['matchesPlayed'] += 1;
                         }

@@ -1,3 +1,10 @@
+/**
+ * Team Subs: subroutines that can be called that we just want the work done; generally not waiting on their reply before the route replys or server continues work
+ * 
+ * reviewed: 10-1-2020
+ * reviewer: wraith
+ * --added some todos and things to look into drying
+ */
 const util = require('../utils');
 const Team = require('../models/team-models');
 const User = require('../models/user-models');
@@ -12,18 +19,30 @@ const location = 'team-subs.js';
 //how many members of team we will use to calculate avg-mmr
 const numberOfTopMembersToUse = 4;
 
-//subroutine to update teams division
-// teams: array of teams,
-//division: object division object
+
+/**
+ * @name upsertTeamsDivision
+ * @function
+ * @description subroutine to update teams division
+ * 
+ * @param {Array.<Team>} teams teams: array of teams,
+ * @param {Object} division division: object division object
+ */
 function upsertTeamsDivision(teams, division) {
     teams.forEach(team => {
         upsertTeamDivision(team, division);
     });
 }
 
-//update team's division info with that of the provided division
-//team: object or string
-//division : object, division obhect
+
+/**
+ * @name upsertTeamDivision
+ * @function
+ * @description update team 's division info with that of the provided division
+ * 
+ * @param {Team | string} team team: team object or team name string
+ * @param {Object} division division : division object
+ */
 function upsertTeamDivision(team, division) {
     let logObj = {};
     logObj.actor = 'SYSTEM; Update Team Division';
@@ -62,8 +81,13 @@ function upsertTeamDivision(team, division) {
     })
 }
 
-//update mmrs asynch
-//team:string or team object, 
+/**
+ * @name updateTeamMmrAsynch
+ * @function
+ * @description updates provided teams avg mmr; updates the individual members info first
+ * 
+ * @param {Team | string} team team object or team name string; provided team to update
+ */
 async function updateTeamMmrAsynch(team) {
     let logObj = {};
     logObj.actor = 'SYSTEM; Update Team MMR';
@@ -81,6 +105,7 @@ async function updateTeamMmrAsynch(team) {
     }
 
     logObj.target += team.teamName_lower + ' ';
+
     //grab the specified team
     let retrievedTeam = await Team.findOne({
         teamName_lower: team.teamName_lower
@@ -105,8 +130,10 @@ async function updateTeamMmrAsynch(team) {
     if (members.length > 0) {
         //loop through the members of each team
         for (var i = 0; i < members.length; i++) {
+
             //grab a specific member
             let member = members[i];
+
             //call out to the external sources grab the most updated users MMR
             let mmrInfo = await mmrMethods.comboMmr(member);
 
@@ -118,6 +145,7 @@ async function updateTeamMmrAsynch(team) {
 
             logObj.target += member + ' ';
             let savedPlayer;
+
             //save the players updated MMR
             if (player) {
                 if (mmrInfo.heroesProfile >= 0) {
@@ -156,6 +184,7 @@ async function updateTeamMmrAsynch(team) {
             return null;
         });
     }
+
     //save the teams new MMR back to the database if it was calculated
     let updatedTeam;
     if (processMembersMMR) {
@@ -174,42 +203,28 @@ async function updateTeamMmrAsynch(team) {
     return updatedTeam;
 }
 
-//subroutine to update a teams average mmr, this will run when it is passed a team
-//this uses currently saved figures in the database to calculate the teams MMR, does not call external for data
-function updateTeamMmr(team) {
-    if (typeof team == 'string') {
-        team = team.toLowerCase();
-        team = { teamName_lower: team }
-    }
 
-    Team.findOne({ teamName_lower: team.teamName_lower }).then((foundTeam) => {
-        let members = [];
-        foundTeam.teamMembers.forEach(element => {
-            members.push(element.displayName);
-        });
-        topMemberMmr(members).then((processed) => {
-            if (processed) {
-                foundTeam.hpMmrAvg = processed.heroesProfileAvgMmr;
-                foundTeam.teamMMRAvg = processed.averageMmr;
-                foundTeam.stormRankAvg = processed.stormRankAvg;
-                foundTeam.ngsMmrAvg = processed.ngsAvgMmr;
-                foundTeam.save().then(saved => {
-                    //empty promises
-                }, err => {
-                    //empty promises
-                })
-            } else {
-                //empty promises
-            }
-        });
-    }, (err) => {
-        util.errLogger(location, err, 'updateMmr routine failed')
-    });
+/**
+ * @name updateTeamMmr
+ * @function
+ * @description
+ * @deprecated
+ *!!!This method has been found lacking and replaced with the updateTeamMmrAsynch; leaving this in as a wrapper for now!!!
+ * @param {Team | string} team teamname string or team object
+ */
+function updateTeamMmr(team) {
+    return updateTeamMmrAsynch(team);
 }
 
-//calculates the mmr of the highest mmr members of the team
-//members: string array
-//returns average mmrs or Null
+
+//TODO move methods from team asynch into this so it will be even cooler.... 
+/**
+ * @name topMemberMmr
+ * @function
+ * @description returns the team avg mmr of the top players required
+ * 
+ * @param {Array.<string>} members array of members display names
+ */
 async function topMemberMmr(members) {
 
     try {
@@ -354,9 +369,16 @@ async function topMemberMmr(members) {
 
 }
 
-//this is used to calculate MMRS on the fly for admin to apporve a team add
-//userMmrToadd: string or number of the average mmr of a player who is being added to a team
-//members:string array of the current members of a team
+
+/**
+ * @name resultantMMR
+ * @function
+ * @description caluclate the mmr / avg storm rank of addition of a player to a team
+ * 
+ * @param {number} userMmrToAdd string of number of MMR to add
+ * @param {Array.<string>} members array of current members of team
+ * @param {string} newPlayerName the new player to add name
+ */
 async function resultantMMR(userMmrToAdd, members, newPlayerName) {
 
     let returnObject = {};
@@ -371,6 +393,7 @@ async function resultantMMR(userMmrToAdd, members, newPlayerName) {
     }, (err) => {
         return null
     });
+
 
     if (users) {
         if (users && users.length > 0) {
@@ -427,6 +450,14 @@ async function resultantMMR(userMmrToAdd, members, newPlayerName) {
 //removes user from team
 //team:string - teamname;
 //user: string - battletag
+/**
+ * @name
+ * @function
+ * @description
+ * Removes the provided user from the provided team
+ * @param {string} team string: team name
+ * @param {string} user string: user displayName
+ */
 function removeUser(team, user) {
     team = team.toLowerCase();
     //grab team from the db
@@ -455,8 +486,13 @@ function removeUser(team, user) {
     })
 }
 
-//removes any instances of a username from any teams
-//username: string - battletag
+/**
+ * @name scrubUserFromTeams
+ * @function
+ * @description
+ * removes any instances of username from any teams it is found in
+ * @param {string} username string: user displayName
+ */
 function scrubUserFromTeams(username) {
 
     //find teams that have the user in the pending members
@@ -518,7 +554,15 @@ function scrubUserFromTeams(username) {
     );
 };
 
-//will update all received teams history that they have been added to a division once the division has been set to public:
+
+/**
+ * @name updateDivisionHistory
+ * @function
+ * @description will update all received teams history that they have been added to a division once the division has been set to public:
+ * 
+ * @param {Array.<string>} teams Array of team names
+ * @param {string} divisionName division name
+ */
 function updateDivisionHistory(teams, divisionName) {
 
     let logObj = {};
@@ -572,7 +616,14 @@ function updateDivisionHistory(teams, divisionName) {
 
 //will find all the matches that  team is associated to and will update the team name that is in the 
 //match object
-function updateTeamMatches(team) {
+/**
+ * @name markTeamWithdrawnInMatches
+ * @function
+ * @description Marks a team withdrawn from all matches they were in
+ * 
+ * @param {Team} team object:Team
+ */
+function markTeamWithdrawnInMatches(team) {
     //find all matches that has the team in the away or home 
     let id = team._id.toString();
     Match.find({
@@ -610,10 +661,17 @@ module.exports = {
     resultantMMR: resultantMMR,
     returnTeamMMR: topMemberMmr,
     updateTeamMmrAsynch: updateTeamMmrAsynch,
-    updateTeamMatches: updateTeamMatches,
+    markTeamWithdrawnInMatches: markTeamWithdrawnInMatches,
     updateTeamDivHistory: updateDivisionHistory
 }
 
+/**
+ * @name removeZeroIndicies
+ * @function
+ * @description helper method to remove and indicies in array that have zero in them;
+ * 
+ * @param {Array.<number>} arr : Array of numbers
+ */
 function removeZeroIndicies(arr) {
     let zerosIndicies = [];
     arr.forEach((val, index) => {
@@ -628,7 +686,14 @@ function removeZeroIndicies(arr) {
 }
 
 
-//helper function to update team names in matches after a team name change
+/**
+ * @name addTeamNamesToMatch
+ * @function
+ * @description helper function to update team names in matches after a team name change (10/2020 currently look only used in withdrawl can dry?)
+ * 
+ * @param {Team} team : team object
+ * @param {Array.Match>} found : Array of matches objects
+ */
 async function addTeamNamesToMatch(team, found) {
     //typechecking
     if (!Array.isArray(found)) {

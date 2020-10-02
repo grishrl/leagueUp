@@ -1,12 +1,23 @@
+/**
+ * Logging Subs -> logs messages to the db for checking in case things bork up
+ * 
+ * reviewed: 10-1-2020
+ * reviewer: wraith
+ */
 const log = require('../models/system-models');
 const util = require('../utils');
 
-//helper method to log server side activity to the database
-
-//accepts : logObj: object - containing the log information we want,
-// or
-// lobObj:string - the level of the log, actor:string the - system or user performing the actoun, 
-// action:string - action being performed, target: the object upon which actionw as performed, error:string - errors that occured
+/**
+ * @name logger
+ * @function
+ * @description helper method to log server side activity to the database
+ * @param {Object | string} logObj 
+ * @param {string} actor 
+ * @param {string} action 
+ * @param {string} target 
+ * @param {string} error 
+ * @param {Object} deepLogging 
+ */
 function logger(logObj, actor, action, target, error, deepLogging) {
     if (typeof logObj == 'object') {
         if (logObj.hasOwnProperty('deepLogging')) {
@@ -27,6 +38,7 @@ function logger(logObj, actor, action, target, error, deepLogging) {
     }
 }
 
+//might start using this... it would be nice not to have to define a durn log object all the durn time!
 function newLogger() {
 
     const logger = {

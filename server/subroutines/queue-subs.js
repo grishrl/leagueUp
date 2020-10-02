@@ -1,14 +1,27 @@
+/**
+ *  Queue subroutines - methods for adminsitering the queues
+ * 
+ * reviewed: 10-1-2020
+ * reviewer: wraith
+ */
+
 const Admin = require('../models/admin-models');
 const util = require('../utils');
 const logger = require('./sys-logging-subs').logger;
 
-//method to remove pending queue items via its object ID
+
+/**
+ * @name cleanUpPendingQueue
+ * @function
+ * @description method to remove provided queue item
+ * @param {Object} item 
+ */
 function cleanUpPendingQueue(item) {
     //log object
     let logObj = {};
     logObj.actor = 'SYSTEM SUBROUTINE cleanUpPendingQueue';
     logObj.action = ' remove pending queue item ';
-    logObj.target = item;
+    logObj.target = JSON.stringify(util.objectify(item));
     logObj.logLevel = 'STD';
     logObj.timeStamp = new Date().getTime();
     Admin.PendingQueue.findByIdAndDelete(item._id).then((deleted) => {
@@ -20,8 +33,15 @@ function cleanUpPendingQueue(item) {
     })
 }
 
-//method to remove pending queue items via its object ID
-function cleanUpAvatarPendingQueue(userId, fileName) {
+//
+/**
+ * @name removePendingAvatarQueue
+ * @function
+ * @description pending avatar items via user id and file name
+ * @param {string} userId 
+ * @param {string} fileName 
+ */
+function removePendingAvatarQueue(userId, fileName) {
     //log object
     let logObj = {};
     logObj.actor = 'SYSTEM SUBROUTINE cleanUpPendingQueue';
@@ -43,13 +63,20 @@ function cleanUpAvatarPendingQueue(userId, fileName) {
     })
 }
 
-//removes a pending memeber queue item of given team and username
-//teamname:string display name of team, username: string battle tag of the user
-function cleanUpPendingQueueTeamnameUsername(teamId, teamname, userId, username) {
+/**
+ * @name removePendingByTeamAndUser
+ * @function
+ * @description removes a pending memeber queue item of given team and username
+ * @param {string} teamId 
+ * @param {string} teamname 
+ * @param {string} userId 
+ * @param {string} username 
+ */
+function removePendingByTeamAndUser(teamId, teamname, userId, username) {
 
     //log object
     let logObj = {};
-    logObj.actor = 'SYSTEM SUBROUTINE cleanUpPendingQueueTeamnameUsername';
+    logObj.actor = 'SYSTEM SUBROUTINE removePendingByTeamAndUser';
     logObj.action = ' remove pending queue item ';
     logObj.target = teamname + ' : ', username;
     logObj.logLevel = 'STD';
@@ -90,8 +117,12 @@ function cleanUpPendingQueueTeamnameUsername(teamId, teamname, userId, username)
 }
 
 
-//removes pending member queues by userneame
-//username: battle tag of user
+/**
+ * @name removePendingQueueByUsername
+ * @function
+ * @description removes pending member queues by userneame
+ * @param {string} username 
+ */
 function removePendingQueueByUsername(username) {
     //find all pending member queues by this user name
     Admin.PendingQueue.find({ userName: username }).then((toDelete) => {
@@ -107,9 +138,18 @@ function removePendingQueueByUsername(username) {
     })
 }
 
-//this method adds a specified user to the specified team
+//
 //teamLower:string - team name as lower case;
 //user:string battle tag of user
+/**
+ * @name addToPendingTeamMemberQueue
+ * @function
+ * @description creates pending member queue for a specified user to the specified team
+ * @param {string} teamId 
+ * @param {string} teamLower 
+ * @param {string} userId 
+ * @param {string} user 
+ */
 function addToPendingTeamMemberQueue(teamId, teamLower, userId, user) {
     //log object
     let logObj = {};
@@ -141,8 +181,8 @@ function addToPendingTeamMemberQueue(teamId, teamLower, userId, user) {
 
 module.exports = {
     removePendingQueue: cleanUpPendingQueue,
-    removePendingByTeamAndUser: cleanUpPendingQueueTeamnameUsername,
+    removePendingByTeamAndUser: removePendingByTeamAndUser,
     addToPendingTeamMemberQueue: addToPendingTeamMemberQueue,
     removePendingQueueByUsername: removePendingQueueByUsername,
-    removePendingAvatarQueue: cleanUpAvatarPendingQueue
+    removePendingAvatarQueue: removePendingAvatarQueue
 }

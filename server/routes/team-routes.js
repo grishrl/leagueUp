@@ -188,7 +188,7 @@ router.post('/delete', passport.authenticate('jwt', {
     }).then((deletedTeam) => {
         if (deletedTeam) {
             UserSub.clearUsersTeam(deletedTeam.teamMembers);
-            TeamSub.updateTeamMatches(deletedTeam.toObject());
+            TeamSub.markTeamWithdrawnInMatches(deletedTeam.toObject());
             DivSub.updateTeamNameDivision(deletedTeam.teamName, deletedTeam.teamName + ' (withdrawn)');
             //TODO: division sub to handle removing team from the division
             res.status(200).send(util.returnMessaging(path, 'Team has been deleted', false, false, null, logObj));
@@ -275,7 +275,7 @@ router.post('/create', passport.authenticate('jwt', {
                     new Team(
                         recievedTeam
                     ).save().then((newTeam) => {
-                        TeamSub.updateTeamMmr(newTeam.toObject());
+                        TeamSub.updateTeamMmrAsynch(newTeam.toObject());
                         logObj.target = " " + newTeam.teamName;
                         res.status(200).send(util.returnMessaging(path, "Team created successfully", false, newTeam, null, logObj));
                         //this may need some refactoring if we add the ability for an admin to create a team!

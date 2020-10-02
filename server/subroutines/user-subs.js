@@ -1,3 +1,9 @@
+/**
+ * User Subs: subroutines that can be called that we just want the work done; generally not waiting on their reply before the route replys or server continues work
+ * 
+ * reviewed: 10-1-2020
+ * reviewer: wraith
+ */
 const util = require('../utils');
 const User = require('../models/user-models');
 const TeamSubs = require('./team-subs');
@@ -8,21 +14,41 @@ const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 
 //sub to handle complete removal of user from data locations:
 //pendingqueue, teams - pending members and members.
+
+/**
+ * @name scrubUser
+ * @function
+ * @description removes given user name from various locations; pending member queue and any team objects
+ * 
+ * @param {string} username string: username
+ */
 function scrubUser(username) {
     QueueSubs.removePendingQueueByUsername(username);
     TeamSubs.scrubUserFromTeams(username);
 }
 
-//when a team is deleted the users must have the team info removed from their object.
-//accepts an array of users (those removed) and updates their object to be empty
+
+/**
+ * @name clearUsersTeam
+ * @function
+ * @description removes team data from provided list of users
+ * 
+ * @param {Array.<User>} usersRemoved : Array of user objects
+ */
 function clearUsersTeam(usersRemoved) {
     usersRemoved.forEach(function(user) {
         clearUserTeam(user);
     });
 }
 
-//accept user: object
-// remove all team info from the provided user object
+
+/**
+ * @name clearUserTeam
+ * @function 
+ * @description remove all team info from the provided user object
+ * 
+ * @param {User} user : User object
+ */
 function clearUserTeam(user) {
     let logObj = {};
     logObj.actor = 'SYSTEM; clearUserTeam ';
@@ -80,21 +106,40 @@ function clearUserTeam(user) {
 
 }
 
-//update an array of users team info
-function upsertUsersTeamName(users, team, teamid) {
+/**
+ * @name upsertUsersTeamName
+ * @function 
+ * @description update an array of users team info with provided team info
+ * 
+ * @param {Array.<User>} users Array of user objects to update
+ * @param {string} teamName string name of team
+ * @param {string} teamid string Id of team
+ */
+function upsertUsersTeamName(users, teamName, teamid) {
     users.forEach(function(user) {
-        upsertUserTeamName(user, team, teamid);
+        upsertUserTeamName(user, teamName, teamid);
     });
 }
 
-//update a users team info
-function upsertUserTeamName(user, team, teamid) {
+
+/**
+ * @name upsertUserTeamName
+ * @function 
+ * @description update provided users team info to that provided
+ * 
+ * @param {User} user user object to modify
+ * @param {string} teamName team name
+ * @param {string} teamid team id
+ */
+function upsertUserTeamName(user, teamName, teamid) {
+
     let logObj = {};
     logObj.actor = 'SYSTEM; upsertUserTeamName ';
     logObj.action = 'Update users team name in team';
     logObj.target = user.displayName;
     logObj.timeStamp = new Date().getTime();
     logObj.logLevel = 'STD';
+    //get the season value for updating user history
     SeasonInfoCommon.getSeasonInfo().then(
         (rep) => {
             let seasonNum = rep.value;
@@ -102,20 +147,21 @@ function upsertUserTeamName(user, team, teamid) {
                 displayName: user.displayName
             }).then((foundUser) => {
                 if (foundUser) {
-                    foundUser.teamName = team;
+                    //update user team info and history
+                    foundUser.teamName = teamName;
                     foundUser.teamId = teamid;
                     if (foundUser.history) {
                         foundUser.history.push({
                             timestamp: Date.now(),
                             action: 'Joined team',
-                            target: team,
+                            target: teamName,
                             season: seasonNum
                         });
                     } else {
                         foundUser.history = [{
                             timestamp: Date.now(),
                             action: 'Joined team',
-                            target: team,
+                            target: teamName,
                             season: seasonNum
                         }];
                     }
@@ -141,13 +187,22 @@ function upsertUserTeamName(user, team, teamid) {
 
 }
 
+/**
+ * @name setCaptain
+ * @function 
+ * @description sets given user as captain true in user object
+ * 
+ * @param {string} user user displayName
+ */
 function setCaptain(user) {
+
     let logObj = {};
-    logObj.actor = 'SYSTEM; toggleCaptain ';
+    logObj.actor = 'SYSTEM; set captain ';
     logObj.action = 'set Team Captain Status';
     logObj.target = user;
     logObj.timeStamp = new Date().getTime();
     logObj.logLevel = 'STD';
+
     User.findOne({
         displayName: user
     }).then((foundUser) => {
@@ -162,7 +217,6 @@ function setCaptain(user) {
             logger(logObj);
         });
 
-
     }, (err) => {
         logObj.logLevel = 'ERROR';
         logObj.error = err;
@@ -170,9 +224,16 @@ function setCaptain(user) {
     });
 }
 
+/**
+ * @name removeCaptain
+ * @function 
+ * @description sets given user as captain true in user object
+ * 
+ * @param {string} user 
+ */
 function removeCaptain(user) {
     let logObj = {};
-    logObj.actor = 'SYSTEM; toggleCaptain ';
+    logObj.actor = 'SYSTEM; remove captain ';
     logObj.action = 'remove Team Captain Status';
     logObj.target = user;
     logObj.timeStamp = new Date().getTime();
@@ -199,55 +260,22 @@ function removeCaptain(user) {
     });
 }
 
-
-function toggleCaptain(user) {
-    let logObj = {};
-    logObj.actor = 'SYSTEM; toggleCaptain ';
-    logObj.action = 'Toggle Team Captain Status';
-    logObj.target = user;
-    logObj.timeStamp = new Date().getTime();
-    logObj.logLevel = 'STD';
-    User.findOne({ displayName: user }).then((foundUser) => {
-        //get the value in teamInfo, is captain, will be boolean if it's been set before
-        let changed = false;
-        let isCap = util.returnByPath(foundUser.toObject(), 'isCaptain');
-        //if this is a boolean value, toggle it
-        if (typeof isCap == 'boolean') {
-            changed = true;
-            foundUser.isCaptain = !foundUser.isCaptain;
-        } else {
-            //iF the iscaptain didnt exist would be false by default, turn it on
-            if (!util.returnBoolByPath(foundUser.toObject(), 'isCaptain')) {
-                changed = true;
-                foundUser.isCaptain = true;
-            }
-        }
-        if (changed) {
-            foundUser.save().then((save) => {
-                logger(logObj);
-            }, (err) => {
-                logObj.logLevel = 'ERROR';
-                logObj.error = err;
-                logger(logObj);
-            });
-        }
-
-    }, (err) => {
-        logObj.logLevel = 'ERROR';
-        logObj.error = err;
-        logger(logObj);
-    });
-}
-
-function togglePendingTeam(user) {
+/**
+ * @name togglePendingTeam
+ * @function 
+ * @description inverts provided users pending team flag
+ * 
+ * @param {string} userName user display name
+ */
+function togglePendingTeam(userName) {
     let logObj = {};
     logObj.actor = 'SYSTEM; togglePendingTeam ';
     logObj.action = 'Toggle Pending Team';
-    logObj.target = user;
+    logObj.target = userName;
     logObj.timeStamp = new Date().getTime();
     logObj.logLevel = 'STD';
     User.findOne({
-        displayName: user
+        displayName: userName
     }).then((foundUser) => {
         //get the value in teamInfo, is captain, will be boolean if it's been set before
         let changed = false;
@@ -279,6 +307,14 @@ function togglePendingTeam(user) {
     });
 }
 
+/**
+ * @name updateUserName
+ * @function
+ * @description update the given user name to the provided username; 
+ * 10 / 2020 does this need to update pending queues ??
+ * @param {string} id user Id to change
+ * @param {string} newUserName new displayname
+ */
 async function updateUserName(id, newUserName) {
     let user = await User.findById(id).then(
         (foundUser) => {
@@ -355,7 +391,6 @@ module.exports = {
     scrubUser: scrubUser,
     clearUsersTeam: clearUsersTeam,
     upsertUsersTeamName: upsertUsersTeamName,
-    toggleCaptain: toggleCaptain,
     setCaptain: setCaptain,
     removeCaptain: removeCaptain,
     togglePendingTeam: togglePendingTeam,

@@ -51,7 +51,7 @@ async function removeTeamMembers(lower, members, captRestrict) {
                 UserSub.clearUsersTeam(usersRemoved);
                 return foundTeam.save().then((savedTeam) => {
                     if (savedTeam) {
-                        TeamSub.updateTeamMmr(foundTeam);
+                        TeamSub.updateTeamMmrAsynch(foundTeam);
                         returnObject.message = "Users removed from team";
                         returnObject.foundTeam = savedTeam;
                         return returnObject;

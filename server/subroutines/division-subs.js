@@ -1,9 +1,22 @@
+/**
+ * Division Subs: subroutines that can be called that we just want the work done; generally not waiting on their reply before the route replys or server continues work
+ * 
+ * reviewed: 10-1-2020
+ * reviewer: wraith
+ */
 const Division = require('../models/division-models');
 const util = require('../utils');
 const logger = require('../subroutines/sys-logging-subs').logger;
 
 
-//this method is for adding any non-regular teams into the particpants list of the cup divisions
+/**
+ * @name cupDivisionAggregator
+ * @function
+ * @description this method is for adding any non-regular teams into the particpants list of the cup divisions
+ * 
+ * @param {Array.<Object>} teams 
+ * @param {Division} division 
+ */
 async function cupDivisionAggregator(teams, division) {
 
     let dbDivision = await Division.findOne({ divisionConcat: division }).then(
@@ -12,7 +25,6 @@ async function cupDivisionAggregator(teams, division) {
             return null;
         }
     )
-
 
     if (dbDivision) {
         let dbDivisionObject = dbDivision.toObject();
@@ -37,7 +49,14 @@ async function cupDivisionAggregator(teams, division) {
 }
 
 
-//updates a teams name in the division when the team name has been changed
+/**
+ * @name updateTeamNameDivision
+ * @function
+ * @description updates a teams name in the division when the team name has been changed
+ * 
+ * @param {string} oldteamName old team name
+ * @param {string} newteamName new team name
+ */
 function updateTeamNameDivision(oldteamName, newteamName) {
 
     //log object
@@ -75,7 +94,7 @@ function updateTeamNameDivision(oldteamName, newteamName) {
     })
 }
 
-//removes team from division
+//removes team from division 10-2-2020 ... unused... sus
 function removeTeamFromDivision(team) {
     //log object
     let logObj = {};
