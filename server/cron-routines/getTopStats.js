@@ -53,7 +53,11 @@ const stats = [
     'spell_damage'
 ];
 
-//get and save the top stats from hero profile...
+/**
+ * @name getTopStats
+ * @function
+ * @description get and save the top stats from hero profile...
+ */
 getTopStats = async function() {
 
     //create an array to hold promises of returns from hp api

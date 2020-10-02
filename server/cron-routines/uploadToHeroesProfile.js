@@ -23,7 +23,10 @@ const NONSEAON = 'nonSeasonalTourn';
 const location = 'uploadToHeroesProfileHandler'
 
 /**
- *   Executes routine to submit replays to heroes profile
+ * @name postToHotsProfileHandler
+ * @function
+ * @description Executes routine to submit replays to heroes profile
+ * @param {number} limNum 
  */
 async function postToHotsProfileHandler(limNum) {
 
@@ -196,11 +199,13 @@ function promiseQueue() {
 }
 
 /**
- *  
- * @param {*} divisions -> array of division objects
- * @param {*} matchCopy -> match object (objectified)
- * @param {*} match -> match object mongoose
- * @param {*} logObj -> logging object
+ * @name sendToHp
+ * @function
+ * @description sends replay files to HP API
+ * @param {Array<Object>} divisions -> array of division objects
+ * @param {Object} matchCopy -> match object (objectified)
+ * @param {Match} match -> match object mongoose
+ * @param {Object} logObj -> logging object
  */
 async function sendToHp(divisions, matchCopy, match, logObj) {
     let postObj = {};
@@ -371,8 +376,10 @@ async function sendToHp(divisions, matchCopy, match, logObj) {
 }
 
 /**
- * check the heroes profile post object and make sure that we have some values in each or just dont send it
- * @param {*} postObj 
+ * @name screenPostObject
+ * @function
+ * @description check the heroes profile post object and make sure that we have some values in each or just dont send it
+ * @param {Object} postObj 
  */
 function screenPostObject(postObj) {
     let retBool = true;
@@ -392,9 +399,11 @@ function screenPostObject(postObj) {
 }
 
 /**
- * accept the list of divisions and division concat name and return the division name
- * @param {*} divisionList 
- * @param {*} divConcat 
+ * @name getDivisionNameFromConcat
+ * @function
+ * @description return the division name of the accept the list of division concat name from divisions list
+ * @param {Array.<Object>} divisionList 
+ * @param {string} divConcat 
  */
 function getDivisionNameFromConcat(divisionList, divConcat) {
     let returnDiv = '';
@@ -407,9 +416,11 @@ function getDivisionNameFromConcat(divisionList, divConcat) {
 }
 
 /**
- * determine what match type this; SIMPLE, NONSEAON, or GRANDFINAL and return the division info for each time that goes with each value
- * @param {*} match 
- * @param {*} divisions 
+ * @name determineDivision
+ * @function
+ * @description determine what match type this; SIMPLE, NONSEAON, or GRANDFINAL and return the division info for each time that goes with each value
+ * @param {Object} match 
+ * @param {Array.<Object>} divisions 
  */
 async function determineDivision(match, divisions) {
     let divisionReturn = {};
@@ -450,9 +461,12 @@ async function determineDivision(match, divisions) {
     return divisionReturn;
 }
 /**
- * take division list and a teamname and return the appropriate division name for that team
- * @param {*} divisionList 
- * @param {*} teamName 
+ * @name
+ * @function
+ * @description return the appropriate division name for provided team
+ * 
+ * @param {Array.<Object>} divisionList 
+ * @param {string} teamName 
  */
 function getDivisionByTeamName(divisionList, teamName) {
     return _.find(divisionList, function(v) {

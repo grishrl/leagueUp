@@ -17,7 +17,9 @@ const varianceWindow = 15;
 const compLevelVariance = 1;
 
 /**
- * This method wraps and kicks off the process to match free agents to free agents to possibly create a team
+ * @name suggestUserToUser
+ * @function
+ * @description kicks off the process to match free agents to free agents to possibly create a team
  */
 async function suggestUserToUser() {
 
@@ -48,8 +50,13 @@ async function suggestUserToUser() {
     }
 }
 
-//return me an empty user query object with some base crap i want to look for
-function baseUserQuery() {
+
+/**
+ * @name returnBaseUserQuery
+ * @function
+ * @description return an empty user query object with some query params
+ */
+function returnBaseUserQuery() {
     return {
         $and: [{
                 $or: [{
@@ -73,10 +80,11 @@ function baseUserQuery() {
     };
 }
 /**
- * this method seeks to match a given free agent to other free agents that have similar time availability; there could possibly be other factors to consider 
- * but for people making random connections the time is the factor ... at least as i judge it
+ * @name matchUsersByTime
+ * @function
+ * @description seeks to match a given free agent to other free agents that have similar time availability, competitive level, mmr etc...
  * 
- * @param {*} userObj - user object
+ * @param {Object} userObj - user object
  */
 async function matchUsersByTime(userObj) {
     // let compLevel = teamObj.competitiveLevel;
@@ -91,16 +99,16 @@ async function matchUsersByTime(userObj) {
         $and: []
     };
 
-    let dayOr = cleanOr();
+    let dayOr = returnCleanOr();
 
     //build a query out the given users availabilities
     _.forEach(userAvail, (val, key) => {
 
         if (val.available) {
 
-            let query = baseUserQuery();
+            let query = returnBaseUserQuery();
 
-            let endAndStart = cleanAnd();
+            let endAndStart = returnCleanAnd();
 
             let timeAnd = {
                 $and: []
@@ -260,11 +268,13 @@ async function matchUsersByTime(userObj) {
 }
 
 /**
- * At this point we have matched two users on times; lets try and solidify that match using witchy math that is all arbitrary by me.
+ * @name solidifyUserMatch
+ * @function
+ * @description At this point we have matched two users on times; lets try and solidify that match using witchy math that is all arbitrary by me.
  * 
- * @param {*} userObj - given user object; 
- * @param {*} candidateId - candidate match user Id
- * @param {*} hits - current 'hits' or matches made (at this point this is the number of schedule times they have aligned)
+ * @param {Object} userObj - given user object; 
+ * @param {string} candidateId - candidate match user Id
+ * @param {number} hits - current 'hits' or matches made (at this point this is the number of schedule times they have aligned)
  */
 async function solidifyUserMatch(userObj, candidateId, hits) {
 
@@ -341,7 +351,9 @@ async function solidifyUserMatch(userObj, candidateId, hits) {
 }
 
 /**
- * This method wraps and kicks off the process to match free agents to an existing team - sends message to captain and players when matches are made
+ * @name suggestUserToTeam
+ * @function
+ * @description kicks off the process to match free agents to an existing team - sends message to captain and players when matches are made
  */
 async function suggestUserToTeam() {
 
@@ -381,21 +393,34 @@ async function suggestUserToTeam() {
     }
 }
 
-function cleanAnd() {
+/**
+ * @name returnCleanAnd
+ * @function
+ * @description returns clean and query
+ */
+function returnCleanAnd() {
     return { $and: [] };
 }
 
-function cleanOr() {
+/**
+ * @name returnCleanOr
+ * @function
+ * @description returns clean or query
+ */
+function returnCleanOr() {
     return {
         $or: []
     };
 }
 
 /**
- * attempts to match free agents to teams
+ * @name findFreeAgentsForTeam
+ * @function
+ * @description attempts to match free agents to teams
  * 
- * @param {*} team 
- * @param {*} teamObj 
+ * 
+ * @param {Team} team 
+ * @param {Object} teamObj 
  */
 async function findFreeAgentsForTeam(team, teamObj) {
 
@@ -408,7 +433,7 @@ async function findFreeAgentsForTeam(team, teamObj) {
         $and: []
     };
 
-    let dayOr = cleanOr();
+    let dayOr = returnCleanOr();
 
     //go through the team times to find users who have matching times
     _.forEach(teamAvail, (val, key) => {
@@ -421,7 +446,7 @@ async function findFreeAgentsForTeam(team, teamObj) {
                 }]
             };
 
-            let endAndStart = cleanAnd();
+            let endAndStart = returnCleanAnd();
 
             let timeAnd = {
                 $and: []
@@ -601,7 +626,14 @@ async function findFreeAgentsForTeam(team, teamObj) {
     return true;
 
 }
-
+/**
+ * @name teamMatchConfidence
+ * @function
+ * @description attempts to determine match strength of team and players
+ * @param {Team} team 
+ * @param {string} candidateId 
+ * @param {number} hits 
+ */
 async function teamMatchConfidence(team, candidateId, hits) {
 
     let confidenceLevel = 3;
@@ -674,7 +706,12 @@ async function teamMatchConfidence(team, candidateId, hits) {
 
 }
 
-// run through teams and add the zeroGMT time to the teams
+
+/**
+ * @name zeroTeamTimes
+ * @function
+ * @description run through teams and add the zeroGMT time to the teams
+ */
 async function zeroTeamTimes() {
 
     let teams = await Team.find().then(
@@ -731,7 +768,11 @@ async function zeroTeamTimes() {
 
 }
 
-// run through teams and add the zeroGMT time to their availabilities
+/**
+ * @name zeroUserTimes
+ * @function
+ * @description run through users and add the zeroGMT time to their availabilities
+ */
 async function zeroUserTimes() {
 
     let teams = await User.find().then(
