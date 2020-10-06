@@ -182,7 +182,6 @@ export class AuthService {
 
   //destroy all auth
   destroyAuth(route){
-    // let url = 'http://localhost:3000/auth/logout';
     let url = '/auth/logout';
 
 

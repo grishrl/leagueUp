@@ -16,6 +16,14 @@ export class HttpServiceService {
     if(showNotification){
       this.notificationService.subj_notification.next('Working..');
     }
+    if(url.indexOf('api')==-1){
+      if(url.charAt(0) == '/'){
+        url = `api${url}`;
+      }else{
+        url = `api/${url}`;
+      }
+
+    }
     return this.http.post(url, payload).pipe(
             map(
               res => {
@@ -42,7 +50,13 @@ export class HttpServiceService {
     /*
     [{parameter:query}]
     */
-
+    if(url.indexOf('api')==-1){
+      if(url.charAt(0) == '/'){
+        url = `api${url}`;
+      }else{
+        url = `api/${url}`;
+      }
+    }
    if(parameters){
      if(Array.isArray(parameters)){
            parameters.forEach((element, index) => {
@@ -95,6 +109,13 @@ export class HttpServiceService {
     /*
     [{parameter:query}]
     */
+       if (url.indexOf("api") == -1) {
+         if (url.charAt(0) == "/") {
+           url = `api${url}`;
+         } else {
+           url = `api/${url}`;
+         }
+       }
     parameters.forEach((element, index) => {
       let key = Object.keys(element);
       if (index == 0) {
