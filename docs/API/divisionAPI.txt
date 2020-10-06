@@ -5,25 +5,25 @@ Auth:
 Params: 
 Return: 
 
-Route: /division/get
+Route: api/division/get
 Method: get
 Auth: Open
 Params: division (string) division concat name
 Return: Division object
 
-Route: /division/get/by/teamname
+Route: api/division/get/by/teamname
 Method: get
 Auth: Open
 Params: teamName (string)
 Return: Division object which team belongs to
 
-Route: /division/get/all
+Route: api/division/get/all
 Method: get
 Auth: Open
 Params: none
 Return: Returns all divisions
 
-Route: /division/get/any
+Route: api/division/get/any
 Method: get
 Auth: Open
 Params: divInfo (string)

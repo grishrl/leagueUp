@@ -5,71 +5,71 @@ Auth:
 Params: 
 Return: 
 
-Route: /admin/match/update
+Route: api/admin/match/update
 Method: POST
-Auth: Auth / Match Permission
+Auth: Auth api/ Match Permission
 Params: JSON Body; match: match object
 Return: Updates match in database
 
-Route: /admin/match/set/schedule/deadline
+Route: api/admin/match/set/schedule/deadline
 Description: Updates all matches in provided division to have a schedule deadline of provided 
 date (+7 days on iteration) up to the week provided
 Method: POST
-Auth: Auth / Match Permission
+Auth: Auth api/ Match Permission
 Params: JSON Body; division: string, date: string, endWeek:number
 Return: null
 
-Route: /admin/match/deletereplay
+Route: api/admin/match/deletereplay
 Description: deletes the replay from the provided match at the provided replay prop; also should delete from hero profile
 Method: POST
-Auth: Auth / Match Permission
+Auth: Auth api/ Match Permission
 Params: JSON Body; matchId: string, replayProp: string
 Return: Modified match
 
-Route: /admin/match/uploadreplay
+Route: api/admin/match/uploadreplay
 Description: uploads to s3 the provided replay, parses and associates with match
-Auth: Auth / Match Permission
+Auth: Auth api/ Match Permission
 Params: Multipart Form; 
 Return: Modified match
 
-Route: /admin/match/uploadreplay
+Route: api/admin/match/uploadreplay
 Description: uploads to s3 the provided replay, parses and associates with match
-Auth: Auth / Match Permission
+Auth: Auth api/ Match Permission
 Params: Multipart Form; 
 Return: Modified match
 
-Route: /admin/match/create/grandfinal
+Route: api/admin/match/create/grandfinal
 Description: creates a grand final match with the provided information
-Auth: Auth / Match Permission
+Auth: Auth api/ Match Permission
 Params: JSON Body - the body of this request is a match object
 Return: Saved match
 
-Route: /admin/match/delete/grandfinal
+Route: api/admin/match/delete/grandfinal
 Description: deletes a grand final match that matches the provided information
-Auth: Auth / Match Permission
+Auth: Auth api/ Match Permission
 Params: JSON Body - matchId : string 
 Return: deleted match
 
-Route: /admin/match/create/stream/link
+Route: api/admin/match/create/stream/link
 Description: creates a match object for a home page steam event
-Auth: Auth / Match Permission
+Auth: Auth api/ Match Permission
 Params: JSON Body - the body of this request is a match object
 Return: created match
 
-Route: /admin/match/delete/stream/link
+Route: api/admin/match/delete/stream/link
 Description: deletes a match object for a home page steam event
-Auth: Auth / Match Permission
+Auth: Auth api/ Match Permission
 Params: JSON Body - matchId : string
 Return: deleted match
 
-Route: /admin/season/reset
+Route: api/admin/season/reset
 Description: Archives all the teams and divisions for a season and resets team registration
-Auth: Auth / Match Permission
+Auth: Auth api/ Match Permission
 Params: JSON Body - password : string
 Return: Success message
 
-Route: /admin/season/reset
+Route: api/admin/season/reset
 Description: Archives all the teams and divisions for a season and resets team registration
-Auth: Auth / Match Permission
+Auth: Auth api/ Match Permission
 Params: JSON Body - password : string
 Return: Success message

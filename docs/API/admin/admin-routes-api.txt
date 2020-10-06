@@ -5,13 +5,13 @@ Auth:
 Params: 
 Return: 
 
-Route: /admin/upsertSeasonInfo
+Route: api/admin/upsertSeasonInfo
 Method: POST
-Auth: Auth / Schedule Generator Permission
+Auth: Auth api/ Schedule Generator Permission
 Params: JSON Body; body is the object for the season info object
 Return: Upserts a season info
 
-Route: /admin/getSeasonInfo
+Route: api/admin/getSeasonInfo
 Method: GET
 Auth: Open
 Params: season: string
