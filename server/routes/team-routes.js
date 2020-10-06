@@ -15,7 +15,7 @@ const uploadTeamLogo = require('../methods/teamLogoUpload').uploadTeamLogo;
 const Stats = require('../models/stats-model');
 const logger = require('../subroutines/sys-logging-subs').logger;
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
-const TeamMethods = require('../methods/teamCommon');
+const TeamMethods = require('../methods/team/teamCommon');
 
 /*
 routes for team management --
@@ -707,7 +707,7 @@ router.post('/uploadLogo', passport.authenticate('jwt', {
     logObj.target = teamName;
     logObj.logLevel = 'STD';
 
-    uploadTeamLogo(path, dataURI, teamName).then(rep => {
+    uploadTeamLogo(dataURI, teamName).then(rep => {
             res.status(200).send(util.returnMessaging(path, "Image Uploaded.", false, rep.eo, null, logObj))
         },
         err => {

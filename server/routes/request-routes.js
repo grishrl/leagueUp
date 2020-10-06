@@ -10,7 +10,7 @@ const Team = require("../models/team-models");
 const passport = require("passport");
 const messageSub = require('../subroutines/message-subs');
 const Message = require('../models/message-models');
-const { getCptId } = require('../methods/teamCommon');
+const { returnIdFromDisplayName } = require('../methods/profileMethods');
 
 
 router.post('/team/join', passport.authenticate('jwt', {
@@ -35,7 +35,7 @@ router.post('/team/join', passport.authenticate('jwt', {
         found => {
             if (found) {
 
-                getCptId(found.captain).then(
+                returnIdFromDisplayName(found.captain).then(
                     foundCaptain => {
                         if (foundCaptain) {
                             let msg = {};
@@ -386,7 +386,7 @@ router.post('/user/join/response', passport.authenticate('jwt', {
                                     UserSub.togglePendingTeam(foundUser.displayName);
                                     QueueSub.addToPendingTeamMemberQueue(util.returnIdString(foundTeam._id), foundTeam.teamName_lower, util.returnIdString(foundUser._id), foundUser.displayName);
 
-                                    getCptId(foundTeam.captain).then(
+                                    returnIdFromDisplayName(foundTeam.captain).then(
                                         cpt => {
                                             let msg = {};
                                             msg.sender = foundUser._id;

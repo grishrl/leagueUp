@@ -1,17 +1,29 @@
+/**
+ * assignCaptain - method to dry the assigning of new captain from various requests
+ */
 const Team = require('../../models/team-models');
 const UserSub = require('../../subroutines/user-subs');
 const util = require('../../utils');
 
+/**
+ * @name assignNewCaptain
+ * @function
+ * @description updates team captain to the new captain, if requestor has rights to make that change
+ * @param {string} teamName team name
+ * @param {string} newCaptName display name of new captain
+ * @param {string} requestor display name of requestor
+ */
 async function assignNewCaptain(teamName, newCaptName, requestor) {
 
     let returnObject = {};
 
     let awaitReturnObject = await Team.findOne({
-        teamName_lower: teamName
+        teamName_lower: teamName.toLowerCase()
     }).then(
         (foundTeam) => {
             if (foundTeam) {
                 let foundTeamObj = util.objectify(foundTeam);
+                //make sure if the requestor is aC then they can not steal the team
                 if (requestor) {
                     if (foundTeamObj.assistantCaptain && foundTeamObj.assistantCaptain.indexOf(requestor) > -1) {
                         returnObject.logLevel = 'ERROR';

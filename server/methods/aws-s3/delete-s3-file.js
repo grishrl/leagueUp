@@ -1,3 +1,6 @@
+/**
+ * s3deletefile method
+ */
 const AWS = require('aws-sdk');
 const logger = require('../../subroutines/sys-logging-subs').logger;
 
@@ -8,6 +11,14 @@ AWS.config.update({
     region: process.env.S3region
 });
 
+/**
+ * @name s3deleteFile
+ * @function
+ * @description deletes file from s3 matching the bucket, folder, filename
+ * @param {string} bucket 
+ * @param {string} folder 
+ * @param {string} fileName 
+ */
 async function s3deleteFile(bucket, folder, fileName) {
 
     const s3Bucket = new AWS.S3({

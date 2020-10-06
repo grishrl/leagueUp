@@ -66,13 +66,6 @@ const userSchema = new Schema({
     "verifiedRankHistory": [rankSchema]
 });
 
-
-/**
- * {
- *  <seasonNumber>:['replays']
- * }
- */
-
 const User = mongoose.model('user', userSchema);
 // const MiniUser = mongoose.model('miniUser', miniUser);
 

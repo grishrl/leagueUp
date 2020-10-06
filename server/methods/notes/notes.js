@@ -1,5 +1,19 @@
+/**
+ * NOTES - CRUD
+ */
+
 const Notes = require('../../models/notes-models');
 
+/**
+ * @name createNote
+ * @function
+ * @description creates a new note in notes collection
+ * @param {Object} param0 
+ * @param {string} param0.authorId 
+ * @param {string} param0.subjectId
+ * @param {string} param0.note
+ * @param {string} param0.timeStamp 
+ */
 function createNote({ authorId, subjectId, note, timeStamp }) {
 
     if (timeStamp) {
@@ -21,6 +35,12 @@ function createNote({ authorId, subjectId, note, timeStamp }) {
     }
 }
 
+/**
+ * @name deleteNote
+ * @function
+ * @description deletes note by id
+ * @param {string} noteId 
+ */
 function deleteNote(noteId) {
     return Notes.findByIdAndDelete(noteId).then(
         deleted => {
@@ -32,6 +52,12 @@ function deleteNote(noteId) {
     )
 }
 
+/**
+ * @name getNotes
+ * @function
+ * @description returns notes on the specified subject id
+ * @param {string} subjectId 
+ */
 function getNotes(subjectId) {
     return Notes.find({ subjectId: subjectId }).then(
         found => {
@@ -43,6 +69,12 @@ function getNotes(subjectId) {
     )
 }
 
+/**
+ * @name deleteAllNotesWhere
+ * @function
+ * @description deletes all notes that have specified subject id
+ * @param {string} id 
+ */
 function deleteAllNotesWhere(id) {
     return Notes.deleteMany({ subjectId: id }).then(
         deleted => {

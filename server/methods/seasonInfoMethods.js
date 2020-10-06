@@ -1,6 +1,18 @@
+/**
+ * Season Info Methods
+ * 
+ * reviewed:10-5-2020
+ * reviewer:wraith
+ */
+
 const System = require("../models/system-models");
 
-
+/**
+ * @name getSeasonInfo
+ * @function
+ * @description returns the current season info or returns a specified seasons info
+ * @param {number} [season] - season to return info for
+ */
 async function getSeasonInfo(season) {
     let query = {};
     if (season) {

@@ -1,3 +1,10 @@
+/**
+ * MMR Methods - methods for getting MMR from providers; this is now only for Heroes Profile
+ * 
+ * reviewed:10-5-2020
+ * reviewer:wraith
+ * 
+ */
 const axios = require('axios');
 const https = require('https');
 const util = require('../utils');
@@ -5,8 +12,12 @@ const hpAPI = require('./heroesProfileAPI');
 
 const location = 'mmrMethods';
 
-//helper function to return compatible user name for hotslogs
-//replaces the # in a battle tag with _
+/**
+ * @name
+ * @function
+ * @description helper function to return compatible user name for hotslogs replaces the # in a battle tag with _
+ * @param {string} username 
+ */
 function routeFriendlyUsername(username) {
     if (username != null && username != undefined) {
         return username.replace('#', '_');
@@ -17,7 +28,13 @@ function routeFriendlyUsername(username) {
 
 
 let hotslogsURL = 'https://api.hotslogs.com/Public/Players/1/';
-//method to get back user mmr from hotslogs using their mmr
+
+/**
+ * @name hotslogs
+ * @function
+ * @description method to get back user mmr from hotslogs using their battletag
+ * @param {string} btag 
+ */
 async function hotslogs(btag) {
     let val = 0;
     let id = null;
@@ -50,6 +67,12 @@ async function hotslogs(btag) {
     return { playerId: id, mmr: val };
 };
 
+/**
+ * @name heroesProfile
+ * @function
+ * @description method to get back user mmr from heroes profile using their battletag
+ * @param {string} btag 
+ */
 async function heroesProfile(btag) {
     let val = null;
 
@@ -132,6 +155,12 @@ async function heroesProfile(btag) {
     return val;
 }
 
+/**
+ * @name comboMmr
+ * @function
+ * @description returns mmr from all viable methods for battle tag
+ * @param {string} btag 
+ */
 async function comboMmr(btag) {
 
     let hp = await heroesProfile(btag);

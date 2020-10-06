@@ -1,13 +1,21 @@
+/**
+ * CRUD for new MVP community data
+ * 
+ * reviewed:10-5-2020
+ * reviewer:wraith
+ */
+
 const Mvp = require('../models/mvp-models');
 const ProfileMethods = require('./profileMethods');
 const SeasonInfo = require('./seasonInfoMethods');
 const utils = require('../utils');
 
-/*
-CRUD for new MVP community data
-*/
 
-
+/**
+ * @name getAll
+ * @function
+ * @description returns all MVP items sorted by timestamp
+ */
 async function getAll() {
     return Mvp.find({}).lean().then(
         found => {
@@ -31,6 +39,12 @@ async function getAll() {
     )
 }
 
+/**
+ * 
+ * @param {Object} param0 
+ * @param {string} param0.type - type to search
+ * * @param {Array.<string>} param0.listArr - list of MVPs to find
+ */
 async function getList({
     type,
     listArr
@@ -52,6 +66,14 @@ async function getList({
     );
 }
 
+/**
+ * @name getById
+ * @function
+ * @description queries the mvp collection by provided type and id
+ * @param {Object} param0 
+ * @param {string} param0.type - type to search
+ * @param {string} param0.id - id to find
+ */
 async function getById({ type, id }) {
     let query = {}
     query[type] = id;
@@ -83,6 +105,12 @@ async function getById({ type, id }) {
     return mvpInf;
 }
 
+/**
+ * @name getBySeason
+ * @function
+ * @description retrieves mvp collections by season
+ * @param {number} season 
+ */
 async function getBySeason(season) {
     return Mvp.find({ season: season }).lean().then(
         found => {
@@ -94,7 +122,12 @@ async function getBySeason(season) {
     )
 }
 
-
+/**
+ * @name upsert
+ * @function 
+ * @description upserts provided mvp object into the collection
+ * @param {Object} obj 
+ */
 async function upsert(obj) {
 
     if (obj.displayName) {
@@ -127,6 +160,15 @@ async function upsert(obj) {
 
 }
 
+/**
+ * @name deleteList
+ * @function
+ * @description delete list of MVPs
+ * @deprecated
+ * @param {Object} param0
+ * @param {string} param0.type 
+ * @param {Array.<string>} param0.list
+ */
 async function deleteList({ type, list }) {
     let query = {};
     query[type] = { $in: list };
@@ -140,6 +182,14 @@ async function deleteList({ type, list }) {
     );
 }
 
+/**
+ * @name deleteById
+ * @function
+ * @description - delete matching mvp from collection
+ * @param {*} param0 
+ * @param {string} param0.type - type to delete
+ * @param {string} param0.id - id to delete
+ */
 async function deleteById({
     type,
     id
@@ -157,6 +207,13 @@ async function deleteById({
     );
 }
 
+/**
+ * @name like
+ * @function
+ * @description - handles adding a like to the MVP
+ * @param {string} id - id of mvp to be liked
+ * @param {string} likerId - id of the liker
+ */
 async function like(id, likerId) {
 
     return Mvp.findOne({ match_id: id }).then(

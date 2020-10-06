@@ -1,3 +1,17 @@
+/**
+ * Methods to handle the uploading of a player rank image, approval of a player rank, and denial of player rank
+ * 
+ * This process flows as such:
+ * Player or captain uploads a screen shot of a specific players rank for specific season -> an admin looks at this picture on the admin tools and approves or denies this; 
+ * as part of the approval the admin will record the players ranked as Metal / numeric division as they see in the image; this will be saved into the players verified ranks; 
+ * also this will be given an NGS number; laid out speficically for each metal/division in order to get an average rank of the players
+ * 
+ * Denied uploads will be deleted and the process will be reset
+ * 
+ * reviewed:10-5-2020
+ * reviewer:wraith
+ */
+
 const User = require('../models/user-models');
 const logger = require('../subroutines/sys-logging-subs').logger;
 const CustomError = require('./customError');
@@ -8,6 +22,14 @@ const s3deleteFile = require('../methods/aws-s3/delete-s3-file').s3deleteFile;
 const { s3putObject } = require('../methods/aws-s3/put-s3-file');
 const { prepImage } = require('../methods/image-upload-common');
 
+
+/**
+ * @name rankToNumber
+ * @function
+ * @description parses the provided metal / division into an NGS specific rank number
+ * @param {string} hlRankMetal 
+ * @param {number} hlRankDivision 
+ */
 function rankToNumber(hlRankMetal, hlRankDivision) {
     let num = 0;
 
@@ -40,7 +62,16 @@ function rankToNumber(hlRankMetal, hlRankDivision) {
 
 const PLAYERRANKFOLDER = 'player-ranks-images/';
 
-//upload image and return the path where the image will be stored
+/**
+ * @name uploadRankImage
+ * @function
+ * @description upload image and return the path where the image will be stored; sets a pending status on the user for the given season info
+ * @param {string} dataURI 
+ * @param {string} user_id 
+ * @param {Object} seasonInfo 
+ * @param {number} seasonInfo.year 
+ * @param {number} seasonInfo.season 
+ */
 async function uploadRankImage(dataURI, user_id, seasonInfo) {
 
     let query = {
@@ -212,6 +243,17 @@ async function uploadRankImage(dataURI, user_id, seasonInfo) {
 
 }
 
+/**
+ * @name playerRankApproved
+ * @function
+ * @description deletes the image and queue for specified year/season/user currently and updates the user object with verified rank for specific season/year
+ * @param {Object} rankObj 
+ * @param {string} rankObj.userId id of user to modify
+ * @param {number} rankObj.year specified year
+ * @param {number} rankObj.season specified season
+ * @param {string} rankObj.hlRankMetal - verified rank metal
+ * @param {string} rankObj.hlRankDivision - verified rank division
+ */
 async function playerRankApproved(rankObj) {
 
     let successObject = {
@@ -302,6 +344,15 @@ async function playerRankApproved(rankObj) {
 
 }
 
+/**
+ * @name playerRankDenied
+ * @function
+ * @description deletes the image and queue for specified year/season/user currently and resets the user object for specific season/year
+ * @param {Object} rankObj 
+ * @param {string} rankObj.userId id of user to modify
+ * @param {number} rankObj.year specified year
+ * @param {number} rankObj.season specified season
+ */
 async function playerRankDenied(rankObj) {
 
 
@@ -335,20 +386,14 @@ async function playerRankDenied(rankObj) {
         if (foundQ) {
 
             let user = await User.findById(foundQ.userId).then(
-                    found => {
-                        return found;
-                    },
-                    err => {
-                        throw err;
-                    }
-                )
-                // let rankScheme = {
-                //     hlRankMetal: rankObj.hlRankMetal,
-                //     hlRankDivision: rankObj.hlRankDivision,
-                //     season: seasonInf.season,
-                //     year: seasonInf.year,
-                //     status: 'verified'
-                // }
+                found => {
+                    return found;
+                },
+                err => {
+                    throw err;
+                }
+            )
+
             if (user) {
 
                 let userObj = utils.objectify(user);

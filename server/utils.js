@@ -64,7 +64,7 @@ isNullorUndefined = function(dat) {
 
 returnMessaging = function(route, message, err, obj, additional, logInfo) {
     var ret = {
-        "route": route,
+        "route": `/api/${route}`,
         "message": message
     };
 

@@ -1,7 +1,29 @@
+/**
+ * Stream creator; 
+ * Creates a special match object that will show a stream on the home page when the time is matching the provided time
+ * 
+ * reviewed: 10-5-2020
+ * reviewer: wraith
+ */
+
 const Match = require('../models/match-model');
 const utls = require('../utils');
 const uniqid = require('uniqid');
 
+/**
+ * @name createStreamEvent
+ * @function
+ * @description accepts object and creates a special match object for a special match 'steam object'
+ * @param {Object} param0 
+ * @param {string} param0.casterName
+ * @param {string} param0.casterUrl
+ * @param {string} param0.team1Name
+ * @param {string} param0.team2Name
+ * @param {string} param0.title - title of event
+ * @param {number} param0.runTime - MS length to show the event
+ * @param {number} [param0.startTime] MS time to start stream; optional if startNow is true
+ * @param {boolean} [param0.startNow] Start a stream event right now until runtime, optional if startTime is provided
+ */
 async function createStreamEvent({ casterName, casterUrl, team1Name, team2Name, title, runTime, startTime, startNow }) {
 
     let matchObj = {};

@@ -1,5 +1,17 @@
+/**
+ * Reset team registration method
+ * 
+ * reviewed: 10-5-2020
+ * reviewer: wraith
+ */
+
 const Team = require('../../models/team-models');
 
+/**
+ * @name resetTeamRegistrations
+ * @description resets all team registrations to empty for a new season of registering
+ * @function
+ */
 async function resetTeamRegistrations() {
 
     let x = await Team.find().then(

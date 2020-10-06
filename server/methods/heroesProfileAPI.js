@@ -1,34 +1,58 @@
+/**
+ * Heroes Profile API WRAPPERS
+ * 
+ * reviewed:10-5-2020
+ * reviewer:wraith
+ * 
+ */
 const axios = require('axios');
 const querystring = require('querystring');
 const util = require('../utils');
 
+//base hp url
 const hpAPIbase = 'https://api.heroesprofile.com/api/';
 
+//URI segment for match upload
 const matchUpload = 'NGS/Games/Upload';
 
+//uri segment for player mmr
 const playerMmr = 'Player/MMR?mode=json&battletag={btag}&region=1';
 
+//uri segment for getting highest stats
 const highestStat = 'NGS/Leaderboard/Highest/Total/Stat?stat={stat}&season={season}';
 
+//uri segment for getting average stats
 const avgStat = 'NGS/Leaderboard/Highest/Average/Stat?stat={stat}&season={season}';
 
+//uri segment for player profile
 const playerProfile = 'Player?battletag={btag}&region=1';
 
+//uri segment for getting players hero stats
 const playerHeroStat = 'NGS/Hero/Stat?battletag={btag}&region=1&hero={hero}&season={season}&division={division}';
 
+//uri segment for getting player ngs profile
 const ngsPlayerProfile = 'NGS/Player/Profile?battletag={btag}&region=1';
 
+//uri segment for deleting replay
 const replayDeleteUri = 'NGS/Games/Delete?replayID={replayId}';
+
 
 const ngsPlayerProfileParams = {
     division: '&division={division}',
     season: '&season={season}'
 }
 
+//uri segment for getting players all hero stats
 const playerAllHero = 'Player/Hero/All?mode=json&battletag={btag}&region=1&api_token={token}&game_type=Storm League';
 
 
 
+/**
+ * @name matchUploadFn
+ * @function
+ * @description sends data to heroes profile for a replay upload
+ * @param {Object} postObj 
+ */
 async function matchUploadFn(postObj) {
 
     const config = {
@@ -46,8 +70,6 @@ async function matchUploadFn(postObj) {
             return success.data;
         },
         failure => {
-            // console.log('failure', failure);
-            // util.errLogger('HeroesProfileAPI', failure, 'matchUploadFn');
             throw failure;
         }
     );
@@ -56,6 +78,12 @@ async function matchUploadFn(postObj) {
 
 };
 
+/**
+ * @name deleteReplayAPI
+ * @function
+ * @description deletes given url info from heroes profile
+ * @param {string} replayUrl 
+ */
 function deleteReplayAPI(replayUrl) {
     let url = hpAPIbase + replayDeleteUri;
 
@@ -76,6 +104,12 @@ function deleteReplayAPI(replayUrl) {
     );
 }
 
+/**
+ * @name playerMmrAPI
+ * @function
+ * @description retrieves players MMR by battletag
+ * @param {string} battletag 
+ */
 function playerMmrAPI(battletag) {
     let url = hpAPIbase + playerMmr;
 
@@ -93,6 +127,12 @@ function playerMmrAPI(battletag) {
     );
 }
 
+/**
+ * @name playerProfileFn
+ * @function
+ * @description returns link to player profile @ heroes profile
+ * @param {string} btag 
+ */
 function playerProfileFn(btag) {
     let url = hpAPIbase + playerProfile;
     url = url.replace('{btag}', encodeURIComponent(btag));
@@ -106,6 +146,13 @@ function playerProfileFn(btag) {
     );
 }
 
+/**
+ * @name highestStatFn
+ * @function
+ * @description returns data for the highest stats of provided stat name / season (ex: highest kills)
+ * @param {string} stat stat name
+ * @param {number} season season number
+ */
 async function highestStatFn(stat, season) {
     let url = hpAPIbase + highestStat;
 
@@ -133,6 +180,12 @@ async function highestStatFn(stat, season) {
 }
 
 
+/**
+ * @name appendApiToken
+ * @function
+ * @description appends the API key to provided URL string
+ * @param {string} url 
+ */
 function appendApiToken(url) {
     if (url.indexOf('?') > -1) {
         url += '&';
@@ -144,6 +197,13 @@ function appendApiToken(url) {
     return url;
 }
 
+
+/**
+ * @name getIdFromUrl
+ * @function
+ * @description parses a HP url string and returns the ID from that string
+ * @param {string} url URL string that heroes profile provides back to us after parsing
+ */
 function getIdFromUrl(url) {
 
     let locate = '?replayID=';
@@ -164,6 +224,14 @@ function getIdFromUrl(url) {
 
 }
 
+/**
+ * @name returnNextCharInd
+ * @function
+ * @description returns the indexes of the next string that is not URL specific identifiers EG: not /, ?, &
+ * @param {*} str 
+ * @param {*} startingIndex 
+ * @param {*} searchChars 
+ */
 function returnNextCharInd(str, startingIndex, searchChars) {
     if (searchChars == undefined || searchChars == null) {
         searchChars = ['?', '/', '&'];

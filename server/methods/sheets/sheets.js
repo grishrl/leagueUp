@@ -1,8 +1,8 @@
 //season 7 sheet: 1-dNFe8cJ7yZlb5aCDqKuKNlDNMll72RL3t_7rivVgk4
 //season 8 sheet: 1-EYgbPXWCCFbgXv6S5lHLPBnPLHWyx7E4Qy7NNKR73w
-const {
-    google
-} = require('googleapis');
+// not reviewing this as hopefully it will be gone for season 11
+
+const { google } = require('googleapis');
 const Match = require('../../models/match-model');
 const logger = require('../../subroutines/sys-logging-subs').logger;
 const util = require('../../utils');

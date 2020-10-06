@@ -787,7 +787,7 @@ router.post('/team/uploadLogo', passport.authenticate('jwt', {
     logObj.target = teamName;
     logObj.logLevel = 'STD';
 
-    uploadTeamLogo(path, dataURI, teamName).then(rep => {
+    uploadTeamLogo(dataURI, teamName).then(rep => {
             res.status(200).send(util.returnMessaging(path, "Image Uploaded.", false, null, rep.eo, logObj));
         },
         err => {

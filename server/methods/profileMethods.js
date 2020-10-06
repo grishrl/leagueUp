@@ -1,5 +1,19 @@
+/**
+ * Helpful profile methods
+ * 
+ * 
+ * reviewed:10-5-2020
+ * reviewer:wraith
+ */
+
 const User = require('../models/user-models');
 
+/**
+ * @name returnDisplayNameFromId
+ * @function
+ * @description returns the display name for provided ID
+ * @param {string} id 
+ */
 function returnDisplayNameFromId(id) {
     return User.findById(id).lean().then(
         res => {
@@ -15,6 +29,12 @@ function returnDisplayNameFromId(id) {
     )
 }
 
+/**
+ * @name returnIdFromDisplayName
+ * @function
+ * @description returns id for provided displayname
+ * @param {string} displayName 
+ */
 function returnIdFromDisplayName(displayName) {
     return User.findOne({ displayName: displayName }).lean().then(
         res => {

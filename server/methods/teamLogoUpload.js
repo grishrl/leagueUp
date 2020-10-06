@@ -1,3 +1,10 @@
+/**
+ * Methods for handling uploading a team logo and archiving a team logo
+ * 
+ * reviewed: 10-5-2020
+ * reviewer: wraith
+ */
+
 const Team = require("../models/team-models");
 const AWS = require('aws-sdk');
 const logger = require('../subroutines/sys-logging-subs').logger;
@@ -13,8 +20,14 @@ AWS.config.update({
 });
 
 
-
-async function uploadTeamLogo(path, dataURI, teamName) {
+/**
+ * @name uploadTeamLogo
+ * @function
+ * @description uploads team logo to s3 bucket and updates team profile with logo
+ * @param {string} dataURI 
+ * @param {string} teamName 
+ */
+async function uploadTeamLogo(dataURI, teamName) {
 
     let preppedImage = await prepImage(dataURI, { teamName });
 
@@ -86,7 +99,12 @@ async function uploadTeamLogo(path, dataURI, teamName) {
 
 }
 
-
+/**
+ * @name teamLogoArchive
+ * @function
+ * @description adds provided logo into the team logo archive
+ * @param {string} logo 
+ */
 async function teamLogoArchive(logo) {
     let aws = new AWS.S3({
 

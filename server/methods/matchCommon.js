@@ -1,3 +1,11 @@
+/**
+ * Common Match Related Methods
+ * 
+ * reviewed:10-5-2020
+ * reviewer:wraith
+ * 
+ */
+
 const challoneAPI = require('../methods/challongeAPI');
 const Scheduling = require('../models/schedule-models');
 const Archive = require('../models/system-models').archive;
@@ -5,11 +13,16 @@ const Match = require('../models/match-model');
 const util = require('../utils');
 const Team = require('../models/team-models');
 
+
+/**
+ * @name promoteTournamentMatch
+ * @function
+ * @description takes a tournmaent match and calls the challonge API to promote it along the branch path in challonge; also promotes each team in the NGS match object
+ * @param {Match} foundMatch 
+ */
 async function promoteTournamentMatch(foundMatch) {
     //make sure the received is plain old object
-    if (foundMatch.hasOwnProperty('toObject')) {
-        foundMatch = foundMatch.toObject();
-    }
+    foundMatch = util.objectify(foundMatch);
     let winnerID;
     let loserID;
     //grab the winner score and their position from the match
@@ -173,6 +186,17 @@ async function promoteTournamentMatch(foundMatch) {
     }
 }
 
+/**
+ * @name
+ * @function
+ * @description 
+ * @param {Match} match - NGS match object to be reported
+ * @param {Object} winner - object for tracking winners position, id, teamname
+ * @param {string} winner.id - database id
+ * @param {string} winner.pos - position in the match (home/away)
+ * @param {string} winner.teamName - teamname
+ * @param {*} winnerID - challonge participant reference
+ */
 async function reportToChallonge(match, winner, winnerID) {
     let returnVal = null;
 
@@ -241,15 +265,21 @@ async function reportToChallonge(match, winner, winnerID) {
     return returnVal;
 }
 
-function findTeamIds(found) {
+/**
+ * @name findTeamIds
+ * @function
+ * @description Takes a list of matches and returns the ids of all teams participating in the list
+ * @param {Array.<Match> | Match} matchesArray - list of matches to get the team ids from
+ */
+function findTeamIds(matchesArray) {
     let teams = [];
 
     //type checking make sure we have array
-    if (!Array.isArray(found)) {
-        found = [found];
+    if (!Array.isArray(matchesArray)) {
+        matchesArray = [matchesArray];
     }
 
-    found.forEach(match => {
+    matchesArray.forEach(match => {
         if (util.returnBoolByPath(match, 'home.id')) {
             if (match.home.id != 'null' && teams.indexOf(match.home.id.toString()) == -1) {
                 teams.push(match.home.id.toString());
@@ -264,25 +294,30 @@ function findTeamIds(found) {
     return teams;
 }
 
-
-async function addTeamInfoToMatch(found) {
+/**
+ * @name addTeamInfoToMatch
+ * @function
+ * @description - adds the teams info into all the matches provided in the list
+ * @param {Array.<Match>} matchesArray - list of matches to add team info to
+ */
+async function addTeamInfoToMatch(matchesArray) {
     //typechecking
-    if (!Array.isArray(found)) {
-        found = [found];
+    if (!Array.isArray(matchesArray)) {
+        matchesArray = [matchesArray];
     }
 
-    let teams = findTeamIds(found);
+    let teams = findTeamIds(matchesArray);
 
     return Team.find({
         _id: {
             $in: teams
         }
-    }).then((foundTeams) => {
-        if (foundTeams) {
+    }).then((matchesArrayTeams) => {
+        if (matchesArrayTeams) {
 
-            foundTeams.forEach(team => {
+            matchesArrayTeams.forEach(team => {
                 let teamid = team._id.toString();
-                found.forEach(match => {
+                matchesArray.forEach(match => {
                     let homeid, awayid;
                     if (util.returnBoolByPath(match, 'home.id')) {
                         homeid = match.home.id.toString();
@@ -304,7 +339,7 @@ async function addTeamInfoToMatch(found) {
                     }
                 });
             });
-            return found;
+            return matchesArray;
         } else {
             return [];
         }
@@ -313,13 +348,20 @@ async function addTeamInfoToMatch(found) {
     });
 };
 
-async function addTeamInfoFromArchiveToMatch(found, season) {
+/**
+ * @name addTeamInfoFromArchiveToMatch
+ * @function
+ * @description Add provided season archived team info to the provided matches list
+ * @param {Array.<Match>} matchesArray - list of matches to add team info to
+ * @param {number} season - season archive from which to get the team info
+ */
+async function addTeamInfoFromArchiveToMatch(matchesArray, season) {
     //typechecking
-    if (!Array.isArray(found)) {
-        found = [found];
+    if (!Array.isArray(matchesArray)) {
+        matchesArray = [matchesArray];
     }
 
-    let teams = findTeamIds(found);
+    let teams = findTeamIds(matchesArray);
     let query = {
         $and: [{
                 "season": season
@@ -333,11 +375,11 @@ async function addTeamInfoFromArchiveToMatch(found, season) {
         ]
     }
 
-    return Archive.find(query).then((foundTeams) => {
-        if (foundTeams) {
-            foundTeams.forEach(team => {
+    return Archive.find(query).then((matchesArrayTeams) => {
+        if (matchesArrayTeams) {
+            matchesArrayTeams.forEach(team => {
                 let teamid = team.object.teamId;
-                found.forEach(match => {
+                matchesArray.forEach(match => {
                     let homeid, awayid;
                     if (util.returnBoolByPath(match, 'home.id')) {
                         homeid = match.home.id.toString();
@@ -359,7 +401,7 @@ async function addTeamInfoFromArchiveToMatch(found, season) {
                     }
                 });
             });
-            return found;
+            return matchesArray;
         } else {
             return [];
         }

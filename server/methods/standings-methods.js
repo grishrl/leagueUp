@@ -18,8 +18,14 @@ const MatchCommon = require('./matchCommon');
 const jsonDiff = require('deep-object-diff');
 
 
-//takes the provided division and season and calcuates the current standings of the teams
-//division:string division concat name, season:string or number, season number to check the standings of
+/**
+ * @name calulateStandings
+ * @function
+ * @description takes the provided division and season and calcuates the current standings of the teams
+ * @param {Division} division 
+ * @param {number} season 
+ * @param {boolean} pastSeason 
+ */
 async function calulateStandings(division, season, pastSeason) {
     let standings;
     try {
@@ -62,10 +68,16 @@ const points = [{
     }
 ];
 
-//helper function that returns objects that match given, 
-// array of objects, 
-// matchKey: string of property to check;
-// matchValue: the value of the property to match against
+
+//is there an underscore replacement for this??
+/**
+ * @name returnObjectForKeyMatch
+ * @function
+ * @description helper function that returns objects that match given: matchKey, matchValue
+ * @param {Array.<Object>} arrayOfObjects 
+ * @param {string} matchKey 
+ * @param {*} matchValue 
+ */
 function returnObjectForKeyMatch(arrayOfObjects, matchKey, matchValue) {
     let arr = arrayOfObjects;
     let returnObj = null;
@@ -80,7 +92,13 @@ function returnObjectForKeyMatch(arrayOfObjects, matchKey, matchValue) {
 }
 
 
-//method for calculating the standings of a cup division... if such a thing ever exists.
+/**
+ * @name cupDivStanding
+ * @function
+ * @description method for calculating the standings of a cup division... if such a thing ever exists.
+ * @param {string} division - division concat name
+ * @param {number} season - season 
+ */
 async function cupDivStanding(division, season) {
     let returnStanding = [];
     let standingsQuery = {
@@ -241,6 +259,14 @@ async function cupDivStanding(division, season) {
 }
  */
 
+/**
+ * @name stdDivStanding
+ * @function
+ * @description returns teams standings for specified division and season
+ * @param {Divison} division 
+ * @param {number} season 
+ * @param {boolean} pastSeason 
+ */
 async function stdDivStanding(division, season, pastSeason) {
     let teams;
 

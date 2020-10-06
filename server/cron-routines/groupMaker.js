@@ -10,7 +10,7 @@ const Team = require('../models/team-models');
 const util = require('../utils');
 const messageSub = require('../subroutines/message-subs');
 const _ = require('lodash');
-const { getCptId } = require('../methods/teamCommon');
+const { returnIdFromDisplayName } = require('../methods/profileMethods');
 const milTime = require('../methods/timeMethods');
 
 const varianceWindow = 15;
@@ -583,7 +583,7 @@ async function findFreeAgentsForTeam(team, teamObj) {
                     userMessages[conf.userId] = userMsg;
                 }
 
-                let capt = await getCptId(teamObj.captain).then(
+                let capt = await returnIdFromDisplayName(teamObj.captain).then(
                     capt => {
                         return capt;
                     },

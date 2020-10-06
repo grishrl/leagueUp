@@ -1,9 +1,23 @@
+/**
+ *  WORDPRESS API WRAPPERS
+ * 
+ * reviewed: 10-5-2020
+ * reviewer: wraith
+ */
+
 const axios = require('axios');
 const querystring = require('querystring');
 const util = require('../utils');
 
+//BASE URI FOR ALL API CALLS
 const baseURL = `${process.env.wordpressUri}/wp-json/wp/v2`;
 
+/**
+ * @name getBlogPosts
+ * @function
+ * @description returns blog post that matches provided params
+ * @param {Object} params 
+ */
 function getBlogPosts(params) {
     let paramString = '';
     if (params) {
@@ -34,6 +48,12 @@ function getBlogPosts(params) {
     );
 }
 
+/**
+ * @name getBlogPost
+ * @function
+ * @description returns blog post that matches id
+ * @param {string} id 
+ */
 function getBlogPost(id) {
     return axios.get(`${baseURL}/posts/${id}`).then(
         res => {
@@ -45,20 +65,33 @@ function getBlogPost(id) {
     )
 }
 
+/**
+ * @name getPostByAuthor
+ * @function
+ * @description returns blog posts by provided author id
+ * @param {string} authorId 
+ */
 function getPostByAuthor(authorId) {
     return getBlogPosts([{ 'author': authorId }]);
 }
 
-// getPostByAuthor(17);
-
+/**
+ * @name getPostsByCategory
+ * @function
+ * @description return blog posts by provided category id
+ * @param {string} categoryId 
+ */
 function getPostsByCategory(categoryId) {
     return getBlogPosts([{
         'categories': categoryId
     }]);
 }
 
-// getPostsByCategory(1);
-
+/**
+ * @name getAuthors
+ * @function
+ * @description returns authors info
+ */
 function getAuthors() {
     return axios.get(`${baseURL}/users?per_page=100`).then(
         res => {
@@ -70,7 +103,12 @@ function getAuthors() {
     )
 }
 
-// getAuthors();
+/**
+ * @name getAuthor
+ * @function
+ * @description returns author info of provided author id
+ * @param {string} authorId 
+ */
 function getAuthor(authorId) {
     return axios.get(`${baseURL}/users/${authorId}`).then(
         res => {
@@ -82,6 +120,11 @@ function getAuthor(authorId) {
     )
 }
 
+/**
+ * @name getCategories
+ * @function
+ * @description returns categories info
+ */
 function getCategories() {
     return axios.get(`${baseURL}/categories?per_page=100`).then(
         res => {
@@ -93,6 +136,12 @@ function getCategories() {
     )
 }
 
+/**
+ * @name getMedia
+ * @function
+ * @description returns media object info for provided media id
+ * @param {string} id 
+ */
 function getMedia(id) {
     return axios.get(`${baseURL}/media/${id}`).then(
         res => {

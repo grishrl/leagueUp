@@ -1,3 +1,6 @@
+/**
+ * s3putfile
+ */
 const AWS = require('aws-sdk');
 const logger = require('../../subroutines/sys-logging-subs').logger;
 
@@ -8,6 +11,15 @@ AWS.config.update({
     region: process.env.S3region
 });
 
+/**
+ * @name s3putObject
+ * @function
+ * @description places file into s3 with specified bucket, folder, filename
+ * @param {string} bucket 
+ * @param {string} folder 
+ * @param {string} fileName 
+ * @param {buffer} body file data buffer
+ */
 function s3putObject(bucket, folder, fileName, body) {
 
     const s3Bucket = new AWS.S3({

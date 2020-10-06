@@ -61,29 +61,29 @@ app.use(function(req, res, next) {
 
 
 //setup Routes
-app.use('/auth', authRoutes);
-app.use('/user', profileRoutes);
-app.use('/team', teamRoutes);
-app.use('/admin', adminRoutes);
-app.use('/division', divisionRoutes);
-app.use('/search', searchRoutes);
-app.use('/outreach', outreachRoutes);
-app.use('/admin', adminTeam);
-app.use('/admin', adminLogs);
-app.use('/admin', adminDivision);
-app.use('/admin', adminUser);
-app.use('/admin', adminMatch);
-app.use('/schedule', scheduleRoutes);
-app.use('/standings', standingRoutes);
-app.use('/messageCenter', messageRoutes);
-app.use('/request', requestRoutes);
-app.use('/utility', utilityRoutes);
-app.use('/events', eventRoutes);
-app.use('/history', history);
-app.use('/blog', blog);
-app.use('/mvp', mvp);
-app.use('/admin', notes);
-app.use('/playerrank', playerrank);
+app.use('/api/auth', authRoutes);
+app.use('/api/user', profileRoutes);
+app.use('/api/team', teamRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/division', divisionRoutes);
+app.use('/api/search', searchRoutes);
+app.use('/api/outreach', outreachRoutes);
+app.use('/api/admin', adminTeam);
+app.use('/api/admin', adminLogs);
+app.use('/api/admin', adminDivision);
+app.use('/api/admin', adminUser);
+app.use('/api/admin', adminMatch);
+app.use('/api/schedule', scheduleRoutes);
+app.use('/api/standings', standingRoutes);
+app.use('/api/messageCenter', messageRoutes);
+app.use('/api/request', requestRoutes);
+app.use('/api/utility', utilityRoutes);
+app.use('/api/events', eventRoutes);
+app.use('/api/history', history);
+app.use('/api/blog', blog);
+app.use('/api/mvp', mvp);
+app.use('/api/admin', notes);
+app.use('/api/playerrank', playerrank);
 
 //this is a special route that can be used for seeding teams and users into a dev env when needed
 // const seeding = require('./server/routes/seeding-route');
