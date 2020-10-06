@@ -1,6 +1,6 @@
 const Admin = require('../models/admin-models');
 const util = require('../utils');
-const logger = require('./sys-logging-subs');
+const logger = require('./sys-logging-subs').logger;
 
 //method to remove pending queue items via its object ID
 function cleanUpPendingQueue(item) {

@@ -2,7 +2,7 @@ const util = require('../utils');
 const Team = require('../models/team-models');
 const User = require('../models/user-models');
 const Match = require('../models/match-model');
-const logger = require('./sys-logging-subs');
+const logger = require('./sys-logging-subs').logger;
 const mmrMethods = require('../methods/mmrMethods');
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 
