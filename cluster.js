@@ -2,7 +2,7 @@ var cluster = require('cluster'); // Only required if you want the worker id
 var sticky = require('sticky-session');
 var app = require('express')();
 var worker = require('./worker');
-console.log('>>>>', worker)
+
 
 var server = require('http').createServer(app);
 
