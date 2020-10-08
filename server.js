@@ -1,9 +1,16 @@
+const throng = require('throng');
 //import the express server from file
-const app = require('./serverConf')['app'];
+
+const { socket, app } = require('./serverConf');
+
 if (process.env.runNewRelic != 'false') {
     console.log('run');
     require('newrelic');
 }
+const express = require("express");
+//host name and port
+const hostname = process.env.hostname;
+const port = process.env.PORT;
 
 //load route files
 const authRoutes = require('./server/routes/auth-routes');
@@ -36,66 +43,89 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const passportSetup = require('./server/configs/passport-setup');
-const express = require("express");
 const path = require('path');
 
-//configs...
-app.use(bodyParser.json({
-    limit: '2.5mb',
-    extended: true
-}));
+function startApp() {
+    // //bootstrap express server
+    // const app = express();
 
-app.use(bodyParser.urlencoded({ extended: false }));
+    // //create server listening on port
+    // let server = app.listen(port, hostname, () => {
+    //     console.log(`Server ${hostname} running at on ${port}`);
+    // });
 
-//connect to mongo db
-mongoose.set('useUnifiedTopology', true);
-mongoose.set('useFindAndModify', false);
-mongoose.connect(process.env.mongoURI, { useNewUrlParser: true }, () => {
-    console.log('connected to mongodb');
-});
+    //configs...
+    app.use(bodyParser.json({
+        limit: '2.5mb',
+        extended: true
+    }));
 
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
+    app.use(bodyParser.urlencoded({
+        extended: false
+    }));
+
+    //connect to mongo db
+    mongoose.set('useUnifiedTopology', true);
+    mongoose.set('useFindAndModify', false);
+    mongoose.connect(process.env.mongoURI, {
+        useNewUrlParser: true
+    }, () => {
+        console.log('connected to mongodb');
+    });
+
+    app.use(function(req, res, next) {
+        res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        next();
+    });
 
 
-//setup Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/user', profileRoutes);
-app.use('/api/team', teamRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/division', divisionRoutes);
-app.use('/api/search', searchRoutes);
-app.use('/api/outreach', outreachRoutes);
-app.use('/api/admin', adminTeam);
-app.use('/api/admin', adminLogs);
-app.use('/api/admin', adminDivision);
-app.use('/api/admin', adminUser);
-app.use('/api/admin', adminMatch);
-app.use('/api/schedule', scheduleRoutes);
-app.use('/api/standings', standingRoutes);
-app.use('/api/messageCenter', messageRoutes);
-app.use('/api/request', requestRoutes);
-app.use('/api/utility', utilityRoutes);
-app.use('/api/events', eventRoutes);
-app.use('/api/history', history);
-app.use('/api/blog', blog);
-app.use('/api/mvp', mvp);
-app.use('/api/admin', notes);
-app.use('/api/playerrank', playerrank);
-app.use('/api/s3', s3clientUploads);
+    //setup Routes
+    app.use('/api/auth', authRoutes);
+    app.use('/api/user', profileRoutes);
+    app.use('/api/team', teamRoutes);
+    app.use('/api/admin', adminRoutes);
+    app.use('/api/division', divisionRoutes);
+    app.use('/api/search', searchRoutes);
+    app.use('/api/outreach', outreachRoutes);
+    app.use('/api/admin', adminTeam);
+    app.use('/api/admin', adminLogs);
+    app.use('/api/admin', adminDivision);
+    app.use('/api/admin', adminUser);
+    app.use('/api/admin', adminMatch);
+    app.use('/api/schedule', scheduleRoutes);
+    app.use('/api/standings', standingRoutes);
+    app.use('/api/messageCenter', messageRoutes);
+    app.use('/api/request', requestRoutes);
+    app.use('/api/utility', utilityRoutes);
+    app.use('/api/events', eventRoutes);
+    app.use('/api/history', history);
+    app.use('/api/blog', blog);
+    app.use('/api/mvp', mvp);
+    app.use('/api/admin', notes);
+    app.use('/api/playerrank', playerrank);
+    app.use('/api/s3', s3clientUploads);
 
-//this is a special route that can be used for seeding teams and users into a dev env when needed
-// const seeding = require('./server/routes/seeding-route');
-// app.use('/dev', seeding);
+    //this is a special route that can be used for seeding teams and users into a dev env when needed
+    // const seeding = require('./server/routes/seeding-route');
+    // app.use('/dev', seeding);
 
-//initialize passport
-app.use(passport.initialize());
+    //initialize passport
+    app.use(passport.initialize());
 
-app.use('/', express.static(path.join(__dirname, './client/dist/client/')));
+    app.use('/', express.static(path.join(__dirname, './client/dist/client/')));
 
-app.get('*', function(req, res) {
-    res.sendFile(path.join(__dirname, './client/dist/client/index.html'));
-});
+    app.get('*', function(req, res) {
+        res.sendFile(path.join(__dirname, './client/dist/client/index.html'));
+    });
+}
+
+let WORKERS = process.env.WEB_CONCRRENCY || 1;
+
+if (process.env.environment == 'development') {
+    console.log(WORKERS);
+    startApp();
+} else {
+    console.log(WORKERS);
+    throng(WORKERS, startApp);
+}
