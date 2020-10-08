@@ -29,6 +29,7 @@ const blog = require('./server/routes/blog-routes');
 const mvp = require('./server/routes/mvp-routes');
 const notes = require('./server/routes/notes-routes');
 const playerrank = require('./server/routes/player-rank-routes');
+const s3clientUploads = require('./server/routes/s3-client-direct-upload-routes');
 
 //load mongoose and other utilities 
 const mongoose = require('mongoose');
@@ -84,6 +85,7 @@ app.use('/api/blog', blog);
 app.use('/api/mvp', mvp);
 app.use('/api/admin', notes);
 app.use('/api/playerrank', playerrank);
+app.use('/api/s3', s3clientUploads);
 
 //this is a special route that can be used for seeding teams and users into a dev env when needed
 // const seeding = require('./server/routes/seeding-route');

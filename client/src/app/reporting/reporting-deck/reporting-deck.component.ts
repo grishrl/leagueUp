@@ -5,6 +5,8 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TeamService } from 'src/app/services/team.service';
 import {merge, forEach as _forEach } from 'lodash';
 import { Match } from 'src/app/classes/match.class';
+import { S3uploadServiceService } from 'src/app/services/s3upload-service.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-reporting-deck',
@@ -50,7 +52,7 @@ export class ReportingDeckComponent implements OnInit {
           this.allPlayers = this.allPlayers.concat(this.homeTeam.teamMembers);
         },
         err=>{
-          console.log(err);
+          console.warn(err);
         }
       )
       this.team.getTeam(match.away.teamName).subscribe(
@@ -60,7 +62,7 @@ export class ReportingDeckComponent implements OnInit {
           this.allPlayers = this.allPlayers.concat(this.awayTeam.teamMembers);
         },
         err => {
-          console.log(err);
+          console.warn(err);
         }
       )
       //if match is boX we need different match numbers logic
@@ -94,7 +96,7 @@ export class ReportingDeckComponent implements OnInit {
 
   }
 
-  constructor(private scheduleService: ScheduleService, private util: UtilitiesService, public team:TeamService) { }
+  constructor(private scheduleService: ScheduleService, private util: UtilitiesService, public team:TeamService, private s3uploads:S3uploadServiceService ) { }
 
   maps = {
   // ControlPoints: 'Sky Temple',
@@ -197,10 +199,10 @@ showReportButton(){
   initGetTeamsInfo(teams){
     this.team.getTeams(teams).subscribe(
       res=>{
-        console.log(res);
+
       },
       err=>{
-        console.log(err);
+        console.warn(err);
       }
     )
   }
@@ -285,46 +287,56 @@ showReportButton(){
   }
 
   report() {
-
     let submittable = true;
 
     let report = {
-      matchId:this.recMatch.matchId,
-      homeTeamScore:0,
-      awayTeamScore:0
+      matchId: this.recMatch.matchId,
+      homeTeamScore: 0,
+      awayTeamScore: 0,
+      otherDetails:{}
     };
     let otherData = {};
 
-    if(!this.homeTeamPlayer){
+    if (!this.homeTeamPlayer) {
       submittable = false;
-      alert('Home team player is not selected, can not submit.');
-    }else{
-      otherData['homeTeamPlayer'] = this.homeTeamPlayer;
+      alert("Home team player is not selected, can not submit.");
+    } else {
+      otherData["homeTeamPlayer"] = this.homeTeamPlayer;
     }
     if (!this.awayTeamPlayer) {
       submittable = false;
-      alert('Away team player is not selected, can not submit.');
-    }else{
-      otherData['awayTeamPlayer'] = this.awayTeamPlayer;
+      alert("Away team player is not selected, can not submit.");
+    } else {
+      otherData["awayTeamPlayer"] = this.awayTeamPlayer;
     }
+
+    let fileArray = [];
+    const fileInfo = [];
+    let tieBackFilename;
+    const fileTrack = {};
+
     let keys = Object.keys(this.games);
-    keys.forEach(key => {
+    keys.forEach((key) => {
       let game = this.games[key];
-      if(game.winner == 'home'){
-        report.homeTeamScore+=1;
-      }else if(game.winner == 'away'){
-        report.awayTeamScore+=1;
-      }else{
+      if (game.winner == "home") {
+        report.homeTeamScore += 1;
+      } else if (game.winner == "away") {
+        report.awayTeamScore += 1;
+      } else {
         submittable = false;
-        alert('Game ' + key + ' winner is not selected, can not submit.');
+        alert("Game " + key + " winner is not selected, can not submit.");
       }
 
-      if (game.replay == null && game.replay == undefined){
-          submittable = false;
-          alert('Game ' + key + ' replay is not attached, can not submit.');
-        }
+      if (game.replay == null && game.replay == undefined) {
+        submittable = false;
+        alert("Game " + key + " replay is not attached, can not submit.");
+      } else {
+        tieBackFilename = game.replay.name;
+            fileInfo.push({ filename: game.replay.name, type: game.replay.type });
+            fileArray.push(game.replay);
+      }
 
-      report['replay'+key.toString()]=game.replay;
+      // report["replay" + key.toString()] = game.replay;
 
       let gamenum = key.toString();
       //hero bans
@@ -336,53 +348,98 @@ showReportButton(){
       //   alert('Game ' + key + ' away bans is not filled, can not submit.');
       //   submittable = false
       // }
-      otherData[gamenum]={
-
-        winner : game.winner
+      otherData[gamenum] = {
+        winner: game.winner
+      };
+      fileTrack[gamenum]= {
+        filename: tieBackFilename,
       }
     });
 
-    if (this.mapBans.awayOne == ''){
+    if (this.mapBans.awayOne == "") {
       submittable = false;
-      alert('This match\'s away map ban not filled out, can not submit.');
+      alert("This match's away map ban not filled out, can not submit.");
     }
 
-    if (this.mapBans.homeOne == '') {
+    if (this.mapBans.homeOne == "") {
       submittable = false;
-      alert('This match\'s home map ban not filled out, can not submit.');
+      alert("This match's home map ban not filled out, can not submit.");
     }
 
-    if (this.mapBans.awayTwo == '') {
+    if (this.mapBans.awayTwo == "") {
       submittable = false;
-      alert('This match\'s away map ban not filled out, can not submit.');
+      alert("This match's away map ban not filled out, can not submit.");
     }
 
-    if (this.mapBans.homeTwo == '') {
+    if (this.mapBans.homeTwo == "") {
       submittable = false;
-      alert('This match\'s home map ban not filled out, can not submit.');
+      alert("This match's home map ban not filled out, can not submit.");
     }
 
-
-    if (report.homeTeamScore == 1 && report.awayTeamScore == 1 || report.awayTeamScore == 1 && report.homeTeamScore == 1){
+    if (
+      (report.homeTeamScore == 1 && report.awayTeamScore == 1) ||
+      (report.awayTeamScore == 1 && report.homeTeamScore == 1)
+    ) {
       submittable = false;
-      alert('This out come is not allowed, matches must end 2-0 or 2-1');
+      alert("This out come is not allowed, matches must end 2-0 or 2-1");
     }
 
-    report['otherDetails']=JSON.stringify(otherData);
-    report['mapBans']=JSON.stringify(this.mapBans);
+    report["otherDetails"] = otherData;
+    report["mapBans"] = this.mapBans;
+    report['fileTracking'] = fileTrack;
+
+    let replayExists = false;
+    let replay;
 
 
-    if(submittable){
-      this.uploading=true;
-      this.scheduleService.reportMatch(report).subscribe( res=>{
-        this.uploading=false;
-        this.recMatch.reported = true;
-      },
-      err=>{
-        this.uploading = false
-        console.log(err);
-      })
+    let i = 1;
+
+    let payload = { fileInfo };
+
+    if (submittable) {
+      this.uploading = true;
+      this.s3uploads.getSignedUrl(payload).subscribe(
+        (signedUrlsObj) => {
+          let observableArray = [];
+          signedUrlsObj.forEach((retObj) => {
+            fileArray.forEach((file) => {
+              if (retObj.clientName == file.name) {
+                observableArray.push(
+                  this.s3uploads.s3put(retObj.signedUrl, file)
+                );
+              }
+            });
+          });
+          forkJoin(observableArray).subscribe(
+            (uploadedToS3) => {
+              _forEach(report['fileTracking'], (v, k) => {
+                let fileTrackingObj = v;
+                signedUrlsObj.forEach((urlObj) => {
+                  if (fileTrackingObj["filename"] == urlObj.clientName) {
+                    report['fileTracking'][k]["filename"] = urlObj.file;
+                  }
+                });
+              });
+                this.scheduleService.reportMatch(report).subscribe( res=>{
+                  this.uploading=false;
+                  this.recMatch.reported = true;
+                },
+                err=>{
+                  this.uploading = false
+                  console.warn(err);
+                })
+            },
+            (err) => {
+              console.warn(err);
+            }
+          );
+        },
+        (err) => {
+          console.warn("Failed to get signed URL");
+        }
+      );
     }
+
 
   }
 
