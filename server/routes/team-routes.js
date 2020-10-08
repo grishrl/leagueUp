@@ -693,7 +693,7 @@ router.post('/removeMember', passport.authenticate('jwt', {
 router.post('/uploadLogo', passport.authenticate('jwt', {
     session: false
 }), confirmCaptain, (req, res) => {
-
+    //TODO - replace this with direct to s3 method?
     const path = '/team/uploadLogo';
     let uploadedFileName = "";
 

@@ -251,7 +251,7 @@ router.post('/image/upload', passport.authenticate('jwt', {
     session: false
 }), (req, res) => {
     const path = '/utility/image/upload';
-
+    //TODO - replace this with direct to s3 method?
     //the file name will be the objectID    
     let id = req.body.id;
     let type = req.body.type;

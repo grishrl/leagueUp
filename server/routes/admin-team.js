@@ -773,7 +773,7 @@ router.post('/team/memberAdd',
 router.post('/team/uploadLogo', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.teamLevel, util.appendResHeader, (req, res) => {
-
+    //TODO - replace this with direct to s3 method?
     const path = '/admin/team/uploadLogo';
     let uploadedFileName = "";
 

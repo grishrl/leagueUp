@@ -219,7 +219,13 @@
                         </div>
                     </div>
                     <div class="col" *ngIf="winner">
-                        <button class="btn btn-success" (click)="uploadReplay()">Submit</button>
+                        <button class="btn btn-success" [disabled]="uploading" (click)="uploadReplay()">Submit</button>
+                    </div>
+                    <div *ngIf="uploading" class="row mt-3">
+                        <div class="col  text-center">
+                            <span class="border p-3">Uploading ... <i class="fas fa-sync fa-spin"
+                                                style="font-size:24px"></i></span>
+                        </div>
                     </div>
                 </div>
             </div>

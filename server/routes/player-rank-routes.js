@@ -69,6 +69,8 @@ router.post('/upload', passport.authenticate('jwt', {
     session: false
 }), (req, res) => {
 
+    //TODO: replace with client direct to s3 upload, maybe
+
     const path = '/playerrank/upload';
 
     let userId = req.user._id;
@@ -107,6 +109,8 @@ router.post('/upload', passport.authenticate('jwt', {
 router.post('/capt/upload', passport.authenticate('jwt', {
     session: false
 }), confirmCanUpload, (req, res) => {
+
+    //TODO: replace with client direct to s3 upload
 
     const path = '/playerrank/capt/upload';
 

@@ -4,13 +4,6 @@
 const AWS = require('aws-sdk');
 const logger = require('../../subroutines/sys-logging-subs').logger;
 
-//remove file from S3 
-AWS.config.update({
-    accessKeyId: process.env.S3accessKeyId,
-    secretAccessKey: process.env.S3secretAccessKey,
-    region: process.env.S3region
-});
-
 /**
  * @name s3deleteFile
  * @function
@@ -21,11 +14,7 @@ AWS.config.update({
  */
 async function s3deleteFile(bucket, folder, fileName) {
 
-    const s3Bucket = new AWS.S3({
-        params: {
-            Bucket: bucket
-        }
-    });
+
 
     let path = '';
     if (!folder) {
@@ -45,6 +34,19 @@ async function s3deleteFile(bucket, folder, fileName) {
 
 
     return new Promise((resolve, reject) => {
+        //remove file from S3 
+        AWS.config.update({
+            accessKeyId: process.env.S3accessKeyId,
+            secretAccessKey: process.env.S3secretAccessKey,
+            region: process.env.S3region
+        });
+
+        const s3Bucket = new AWS.S3({
+            params: {
+                Bucket: bucket
+            }
+        });
+
         s3Bucket.deleteObject(data, (err, data) => {
             let returnVal = false;
             if (err) {

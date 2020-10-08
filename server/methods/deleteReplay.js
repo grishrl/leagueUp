@@ -47,42 +47,59 @@ async function deleteReplay(matchId, indexProp) {
     let removeFromHPResult;
     let removedFromS3Result;
 
+    console.log('match', matchObj, 'replayToDelete', replayToDelete);
+
     if (replayToDelete) {
         try {
+
             if (replayToDelete.data) {
+                try {
+                    //remove the parsed data from database
+                    replayDeleteResult = await removeParsedFileFromDatabase(replayToDelete.data).then(res => {
+                        return res;
+                    });
 
-                //remove the parsed data from database
-                replayDeleteResult = await removeParsedFileFromDatabase(replayToDelete.data).then(res => {
-                    return res;
-                });
+                    //remove association from home team
+                    removedFromTeamResult[0] = await removeParsedIdFromTeam(matchObj.home.id, replayToDelete.data).then(res => {
+                        return res;
+                    });
+                    //remove association from away team
+                    removedFromTeamResult[1] = await removeParsedIdFromTeam(matchObj.away.id, replayToDelete.data).then(res => {
+                        return res;
+                    });
+                } catch (e) {
+                    console.log("catch1", e)
+                }
 
-                //remove association from home team
-                removedFromTeamResult[0] = await removeParsedIdFromTeam(matchObj.home.id, replayToDelete.data).then(res => {
-                    return res;
-                });
-                //remove association from away team
-                removedFromTeamResult[1] = await removeParsedIdFromTeam(matchObj.away.id, replayToDelete.data).then(res => {
-                    return res;
-                });
             }
 
             if (replayToDelete.url) {
                 //remove from s3
-                removedFromS3Result = await s3deleteFile(process.env.s3bucketReplays, null, replayToDelete.url).then(answer => {
-                    return answer;
-                });
+                try {
+                    removedFromS3Result = await s3deleteFile(process.env.s3bucketReplays, null, replayToDelete.url).then(answer => {
+                        return answer;
+                    });
+                } catch (e) {
+                    console.log("catch2", e)
+                }
+
             }
 
             if (replayToDelete.parsedUrl) {
                 //remove from hero profile
-                removeFromHPResult = await HP.deleteReplayAPI(replayToDelete.parsedUrl).then(
-                    res => {
-                        return true;
-                    },
-                    err => {
-                        return 'Error occured deleting this replay';
-                    }
-                );
+                try {
+                    removeFromHPResult = await HP.deleteReplayAPI(replayToDelete.parsedUrl).then(
+                        res => {
+                            return true;
+                        },
+                        err => {
+                            return 'Error occured deleting this replay';
+                        }
+                    );
+                } catch (e) {
+                    console.log("catch3", e)
+                }
+
             }
 
             delete matchObj.replays[indexProp];
@@ -90,9 +107,11 @@ async function deleteReplay(matchId, indexProp) {
             match.markModified('replays');
             let matchMod = await match.save().then(
                 saved => {
+                    console.log('saved')
                     return true;
                 },
                 err => {
+                    console.log('save err', err)
                     throw err;
                 }
             );
@@ -106,6 +125,7 @@ async function deleteReplay(matchId, indexProp) {
             };
 
         } catch (e) {
+            console.log('try', e);
             throw e;
         }
     } else {

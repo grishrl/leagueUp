@@ -156,221 +156,22 @@ router.post('/match/uploadreplay', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.matchLevel, util.appendResHeader, (req, res) => {
     const path = 'admin/match/uploadreplay';
-    const formidable = require('formidable');
-    const parser = require('hots-parser');
-    let form = new formidable.IncomingForm();
 
+    let requester = req.user.displayName;
+
+    const reportMatch = require('../methods/matches/report-match');
+
+    let matchReport = req.body;
     //log object
-    let logObj = {};
-    logObj.actor = req.user.displayName;
-    logObj.action = 'report match';
-    logObj.logLevel = 'STD';
-
-    form.parse(req, (req, fields, files) => {
-
-        logObj.target = fields.matchId;
-
-        //get the match
-        Match.findOne({
-            matchId: fields.matchId
-        }).then(
-            (foundMatch) => {
-                if (foundMatch) {
-                    //get the teams
-                    let teamIds = matchCommon.findTeamIds([foundMatch.toObject()]);
-                    Team.find({
-                        _id: {
-                            $in: teamIds
-                        }
-                    }).then(
-                        (foundTeams) => {
-
-                            //an array of team name and players on each team, used to associate the replays to the specifc team
-                            teamInfo = [];
-
-                            foundTeams.forEach(team => {
-                                let teamid = team._id.toString();
-                                //info object
-                                let teamInf = {};
-                                //teamname
-                                teamInf['teamName'] = team.teamName;
-                                teamInf['id'] = teamid;
-                                //add all the players of the team into a player array
-                                teamInf['players'] = [];
-                                team.teamMembers.forEach(member => {
-                                    let name = member.displayName.split('#');
-                                    name = name[0];
-                                    teamInf['players'].push(name);
-                                });
-                                teamInfo.push(teamInf);
-                            });
-
-                            let fileKeys = Object.keys(files);
-                            let parsed = [];
-
-                            //parse the replays
-                            fileKeys.forEach(fileKey => {
-                                try {
-                                    let parsedReplay = parser.processReplay(files[fileKey].path, {
-                                        useAttributeName: true,
-                                        overrideVerifiedBuild: true
-                                    });
-
-                                    if (parsedReplay.status != 1) {
-                                        parsedReplay['failed'] = true;
-                                    }
-                                    parsed.push(parsedReplay);
-                                } catch (error) {
-                                    parsed.push({
-                                        match: {
-                                            map: 'UNKNOWN-PARSE-ERROR'
-                                        }
-                                    });
-                                    util.errLogger(path, error, 'caught parse error');
-                                }
-                            });
-
-                            let replayfilenames = [];
-                            //loop through the parsed replays to grab some info
-                            parsed.forEach((element, index) => {
-                                //this tie back object is used to tie together the parsed replays, the match objects, and the replay files
-                                let tieBack = {};
-                                let timeStamp = '';
-                                if (util.returnBoolByPath(foundMatch.toObject(), 'scheduledTime.startTime')) {
-                                    let date = new Date(parseInt(foundMatch.scheduledTime.startTime));
-                                    let day = date.getDate();
-                                    let year = date.getFullYear();
-                                    let month = date.getMonth();
-                                    month = month + 1;
-                                    timeStamp = month + "-" + day + "-" + year;
-                                }
-                                let composeFilename = 'ngs_' + timeStamp + "_" + teamInfo[0].teamName + '_vs_' + teamInfo[1].teamName;
-
-                                //if the replay does not parse we will still store in the s3 giving it an unknown_map suffix
-                                if (element.hasOwnProperty('failed') && element.failed == true) {
-                                    composeFilename += '_' + 'unknown_map-' + index;
-                                } else {
-                                    let UUID = uniqid();
-                                    tieBack.id = UUID;
-                                    //this object will be pushed into the replayfilenames hold some info we need to save back to the match to tie the two together
-                                    let replayTeamA = element.match.teams["0"];
-                                    let replayTeamB = element.match.teams["1"];
-
-                                    //sort through the team members in the replay to assign the proper team names into the parsed replay object
-                                    teamInfo.forEach(teamInfo => {
-                                        if (_.intersection(replayTeamA.names, teamInfo.players).length > _.intersection(replayTeamB.names, teamInfo.players).length) {
-                                            replayTeamA.teamName = teamInfo.teamName;
-                                            replayTeamA.teamId = teamInfo.id;
-                                        } else if (_.intersection(replayTeamA.names, teamInfo.players).length < _.intersection(replayTeamB.names, teamInfo.players).length) {
-                                            replayTeamB.teamName = teamInfo.teamName;
-                                            replayTeamB.teamId = teamInfo.id;
-                                        } else {
-                                            //some error state, both == 0.... 
-                                        }
-                                    })
-
-                                    composeFilename += '_' + element.match.map;
-
-                                    element.match['ngsMatchId'] = foundMatch.matchId;
-                                    composeFilename = composeFilename.replace(/[^A-Z0-9\-]+/ig, "_");
-                                    element.match.filename = composeFilename;
-                                    element.systemId = UUID;
-                                }
-
-                                composeFilename = composeFilename.replace(/[^A-Z0-9\-]+/ig, "_");
-                                tieBack.fileName = composeFilename + '.stormReplay';
-                                replayfilenames.push(tieBack);
-
-                            });
-
-
-                            //TODO: possibly combining these into a promise array to bring exectuion time into sync so we can report to hots-profile here?
-                            for (var i = 0; i < fileKeys.length; i++) {
-                                if (foundMatch.replays == undefined || foundMatch.replays == null) {
-                                    foundMatch.replays = {};
-                                }
-
-                                if (foundMatch.replays[fields.round] == undefined || foundMatch.replays[fields.round] == null) {
-                                    foundMatch.replays[fields.round] = {};
-                                }
-
-                                foundMatch.replays[fields.round].url = replayfilenames[i].fileName;
-
-                                if (replayfilenames[i].id) {
-                                    foundMatch.replays[fields.round].data = replayfilenames[i].id;
-                                }
-
-                                let fileName = replayfilenames[i].fileName;
-                                let filePath = files[fileKeys[i]].path;
-                                uploadMethods.uploadReplayToS3(filePath, fileName).then(
-                                    ret => {
-                                        console.log(ret, 'uploaded to s3')
-                                    },
-                                    err => {
-                                        console.log(err, 'err sending to s3');
-                                    }
-                                );
-                            }
-
-                            //if we have failed parse - remove those junk objects from the array before inserting them into the database.
-                            indiciesToRemove = [];
-                            SeasonInfoCommon.getSeasonInfo().then(
-                                rep => {
-                                    let seasonNum = rep.value;
-                                    parsed.forEach((element, index) => {
-                                        element.season = seasonNum;
-                                        if (element.hasOwnProperty('failed') && element.failed == true) {
-                                            indiciesToRemove.push(index);
-                                        }
-                                    });
-
-                                    indiciesToRemove.forEach(index => {
-                                        parsed.splice(index, 1);
-                                    });
-
-                                    ParsedReplay.collection.insertMany(parsed).then(
-                                        (records) => {
-                                            let sysLog = {};
-                                            sysLog.actor = 'SYS';
-                                            sysLog.action = ' parsed replay stored';
-                                            sysLog.logLevel = 'SYSTEM';
-                                            sysLog.target = '';
-                                            sysLog.timeStamp = new Date().getTime();
-                                            logger(sysLog);
-                                        },
-                                        (err) => {
-                                            let sysLog = {};
-                                            sysLog.actor = 'SYS';
-                                            sysLog.action = ' parsed replay error';
-                                            sysLog.logLevel = 'ERROR';
-                                            sysLog.error = err;
-                                            sysLog.target = '';
-                                            sysLog.timeStamp = new Date().getTime();
-                                            logger(sysLog);
-                                        }
-                                    )
-                                }
-                            );
-                            foundMatch.reported = true;
-                            foundMatch.postedToHP = false;
-                            foundMatch.save((saved) => {
-                                res.status(200).send(util.returnMessaging(path, 'Match reported', false, saved, null, logObj));
-                            }, (err) => {
-                                res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
-                            })
-
-                        }, (err) => {
-                            res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
-                        })
-                } else {
-                    res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
-                }
-            },
-            (err) => {
-                res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
-            }
-        )
-    });
+    reportMatch(path, matchReport, requester, true).then(
+        reported => {
+            res.status(200).send(util.returnMessaging(path, 'Match Reported', null, reported));
+        },
+        err => {
+            console.log('err', err);
+            res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err));
+        }
+    );
 });
 
 router.post('/match/deletereplay', passport.authenticate('jwt', {
@@ -383,7 +184,7 @@ router.post('/match/deletereplay', passport.authenticate('jwt', {
     logInfo.action = 'delete replay from match';
     logInfo.admin = 'ADMIN';
     logInfo.actor = req.user.displayName;
-    logInfo.target = `${req.body.match} : replay prop ${req.body.replayProp}`;
+    logInfo.target = `${req.body.matchId} : replay prop ${req.body.replayProp}`;
 
     // res.status(200).send("Under construction");
     if (req.body.matchId && req.body.replayProp) {

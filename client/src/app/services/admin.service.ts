@@ -181,7 +181,7 @@ export class AdminService {
 
   //returns list of all divisions
   getDivisionList() {
-    let url = "/getDivisionInfo";
+    let url = "admin/getDivisionInfo";
 
     return this.httpService.httpGet(url, []).pipe(
       map((res) => {
@@ -350,14 +350,8 @@ export class AdminService {
 
   uploadReplay(payload) {
     let url = "admin/match/uploadreplay";
-    let input = new FormData();
 
-    let keys = Object.keys(payload);
-    keys.forEach((element) => {
-      input.append(element, payload[element]);
-    });
-
-    return this.httpService.httpPost(url, input, true);
+    return this.httpService.httpPost(url, payload, true);
   }
 
   createStream(obj) {

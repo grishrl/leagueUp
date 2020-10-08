@@ -1,24 +1,17 @@
 const Team = require('../models/team-models');
-const ParsedReplay = require('../models/replay-parsed-models');
 const Match = require('../models/match-model');
 const util = require('../utils');
 const passport = require("passport");
 const _ = require('lodash');
 const router = require('express').Router();
-const uniqid = require('uniqid');
 const levelRestrict = require("../configs/admin-leveling");
 const scheduleGenerator = require('../subroutines/schedule-subs');
-const logger = require('../subroutines/sys-logging-subs').logger;
 const Scheduling = require('../models/schedule-models');
 const Division = require('../models/division-models');
 const matchCommon = require('../methods/matchCommon');
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 const archiveMethods = require('../methods/archivalMethods');
-const uploadMethod = require('../methods/replayUpload');
-const e = require('express');
-const { s3deleteFile } = require('../methods/aws-s3/delete-s3-file');
 const AWS = require('aws-sdk');
-const utils = require('../utils');
 
 
 /**
@@ -674,300 +667,17 @@ router.post('/report/match', passport.authenticate('jwt', {
     let requester = req.user.displayName;
 
     let matchReport = req.body;
-    //log object
-    let logObj = {};
-    logObj.actor = req.user.displayName;
-    logObj.action = 'report match';
-    logObj.logLevel = 'STD';
-    logObj.target = matchReport.matchId;
 
-    let match = await Match.findOne({
-        matchId: matchReport.matchId
-    });
+    const rM = require('../methods/matches/report-match');
 
-    if (!match) {
-        //fail match not found
-        res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
-    } else {
-
-        let teamIds = findTeamIds([match.toObject()]);
-
-        let foundTeams = await Team.find({
-            _id: {
-                $in: teamIds
-            }
-        });
-
-        if (!foundTeams) {
-            //fail teams not found
-            res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
-        } else {
-            let homeDominate = false;
-            let awayDominate = false;
-            if (matchReport.homeTeamScore == 2 && matchReport.awayTeamScore == 0) {
-                homeDominate = true;
-            } else if (matchReport.homeTeamScore == 0 && matchReport.awayTeamScore == 2) {
-                awayDominate = true;
-            }
-            //an array of team name and players on each team, used to associate the replays to the specifc team
-            teamInfo = [];
-            foundTeams.forEach(team => {
-                let teamid = team._id.toString();
-                let homeid, awayid;
-                if (util.returnBoolByPath(match.toObject(), 'home.id')) {
-                    homeid = match.home.id.toString();
-                }
-                if (util.returnBoolByPath(match.toObject(), 'away.id')) {
-                    awayid = match.away.id.toString();
-                }
-                if (teamid == homeid) {
-                    if (homeDominate) {
-                        match.home.dominator = true;
-                    }
-                    match.home.teamName = team.teamName;
-                    match.home.score = matchReport.homeTeamScore;
-                }
-                if (teamid == awayid) {
-                    if (awayDominate) {
-                        match.away.dominator = true;
-                    }
-                    match.away.teamName = team.teamName;
-                    match.away.score = matchReport.awayTeamScore;
-                }
-                //info object
-                let teamInf = {};
-                //teamname
-                teamInf['teamName'] = team.teamName;
-                teamInf['id'] = teamid;
-                //add all the players of the team into a player array
-                teamInf['players'] = [];
-                team.teamMembers.forEach(member => {
-                    let name = member.displayName.split('#');
-                    name = name[0];
-                    teamInf['players'].push(name);
-                });
-                teamInfo.push(teamInf);
-            });
-
-
-            if (matchReport.otherDetails != null && matchReport.otherDetails != undefined) {
-                match.other = matchReport.otherDetails;
-            }
-
-            if (matchReport.mapBans != null && matchReport.mapBans != undefined) {
-                match.mapBans = matchReport.mapBans;
-            }
-
-            //validate the submitter is a captain OR assistantCaptain of one of the teams
-            let isCapt = returnIsCapt(foundTeams, requester);
-            if (!isCapt) {
-                //fail request is not authorized to report
-                logObj.logLevel = 'ERROR';
-                logObj.error = 'Unauthorized to report'
-                res.status(403).send(path, 'Unauthorized', false, null, null, logObj);
-            } else {
-
-                //these replays are in s3 all ready!
-
-                // matchReport.otherDetails[game]['filename'] <--- the S3 file of the replay
-
-                let parsed = [];
-
-                AWS.config.update({
-                    accessKeyId: process.env.S3accessKeyId,
-                    secretAccessKey: process.env.S3secretAccessKey,
-                    region: process.env.S3region
-                });
-
-                const s3replayBucket = new AWS.S3({
-                    params: {
-                        Bucket: process.env.s3bucketReplays
-                    }
-                });
-
-                const s3pendingFiles = new AWS.S3({
-                    params: {
-                        Bucket: 's3-client-uploads'
-                    }
-                });
-
-                const tmp = require('tmp-promise');
-                const fs = require('fs');
-
-
-                let keysArray = Object.keys(matchReport.fileTracking);
-                for (var i = 0; i < keysArray.length; i++) {
-
-                    let key = keysArray[i];
-                    let value = matchReport.fileTracking[key];
-
-                    let dat = await s3pendingFiles.getObject({ Key: value['filename'] }).promise().then(
-                        dat => { return dat },
-                        err => { return null }
-                    );
-
-                    if (dat) {
-                        try {
-
-                            const { fd, path, cleanup } = await tmp.file();
-                            let f = await fs.promises.appendFile(path, dat.Body);
-                            let parsedReplay = parser.processReplay(path, {
-                                useAttributeName: true,
-                                overrideVerifiedBuild: true
-                            });
-
-                            if (parsedReplay.status != 1) {
-                                parsedReplay['failed'] = true;
-                            }
-                            parsed.push({
-                                parseObj: parsedReplay,
-                                tempFileName: value['filename']
-                            });
-                            cleanup();
-
-                        } catch (error) {
-                            parsed.push({
-                                match: {
-                                    map: 'UNKNOWN-PARSE-ERROR'
-                                }
-                            });
-                            util.errLogger(path, error, 'caught parse error');
-                        }
-                    } else {
-                        //no dat!!!
-                    }
-
-                }
-
-                parsed.forEach((element, index) => {
-                    let tieBack = {};
-                    let timeStamp = '';
-                    if (util.returnBoolByPath(match.toObject(), 'scheduledTime.startTime')) {
-                        let date = new Date(parseInt(match.scheduledTime.startTime));
-                        let day = date.getDate();
-                        let year = date.getFullYear();
-                        let month = date.getMonth();
-                        month = month + 1;
-                        timeStamp = month + "-" + day + "-" + year;
-                    }
-                    let composeFilename = 'ngs_' + timeStamp + "_" + teamInfo[0].teamName + '_vs_' + teamInfo[1].teamName;
-                    //if the replay does not parse we will still store in the s3 giving it an unknown_map suffix
-                    if (element.parseObj && element.parseObj.hasOwnProperty('failed') && element.parseObj.failed == true) {
-                        composeFilename += '_' + 'unknown_map-' + index;
-                    } else {
-                        let UUID = uniqid();
-                        tieBack.id = UUID;
-                        //this object will be pushed into the replayfilenames hold some info we need to save back to the match to tie the two together
-                        let replayTeamA = element.parseObj.match.teams["0"];
-                        let replayTeamB = element.parseObj.match.teams["1"];
-
-                        //sort through the team members in the replay to assign the proper team names into the parsed replay object
-                        teamInfo.forEach(teamInfo => {
-                            if (_.intersection(replayTeamA.names, teamInfo.players).length > _.intersection(replayTeamB.names, teamInfo.players).length) {
-                                replayTeamA.teamName = teamInfo.teamName;
-                                replayTeamA.teamId = teamInfo.id;
-                            } else if (_.intersection(replayTeamA.names, teamInfo.players).length < _.intersection(replayTeamB.names, teamInfo.players).length) {
-                                replayTeamB.teamName = teamInfo.teamName;
-                                replayTeamB.teamId = teamInfo.id;
-                            } else {
-                                //some error state, both == 0.... 
-                            }
-                        })
-                        element.parsedReplayId = UUID;
-                        composeFilename += '_' + element.parseObj.match.map;
-                        element.parseObj.match['ngsMatchId'] = match.matchId;
-                        composeFilename = composeFilename.replace(/[^A-Z0-9\-]+/ig, "_");
-                        element.parseObj.match.filename = composeFilename;
-                        element.parseObj.systemId = UUID;
-                    }
-                    element.newFileName = composeFilename;
-                });
-                //MOVE REPLAY FILES FROM TEMP TO FINAL RESTING
-                for (var i = 0; i < parsed.length; i++) {
-                    if (match.replays == undefined || match.replays == null) {
-                        match.replays = {};
-                    }
-                    if (match.replays[(i + 1).toString()] == undefined || match.replays[(i + 1).toString()] == null) {
-                        match.replays[(i + 1).toString()] = {};
-                    }
-                    let obj = parsed[i];
-
-                    const copyParam = {
-                        CopySource: `s3-client-uploads/${obj.tempFileName}`,
-                        Bucket: process.env.s3bucketReplays,
-                        Key: obj.newFileName
-                    }
-
-                    if (obj.parsedReplayId) {
-                        match.replays[(i + 1).toString()].data = obj.parsedReplayId;
-                    }
-
-                    let copied = await s3pendingFiles.copyObject(copyParam).promise().then(res => { return res }, err => { return null; });
-                    if (copied) {
-                        match.replays[(i + 1).toString()].url = obj.newFileName;
-                        s3deleteFile('s3-client-uploads', null, obj.tempFileName);
-                    } else {
-                        //uh oh
-                        utils.errLogger(path, `${obj.tempFileName} file wasnt moved!`)
-                    }
-                }
-
-                //if we have failed parse - remove those junk objects from the array before inserting them into the database.
-                indiciesToRemove = [];
-                SeasonInfoCommon.getSeasonInfo().then(
-                    rep => {
-                        let seasonNum = rep.value;
-                        parsed.forEach((element, index) => {
-                            parsed[index] = element.parseObj;
-                        });
-                        parsed.forEach((element, index) => {
-                            element.season = seasonNum;
-                            if (element.hasOwnProperty('failed') && element.failed == true) {
-                                indiciesToRemove.push(index);
-                            };
-                        });
-
-                        indiciesToRemove.forEach(index => {
-                            parsed.splice(index, 1);
-                        });
-
-                        ParsedReplay.collection.insertMany(parsed).then(
-                            (records) => {
-                                let sysLog = {};
-                                sysLog.actor = 'SYS';
-                                sysLog.action = ' parsed replay stored';
-                                sysLog.logLevel = 'SYSTEM';
-                                sysLog.target = '';
-                                sysLog.timeStamp = new Date().getTime();
-                                logger(sysLog);
-                            },
-                            (err) => {
-                                let sysLog = {};
-                                sysLog.actor = 'SYS';
-                                sysLog.action = ' parsed replay error';
-                                sysLog.logLevel = 'ERROR';
-                                sysLog.error = err;
-                                sysLog.target = '';
-                                sysLog.timeStamp = new Date().getTime();
-                                logger(sysLog);
-                            }
-                        )
-                    }
-                );
-
-                match.reported = true;
-                match.save((saved) => {
-                        res.status(200).send(util.returnMessaging(path, 'Match reported', false, saved, null, logObj));
-                    }, (err) => {
-                        res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null, null, logObj));
-                    })
-                    //if this match was a tournmanet match then we need to promote the winner to the parent match
-                matchCommon.promoteTournamentMatch(match.toObject());
-
-            }
+    rM(path, matchReport, requester).then(
+        succ => {
+            res.status(200).send(util.returnMessaging(path, 'Match Reported!', null, succ));
+        }, err => {
+            console.log(err);
+            res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err, null));
         }
-
-    }
+    )
 
 });
 

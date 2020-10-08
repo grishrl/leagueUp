@@ -22,27 +22,32 @@ const replaySchema = new Schema({
     "1": {
         "parsedUrl": String,
         "url": String,
-        "data": String
+        "data": String,
+        "tempUrl": String
     },
     "2": {
         "parsedUrl": String,
         "url": String,
-        "data": String
+        "data": String,
+        "tempUrl": String
     },
     "3": {
         "parsedUrl": String,
         "url": String,
-        "data": String
+        "data": String,
+        "tempUrl": String
     },
     "4": {
         "parsedUrl": String,
         "url": String,
-        "data": String
+        "data": String,
+        "tempUrl": String
     },
     "5": {
         "parsedUrl": String,
         "url": String,
-        "data": String
+        "data": String,
+        "tempUrl": String
     }
 }, { strict: false });
 

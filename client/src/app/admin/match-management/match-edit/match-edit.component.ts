@@ -7,11 +7,13 @@ import * as moment from 'moment-timezone';
 import { Match } from '../../../classes/match.class';
 import { MvpService } from 'src/app/services/mvp.service';
 import { forEach } from 'lodash';
+import { S3uploadServiceService } from 'src/app/services/s3upload-service.service';
+import { timeout } from 'rxjs/operators';
 
 @Component({
   selector: "app-match-edit",
   templateUrl: "./match-edit.component.html",
-  styleUrls: ["./match-edit.component.css"]
+  styleUrls: ["./match-edit.component.css"],
 })
 export class MatchEditComponent implements OnInit {
   //component properties
@@ -43,18 +45,21 @@ export class MatchEditComponent implements OnInit {
   amPm = ["PM", "AM"];
   mvpObj = {
     displayName: "",
-    potg_link: ""
+    potg_link: "",
   };
   filePendingUpload;
   matchRound;
   winner;
+
+  uploading = false;
 
   constructor(
     private route: ActivatedRoute,
     private scheduleService: ScheduleService,
     private adminService: AdminService,
     private util: UtilitiesService,
-    private mvpServ: MvpService
+    private mvpServ: MvpService,
+    private s3uploads: S3uploadServiceService
   ) {
     if (this.route.snapshot.params["id"]) {
       this.matchId = this.route.snapshot.params["id"];
@@ -63,20 +68,19 @@ export class MatchEditComponent implements OnInit {
 
   ngOnInit() {
     this.scheduleService.getMatchInfo(this.matchId).subscribe(
-      res => {
+      (res) => {
         this.match = res;
-        if (
-          this.util.returnBoolByPath(this.match, 'away.score')){
-            this.awayScore = this.match.away.score;
-          }
+        if (this.util.returnBoolByPath(this.match, "away.score")) {
+          this.awayScore = this.match.away.score;
+        }
 
-          if(this.util.returnBoolByPath(this.match, 'home.score')){
+        if (this.util.returnBoolByPath(this.match, "home.score")) {
           this.homeScore = this.match.home.score;
         }
         if (!this.match.hasOwnProperty("scheduledTime")) {
           this.match.scheduledTime = {
             startTime: null,
-            endTime: null
+            endTime: null,
           };
         } else {
           // this.friendlyDate = this.util.getDatePickerFormatFromMS(this.match.scheduledTime.startTime);
@@ -88,7 +92,7 @@ export class MatchEditComponent implements OnInit {
           );
         }
       },
-      err => {
+      (err) => {
         console.log(err);
       }
     );
@@ -103,12 +107,12 @@ export class MatchEditComponent implements OnInit {
       }
     }
     this.mvpServ.getMvpById("match_id", this.matchId).subscribe(
-      res => {
-        if(res){
+      (res) => {
+        if (res) {
           this.mvpObj = res;
         }
       },
-      err => {
+      (err) => {
         console.log("err", err);
       }
     );
@@ -120,20 +124,20 @@ export class MatchEditComponent implements OnInit {
       if (valObj.valid) {
         obj.potg_link = valObj.returnClip;
         this.mvpServ.upsertMvp(obj).subscribe(
-          res => {
+          (res) => {
             this.mvpObj = res;
           },
-          err => {
+          (err) => {
             console.log("MVP Submit: ", err);
           }
         );
       }
     } else {
       this.mvpServ.upsertMvp(obj).subscribe(
-        res => {
+        (res) => {
           this.mvpObj = res;
         },
-        err => {
+        (err) => {
           console.log("MVP Submit: ", err);
         }
       );
@@ -142,48 +146,78 @@ export class MatchEditComponent implements OnInit {
 
   deleteReplay(key) {
     this.adminService.deleteReplay(this.match.matchId, key).subscribe(
-      res=>{
+      (res) => {
         this.ngOnInit();
       },
-      err=>{
+      (err) => {
         console.log(err);
       }
-    )
+    );
   }
 
   uploadReplay() {
-    if(this.util.returnBoolByPath(this.match, `replays.${this.matchRound}`)){
-      alert('This match all ready has info for the provided round!');
-    }else{
-      if (this.util.returnBoolByPath(this.match, `other.${this.matchRound}`)){
-        this.match.other[this.matchRound].winner = this.winner;
-      }else{
-        if(!this.util.returnBoolByPath(this.match, 'other')){
-          this.match.other = {};
+    let report = {
+      matchId: this.match.matchId,
+    };
+    //check if we're over writing some round info
+    if (this.util.returnBoolByPath(this.match, `replays.${this.matchRound}`)) {
+      alert("This match all ready has info for the provided round!");
+    } else {
+      //round is clear.
+      // set up winner in the other object;
+      if (
+        this.util.returnBoolByPath(report, `otherDetails.${this.matchRound}`)
+      ) {
+        report["otherDetails"][this.matchRound].winner = this.winner;
+      } else {
+        if (!this.util.returnBoolByPath(report, "otherDetails")) {
+          report["otherDetails"] = {};
         }
-        this.match.other[this.matchRound] = { winner : this.winner };
+        report["otherDetails"][this.matchRound] = { winner: this.winner };
       }
-
-      this.adminService.matchUpdate(this.match).subscribe(
-        res => {
-          //now lets do some replay magic...
-          let report = { "matchId":this.match.matchId, "round": this.matchRound}
-          report[`replay${this.matchRound}`] = this.filePendingUpload;
-          this.adminService.uploadReplay(report).subscribe(
-            res=>{
-              this.filePendingUpload = null;
-              this.matchRound = null;
-              this.winner = null;
-              this.ngOnInit();
-            },
-            err=>{
-              console.log(err);
-
-            }
-          )
+      let inf = {
+        fileInfo: {
+          filename: this.filePendingUpload.name,
+          type: this.filePendingUpload.type,
         },
-        err => {
-          console.log(err);
+      };
+      this.uploading = true;
+      this.s3uploads.getSignedUrl(inf).subscribe(
+        (signedObj) => {
+          console.log("signedObj", signedObj);
+          report["fileTracking"] = {};
+          report["fileTracking"][this.matchRound] = {};
+          report["fileTracking"][this.matchRound]["filename"] =
+            signedObj[0].file;
+          console.log("a", signedObj, report);
+          this.s3uploads
+            .s3put(signedObj[0].signedUrl, this.filePendingUpload)
+            .subscribe(
+              (uploaded) => {
+                this.adminService.uploadReplay(report).subscribe(
+                  (res) => {
+                    this.filePendingUpload = null;
+                    this.matchRound = null;
+                    this.winner = null;
+
+                    setTimeout(()=>{
+                      this.uploading = false;
+                      this.ngOnInit()
+                    }, 3000);
+                    // this.ngOnInit();
+                  },
+                  (err) => {
+                    console.log(err);
+                  }
+                );
+              },
+              (err) => {
+                console.warn(err);
+              }
+            );
+        },
+        (err) => {
+          console.warn(err);
         }
       );
     }
@@ -216,10 +250,10 @@ export class MatchEditComponent implements OnInit {
 
     if (submittable) {
       this.adminService.matchUpdate(match).subscribe(
-        res => {
+        (res) => {
           this.ngOnInit();
         },
-        err => {
+        (err) => {
           console.log(err);
         }
       );

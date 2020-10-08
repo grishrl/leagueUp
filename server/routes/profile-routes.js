@@ -355,6 +355,8 @@ router.post('/upload/avatar', passport.authenticate('jwt', {
     session: false
 }), (req, res) => {
 
+    //TODO: replace with new client to s3 methods, maybe
+
     const path = '/user/upload/avatar';
     let uploadedFileName = "";
 
