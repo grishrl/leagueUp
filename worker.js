@@ -37,9 +37,7 @@ function worker(server, app) {
     const mvp = require('./server/routes/mvp-routes');
     const notes = require('./server/routes/notes-routes');
 
-    //create socket server from express server
-    let socketIo = io(server);
-    socketIo.set('heartbeat timeout', 30);
+
     //configs...
     app.use(bodyParser.json({
         limit: '2.5mb',

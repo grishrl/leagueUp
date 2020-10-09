@@ -70,7 +70,7 @@ import { UserMessageCenterComponent } from './messageCenter/user-message-center/
 import { TeamMarketComponent } from './marketplace/team-market/team-market.component';
 import { UserMarketplaceComponent } from './marketplace/user-marketplace/user-marketplace.component';
 import { UserDeckComponent } from './marketplace/user-marketplace/user-deck/user-deck.component';
- import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+//  import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { ConfirmRemoveMemberComponent } from './modal/confirm-remove-member/confirm-remove-member.component';
 import { TournamentGeneratorComponent } from './admin/match-management/tournament-generator/tournament-generator.component';
 import { GenerateSeasonComponent } from './admin/match-management/generate-season/generate-season.component';
@@ -202,7 +202,7 @@ import { ChampExpanderComponent } from './grand-champions-viewer/champ-expander/
 import { MatchResultsHeaderComponent } from './match/match-results-view/match-results-header/match-results-header.component';
 import { LoadingComponent } from './elements/loading/loading.component';
 
-const config: SocketIoConfig = { url: environment.socketURL, options:{} }
+// const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
 @NgModule({
   declarations: [
@@ -412,7 +412,7 @@ const config: SocketIoConfig = { url: environment.socketURL, options:{} }
       provide: DateAdapter,
       useFactory: adapterFactory
     }),
-    SocketIoModule.forRoot(config),
+    // SocketIoModule.forRoot(config),
     DragDropModule,
     DragScrollModule
   ],

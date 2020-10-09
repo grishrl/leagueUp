@@ -6,7 +6,8 @@ import { UserService } from '../services/user.service';
 import { DivisionService } from '../services/division.service';
 import { MessagesService } from '../services/messages.service';
 import { NotificationService } from '../services/notification.service';
-import { Socket } from 'ngx-socket-io';
+// import { Socket } from 'ngx-socket-io';
+// import { WebsocketService } from '../services/websocket.service';
 import { TimeserviceService } from '../services/timeservice.service';
 
 declare var Mmenu: any;
@@ -20,7 +21,7 @@ export class NavComponent implements OnInit {
   divisions
   userMessages:number=0;
 
-  constructor(public Auth:AuthService, private socket:Socket, private router: Router, public team:TeamService,
+  constructor(public Auth:AuthService, private router: Router, public team:TeamService,
     public user:UserService, private divisionService: DivisionService, private messages:MessagesService,
     private notificationService:NotificationService, private timeService:TimeserviceService) {
       if(this.Auth.isAuthenticated()){
@@ -98,17 +99,17 @@ createMobileNav(){
 
     //set up socket connection for the logged in user
     if(this.Auth.getUserId()){
-      this.socket.emit('storeClientInfo', { userId: this.Auth.getUserId() });
+      // this.socket.emit('storeClientInfo', { userId: this.Auth.getUserId() });
     }
     //subscribe to the socket emiter if a user gets a message to update their information
-    this.socket.fromEvent('newMessage').subscribe(
-      res=>{
-        this.userMessages+=1;
-      },
-      err=>{
-        console.log(err);
-      }
-    )
+    // this.socket.fromEvent('newMessage').subscribe(
+    //   res=>{
+    //     this.userMessages+=1;
+    //   },
+    //   err=>{
+    //     console.log(err);
+    //   }
+    // )
     //updates the unread messages bubble...
     this.notificationService.updateMessages.subscribe(
       message=>{

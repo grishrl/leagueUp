@@ -1,5 +1,5 @@
 const Message = require('../models/message-models');
-const socketMethods = require('./socket-io-methods');
+// const socketMethods = require('./socket-io-methods');
 const util = require('../utils');
 
 //function for sending messages to users
@@ -9,7 +9,7 @@ function message(recipient, subject, content, sender) {
     if (typeof recipient == 'object') {
         new Message(recipient).save();
         let recp = recipient.recipient.toString();
-        socketMethods.dispatchMessage(recp);
+        // socketMethods.dispatchMessage(recp);
     } else if (typeof recipient == 'string') { //otherwise we need to create an object with the individual parameters we were given
         new Message({
             recipient: recipient,
@@ -19,7 +19,7 @@ function message(recipient, subject, content, sender) {
             sender: sender,
             notSeen: true
         }).save();
-        socketMethods.dispatchMessage(recipient);
+        // socketMethods.dispatchMessage(recipient);
     } else {
         util.errLogger('message-sub', null, 'messenger got bad data');
     }

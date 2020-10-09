@@ -1,5 +1,6 @@
 //import the express server from file
 const app = require('./serverConf')['app'];
+
 if (process.env.runNewRelic != 'false') {
     console.log('run');
     require('newrelic');
