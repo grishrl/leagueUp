@@ -15,5 +15,5 @@ if (!sticky.listen(server, process.env.PORT, {
     });
 } else {
     // Worker code
-    worker(server, app);
+    // worker(server, app);
 }
