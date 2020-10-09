@@ -95,11 +95,7 @@ function worker(server, app) {
     //initialize passport
     app.use(passport.initialize());
 
-    console.log('>>>>', express.static(path.join(__dirname, './client/dist/client/')));
-
     app.use('/', express.static(path.join(__dirname, './client/dist/client/')));
-
-    console.log('////', path.join(__dirname, './client/dist/client/index.html'));
 
     app.get('*', function(req, res) {
         res.sendFile(path.join(__dirname, './client/dist/client/index.html'));
