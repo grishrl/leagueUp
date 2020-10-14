@@ -13,8 +13,9 @@
                         <ul class="general-info">
                             <li *ngIf="showDivision">
                                 <h6><strong>Division:</strong>
-                                    <app-division-if-public [divisionInfo]="returnedProfile.divisionConcat">
-                                    </app-division-if-public>
+                                    <app-division-link [division]="returnedProfile.divisionConcat">
+                                        <app-division-if-public [divisionInfo]="returnedProfile.divisionConcat"></app-division-if-public>
+                                    </app-division-link>
                                 </h6>
                             </li>
                             <li>
@@ -34,10 +35,10 @@
                                 <h6><strong>HeroesProfile MMR:</strong> {{returnedProfile.hpMmrAvg}}
                                 </h6>
                             </li>
-                            <li>
+                            <!-- <li>
                                 <h6><strong>NGS MMR:</strong> {{returnedProfile.ngsMmrAvg}}
                                 </h6>
-                            </li>
+                            </li> -->
                             <!-- <li>
                                 <h6>
                                     <i class="fa fa-link" aria-hidden="true"></i>
@@ -47,6 +48,9 @@
                         </ul>
 
                         <ul class="social-teams">
+                            <li>
+                                <h6><strong>Team Socials:</strong></h6>
+                            </li>
                             <li>
                                 <a href="{{hpLink}}" target="_blank">
                                     <img style="max-width: 30px;" src="/assets/heroesprofilelogo.png">
