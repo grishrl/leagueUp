@@ -8,8 +8,8 @@ if (process.env.runNewRelic != 'false') {
 
 const express = require("express");
 //host name and port
-const hostname = process.env.hostname;
-const port = process.env.PORT;
+// const hostname = process.env.hostname;
+// const port = process.env.PORT;
 
 //load route files
 const authRoutes = require('./server/routes/auth-routes');
@@ -118,3 +118,4 @@ function startApp() {
         res.sendFile(path.join(__dirname, './client/dist/client/index.html'));
     });
 }
+startApp();
