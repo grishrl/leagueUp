@@ -1,6 +1,3 @@
-const throng = require('throng');
-//import the express server from file
-
 const { socket, app } = require('./serverConf');
 
 if (process.env.runNewRelic != 'false') {
