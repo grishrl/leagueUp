@@ -1,10 +1,11 @@
-const { socket, app } = require('./serverConf');
+const { app } = require('./serverConf');
 
 
 if (process.env.runNewRelic != 'false') {
     console.log('run');
     require('newrelic');
 }
+
 const express = require("express");
 //host name and port
 const hostname = process.env.hostname;
@@ -116,14 +117,4 @@ function startApp() {
     app.get('*', function(req, res) {
         res.sendFile(path.join(__dirname, './client/dist/client/index.html'));
     });
-}
-
-let WORKERS = process.env.WEB_CONCRRENCY || 1;
-
-if (process.env.environment == 'development') {
-    console.log(WORKERS);
-    startApp();
-} else {
-    console.log(WORKERS);
-    throng(WORKERS, startApp);
 }

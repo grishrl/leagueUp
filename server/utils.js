@@ -1,6 +1,32 @@
 const logger = require('./subroutines/sys-logging-subs').logger;
 const _ = require('lodash');
 
+validateInputs = {};
+
+validateInputs.array = function(input) {
+    var retVal = false;
+    if (!isNullOrEmpty(input)) {
+        retVal = input instanceof Array ? input : false;
+    }
+    return retVal;
+}
+
+validateInputs.string = function(input) {
+    var retVal = false;
+    if (!isNullOrEmpty(input)) {
+        retVal = typeof(input) == 'string' ? input : false;
+    }
+    return retVal;
+}
+
+validateInputs.object = function(input) {
+    var retVal = false;
+    if (!isNullOrEmpty(input)) {
+        retVal = typeof(input) == 'object' ? input : false;
+    }
+    return retVal;
+}
+
 isNullOrEmpty = function(dat) {
     if (dat == null || dat == undefined) {
         return true;
@@ -282,5 +308,6 @@ module.exports = {
     objectify: objectify,
     removeInactiveTeams: removeInactiveTeams,
     errLogger: errLogger,
-    JSONCopy: JSONCopy
+    JSONCopy: JSONCopy,
+    validateInputs: validateInputs
 };
