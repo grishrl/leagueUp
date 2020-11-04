@@ -27,6 +27,15 @@ validateInputs.object = function(input) {
     return retVal;
 }
 
+validateInputs.number = function(input) {
+    var retVal = false;
+    if (!isNullOrEmpty(input)) {
+        retVal = typeof(input) == 'number' ? input : false;
+    }
+    return retVal;
+}
+
+
 isNullOrEmpty = function(dat) {
     if (dat == null || dat == undefined) {
         return true;

@@ -1,7 +1,5 @@
-const util = require('../utils');
 const router = require('express').Router();
 const Division = require("../models/division-models");
-const DivSubs = require('../subroutines/division-subs');
 const TeamSubs = require('../subroutines/team-subs');
 const Team = require("../models/team-models");
 const passport = require("passport");
@@ -13,7 +11,7 @@ const utils = require('../utils');
 //successuflly registered for the season
 router.get('/getTeamsUndivisioned', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.divisionLevel, util.appendResHeader, (req, res) => {
+}), levelRestrict.divisionLevel, utils.appendResHeader, (req, res) => {
     const path = '/admin/getTeamsUndivisioned';
     try {
 
@@ -36,14 +34,14 @@ router.get('/getTeamsUndivisioned', passport.authenticate('jwt', {
                 "questionnaire.registered": true
             }]
         }).then((results) => {
-            res.status(200).send(util.returnMessaging(path, 'Found teams', false, results));
+            res.status(200).send(utils.returnMessaging(path, 'Found teams', false, results));
         }, (err) => {
-            res.status(500).send(util.returnMessaging(path, 'Error querying teams', err));
+            res.status(500).send(utils.returnMessaging(path, 'Error querying teams', err));
         })
 
     } catch (e) {
         utils.errLogger(path, e);
-        res.status(500).send(util.returnMessaging(path, 'Internal Server Error', e));
+        res.status(500).send(utils.returnMessaging(path, 'Internal Server Error', e));
     }
 
 });
@@ -59,13 +57,13 @@ router.get('/getDivisionInfo', (req, res) => {
     const path = '/admin/getDivisionInfo'
     try {
         Division.find({}).then((found) => {
-            res.status(200).send(util.returnMessaging(path, 'Returning division info.', false, found));
+            res.status(200).send(utils.returnMessaging(path, 'Returning division info.', false, found));
         }, (err) => {
-            res.status(500).send(util.returnMessaging(path, 'Error getting the division info.', err));
+            res.status(500).send(utils.returnMessaging(path, 'Error getting the division info.', err));
         })
     } catch (e) {
         utils.errLogger(path, e);
-        res.status(500).send(util.returnMessaging(path, 'Internal Server Error', e));
+        res.status(500).send(utils.returnMessaging(path, 'Internal Server Error', e));
     }
 });
 
@@ -73,7 +71,7 @@ router.get('/getDivisionInfo', (req, res) => {
 router.post('/divisionTeams',
     passport.authenticate('jwt', {
         session: false
-    }), levelRestrict.divisionLevel, util.appendResHeader, (req, res) => {
+    }), levelRestrict.divisionLevel, utils.appendResHeader, (req, res) => {
         const path = '/admin/divisionTeams';
         let div = req.body.divisionName;
         let recTeam = req.body.teamInfo;
@@ -113,17 +111,17 @@ router.post('/divisionTeams',
                         foundDiv.markModified('teams');
                         foundDiv.save().then((saved) => {
                             runTeamSub = true;
-                            res.status(200).send(util.returnMessaging(path, 'Saved division', false, saved, null, logObj));
+                            res.status(200).send(utils.returnMessaging(path, 'Saved division', false, saved, null, logObj));
                             TeamSubs.upsertTeamsDivision(teams, {
                                 displayName: saved.displayName,
                                 divisionConcat: saved.divisionConcat
                             });
                         }, (err) => {
-                            res.status(500).send(util.returnMessaging(path, 'Error saving divsion', err, null, null, logObj));
+                            res.status(500).send(utils.returnMessaging(path, 'Error saving divsion', err, null, null, logObj));
                         })
                     }
                 }, (err) => {
-                    res.status(500).send(util.returnMessaging(path, 'Error finding division', err, null, null, logObj))
+                    res.status(500).send(utils.returnMessaging(path, 'Error finding division', err, null, null, logObj))
                 })
             } else {
                 let message = 'Error: ';
@@ -133,19 +131,19 @@ router.post('/divisionTeams',
                 if (!div) {
                     message += 'divisionName (string) parameter required';
                 }
-                res.status(500).send(util.returnMessaging(path, message));
+                res.status(500).send(utils.returnMessaging(path, message));
             }
 
         } catch (e) {
             utils.errLogger(path, e);
-            res.status(500).send(util.returnMessaging(path, 'Internal Server Error', e));
+            res.status(500).send(utils.returnMessaging(path, 'Internal Server Error', e));
         }
 
     });
 
 router.post('/upsertDivision', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.divisionLevel, util.appendResHeader, (req, res) => {
+}), levelRestrict.divisionLevel, utils.appendResHeader, (req, res) => {
     const path = '/admin/upsertDivision';
 
     try {
@@ -187,7 +185,7 @@ router.post('/upsertDivision', passport.authenticate('jwt', {
                             if (saved.public && divisionPriorState.public != saved.public) {
                                 TeamSubs.updateTeamDivHistory(saved.teams, saved.displayName);
                             }
-                            res.status(200).send(util.returnMessaging(path, 'Division updated', false, saved, null, logObj));
+                            res.status(200).send(utils.returnMessaging(path, 'Division updated', false, saved, null, logObj));
                             if (runSubs) {
                                 TeamSubs.upsertTeamsDivision(found.teams, {
                                     "displayName": saved.displayName,
@@ -195,7 +193,7 @@ router.post('/upsertDivision', passport.authenticate('jwt', {
                                 });
                             }
                         }, (err) => {
-                            res.status(500).send(util.returnMessaging(path, 'Error saving Division', err, null, null, logObj));
+                            res.status(500).send(utils.returnMessaging(path, 'Error saving Division', err, null, null, logObj));
                         }
                     )
 
@@ -203,14 +201,14 @@ router.post('/upsertDivision', passport.authenticate('jwt', {
                     new Division(
                         division
                     ).save().then((newDivision) => {
-                        res.status(200).send(util.returnMessaging(path, 'Created new division', false, newDivision, null, logObj));
+                        res.status(200).send(utils.returnMessaging(path, 'Created new division', false, newDivision, null, logObj));
                     }, (err) => {
-                        res.status(500).send(util.returnMessaging(path, 'Error creating new division', err, null, null, logObj));
+                        res.status(500).send(utils.returnMessaging(path, 'Error creating new division', err, null, null, logObj));
                     });
                 }
 
             }, (err) => {
-                res.status(500).send(util.returnMessaging(path, 'Error finding division', err, null, null, logObj));
+                res.status(500).send(utils.returnMessaging(path, 'Error finding division', err, null, null, logObj));
             })
         } else {
             let message = 'Error: ';
@@ -220,19 +218,19 @@ router.post('/upsertDivision', passport.authenticate('jwt', {
             if (!division) {
                 message += 'divisionName (object) parameter required ';
             }
-            res.status(500).send(util.returnMessaging(path, message));
+            res.status(500).send(utils.returnMessaging(path, message));
         }
 
     } catch (e) {
         utils.errLogger(path, e);
-        res.status(500).send(util.returnMessaging(path, 'Internal Server Error', e));
+        res.status(500).send(utils.returnMessaging(path, 'Internal Server Error', e));
     }
 
 });
 
 router.post('/removeTeams', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.divisionLevel, util.appendResHeader, (req, res) => {
+}), levelRestrict.divisionLevel, utils.appendResHeader, (req, res) => {
     const path = '/admin/removeTeams';
 
     let removeTeams = req.body.teams;
@@ -262,18 +260,18 @@ router.post('/removeTeams', passport.authenticate('jwt', {
                         removed = removed.concat(found.teams.splice(i, 1));
                     });
                     found.save((saved) => {
-                        res.status(200).send(util.returnMessaging(path, 'Saved division', false, saved, null, logObj));
+                        res.status(200).send(utils.returnMessaging(path, 'Saved division', false, saved, null, logObj));
                         TeamSubs.upsertTeamsDivision(removed, {});
                     }, (err) => {
-                        res.status(500).send(util.returnMessaging(path, 'Error saving division', err, null, null, logObj));
+                        res.status(500).send(utils.returnMessaging(path, 'Error saving division', err, null, null, logObj));
                     })
                 } else {
                     logObj.logLevel = 'ERROR';
                     logObj.error = 'Division was not found';
-                    res.status(200).send(util.returnMessaging(path, 'No division found', false, found, null, logObj));
+                    res.status(200).send(utils.returnMessaging(path, 'No division found', false, found, null, logObj));
                 }
             }, (err) => {
-                res.status(500).send(util.returnMessaging(path, 'Error finding division', err, null, null, logObj));
+                res.status(500).send(utils.returnMessaging(path, 'Error finding division', err, null, null, logObj));
             })
         } else {
             let message = 'Error: ';
@@ -283,13 +281,13 @@ router.post('/removeTeams', passport.authenticate('jwt', {
             if (!div) {
                 message += 'div (string) parameter required ';
             }
-            res.status(500).send(util.returnMessaging(path, message));
+            res.status(500).send(utils.returnMessaging(path, message));
         }
 
 
     } catch (e) {
         utils.errLogger(path, e);
-        res.status(500).send(util.returnMessaging(path, 'Internal Server Error', e));
+        res.status(500).send(utils.returnMessaging(path, 'Internal Server Error', e));
     }
 
 
@@ -297,7 +295,7 @@ router.post('/removeTeams', passport.authenticate('jwt', {
 
 router.post('/createDivision', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.divisionLevel, util.appendResHeader, (req, res) => {
+}), levelRestrict.divisionLevel, utils.appendResHeader, (req, res) => {
     const path = '/admin/createDivision';
 
     let recievedDivision = req.body.division;
@@ -320,22 +318,22 @@ router.post('/createDivision', passport.authenticate('jwt', {
                     if (found) {
                         logObj.logLevel = 'ERROR';
                         logObj.error = 'Division all ready exists';
-                        res.status(400).send(util.returnMessaging(path, 'Division All ready exists', false, found, null, logObj));
+                        res.status(400).send(utils.returnMessaging(path, 'Division All ready exists', false, found, null, logObj));
                     } else {
                         new Division(
                             recievedDivision
                         ).save().then(
                             (saved) => {
-                                res.status(200).send(util.returnMessaging(path, 'Division Created', false, saved, null, logObj));
+                                res.status(200).send(utils.returnMessaging(path, 'Division Created', false, saved, null, logObj));
                             },
                             (err) => {
-                                res.status(500).send(util.returnMessaging(path, 'Division not created', err, null, null, logObj));
+                                res.status(500).send(utils.returnMessaging(path, 'Division not created', err, null, null, logObj));
                             }
                         )
                     }
                 },
                 (err) => {
-                    res.status(500).send(util.returnMessaging(path, 'Error creating division', err, null, null, logObj));
+                    res.status(500).send(utils.returnMessaging(path, 'Error creating division', err, null, null, logObj));
                 }
             )
         } else {
@@ -343,11 +341,11 @@ router.post('/createDivision', passport.authenticate('jwt', {
             if (!recievedDivision) {
                 message += 'recievedDivision (object) parameter required ';
             }
-            res.status(500).send(util.returnMessaging(path, message));
+            res.status(500).send(utils.returnMessaging(path, message));
         }
     } catch (e) {
         utils.errLogger(path, e);
-        res.status(500).send(util.returnMessaging(path, 'Internal Server Error', e));
+        res.status(500).send(utils.returnMessaging(path, 'Internal Server Error', e));
     }
 
 
@@ -356,7 +354,7 @@ router.post('/createDivision', passport.authenticate('jwt', {
 
 router.post('/deleteDivision', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.divisionLevel, util.appendResHeader, (req, res) => {
+}), levelRestrict.divisionLevel, utils.appendResHeader, (req, res) => {
     const path = '/admin/deleteDivision';
     let recievedDivision = req.body.division;
 
@@ -378,17 +376,17 @@ router.post('/deleteDivision', passport.authenticate('jwt', {
                 (removed) => {
                     if (removed) {
                         //touch each team that was in the division and remove the division from them
-                        res.status(200).send(util.returnMessaging(path, 'Division was deleted', false, removed, null, logObj));
+                        res.status(200).send(utils.returnMessaging(path, 'Division was deleted', false, removed, null, logObj));
                         TeamSubs.upsertTeamsDivision(removed.teams, {});
 
                     } else {
                         logObj.logLevel = 'ERROR';
                         logObj.error = 'Division not found'
-                        res.status(400).send(util.returnMessaging(path, 'Division not found', false, null, null, logObj));
+                        res.status(400).send(utils.returnMessaging(path, 'Division not found', false, null, null, logObj));
                     }
                 },
                 (err) => {
-                    res.status(500).send(util.returnMessaging(path, 'Division delete failed', err, null, null, logObj));
+                    res.status(500).send(utils.returnMessaging(path, 'Division delete failed', err, null, null, logObj));
                 }
             )
         } else {
@@ -396,12 +394,12 @@ router.post('/deleteDivision', passport.authenticate('jwt', {
             if (!recievedDivision) {
                 message += 'recievedDivision (string) parameter required ';
             }
-            res.status(500).send(util.returnMessaging(path, message));
+            res.status(500).send(utils.returnMessaging(path, message));
         }
 
     } catch (e) {
         utils.errLogger(path, e);
-        res.status(500).send(util.returnMessaging(path, 'Internal Server Error', e));
+        res.status(500).send(utils.returnMessaging(path, 'Internal Server Error', e));
     }
 
 
