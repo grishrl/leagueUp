@@ -6,7 +6,7 @@ import { UserService } from 'src/app/services/user.service';
 import { RequestService } from 'src/app/services/request.service';
 import { TeamService } from 'src/app/services/team.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
-import { Socket } from 'ngx-socket-io';
+// import { Socket } from 'ngx-socket-io';
 
 @Component({
   selector: 'app-user-message-center',
@@ -16,15 +16,15 @@ import { Socket } from 'ngx-socket-io';
 export class UserMessageCenterComponent implements OnInit {
 
   constructor(public util:UtilitiesService, public user:UserService, public team:TeamService, private request:RequestService, private auth:AuthService, private messageCenter:MessagesService,
-    private notificationService:NotificationService, private socket:Socket) {
-    this.socket.fromEvent('newMessage').subscribe(
-      res => {
-        this.ngOnInit();
-      },
-      err => {
-        console.log(err);
-      }
-    )
+    private notificationService:NotificationService) {
+    // this.socket.fromEvent('newMessage').subscribe(
+    //   res => {
+    //     this.ngOnInit();
+    //   },
+    //   err => {
+    //     console.log(err);
+    //   }
+    // )
    }
 
   messages:any = [];

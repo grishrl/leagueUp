@@ -3,15 +3,16 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { UtilitiesService } from './utilities.service';
-import { Socket } from 'ngx-socket-io';
+// import { Socket } from 'ngx-socket-io';
 import { NotificationService } from './notification.service';
+// import { WebsocketService } from './websocket.service';
 
 
 @Injectable({providedIn: 'root'})
 
 export class AuthService {
 
-  constructor(private router:Router, private http: HttpClient, private util:UtilitiesService, private socket:Socket, private notificationService:NotificationService){
+  constructor(private router:Router, private http: HttpClient, private util:UtilitiesService, private notificationService:NotificationService){
 
   }
 
@@ -83,7 +84,7 @@ export class AuthService {
     }
 
     if (this.getUserId()) {
-      this.socket.emit('storeClientInfo', { userId: this.getUserId() });
+      // this.ws.send({ storeClientInfo: { userId: this.getUserId() } });
     }
     this.notificationService.updateLogin.next('next');
   }
@@ -183,7 +184,7 @@ export class AuthService {
   //destroy all auth
   destroyAuth(route){
     let url = '/auth/logout';
-
+    // this.ws.disconnectSocket();
 
     this.http.get(url).subscribe(
       res => {
