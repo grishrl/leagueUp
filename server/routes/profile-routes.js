@@ -1,16 +1,20 @@
-const util = require('../utils');
+const utils = require('../utils');
 const router = require('express').Router();
 const User = require('../models/user-models');
 const TeamSub = require('../subroutines/team-subs');
 const System = require('../models/system-models').system;
 const passport = require("passport");
 const mmrMethods = require('../methods/mmrMethods');
-const Stats = require('../models/stats-model');
 const Avatar = require('../methods/avatarUpload');
 const PendingAvatarQueue = require('../models/admin-models').PendingAvatarQueue;
 const archiveUser = require('../methods/archivalMethods').archiveUser;
 const hpAPI = require('../methods/heroesProfileAPI');
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
+const {
+    commonResponseHandler,
+    requireOneInput,
+    returnInvalidInputsMessage
+} = require('./../commonResponseHandler');
 
 /*
 /get
@@ -20,250 +24,301 @@ const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 
 router.get('/get', (req, res) => {
     const path = '/user/get';
-    let query = {};
-    let single = true;
-    if (req.query.user) {
-        var user = req.query.user;
-        user = decodeURIComponent(user);
-        query['displayName'] = user;
-    } else if (req.query.userId) {
-        var id = req.query.userId;
-        id = decodeURIComponent(id);
-        query['_id'] = id;
-    } else if (req.query.userIds) {
-        single = false;
-        var idarr = decodeURIComponent(req.query.userIds).split(',');
-        query['_id'] = { $in: idarr };
-    } else if (req.query.users) {
-        single = false;
-        var idarr = decodeURIComponent(req.query.users).split(',');
-        query['displayName'] = {
-            $in: idarr
-        };
-    }
-    if (single) {
-        User.findOne(query).lean().then(
-            (foundUser) => {
-                if (foundUser) {
-                    var temp = removeUneeded(foundUser);
-                    res.status(200).send(util.returnMessaging(path, 'User Found', false, temp));
-                } else {
-                    res.status(400).send({
-                        "message": "User not found"
-                    });
-                }
-            }, (err) => {
-                res.status(500).send({
-                    "message": "Error querying users.",
-                    "error": err
-                });
+
+    const optionalParameters = [{
+        name: 'user',
+        type: 'string'
+    }, {
+        name: 'userId',
+        type: 'string'
+    }, {
+        name: 'userIds',
+        type: 'string'
+    }, {
+        name: 'users',
+        type: 'string'
+    }]
+
+    commonResponseHandler(req, res, [], optionalParameters, async(req, res, requiredParams, optionalParameters) => {
+        const response = {};
+        if (requireOneInput(optionalParameters)) {
+
+            let query = {};
+            let single = true;
+            if (optionalParameters.user.valid) {
+                // var user = req.query.user;
+                // user = decodeURIComponent(user);
+                query['displayName'] = optionalParameters.user.value;
+            } else if (optionalParameters.userId.valid) {
+                // var id = optionalParameters.userId;
+                // id = decodeURIComponent(id);
+                query['_id'] = optionalParameters.userId.value;
+            } else if (optionalParameters.userIds.valid) {
+                single = false;
+                // var idarr = decodeURIComponent(optionalParameters.userIds).split(',');
+                var idarr = optionalParameters.userIds.value.split(',');
+                query['_id'] = {
+                    $in: idarr
+                };
+            } else if (optionalParameters.users.valid) {
+                single = false;
+                // var idarr = decodeURIComponent(optionalParameters.users).split(',');
+                var idarr = optionalParameters.users.value.split(',');
+                query['displayName'] = {
+                    $in: idarr
+                };
             }
-        )
-    } else {
-        User.find(query).lean().then(
-            (foundUser) => {
-                if (foundUser) {
-                    var temp = removeUneeded(foundUser);
-                    res.status(200).send(util.returnMessaging(path, 'User Found', false, temp));
-                } else {
-                    res.status(400).send({
-                        "message": "User not found"
-                    });
+
+            return User.find(query).lean().then(
+                (foundUser) => {
+                    if (foundUser) {
+                        var temp = removeUneeded(foundUser);
+                        response.status = 200;
+                        if (single) {
+                            temp = temp[0];
+                        }
+                        response.message = utils.returnMessaging(req.originalUrl, 'User Found', false, temp)
+                        return response;
+                    } else {
+                        response.status = 400;
+                        response.message = utils.returnMessaging(req.originalUrl, 'User not found', false, {});
+                        return response;
+                    }
+                }, (err) => {
+                    response.status = 500;
+                    response.message = utils.returnMessaging(req.originalUrl, 'Error querying users', err);
+                    return response;
                 }
-            }, (err) => {
-                res.status(500).send({
-                    "message": "Error querying users.",
-                    "error": err
-                });
-            }
-        )
-    }
+            )
+
+
+        } else {
+            return returnInvalidInputsMessage(req, optionalParameters);
+        }
+
+    })
 
 });
 
 router.get('/delete', passport.authenticate('jwt', {
     session: false
-}), util.appendResHeader, (req, res) => {
+}), utils.appendResHeader, (req, res) => {
     const path = '/user/delete';
 
-    let logObj = {};
-    logObj.actor = req.user.displayName;
-    logObj.action = ' delete user (self) profile ';
-    logObj.target = req.user.displayName;
-    logObj.logLevel = 'STD';
+    commonResponseHandler(req, res, [], [], async(req, res) => {
+        const response = {};
+
+        let logObj = {};
+        logObj.actor = req.user.displayName;
+        logObj.action = ' delete user (self) profile ';
+        logObj.target = req.user.displayName;
+        logObj.logLevel = 'STD';
 
 
-    archiveUser({
-            displayName: req.user.displayName
-        },
-        req.user.displayName).then(
-        response => {
-            res.status(200).send(util.returnMessaging(path, 'User deleted!', null, response, null, logObj));
-        },
-        err => {
-            res.stauts(500).send(util.returnMessaging(path, 'Error deleting user!', err, null, null, logObj));
-        }
-    );
+        return archiveUser({ displayName: req.user.displayName }, req.user.displayName).then(
+            response => {
+                response.status = 200;
+                response.message = utils.returnMessaging(req.originalUrl, 'User deleted!', null, response, null, logObj);
+                return response;
+            },
+            err => {
+                response.status = 500;
+                response.message = utils.returnMessaging(req.originalUrl, 'Error deleting user!', err, null, null, logObj);
+                return response
+            }
+        );
+
+    })
 
 });
 
 router.post('/save', passport.authenticate('jwt', {
         session: false
-    }), util.appendResHeader,
+    }), utils.appendResHeader,
     function(req, res) {
         const path = 'user/save';
 
-        var sentUser = req.body;
 
-        //construct log object
-        let logObj = {};
-        logObj.actor = req.user.displayName;
-        logObj.action = 'user profile save ';
-        logObj.target = sentUser.displayName;
-        logObj.logLevel = 'STD';
+        commonResponseHandler(req, res, [], [], async(req, res) => {
+            const response = {};
 
-        var id = req.user._id.toString();
-        //ensure saving requesting user is the user being saved
-        if (req.user._id.toString() === sentUser._id) {
-            User.findOne({ _id: req.user._id }).then(function(found) {
-                if (found) {
-                    //validate all the data before saving --
+            var sentUser = req.body;
 
-                    if (util.returnBoolByPath(sentUser, 'lookingForGroup')) {
-                        found.lookingForGroup = sentUser.lookingForGroup
-                    }
-                    if (util.returnBoolByPath(sentUser, 'availability')) {
-                        found.availability = {};
-                        found.availability = sentUser.availability;
-                    }
+            //construct log object
+            let logObj = {};
+            logObj.actor = req.user.displayName;
+            logObj.action = 'user profile save ';
+            logObj.target = sentUser.displayName;
+            logObj.logLevel = 'STD';
 
-                    if (util.returnBoolByPath(sentUser, 'averageMmr')) {
-                        found.averageMmr = sentUser.averageMmr;
-                        if (found.teamName) {
-                            TeamSub.updateTeamMmrAsynch(found.teamName);
+            var id = req.user._id.toString();
+            //ensure saving requesting user is the user being saved
+            if (req.user._id.toString() === sentUser._id) {
+                return User.findOne({
+                    _id: req.user._id
+                }).then(function(found) {
+                    if (found) {
+                        //validate all the data before saving --
+
+                        if (utils.returnBoolByPath(sentUser, 'lookingForGroup')) {
+                            found.lookingForGroup = sentUser.lookingForGroup
                         }
-                    }
-
-                    if (util.returnBoolByPath(sentUser, 'competitiveLevel')) {
-                        found.competitiveLevel = sentUser.competitiveLevel;
-                    }
-                    if (util.returnBoolByPath(sentUser, 'descriptionOfPlay')) {
-                        found.descriptionOfPlay = sentUser.descriptionOfPlay;
-                    }
-                    if (util.returnBoolByPath(sentUser, 'role')) {
-                        found.role = {};
-                        found.role = sentUser.role;
-                    }
-
-                    if (util.returnBoolByPath(sentUser, 'timeZone')) {
-                        found.timeZone = sentUser.timeZone
-                    }
-                    if (util.returnBoolByPath(sentUser, 'toonId')) {
-                        found.toonId = sentUser.toonId
-                    }
-                    if (util.returnBoolByPath(sentUser, 'discordTag')) {
-                        found.discordTag = sentUser.discordTag
-                    }
-                    if (util.returnBoolByPath(sentUser, 'hlRankMetal')) {
-                        found.hlRankMetal = sentUser.hlRankMetal
-                    }
-                    if (util.returnBoolByPath(sentUser, 'hlRankDivision')) {
-                        found.hlRankDivision = sentUser.hlRankDivision
-                    }
-                    //leaving this here, just in case it catches and prevents any errors
-                    if (util.returnBoolByPath(sentUser, 'hotsLogsURL')) {
-                        found.hotsLogsURL = sentUser.hotsLogsURL;
-                    }
-                    if (util.returnBoolByPath(sentUser, 'twitch')) {
-                        found.twitch = sentUser.twitch;
-                    }
-                    if (util.returnBoolByPath(sentUser, 'twitter')) {
-                        found.twitter = sentUser.twitter;
-                    }
-                    if (util.returnBoolByPath(sentUser, 'youtube')) {
-                        found.youtube = sentUser.youtube;
-                    }
-                    if (util.returnBoolByPath(sentUser, 'casterName')) {
-                        found.casterName = sentUser.casterName;
-                    }
-                    if (util.returnBoolByPath(sentUser, 'groupMaker')) {
-                        found.groupMaker = sentUser.groupMaker;
-                    }
-
-                    sendRes = false;
-
-                    found.save(function(err, updatedUser) {
-                        if (err) {
-                            logObj.logLevel = "ERROR"
-                            res.status(500).send(util.returnMessaging(path, 'Error saving user', err, null, null, logObj));
+                        if (utils.returnBoolByPath(sentUser, 'availability')) {
+                            found.availability = {};
+                            found.availability = sentUser.availability;
                         }
 
-                        if (updatedUser) {
-                            res.status(200).send(util.returnMessaging(path, 'User update successful', false, updatedUser, null, logObj));
+                        if (utils.returnBoolByPath(sentUser, 'averageMmr')) {
+                            found.averageMmr = sentUser.averageMmr;
+                            if (found.teamName) {
+                                TeamSub.updateTeamMmrAsynch(found.teamName);
+                            }
                         }
-                    });
 
+                        if (utils.returnBoolByPath(sentUser, 'competitiveLevel')) {
+                            found.competitiveLevel = sentUser.competitiveLevel;
+                        }
+                        if (utils.returnBoolByPath(sentUser, 'descriptionOfPlay')) {
+                            found.descriptionOfPlay = sentUser.descriptionOfPlay;
+                        }
+                        if (utils.returnBoolByPath(sentUser, 'role')) {
+                            found.role = {};
+                            found.role = sentUser.role;
+                        }
 
-                } else {
-                    logObj.error = 'User ID not found.';
-                    res.status(400).send(util.returnMessaging(path, 'User ID not found.', false, null, null, logObj));
-                }
-            })
-        } else {
-            logObj.error = 'Unauthorized to mofify this profile.';
-            res.status(403).send(util.returnMessaging(path, 'Unauthorized to mofify this profile.', false, null, null, logObj))
-        }
+                        if (utils.returnBoolByPath(sentUser, 'timeZone')) {
+                            found.timeZone = sentUser.timeZone
+                        }
+                        if (utils.returnBoolByPath(sentUser, 'toonId')) {
+                            found.toonId = sentUser.toonId
+                        }
+                        if (utils.returnBoolByPath(sentUser, 'discordTag')) {
+                            found.discordTag = sentUser.discordTag
+                        }
+                        if (utils.returnBoolByPath(sentUser, 'hlRankMetal')) {
+                            found.hlRankMetal = sentUser.hlRankMetal
+                        }
+                        if (utils.returnBoolByPath(sentUser, 'hlRankDivision')) {
+                            found.hlRankDivision = sentUser.hlRankDivision
+                        }
+                        //leaving this here, just in case it catches and prevents any errors
+                        if (utils.returnBoolByPath(sentUser, 'hotsLogsURL')) {
+                            found.hotsLogsURL = sentUser.hotsLogsURL;
+                        }
+                        if (utils.returnBoolByPath(sentUser, 'twitch')) {
+                            found.twitch = sentUser.twitch;
+                        }
+                        if (utils.returnBoolByPath(sentUser, 'twitter')) {
+                            found.twitter = sentUser.twitter;
+                        }
+                        if (utils.returnBoolByPath(sentUser, 'youtube')) {
+                            found.youtube = sentUser.youtube;
+                        }
+                        if (utils.returnBoolByPath(sentUser, 'casterName')) {
+                            found.casterName = sentUser.casterName;
+                        }
+                        if (utils.returnBoolByPath(sentUser, 'groupMaker')) {
+                            found.groupMaker = sentUser.groupMaker;
+                        }
+
+                        sendRes = false;
+
+                        return found.save().then(
+                            updatedUser => {
+                                response.status = 200;
+                                response.message = utils.returnMessaging(req.originalUrl, 'User update successful', false, updatedUser, null, logObj);
+                                return response;
+                            },
+                            err => {
+                                logObj.logLevel = "ERROR"
+                                response.status = 500;
+                                response.message = utils.returnMessaging(req.originalUrl, 'Error saving user', err, null, null, logObj);
+                                return response;
+                            }
+                        )
+
+                    } else {
+                        logObj.error = 'User ID not found.';
+                        response.status = 400;
+                        response.message = utils.returnMessaging(req.originalUrl, 'User ID not found.', false, null, null, logObj)
+                        return response;
+                    }
+                })
+            } else {
+                logObj.error = 'Unauthorized to mofify this profile.';
+                response.status = 403;
+                response.message = utils.returnMessaging(req.originalUrl, 'Unauthorized to mofify this profile.', false, null, null, logObj);
+                return response;
+            }
+
+        });
 
     });
 
 
 router.get('/update/mmr', passport.authenticate('jwt', {
         session: false
-    }), util.appendResHeader,
+    }), utils.appendResHeader,
     function(req, res) {
         const path = 'user/update/mmr';
-        if (req.user.displayName) {
-            mmrMethods.comboMmr(req.user.displayName).then(
-                mmrResponse => {
-                    User.findOne({ displayName: req.user.displayName }).then(found => {
-                        if (found) {
-                            //leaving these here in case by being here they might catch any errors.
-                            if (mmrResponse.hotsLogs && mmrResponse.hotsLogs.playerId) {
-                                found.hotsLogsPlayerID = mmrResponse.hotsLogs.playerId;
-                            }
-                            if (mmrResponse.hotsLogs && mmrResponse.hotsLogs.mmr) {
-                                found.averageMmr = mmrResponse.hotsLogs.mmr;
-                            }
-                            if (mmrResponse.heroesProfile) {
-                                found.heroesProfileMmr = mmrResponse.heroesProfile;
-                            }
-                            if (mmrResponse.ngsMmr) {
-                                found.ngsMmr = mmrResponse.ngsMmr;
-                            }
 
-                            if (mmrResponse.heroesProfile < 0) {
-                                found.lowReplays = true;
+        if (req.user.displayName) {
+            commonResponseHandler(req, res, [], [], async(req, res) => {
+                const response = {};
+                return mmrMethods.comboMmr(req.user.displayName).then(
+                    mmrResponse => {
+                        return User.findOne({
+                            displayName: req.user.displayName
+                        }).then(found => {
+                            if (found) {
+                                //leaving these here in case by being here they might catch any errors.
+                                if (mmrResponse.hotsLogs && mmrResponse.hotsLogs.playerId) {
+                                    found.hotsLogsPlayerID = mmrResponse.hotsLogs.playerId;
+                                }
+                                if (mmrResponse.hotsLogs && mmrResponse.hotsLogs.mmr) {
+                                    found.averageMmr = mmrResponse.hotsLogs.mmr;
+                                }
+                                if (mmrResponse.heroesProfile) {
+                                    found.heroesProfileMmr = mmrResponse.heroesProfile;
+                                }
+                                if (mmrResponse.ngsMmr) {
+                                    found.ngsMmr = mmrResponse.ngsMmr;
+                                }
+
+                                if (mmrResponse.heroesProfile < 0) {
+                                    found.lowReplays = true;
+                                } else {
+                                    if (found.lowReplays) {
+                                        found.lowReplays = false;
+                                    }
+                                }
+                                return found.save().then(
+                                    saved => {
+                                        response.status = 200;
+                                        response.message = utils.returnMessaging(req.originalUrl, 'User Updated', null, null, saved);
+                                        return response;
+                                    },
+                                    err => {
+                                        response.status = 500;
+                                        response.message = utils.returnMessaging(req.originalUrl, 'Error saving user', err, null, null);
+                                        return response;
+                                    }
+                                )
                             } else {
-                                if (found.lowReplays) {
-                                    found.lowReplays = false;
-                                }
+                                response.status = 500;
+                                response.message = utils.returnMessaging(req.originalUrl, 'User not found', null, null, found)
+                                return response;
                             }
-                            found.save().then(
-                                saved => {
-                                    res.status(200).send(util.returnMessaging(path, 'User Updated', null, null, saved));
-                                },
-                                err => {
-                                    res.status(500).send(util.returnMessaging(path, 'Error saving user', err, null, null));
-                                }
-                            )
-                        } else {
-                            res.status(500).send(util.returnMessaging(path, 'User not found', null, null, found));
-                        }
-                    }, err => {
-                        res.status(500).send(util.returnMessaging(path, 'Error finding user', err, null, null))
-                    })
-                }
-            );
+                        }, err => {
+                            response.status = 500;
+                            response.message = utils.returnMessaging(req.originalUrl, 'Error finding user', err, null, null);
+                            return response;
+                        })
+                    }
+                );
+            })
+        } else {
+            res.status(500).send(utils.returnMessaging(req.originalUrl, 'Error updatng', err, null, null))
         }
     });
 
@@ -271,11 +326,15 @@ router.get('/update/mmr', passport.authenticate('jwt', {
 router.get('/frontPageStats', async(req, res) => {
 
     const path = '/user/frontPageStats';
-    var stat = req.query.stat;
 
-    let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+    const requiredParameters = [{
+        name: 'stat',
+        type: 'string'
+    }]
 
-    if (stat) {
+    commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
+        const response = {};
+        let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
         let query = {
             '$and': [{
                     'dataName': 'TopStatList'
@@ -284,23 +343,24 @@ router.get('/frontPageStats', async(req, res) => {
                     'span': currentSeasonInfo.value
                 },
                 {
-                    'stat': stat
+                    'stat': requiredParameters.stat.value
                 }
             ]
         }
 
-        System.findOne(query).then(
+        return System.findOne(query).then(
             found => {
-                res.status(200).send(util.returnMessaging(path, 'Found stat', false, found));
+                response.status = 200
+                response.message = utils.returnMessaging(req.originalUrl, 'Found stat', false, found)
+                return response;
             },
             err => {
-                res.status(400).send(util.returnMessaging(path, 'Error getting stat.', err, null, null));
+                response.status = 400;
+                response.message = utils.returnMessaging(req.originalUrl, 'Error getting stat.', err, null, null);
+                return response;
             }
         );
-    } else {
-        //stat not recieved
-    }
-
+    })
 
 });
 
@@ -309,26 +369,32 @@ router.get('/leagueOverallStats', (req, res) => {
 
     const path = '/user/leagueOverallStats';
 
-
-    let query = {
-        $and: [{
-                dataName: "leagueRunningFunStats"
-            },
-            {
-                span: "overall"
-            }
-        ]
-    }
-
-    System.findOne(query).then(
-        found => {
-            res.status(200).send(util.returnMessaging(path, 'Found stat', false, found));
-        },
-        err => {
-            res.status(400).send(util.returnMessaging(path, 'Error getting stat.', err, null, null));
+    commonResponseHandler(req, res, [], [], async(req, res) => {
+        const response = {};
+        let query = {
+            $and: [{
+                    dataName: "leagueRunningFunStats"
+                },
+                {
+                    span: "overall"
+                }
+            ]
         }
-    );
 
+        return System.findOne(query).then(
+            found => {
+                response.status = 200;
+                response.message = utils.returnMessaging(req.originalUrl, 'Found stat', false, found);
+                return response;
+            },
+            err => {
+                response.status = 400;
+                response.message = utils.returnMessaging(req.originalUrl, 'Error getting stat.', err, null, null);
+                return response;
+            }
+        );
+
+    })
 
 
 });
@@ -336,14 +402,27 @@ router.get('/leagueOverallStats', (req, res) => {
 router.get('/hero-profile/path', (req, res) => {
 
     const path = 'user/hero-profile/path';
-    hpAPI.playerProfile(req.query.displayName).then(
-        (resp) => {
-            res.status(200).send(util.returnMessaging(path, 'Found.', null, resp));
-        },
-        (err) => {
-            res.status(500).send(util.returnMessaging(path, 'Not Found.', err));
-        }
-    )
+
+    const requiredParameters = [{
+        name: 'displayName',
+        type: 'string'
+    }]
+
+    commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
+        const response = {};
+        return hpAPI.playerProfile(requiredParameters.displayName.value).then(
+            (resp) => {
+                response.status = 200;
+                response.message = utils.returnMessaging(req.originalUrl, 'Found.', null, resp);
+                return response;
+            },
+            (err) => {
+                response.status = 500;
+                response.message = utils.returnMessaging(req.originalUrl, 'Not Found.', err);
+                return response;
+            }
+        )
+    })
 
 });
 
@@ -358,58 +437,72 @@ router.post('/upload/avatar', passport.authenticate('jwt', {
     //TODO: replace with new client to s3 methods, maybe
 
     const path = '/user/upload/avatar';
-    let uploadedFileName = "";
 
 
-    let userId = req.user._id;
-    let dataURI = req.body.logo;
+    const requiredParameters = [{
+        name: 'logo',
+        type: 'string'
+    }]
 
-    //construct log object
-    let logObj = {};
-    logObj.actor = req.user.displayName;
-    logObj.action = 'upload user avatar';
-    logObj.target = req.user.displayName;
-    logObj.logLevel = 'STD';
-    PendingAvatarQueue.find({
-        userId: userId
-    }).then(
-        found => {
-            for (var i = 0; i < found.length; i++) {
-                Avatar.deleteAvatar(found[i].fileName);
-                PendingAvatarQueue.findByIdAndDelete(found[i]._id).then(
-                    deleted => {
-                        //empty return from promise
+    commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
+        const response = {};
+        //construct log object
+        let userId = req.user._id;
+        let dataURI = requiredParameters.logo.value;
+        let logObj = {};
+        logObj.actor = req.user.displayName;
+        logObj.action = 'upload user avatar';
+        logObj.target = req.user.displayName;
+        logObj.logLevel = 'STD';
+        //create or otherwise handle and current pending avatar queue items; 
+        PendingAvatarQueue.find({
+            userId: userId
+        }).then(
+            found => {
+                for (var i = 0; i < found.length; i++) {
+                    Avatar.deleteAvatar(found[i].fileName);
+                    PendingAvatarQueue.findByIdAndDelete(found[i]._id).then(
+                        deleted => {
+                            //empty return from promise
+                        },
+                        err => {
+                            utils.errLogger(req.originalUrl, err, 'PendingAvatarQueue.findByIdAndDelete');
+                        }
+                    );
+                }
+            },
+            err => {
+                utils.errLogger(req.originalUrl, err);
+            }
+        );
+
+        return Avatar.uploadAvatar(dataURI, req.user.displayName).then(rep => {
+                return new PendingAvatarQueue({
+                    userId: userId,
+                    displayName: req.user.displayName,
+                    fileName: rep.fileName,
+                    timestamp: Date.now()
+                }).save().then(
+                    saved => {
+                        response.status = 200;
+                        response.message = utils.returnMessaging(req.originalUrl, "Image Sent to Pending Queue.", false, rep.eo, saved, logObj);
+                        return response;
                     },
                     err => {
-                        util.errLogger(path, err, 'PendingAvatarQueue.findByIdAndDelete');
+                        response.status = 500;
+                        response.message = utils.returnMessaging(req.originalUrl, "Error Image not Sent to Pending Queue.", err, false, false, logObj);
+                        return response;
                     }
-                );
-            }
-        },
-        err => {
-            util.errLogger(path, err);
-        }
-    );
-    Avatar.uploadAvatar(dataURI, req.user.displayName).then(rep => {
-            new PendingAvatarQueue({
-                userId: userId,
-                displayName: req.user.displayName,
-                fileName: rep.fileName,
-                timestamp: Date.now()
-            }).save().then(
-                saved => {
-                    res.status(200).send(util.returnMessaging(path, "Image Sent to Pending Queue.", false, rep.eo, saved, logObj));
-                },
-                err => {
-                    res.status(500).send(util.returnMessaging(path, "Error Image not Sent to Pending Queue.", err, false, false, logObj))
-                }
-            )
+                )
 
-        },
-        err => {
-            res.status(500).send(util.returnMessaging(path, err.message, err, null, null, logObj))
-        });
+            },
+            err => {
+                response.status = 500;
+                response.message = utils.returnMessaging(req.originalUrl, err.message, err, null, null, logObj)
+                return response;
+            });
 
+    });
 
 });
 

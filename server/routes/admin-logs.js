@@ -23,7 +23,8 @@ router.get('/logs', passport.authenticate('jwt', {
             }
         )
     } catch (e) {
-        console.log(e)
+        console.log('admin logs catch', e)
+        res.status(500).send(util.returnMessaging(path, 'Error getting logs', e, null, null));
     }
 
 

@@ -1,11 +1,14 @@
 const router = require('express').Router();
-const util = require('../utils');
+const utils = require('../utils');
 const passport = require("passport");
 const prMethods = require('../methods/player-ranks/playerRankMethods');
 const PlayerRankImageUpload = require('../methods/player-rank-upload');
 const System = require('../models/system-models').system;
 const levelRestrict = require("../configs/admin-leveling");
 const User = require('../models/user-models');
+const {
+    commonResponseHandler
+} = require('./../commonResponseHandler');
 
 
 //get playerrank required
@@ -15,18 +18,23 @@ router.get('/get/required', passport.authenticate('jwt', {
 
     const path = 'playerrank/get/required';
 
-    System.findOne({
-        dataName: "requiredRankInfo"
-    }).then(
-        found => {
-            res.status(200).send(util.returnMessaging(path, 'Found data', null, found, null));
-        },
-        err => {
-            res.status(500).send(util.returnMessaging(path, 'Failed to find data', err, null, null));
-        }
-    )
-
-
+    commonResponseHandler(req, res, [], [], async(req, res) => {
+        const response = {};
+        return System.findOne({
+            dataName: "requiredRankInfo"
+        }).then(
+            found => {
+                response.status = 200;
+                response.message = utils.returnMessaging(path, 'Found data', null, found, null);
+                return response;
+            },
+            err => {
+                response.status = 500;
+                response.message = utils.returnMessaging(path, 'Failed to find data', err, null, null);
+                return response;
+            }
+        );
+    });
 });
 
 //get playerrank required
@@ -36,27 +44,32 @@ router.post('/upsert', passport.authenticate('jwt', {
 
     const path = 'playerrank/upsert';
 
-    let dataForUpsert = req.body.requiredRanks;
+    const requiredParameters = [{
+        name: 'requiredRanks',
+        type: 'object'
+    }]
 
-    if (!util.isNullOrEmpty(dataForUpsert)) {
-        System.findOneAndUpdate({
+    commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
+        const response = {};
+        let dataForUpsert = requiredParameters.requiredRanks.value;
+        return System.findOneAndUpdate({
             dataName: "requiredRankInfo"
         }, dataForUpsert, {
             new: true,
             upsert: true
         }).then(
             saved => {
-                res.status(200).send(util.returnMessaging(path, "Upserted the required rank info.", false, saved, null, null));
+                response.status = 200;
+                response.message = utils.returnMessaging(path, "Upserted the required rank info.", false, saved, null, null);
+                return response;
             },
             err => {
-                res.status(500).send(util.returnMessaging(path, "Upsert required rank info failed.", err, null, null, null));
+                response.status = 500;
+                response.message = utils.returnMessaging(path, "Upsert required rank info failed.", err, null, null, null)
+                return response;
             }
         );
-    } else {
-        res.status(500).send(util.returnMessaging(path, "Upsert required rank info failed.", null, null, null, null));
-    }
-
-
+    });
 
 });
 
@@ -73,31 +86,45 @@ router.post('/upload', passport.authenticate('jwt', {
 
     const path = '/playerrank/upload';
 
-    let userId = req.user._id;
-    let dataURI = req.body.logo;
-    let seasonInf = req.body.seasonInf;
+    const requiredParameters = [{
+        name: 'logo',
+        type: 'string'
+    }, {
+        name: 'seasonInf',
+        type: 'object'
+    }]
 
-    //construct log object
-    let logObj = {};
-    logObj.actor = req.user.displayName;
-    logObj.action = 'upload user avatar';
-    logObj.target = req.user.displayName;
-    logObj.logLevel = 'STD';
+    commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
+        const response = {};
 
+        let userId = req.user._id;
+        let dataURI = requiredParameters.logo.value;
+        let seasonInf = requiredParameters.seasonInf.value;
 
-    /**
-     * post object will have user id, season inf, img inf
-     * this will need to be submitted to the pending queue and the image uploaded to s3
-     */
+        //construct log object
+        let logObj = {};
+        logObj.actor = req.user.displayName;
+        logObj.action = 'upload user avatar';
+        logObj.target = req.user.displayName;
+        logObj.logLevel = 'STD';
 
-    PlayerRankImageUpload.uploadRankImage(dataURI, userId, seasonInf).then(
-        success => {
-            res.status(200).send(util.returnMessaging(path, 'Uploaded to pending', null, success, null));
-        },
-        failure => {
-            res.status(500).send(util.returnMessaging(path, 'Failed upload to pending', failure, null, null));
-        }
-    )
+        /**
+         * post object will have user id, season inf, img inf
+         * this will need to be submitted to the pending queue and the image uploaded to s3
+         */
+        return PlayerRankImageUpload.uploadRankImage(dataURI, userId, seasonInf).then(
+            success => {
+                response.status = 200;
+                response.message = utils.returnMessaging(path, 'Uploaded to pending', null, success, null);
+                return response;
+            },
+            failure => {
+                response.status = 500;
+                response.message = utils.returnMessaging(path, 'Failed upload to pending', failure, null, null);
+                return response;
+            }
+        );
+    })
 
 
 });
@@ -114,32 +141,48 @@ router.post('/capt/upload', passport.authenticate('jwt', {
 
     const path = '/playerrank/capt/upload';
 
+    const requiredParameters = [{
+        name: 'logo',
+        type: 'string'
+    }, {
+        name: 'seasonInf',
+        type: 'object'
+    }, {
+        name: 'userId',
+        type: 'string'
+    }]
 
-    let dataURI = req.body.logo;
-    let seasonInf = req.body.seasonInf;
-    let userId = req.body.userId;
+    commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
+        const response = {};
 
-    //construct log object
-    let logObj = {};
-    logObj.actor = req.user.displayName;
-    logObj.action = 'upload user avatar';
-    logObj.target = req.user.displayName;
-    logObj.logLevel = 'STD';
+        let dataURI = requiredParameters.logo.value;
+        let seasonInf = requiredParameters.seasonInf.value;
+        let userId = requiredParameters.userId.value;
 
+        //construct log object
+        let logObj = {};
+        logObj.actor = req.user.displayName;
+        logObj.action = 'upload user avatar';
+        logObj.target = req.user.displayName;
+        logObj.logLevel = 'STD';
 
-    /**
-     * post object will have user id, season inf, img inf
-     * this will need to be submitted to the pending queue and the image uploaded to s3
-     */
-
-    PlayerRankImageUpload.uploadRankImage(dataURI, userId, seasonInf).then(
-        success => {
-            res.status(200).send(util.returnMessaging(path, 'Uploaded to pending', null, success, null));
-        },
-        failure => {
-            res.status(500).send(util.returnMessaging(path, 'Failed upload to pending', failure, null, null));
-        }
-    )
+        /**
+         * post object will have user id, season inf, img inf
+         * this will need to be submitted to the pending queue and the image uploaded to s3
+         */
+        return PlayerRankImageUpload.uploadRankImage(dataURI, userId, seasonInf).then(
+            success => {
+                response.status = 200;
+                response.message = utils.returnMessaging(path, 'Uploaded to pending', null, success, null);
+                return response;
+            },
+            failure => {
+                response.status = 500;
+                response.message = utils.returnMessaging(path, 'Failed upload to pending', failure, null, null);
+                return response;
+            }
+        );
+    });
 
 
 });
@@ -180,25 +223,25 @@ function confirmCanUpload(req, res, next) {
                                 logObj.logLevel = 'ERROR';
                                 logObj.error = 'user was not authorized for action';
                                 res.status(403).send(
-                                    util.returnMessaging(path, "User not authorized remove.", false, null, null, logObj));
+                                    utils.returnMessaging(path, "User not authorized remove.", false, null, null, logObj));
                             }
                         }
                     },
                     err => {
                         logObj.logLevel = 'ERROR';
                         logObj.error = 'there was a problem finding the user';
-                        res.status(400).send(util.returnMessaging(path, "User not found.", false, null, null, logObj));
+                        res.status(400).send(utils.returnMessaging(path, "User not found.", false, null, null, logObj));
                     }
                 )
 
             } else {
                 logObj.logLevel = 'ERROR';
                 logObj.error = 'there was a problem finding the team';
-                res.status(400).send(util.returnMessaging(path, "Team not found.", false, null, null, logObj));
+                res.status(400).send(utils.returnMessaging(path, "Team not found.", false, null, null, logObj));
             }
         }, (err) => {
             res.status(500).send(
-                util.returnMessaging(path, "Error finding team", err, null, null, logObj)
+                utils.returnMessaging(path, "Error finding team", err, null, null, logObj)
             );
         });
     } else {

@@ -243,14 +243,6 @@ router.post('/tabulate-stats/team', (req, res) => {
 
 });
 
-router.post('/wss', (req, res) => {
-    const ws = require('../subroutines/socket-io-config');
-    const wsm = require('../subroutines/socket-io-methods');
-
-    console.log(ws.clients);
-    res.status(200).send(":)");
-});
-
 //post
 // path: /team/uploadLogo
 // requires id, type, and base64 encoded image

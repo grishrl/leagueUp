@@ -2,47 +2,42 @@ const {
     confirmCaptain
 } = require("../methods/confirmCaptain");
 const notesMethods = require('../methods/notes/notes');
-const util = require('../utils');
+const utils = require('../utils');
 const router = require('express').Router();
 const passport = require("passport");
 const levelRestrict = require("../configs/admin-leveling");
+const {
+    commonResponseHandler
+} = require('./../commonResponseHandler');
 
-// router.get('notes/fetch/team', passport.authenticate('jwt', {
-//     session: false
-// }), levelRestrict.teamLevel, (req, res) => {
-
-//     const path = 'admin/notes/fetch/team';
-//     notesMethods.getNotes(req.query.subjectId).then(
-//         found => {
-//             res.status(200).send(
-//                 util.returnMessaging(path, 'Found notes.', false, found)
-//             );
-//         },
-//         err => {
-//             res.status(500).send {
-//                 util.returnMessaging(path, 'Error getting notes.', err);
-//             }
-//         }
-//     )
-// });
 
 router.get('/notes/fetch/user', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.userLevel, (req, res) => {
 
     const path = 'admin/notes/fetch/user';
-    notesMethods.getNotes(req.query.subjectId).then(
-        found => {
-            res.status(200).send(
-                util.returnMessaging(path, 'Found notes.', false, found)
-            );
-        },
-        err => {
-            res.status(500).send(
-                util.returnMessaging(path, 'Error getting notes.', err)
-            );
-        }
-    )
+
+    const requiredParameters = [{
+        name: 'subjectId',
+        type: 'string'
+    }]
+
+    commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
+        const response = {};
+
+        return notesMethods.getNotes(requiredParameters.subjectId.value).then(
+            found => {
+                response.status = 200;
+                response.message = utils.returnMessaging(req.originalUrl, 'Found notes.', false, found);
+                return response;
+            },
+            err => {
+                response.status = 500;
+                response.message = utils.returnMessaging(req.originalUrl, 'Error getting notes.', err);
+                return response;
+            }
+        );
+    })
 });
 
 router.post('/notes/create/user', passport.authenticate('jwt', {
@@ -51,39 +46,22 @@ router.post('/notes/create/user', passport.authenticate('jwt', {
 
     const path = 'admin/notes/create/user';
 
-    notesMethods.createNote(req.body).then(
-        created => {
-            res.status(200).send(
-                util.returnMessaging(path, 'Note created', false, created)
-            );
-        },
-        err => {
-            res.status(500).send(
-                util.returnMessaging(path, 'Error creating notes.', err)
-            );
-        }
-    )
+    commonResponseHandler(req, res, [], [], async(req, res) => {
+        const response = {};
+        return notesMethods.createNote(req.body).then(
+            created => {
+                response.status = 200;
+                response.message = utils.returnMessaging(req.originalUrl, 'Note created', false, created);
+                return response;
+            },
+            err => {
+                response.status = 500;
+                response.message = utils.returnMessaging(req.originalUrl, 'Error creating notes.', err);
+                return response;
+            }
+        );
+    });
 });
-
-// router.post('notes/create/team', passport.authenticate('jwt', {
-//     session: false
-// }), levelRestrict.teamLevel, (req, res) => {
-
-//     const path = 'admin/notes/create/team';
-
-//     notesMethods.createNote(req.body).then(
-//         created => {
-//             res.status(200).send(
-//                 util.returnMessaging(path, 'Note created', false, created)
-//             );
-//         },
-//         err => {
-//             res.status(500).send {
-//                 util.returnMessaging(path, 'Error creating notes.', err);
-//             }
-//         }
-//     )
-// });
 
 router.post('/notes/delete',
     passport.authenticate('jwt', {
@@ -92,18 +70,29 @@ router.post('/notes/delete',
 
         const path = 'admin/notes/delete';
 
-        notesMethods.deleteNote(req.body.noteId).then(
-            created => {
-                res.status(200).send(
-                    util.returnMessaging(path, 'Note deleted', false, created)
-                );
-            },
-            err => {
-                res.status(500).send(
-                    util.returnMessaging(path, 'Error deleting note.', err)
-                );
-            }
-        )
+        const requiredParameters = [{
+            name: 'noteId',
+            type: 'string'
+        }]
+
+        commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
+            const response = {};
+
+            return notesMethods.deleteNote(requiredParameters.noteId.value).then(
+                created => {
+                    response.status = 200;
+                    response.message = utils.returnMessaging(req.originalUrl, 'Note deleted', false, created);
+                    return response;
+                },
+                err => {
+                    response.status = 500;
+                    response.message = utils.returnMessaging(req.originalUrl, 'Error deleting note.', err);
+                    return response;
+                }
+            )
+
+        });
+
     });
 
 module.exports = router;

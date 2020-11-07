@@ -441,7 +441,7 @@ async function stdDivStanding(division, season, pastSeason) {
                     }
                 )
             }
-        } catch (e) { console.log(e) }
+        } catch (e) { console.log('standings changes catch', e) }
 
         //update the standings i guess
         if (data) {

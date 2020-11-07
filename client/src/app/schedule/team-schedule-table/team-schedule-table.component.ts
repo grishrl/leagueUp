@@ -33,6 +33,7 @@ export class TeamScheduleTableComponent implements OnInit {
     this.timeService.getSesasonInfo().subscribe(
         res => {
           this.currentSeason = res['value'];
+          console.log(this.currentSeason, teamName);
           this.scheduleService.getTeamSchedules(this.currentSeason, teamName).subscribe(
             res => {
               let matches = res;

@@ -14,7 +14,7 @@ import { AuthService } from '../services/auth.service';
 export class UserSearchComponent implements OnInit {
 
   usersToFilter: any[] = [];
-  
+
   priorSelect: any
   lastChange: number = 0;
   selectedUser:any
@@ -68,7 +68,7 @@ export class UserSearchComponent implements OnInit {
     });
     return master;
   }
- 
+
   userCtrl = new FormControl();
   foundUsers: any[]
   search: string

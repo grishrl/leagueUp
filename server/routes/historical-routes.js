@@ -1,45 +1,68 @@
-const util = require('../utils');
+const utils = require('../utils');
 const router = require('express').Router();
 const Archive = require('../models/system-models').archive;
 const Schedule = require('../models/schedule-models');
+const {
+    commonResponseHandler
+} = require('./../commonResponseHandler');
 
 router.get('/seasons', (req, res) => {
 
-    const path = '/history/seasons';
-    let query = {
-        type: { $exists: false }
-    }
-    Schedule.find(query).then(
-        found => {
-            res.status(200).send(util.returnMessaging(path, 'Found seasons:', false, found));
-        },
-        err => {
-            res.status(500).send(util.returnMessaging(path, 'Error finding seasons:', err));
+    commonResponseHandler(req, res, [], [], async(req, res) => {
+        const response = {};
+        const path = '/history/seasons';
+        let query = {
+            type: {
+                $exists: false
+            }
         }
-    );
+        return Schedule.find(query).then(
+            found => {
+                response.status = 200;
+                response.message = utils.returnMessaging(req.originalUrl, 'Found seasons:', false, found)
+                return response;
+            },
+            err => {
+                response.status = 500;
+                response.message = utils.returnMessaging(req.originalUrl, 'Error finding seasons:', err)
+                return response;
+            }
+        );
+    })
+
 });
 
 router.get('/season/divisions', (req, res) => {
 
     const path = '/history/season/divisions';
 
-    let season = req.query.season;
-    if (season) {
+    const requiredParameters = [{
+        name: 'season',
+        type: 'number'
+    }]
+
+    commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
+        const response = {};
+
+        let season = requiredParameters.season.value;
         let query = {
             season: season,
             type: 'division'
         };
-        Archive.find(query).then(
+        return Archive.find(query).then(
             found => {
-                res.status(200).send(util.returnMessaging(path, 'Found divisions for season ' + season + ':', false, found));
+                response.status = 200;
+                response.message = utils.returnMessaging(req.originalUrl, 'Found divisions for season ' + season + ':', false, found)
+                return response;
             },
             err => {
-                res.status(500).send(util.returnMessaging(path, 'Error finding divisions:', err));
+                response.status = 500;
+                response.message = utils.returnMessaging(req.originalUrl, 'Error finding divisions:', err);
+                return response;
             }
         );
-    } else {
-        res.status(400).send(util.returnMessaging(path, 'Season not provided'));
-    }
+
+    })
 
 });
 
@@ -47,9 +70,15 @@ router.get('/season/division', (req, res) => {
 
     const path = '/history/season/division';
 
-    let season = req.query.season;
-    let division = req.query.division;
-    if (season && division) {
+    const requiredParameters = [{
+        name: 'season',
+        type: 'number'
+    }]
+
+    commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
+        const response = {};
+
+        let season = requiredParameters.season.value;
         let query = {
             '$and': [{
                 season: season
@@ -57,17 +86,20 @@ router.get('/season/division', (req, res) => {
                 type: 'division'
             }]
         };
-        Archive.find(query).then(
+        return Archive.find(query).then(
             found => {
-                res.status(200).send(util.returnMessaging(path, 'Found division for season ' + season + ':', false, found));
+                response.status = 200;
+                response.message = utils.returnMessaging(req.originalUrl, 'Found division for season ' + season + ':', false, found);
+                return response;
             },
             err => {
-                res.status(500).send(util.returnMessaging(path, 'Error finding division:', err));
+                response.status = 500;
+                response.message = utils.returnMessaging(req.originalUrl, 'Error finding division:', err)
+                return response;
             }
         );
-    } else {
-        res.status(400).send(util.returnMessaging(path, 'Parameters not provided See required params:', { 'season': season, 'division': division }));
-    }
+
+    })
 
 });
 
@@ -75,13 +107,27 @@ router.post('/season/teams', (req, res) => {
 
     const path = '/history/season/teams';
 
-    let season = req.body.season;
-    let teams = req.body.teams;
-    if (season && teams) {
+    const requiredParameters = [{
+        name: 'season',
+        type: 'number'
+    }, {
+        name: 'teams',
+        type: 'array'
+    }]
+
+    commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
+        const response = {};
+
+        let season = requiredParameters.season.value;
+        let teams = requiredParameters.teams.value;
+
         let query = {
-            '$and': [
-                { season: season },
-                { type: 'team' },
+            '$and': [{
+                    season: season
+                },
+                {
+                    type: 'team'
+                },
                 {
                     'object.teamName': {
                         $in: teams
@@ -89,20 +135,21 @@ router.post('/season/teams', (req, res) => {
                 }
             ]
         };
-        Archive.find(query).then(
+
+
+        return Archive.find(query).then(
             found => {
-                res.status(200).send(util.returnMessaging(path, 'Found ' + found.length + ' of ' + teams.length + ' teams for season ' + season + ':', false, found));
+                response.status = 200;
+                response.message = utils.returnMessaging(req.originalUrl, 'Found ' + found.length + ' of ' + teams.length + ' teams for season ' + season + ':', false, found);
+                return response;
             },
             err => {
-                res.status(500).send(util.returnMessaging(path, 'Error finding teams:', err));
+                response.status = 500;
+                response.message = utils.returnMessaging(req.originalUrl, 'Error finding teams:', err);
+                return response
             }
         );
-    } else {
-        res.status(400).send(util.returnMessaging(path, 'Parameters not provided See required params:', {
-            'season': season,
-            'teams': teams
-        }));
-    }
+    });
 
 });
 

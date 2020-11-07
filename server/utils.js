@@ -4,33 +4,85 @@ const _ = require('lodash');
 validateInputs = {};
 
 validateInputs.array = function(input) {
-    var retVal = false;
+    var retVal = { valid: false };;
     if (!isNullOrEmpty(input)) {
-        retVal = input instanceof Array ? input : false;
+        retVal.valid = input instanceof Array ? true : false;
+        if (retVal.valid) {
+            retVal.value = input;
+        }
+
     }
     return retVal;
 }
 
 validateInputs.string = function(input) {
-    var retVal = false;
+    var retVal = { valid: false };
     if (!isNullOrEmpty(input)) {
-        retVal = typeof(input) == 'string' ? input : false;
+        retVal.valid = typeof(input) == 'string' ? true : false;
+        if (retVal.valid) {
+            retVal.value = input;
+        }
     }
     return retVal;
 }
 
 validateInputs.object = function(input) {
-    var retVal = false;
+    var retVal = {
+        valid: false
+    };
     if (!isNullOrEmpty(input)) {
-        retVal = typeof(input) == 'object' ? input : false;
+        retVal.valid = typeof(input) == 'object' ? true : false;
+        if (retVal.valid) {
+            retVal.type = 'object';
+            retVal.value = input;
+        }
     }
     return retVal;
 }
 
 validateInputs.number = function(input) {
-    var retVal = false;
+    var retVal = { valid: false };;
     if (!isNullOrEmpty(input)) {
-        retVal = typeof(input) == 'number' ? input : false;
+        retVal.valid = typeof(parseInt(input)) == 'number' ? true : false;
+        if (retVal.valid) {
+            retVal.value = input;
+        }
+    }
+    return retVal;
+}
+
+validateInputs.stringOrArrayOfStrings = function(input) {
+    var retVal = { valid: false };;
+    if (!isNullOrEmpty(input)) {
+        if (typeof(input) == 'string') {
+            retVal.valid = true;
+        }
+        if (input instanceof Array) {
+            retVal.valid = true;
+        }
+        if (retVal.valid) {
+            retVal.value = input;
+        }
+    }
+    return retVal;
+}
+
+validateInputs.boolean = function(input) {
+    var retVal = { valid: false };;
+    if (!isNullOrEmpty(input)) {
+        if (typeof(input) == 'string') {
+            if (input == 'true') {
+                retVal.valid = true;
+                retVal.value = true;
+            } else if (input == 'false') {
+                retVal.valid = true;
+                retVal.value = false;
+            }
+        }
+        if (typeof(input) == 'boolean') {
+            retVal.valid = true;
+            retVal.value = input;
+        }
     }
     return retVal;
 }
@@ -99,9 +151,14 @@ isNullorUndefined = function(dat) {
 
 returnMessaging = function(route, message, err, obj, additional, logInfo) {
     var ret = {
-        "route": `/api/${route}`,
         "message": message
     };
+
+    if (route.indexOf('/api/') > -1) {
+        ret.route = route;
+    } else {
+        ret.route = `/api/${route}`
+    }
 
     if (!isNullorUndefined(err) && err) {
         if (err.hasOwnProperty('toString')) {

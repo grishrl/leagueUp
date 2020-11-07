@@ -71,16 +71,20 @@ export class TournamentViewComponent implements OnInit {
       this.scheduleService.getTournamentGames( this._name, this._season, this._division).subscribe(res => {
         if (res['tournInfo'][0]['matches']){
           this.matches = res['tournInfo'][0]['matches'];
-          this.scheduleService.getMatchList(this.matches, this._season).subscribe(
-            res=>{
-              this.matches = res;
-              this.tournamentObject = this.arrangeMatches();
-              this.hasBracket = true;
-            },
-            err=>{
-              console.log(err);
-            }
-          )
+          if(this.matches.length>0){
+                      this.scheduleService
+                        .getMatchList(this.matches, this._season)
+                        .subscribe(
+                          (res) => {
+                            this.matches = res;
+                            this.tournamentObject = this.arrangeMatches();
+                            this.hasBracket = true;
+                          },
+                          (err) => {
+                            console.log(err);
+                          }
+                        );
+          }
         }
       }, err => {
         this.hasBracket = false;

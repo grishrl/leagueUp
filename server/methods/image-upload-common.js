@@ -34,8 +34,7 @@ async function prepImage(dataURI, namingObject) {
         stamp = stamp.toString();
         stamp = stamp.slice(stamp.length - 4, stamp.length);
 
-        console.log(JSON.stringify(namingObject))
-            //parse filename
+        //parse filename
         Object.keys(namingObject).forEach(key => {
             let v = namingObject[key];
             if (!_.isString(v)) {

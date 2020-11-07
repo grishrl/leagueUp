@@ -62,7 +62,11 @@ async function forfietTeam(teamName) {
             throw returnObject;
         }
     } catch (e) {
-        console.log(e);
+        console.log('forfiet teams catch', e);
+        returnObject.logLevel = 'ERROR';
+        returnObject.error = e;
+        returnObject.message = 'Error in forfeit method';
+        throw returnObject;
     }
 
     return returnObject;

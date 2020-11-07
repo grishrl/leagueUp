@@ -38,44 +38,59 @@ export class DivisionTournamentScheduleTableComponent implements OnInit, OnChang
               this.noMatches = false;
             }
 
-            this.scheduleService.getMatchList(matches, providedSeason).subscribe(
-              res=>{
-                let returnedMatches = res;
-                returnedMatches.sort((a,b)=>{
-                  if(a.round>b.round){
-                    return 1;
-                  }else{
-                    return -1;
-                  }
-                })
-                returnedMatches.forEach(match => {
-                  if (match.scheduleDeadline) {
-                    match['friendlyDeadline'] = this.util.getDateFromMS(match.scheduleDeadline);
-                  }
-
-                  if (match.scheduledTime) {
-                    match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
-                    match['friendlyTime'] = this.util.getTimeFromMS(match.scheduledTime.startTime);
-                    match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
-                  }
-
-                  if (!this.util.returnBoolByPath(match, 'home') && !this.util.returnBoolByPath(match, 'home.name')) {
-                    match.home = {
-                      teamName: "TBD"
+            if(matches.length>0){
+              this.scheduleService
+                .getMatchList(matches, providedSeason)
+                .subscribe((res) => {
+                  let returnedMatches = res;
+                  returnedMatches.sort((a, b) => {
+                    if (a.round > b.round) {
+                      return 1;
+                    } else {
+                      return -1;
                     }
-                  }
-                  if (!this.util.returnBoolByPath(match, 'away') && !this.util.returnBoolByPath(match, 'away.name')) {
-                    match.away = {
-                      teamName: "TBD"
+                  });
+                  returnedMatches.forEach((match) => {
+                    if (match.scheduleDeadline) {
+                      match["friendlyDeadline"] = this.util.getDateFromMS(
+                        match.scheduleDeadline
+                      );
                     }
-                  }
 
-              }
-            );
+                    if (match.scheduledTime) {
+                      match["friendlyDate"] = this.util.getDateFromMS(
+                        match.scheduledTime.startTime
+                      );
+                      match["friendlyTime"] = this.util.getTimeFromMS(
+                        match.scheduledTime.startTime
+                      );
+                      match["suffix"] = this.util.getSuffixFromMS(
+                        match.scheduledTime.startTime
+                      );
+                    }
 
-              this.matches = returnedMatches;
+                    if (
+                      !this.util.returnBoolByPath(match, "home") &&
+                      !this.util.returnBoolByPath(match, "home.name")
+                    ) {
+                      match.home = {
+                        teamName: "TBD",
+                      };
+                    }
+                    if (
+                      !this.util.returnBoolByPath(match, "away") &&
+                      !this.util.returnBoolByPath(match, "away.name")
+                    ) {
+                      match.away = {
+                        teamName: "TBD",
+                      };
+                    }
+                  });
 
-            });
+                  this.matches = returnedMatches;
+                });
+            }
+
 
           },
           err => { console.log(err) }

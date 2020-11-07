@@ -183,7 +183,7 @@ export class AuthService {
 
   //destroy all auth
   destroyAuth(route){
-    let url = '/auth/logout';
+    let url = '/api/auth/logout';
     // this.ws.disconnectSocket();
 
     this.http.get(url).subscribe(

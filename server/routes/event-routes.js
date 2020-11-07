@@ -1,41 +1,63 @@
 const router = require('express').Router();
-const util = require('../utils');
+const utils = require('../utils');
 const Event = require('../models/event-model');
 const uniqid = require('uniqid');
 const passport = require("passport");
 const levelRestrict = require("../configs/admin-leveling");
+const { commonResponseHandler } = require('./../commonResponseHandler');
 
 
 router.post('/upsert', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.events, util.appendResHeader, (req, res) => {
+}), levelRestrict.events, utils.appendResHeader, (req, res) => {
 
     const path = '/events/upsert';
 
-    let orig = req.body.org_event;
-    let event = req.body.event;
+    const requiredParameters = [{
+        name: 'org_event',
+        type: 'object'
+    }, {
+        name: 'event',
+        type: 'object'
+    }]
 
-    let keys = Object.keys(orig);
-    if (keys.length == 0) {
-        event.uuid = uniqid();
-        orig = event;
-    }
+    commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
+        const response = {};
 
-    //log object
-    let logObj = {};
-    logObj.actor = req.user.displayName;
-    logObj.action = 'create event';
-    logObj.target = 'new event';
-    logObj.logLevel = 'STD';
+        let orig = requiredParameters.org_event.value;
+        let event = requiredParameters.event.value;
 
-    Event.findOneAndUpdate(orig, event, { upsert: true, overwrite: false, new: true }).then(
-        reply => {
-            res.status(200).send(util.returnMessaging(path, "Event updated", false, reply, null, logObj));
-        },
-        err => {
-            res.status(500).send(util.returnMessaging(path, "Error creating event", err, null, null, logObj));
+        let keys = Object.keys(orig);
+        if (keys.length == 0) {
+            event.uuid = uniqid();
+            orig = event;
         }
-    );
+
+        //log object
+        let logObj = {};
+        logObj.actor = req.user.displayName;
+        logObj.action = 'create event';
+        logObj.target = 'new event';
+        logObj.logLevel = 'STD';
+
+        return Event.findOneAndUpdate(orig, event, {
+            upsert: true,
+            overwrite: false,
+            new: true
+        }).then(
+            reply => {
+                response.status = 200;
+                response.message = utils.returnMessaging(req.originalUrl, "Event updated", false, reply, null, logObj)
+                return response;
+            },
+            err => {
+                response.status = 500;
+                response.message = utils.returnMessaging(req.originalUrl, "Error creating event", err, null, null, logObj)
+                return response;
+            }
+        );
+
+    });
 
 });
 
@@ -45,16 +67,31 @@ router.post('/get/id', (req, res) => {
 
     const path = '/events/get/id';
 
-    let id = req.body.id;
 
-    Event.findOne({ uuid: id }).then(
-        found => {
-            res.status(200).send(util.returnMessaging(path, "Event found", false, found));
-        },
-        err => {
-            res.status(500).send(util.returnMessaging(path, "Error getting event", err));
-        }
-    );
+
+    const requiredParameters = [{
+        name: 'id',
+        type: 'string'
+    }]
+
+    commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
+        const response = {};
+        let id = requiredParameters.id.value;
+        return Event.findOne({
+            uuid: id
+        }).then(
+            found => {
+                response.status = 200;
+                response.message = utils.returnMessaging(req.originalUrl, "Event found", false, found)
+                return response;
+            },
+            err => {
+                response.status = 500;
+                response.message = utils.returnMessaging(req.originalUrl, "Error getting event", err)
+                return response;
+            }
+        );
+    });
 
 });
 
@@ -64,40 +101,64 @@ router.post('/get/params', (req, res) => {
 
     const path = '/events/get/params';
 
-    let name = req.body.name;
-    let date = req.body.date;
-    let startRange = req.body.startRange;
-    let endRange = req.body.endRange;
-    let searchObj = { $or: [] };
-
-    if (name) {
-        searchObj.$or.push({ "eventName": name })
-    }
-
-    if (date) {
-        searchObj.$or.push({
-            "eventDate": date
-        });
-    }
-
-    if (startRange && endRange) {
-        searchObj.$or.push({
-            "eventDate": {
-                "$gte": startRange,
-                "$lte": endRange
-            }
-        })
-
-    }
-
-    Event.find(searchObj).then(
-        found => {
-            res.status(200).send(util.returnMessaging(path, "Event found", false, found));
+    const optionalParams = [
+        { name: 'name', type: 'string' },
+        {
+            name: 'date',
+            type: 'string'
         },
-        err => {
-            res.status(500).send(util.returnMessaging(path, "Error getting event", err));
+        {
+            name: 'startRange',
+            type: 'number'
+        }, {
+            name: 'endRange',
+            type: 'number'
         }
-    );
+    ]
+
+    commonResponseHandler(req, res, [], optionalParams, async(req, res, requiredParams, optionalParams) => {
+        const response = {};
+
+        let searchObj = {
+            $or: []
+        };
+        if (optionalParams.name.valid) {
+            searchObj.$or.push({
+                "eventName": optionalParams.name.value
+            })
+        }
+
+        if (optionalParams.date.valid) {
+            searchObj.$or.push({
+                "eventDate": optionalParams.date.value
+            });
+        }
+
+        if (optionalParams.startRange.valid && optionalParams.endRange.valid) {
+            searchObj.$or.push({
+                "eventDate": {
+                    "$gte": optionalParams.startRange.value,
+                    "$lte": optionalParams.endRange.value
+                }
+            })
+
+        }
+
+        return Event.find(searchObj).then(
+            found => {
+                response.status = 200;
+                response.message = utils.returnMessaging(req.originalUrl, "Event found", false, found)
+                return response;
+            },
+            err => {
+                response.status = 500;
+                response.message = utils.returnMessaging(req.originalUrl, "Error getting event", err);
+                return response;
+            }
+        );
+    })
+
+
 
 });
 
@@ -107,73 +168,67 @@ router.post('/get/all', (req, res) => {
 
     const path = '/events/get/all';
 
-    // let name = req.body.name;
-    // let date = req.body.date;
-    // let startRange = req.body.startRange;
-    // let endRange = req.body.endRange;
-    // let searchObj = {
-    //     $or: []
-    // };
+    commonResponseHandler(req, res, [], [], async(req, res) => {
+        const response = {};
+        return Event.find({}).then(
+            found => {
+                response.status = 200;
+                response.message = utils.returnMessaging(req.originalUrl, "Event found", false, found);
+                return response;
+            },
+            err => {
+                response.status = 500;
+                response.message = utils.returnMessaging(req.originalUrl, "Error getting event", err);
+                return response;
+            }
+        );
+    })
 
-    // if (name) {
-    //     searchObj.$or.push({
-    //         "eventName": name
-    //     })
-    // }
-
-    // if (date) {
-    //     searchObj.$or.push({
-    //         "eventDate": date
-    //     });
-    // }
-
-    // if (startRange && endRange) {
-    //     searchObj.$or.push({
-    //         "eventDate": {
-    //             "$gte": startRange,
-    //             "$lte": endRange
-    //         }
-    //     })
-
-    // }
-
-    Event.find({}).then(
-        found => {
-            res.status(200).send(util.returnMessaging(path, "Event found", false, found));
-        },
-        err => {
-            res.status(500).send(util.returnMessaging(path, "Error getting event", err));
-        }
-    );
 
 });
 
 //delete
 router.post('/delete', passport.authenticate('jwt', {
     session: false
-}), levelRestrict.events, util.appendResHeader, (req, res) => {
+}), levelRestrict.events, utils.appendResHeader, (req, res) => {
     const path = '/events/delete';
     let id = req.body.id;
     //log object
-    let logObj = {};
-    logObj.actor = req.user.displayName;
-    logObj.action = 'delete event';
-    logObj.target = id;
-    logObj.logLevel = 'STD';
-    Event.findByIdAndDelete(id).then(
-        deleted => {
-            if (deleted) {
-                res.status(200).send(util.returnMessaging(path, "Event deleted", false, deleted, null, logObj));
-            } else {
-                logObj.logLevel = 'ERROR';
-                logObj.error = 'Event not found';
-                res.status(500).send(util.returnMessaging(path, "Error deleting; event not found", null, deleted, null, logObj));
+
+    const requiredParameters = [{
+        name: 'id',
+        type: 'string'
+    }]
+
+    commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
+        const response = {};
+        let logObj = {};
+        logObj.actor = req.user.displayName;
+        logObj.action = 'delete event';
+        logObj.target = requiredParameters.id.value;
+        logObj.logLevel = 'STD';
+        return Event.findByIdAndDelete(requiredParameters.id.value).then(
+            deleted => {
+                if (deleted) {
+                    response.status = 200;
+                    response.message = utils.returnMessaging(req.originalUrl, "Event deleted", false, deleted, null, logObj);
+                    return response;
+                } else {
+                    logObj.logLevel = 'ERROR';
+                    logObj.error = 'Event not found';
+                    response.status = 500;
+                    response.message = utils.returnMessaging(req.originalUrl, "Error deleting; event not found", null, deleted, null, logObj);
+                    return response;
+                }
+            },
+            err => {
+                response.status = 500;
+                response.message = utils.returnMessaging(req.originalUrl, "Error deleting event", err);
+                return response;
             }
-        },
-        err => {
-            res.status(500).send(util.returnMessaging(path, "Error deleting event", err));
-        }
-    )
+        );
+    })
+
 })
 
 module.exports = router;

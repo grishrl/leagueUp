@@ -124,7 +124,7 @@ export class ApproveMemberViewComponent implements OnInit {
     if (this.note.length > 0) {
       this.admin.pmqAddNote(this._info, this.note).subscribe(
         (res) => {
-          console.log(res);
+          // console.log(res);
           this._info = res;
           this.note = "";
         },

@@ -13,59 +13,83 @@ router.post('/upsertSeasonInfo', passport.authenticate('jwt', {
 
     let season = parseInt(req.body.value);
 
-    let logObj = {};
-    logObj.actor = '/upsertSeasonInfo';
-    logObj.action = 'upserting season info';
-    logObj.target = 'System table: season info :' + season;
-    logObj.logLevel = 'STD';
-    logObj.timeStamp = Date.now();
+    try {
+        season = util.validateInputs.number(season);
 
-    let scheduleQuery = {
-        $and: [
-            { 'dataName': 'seasonInfo' },
-            { 'value': season }
-        ]
-    };
-    let postedInfo = {
-        'dataName': 'seasonInfo',
-        'value': season,
-        'data': {
-            'registrationOpen': req.body.data.registrationOpen,
-            'seasonStartDate': req.body.data.seasonStartDate,
-            'seasonEndDate': req.body.data.seasonEndDate,
-            'registrationEndDate': req.body.data.registrationEndDate,
-        }
-    };
+        if (season) {
+            let logObj = {};
+            logObj.actor = '/upsertSeasonInfo';
+            logObj.action = 'upserting season info';
+            logObj.target = 'System table: season info :' + season;
+            logObj.logLevel = 'STD';
+            logObj.timeStamp = Date.now();
 
-    System.system.findOneAndUpdate(
-        scheduleQuery, postedInfo, {
-            new: true,
-            upsert: true
+            let scheduleQuery = {
+                $and: [{
+                        'dataName': 'seasonInfo'
+                    },
+                    {
+                        'value': season
+                    }
+                ]
+            };
+            let postedInfo = {
+                'dataName': 'seasonInfo',
+                'value': season,
+                'data': {
+                    'registrationOpen': req.body.data.registrationOpen,
+                    'seasonStartDate': req.body.data.seasonStartDate,
+                    'seasonEndDate': req.body.data.seasonEndDate,
+                    'registrationEndDate': req.body.data.registrationEndDate,
+                }
+            };
+
+            System.system.findOneAndUpdate(
+                scheduleQuery, postedInfo, {
+                    new: true,
+                    upsert: true
+                }
+            ).then(
+                saved => {
+                    res.status(200).send(util.returnMessaging(path, "Upserted the season schedule.", false, saved, null, logObj));
+                },
+                err => {
+                    res.status(500).send(util.returnMessaging(path, "Upsert season schedule failed.", err, null, null, logObj));
+                }
+            );
+        } else {
+            //bad inputs
+            let message = 'Error: ';
+
+            message += 'value (number) is required!';
+
+            res.status(500).send(utils.returnMessaging(path, message));
         }
-    ).then(
-        saved => {
-            res.status(200).send(util.returnMessaging(path, "Upserted the season schedule.", false, saved, null, logObj));
-        },
-        err => {
-            res.status(500).send(util.returnMessaging(path, "Upsert season schedule failed.", err, null, null, logObj));
-        }
-    );
+    } catch (e) {
+        utils.errLogger(path, e);
+        res.status(500).send(util.returnMessaging(path, 'Internal Server Error', e));
+    }
+
+
 });
 
 router.get('/getSeasonInfo', (req, res) => {
 
     const path = '/admin/getSeasonInfo';
 
-    let specificSeason = parseInt(req.query.season);
+    let specificSeason = req.query.season;
+    specificSeason = util.validateInputs.number(specificSeason);
 
-    if (specificSeason) {
+
+    if (specificSeason.valid) {
         try {
-            seasonInfoCommon.getSeasonInfo(specificSeason).then(
+            seasonInfoCommon.getSeasonInfo(specificSeason.value).then(
                 process => {
                     res.status(200).send(util.returnMessaging(path, "Found the season schedule.", false, process, null));
                 }
             )
         } catch (e) {
+            util.errLogger(path, e);
             res.status(500).send(util.returnMessaging(path, "Error in node", err, null, null));
         }
     } else {
@@ -80,7 +104,8 @@ router.get('/getSeasonInfo', (req, res) => {
                 }
             )
         } catch (e) {
-            //log?
+            util.errLogger(path, e);
+            res.status(500).send(util.returnMessaging(path, "Error in node", err, null, null));
         }
     }
 

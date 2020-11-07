@@ -1,10 +1,11 @@
 const MvpMethods = require('../methods/mvpMethods');
+const { commonResponseHandler } = require('./../commonResponseHandler');
 
 const {
     confirmCaptain
 } = require("../methods/confirmCaptain");
 
-const util = require('../utils');
+const utils = require('../utils');
 const router = require('express').Router();
 const passport = require("passport");
 
@@ -13,72 +14,97 @@ router.get('/get', (req, res) => {
 
     const path = '/mvp/get';
 
-    let type = req.query.type;
-    let list = req.query.list;
-    let id = req.query.id;
-    let season = req.query.season;
+    const optionalParameters = [{
+            name: 'type',
+            type: 'string'
+        },
+        {
+            name: 'list',
+            type: 'string'
+        },
+        {
+            name: 'id',
+            type: 'string'
+        }, {
+            name: 'season',
+            type: 'number'
+        }
+    ]
 
-    if (util.isNullorUndefined(id) && !util.isNullorUndefined(list)) {
+    commonResponseHandler(req, res, [], optionalParameters, async(req, res, requiredParameters, optionalParameters) => {
+        const response = {};
 
-        let listArr = list.split(',');
-        console.log(listArr);
-        MvpMethods.getList({
-            type,
-            listArr
-        }).then(
-            found => {
-                res.status(200).send(
-                    util.returnMessaging(path, 'Found records', false, found)
-                );
-            },
-            err => {
-                res.status(500).send(
-                    util.returnMessaging(path, 'Error fetching records', err)
-                );
-            }
-        );
-    } else if (!util.isNullorUndefined(id) && util.isNullorUndefined(list)) {
+        let type = optionalParameters['type'].value;
+        let list = optionalParameters.list.value;
+        let id = optionalParameters.id.value;
+        let season = optionalParameters.season.value;
 
-        MvpMethods.getById({ type, id }).then(
-            found => {
-                res.status(200).send(
-                    util.returnMessaging(path, 'Found records', false, found)
-                );
-            },
-            err => {
-                res.status(500).send(
-                    util.returnMessaging(path, 'Error fetching records', err)
-                );
-            }
-        )
-    } else if (!util.isNullOrEmpty(season)) {
-        MvpMethods.getBySeason(season).then(
-            found => {
-                res.status(200).send(
-                    util.returnMessaging(path, 'Found records', false, found)
-                );
-            },
-            err => {
-                res.status(500).send(
-                    util.returnMessaging(path, 'Error fetching records', err)
-                );
-            }
-        )
-    } else {
+        if (utils.isNullorUndefined(id) && !utils.isNullorUndefined(list)) {
 
-        MvpMethods.getAll().then(
-            found => {
-                res.status(200).send(
-                    util.returnMessaging(path, 'Found records', false, found)
-                );
-            },
-            err => {
-                res.status(500).send(
-                    util.returnMessaging(path, 'Error fetching records', err)
-                );
-            }
-        )
-    }
+            let listArr = list.split(',');
+
+            return MvpMethods.getList({
+                type,
+                listArr
+            }).then(
+                found => {
+                    response.status = 200;
+                    response.message = utils.returnMessaging(req.originalUrl, 'Found records', false, found);
+                    return response;
+                },
+                err => {
+                    response.status = 500;
+                    response.message = utils.returnMessaging(req.originalUrl, 'Error fetching records', err)
+                    return response;
+                }
+            );
+        } else if (!utils.isNullorUndefined(id) && utils.isNullorUndefined(list)) {
+
+            return MvpMethods.getById({
+                type,
+                id
+            }).then(
+                found => {
+                    response.status = 200;
+                    response.message = utils.returnMessaging(req.originalUrl, 'Found records', false, found);
+                    return response;
+                },
+                err => {
+                    response.status = 500;
+                    response.message = utils.returnMessaging(req.originalUrl, 'Error fetching records', err);
+                    return response;
+                }
+            )
+        } else if (!utils.isNullOrEmpty(season)) {
+            return MvpMethods.getBySeason(season).then(
+                found => {
+                    response.status = 200;
+                    response.message = utils.returnMessaging(req.originalUrl, 'Found records', false, found);
+                    return response;
+                },
+                err => {
+                    response.status = 500;
+                    response.message = utils.returnMessaging(req.originalUrl, 'Error fetching records', err);
+                    return response;
+                }
+            )
+        } else {
+
+            return MvpMethods.getAll().then(
+                found => {
+                    response.status = 200;
+                    response.message = utils.returnMessaging(req.originalUrl, 'Found records', false, found);
+                    return response;
+                },
+                err => {
+                    response.status = 500;
+                    response.message = utils.returnMessaging(req.originalUrl, 'Error fetching records', err);
+                    return response;
+                }
+            )
+        }
+
+    });
 
 });
 
@@ -89,17 +115,17 @@ router.post('/upsert', passport.authenticate('jwt', {
     const path = '/mvp/upsert';
     MvpMethods.upsert(req.body).then(
         found => {
-            found = util.objectify(found);
+            found = utils.objectify(found);
             if (req.body.displayName) {
                 found.displayName = req.body.displayName;
             }
             res.status(200).send(
-                util.returnMessaging(path, 'Record created', false, found)
+                utils.returnMessaging(req.originalUrl, 'Record created', false, found)
             );
         },
         err => {
             res.status(500).send(
-                util.returnMessaging(path, 'Error creating record', err)
+                utils.returnMessaging(req.originalUrl, 'Error creating record', err)
             );
         }
     )
@@ -111,19 +137,30 @@ router.post('/like', passport.authenticate('jwt', {
 }), (req, res) => {
 
     const path = '/mvp/like';
-    MvpMethods.like(req.body.id, req.user._id).then(
-        found => {
-            found = util.objectify(found);
-            res.status(200).send(
-                util.returnMessaging(path, 'Record updated', false, found)
-            );
-        },
-        err => {
-            res.status(500).send(
-                util.returnMessaging(path, 'Error updating record', err)
-            );
-        }
-    )
+
+    const requiredParameters = [{
+        name: 'id',
+        type: 'string'
+    }]
+
+    commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
+        const response = {};
+
+        return MvpMethods.like(requiredParameters.id.value, req.user._id).then(
+            found => {
+                found = utils.objectify(found);
+                response.status = 200;
+                response.message = utils.returnMessaging(req.originalUrl, 'Record updated', false, found);
+                return response;
+            },
+            err => {
+                response.status = 500;
+                response.message = utils.returnMessaging(req.originalUrl, 'Error updating record', err);
+                return response;
+            }
+        );
+
+    });
 
 });
 

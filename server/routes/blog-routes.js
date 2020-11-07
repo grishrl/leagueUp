@@ -1,108 +1,144 @@
 const util = require('../utils');
 const wpApi = require('../methods/wordpressAPI');
 const router = require('express').Router();
+const {
+    commonResponseHandler
+} = require('./../commonResponseHandler');
 
 router.post('/blogs', (req, res) => {
 
-    let request = req.body;
+    commonResponseHandler(req, res, [], [], async(req, res) => {
+        const response = {};
+        let request = req.body;
 
-    const path = 'blog/blogs';
+        const path = 'blog/blogs';
 
-    switch (request.action) {
+        switch (request.action) {
 
-        case 'getBlogPosts':
-            wpApi.getBlogPosts(request.params).then(
-                data => {
-                    res.status(200).send(util.returnMessaging(path, 'Returning blogs', null, data));
-                },
-                err => {
-                    util.errLogger(path, err, 'getBlogPosts');
-                    res.status(500).send(util.returnMessaging(path, 'Invalid request', err, null));
-                }
-            )
-            break;
-        case 'getBlogPost':
-            wpApi.getBlogPost(request.params).then(
-                data => {
-                    res.status(200).send(util.returnMessaging(path, 'Returning blog', null, data));
-                },
-                err => {
-                    util.errLogger(path, err, 'getBlogPost');
-                    res.status(500).send(util.returnMessaging(path, 'Invalid request', err, null));
-                }
-            )
-            break;
-        case 'getPostByAuthor':
-            wpApi.getPostByAuthor(request.params).then(
-                data => {
-                    res.status(200).send(util.returnMessaging(path, 'Returning blogs', null, data));
-                },
-                err => {
-                    util.errLogger(path, err, 'getPostByAuthor');
-                    res.status(500).send(util.returnMessaging(path, 'Invalid request', err, null));
-                }
-            )
-            break;
-        case 'getPostsByCategory':
-            wpApi.getPostsByCategory(request.params).then(
-                data => {
-                    res.status(200).send(util.returnMessaging(path, 'Returning categories', null, data));
-                },
-                err => {
-                    util.errLogger(path, err, 'getPostsByCategory');
-                    res.status(500).send(util.returnMessaging(path, 'Invalid request', err, null));
-                }
-            )
-            break;
-        case 'getAuthors':
-            wpApi.getAuthors().then(
-                data => {
-                    res.status(200).send(util.returnMessaging(path, 'Returning authors', null, data));
-                },
-                err => {
-                    util.errLogger(path, err, 'getAuthors');
-                    res.status(500).send(util.returnMessaging(path, 'Invalid request', err, null));
-                }
-            )
-            break;
-        case 'getAuthor':
-            wpApi.getAuthor(request.params).then(
-                data => {
-                    res.status(200).send(util.returnMessaging(path, 'Returning author', null, data));
-                },
-                err => {
-                    util.errLogger(path, err, 'getAuthor');
-                    res.status(500).send(util.returnMessaging(path, 'Invalid request', err, null));
-                }
-            )
-            break;
-        case 'getCategories':
-            wpApi.getCategories().then(
-                data => {
-                    res.status(200).send(util.returnMessaging(path, 'Returning categories', null, data));
-                },
-                err => {
-                    util.errLogger(path, err, 'getCategories');
-                    res.status(500).send(util.returnMessaging(path, 'Invalid request', err, null));
-                }
-            )
-            break;
-        case 'getMedia':
-            wpApi.getMedia(request.params).then(
-                data => {
-                    res.status(200).send(util.returnMessaging(path, 'Returning media', null, data));
-                },
-                err => {
-                    util.errLogger(path, err, 'getMedia');
-                    res.status(500).send(util.returnMessaging(path, 'Invalid request', err, null));
-                }
-            )
-            break;
-        default:
-            util.errLogger(path, request.action, 'Invalid Request');
-            res.status(500).send(util.returnMessaging(path, 'Invalid request', null, null));
-    }
-
+            case 'getBlogPosts':
+                return wpApi.getBlogPosts(request.params).then(
+                    data => {
+                        response.status = 200;
+                        response.message = util.returnMessaging(req.originalUrl, 'Returning blogs', null, data)
+                        return response;
+                    },
+                    err => {
+                        util.errLogger(req.originalUrl, err, 'getBlogPosts');
+                        response.status = 500;
+                        response.message = util.returnMessaging(req.originalUrl, 'Invalid request', err, null);
+                        return response;
+                    }
+                )
+                break;
+            case 'getBlogPost':
+                return wpApi.getBlogPost(request.params).then(
+                    data => {
+                        response.status = 200;
+                        response.message = util.returnMessaging(req.originalUrl, 'Returning blog', null, data)
+                        return response;
+                    },
+                    err => {
+                        util.errLogger(req.originalUrl, err, 'getBlogPost');
+                        response.status = 500;
+                        response.message = util.returnMessaging(req.originalUrl, 'Invalid request', err, null)
+                        return response;
+                    }
+                )
+                break;
+            case 'getPostByAuthor':
+                return wpApi.getPostByAuthor(request.params).then(
+                    data => {
+                        response.status = 200;
+                        response.message = util.returnMessaging(req.originalUrl, 'Returning blogs', null, data)
+                        return response;
+                    },
+                    err => {
+                        util.returnMessaging(req.originalUrl, 'Invalid request', err, null)
+                        response.status = 500
+                        response.message = util.returnMessaging(req.originalUrl, 'Invalid request', err, null)
+                        return response;
+                    }
+                )
+                break;
+            case 'getPostsByCategory':
+                return wpApi.getPostsByCategory(request.params).then(
+                    data => {
+                        response.status = 200;
+                        response.message = util.returnMessaging(req.originalUrl, 'Returning categories', null, data)
+                        return response;
+                    },
+                    err => {
+                        util.errLogger(req.originalUrl, err, 'getPostsByCategory');
+                        response.status = 500;
+                        response.message = util.returnMessaging(req.originalUrl, 'Invalid request', err, null)
+                        return response;
+                    }
+                )
+                break;
+            case 'getAuthors':
+                return wpApi.getAuthors().then(
+                    data => {
+                        response.status = 200;
+                        response.message = util.returnMessaging(req.originalUrl, 'Returning authors', null, data)
+                        return response;
+                    },
+                    err => {
+                        util.errLogger(req.originalUrl, err, 'getAuthors');
+                        response.status = 500;
+                        response.message = util.returnMessaging(req.originalUrl, 'Invalid request', err, null)
+                        return response;
+                    }
+                )
+                break;
+            case 'getAuthor':
+                return wpApi.getAuthor(request.params).then(
+                    data => {
+                        response.status = 200;
+                        response.message = util.returnMessaging(req.originalUrl, 'Returning author', null, data)
+                        return response;
+                    },
+                    err => {
+                        util.errLogger(req.originalUrl, err, 'getAuthor');
+                        response.status = 500;
+                        response.message = util.returnMessaging(req.originalUrl, 'Invalid request', err, null);
+                        return response;
+                    }
+                )
+                break;
+            case 'getCategories':
+                return wpApi.getCategories().then(
+                    data => {
+                        response.status = 200;
+                        response.message = util.returnMessaging(req.originalUrl, 'Returning categories', null, data)
+                        return response;
+                    },
+                    err => {
+                        util.errLogger(req.originalUrl, err, 'getCategories');
+                        response.status = 200;
+                        response.message = util.returnMessaging(req.originalUrl, 'Invalid request', err, null)
+                        return response;
+                    }
+                )
+                break;
+            case 'getMedia':
+                return wpApi.getMedia(request.params).then(
+                    data => {
+                        response.status = 200;
+                        response.message = util.returnMessaging(req.originalUrl, 'Returning media', null, data);
+                        return response;
+                    },
+                    err => {
+                        util.errLogger(req.originalUrl, err, 'getMedia');
+                        response.status = 500;
+                        response.message = util.returnMessaging(req.originalUrl, 'Invalid request', err, null)
+                    }
+                )
+                break;
+            default:
+                util.errLogger(req.originalUrl, request.action, 'Invalid Request');
+                res.status(500).send(util.returnMessaging(req.originalUrl, 'Invalid request', null, null));
+        }
+    })
 
 });
 

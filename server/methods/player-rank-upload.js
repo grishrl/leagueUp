@@ -144,7 +144,7 @@ async function uploadRankImage(dataURI, user_id, seasonInfo) {
 
                     s3deleteFile(process.env.s3bucketGeneralImages, PLAYERRANKFOLDER, fileToDelete);
                 } catch (e) {
-                    console.log(e);
+                    console.log('catch delete pedning player rank', e);
                 }
 
             } else {
@@ -169,7 +169,7 @@ async function uploadRankImage(dataURI, user_id, seasonInfo) {
                     );
                     successObject['savedQueue'] = newQ;
                 } catch (e) {
-                    console.log(e);
+                    console.log('catch create new pending player rank', e);
                 }
 
 
@@ -337,7 +337,7 @@ async function playerRankApproved(rankObj) {
         }
 
     } catch (e) {
-        console.log('eee', e);
+        console.log('Pending Player Rank - Catch 3', e);
     }
 
     return successObject;
@@ -424,7 +424,7 @@ async function playerRankDenied(rankObj) {
 
         }
     } catch (e) {
-        console.log('zzz', e);
+        console.log('Pending player rank - catch 4', e);
     }
 
     return successObject;

@@ -213,7 +213,6 @@ router.post('/match/uploadreplay', passport.authenticate('jwt', {
                     res.status(200).send(util.returnMessaging(path, 'Match Reported', null, reported));
                 },
                 err => {
-                    console.log('err', err);
                     res.status(500).send(util.returnMessaging(path, 'Error reporting match result', err));
                 }
             );
@@ -252,7 +251,6 @@ router.post('/match/deletereplay', passport.authenticate('jwt', {
                     res.status(200).send(util.returnMessaging(path, 'Replay Deleted', false, answer, null, logInfo));
                 },
                 err => {
-                    console.log('err', err);
                     res.status(500).send(util.returnMessaging(path, 'Delete replay failed', err));
                 }
             )
@@ -375,7 +373,6 @@ router.post('/match/create/stream/link', passport.authenticate('jwt', {
                     res.status(200).send(util.returnMessaging(path, 'Stream info created', false, answer));
                 },
                 err => {
-                    console.log(err);
                     if (err instanceof Error) {
                         err = err.message;
                     }

@@ -40,28 +40,31 @@ export class TournamentReportingComponent implements OnInit {
 
   getTeamTournamentMatches(tournament) {
 
-    this.scheduleService.getMatchList(tournament.matches).subscribe(
-      res=>{
-        let tempMatches = res;
+    if (tournament.matches.length>0){
+            this.scheduleService.getMatchList(tournament.matches).subscribe(
+              (res) => {
+                let tempMatches = res;
 
-        tempMatches = tempMatches.filter( a=>{
-          if(this.util.returnBoolByPath(a, 'home.id')){
-            if (a.home.id == this.auth.getTeamId()){
-              return true;
-            }
-          }
-          if(this.util.returnBoolByPath(a, 'away.id')){
-            if (a.away.id == this.auth.getTeamId()) {
-              return true;
-            }
-          }
-          return false;
-        });
-        this.matches = tempMatches;
-      },
-      err=>{
-        console.log(err);
-      }
-    )
+                tempMatches = tempMatches.filter((a) => {
+                  if (this.util.returnBoolByPath(a, "home.id")) {
+                    if (a.home.id == this.auth.getTeamId()) {
+                      return true;
+                    }
+                  }
+                  if (this.util.returnBoolByPath(a, "away.id")) {
+                    if (a.away.id == this.auth.getTeamId()) {
+                      return true;
+                    }
+                  }
+                  return false;
+                });
+                this.matches = tempMatches;
+              },
+              (err) => {
+                console.log(err);
+              }
+            );
+    }
+
   }
 }

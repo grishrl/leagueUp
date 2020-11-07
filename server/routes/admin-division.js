@@ -6,6 +6,7 @@ const passport = require("passport");
 const levelRestrict = require("../configs/admin-leveling");
 const _ = require('lodash');
 const utils = require('../utils');
+const { commonResponseHandler } = require('./../commonResponseHandler');
 
 //this api retrieves all teams that do not have a division assigned, and have 
 //successuflly registered for the season
@@ -13,9 +14,10 @@ router.get('/getTeamsUndivisioned', passport.authenticate('jwt', {
     session: false
 }), levelRestrict.divisionLevel, utils.appendResHeader, (req, res) => {
     const path = '/admin/getTeamsUndivisioned';
-    try {
 
-        Team.find({
+    commonResponseHandler(req, res, [], [], async(req, res) => {
+        const response = {};
+        return Team.find({
             $and: [{
                 $or: [{
                     divisionConcat: null
@@ -34,16 +36,15 @@ router.get('/getTeamsUndivisioned', passport.authenticate('jwt', {
                 "questionnaire.registered": true
             }]
         }).then((results) => {
-            res.status(200).send(utils.returnMessaging(path, 'Found teams', false, results));
+            response.status = 200;
+            response.message = utils.returnMessaging(req.originalUrl, 'Found teams', false, results)
+            return response;
         }, (err) => {
-            res.status(500).send(utils.returnMessaging(path, 'Error querying teams', err));
+            response.status = 500;
+            response.messeage = utils.returnMessaging(req.originalUrl, 'Error querying teams', err)
+            return response;
         })
-
-    } catch (e) {
-        utils.errLogger(path, e);
-        res.status(500).send(utils.returnMessaging(path, 'Internal Server Error', e));
-    }
-
+    });
 });
 
 
@@ -55,12 +56,22 @@ router.get('/getTeamsUndivisioned', passport.authenticate('jwt', {
 //NOTICE this route is not secured because it is used for pulling back division lists et all - no use for replication
 router.get('/getDivisionInfo', (req, res) => {
     const path = '/admin/getDivisionInfo'
-    try {
-        Division.find({}).then((found) => {
-            res.status(200).send(utils.returnMessaging(path, 'Returning division info.', false, found));
+
+    commonResponseHandler(req, res, [], [], async(req, res) => {
+        const response = {};
+        return Division.find({}).then((found) => {
+            response.status = 200;
+            response.message = utils.returnMessaging(req.originalUrl, 'Returning division info.', false, found);
+            return response;
         }, (err) => {
-            res.status(500).send(utils.returnMessaging(path, 'Error getting the division info.', err));
-        })
+            response.status = 500;
+            response.message = utils.returnMessaging(req.originalUrl, 'Error getting the division info.', err);
+            return response;
+        });
+    })
+
+    try {
+
     } catch (e) {
         utils.errLogger(path, e);
         res.status(500).send(utils.returnMessaging(path, 'Internal Server Error', e));

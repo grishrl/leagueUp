@@ -47,8 +47,6 @@ async function deleteReplay(matchId, indexProp) {
     let removeFromHPResult;
     let removedFromS3Result;
 
-    console.log('match', matchObj, 'replayToDelete', replayToDelete);
-
     if (replayToDelete) {
         try {
 
@@ -107,11 +105,9 @@ async function deleteReplay(matchId, indexProp) {
             match.markModified('replays');
             let matchMod = await match.save().then(
                 saved => {
-                    console.log('saved')
                     return true;
                 },
                 err => {
-                    console.log('save err', err)
                     throw err;
                 }
             );
