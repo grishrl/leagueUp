@@ -70,7 +70,7 @@
                         <!-- Tab One - overview -->
                         <div class="tab-pane" *ngIf="index == 0" [ngClass]="{'active': index==0}">
 
-                            <app-standings-view [division]="divDisplay" [season]="passSeasonVal"></app-standings-view>
+                            <app-standings-view [season]="passSeasonVal" [division]="divDisplay"></app-standings-view>
 
                         </div>
                         <!-- Tab One - overview -->
@@ -98,7 +98,7 @@
                         <!-- Tab Theree - results -->
                         <div class="tab-pane" *ngIf="index == 3" [ngClass]="{'active': index==3}">
                             <div>
-                                <app-division-results-tiles *ngIf="!divDisplay.cupDiv" [division]="divDisplay" [season]="passSeasonVal"></app-division-results-tiles>
+                                <app-division-results-tiles *ngIf="!divDisplay.cupDiv" [season]="passSeasonVal" [division]="divDisplay"></app-division-results-tiles>
                                 <div class="mt-3">
                                     <app-division-tournament-results-tiles *ngIf="!divDisplay.cupDiv" [division]="divDisplay"></app-division-tournament-results-tiles>
                                 </div>

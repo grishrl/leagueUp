@@ -5,6 +5,7 @@ import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/dr
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { FormControl, Validators } from '@angular/forms';
 import { TeamService } from 'src/app/services/team.service';
+import { UtilitiesService } from 'src/app/services/utilities.service';
 
 @Component({
   selector: "app-tournament-generator",
@@ -14,6 +15,7 @@ import { TeamService } from 'src/app/services/team.service';
 export class TournamentGeneratorComponent implements OnInit {
   selectFromList: AnalyserNode;
   selectedList: any;
+  divisional:boolean = false;
 
   divisions: any = [];
   selectedDivision: any = null;
@@ -22,7 +24,8 @@ export class TournamentGeneratorComponent implements OnInit {
     private adminService: AdminService,
     private standingsService: StandingsService,
     private admin: AdminService,
-    private team: TeamService
+    private team: TeamService,
+    private utils: UtilitiesService
   ) {}
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
@@ -140,6 +143,7 @@ export class TournamentGeneratorComponent implements OnInit {
     this.showAll = false;
     this.selectedDivision = null;
     this.division = null;
+    this.divisional = false;
     this.season = null;
     this.name = null;
     this.description = null;
@@ -186,23 +190,61 @@ export class TournamentGeneratorComponent implements OnInit {
 
   disableGenerate() {
     let disable = true;
-    if (this.tournamentSeed.length > 3) {
-      if ((this.showAll && this.name != null) || this.name != undefined) {
-        disable = false;
-      } else {
-        if (this.season) {
-          disable = false;
-        }
-      }
-      if (this.tournName.invalid) {
-        disable = true;
-      }
+    if (
+      this.tournamentSeed.length > 3 &&
+      this.season &&
+      !this.utils.isNullOrEmpty(this.name)
+    ) {
+      disable = false;
     }
     return disable;
   }
 
   generateBrackets() {
-    // console.log(this.tournamentSeed, this.season, this.name, this.division, this.cup, this.description);
+
+
+    if(!this.divisional){
+          this.adminService
+            .generateTournament(
+              this.tournamentSeed,
+              this.season,
+              this.name,
+              this.division,
+              this.cup,
+              this.description,
+              this.selectedType
+            )
+            .subscribe(
+              (res) => {
+                this.ngOnInit();
+              },
+              (err) => {
+                console.log(err);
+              }
+            );
+    }else{
+          this.adminService
+            .generateTournament(
+              this.tournamentSeed,
+              this.season,
+              this.name,
+              null,
+              null,
+              this.description,
+              this.selectedType
+            )
+            .subscribe(
+              (res) => {
+                this.ngOnInit();
+              },
+              (err) => {
+                console.log(err);
+              }
+            );
+    }
+  }
+
+  private gen(){
     this.adminService
       .generateTournament(
         this.tournamentSeed,

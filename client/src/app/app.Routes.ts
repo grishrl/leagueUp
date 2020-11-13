@@ -59,6 +59,7 @@ import { GrandFinalGeneratorComponent } from './admin/grand-final-generator/gran
 import { GrandChampionsViewerComponent } from "./grand-champions-viewer/grand-champions-viewer.component";
 import { RankRequirementsComponent } from './admin/rank-requirements/set-rank-requirements/rank-requirements.component';
 import { ValidateRankComponent } from './admin/rank-requirements/validate-rank/validate-rank.component';
+import { DeleteTournamentComponent } from './admin/match-management/delete-tournament/delete-tournament.component';
 
 const APP_ROUTES: Routes = [
   { path: "challonge", component: ChallongeTournComponent },
@@ -190,6 +191,12 @@ const APP_ROUTES: Routes = [
   {
     path: "_admin/scheduleGenerator",
     component: GenerateSeasonComponent,
+    canActivate: [AuthGuardService],
+    data: { role: "schedulegen" },
+  },
+  {
+    path: "_admin/deleteTournament",
+    component: DeleteTournamentComponent,
     canActivate: [AuthGuardService],
     data: { role: "schedulegen" },
   },

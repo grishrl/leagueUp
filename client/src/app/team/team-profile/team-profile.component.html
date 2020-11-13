@@ -349,7 +349,7 @@
                         </div>
                         <!-- End Tab Two - squad -->
 
-                        <!-- Tab Theree - fixtures -->
+                        <!-- Tab Theree - schedule -->
                         <div class="tab-pane " [ngClass]="{'active': index==2}" *ngIf="index==2">
                             <div *ngIf=" index==2 ">
                                 <app-team-schedule-table [teamName]="returnedProfile.teamName " [season]="season "></app-team-schedule-table>
@@ -358,12 +358,12 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- End Tab Theree - fixtures -->
+                        <!-- End Tab Theree - schedule -->
 
                         <!-- Tab Theree - results -->
                         <div class="tab-pane " [ngClass]="{ 'active': index==3} " *ngIf="index==3">
                             <div *ngIf="index==3 ">
-                                <app-team-results-tiles [team]="returnedProfile.teamName " [season]="season "></app-team-results-tiles>
+                                <app-team-results-tiles [team]="returnedProfile.teamName" [season]="season"></app-team-results-tiles>
                                 <div class="mt-3 ">
                                     <app-team-tournament-results-tiles [teamId]="returnedProfile._id " [season]="season "></app-team-tournament-results-tiles>
                                 </div>
@@ -371,13 +371,13 @@
                         </div>
                         <!-- End Tab Theree - results -->
 
-                        <!-- Tab Theree - stats -->
+                        <!-- Tab Theree - tournaments -->
                         <div class="tab-pane " [ngClass]="{ 'active': index==4} " *ngIf="index==4">
                             <div *ngIf="index==4 ">
                                 <app-team-tournaments [team]="returnedProfile" [season]="season"></app-team-tournaments>
                             </div>
                         </div>
-                        <!-- End Tab Theree - stats -->
+                        <!-- End Tab Theree - tournaments -->
                     </div>
                     <!-- Content Tabs -->
                 </div>

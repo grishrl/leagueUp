@@ -51,16 +51,19 @@ export class ScheduleViewComponent implements OnInit, OnChanges {
       this.provSeason = val.season;
       this.pastSeason = val.pastSeason;
       this.rounds = this.util.calculateRounds(this.provDiv);
+      // this.initialize();
     }
   }
 
   @Input() set season(val){
     this.seasonVal = val;
+    // this.initialize();
   }
 
   @Input() set division(div){
     if(div!=undefined && div != null){
       this.provDiv = div;
+      // this.initialize();
     }
   }
 

@@ -33,6 +33,7 @@ export class DivisionResultsTilesComponent implements OnInit {
   @Input() set division(div) {
     if (div != undefined && div != null) {
       this.provDiv = div;
+      this.ngOnInit();
     }
   }
 

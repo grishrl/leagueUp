@@ -22,15 +22,20 @@ const jsonDiff = require('deep-object-diff');
  * @name calulateStandings
  * @function
  * @description takes the provided division and season and calcuates the current standings of the teams
- * @param {Division} division 
- * @param {number} season 
- * @param {boolean} pastSeason 
+ * @param {Division} divisionConcat provide division concat for calculation
+ * @param {number} season provide season number
+ * @param {boolean} pastSeason provide true if past season inquiry
+ * @param {boolean} noDeltas provide true if standings delta not desired; 
  */
-async function calulateStandings(division, season, pastSeason) {
+async function calulateStandings(divisionConcat, season, pastSeason, noDeltas) {
     let standings;
     try {
 
-        let dbDiv = await Division.findOne({ divisionConcat: division }).then(found => { return found; });
+        let dbDiv = await Division.findOne({
+            divisionConcat: divisionConcat
+        }).then(found => {
+            return found;
+        });
 
         if (dbDiv) {
             if (util.returnBoolByPath(dbDiv.toObject(), 'cupDiv') && dbDiv.cupDiv == true) {
@@ -38,7 +43,7 @@ async function calulateStandings(division, season, pastSeason) {
                     return answer;
                 });
             } else {
-                standings = await stdDivStanding(dbDiv, season, pastSeason).then(answer => {
+                standings = await stdDivStanding(dbDiv, season, pastSeason, noDeltas).then(answer => {
                     return answer;
                 });
             }
@@ -267,7 +272,10 @@ async function cupDivStanding(division, season) {
  * @param {number} season 
  * @param {boolean} pastSeason 
  */
-async function stdDivStanding(division, season, pastSeason) {
+async function stdDivStanding(division, season, pastSeason, noDeltas) {
+
+    noDeltas = util.validateInputs.boolean(noDeltas).value;
+
     let teams;
 
     //grab all amtches that match the season and division and are not tournament matches
@@ -340,61 +348,39 @@ async function stdDivStanding(division, season, pastSeason) {
                 return 1;
             }
         });
-        //add a position property 1st,....
-        for (var i = 0; i < standings.length; i++) {
-            standings[i]['standing'] = i + 1;
-        }
 
-        let query = {
-            dataName: `${division.divisionConcat}`,
-            span: season
-        }
-
-        //pull saved standings data from the database
-        let data = await System.findOne(
-            query
-        ).then(
-            saved => {
-                return saved;
-            },
-            err => {
-                util.errLogger('standings-subs, cupDivStanding', err);
-                return null;
+        if (!noDeltas) {
+            //add a position property 1st,....
+            for (var i = 0; i < standings.length; i++) {
+                standings[i]['standing'] = i + 1;
             }
-        );
 
-        //add standings change data;
-        let dataChanged = false;
-        try {
+            //retrieve data from db of stored standings
+            let query = {
+                dataName: `${division.divisionConcat}`,
+                span: season
+            }
 
-            if (data) {
-                //check the data didnt change first
-                let oldData = util.objectify(data);
-                oldData = oldData.data.standings;
-                _.forEach(oldData, (oldDataV, oldDataK) => {
-                    let storedStanding = oldDataV;
-                    _.forEach(standings, (standingV, standingK) => {
-                        let calcStanding = standingV;
-                        if (storedStanding.id == calcStanding.id) {
-                            if (calcStanding.standing == storedStanding.standing) {
-                                //no changes
-                            } else {
-                                //changed
-                                dataChanged = true;
-                            }
-                        }
-                    })
-                });
+            //pull saved standings data from the database
+            let data = await System.findOne(
+                query
+            ).then(
+                saved => {
+                    return saved;
+                },
+                err => {
+                    util.errLogger('standings-subs, cupDivStanding', err);
+                    return null;
+                }
+            );
 
-                //if the standings changed; update the deltas of the teams
-                if (dataChanged) {
+            try {
+
+                if (data) {
                     _.forEach(oldData, (oldDataV, oldDataK) => {
                         let storedStanding = oldDataV;
-
                         _.forEach(standings, (standingV, standingK) => {
-
                             let calcStanding = standingV;
-
                             if (storedStanding.id == calcStanding.id) {
                                 if (calcStanding.standing == storedStanding.standing) {
                                     calcStanding['change'] = 'none';
@@ -406,85 +392,18 @@ async function stdDivStanding(division, season, pastSeason) {
                             }
                         })
                     })
-                } else {
-                    //assign the database version of standings deltas to teams
-                    _.forEach(oldData, (oldDataV, oldDataK) => {
-                        let storedStanding = oldDataV;
-
-                        _.forEach(standings, (standingV, standingK) => {
-
-                            let calcStanding = standingV;
-
-                            if (storedStanding.id == calcStanding.id) {
-                                calcStanding['change'] = storedStanding['change'];
-                            }
-                        })
-                    })
                 }
 
-            } else {
-
-                //we had no data so how can we have changes.. save this and carry on
-
-                query.data = {
-                    standings,
-                    timeStamp: Date.now()
-                };
-                new System(
-                    query
-                ).save().then(
-                    res => {
-                        util.errLogger('standings-subs', res, 'first save last standings');
-                    },
-                    err => {
-                        util.errLogger('standings-subs', err, 'error first saving last standings');
-                    }
-                )
-            }
-        } catch (e) { console.log('standings changes catch', e) }
-
-        //update the standings i guess
-        if (data) {
-            try {
-                //diff the database object against the finalized standings object; if their is a delta save the standings to the db
-                let dataObj = util.objectify(data);
-                let diff = jsonDiff.diff(dataObj.data.standings, standings);
-
-                let updateDocument = util.JSONCopy(query);
-                updateDocument.data = {
-                    standings,
-                    timeStamp: Date.now()
-                };
-
-                if (Object.keys(diff).length > 0) {
-                    System.findOneAndUpdate(
-                        query, updateDocument, {
-                            new: true,
-                            upsert: true
-                        }
-                    ).then(
-                        saved => {
-                            util.errLogger('standings-subs', null, 'last standings upserted');
-                        },
-                        err => {
-                            util.errLogger('standings-subs, last standing', err);
-                        }
-                    );
-
-
-                } else {
-                    //dont save
-                }
             } catch (e) {
-                util.errLogger('standings-subs', e, 'error in last standings');
+                console.log('standings changes catch', e)
             }
-
-
         }
 
     }
     return standings;
 }
+
+
 
 
 module.exports = {

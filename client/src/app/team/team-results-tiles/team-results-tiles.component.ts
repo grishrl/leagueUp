@@ -74,6 +74,7 @@ export class TeamResultsTilesComponent implements OnInit {
   @Input() set team(val) {
     if (val) {
       this.teamVal = val;
+      this.ngOnInit()
     }
   }
 
@@ -81,6 +82,7 @@ export class TeamResultsTilesComponent implements OnInit {
   @Input() set season(val) {
     if (val) {
       this.seasonVal = val;
+      this.ngOnInit();
     }
   }
 

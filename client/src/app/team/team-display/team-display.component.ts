@@ -17,6 +17,7 @@ export class TeamDisplayComponent implements OnInit {
   @Input() set teams(teams:Team[]){
     if(teams != null && teams != undefined){
       this._teamList = teams;
+      this.initComponent();
     }else{
       this._teams = [];
       this.rows = [];
@@ -32,15 +33,19 @@ export class TeamDisplayComponent implements OnInit {
   @Input() set season(val) {
     if (val) {
       this._season = val;
+      this.initComponent();
     }
   }
 
   initComponent(){
+
     //blank out display array
     this._teams=[];
     if (this._season){
       this.history.getPastTeamsViaSeason(this._teamList, this._season).subscribe(
         res => {
+          this._teams = [];
+
           res.forEach(element => {
             this._teams.push(element.object);
           });
@@ -48,11 +53,12 @@ export class TeamDisplayComponent implements OnInit {
           this.getLogos();
         },
         err => {
-          console.log(err);
+
         }
       )
     }else{
       this.team.getTeams(this._teamList).subscribe((retn) => {
+        this._teams = [];
         retn = this.util.sortTeams(retn);
         this._teams = retn;
         this.getLogos();
@@ -72,7 +78,9 @@ export class TeamDisplayComponent implements OnInit {
 
   rows: Array<any> = [];
 
-  constructor(public team:TeamService, private util:UtilitiesService, private history:HistoryService) { }
+  constructor(public team:TeamService, private util:UtilitiesService, private history:HistoryService) {
+    this._teams = [];
+   }
 
   ngOnInit() {
 

@@ -1,7 +1,7 @@
 <div class="container">
     <div class="row forceFull">
-        <div class="col">
-            <div class="row mt-2">
+        <div class="col panel-box p-2">
+            <div class="row">
                 <div class="col">
                     <a [routerLink]="['/_admin/dashboard']">Back to Dashboard</a>
                 </div>
@@ -123,16 +123,26 @@
             </div>
             <div class="row">
                 <div class="col">
+                    <div><span class="text-danger">Required</span></div>
                     <mat-form-field class="mat-FullWidth">
                         <input matInput type="number" placeholder="Season" [(ngModel)]="season">
                     </mat-form-field>
                 </div>
             </div>
+            <mat-checkbox [(ngModel)]="divisional">Divisional Season Brackets? <span class="text-warning"> Mark this if this is a division bracket!</span></mat-checkbox>
             <div class="row" *ngIf="showCups">
                 <div class="col">
                     <div>Cup Number; please enter sequential cup number (1 more than the last) for this division</div>
                     <mat-form-field class="mat-FullWidth">
                         <input matInput placeholder="Cup:" [(ngModel)]="cup">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div><span class="text-danger">Required</span> Tournament name is optional for division end of season tournaments, otherwise you should name it.</div>
+                    <mat-form-field class="mat-FullWidth">
+                        <input matInput placeholder="Tournament Name:" [formControl]="tournName" [(ngModel)]="name">
                     </mat-form-field>
                 </div>
             </div>
@@ -144,15 +154,6 @@
                     </mat-form-field>
                 </div>
             </div>
-            <div class="row">
-                <div class="col">
-                    <div>Tournament name is optional for division end of season tournaments, otherwise you should name it.</div>
-                    <mat-form-field class="mat-FullWidth">
-                        <input matInput placeholder="Tournament Name:" [formControl]="tournName" [(ngModel)]="name">
-                    </mat-form-field>
-                </div>
-            </div>
-
             <div class="row">
                 <div class="col">
                     <mat-form-field class="mat-FullWidth">

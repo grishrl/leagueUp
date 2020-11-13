@@ -561,7 +561,6 @@ router.post('/fetch/matches/team', async(req, res) => {
                 return null;
             });
         }
-
         if (foundTeam) {
             let teamId = foundTeam._id;
             return Match.find({
@@ -1364,6 +1363,65 @@ router.post('/generate/tournament', passport.authenticate('jwt', {
 });
 
 
+router.get('/delete/tournament', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.scheduleGenerator, async(req, res) => {
+
+    const path = '/schedule/delete/tournament';
+
+    const requiredParameters = [{
+        name: "tournId",
+        type: "number"
+    }];
+
+    commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
+
+        const response = {};
+
+        let tourn = requiredParameters.tournId.value;
+
+        return Scheduling.findOneAndDelete({
+            challonge_ref: tourn
+        }).then(
+            foundTourn => {
+                if (foundTourn) {
+                    return Match.deleteMany({
+                        matchId: {
+                            $in: utils.objectify(foundTourn).matches
+                        }
+                    }).then(
+                        deleted => {
+                            const deleteLoad = {
+                                matches: deleted,
+                                tournament: foundTourn
+                            };
+                            response.status = 200;
+                            response.message = utils.returnMessaging(req.originalUrl, 'Tournament Deleted', false, deleteLoad, null, null)
+                            return response;
+                        },
+                        err => {
+                            response.status = 500;
+                            response.message = utils.returnMessaging(req.originalUrl, 'Deletion Error', err, null, null, null)
+                            return response;
+                        }
+                    );
+
+                } else {
+                    response.status = 400;
+                    response.message = utils.returnMessaging(req.originalUrl, 'Tournament Not Found', false, null, null, null)
+                    return response;
+                }
+            },
+            err => {
+                response.status = 500;
+                response.message = utils.returnMessaging(req.originalUrl, 'Deletion Error', err, null, null, null)
+                return response;
+            });
+
+    });
+
+})
+
 //this route retuns all tournament matches that a team participates in 
 router.post('/fetch/team/tournament/matches', async(req, res) => {
 
@@ -1585,7 +1643,7 @@ router.post('/fetch/team/tournament', (req, res) => {
 
 });
 
-//this route takes a team id and returns all the active tournaments for the team; regardless of season.
+//this route takes a team id and returns all the active tournaments; regardless of season.
 router.get('/fetch/tournament/active', async(req, res) => {
 
     const path = '/schedule/fetch/tournament/active';

@@ -45,7 +45,7 @@ validateInputs.number = function(input) {
     if (!isNullOrEmpty(input)) {
         retVal.valid = typeof(parseInt(input)) == 'number' ? true : false;
         if (retVal.valid) {
-            retVal.value = input;
+            retVal.value = parseInt(input);
         }
     }
     return retVal;
