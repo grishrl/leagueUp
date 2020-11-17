@@ -50,6 +50,7 @@ const userSchema = new Schema({
     "pendingTeam": Boolean,
     "toonHandle": String, //used for tieng profile to replays submitted
     "discordTag": String,
+    "discordId": String,
     "lastTouched": Number,
     "replays": [String],
     "replayArchive": [archiveSchema],

@@ -92,12 +92,18 @@ function handleInvalidInputsMessage(req, res, inputs) {
     res.status(500).send(utils.returnMessaging(req.originalUrl, message));
 }
 
-function returnInvalidInputsMessage(req, inputs) {
+function returnInvalidInputsMessage(req, inputs, optionals) {
     let response = {};
     let message = '';
+    let andor = optionals ? ' or ' : ' and '
+    let ind = 1;
     _.forEach(inputs, (v, k) => {
         if (!v.valid) {
             message += ` ${k} - (${v.type}) parameter is required `;
+            if (ind < Object.keys(inputs).length) {
+                message += andor;
+                ind++;
+            }
         }
     });
     response.status = 500;
