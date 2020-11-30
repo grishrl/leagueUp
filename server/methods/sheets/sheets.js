@@ -68,15 +68,16 @@ async function gsRun(client) {
             youtubeURL: r[5],
             vod1: r[6],
             vod2: r[7],
-
-            issues: r[9],
-            sysRead: r[10]
+            issues: r[8],
+            sysRead: r[9]
         }
         return obj;
     });
 
     for (var i = 0; i < newDataArray.length; i++) {
         let obj = newDataArray[i];
+        console.log(obj);
+        console.log(readInRow(obj.sysRead));
         if (obj.matchId && (obj.youtubeURL || obj.vod1 || obj.vod2) && readInRow(obj.sysRead)) {
             updateRequired = true;
             x += 1;
@@ -108,7 +109,6 @@ async function gsRun(client) {
                 let saveResult = await match.save().then(
                     saved => {
                         return saved;
-
                     },
                     err => {
                         return null;

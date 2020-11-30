@@ -22,8 +22,16 @@
                         <div class="container">
                             <!-- Menu-->
                             <ul class="sf-menu" id="menu">
-                                <li>
-                                    <a [routerLink]="['/rules']">Rules</a>
+                                <li class="current">
+                                    <a class="finger linkColorFix">Rules</a>
+                                    <ul class="sub-current" appHideMenu>
+                                        <li>
+                                            <a [routerLink]="['/stormrules']">Storm Rules</a>
+                                        </li>
+                                        <li>
+                                            <a [routerLink]="['/rules']">Community Rules</a>
+                                        </li>
+                                    </ul>
                                 </li>
                                 <li>
                                     <a [routerLink]="['/faq']">FAQ</a>

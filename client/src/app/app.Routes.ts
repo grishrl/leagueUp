@@ -72,6 +72,14 @@ const APP_ROUTES: Routes = [
     data: { slug: "rules", headerText: "Community Rules" },
   },
   {
+    path: "stormrules",
+    component: BlogViewComponent,
+    data: {
+      slug: "ngs-storm-division-rules-and-regulations",
+      headerText: "Storm Rules",
+    },
+  },
+  {
     path: "volunteers",
     component: BlogViewComponent,
     data: { slug: "volunteers", headerText: "Community Volunteers" },

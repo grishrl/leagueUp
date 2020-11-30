@@ -72,7 +72,6 @@ router.get('/get', (req, res) => {
 
             return teamQuery(optionalParameters).then(
                 foundTeam => {
-                    console.log('foundTeam', foundTeam)
                     foundTeam = foundTeam ? foundTeam : {};
                     response.status = 200;
                     response.message = utils.returnMessaging(req.originalUrl, 'Found team', false, foundTeam)
