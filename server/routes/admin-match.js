@@ -29,7 +29,9 @@ router.post('/match/update', passport.authenticate('jwt', {
     match = util.validateInputs.object(match);
     try {
 
-        if (match) {
+        if (match.valid) {
+
+            match = match.value;
 
             logInfo.action = 'update match ';
             logInfo.admin = 'ADMIN';
@@ -125,9 +127,13 @@ router.post('/match/set/schedule/deadline', passport.authenticate('jwt', { sessi
         date = util.validateInputs.number(date);
         endWeek = util.validateInputs.number(endWeek);
 
-        if (div && date && endWeek) {
+        if (div.valid && date.valid && endWeek.valid) {
 
             let logInfo = {};
+
+            div = div.value;
+            date = date.value;
+            endWeek = endWeek.value;
 
             logInfo.action = 'set schedule deadline ';
             logInfo.admin = 'ADMIN';
@@ -176,13 +182,13 @@ router.post('/match/set/schedule/deadline', passport.authenticate('jwt', { sessi
         } else {
             //bad inputs
             let message = 'Error: ';
-            if (!div) {
+            if (!div.valid) {
                 message += 'div (string) parameter required';
             }
-            if (!date) {
+            if (!date.valid) {
                 message += 'date (number) parameter required';
             }
-            if (!endWeek) {
+            if (!endWeek.valid) {
                 message += 'endWeek (number) parameter required';
             }
             res.status(500).send(utils.returnMessaging(path, message));
@@ -207,7 +213,8 @@ router.post('/match/uploadreplay', passport.authenticate('jwt', {
 
     try {
         matchReport = util.validateInputs.object(matchReport);
-        if (matchReport) {
+        if (matchReport.valid) {
+            matchReport = matchReport.value;
             reportMatch(path, matchReport, requester, true).then(
                 reported => {
                     res.status(200).send(util.returnMessaging(path, 'Match Reported', null, reported));
@@ -219,7 +226,7 @@ router.post('/match/uploadreplay', passport.authenticate('jwt', {
         } else {
             //bad inputs
             let message = 'Error: ';
-            if (!matchReport) {
+            if (!matchReport.valid) {
                 message += 'matchReport (object) parameter required';
             }
             res.status(500).send(utils.returnMessaging(path, message));
@@ -274,7 +281,8 @@ router.post('/match/create/grandfinal', passport.authenticate('jwt', {
 
         let matchObj = req.body;
         matchObj = util.validateInputs.object(matchObj);
-        if (matchObj) {
+        if (matchObj.valid) {
+            matchObj = matchObj.value;
             const logInfo = {}
             logInfo.action = 'create grand final match';
             logInfo.admin = 'ADMIN';
@@ -320,8 +328,8 @@ router.post('/match/delete/grandfinal', passport.authenticate('jwt', {
 
         matchId = util.validateInputs.string(matchId);
 
-        if (matchId) {
-
+        if (matchId.valid) {
+            matchId = matchId.value;
             const logInfo = {}
             logInfo.action = 'delete grand final match';
             logInfo.admin = 'ADMIN';
@@ -367,7 +375,8 @@ router.post('/match/create/stream/link', passport.authenticate('jwt', {
     try {
         let newStream = req.body
         newStream = util.validateInputs.object(newStream);
-        if (newStream) {
+        if (newStream.valid) {
+            newStream = newStream.value;
             streamMethod.createStreamEvent(newStream).then(
                 answer => {
                     res.status(200).send(util.returnMessaging(path, 'Stream info created', false, answer));
@@ -403,7 +412,8 @@ router.post('/match/delete/stream/link', passport.authenticate('jwt', {
     try {
         let matchId = req.body.matchId
         matchId = util.validateInputs.string(matchId);
-        if (matchId) {
+        if (matchId.valid) {
+            matchId = matchId.value;
             let query = {
                 "$and": [{
                     "matchId": matchId
@@ -451,7 +461,8 @@ router.post('/season/reset', passport.authenticate('jwt', {
 
         password = util.validateInputs.string(password);
 
-        if (password) {
+        if (password.valid) {
+            password = password.value;
             if (password == 'resetseason') {
                 let archived = await ArchiveMethods.archiveDivisions().then(
                     suc => {

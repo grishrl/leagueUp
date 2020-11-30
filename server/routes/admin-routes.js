@@ -16,11 +16,11 @@ router.post('/upsertSeasonInfo', passport.authenticate('jwt', {
     try {
         season = util.validateInputs.number(season);
 
-        if (season) {
+        if (season.valid) {
             let logObj = {};
             logObj.actor = '/upsertSeasonInfo';
             logObj.action = 'upserting season info';
-            logObj.target = 'System table: season info :' + season;
+            logObj.target = 'System table: season info :' + season.value;
             logObj.logLevel = 'STD';
             logObj.timeStamp = Date.now();
 
@@ -29,13 +29,13 @@ router.post('/upsertSeasonInfo', passport.authenticate('jwt', {
                         'dataName': 'seasonInfo'
                     },
                     {
-                        'value': season
+                        'value': season.value
                     }
                 ]
             };
             let postedInfo = {
                 'dataName': 'seasonInfo',
-                'value': season,
+                'value': season.value,
                 'data': {
                     'registrationOpen': req.body.data.registrationOpen,
                     'seasonStartDate': req.body.data.seasonStartDate,

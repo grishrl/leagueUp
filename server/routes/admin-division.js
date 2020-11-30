@@ -90,23 +90,23 @@ router.post('/divisionTeams',
 
         try {
 
-            recTeam = utils.validateInputs.array(recTeams);
+            recTeam = utils.validateInputs.array(recTeam);
             div = utils.validateInputs.string(div);
 
-            if (recTeam && div) {
+            if (recTeam.valid && div.valid) {
                 //log object
                 let logObj = {};
                 logObj.actor = req.user.displayName;
                 logObj.action = 'add team to division ';
-                logObj.target = div + ' : ' + teams.toString();
+                logObj.target = div.value + ' : ' + teams.toString();
                 logObj.logLevel = 'ADMIN';
 
 
-                recTeam.forEach(element => {
+                recTeam.value.forEach(element => {
                     teams.push(element.teamName);
                 });
                 Division.findOne({
-                    divisionConcat: div
+                    divisionConcat: div.value
                 }).then((foundDiv) => {
                     if (foundDiv) {
                         //make sure we don't double up teams in here
@@ -136,10 +136,10 @@ router.post('/divisionTeams',
                 })
             } else {
                 let message = 'Error: ';
-                if (!recTeam) {
+                if (!recTeam.valid) {
                     message += 'teamInfo (array) parameter required';
                 }
-                if (!div) {
+                if (!div.valid) {
                     message += 'divisionName (string) parameter required';
                 }
                 res.status(500).send(utils.returnMessaging(path, message));
@@ -165,9 +165,9 @@ router.post('/upsertDivision', passport.authenticate('jwt', {
         name = utils.validateInputs.string(name);
         division = utils.validateInputs.object(division);
 
-        if (name && division) {
+        if (name.valid && division.valid) {
             let runSubs = false;
-            if (name != division.divisionConcat) {
+            if (name.value != division.value.divisionConcat) {
                 runSubs = true;
             }
 
@@ -175,19 +175,19 @@ router.post('/upsertDivision', passport.authenticate('jwt', {
             let logObj = {};
             logObj.actor = req.user.displayName;
             logObj.action = 'create or edit division ';
-            logObj.target = division;
+            logObj.target = division.value;
             logObj.logLevel = 'ADMIN';
 
             Division.findOne({
-                divisionConcat: name
+                divisionConcat: name.value
             }).then((found) => {
                 if (found) {
                     let divisionPriorState = found.toObject();
                     //check one more time to ensure we dont need to run sub routines:
-                    if (found.displayName != division.displayName || found.divisionConcat != division.concat) {
+                    if (found.displayName != division.value.displayName || found.divisionConcat != division.value.concat) {
                         runSubs = true;
                     }
-                    _.forEach(division, (value, key) => {
+                    _.forEach(division.value, (value, key) => {
                         found[key] = value;
                     });
 
@@ -210,7 +210,7 @@ router.post('/upsertDivision', passport.authenticate('jwt', {
 
                 } else {
                     new Division(
-                        division
+                        division.value
                     ).save().then((newDivision) => {
                         res.status(200).send(utils.returnMessaging(path, 'Created new division', false, newDivision, null, logObj));
                     }, (err) => {
@@ -223,10 +223,10 @@ router.post('/upsertDivision', passport.authenticate('jwt', {
             })
         } else {
             let message = 'Error: ';
-            if (!name) {
+            if (!name.valid) {
                 message += 'name (string) parameter required ';
             }
-            if (!division) {
+            if (!division.valid) {
                 message += 'divisionName (object) parameter required ';
             }
             res.status(500).send(utils.returnMessaging(path, message));
@@ -254,19 +254,19 @@ router.post('/removeTeams', passport.authenticate('jwt', {
         removeTeams = utils.validateInputs.array(removeTeams);
         div = utils.validateInputs.string(div);
 
-        if (removeTeams && div) {
+        if (removeTeams.valid && div.valid) {
             //log object
             let logObj = {};
             logObj.actor = req.user.displayName;
             logObj.action = 'remove team from division ';
-            logObj.target = div + ' : ' + removeTeams.toString();
+            logObj.target = div.value + ' : ' + removeTeams.value.toString();
             logObj.logLevel = 'ADMIN';
 
             Division.findOne({
-                divisionConcat: div
+                divisionConcat: div.value
             }).then((found) => {
                 if (found) {
-                    removeTeams.forEach(team => {
+                    removeTeams.value.forEach(team => {
                         let i = found.teams.indexOf(team);
                         removed = removed.concat(found.teams.splice(i, 1));
                     });
@@ -286,10 +286,10 @@ router.post('/removeTeams', passport.authenticate('jwt', {
             })
         } else {
             let message = 'Error: ';
-            if (!removeTeams) {
+            if (!removeTeams.valid) {
                 message += 'removeTeams (array) parameter required ';
             }
-            if (!div) {
+            if (!div.valid) {
                 message += 'div (string) parameter required ';
             }
             res.status(500).send(utils.returnMessaging(path, message));
@@ -314,16 +314,16 @@ router.post('/createDivision', passport.authenticate('jwt', {
     try {
         recievedDivision = utils.validateInputs.object(recievedDivision);
 
-        if (recievedDivision) {
+        if (recievedDivision.valid) {
             //log object
             let logObj = {};
             logObj.actor = req.user.displayName;
             logObj.action = 'create division ';
-            logObj.target = recievedDivision.divisionConcat;
+            logObj.target = recievedDivision.value.divisionConcat;
             logObj.logLevel = 'ADMIN';
 
             Division.findOne({
-                divisionConcat: recievedDivision.divisionConcat
+                divisionConcat: recievedDivision.value.divisionConcat
             }).then(
                 (found) => {
                     if (found) {
@@ -332,7 +332,7 @@ router.post('/createDivision', passport.authenticate('jwt', {
                         res.status(400).send(utils.returnMessaging(path, 'Division All ready exists', false, found, null, logObj));
                     } else {
                         new Division(
-                            recievedDivision
+                            recievedDivision.value
                         ).save().then(
                             (saved) => {
                                 res.status(200).send(utils.returnMessaging(path, 'Division Created', false, saved, null, logObj));
@@ -349,7 +349,7 @@ router.post('/createDivision', passport.authenticate('jwt', {
             )
         } else {
             let message = 'Error: ';
-            if (!recievedDivision) {
+            if (!recievedDivision.valid) {
                 message += 'recievedDivision (object) parameter required ';
             }
             res.status(500).send(utils.returnMessaging(path, message));
@@ -373,16 +373,16 @@ router.post('/deleteDivision', passport.authenticate('jwt', {
 
         recievedDivision = utils.validateInputs.string(recievedDivision);
 
-        if (recievedDivision) {
+        if (recievedDivision.valid) {
             //log object
             let logObj = {};
             logObj.actor = req.user.displayName;
             logObj.action = 'delete division ';
-            logObj.target = recievedDivision;
+            logObj.target = recievedDivision.value;
             logObj.logLevel = 'ADMIN';
 
             Division.findOneAndDelete({
-                divisionConcat: recievedDivision
+                divisionConcat: recievedDivision.value
             }).then(
                 (removed) => {
                     if (removed) {
@@ -402,7 +402,7 @@ router.post('/deleteDivision', passport.authenticate('jwt', {
             )
         } else {
             let message = 'Error: ';
-            if (!recievedDivision) {
+            if (!recievedDivision.valid) {
                 message += 'recievedDivision (string) parameter required ';
             }
             res.status(500).send(utils.returnMessaging(path, message));
