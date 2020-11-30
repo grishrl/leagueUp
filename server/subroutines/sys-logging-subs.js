@@ -5,7 +5,6 @@
  * reviewer: wraith
  */
 const log = require('../models/system-models');
-const util = require('../utils');
 
 /**
  * @name logger
@@ -34,7 +33,7 @@ function logger(logObj, actor, action, target, error, deepLogging) {
             deepLogging: JSON.stringify(deepLogging)
         }).save();
     } else {
-        util.errLogger('sys-logging-subs', null, 'logger got bad data');
+        console.log('sys-logging-subs logger got bad data');
     }
 }
 
