@@ -204,6 +204,8 @@ import { ValidateRankComponent } from './admin/rank-requirements/validate-rank/v
 import { ApproveRankViewComponent } from './admin/rank-requirements/validate-rank/approve-rank-view/approve-rank-view.component';
 import { VerifiedStormLeagueRanksViewComponent } from './verified-storm-league-ranks-view/verified-storm-league-ranks-view.component';
 import { DeleteTournamentComponent } from './admin/match-management/delete-tournament/delete-tournament.component';
+import { MembersReportingComponent } from './storm-rank-tools/members-reporting/members-reporting.component';
+import { VerifiedStormRanksDisplayNameComponent } from './storm-rank-tools/verified-storm-ranks-display-name/verified-storm-ranks-display-name.component';
 
 // const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
@@ -393,7 +395,9 @@ import { DeleteTournamentComponent } from './admin/match-management/delete-tourn
     ValidateRankComponent,
     ApproveRankViewComponent,
     VerifiedStormLeagueRanksViewComponent,
-    DeleteTournamentComponent
+    DeleteTournamentComponent,
+    MembersReportingComponent,
+    VerifiedStormRanksDisplayNameComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

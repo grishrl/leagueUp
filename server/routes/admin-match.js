@@ -108,7 +108,7 @@ router.post('/match/update', passport.authenticate('jwt', {
         }
 
     } catch (e) {
-        utils.errLogger(path, e);
+        util.errLogger(path, e);
         res.status(500).send(util.returnMessaging(path, 'Internal Server Error', e));
     }
 
@@ -191,11 +191,11 @@ router.post('/match/set/schedule/deadline', passport.authenticate('jwt', { sessi
             if (!endWeek.valid) {
                 message += 'endWeek (number) parameter required';
             }
-            res.status(500).send(utils.returnMessaging(path, message));
+            res.status(500).send(util.returnMessaging(path, message));
         }
 
     } catch (e) {
-        utils.errLogger(path, e);
+        util.errLogger(path, e);
         res.status(500).send(util.returnMessaging(path, 'Internal Server Error', e));
     }
 
@@ -229,10 +229,10 @@ router.post('/match/uploadreplay', passport.authenticate('jwt', {
             if (!matchReport.valid) {
                 message += 'matchReport (object) parameter required';
             }
-            res.status(500).send(utils.returnMessaging(path, message));
+            res.status(500).send(util.returnMessaging(path, message));
         }
     } catch (e) {
-        utils.errLogger(path, e);
+        util.errLogger(path, e);
         res.status(500).send(util.returnMessaging(path, 'Internal Server Error', e));
     }
 
@@ -265,7 +265,7 @@ router.post('/match/deletereplay', passport.authenticate('jwt', {
             res.status(500).send(util.returnMessaging(path, 'Bad parameters', null));
         }
     } catch (e) {
-        utils.errLogger(path, e);
+        util.errLogger(path, e);
         res.status(500).send(util.returnMessaging(path, 'Internal Server Error', e));
     }
 
@@ -307,11 +307,11 @@ router.post('/match/create/grandfinal', passport.authenticate('jwt', {
 
             message += 'send the new object as the body of this request!';
 
-            res.status(500).send(utils.returnMessaging(path, message));
+            res.status(500).send(util.returnMessaging(path, message));
         }
 
     } catch (e) {
-        utils.errLogger(path, e);
+        util.errLogger(path, e);
         res.status(500).send(util.returnMessaging(path, 'Internal Server Error', e));
     }
 
@@ -356,11 +356,11 @@ router.post('/match/delete/grandfinal', passport.authenticate('jwt', {
 
             message += 'matchId (string) is required';
 
-            res.status(500).send(utils.returnMessaging(path, message));
+            res.status(500).send(util.returnMessaging(path, message));
         }
 
     } catch (e) {
-        utils.errLogger(path, e);
+        util.errLogger(path, e);
         res.status(500).send(util.returnMessaging(path, 'Internal Server Error', e));
     }
 
@@ -394,11 +394,11 @@ router.post('/match/create/stream/link', passport.authenticate('jwt', {
 
             message += 'send the new object as the body of this request!';
 
-            res.status(500).send(utils.returnMessaging(path, message));
+            res.status(500).send(util.returnMessaging(path, message));
         }
 
     } catch (e) {
-        utils.errLogger(path, e);
+        util.errLogger(path, e);
         res.status(500).send(util.returnMessaging(path, 'Internal Server Error', e));
     }
 
@@ -435,11 +435,11 @@ router.post('/match/delete/stream/link', passport.authenticate('jwt', {
 
             message += 'matchId (string) required';
 
-            res.status(500).send(utils.returnMessaging(path, message));
+            res.status(500).send(util.returnMessaging(path, message));
         }
 
     } catch (e) {
-        utils.errLogger(path, e);
+        util.errLogger(path, e);
         res.status(500).send(util.returnMessaging(path, 'Internal Server Error', e));
     }
 
@@ -495,11 +495,11 @@ router.post('/season/reset', passport.authenticate('jwt', {
 
             message += 'password (string) required';
 
-            res.status(500).send(utils.returnMessaging(path, message));
+            res.status(500).send(util.returnMessaging(path, message));
         }
 
     } catch (e) {
-        utils.errLogger(path, e);
+        util.errLogger(path, e);
         res.status(500).send(util.returnMessaging(path, 'Internal Server Error', e));
     }
 

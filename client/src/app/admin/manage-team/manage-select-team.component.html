@@ -47,6 +47,9 @@
                             </div>
                             <div class="col">
                                 <span class="titles">NGS Team Rank Avg:</span> {{team.stormRankAvg}}
+                                <div>
+                                    <app-members-reporting [teamMembers]="team.teamMembers"></app-members-reporting>
+                                </div>
                             </div>
                         </div>
                         <div class="row">

@@ -22,6 +22,7 @@ export class VerifiedStormLeagueRanksViewComponent implements OnInit {
   showUploadButton = false;
   userStatus = "";
 
+  @Input() admin = false
   @Input() verifiedUserRanks;
   @Input() teamName;
   @Input() userId;
@@ -69,6 +70,9 @@ export class VerifiedStormLeagueRanksViewComponent implements OnInit {
   ) {
     this.showUploadButton = true;
     this.userStatus = "capt";
+  }else if(this.admin){
+    this.userStatus = 'capt';
+    this.showUploadButton = true;
   }
 
 }
@@ -112,6 +116,8 @@ export class VerifiedStormLeagueRanksViewComponent implements OnInit {
           this.uploadImage = false;
         },
         (err) => {
+          this.saving = false;
+          this.uploadImage = false;
           console.warn(err);
         }
       );
@@ -133,6 +139,8 @@ export class VerifiedStormLeagueRanksViewComponent implements OnInit {
           this.uploadImage = false;
         },
         (err) => {
+          this.saving = false;
+          this.uploadImage = false;
           console.warn(err);
         }
       );

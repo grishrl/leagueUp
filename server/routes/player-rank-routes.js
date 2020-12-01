@@ -2,6 +2,7 @@ const router = require('express').Router();
 const utils = require('../utils');
 const passport = require("passport");
 const prMethods = require('../methods/player-ranks/playerRankMethods');
+const Team = require('../models/team-models');
 const PlayerRankImageUpload = require('../methods/player-rank-upload');
 const System = require('../models/system-models').system;
 const levelRestrict = require("../configs/admin-leveling");
@@ -9,6 +10,8 @@ const User = require('../models/user-models');
 const {
     commonResponseHandler
 } = require('./../commonResponseHandler');
+const playerRankMethods = require('../methods/player-ranks/playerRankMethods');
+const _ = require('lodash');
 
 
 //get playerrank required
@@ -187,6 +190,41 @@ router.post('/capt/upload', passport.authenticate('jwt', {
 
 });
 
+router.post('/usersReporting', passport.authenticate('jwt', {
+    session: false
+}), (req, res) => {
+
+    //TODO: replace with client direct to s3 upload
+
+    const path = 'playerrank/usersReporting';
+
+    const requiredParameters = [{
+        name: 'members',
+        type: 'array'
+    }]
+
+    commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
+        const response = {};
+
+        let members = requiredParameters.members.value;
+
+        return playerRankMethods.getReportingTeamMembers(members).then(
+            success => {
+                response.status = 200;
+                response.message = utils.returnMessaging(path, 'Reporting Members:', null, { reported: success }, null);
+                return response;
+            },
+            failure => {
+                response.status = 500;
+                response.message = utils.returnMessaging(path, 'Failed upload to pending:', failure, null, null);
+                return response;
+            }
+        )
+    });
+
+
+});
+
 
 function confirmCanUpload(req, res, next) {
     const path = 'canUpload';
@@ -202,51 +240,57 @@ function confirmCanUpload(req, res, next) {
     logObj.logLevel = 'STD';
     logObj.target = payloadUser + ' : ';
 
-    if (req.body.remove) {
-        Team.findOne({
-            teamName_lower: callingUser.teamName.toLowerCase()
-        }).then((foundTeam) => {
-            if (foundTeam) {
-                User.findById(payloadUser).then(
-                    found => {
-                        if (found) {
+    // if (req.body.remove) {
+    Team.findOne({
+        teamName_lower: callingUser.teamName.toLowerCase()
+    }).lean().then((foundTeam) => {
+        if (foundTeam) {
+            User.findById(payloadUser).then(
+                found => {
+                    if (found) {
 
-                            let ind = _.findIndex(foundTeam.teamMembers, (teamMember) => {
-                                if (teamMember.displayName == found.displayName) {
-                                    return true;
-                                }
-                            })
-
-                            if (callingUser.displayName == found.displayName || ind > -1) {
-                                next();
-                            } else {
-                                logObj.logLevel = 'ERROR';
-                                logObj.error = 'user was not authorized for action';
-                                res.status(403).send(
-                                    utils.returnMessaging(path, "User not authorized remove.", false, null, null, logObj));
+                        let ind = _.findIndex(foundTeam.teamMembers, (teamMember) => {
+                            if (teamMember.displayName == found.displayName) {
+                                return true;
                             }
-                        }
-                    },
-                    err => {
-                        logObj.logLevel = 'ERROR';
-                        logObj.error = 'there was a problem finding the user';
-                        res.status(400).send(utils.returnMessaging(path, "User not found.", false, null, null, logObj));
-                    }
-                )
+                        })
 
-            } else {
-                logObj.logLevel = 'ERROR';
-                logObj.error = 'there was a problem finding the team';
-                res.status(400).send(utils.returnMessaging(path, "Team not found.", false, null, null, logObj));
-            }
-        }, (err) => {
-            res.status(500).send(
-                utils.returnMessaging(path, "Error finding team", err, null, null, logObj)
-            );
-        });
-    } else {
-        next();
-    }
+                        if (callingUser.displayName == found.displayName || ind > -1) {
+                            next();
+                        } else {
+                            console.log('going there');
+                            levelRestrict.userLevel(req, res, next);
+                        }
+                        // } else if () {
+
+                        // } else {
+                        //     logObj.logLevel = 'ERROR';
+                        //     logObj.error = 'user was not authorized for action';
+                        //     res.status(403).send(
+                        //         utils.returnMessaging(path, "User not authorized remove.", false, null, null, logObj));
+                        // }
+                    }
+                },
+                err => {
+                    logObj.logLevel = 'ERROR';
+                    logObj.error = 'there was a problem finding the user';
+                    res.status(400).send(utils.returnMessaging(path, "User not found.", false, null, null, logObj));
+                }
+            )
+
+        } else {
+            logObj.logLevel = 'ERROR';
+            logObj.error = 'there was a problem finding the team';
+            res.status(400).send(utils.returnMessaging(path, "Team not found.", false, null, null, logObj));
+        }
+    }, (err) => {
+        res.status(500).send(
+            utils.returnMessaging(path, "Error finding team", err, null, null, logObj)
+        );
+    });
+    // } else {
+    //     next();
+    // }
 
 }
 

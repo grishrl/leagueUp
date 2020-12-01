@@ -52,4 +52,12 @@ export class PlayerRankService {
     let url = 'admin/approveRank';
     return this.http.httpPost(url, payload, true);
   }
+
+  getReportingCount(members){
+    let url = "playerrank/usersReporting";
+    const payload = {
+      members
+    }
+    return this.http.httpPost(url, payload, false);
+  }
 }

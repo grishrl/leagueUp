@@ -301,6 +301,15 @@
                                 <td>Season {{seasonNumber}} Questionnaire Completed </td>
                                 <td><span *ngIf="!checkQuestionnaire()"><i class="material-icons text-danger">close</i></span><span *ngIf="checkQuestionnaire()" class="material-icons text-success">check</span></td>
                             </tr>
+                            <tr>
+                                <td>Required SL Ranks Verified</td>
+                                <td>
+                                    <span *ngIf="!ranksVerified">
+                                    <i class="material-icons text-danger">close</i>
+                                  </span>
+                                    <span *ngIf="ranksVerified" class="material-icons text-success">check</span>
+                                </td>
+                            </tr>
 
                         </table>
 

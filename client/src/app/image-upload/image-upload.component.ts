@@ -10,6 +10,7 @@ import { UserService } from '../services/user.service';
   styleUrls: ["./image-upload.component.css"]
 })
 export class ImageUploadComponent implements OnInit {
+  randomName;
   _teamName: string;
   @Input() set teamName(name) {
     if (name != null && name != undefined && name.length) {
@@ -126,7 +127,9 @@ export class ImageUploadComponent implements OnInit {
     private teamService: TeamService,
     private util: UtilitiesService,
     private admin: AdminService
-  ) {}
+  ) {
+    this.randomName = Math.floor(Math.random() * Math.floor(1000));
+  }
 
   removeImage() {
     this.admin.teamRemoveLogo(this._teamName).subscribe(
@@ -180,7 +183,8 @@ export class ImageUploadComponent implements OnInit {
     console.log(this.widthPx, this.heightPx);
     let wB = this.widthPx*1.2;
     let hB = this.heightPx*1.2;
-    this.croppieObject = $("#cropImg").croppie({
+    let ele = `#${this.randomName}`;
+    this.croppieObject = $(ele).croppie({
       viewport: {
         width: this.widthPx,
         height: this.heightPx,

@@ -26,7 +26,13 @@ export class AdminService {
 
   archiveSeason() {
     let url = "admin/season/reset";
-    return this.httpService.httpPost(url, {}, true);
+    return this.httpService.httpPost(
+      url,
+      {
+        password: "resetseason",
+      },
+      true
+    );
   }
 
   teamLogoUpload(img, teamName?) {

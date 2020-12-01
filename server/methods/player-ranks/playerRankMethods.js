@@ -26,10 +26,12 @@ async function getNgsAvgRank(verifiedRankHistory) {
 
         //temp array
         let requiredRanksArray = [];
+        let requiredRanksLength = 0;
 
         //loop through the ranks requirements
         requiredRanks.data.forEach(rr => {
             if (rr.required) {
+                requiredRanksLength += 1;
                 //if the rank is required, loop through the users verfied ranks to see if they have data for this season/year
                 verifiedRankHistory.forEach(vh => {
                     if (rr.year == vh.year && rr.season == vh.season && vh.status == 'verified') {
@@ -40,12 +42,16 @@ async function getNgsAvgRank(verifiedRankHistory) {
             }
         });
 
-        //loop through our temp array and get the highest ngs rank numb
-        requiredRanksArray.forEach(vr => {
-            if (vr.level > highest) {
-                highest = vr.level;
-            }
-        });
+        //make sure the player has submited all required ranks 
+        if (requiredRanksArray.length == requiredRanksLength) {
+            //loop through our temp array and get the highest ngs rank numb
+            requiredRanksArray.forEach(vr => {
+                if (vr.level > highest) {
+                    highest = vr.level;
+                }
+            });
+
+        }
 
         return highest;
 
@@ -140,8 +146,78 @@ async function getTeamAvgFromMembers(membersArray) {
 
 }
 
+async function getReportingTeamMembers(membersArray) {
+
+    return returnUsersObjects(membersArray).then(
+        users => {
+
+            //create a promise array to resolve the highest ngs rank of all the members
+            let secondArr = [];
+
+            users.forEach(member => {
+                let memberObj = utils.objectify(member);
+                if (utils.returnBoolByPath(memberObj, 'verifiedRankHistory')) {
+                    secondArr.push(getNgsAvgRank(memberObj.verifiedRankHistory));
+                }
+            });
+
+            //resolve the promise array
+            return Promise.all(secondArr).then(
+                secondArrReturn => {
+                    let count = 0;
+                    secondArrReturn.forEach(
+                        ind => {
+                            if (ind != 0) {
+                                count++;
+                            }
+                        }
+                    );
+                    return count;
+                },
+                err => {
+                    throw err;
+                }
+            );
+
+
+        },
+        err => {
+            throw err;
+        }
+    )
+
+}
+
 module.exports = {
     getNgsAvgRank,
     teamRankAverage,
-    getTeamAvgFromMembers
+    getTeamAvgFromMembers,
+    getReportingTeamMembers
+}
+
+function returnUsersObjects(memArr) {
+
+    let usersArray = [];
+
+    if (typeof memArr[0] == 'object' && memArr[0].hasOwnProperty('displayName')) {
+
+        memArr.forEach(mem => {
+            usersArray.push(mem.displayName);
+        })
+
+    } else {
+
+        usersArray.concat(memArr);
+
+    }
+
+    return User.find({ displayName: { $in: usersArray } }).lean().then(
+        users => {
+            return users;
+        },
+        err => {
+            return err;
+        }
+    )
+
 }

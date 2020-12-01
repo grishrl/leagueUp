@@ -52,6 +52,9 @@
                 </div>
                 <div class="col">
                     Storm Rank Avg: {{returnedProfile.stormRankAvg}}
+                    <div>
+                        <app-members-reporting [teamMembers]="returnedProfile.teamMembers"></app-members-reporting>
+                    </div>
                 </div>
                 <div class="col">
                     HOTS LOGS MMR: {{returnedProfile.teamMMRAvg}}
@@ -120,6 +123,18 @@
                     <button class="btn btn-danger " (click)="openConfirmRemove(player.displayName) " [disabled]="deleteUserButtonOn(player.displayName) "> X </button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="row mt-3 ">
+        <div class="col ">
+            <h2>Team Members Verified Ranks:</h2>
+        </div>
+    </div>
+
+    <div class="row mt-3" *ngFor="let player of returnedProfile.teamMembers">
+        <div class="col ">
+            <app-verified-storm-ranks-display-name [admin]="true" [displayName]="player.displayName"></app-verified-storm-ranks-display-name>
         </div>
     </div>
 
