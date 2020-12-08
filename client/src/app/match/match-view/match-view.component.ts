@@ -33,11 +33,14 @@ export class MatchViewComponent implements OnInit {
     },
     type:'',
     casterName:'',
-    casterUrl:''
+    casterUrl:'',
+    title:null
   }
 
   homeLogo;
   awayLogo;
+
+  title;
 
   @Input() set passMatch(_match){
     if(_match != undefined && _match != null){
@@ -66,13 +69,17 @@ export class MatchViewComponent implements OnInit {
           this.match.away.teamName = 'TBD';
           this.match.away.logo = null;
         }
+      }else if(this.match.type && this.match.type=='grandfinal'){
+        this.title = this.match.title;
       }
 
       this.homeLogo = this.team.imageFQDN(this.match.home.logo);
       this.awayLogo = this.team.imageFQDN(this.match.away.logo);
       this.divisionService.getDivision(this.match.divisionConcat).subscribe(
         res=>{
-          this.divisionDisplayName=res.displayName;
+          if(res){
+            this.divisionDisplayName = res.displayName;
+          }
         }
       )
     }

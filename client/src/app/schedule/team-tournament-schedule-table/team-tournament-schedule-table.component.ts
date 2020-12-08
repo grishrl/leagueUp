@@ -20,7 +20,7 @@ export class TeamTournamentScheduleTableComponent implements OnInit {
     private standingsService: StandingsService,
     private Auth: AuthService,
     private router: Router,
-    private timeService: TimeserviceService
+    private timeService: TimeserviceService,
   ) {}
 
   noMatches;
@@ -30,7 +30,7 @@ export class TeamTournamentScheduleTableComponent implements OnInit {
   historical = false;
   activeTourns = [];
 
-  initHistoricalSchedule(teamId, providedSeason) {
+  initHistoricalSchedule(providedSeason,teamId) {
     this.historical = true;
     this.scheduleService
       .getTeamTournamentGames(providedSeason, teamId)
@@ -126,19 +126,43 @@ export class TeamTournamentScheduleTableComponent implements OnInit {
     );
   }
 
+
+  closedTourns = [];
+
   todayDate;
   ngOnInit() {
     this.todayDate = new Date().getTime();
-    if (this.seasonVal) {
-      this.initHistoricalSchedule(this.teamObj._id, this.seasonVal);
-    } else {
-      this.timeService.getSesasonInfo().subscribe(
+    this.timeService.getSesasonInfo().subscribe(
         (res) => {
           let currentSeason = res["value"];
-          this.getActiveTournaments();
+          this.teamServ.getSeasonTournaments(this.teamObj._id, currentSeason).subscribe(
+            res=>{
+                res.forEach(tourn=>{
+                  if(tourn.active){
+                    this.activeTourns.push(tourn);
+                  }else{
+                    this.closedTourns.push(tourn);
+                  }
+                });
+                console.log(this.closedTourns, this.activeTourns);
+            }
+          );
+          // this.getActiveTournaments();
+          // this.initHistoricalSchedule(currentSeason, this.teamObj._id);
         },
         (err) => {}
       );
-    }
+    // if (this.seasonVal) {
+    //   this.initHistoricalSchedule(this.teamObj._id, this.seasonVal);
+    // } else {
+    //   this.timeService.getSesasonInfo().subscribe(
+    //     (res) => {
+    //       let currentSeason = res["value"];
+    //       this.getActiveTournaments();
+    //       this.initHistoricalSchedule(currentSeason, this.teamObj._id);
+    //     },
+    //     (err) => {}
+    //   );
+    // }
   }
 }

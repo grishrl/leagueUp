@@ -376,10 +376,8 @@ async function stdDivStanding(division, season, pastSeason, noDeltas) {
 
             try {
 
-                console.log('data', data);
                 if (data) {
                     _.forEach(data.data.standings, (oldDataV, oldDataK) => {
-                        console.log('oldDataV', oldDataV);
                         let storedStanding = oldDataV;
                         _.forEach(standings, (standingV, standingK) => {
                             let calcStanding = standingV;

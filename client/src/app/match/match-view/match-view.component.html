@@ -15,7 +15,10 @@
     </div>
     <div class="row">
         <div class="col text-center">
-            <div class="mt-2">
+            <div class="mt-2" *ngIf="title">
+                <strong>Title:</strong> {{title}}
+            </div>
+            <div class="mt-2" *ngIf="divisionDisplayName">
                 <strong> Division:</strong> {{divisionDisplayName}}
             </div>
 

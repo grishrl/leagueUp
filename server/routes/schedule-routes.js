@@ -2379,6 +2379,7 @@ function parseTournamentReturnObjects(tournaments, returnArray, tournamentIdsArr
         returnObject['tournamentName'] = tournament.name;
         returnObject['challonge_url'] = tournament.challonge_url;
         returnObject['challonge_ref'] = tournament.challonge_ref;
+        returnObject['active'] = tournament.active;
         returnArray.push(returnObject);
     });
 }
