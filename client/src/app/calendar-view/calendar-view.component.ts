@@ -151,15 +151,18 @@ export class CalendarViewComponent implements OnInit {
   isLoaded = false;
 
   calendarInfo = 'calendarInfo';
+  listInfo = 'listInfo';
 
   _matches = [];
   ngOnInit(){
     let cache = this.cache.getCache(this.calendarInfo);
+    let listCache = this.cache.getCache(this.listInfo);
     if(cache=='getNewData' || cache == null){
       this.initEvents();
     }else{
       this.isLoaded = true;
       this.events = cache;
+      this.list = listCache;
       this.refresh.next();
     }
 
@@ -258,6 +261,7 @@ export class CalendarViewComponent implements OnInit {
                    return retVal;
                  });
                  this.cache.setCache(this.calendarInfo, this.events);
+                 this.cache.setCache(this.listInfo, this.list);
                  this.isLoaded = true;
                  this.refresh.next();
                },

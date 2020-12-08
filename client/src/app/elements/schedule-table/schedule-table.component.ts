@@ -19,6 +19,8 @@ export class ScheduleTableComponent implements OnInit {
 
   matchesVal = [];
 
+  colSpanInt = 4;
+
 @Input() sortOrder = 'round';
 
 @Input() showBye = false;
@@ -102,6 +104,12 @@ export class ScheduleTableComponent implements OnInit {
   ngOnInit() {
     this.todayDate = new Date().getTime();
     this.isCaster = this.auth.isCaster();
+    if(this.divColumn){
+      this.colSpanInt+=1;
+    }
+    if(this.showRound){
+      this.colSpanInt+=1;
+    }
   }
 
   userCanSchedule(match) {

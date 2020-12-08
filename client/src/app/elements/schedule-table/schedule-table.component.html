@@ -13,6 +13,11 @@
         <tbody>
 
             <ng-container *ngFor="let match of matchesVal">
+                <tr *ngIf="match.type == 'grandfinal'">
+                    <td [attr.colspan]="colSpanInt" class="text-center h5">
+                        {{match.title}}
+                    </td>
+                </tr>
                 <tr>
                     <!-- round column -->
                     <td *ngIf="showRound">
