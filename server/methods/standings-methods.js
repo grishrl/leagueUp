@@ -364,7 +364,7 @@ async function stdDivStanding(division, season, pastSeason, noDeltas) {
             //pull saved standings data from the database
             let data = await System.findOne(
                 query
-            ).then(
+            ).lean().then(
                 saved => {
                     return saved;
                 },
@@ -376,8 +376,10 @@ async function stdDivStanding(division, season, pastSeason, noDeltas) {
 
             try {
 
+                console.log('data', data);
                 if (data) {
-                    _.forEach(oldData, (oldDataV, oldDataK) => {
+                    _.forEach(data.data.standings, (oldDataV, oldDataK) => {
+                        console.log('oldDataV', oldDataV);
                         let storedStanding = oldDataV;
                         _.forEach(standings, (standingV, standingK) => {
                             let calcStanding = standingV;

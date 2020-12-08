@@ -285,8 +285,8 @@ export class CalendarViewComponent implements OnInit {
           ret = colors[match.divisionConcat]
             ? colors[match.divisionConcat]
             : { primary: "#FFFFFF" };
-    }else if(match.type == 'tournament'){
-      ret = colors['tournament'];
+    }else if (match.type == "tournament" || match.type == "grandfinal") {
+      ret = colors["tournament"];
     }
 
     return ret;
@@ -309,7 +309,14 @@ export class CalendarViewComponent implements OnInit {
         }
       });
 
-      retStr+= (this.util.returnBoolByPath(t, 'name')) ? `${this.util.returnByPath(t, 'name')}: ` : "Tournament: "
+      if (match.type == "grandfinal" && match.title) {
+        retStr += `${match.title}: `;
+      }else{
+        retStr += this.util.returnBoolByPath(t, "name")
+          ? `${this.util.returnByPath(t, "name")}: `
+          : "Tournament: ";
+      }
+
 
       retStr += (this.util.returnBoolByPath(match, "home.teamName")
         ? match.home.teamName
@@ -318,6 +325,10 @@ export class CalendarViewComponent implements OnInit {
       (this.util.returnBoolByPath(match, "away.teamName")
         ? match.away.teamName
         : "TBD");
+
+        if(match.type == 'grandfinal' && match.title){
+
+        }
 
   }
   return retStr;

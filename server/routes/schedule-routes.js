@@ -1440,10 +1440,10 @@ router.post('/fetch/team/tournament/matches', async(req, res) => {
         let queryObj = {
             $and: [{
                     $or: [{
-                            "home.id": requiredParameters.team.value
+                            "home.id": requiredParameters.teamId.value
                         },
                         {
-                            "away.id": requiredParameters.team.value
+                            "away.id": requiredParameters.teamId.value
                         }
                     ]
                 },
@@ -1453,9 +1453,9 @@ router.post('/fetch/team/tournament/matches', async(req, res) => {
             ]
         };
 
-        let season = req.body.requiredParameters.season.value;
+        let season = requiredParameters.season.value;
         queryObj.$and.push({
-            season: req.body.requiredParameters.season.value
+            season: requiredParameters.season.value
         });
 
         if (req.body.division) {
