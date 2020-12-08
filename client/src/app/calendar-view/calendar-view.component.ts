@@ -180,6 +180,8 @@ export class CalendarViewComponent implements OnInit {
 
         let now = Date.now();
 
+        let weekAway = now * 2* 7 * 24 * 60 * 60 * 1000;
+
         let tournamentRefs = [];
 
         matches.forEach(match => {
@@ -222,7 +224,10 @@ export class CalendarViewComponent implements OnInit {
 
               this.events.push(event);
 
-              if (now <= match.scheduledTime.startTime) {
+              if (
+                now <= match.scheduledTime.startTime &&
+                match.scheduledTime.startTime < weekAway
+              ) {
                 let formatDate = this.util.getFormattedDate(
                   match.scheduledTime.startTime,
                   "dddd MMM D"
@@ -232,8 +237,7 @@ export class CalendarViewComponent implements OnInit {
                   tempArr.push(match);
                   this.list.set(formatDate, tempArr);
                   // this.list[formatDate].push(match);
-                }
-                else {
+                } else {
                   this.list.set(formatDate, [match]);
                 }
               }
