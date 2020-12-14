@@ -107,7 +107,7 @@ function startApp() {
 
     //this is a special route that can be used for seeding teams and users into a dev env when needed
     // const seeding = require('./server/routes/seeding-route');
-    // app.use('/dev', seeding);
+    // app.use('/api/dev', seeding);
 
     //initialize passport
     app.use(passport.initialize());
