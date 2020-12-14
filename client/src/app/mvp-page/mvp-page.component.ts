@@ -52,9 +52,18 @@ export class MvpPageComponent implements OnInit {
   initMvps(){
         this.mvpService.getBySeason(this.selectedSeason).subscribe((res) => {
           this.mvpList = res;
+          this.mvpList = this.mvpList.sort( (a,b)=>{
+            if(a.timeStamp>b.timeStamp){
+              return -1;
+            }else{
+              return 1;
+            }
+          } )
+
           this.length = res.length;
           let endSlice = this.pageSize > res.length ? res.length : this.pageSize;
           this.displayArray = res.slice(0, endSlice);
+          console.log(this.displayArray);
         });
   }
 }
