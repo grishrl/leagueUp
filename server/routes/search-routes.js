@@ -200,31 +200,46 @@ router.post('/team/market', passport.authenticate('jwt', {
 }), (req, res) => {
     const path = '/search/team/market';
 
-    const requiredParameters = [{
+    const optionalParmateres = [{
         name: 'searchObj',
         type: 'object'
     }]
 
-    commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
-        const response = {};
-        let payload = requiredParameters.searchObj.value;
-        let formedSearchObject = createTeamSearchObject(payload, req.user);
-        // res.status(200).send(utils.returnMessaging(req.originalUrl, "Testing", null, formedSearchObject));
-        return Team.find(formedSearchObject).then(
-            (found) => {
-                response.status = 200;
-                response.message = utils.returnMessaging(req.originalUrl, "Found these teams", null, found);
-                return response;
-                // res.status(200).send(utils.returnMessaging(req.originalUrl, "Found these teams", null, found));
-            }, (err) => {
-                response.status = 500;
-                response.message = utils.returnMessaging(req.originalUrl, "Error finding teams", err)
-                return response;
-                // res.status(500).send(utils.returnMessaging(req.originalUrl, "Error finding teams", err));
-            }
-        );
+    let payload = req.body.searchObj;
+    let formedSearchObject = createTeamSearchObject(payload, req.user);
 
-    })
+    return Team.find(formedSearchObject).then(
+        (found) => {
+            res.status(200).send(utils.returnMessaging(req.originalUrl, "Found these teams", null, found))
+                // response.status = 200;
+                // response.message = utils.returnMessaging(req.originalUrl, "Found these teams", null, found);
+                // return response;
+        }, (err) => {
+            res.status(500).send(utils.returnMessaging(req.originalUrl, "Error finding teams", err))
+                // response.status = 500;
+                // response.message = utils.returnMessaging(req.originalUrl, "Error finding teams", err);
+                // return response;
+        }
+    );
+    // commonResponseHandler(req, res, [], optionalParmateres, async(req, res, [], optionalParmateres) => {
+    //     const response = {};
+    //     console.log('asdfasdf')
+    //     let payload = optionalParmateres.searchObj.value;
+    //     let formedSearchObject = createTeamSearchObject(payload, req.user);
+    //     console.log('zzz', formedSearchObject);
+    //     // return { status: 500, message: { message: 'error' } }
+    //     return Team.find(formedSearchObject).then(
+    //         (found) => {
+    //             response.status = 200;
+    //             response.message = utils.returnMessaging(req.originalUrl, "Found these teams", null, found);
+    //             return response;
+    //         }, (err) => {
+    //             response.status = 500;
+    //             response.message = utils.returnMessaging(req.originalUrl, "Error finding teams", err);
+    //             return response;
+    //         }
+    //     );
+    // })
 
 
 });

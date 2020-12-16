@@ -49,7 +49,7 @@ router.post('/team/join', passport.authenticate('jwt', {
                             if (foundCaptain) {
                                 let msg = {};
                                 msg.sender = req.user._id;
-                                msg.recipient = foundCaptain._id;
+                                msg.recipient = foundCaptain;
                                 msg.subject = 'Team join request';
                                 msg.content = req.user.displayName + ' requests to join your team.';
                                 msg.notSeen = true;
@@ -485,10 +485,10 @@ router.post('/user/join/response', passport.authenticate('jwt', {
                                         QueueSub.addToPendingTeamMemberQueue(utils.returnIdString(foundTeam._id), foundTeam.teamName_lower, utils.returnIdString(foundUser._id), foundUser.displayName);
 
                                         returnIdFromDisplayName(foundTeam.captain).then(
-                                            cpt => {
+                                            cptId => {
                                                 let msg = {};
                                                 msg.sender = foundUser._id;
-                                                msg.recipient = cpt._id;
+                                                msg.recipient = cptId;
                                                 msg.subject = 'Team invite response';
                                                 msg.content = req.user.displayName + ' accepted your request to join the team!  The request has been added to the approval queue for the admins.';
                                                 msg.notSeen = true;

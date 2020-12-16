@@ -592,12 +592,12 @@ async function findFreeAgentsForTeam(team, teamObj) {
                     }
                 );
                 if (capt) {
-                    if (teamCaptMessages.hasOwnProperty(capt._id.toString())) {
-                        teamCaptMessages[capt._id.toString()].request.players.push(conf.userName);
+                    if (teamCaptMessages.hasOwnProperty(capt.toString())) {
+                        teamCaptMessages[capt.toString()].request.players.push(conf.userName);
                     } else {
                         let teamMsg = {};
                         teamMsg.notSeen = true;
-                        teamMsg.recipient = capt._id.toString();
+                        teamMsg.recipient = capt.toString();
                         teamMsg.sender = 'Mr. Fisky';
                         teamMsg.subject = 'NGS Group Finder';
                         teamMsg.timeStamp = new Date().getTime()
@@ -605,7 +605,7 @@ async function findFreeAgentsForTeam(team, teamObj) {
                         teamMsg.request = {
                             players: [conf.userName]
                         };
-                        teamCaptMessages[capt._id.toString()] = teamMsg;
+                        teamCaptMessages[capt.toString()] = teamMsg;
                     }
                 }
             }
