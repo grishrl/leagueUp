@@ -272,6 +272,7 @@ export class ProfileEditComponent implements OnInit {
 
   //init method ; checks to see if the name we're getting comes from the router URL, or the displayName property
   ngOnInit() {
+    this.hpProfileLink = '';
     let getProfile: string;
     if (this.providedProfile) {
       getProfile = this.providedProfile;

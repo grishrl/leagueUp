@@ -84,7 +84,7 @@ router.post('/user/save', passport.authenticate('jwt', {
 
     const requiredParameters = [{
         name: 'user',
-        type: 'string'
+        type: 'object'
     }]
 
     commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {

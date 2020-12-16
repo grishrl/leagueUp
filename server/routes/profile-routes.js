@@ -245,9 +245,9 @@ router.post('/save', passport.authenticate('jwt', {
                     }
                 })
             } else {
-                logObj.error = 'Unauthorized to mofify this profile.';
+                logObj.error = 'Unauthorized to modify this profile.';
                 response.status = 403;
-                response.message = utils.returnMessaging(req.originalUrl, 'Unauthorized to mofify this profile.', false, null, null, logObj);
+                response.message = utils.returnMessaging(req.originalUrl, 'Unauthorized to modify this profile.', false, null, null, logObj);
                 return response;
             }
 

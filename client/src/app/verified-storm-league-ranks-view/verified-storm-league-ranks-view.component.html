@@ -2,7 +2,11 @@
     <div class="col-3 text-center" *ngFor="let rank of toDisplay">
         {{rank.year}} Season {{rank.season}}
         <ng-container [ngSwitch]="rank.status">
-
+            <div *ngIf="admin">
+                <strong>Admin Mod:</strong>
+                <app-storm-league [(division)]="rank.hlRankMetal" [disabled]="false" [(rank)]="rank.hlRankDivision"></app-storm-league>
+                <button class="btn btn-warning" (click)="saveUpdate()">Save</button>
+            </div>
             <app-storm-league *ngSwitchCase="'verified'" [disabled]="true" [division]="rank.hlRankMetal" [rank]="rank.hlRankDivision">
             </app-storm-league>
             <ng-container *ngSwitchCase="'pending'">

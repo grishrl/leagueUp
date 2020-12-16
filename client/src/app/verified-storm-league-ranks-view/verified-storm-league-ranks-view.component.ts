@@ -1,6 +1,9 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { PlayerRankService } from '../services/player-rank.service';
+import { UserService } from '../services/user.service';
+import { findIndex } from 'lodash';
+import { AdminService } from '../services/admin.service';
 // import { }
 
 @Component({
@@ -11,6 +14,8 @@ import { PlayerRankService } from '../services/player-rank.service';
 export class VerifiedStormLeagueRanksViewComponent implements OnInit {
   constructor(
     private PlayerRankServ: PlayerRankService,
+    private UserServ: UserService,
+    private AdminServ:AdminService,
     public auth: AuthService
   ) {}
 
@@ -22,7 +27,7 @@ export class VerifiedStormLeagueRanksViewComponent implements OnInit {
   showUploadButton = false;
   userStatus = "";
 
-  @Input() admin = false
+  @Input() admin = false;
   @Input() verifiedUserRanks;
   @Input() teamName;
   @Input() userId;
@@ -55,36 +60,60 @@ export class VerifiedStormLeagueRanksViewComponent implements OnInit {
         console.warn(err);
       }
     );
-      this.verifyUserStatus();
-
+    this.verifyUserStatus();
   }
 
-  private verifyUserStatus(){
-
-  if (this.auth.getUserId() === this.userId) {
-    this.showUploadButton = true;
-    this.userStatus = "self";
-  } else if (
-    this.auth.getCaptain() == "true" &&
-    this.auth.getTeam() == this.teamName
-  ) {
-    this.showUploadButton = true;
-    this.userStatus = "capt";
-  }else if(this.admin){
-    this.userStatus = 'capt';
-    this.showUploadButton = true;
+  private verifyUserStatus() {
+    if (this.auth.getUserId() === this.userId) {
+      this.showUploadButton = true;
+      this.userStatus = "self";
+    } else if (
+      this.auth.getCaptain() == "true" &&
+      this.auth.getTeam() == this.teamName
+    ) {
+      this.showUploadButton = true;
+      this.userStatus = "capt";
+    } else if (this.admin) {
+      this.userStatus = "capt";
+      this.showUploadButton = true;
+    }
   }
-
-}
 
   ngOnChanges(changes: SimpleChanges) {
-
-    if(changes.teamName || changes.userId){
+    if (changes.teamName || changes.userId) {
       this.verifyUserStatus();
     }
   }
 
   pendingSeason = {};
+
+  saveUpdate(){
+    this.toDisplay.forEach(
+      rank=>{
+        let ind = findIndex(this.verifiedUserRanks, {season:rank.season, year:rank.year});
+        this.verifiedUserRanks[ind]=rank;
+      }
+    )
+    console.log(this.verifiedUserRanks);
+    console.log(this.toDisplay);
+    this.UserServ.getUserById(this.userId).subscribe(
+      (userRes) => {
+        userRes.verifiedRankHistory = this.verifiedUserRanks;
+        this.AdminServ.saveUser(userRes).subscribe(
+          (saved) => {
+            //saved
+          },
+          (err) => {
+            console.warn("ERROR SAVING", err);
+          }
+        );
+      },
+      (err) => {
+        console.warn("ERROR SAVING", err);
+      }
+    );
+
+  }
 
   openImageUploader(year, season) {
     this.pendingSeason = {};

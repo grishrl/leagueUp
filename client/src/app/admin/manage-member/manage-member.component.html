@@ -6,26 +6,28 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col">
-            <app-user-search (userSelected)="receiveUser($event)" [buttonText]="'Select User For Management'"></app-user-search>
-        </div>
-        <div class="col">
-            <div class="row" *ngIf="turnOnForm">
-                <div class="col">Review user below</div>
-                <div class="col">
-                    <button type="button" (click)="openDialog()" class="btn btn-danger ">
-                            <span class="icon-align">
-                              <i class="material-icons">delete_forever</i> Delete
-                            </span>
-                          </button>
+    <div class="panel-box p-3">
+        <div class="row">
+            <div class="col">
+                <app-user-search (userSelected)="receiveUser($event)" [buttonText]="'Select User For Management'"></app-user-search>
+            </div>
+            <div class="col">
+                <div class="row" *ngIf="turnOnForm">
+                    <div class="col">Review user below</div>
+                    <div class="col">
+                        <button type="button" (click)="openDialog()" class="btn btn-danger ">
+                              <span class="icon-align">
+                                <i class="material-icons">delete_forever</i> Delete
+                              </span>
+                            </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="row" *ngIf="turnOnForm">
-        <div class="col">
-            <app-update-member-info [displayname]="recievedProfile"></app-update-member-info>
+        <div class="row" *ngIf="turnOnForm">
+            <div class="col">
+                <app-update-member-info [displayname]="recievedProfile"></app-update-member-info>
+            </div>
         </div>
     </div>

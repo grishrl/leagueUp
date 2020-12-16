@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const utils = require('./utils');
+const debugLogger = require('./debug');
 
 function commonResponseHandler(req, res, requiredInputs, optionalInputs, executor) {
 
@@ -23,9 +24,11 @@ function commonResponseHandler(req, res, requiredInputs, optionalInputs, executo
         if (inputsWereValid(validatedRequiredInputs)) {
             executor(req, res, validatedRequiredInputs, validatedOptionalInputs).then(
                 response => {
+                    debugLogger(response, null, 'responseHandler');
                     res.status(response.status).send(response.message);
                 },
                 err => {
+                    debugLogger(null, err, 'responseHandler');
                     let status = err.status ? err.status : 500;
                     res.status(status).send(err.message);
                 }
@@ -35,7 +38,7 @@ function commonResponseHandler(req, res, requiredInputs, optionalInputs, executo
         }
 
     } catch (e) {
-        utils.errLogger(req.originalUrl, e.message);
+        utils.errLogger(req.originalUrl, e.stack);
         res.status(500).send(utils.returnMessaging(req.originalUrl, 'Internal Server Error', e.message));
     }
 }

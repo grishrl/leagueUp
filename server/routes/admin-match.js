@@ -480,10 +480,9 @@ router.post('/season/reset', passport.authenticate('jwt', {
                 );
 
                 if (archived.success) {
-
                     res.status(200).send(util.returnMessaging(path, 'Season Reset', false, archived, null, logObj));
                 } else {
-                    res.status(500).send(util.returnMessaging(path, 'Error resetting teams registration division', teams.data, null, null, logObj));
+                    res.status(500).send(util.returnMessaging(path, 'Error resetting teams registration division', archived.data, null, null, logObj));
                 }
 
             } else {
@@ -499,8 +498,8 @@ router.post('/season/reset', passport.authenticate('jwt', {
         }
 
     } catch (e) {
-        util.errLogger(path, e);
-        res.status(500).send(util.returnMessaging(path, 'Internal Server Error', e));
+        util.errLogger(path, e.stack);
+        res.status(500).send(util.returnMessaging(path, 'Internal Server Error', e.message));
     }
 
 });
