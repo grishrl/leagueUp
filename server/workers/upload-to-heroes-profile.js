@@ -3,11 +3,17 @@ const logger = require('../subroutines/sys-logging-subs').logger;
 
 
 function uploadToHeroesProfileWorker() {
+    doWork();
+    uploadToHeroesProfileLoop();
+}
+
+function doWork() {
     let logObj = {};
     logObj.actor = "SYSTEM";
     logObj.action = 'upload replays to hots-profile ';
     logObj.target = 'replays';
     logObj.logLevel = 'STD';
+    logObj.timeStamp = Date.now();
     hpUploadHandler.postToHotsProfileHandler(process.env.replayUploadLimit).then(
         (response) => {
             logObj.action = 'Submitting replays to Hots Profile completed normally ';
@@ -17,18 +23,14 @@ function uploadToHeroesProfileWorker() {
             logObj.logLevel = "ERROR";
             logObj.action = 'Submitting replays to Hots Profile failed';
             logObj.error = err;
-            logger(logObj)
-                // res.status(500).send(util.returnMessaging(path, 'Submitting replays to Hots Profile Failed', err, null, null, logObj));
+            logger(logObj);
         }
     );
-    uploadToHeroesProfileLoop();
 }
 
 function uploadToHeroesProfileLoop() {
     setInterval(
-        function() {
-            uploadToHeroesProfileWorker();
-        }, 60 * 60 * 1000
+        doWork, (60 * 60 * 1000)
     )
 }
 

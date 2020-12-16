@@ -25,6 +25,7 @@
           }, () => {
               console.log('connected to mongodb');
           });
+
           //once daily
           createStandingsTouchPoint();
           tabulateTeamStatsWorker();
