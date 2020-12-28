@@ -7,7 +7,7 @@
             <div class="col">
                 <app-team-quick-view [teamName]="viewTeam"></app-team-quick-view>
             </div>
-            <div class="col-2">
+            <div class="col-2" *ngIf="resultantMmr">
                 <strong>Resultant MMR</strong> {{resultantMmr.resultantMmr}}
                 <div><strong>Resultant Storm League Avg:</strong> {{resultantMmr.stormRankAvg}}</div>
                 <app-storm-league [ngsRankNumber]="resultantMmr.stormRankAvg"></app-storm-league>

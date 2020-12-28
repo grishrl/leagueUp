@@ -116,6 +116,7 @@ async function getTeamAvgFromMembers(membersArray) {
     membersArray.forEach(member => {
         let memberObj = utils.objectify(member);
         if (utils.returnBoolByPath(memberObj, 'verifiedRankHistory')) {
+            // console.log('member', memberObj.displayName, memberObj.verifiedRankHistory);
             secondArr.push(getNgsAvgRank(memberObj.verifiedRankHistory));
         }
     });
@@ -129,13 +130,30 @@ async function getTeamAvgFromMembers(membersArray) {
             secondArrReturn.sort();
             secondArrReturn.reverse();
 
-            //use 4 as the denominator or how many ever less members the team has
-            let denominator = secondArrReturn.length >= 4 ? 4 : secondArrReturn.length;
-            for (var i = 0; i < denominator; i++) {
-                numerator += secondArrReturn[i];
+            //remove zero results
+            var ind = secondArrReturn.length - 1;
+            // console.log(ind);
+            for (ind; ind > -1; ind = ind - 1) {
+                // console.log('ind', ind)
+                // console.log(secondArrReturn[ind]);
+                if (secondArrReturn[ind] == 0) {
+                    secondArrReturn.splice(ind, 1);
+                }
             }
 
-            avg = Math.floor(numerator / denominator);
+            // console.log('secondArrReturn', secondArrReturn);
+            if (secondArrReturn.length > 0) {
+                //use 4 as the denominator or how many ever less members the team has
+                let denominator = secondArrReturn.length >= 4 ? 4 : secondArrReturn.length;
+                for (var i = 0; i < denominator; i++) {
+                    numerator += secondArrReturn[i];
+                }
+
+                avg = Math.floor(numerator / denominator);
+            } else {
+                avg = 0;
+            }
+
 
             return avg;
         },
