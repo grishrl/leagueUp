@@ -91,6 +91,7 @@ export class VerifiedStormLeagueRanksViewComponent implements OnInit {
     this.toDisplay.forEach(
       rank=>{
         let ind = findIndex(this.verifiedUserRanks, {season:rank.season, year:rank.year});
+        rank.level = this.rankToNumber(rank.hlRankMetal, rank.hlRankDivision);
         this.verifiedUserRanks[ind]=rank;
       }
     )
@@ -114,6 +115,36 @@ export class VerifiedStormLeagueRanksViewComponent implements OnInit {
     );
 
   }
+
+  private rankToNumber(hlRankMetal, hlRankDivision) {
+    let num = 0;
+
+    switch (hlRankMetal) {
+
+        case 'Grand Master':
+            num = 27;
+            break;
+        case 'Master':
+            num = 26;
+            break;
+        case 'Diamond':
+            num += 25 - (hlRankDivision - 1);
+            break;
+        case 'Platinum':
+            num += 20 - (hlRankDivision - 1);
+            break;
+        case 'Gold':
+            num += 15 - (hlRankDivision - 1);
+            break;
+        case 'Silver':
+            num += 10 - (hlRankDivision - 1);
+            break;
+        case 'Bronze':
+            num += 5 - (hlRankDivision - 1);
+            break;
+    }
+    return num;
+}
 
   openImageUploader(year, season) {
     this.pendingSeason = {};
