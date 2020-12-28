@@ -18,7 +18,15 @@
 </div>
 <div class="row mt-3" *ngIf="uploadImage">
     <div class="col">
-        <div>Example Image</div>
+        In order for a mod to approve your SL rank screen cap upload, it must have the following:
+        <ul>
+            <li>Your FULL battle tag (including numbers) visable</li>
+            <li>The Statistics tab highlighted</li>
+            <li>The correct season selected and visable</li>
+            <li>Your rank for that season clearly visable</li>
+            <li>Under game types, please have QM, UR and SL selected</li>
+        </ul>
+        <div class="text-center"><img style="max-width: 75%;" src="/assets/img/rankExampleImage.jpg"></div>
         <app-image-upload [imageType]="'stormVerification'" [width]="800" [height]="450" [showEdit]="true" (imageParsed)="imagedParsed($event)"></app-image-upload>
         <app-loading [showLoading]="saving" [displayText]="'Saving'"></app-loading>
     </div>

@@ -12,9 +12,13 @@ router.get('/seasons', (req, res) => {
         const response = {};
         const path = '/history/seasons';
         let query = {
-            type: {
-                $exists: false
-            }
+            $or: [{
+                    type: {
+                        $exists: false
+                    }
+                },
+                { type: 'seasonal' }
+            ]
         }
         return Schedule.find(query).then(
             found => {

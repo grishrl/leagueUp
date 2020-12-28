@@ -17,7 +17,6 @@ export class VerifiedStormRanksDisplayNameComponent implements OnInit {
       this.disName = val;
           this.User.getUser(val).subscribe(
             (res) => {
-              console.log(res);
               this.userProfile = res;
             },
             (err) => {

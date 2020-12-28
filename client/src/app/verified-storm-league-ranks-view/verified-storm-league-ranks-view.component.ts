@@ -35,7 +35,7 @@ export class VerifiedStormLeagueRanksViewComponent implements OnInit {
   ngOnInit(): void {
     this.PlayerRankServ.getRequiredRanks().subscribe(
       (res) => {
-        if (res.data && res.data.length > 0) {
+        if (res && res.data && res.data.length > 0) {
           res.data.forEach((item) => {
             if (item.required == true) {
               item.status = "na";
