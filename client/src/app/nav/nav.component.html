@@ -116,7 +116,7 @@
                                             </a>
                                         </li>
                                         <li class="current">
-                                            <a>Team</a>
+                                            <a class="finger">Team</a>
                                             <ul class="sub-current">
                                                 <ng-template #noTeam>
                                                     <li>
@@ -140,7 +140,7 @@
                                             </ul>
                                         </li>
                                         <li class="current">
-                                            <a>Player</a>
+                                            <a class="finger">Player</a>
                                             <ul class="sub-current">
                                                 <li>
                                                     <app-player-link [player]="Auth.getUser()">My Profile
@@ -150,7 +150,7 @@
                                             </ul>
                                         </li>
                                         <li *ngIf="Auth.getCaster()" class="current">
-                                            <a>Caster Tools</a>
+                                            <a class="finger">Caster Tools</a>
                                             <ul class="sub-current">
                                                 <li>
                                                     <a [routerLink]="['/_casterDashboard']">Caster Dashboard</a>
@@ -165,9 +165,6 @@
                                             <a [routerLink]="['/_admin/dashboard']">Admin Dashboard</a>
                                         </li>
                                         <li><a class="finger linkColorBigDropDown" (click)="logout()">Logout</a></li>
-                                        <ul>
-
-                                        </ul>
                                     </ul>
                                     <!-- <div class="sf-mega" appHideMenu>
                                         <div class="row">

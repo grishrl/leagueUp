@@ -47,6 +47,8 @@ export class BannerImagesService {
     "mei_banner_image.jpg",
     "Ice_Crown_Citadel.png",
     "Arthas_v_Artanis.png",
+    "hog_banner_2.jpg",
+    "hog_time_3.jpg",
   ];
 
   uniqueNumGen(val?) {
