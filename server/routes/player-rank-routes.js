@@ -15,9 +15,7 @@ const _ = require('lodash');
 
 
 //get playerrank required
-router.get('/get/required', passport.authenticate('jwt', {
-    session: false
-}), (req, res) => {
+router.get('/get/required', (req, res) => {
 
     const path = 'playerrank/get/required';
 

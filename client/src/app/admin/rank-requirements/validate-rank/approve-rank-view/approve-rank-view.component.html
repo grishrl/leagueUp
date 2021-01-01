@@ -8,7 +8,7 @@
     <div class="col-3">
         <div class="text-center">
             <app-storm-league [(division)]="hlRankMetal" [disabled]="false" [(rank)]="hlRankDivision"></app-storm-league>
-            <button [disabled]="!hlRankDivision || !hlRankMetal" class="btn btn-success" (click)="actionRank(true)">Approve</button>
+            <button [disabled]="(!hlRankDivision || !hlRankMetal) && hlRankMetal != 'Unranked'" class="btn btn-success" (click)="actionRank(true)">Approve</button>
             <button class="btn btn-danger ml-1" (click)="actionRank(false)">Deny</button>
         </div>
 

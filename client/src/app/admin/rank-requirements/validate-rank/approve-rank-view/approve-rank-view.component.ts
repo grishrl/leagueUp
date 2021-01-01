@@ -25,6 +25,9 @@ export class ApproveRankViewComponent implements OnInit {
   ngOnInit(): void {}
 
   actionRank(approve) {
+    if(this.hlRankMetal == 'Unranked'){
+      this.hlRankDivision = 0;
+    }
     let payload = {
       seasonInf: { season: this.info.season, year: this.info.year },
       userId: this.info.userId,

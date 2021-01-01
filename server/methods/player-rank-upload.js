@@ -34,7 +34,6 @@ function rankToNumber(hlRankMetal, hlRankDivision) {
     let num = 0;
 
     switch (hlRankMetal) {
-
         case 'Grand Master':
             num = 27;
             break;
