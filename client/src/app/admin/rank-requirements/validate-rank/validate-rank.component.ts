@@ -10,12 +10,23 @@ import { findIndex } from 'lodash';
 export class ValidateRankComponent implements OnInit {
   constructor(private queueService: QueuesService) {}
 
+  count=0;
+  total=0;
   queue = [];
   ngOnInit(): void {
     this.queueService.getQueues('pendingRankQueues').subscribe(
       res=>{
         this.queue = res;
-        console.log(res);
+        this.count = res.length;
+      },
+      err=>{
+        console.warn(err);
+      }
+    )
+
+    this.queueService.getQueuesCount("pendingRankQueuesCount").subscribe(
+      res=>{
+        this.total = res.queueCount;
       },
       err=>{
         console.warn(err);
@@ -27,6 +38,7 @@ export class ValidateRankComponent implements OnInit {
         let index = findIndex(this.queue, e);
         if (index > -1) {
           this.queue.splice(index, 1);
+          this.count = this.queue.length;
         }
   }
 }

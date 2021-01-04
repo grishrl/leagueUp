@@ -179,6 +179,27 @@ router.get('/pendingRankQueues', passport.authenticate('jwt', {
 
 });
 
+router.get('/pendingRankQueuesCount', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.userLevel, utils.appendResHeader, (req, res) => {
+    const path = '/admin/pendingRankQueuesCount';
+
+    commonResponseHandler(req, res, [], [], async() => {
+        const response = {};
+        const query = Admin.PendingRankQueue.estimatedDocumentCount();
+        await query.exec().then((reply) => {
+            response.status = 200;
+            response.message = utils.returnMessaging(req.originalUrl, 'Found queues', false, { queueCount: reply })
+        }, (err) => {
+            response.status = 500;
+            response.message = utils.returnMessaging(path, 'Couldn\'t get the queues', err)
+        });
+        return response;
+    })
+
+
+});
+
 //removes the supplied member from the supplied team
 router.post('/team/removeMember', passport.authenticate('jwt', {
     session: false

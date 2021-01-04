@@ -18,4 +18,10 @@ export class QueuesService {
      return this.httpService.httpGet(url, []);
   }
 
+  getQueuesCount(queue){
+    let url = "admin/";
+    url += queue;
+    return this.httpService.httpGet(url, []);
+  }
+
 }
