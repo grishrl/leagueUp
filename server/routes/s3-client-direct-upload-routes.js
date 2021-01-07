@@ -76,7 +76,7 @@ router.post("/sign", passport.authenticate('jwt', {
 
         return Promise.all(promiseArray).then(
             resolved => {
-                response.status = resolved;
+                response.status = 200;
                 response.message = utils.returnMessaging('s3sig', 'Generated Sig Success', null, resolved);
                 return response;
             },
