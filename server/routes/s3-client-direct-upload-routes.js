@@ -26,7 +26,7 @@ router.post("/sign", passport.authenticate('jwt', {
 
     const requiredParameters = [{
         name: 'fileInfo',
-        type: 'stringOrArrayOfStrings'
+        type: 'object'
     }]
 
     commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
