@@ -1625,7 +1625,7 @@ router.post('/fetch/team/tournament', (req, res) => {
     commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
         const response = {};
         return queryScheduling({
-            participants: requiredParameters.team.value
+            participants: requiredParameters.teamId.value
         }).then(
             (found) => {
                 response.status = 200;
