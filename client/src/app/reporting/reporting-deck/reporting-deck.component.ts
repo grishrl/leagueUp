@@ -99,14 +99,14 @@ export class ReportingDeckComponent implements OnInit {
   constructor(private scheduleService: ScheduleService, private util: UtilitiesService, public team:TeamService, private s3uploads:S3uploadServiceService ) { }
 
   maps = {
-  // ControlPoints: 'Sky Temple',
+  ControlPoints: 'Sky Temple',
   TowersOfDoom: 'Towers of Doom',
   // HauntedMines: 'Haunted Mines',
   BattlefieldOfEternity: 'Battlefield of Eternity',
   // BlackheartsBay: "Blackheart's Bay",
   CursedHollow: 'Cursed Hollow',
   DragonShire: 'Dragon Shire',
-  // HauntedWoods: 'Garden of Terror',
+  HauntedWoods: 'Garden of Terror',
   Shrines: 'Infernal Shrines',
   Crypts: 'Tomb of the Spider Queen',
   Volskaya: 'Volskaya Foundry',

@@ -32,6 +32,23 @@ export class QuestionnaireComponent implements OnInit {
   @Input() set team(_team) {
     if (_team != undefined || _team != null) {
       this.passedTeam = _team;
+
+      //timing must be right to have team members; so we dont get false red X
+          if (this.passedTeam.teamMembers && this.passedTeam.teamMembers.length>0){
+            this.playerRank
+              .getReportingCount(this.passedTeam.teamMembers)
+              .subscribe(
+                (res) => {
+                  if (res.reported == this.passedTeam.teamMembers.length) {
+                    this.ranksVerified = true;
+                  }
+                },
+                (err) => {
+                  console.warn(err);
+                }
+              );
+          }
+
       if (_team.questionnaire != null && _team.questionnaire != undefined) {
         this.responses = _team.questionnaire;
         if (
@@ -175,18 +192,5 @@ export class QuestionnaireComponent implements OnInit {
         this.registrationOpen = res["data"].registrationOpen;
       }
     });
-
-        this.playerRank
-          .getReportingCount(this.passedTeam.teamMembers)
-          .subscribe(
-            (res) => {
-              if (res.reported == this.passedTeam.teamMembers.length) {
-                this.ranksVerified = true;
-              }
-            },
-            (err) => {
-              console.warn(err);
-            }
-          );
   }
 }

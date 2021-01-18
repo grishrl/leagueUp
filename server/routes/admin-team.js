@@ -222,7 +222,7 @@ router.post('/team/removeMember', passport.authenticate('jwt', {
         let logObj = {};
         logObj.actor = req.user.displayName;
         logObj.action = 'remove user from team ';
-        logObj.target = teamName + ' : ' + payloadUser;
+        logObj.target = requiredParameters.teamName.value + ' : ' + requiredParameters.removeUser.value;
         logObj.logLevel = 'ADMIN';
 
         const response = {};
