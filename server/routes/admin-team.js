@@ -290,7 +290,7 @@ router.post('/team/removeInvitedMember', passport.authenticate('jwt', {
         logObj.target = requiredParameters.teamName.value + ' : ' + requiredParameters.removeUser.value;
         logObj.logLevel = 'ADMIN';
 
-        removeTeamMembers(requiredParameters.teamName.value, requiredParameters.removeUser.value, false).then(
+        await removeTeamMembers(requiredParameters.teamName.value, requiredParameters.removeUser.value, false).then(
             success => {
 
                 let message = 'Default success.';
