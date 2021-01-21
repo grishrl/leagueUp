@@ -466,7 +466,7 @@ router.post('/delete/team', passport.authenticate('jwt', {
         logObj.target = team;
         logObj.logLevel = 'ADMIN';
 
-        Team.findOneAndDelete({
+        await Team.findOneAndDelete({
             teamName_lower: team
         }).then((deleted) => {
             if (deleted) {
