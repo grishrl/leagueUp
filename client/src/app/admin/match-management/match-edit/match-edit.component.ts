@@ -9,6 +9,7 @@ import { MvpService } from 'src/app/services/mvp.service';
 import { forEach } from 'lodash';
 import { S3uploadServiceService } from 'src/app/services/s3upload-service.service';
 import { timeout } from 'rxjs/operators';
+import { TeamService } from 'src/app/services/team.service';
 
 @Component({
   selector: "app-match-edit",
@@ -59,7 +60,8 @@ export class MatchEditComponent implements OnInit {
     private adminService: AdminService,
     private util: UtilitiesService,
     private mvpServ: MvpService,
-    private s3uploads: S3uploadServiceService
+    private s3uploads: S3uploadServiceService,
+    private team: TeamService
   ) {
     if (this.route.snapshot.params["id"]) {
       this.matchId = this.route.snapshot.params["id"];
@@ -70,6 +72,18 @@ export class MatchEditComponent implements OnInit {
     this.scheduleService.getMatchInfo(this.matchId).subscribe(
       (res) => {
         this.match = res;
+        if (this.util.returnByPath(res, "other.team_one_player")) {
+          this.homeTeamPlayer = this.util.returnByPath(
+            res,
+            "other.team_one_player"
+          );
+        }
+        if (this.util.returnByPath(res, "other.team_two_player")) {
+          this.awayTeamPlayer = this.util.returnByPath(
+            res,
+            "other.team_two_player"
+          );
+        }
         if (this.util.returnBoolByPath(this.match, "away.score")) {
           this.awayScore = this.match.away.score;
         }
@@ -91,6 +105,7 @@ export class MatchEditComponent implements OnInit {
             this.match.scheduledTime.startTime
           );
         }
+        this.initTeams();
       },
       (err) => {
         console.log(err);
@@ -142,6 +157,32 @@ export class MatchEditComponent implements OnInit {
         }
       );
     }
+  }
+
+  awayTeam = { teamMembers: [] };
+  homeTeam = { teamMembers: [] };
+
+  private initTeams() {
+    this.team.getTeam(this.match.away.teamName).subscribe(
+      (res) => {
+        this.awayTeam = res;
+        // this.awayLogo = this.team.imageFQDN(this.awayTeam.logo);
+        // this.allPlayers = this.allPlayers.concat(this.awayTeam.teamMembers);
+      },
+      (err) => {
+        console.warn(err);
+      }
+    );
+    this.team.getTeam(this.match.home.teamName).subscribe(
+      (res) => {
+        this.homeTeam = res;
+        // this.awayLogo = this.team.imageFQDN(this.awayTeam.logo);
+        // this.allPlayers = this.allPlayers.concat(this.awayTeam.teamMembers);
+      },
+      (err) => {
+        console.warn(err);
+      }
+    );
   }
 
   deleteReplay(key) {
@@ -200,9 +241,9 @@ export class MatchEditComponent implements OnInit {
                     this.matchRound = null;
                     this.winner = null;
 
-                    setTimeout(()=>{
+                    setTimeout(() => {
                       this.uploading = false;
-                      this.ngOnInit()
+                      this.ngOnInit();
                     }, 3000);
                     // this.ngOnInit();
                   },
@@ -223,6 +264,9 @@ export class MatchEditComponent implements OnInit {
     }
   }
 
+  homeTeamPlayer;
+  awayTeamPlayer;
+
   saveMatch(match) {
     let submittable = true;
 
@@ -232,6 +276,14 @@ export class MatchEditComponent implements OnInit {
 
     if (this.awayScore != undefined && this.awayScore != null) {
       match.away.score = this.awayScore;
+    }
+
+    if (this.homeTeamPlayer != undefined && this.homeTeamPlayer != null) {
+      match.other.team_one_player = this.homeTeamPlayer;
+    }
+
+    if (this.awayTeamPlayer != undefined && this.awayTeamPlayer != null) {
+      match.other.team_two_player = this.awayTeamPlayer;
     }
 
     if (this.match.scheduledTime.startTime && this.friendlyTime) {

@@ -6,255 +6,298 @@
                     <a [routerLink]="['/_admin/matchMgmt']">Back to Match List</a>
                 </div>
             </div>
-            <div class="row mt-3">
-                <div class="col"><strong>Match ID:</strong> {{match?.matchId}}</div>
-            </div>
-            <div class="row mt-3">
-                <div class="col"><strong>Season:</strong> {{match?.season}}</div>
-                <div class="col"><strong>Round</strong>: {{match?.round}}</div>
-            </div>
-            <div class="row mt-3">
-                <div class="col">
-                    <strong>Division:</strong> {{match?.divisionConcat}}
+            <div class="mt-4 p-2" style="background: #f7f5f5; border-radius: 10px;">
+                <div class="row mt-3">
+                    <div class="col"><strong>Match ID:</strong> {{match?.matchId}}</div>
                 </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col">
-                    <div><strong>HOME</strong></div>
-                    <div *ngIf="match?.home?.teamName!=null&&match?.home?.teamName!=undefined&&match?.home?.teamName.length>0 else bye">{{match?.home?.teamName}}</div>
+                <div class="row mt-3">
+                    <div class="col"><strong>Season:</strong> {{match?.season}}</div>
+                    <div class="col"><strong>Round</strong>: {{match?.round}}</div>
                 </div>
-                <div class="col">
-                    <div><strong>AWAY</strong></div>
-                    <div *ngIf="match?.away?.teamName!=null&&match?.away?.teamName!=undefined&&match?.away?.teamName.length>0 else bye">{{match?.away?.teamName}}</div>
+                <div class="row mt-3">
+                    <div class="col">
+                        <strong>Division:</strong> {{match?.divisionConcat}}
+                    </div>
                 </div>
-                <ng-template #bye> BYE </ng-template>
-            </div>
-            <div class="row mt-3">
-                <div class="col">
-                    <h3>Scores:</h3>
+                <div class="row mt-3">
+                    <div class="col">
+                        <div><strong>HOME</strong></div>
+                        <div *ngIf="match?.home?.teamName!=null&&match?.home?.teamName!=undefined&&match?.home?.teamName.length>0 else bye">{{match?.home?.teamName}}</div>
+                    </div>
+                    <div class="col">
+                        <div><strong>AWAY</strong></div>
+                        <div *ngIf="match?.away?.teamName!=null&&match?.away?.teamName!=undefined&&match?.away?.teamName.length>0 else bye">{{match?.away?.teamName}}</div>
+                    </div>
+                    <ng-template #bye> BYE </ng-template>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <div class="row">
-                        <div class="col">
-                            <mat-form-field class="mat-FullWidth">
-                                <mat-select placeholder="{{match?.home?.teamName}} Score:" [(ngModel)]="homeScore" disableOptionCentering>
-                                    <mat-option [value]="0">0</mat-option>
-                                    <mat-option [value]="1">1</mat-option>
-                                    <mat-option [value]="2">2</mat-option>
-                                    <mat-option [value]="3">3</mat-option>
-                                </mat-select>
-                            </mat-form-field>
+                <div class="row mt-3">
+                    <div class="col">
+                        <h3>Scores:</h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col">
+                                <mat-form-field class="mat-FullWidth">
+                                    <mat-select placeholder="{{match?.home?.teamName}} Score:" [(ngModel)]="homeScore" disableOptionCentering>
+                                        <mat-option [value]="0">0</mat-option>
+                                        <mat-option [value]="1">1</mat-option>
+                                        <mat-option [value]="2">2</mat-option>
+                                        <mat-option [value]="3">3</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col">
+                        <div class="row">
+                            <div class="col">
+                                <mat-form-field class="mat-FullWidth">
+                                    <mat-select placeholder="{{match?.away?.teamName}} Score:" [(ngModel)]="awayScore" disableOptionCentering>
+                                        <mat-option [value]="0">0</mat-option>
+                                        <mat-option [value]="1">1</mat-option>
+                                        <mat-option [value]="2">2</mat-option>
+                                        <mat-option [value]="3">3</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
                         </div>
                     </div>
-
                 </div>
-
-                <div class="col">
-                    <div class="row">
-                        <div class="col">
-                            <mat-form-field class="mat-FullWidth">
-                                <mat-select placeholder="{{match?.away?.teamName}} Score:" [(ngModel)]="awayScore" disableOptionCentering>
-                                    <mat-option [value]="0">0</mat-option>
-                                    <mat-option [value]="1">1</mat-option>
-                                    <mat-option [value]="2">2</mat-option>
-                                    <mat-option [value]="3">3</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        <h3>Best Of:</h3>
+                        <mat-form-field class="mat-FullWidth">
+                            <input matInput type="number" placeholder="Best Of:" [(ngModel)]="match.boX">
+                        </mat-form-field>
                     </div>
                 </div>
-            </div>
-            <div class="row mt-2">
-                <div class="col">
-                    <h3>Best Of:</h3>
-                    <mat-form-field class="mat-FullWidth">
-                        <input matInput type="number" placeholder="Best Of:" [(ngModel)]="match.boX">
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="row mt-2">
-                <div class="col">
-                    <h3>Forfeit:</h3>
-                    <mat-slide-toggle [(ngModel)]="match.forfeit">Forfeit</mat-slide-toggle>
-                </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col">
-                    <h3>Time:</h3>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <app-date-picker [(date)]="match?.scheduledTime.startTime"></app-date-picker>
-                </div>
-                <div class="col">
-                    <mat-form-field class="mat-FullWidth">
-                        <mat-select placeholder="Start Time:" [(ngModel)]="friendlyTime">
-                            <mat-option *ngFor="let time of times" [value]="time">
-                                {{time}}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-
-                    <mat-form-field class="mat-FullWidth">
-                        <mat-select placeholder="AM/PM:" [(ngModel)]="suffix">
-                            <mat-option *ngFor="let suffix of amPm" [value]="suffix">
-                                {{suffix}}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <h3>Admin Notes: <small>Admin only visible</small></h3>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <textarea class="min-text-area" [(ngModel)]="match.notes" matInput cdkTextareaAutosize></textarea>
-                </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col">
-                    <h3>Caster Info:</h3>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <mat-form-field class="mat-FullWidth">
-                        <input matInput placeholder="Caster Name" [(ngModel)]="match.casterName">
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <mat-form-field class="mat-FullWidth">
-                        <input matInput placeholder="Caster URL" [(ngModel)]="match.casterUrl">
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <button class="btn btn-success" (click)="saveMatch(match)"> Save </button>
-                </div>
-            </div>
-
-            <div class="row mt-3">
-                <div class="col">
-                    <h3>Replay Info:</h3>
-                </div>
-            </div>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Data</th>
-                        <th scope="col">URL</th>
-                        <th scope="col">HP Url</th>
-                        <th scope="col">Manage</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <ng-container *ngFor="let replay of match?.replays | keyvalue">
-                        <tr *ngIf="replay.key != '_id'">
-                            <th scope="row">{{replay.key}}</th>
-                            <td>{{replay.value.data}}</td>
-                            <td>{{replay.value.url}}</td>
-                            <td>{{replay.value.parsedUrl}}</td>
-                            <td> <button class="btn btn-danger" (click)="deleteReplay(replay.key)">Delete</button> </td>
-                        </tr>
-                    </ng-container>
-                </tbody>
-            </table>
-
-            <div class="row mt-3">
-                <div class="col">
-                    <h3>Replay Upload:</h3>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <div *ngIf="filePendingUpload"><strong>File Name: </strong>File{{filePendingUpload.name}}</div>
-                    <div *ngIf="matchRound"><strong>Round: </strong>{{matchRound}}</div>
-                    <div *ngIf="winner"><strong>Winner: </strong>{{winner}}</div>
-                    <div class="col" *ngIf="!filePendingUpload">
-                        Select file*:
-                        <input type="file" ngf accept=".StormReplay" [(file)]="filePendingUpload">
+                <div class="row mt-2">
+                    <div class="col">
+                        <h3>Forfeit:</h3>
+                        <mat-slide-toggle [(ngModel)]="match.forfeit">Forfeit</mat-slide-toggle>
                     </div>
-                    <div class="col" *ngIf="filePendingUpload && !matchRound">
+                </div>
+                <div class="row mt-3">
+                    <div class="col">
+                        <h3>Time:</h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <app-date-picker [(date)]="match?.scheduledTime.startTime"></app-date-picker>
+                    </div>
+                    <div class="col">
+                        <mat-form-field class="mat-FullWidth">
+                            <mat-select placeholder="Start Time:" [(ngModel)]="friendlyTime">
+                                <mat-option *ngFor="let time of times" [value]="time">
+                                    {{time}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
 
                         <mat-form-field class="mat-FullWidth">
-                            <mat-select placeholder="Round:" [(ngModel)]="matchRound" disableOptionCentering>
-                                <mat-option [value]="1">1</mat-option>
-                                <mat-option [value]="2">2</mat-option>
-                                <mat-option [value]="3">3</mat-option>
-                                <mat-option [value]="4">4</mat-option>
-                                <mat-option [value]="5">5</mat-option>
+                            <mat-select placeholder="AM/PM:" [(ngModel)]="suffix">
+                                <mat-option *ngFor="let suffix of amPm" [value]="suffix">
+                                    {{suffix}}
+                                </mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
-                    <div class="col" *ngIf="filePendingUpload && matchRound && !winner">
-                        <div class="row m-t-5 ">
-                            <div>
-                                <h5>Winner:</h5>
-                            </div>
-                            <div class="col ">
-                                <mat-radio-group [(ngModel)]='winner'>
-                                    <mat-radio-button class="example-margin" value="home"> Home
-                                    </mat-radio-button>
-                                </mat-radio-group>
-                            </div>
-                            <div class="col ">
-
-                            </div>
-                            <div class="col ">
-                                <mat-radio-group [(ngModel)]='winner'>
-                                    <mat-radio-button class="example-margin" value="away">Away
-                                    </mat-radio-button>
-                                </mat-radio-group>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <h3>Admin Notes: <small>Admin only visible</small></h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <textarea class="min-text-area" [(ngModel)]="match.notes" matInput cdkTextareaAutosize></textarea>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col">
+                        <h3>Caster Info:</h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <mat-form-field class="mat-FullWidth">
+                            <input matInput placeholder="Caster Name" [(ngModel)]="match.casterName">
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <mat-form-field class="mat-FullWidth">
+                            <input matInput placeholder="Caster URL" [(ngModel)]="match.casterUrl">
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row mt-4 ">
+                    <div class="col ">
+                        <h4>Select Player From Each Team Who Played:</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        Home Player
+                        <div class="row m-t-5">
+                            <div class="col">
+                                <mat-select placeholder="Player " [(ngModel)]="homeTeamPlayer">
+                                    <mat-option *ngFor="let player of homeTeam.teamMembers" [value]="player.displayName">
+                                        {{player.displayName}}
+                                    </mat-option>
+                                </mat-select>
                             </div>
                         </div>
                     </div>
-                    <div class="col" *ngIf="winner">
-                        <button class="btn btn-success" [disabled]="uploading" (click)="uploadReplay()">Submit</button>
+                    <div class="col">
+
                     </div>
-                    <div *ngIf="uploading" class="row mt-3">
-                        <div class="col  text-center">
-                            <span class="border p-3">Uploading ... <i class="fas fa-sync fa-spin"
-                                                style="font-size:24px"></i></span>
+                    <div class="col">
+                        Away Player
+                        <div class="row">
+                            <div class="col">
+                                <mat-select placeholder="Player " [(ngModel)]="awayTeamPlayer">
+                                    <mat-option *ngFor="let player of awayTeam.teamMembers" [value]="player.displayName">
+                                        {{player.displayName}}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col">
+                        <button class="btn btn-success" (click)="saveMatch(match)"> Save </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-3 p-2" style="background: #f7f5f5; border-radius: 10px;">
+
+                <div class="row mt-3">
+                    <div class="col">
+                        <h3>Replay Info:</h3>
+                        <small>Note: This section saves independently and automatically as replays are uploaded.</small>
+                    </div>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Data</th>
+                            <th scope="col">URL</th>
+                            <th scope="col">HP Url</th>
+                            <th scope="col">Manage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngFor="let replay of match?.replays | keyvalue">
+                            <tr *ngIf="replay.key != '_id'">
+                                <th scope="row">{{replay.key}}</th>
+                                <td>{{replay.value.data}}</td>
+                                <td>{{replay.value.url}}</td>
+                                <td>{{replay.value.parsedUrl}}</td>
+                                <td> <button class="btn btn-danger" (click)="deleteReplay(replay.key)">Delete</button> </td>
+                            </tr>
+                        </ng-container>
+                    </tbody>
+                </table>
+
+                <div class="row mt-3">
+                    <div class="col">
+                        <h3>Replay Upload:</h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div *ngIf="filePendingUpload"><strong>File Name: </strong>File{{filePendingUpload.name}}</div>
+                        <div *ngIf="matchRound"><strong>Round: </strong>{{matchRound}}</div>
+                        <div *ngIf="winner"><strong>Winner: </strong>{{winner}}</div>
+                        <div class="col" *ngIf="!filePendingUpload">
+                            Select file*:
+                            <input type="file" ngf accept=".StormReplay" [(file)]="filePendingUpload">
+                        </div>
+                        <div class="col" *ngIf="filePendingUpload && !matchRound">
+
+                            <mat-form-field class="mat-FullWidth">
+                                <mat-select placeholder="Round:" [(ngModel)]="matchRound" disableOptionCentering>
+                                    <mat-option [value]="1">1</mat-option>
+                                    <mat-option [value]="2">2</mat-option>
+                                    <mat-option [value]="3">3</mat-option>
+                                    <mat-option [value]="4">4</mat-option>
+                                    <mat-option [value]="5">5</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col" *ngIf="filePendingUpload && matchRound && !winner">
+                            <div class="row m-t-5 ">
+                                <div>
+                                    <h5>Winner:</h5>
+                                </div>
+                                <div class="col ">
+                                    <mat-radio-group [(ngModel)]='winner'>
+                                        <mat-radio-button class="example-margin" value="home"> Home
+                                        </mat-radio-button>
+                                    </mat-radio-group>
+                                </div>
+                                <div class="col ">
+
+                                </div>
+                                <div class="col ">
+                                    <mat-radio-group [(ngModel)]='winner'>
+                                        <mat-radio-button class="example-margin" value="away">Away
+                                        </mat-radio-button>
+                                    </mat-radio-group>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col" *ngIf="winner">
+                            <button class="btn btn-success" [disabled]="uploading" (click)="uploadReplay()">Submit</button>
+                        </div>
+                        <div *ngIf="uploading" class="row mt-3">
+                            <div class="col  text-center">
+                                <span class="border p-3">Uploading ... <i class="fas fa-sync fa-spin"
+                                                  style="font-size:24px"></i></span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="row mt-4 ">
-                <div class="col ">
-                    <h4>Match MVP Info:</h4>
+            <div class="mt-4 p-2" style="background: #f7f5f5; border-radius: 10px;">
+                <div class="row">
+                    <div class="col ">
+                        <h4>Match MVP Info:</h4>
+                        <small>This section saves independently of the others!</small>
+                    </div>
                 </div>
-            </div>
-            <div class="row mt-2 ">
-                <div class="col ">
-                    <strong>MVP Player: </strong> {{this.mvpObj.displayName}}
+                <div class="row mt-2 ">
+                    <div class="col ">
+                        <strong>MVP Player: </strong> {{this.mvpObj.displayName}}
+                    </div>
                 </div>
-            </div>
-            <div class="row mt-2 ">
-                <div class="col ">
-                    <strong>PotG Link:  </strong>
-                    <mat-form-field class="mat-60-width ">
-                        <!-- [formControl]="casterUrlControl " -->
-                        <input matInput placeholder="PotG Clip URL " [(ngModel)]="this.mvpObj.potg_link ">
-                        <!-- <mat-error *ngIf="casterUrlControl.hasError( 'required') ">
-                                            PotG Error!
-                                        </mat-error> -->
-                    </mat-form-field>
+                <div class="row mt-2 ">
+                    <div class="col ">
+                        <strong>PotG Link:  </strong>
+                        <mat-form-field class="mat-60-width ">
+                            <!-- [formControl]="casterUrlControl " -->
+                            <input matInput placeholder="PotG Clip URL " [(ngModel)]="this.mvpObj.potg_link ">
+                            <!-- <mat-error *ngIf="casterUrlControl.hasError( 'required') ">
+                                              PotG Error!
+                                          </mat-error> -->
+                        </mat-form-field>
+                    </div>
                 </div>
-            </div>
-            <div class="row mt-2 ">
-                <div class="col ">
-                    <button class="btn btn-primary " (click)="saveMVP(this.mvpObj) "> Save MVP Info </button>
+                <div class="row mt-2 ">
+                    <div class="col ">
+                        <button class="btn btn-primary " (click)="saveMVP(this.mvpObj) "> Save MVP Info </button>
+                    </div>
                 </div>
             </div>
         </div>
