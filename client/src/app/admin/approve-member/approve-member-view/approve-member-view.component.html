@@ -1,5 +1,5 @@
 <div class="row row-style">
-    <div class="col">
+    <div class="col" *ngIf="!errorState else errorTemplate">
         <div class="row">
             <div class="col">
                 <app-user-quick-view [userId]="player"></app-user-quick-view>
@@ -34,3 +34,9 @@
         <app-notes [queueInfo]="_info"></app-notes>
     </div>
 </div>
+
+<ng-template #errorTemplate>
+    <div class="col m-5 bg-secondary text-center">
+        <p class="h1 text-warning"> There has been an unexpected error with this pending queue! {{_info._id}}</p>
+    </div>
+</ng-template>

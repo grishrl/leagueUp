@@ -73,6 +73,8 @@ export class ApproveMemberViewComponent implements OnInit {
     this.accountActioned.emit(this._info);
   }
 
+  errorState = false;
+
   constructor(
     private user: UserService,
     private team: TeamService,
@@ -84,7 +86,12 @@ export class ApproveMemberViewComponent implements OnInit {
   ngOnInit() {
     if (this._info.teamId && this._info.userId) {
       this.user.getUserById(this._info.userId).subscribe((res) => {
-        this.player = res;
+        if(res){
+          this.player = res;
+        }else{
+          this.errorState = true;
+        }
+
 
         this.team.getTeam(null, null, this._info.teamId).subscribe((resT) => {
           this.viewTeam = resT;

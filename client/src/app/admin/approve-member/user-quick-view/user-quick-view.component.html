@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col">
+    <div class="col" *ngIf="!errorState else errorTemplate">
         <div class="row">
             <div class="col">
                 <strong>Name:</strong>
@@ -45,3 +45,8 @@
         </div>
     </div>
 </div>
+<ng-template #errorTemplate>
+    <div class="col">
+        <h1> An Unexpected Error has occured.</h1>
+    </div>
+</ng-template>
