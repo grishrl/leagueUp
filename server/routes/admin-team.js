@@ -64,14 +64,16 @@ router.post('/pmq/delete', passport.authenticate('jwt', {
         logObj.target = `pending member queue ${validatedRequiredInputs.queue.value._id}`;
         logObj.logLevel = 'ADMIN';
 
-        cleanUp(validatedRequiredInputs.queue.value).then(
+        return cleanUp(validatedRequiredInputs.queue.value).then(
             success => {
                 response.status = 200;
-                response.message = utils.returnMessaging(req.originalUrl, 'Deleted queue item', false, success, null, logObj)
+                response.message = utils.returnMessaging(req.originalUrl, 'Deleted queue item', false, success, null, logObj);
+                return response;
             },
             fail => {
                 response.status = 500;
-                response.message = utils.returnMessaging(req.originalUrl, 'Failed to delete queue', fail, null, null, logObj)
+                response.message = utils.returnMessaging(req.originalUrl, 'Failed to delete queue', fail, null, null, logObj);
+                return response;
             }
         );
     })
