@@ -2,10 +2,30 @@ const _ = require('lodash');
 const utils = require('./utils');
 const debugLogger = require('./debug');
 
+const trackAPI = [
+    'user/hero-profile/path',
+    'request/user/join/response',
+    'schedule/get/matches/casted/playing'
+];
+
+function errTracingLogs(req, start, msg) {
+    let log = false;
+    trackAPI.forEach(val => {
+        if (req.originalUrl.indexOf(val) > -1) {
+            log = true;
+        }
+    });
+    if (log) {
+        console.log(
+            `commonResponseHandler, ${msg}, ${start - Date.now()} ms`
+        );
+    }
+}
+
 function commonResponseHandler(req, res, requiredInputs, optionalInputs, executor) {
-
+    let start = Date.now()
     try {
-
+        errTracingLogs(req, start, 'Initial trace');
         let source = {};
         if (req.method == 'GET') {
             _.forEach(req.query, (v, k) => {
@@ -22,22 +42,27 @@ function commonResponseHandler(req, res, requiredInputs, optionalInputs, executo
         let validatedOptionalInputs = getInputs(optionalInputs, source);
 
         if (inputsWereValid(validatedRequiredInputs)) {
+            errTracingLogs(req, start, 'Beginning Executor..');
             executor(req, res, validatedRequiredInputs, validatedOptionalInputs).then(
                 response => {
+                    errTracingLogs(req, start, 'Executor success');
                     debugLogger(response, null, 'responseHandler');
                     res.status(response.status).send(response.message);
                 },
                 err => {
+                    errTracingLogs(req, start, 'Executor fail');
                     debugLogger(null, err, 'responseHandler');
                     let status = err.status ? err.status : 500;
                     res.status(status).send(err.message);
                 }
             );
         } else {
+            errTracingLogs(req, start, 'input errors...');
             handleInvalidInputsMessage(req, res, validatedRequiredInputs);
         }
 
     } catch (e) {
+        errTracingLogs(req, start, 'caught errors...');
         utils.errLogger(req.originalUrl, e.stack);
         res.status(500).send(utils.returnMessaging(req.originalUrl, 'Internal Server Error', e.message));
     }
