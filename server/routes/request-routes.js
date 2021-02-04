@@ -399,6 +399,8 @@ router.post('/user/join/response', passport.authenticate('jwt', {
         type: 'boolean'
     }]
 
+    console.log('!!!! ', JSON.stringify(requiredParameters));
+
     const start = Date.now();
     console.log(`${path} starting..`);
     commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {

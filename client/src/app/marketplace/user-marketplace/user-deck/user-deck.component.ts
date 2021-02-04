@@ -61,15 +61,23 @@ export class UserDeckComponent implements OnInit {
   }
 
   requestToJoin(player) {
-    this.request.inviteToTeamRequest(this.auth.getTeam(), player.displayName).subscribe(
-      (res) => {
-        this.teamInfo.invitedUsers.push(player.displayName);
-        this.showInviteButton(player);
-        //filter by pending invites?
-      }, err => {
-        console.log(err);
-      }
-    )
+    if(this.auth.getTeam()){
+          this.request
+            .inviteToTeamRequest(this.auth.getTeam(), player.displayName)
+            .subscribe(
+              (res) => {
+                this.teamInfo.invitedUsers.push(player.displayName);
+                this.showInviteButton(player);
+                //filter by pending invites?
+              },
+              (err) => {
+                console.log(err);
+              }
+            );
+    }else{
+      alert("Looks like you need to join or create a team first!");
+    }
+
   }
 
   rosterFull() {
