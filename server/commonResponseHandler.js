@@ -24,7 +24,6 @@ function errTracingLogs(req, start, msg) {
 
 function commonResponseHandler(req, res, requiredInputs, optionalInputs, executor) {
     let start = Date.now()
-    console.log(!!req, !!res, requiredInputs, optionalInputs, executor, typeof executor);
     try {
         errTracingLogs(req, start, 'Initial trace');
         let source = {};
@@ -41,20 +40,15 @@ function commonResponseHandler(req, res, requiredInputs, optionalInputs, executo
 
         let validatedRequiredInputs = getInputs(requiredInputs, source);
         let validatedOptionalInputs = getInputs(optionalInputs, source);
-        console.log('asdfasdfasdfasdfasdfasdfasdfasdfas')
         if (inputsWereValid(validatedRequiredInputs)) {
-            console.log('2222222222222 ', executor, typeof executor);
-
             errTracingLogs(req, start, 'Beginning Executor..');
             executor(req, res, validatedRequiredInputs, validatedOptionalInputs).then(
                 response => {
-                    console.log('3333333333')
                     errTracingLogs(req, start, 'Executor success');
                     debugLogger(response, null, 'responseHandler');
                     res.status(response.status).send(response.message);
                 },
                 err => {
-                    console.log('4444444444')
                     errTracingLogs(req, start, 'Executor fail');
                     debugLogger(null, err, 'responseHandler');
                     let status = err.status ? err.status : 500;
@@ -62,13 +56,11 @@ function commonResponseHandler(req, res, requiredInputs, optionalInputs, executo
                 }
             );
         } else {
-            console.log('555555555 ')
             errTracingLogs(req, start, 'input errors...');
             handleInvalidInputsMessage(req, res, validatedRequiredInputs);
         }
 
     } catch (e) {
-        console.log('66666666 ')
         errTracingLogs(req, start, 'caught errors...');
         utils.errLogger(req.originalUrl, e.stack);
         res.status(500).send(utils.returnMessaging(req.originalUrl, 'Internal Server Error', e.message));
@@ -86,11 +78,8 @@ function getInputs(inputs, inputLocation) {
 
     const inputsVals = {};
     inputs.forEach((input) => {
-        console.log('x');
         if (!utils.isNullorUndefined(inputLocation[input.name])) {
-            console.log('y');
             var validator = utils.validateInputs[input.type];
-            console.log('z');
             if (typeof(validator) == 'function') {
                 inputsVals[input.name] = validator(inputLocation[input.name]);
                 inputsVals[input.name].type = input.type;
@@ -108,7 +97,6 @@ function getInputs(inputs, inputLocation) {
             }
         }
     });
-    console.log('input vals ', inputsVals);
     return inputsVals;
 
 }
