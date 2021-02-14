@@ -13,7 +13,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let event of profile.history">
+                <tr *ngFor="let event of display">
                     <td>
                         {{event.timestamp | commonPipe:util.getFormattedDate:'MM/DD/YYYY'}}
                     </td>

@@ -957,7 +957,7 @@ router.post('/match/add/caster', passport.authenticate('jwt', {
 }), levelRestrict.casterLevel, utils.appendResHeader, (req, res) => {
     let path = 'schedule/match/add/caster';
 
-    const requiredParameters = [{
+    const optionalParameters = [{
         name: 'matchId',
         type: 'string'
     }, {
@@ -968,12 +968,11 @@ router.post('/match/add/caster', passport.authenticate('jwt', {
         type: 'string'
     }]
 
-    commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
+    commonResponseHandler(req, res, [], optionalParameters, async(req, res, required, options) => {
         const response = {};
-
-        let matchid = requiredParameters.matchId.value;
-        let casterName = requiredParameters.casterName.value;
-        let casterUrl = requiredParameters.casterUrl.value;
+        let matchid = options.matchId.value;
+        let casterName = options.casterName.valid ? options.casterName.value : '';
+        let casterUrl = options.casterUrl.valid ? options.casterName.value : '';
 
         //log object
         let logObj = {};
@@ -982,7 +981,7 @@ router.post('/match/add/caster', passport.authenticate('jwt', {
         logObj.logLevel = 'STD';
         logObj.target = matchid;
 
-        return Match.findOne({
+        await Match.findOne({
             matchId: matchid
         }).then((found) => {
             if (found) {
@@ -1012,7 +1011,9 @@ router.post('/match/add/caster', passport.authenticate('jwt', {
             response.message = utils.returnMessaging(req.originalUrl, 'Error updating match', err, null, null, logObj)
             return response;
         });
-    })
+
+        return response;
+    });
 
 });
 
