@@ -24,84 +24,96 @@ const colors: any = {
     //navy
     primary: "#001f3f",
     name: "Heroic Division",
-    sortOder: 1,
+    sortOder: 2,
+  },
+  nexus: {
+    //navy
+    primary: "#EF03E8",
+    name: "Nexus Division",
+    sortOder: 3,
   },
   "a-east": {
     //red
     primary: "#FF4136",
     name: "Division A East",
-    sortOder: 2,
+    sortOder: 4,
   },
   "a-west": {
     //red
     primary: "#d30c00",
     name: "Division A West",
-    sortOder: 2,
+    sortOder: 5,
   },
   "b-east": {
     //teal
     primary: "#39CCCC",
     name: "Division B East",
-    sortOder: 3,
+    sortOder: 6,
   },
   "b-northeast": {
     //teal
     primary: "#0f8c8c",
     name: "Division B North East",
-    sortOder: 4,
+    sortOder: 7,
   },
   "b-southeast": {
     //teal
     primary: "#15e8e8",
     name: "Division B South East",
-    sortOder: 5,
+    sortOder: 8,
   },
   "b-west": {
     //aqua
     primary: "#7FDBFF",
     name: "Division B West",
-    sortOder: 6,
+    sortOder: 9,
   },
   "c-east": {
     //fuchsia
     primary: "#F012BE",
     name: "Division C East",
-    sortOder: 7,
+    sortOder: 10,
   },
   "c-west": {
     //PURPLE
     primary: "#B10DC9",
     name: "Division C West",
-    sortOder: 8,
+    sortOder: 11,
   },
   "d-east": {
     //green
     primary: "#2ECC40",
     name: "Division D East",
-    sortOder: 9,
+    sortOder: 12,
   },
   "d-west": {
     //lime
     primary: "#01FF70",
     name: "Division D West",
-    sortOder: 10,
+    sortOder: 13,
   },
-  e: {
+  "e-east": {
     //purple
     primary: "#FAD165",
-    name: "Division E",
-    sortOder: 11,
+    name: "Division E East",
+    sortOder: 14,
+  },
+  "e-west": {
+    //purple
+    primary: "#D9FA64",
+    name: "Division E West",
+    sortOder: 15,
   },
   event: {
     //orange
     primary: "#FF851B",
     name: "NGS Event",
-    sortOder: 12,
+    sortOder: 16,
   },
   tournament: {
     primary: "#E5D800",
     name: "Tournament",
-    sortOrder: 13,
+    sortOrder: 17,
   },
 };
 
