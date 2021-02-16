@@ -14,7 +14,7 @@ router.get('/logs', passport.authenticate('jwt', {
     const path = 'admin/logs';
 
     try {
-        Log.Log.find().sort({ timeStamp: -1 }).then(
+        Log.Log.find().sort({ timeStamp: -1 }).limit(500).then(
             found => {
                 res.status(200).send(util.returnMessaging(path, 'Got logs', null, found, null));
             },
