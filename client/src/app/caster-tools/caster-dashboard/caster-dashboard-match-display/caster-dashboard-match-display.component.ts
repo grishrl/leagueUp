@@ -35,7 +35,7 @@ export class CasterDashboardMatchDisplayComponent implements OnInit {
   ngOnInit(): void {
     this.casterValid = this.checkRights();
           if (this.replayView) {
-            this.fileLink = `/schedule/matchfiles?match=${this.match.matchId}`;
+            this.fileLink = `/api/schedule/matchfiles?match=${this.match.matchId}`;
           }
   }
 
