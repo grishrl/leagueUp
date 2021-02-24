@@ -346,7 +346,7 @@ router.post('/reassignCaptain', passport.authenticate('jwt', {
         let logObj = {};
         logObj.actor = req.user.displayName;
         logObj.action = 'reassign team captain ';
-        logObj.target = team + ' : ' + newCpt;
+        logObj.target = requiredInputs.teamName.value + ' : ' + requiredInputs.userName.value;
         logObj.logLevel = 'ADMIN';
 
         const assignNewCaptain = require('../methods/team/assignCaptain').assignNewCaptain;
