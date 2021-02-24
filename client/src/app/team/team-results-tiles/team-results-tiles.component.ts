@@ -23,16 +23,19 @@ export class TeamResultsTilesComponent implements OnInit {
 
   getTeamMatches(season, teamName) {
     this.fetching = true;
-    this.displayArray = [];
+
     this.scheduleService.getTeamSchedules(season, teamName).subscribe(
       (res) => {
+        this.displayArray = [];
         this.fetching = false;
         if (res && res.length > 0) {
+          console.log(res);
           res.forEach((match) => {
             if (match.reported) {
               this.displayArray.push(match);
             }
           });
+          console.log(this.displayArray);
         }
       },
       (err) => {}
