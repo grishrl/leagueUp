@@ -164,9 +164,29 @@
                                 </div>
                                 <div class="row">
                                     <div class="col">
+
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
                                         <h4>NOTE: These avatars must be approved by admin before taking affect</h4>
                                         {{returnedProfile.avatar}}
                                         <app-image-upload [playerName]="returnedProfile.displayName" [showEdit]="true" [existingImage]="returnedProfile.avatar" [width]="400" [imageType]="'avatar'" [height]="200"></app-image-upload>
+                                        <div class="mt-3">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <mat-form-field class="full-width">
+                                                        <input matInput placeholder="Discord Tag" [formControl]="discordTagFormControl" [(ngModel)]="returnedProfile.discordTag">
+                                                        <mat-error *ngIf="discordTagFormControl.hasError('required')">
+                                                            Discord Tag is required.
+                                                        </mat-error>
+                                                        <mat-error *ngIf="discordTagFormControl.hasError('invalidTag')">
+                                                            Discord Tag pattern not recognized.
+                                                        </mat-error>
+                                                    </mat-form-field>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="mt-3 p-3" *ngIf="auth.isCaster()">
                                             <mat-form-field class="mt-3 full-width">
                                                 <input matInput placeholder="Caster Name" [(ngModel)]="returnedProfile.casterName">
@@ -185,18 +205,6 @@
                                             <app-youtube [(youtube)]="returnedProfile.youtube">
                                             </app-youtube>
                                         </div>
-                                    </div>
-                                    <!-- discord tag -->
-                                    <div class="mt-3">
-                                        <mat-form-field class="mt-3 full-width">
-                                            <input matInput placeholder="Discord Tag" [formControl]="discordTagFormControl" [(ngModel)]="returnedProfile.discordTag">
-                                            <mat-error *ngIf="discordTagFormControl.hasError('required')">
-                                                Discord Tag is required.
-                                            </mat-error>
-                                            <mat-error *ngIf="discordTagFormControl.hasError('invalidTag')">
-                                                Discord Tag pattern not recognized.
-                                            </mat-error>
-                                        </mat-form-field>
                                     </div>
                                 </div>
                             </div>
