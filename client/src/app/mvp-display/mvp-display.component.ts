@@ -28,6 +28,9 @@ export class MvpDisplayComponent implements OnInit {
   initMvps(){
         this.mvpService.getBySeason(this.currentSeason).subscribe((res) => {
           let reportedMvps = res;
+          reportedMvps.sort( (a,b)=>{
+            return a.timeStamp>b.timeStamp ? -1 : 1;
+          })
           let arrayBounds = reportedMvps.length > 10 ? 10 : reportedMvps.length;
           for (let i = 0; i < arrayBounds; i++) {
             this.display.push(reportedMvps[i]);
