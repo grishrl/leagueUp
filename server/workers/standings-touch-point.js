@@ -33,7 +33,7 @@ async function createStandingsTouchPoint() {
         for (let i = 0; i < divisions.length; i++) {
             let division = divisions[i];
 
-            standingsMethods.calulateStandings(division.divisionConcat, season, false, true).then(
+            standingsMethods.calulateStandings(division.divisionConcat, season, false, false).then(
                 standing => {
                     const query = {
                         dataName: division.divisionConcat,
