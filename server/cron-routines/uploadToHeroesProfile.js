@@ -214,6 +214,10 @@ async function sendToHp(divisions, matchCopy, match, logObj) {
     let postedReplays = 0;
     try {
 
+        //reset log info
+        logObj.action = '';
+        logObj.error = '';
+
         //we will fill our post object with tasty data for heroes profile
 
         //dev/prod
@@ -302,6 +306,7 @@ async function sendToHp(divisions, matchCopy, match, logObj) {
 
                 // if the specific replay object is not null or undefined and the replay does NOT have a valid submission to HP all ready
                 if (!util.isNullorUndefined(replayObj) && !util.returnBoolByPath(replayObj, 'parsedUrl')) {
+
 
                     postObj['replay_url'] = process.env.heroProfileReplay + replayObj.url;
                     logObj.target = 'Match Id: ' + matchCopy.matchId;
