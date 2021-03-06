@@ -344,9 +344,6 @@ async function sendToHp(divisions, matchCopy, match, logObj) {
                                 if (posted.response.data.message) {
                                     logObj.error += posted.response.data.message
                                 }
-                                if (posted.response.data) {
-                                    logObj.error += ', ' + posted.response.data.message
-                                }
                                 postedReplays += 1;
                                 logObj.logLevel = 'ERROR';
                                 logger(logObj);
