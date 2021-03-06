@@ -38,6 +38,7 @@ async function postToHotsProfileHandler(limNum) {
     }
 
     //find matches reported by captains but not send to heroes profile
+
     let matches = await Match.find({
         $and: [{
                 $or: [{
@@ -287,6 +288,9 @@ async function sendToHp(divisions, matchCopy, match, logObj) {
         //does this match have replays?
         if (util.returnBoolByPath(matchCopy, 'replays')) {
 
+            // get the replay keys; assume that _id will never be valid;
+            delete matchCopy.replays._id;
+
             let replayKeys = Object.keys(matchCopy.replays);
 
             for (var j = 0; j < replayKeys.length; j++) {
@@ -296,6 +300,7 @@ async function sendToHp(divisions, matchCopy, match, logObj) {
 
                 let replayObj = matchCopy.replays[(j + 1).toString()];
 
+                // if the specific replay object is not null or undefined and the replay does NOT have a valid submission to HP all ready
                 if (!util.isNullorUndefined(replayObj) && !util.returnBoolByPath(replayObj, 'parsedUrl')) {
 
                     postObj['replay_url'] = process.env.heroProfileReplay + replayObj.url;
@@ -309,40 +314,41 @@ async function sendToHp(divisions, matchCopy, match, logObj) {
                     if (screenPostObject(postObj)) {
 
                         //Post to Heroes Profile >>>>>>>>>>>>>>>>>>>>>>>>
+                        let errorReturn = false;
                         let posted = await hpAPI.matchUpload(postObj).then(reply => {
                             return reply;
                         }, err => {
-                            return null;
+                            errorReturn = true;
+                            return err;
                         });
+
                         //finished post to Heroes Profile >>>>>>>>>>>>>>>
 
-                        if (posted && posted != 'null') {
+                        if (!errorReturn) {
                             fallThroughCheck = false;
                             logObj.action = ' logging reply from hots-profile ' + JSON.stringify(posted);
                             logger(logObj);
                             match['replays'][localKey]['parsedUrl'] = posted.url;
                             postedReplays += 1;
                         } else {
-                            //if post fails then do not set the match to fully reported
-                            fallThroughCheck = false;
-                            logObj.error = '';
-                            if (err.message) {
-                                logObj.error += err.message
-                            }
-                            if (err.response.data.message) {
-                                logObj.error += ', ' + err.response.data.message
-                            }
-                            //if we get a known error then we need to remove this match and replay from the scrap...
-                            if (err.response.data.message) {
-                                if (err.response.data.message == 'Game mode is not custom.  Invalid replay sent') {
-                                    postedReplays += 1;
+                            try {
+                                //if post fails then do not set the match to fully reported
+                                fallThroughCheck = false;
+                                logObj.action = '';
+                                logObj.error = '';
+                                if (posted.response.data.message) {
+                                    logObj.error += posted.response.data.message
                                 }
-                                if (err.response.data.message == 'Invalid parameter. A player provided was not in the game') {
-                                    postedReplays += 1;
+                                if (posted.response.data) {
+                                    logObj.error += ', ' + posted.response.data.message
                                 }
+                                postedReplays += 1;
+                                logObj.logLevel = 'ERROR';
+                                logger(logObj);
+                            } catch (e) {
+                                console.log(e);
                             }
-                            logObj.logLevel = 'ERROR';
-                            logger(logObj);
+
                         }
 
                     } else {
@@ -350,6 +356,9 @@ async function sendToHp(divisions, matchCopy, match, logObj) {
                         logObj.error = "This replay failed the screen, NOT SENT TO HEROSPROFILE!!";
                         logger(logObj);
                     }
+                } // if this replay DOES HAVE a valid submission to HP then count it as submitted
+                else if (util.returnBoolByPath(replayObj, 'parsedUrl')) {
+                    postedReplays += 1;
                 }
                 if (fallThroughCheck) {
                     logObj.logLevel = "WARNING";
@@ -360,6 +369,7 @@ async function sendToHp(divisions, matchCopy, match, logObj) {
             //end loop
         }
 
+        // if we had any succes posting to HP then set reported flag to true to remove this match from submission queue; if problems are reported with it later check the logs.
         match['postedToHP'] = postedReplays > 0;
         //util.errLogger(location, null,'match ' + match )
         let saved = await match.save().then(saved => {

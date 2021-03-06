@@ -141,6 +141,7 @@ async function reportMatch(caller, matchReport, requester, bypass) {
         } else {
 
             match.reported = true;
+            match.postedToHP = false;
             return match.save((saved) => {
                 //if this match was a tournmanet match then we need to promote the winner to the parent match
                 matchCommon.promoteTournamentMatch(match.toObject());
