@@ -276,6 +276,7 @@ async function stdDivStanding(division, season, pastSeason, noDeltas) {
 
     noDeltas = util.validateInputs.boolean(noDeltas).value;
 
+
     let teams;
 
     //grab all amtches that match the season and division and are not tournament matches
@@ -349,16 +350,18 @@ async function stdDivStanding(division, season, pastSeason, noDeltas) {
             }
         });
 
+        //add a position property 1st,....
+        for (var i = 0; i < standings.length; i++) {
+            standings[i]['standing'] = i + 1;
+        }
+
         if (!noDeltas) {
-            //add a position property 1st,....
-            for (var i = 0; i < standings.length; i++) {
-                standings[i]['standing'] = i + 1;
-            }
+
 
             //retrieve data from db of stored standings
             let query = {
                 dataName: `${division.divisionConcat}`,
-                span: season
+                season: season
             }
 
             //pull saved standings data from the database
@@ -374,10 +377,11 @@ async function stdDivStanding(division, season, pastSeason, noDeltas) {
                 }
             );
 
+
             try {
 
                 if (data) {
-                    _.forEach(data.data.standings, (oldDataV, oldDataK) => {
+                    _.forEach(data.data, (oldDataV, oldDataK) => {
                         let storedStanding = oldDataV;
                         _.forEach(standings, (standingV, standingK) => {
                             let calcStanding = standingV;
