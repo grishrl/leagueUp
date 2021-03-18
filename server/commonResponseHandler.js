@@ -2,11 +2,7 @@ const _ = require('lodash');
 const utils = require('./utils');
 const debugLogger = require('./debug');
 
-const trackAPI = [
-    'user/hero-profile/path',
-    'request/user/join/response',
-    'schedule/get/matches/casted/playing'
-];
+const trackAPI = utils.isNullOrEmpty(process.env.trackApi) ? [] : process.env.trackApi.split(',');
 
 function errTracingLogs(req, start, msg) {
     let log = false;
