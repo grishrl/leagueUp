@@ -87,12 +87,10 @@ async function postToHotsProfileHandler(limNum) {
                     return reply;
                 },
                 err => {
-                    util.errLogger(location, err);
+                    util.errLogger(location, err, 'ln:90, error in the division query.');
                     return null;
                 }
             );
-
-            util.errLogger(location, null, matches.length)
 
             //run through the array of matches to be reported
             for (var i = 0; i < matches.length; i++) {
@@ -121,7 +119,7 @@ async function postToHotsProfileHandler(limNum) {
                                 return saved;
                             },
                             err => {
-                                util.errLogger(location, err);
+                                util.errLogger(location, err, 'ln:122 error saving match that was a forfeit');
                                 return null;
                             }
                         )
@@ -129,9 +127,7 @@ async function postToHotsProfileHandler(limNum) {
                     } else {
 
                         pq.addToQueue(
-                            () => {
-                                return sendToHp(divisions, matchCopy, match, logObj)
-                            }
+                            sendToHp(divisions, matchCopy, match, logObj)
                         );
 
                     }
@@ -181,7 +177,7 @@ function promiseQueue() {
         if (promiseQueue.queue.length > 0 && promiseQueue.active == false) {
             promiseQueue.active = true;
             let worker = promiseQueue.queue.shift();
-            Promise.resolve(worker.apply()).then(
+            Promise.resolve(worker).then(
                 doWorkResolved => {
                     promiseQueue.active = false;
                     promiseQueue.doWork();
@@ -377,12 +373,12 @@ async function sendToHp(divisions, matchCopy, match, logObj) {
         let saved = await match.save().then(saved => {
             return saved;
         }, err => {
-            util.errLogger(location, err);
+            util.errLogger(location, err, 'ln 376 error saving match after posting to heroes profile');
             return null;
         });
 
     } catch (e) {
-        util.errLogger(location, e);
+        util.errLogger(location, e, 'ln 381 try/catch caught');
     }
     return null;
 }
@@ -487,3 +483,88 @@ function getDivisionByTeamName(divisionList, teamName) {
         }
     });
 }
+
+
+// 3-19-2021 promise queue work
+
+// function promMock(delay, toReturn, toReject) {
+//   return new Promise((resolve, reject) => {
+//     console.log('starting ', toReturn)
+//     setTimeout(() => {
+//       console.log('careful im making network calls out of order..', toReturn)
+//       if (toReject) {
+//         reject(toReturn);
+//       } else {
+//         console.log('finishing ', toReturn)
+//         resolve(toReturn)
+//       }
+//     }, delay);
+//   })
+// }
+
+// function promiseQueue() {
+
+//   let promiseQueue = {
+
+//   };
+
+//   promiseQueue.queue = [];
+
+//   promiseQueue.active = false;
+
+//   promiseQueue.doWork = function () {
+//     console.log('doing work: ')
+//     if (promiseQueue.queue.length > 0 && promiseQueue.active == false) {
+//       promiseQueue.active = true;
+//       let worker = promiseQueue.queue.shift();
+//       Promise.resolve(worker).then(
+//         doWorkResolved => {
+//           promiseQueue.active = false;
+//           promiseQueue.doWork();
+//         });
+//       /*                 worker.apply();
+//                                       promiseQueue.active = false;
+//                                       promiseQueue.doWork(); */
+//     }
+
+//   }
+
+//   promiseQueue.addToQueue = function (fn) {
+//     console.log('adding to queue :', promiseQueue.queue.length);
+//     promiseQueue.queue.push(fn);
+//     promiseQueue.doWork();
+//   }
+
+//   return promiseQueue;
+
+// }
+
+// async function promAsync(delay, toReturn, toReject) {
+//   let x = await promMock(delay, toReturn, toReject);
+//   return x;
+// }
+
+// promAsync(4000, 'asdfasdfasdf', false).then((res) => {
+//   console.log('res ', res);
+// })
+
+// /*         promMock(4000, 'delay test').then((res)=>{
+//         console.log('res', res);
+//         }); */
+
+// var pq = promiseQueue();
+// var responseList = ['she', 'sells', 'sea', 'shells', 'down', 'by', 'the', 'sea', 'shore'];
+
+// for (var i = 0; i < responseList.length; i++) {
+//   /* promMock(1000*i, responseList[i]).then((res)=>{
+//         console.log('res ', res);
+//         }) */
+//   /*  pq.addToQueue(
+//    promMock(2000 * i, responseList[i], false).then((res)=>{
+//           console.log('res ', res);
+//           })
+//           promAsync(2000 * i, responseList[i], false).then((res)=>{
+//              console.log('res ', res);
+//           })
+//           ); */
+// }
