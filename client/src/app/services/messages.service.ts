@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { of } from 'rxjs';
 import { HttpServiceService } from './http-service.service';
 
 @Injectable({
@@ -7,11 +8,16 @@ import { HttpServiceService } from './http-service.service';
 export class MessagesService {
 
   getMessageNumbers(toGet){
-    let url = '/messageCenter/get/message/numbers';
-    let payload = {
-      recipient:toGet
-    };
-    return this.httpService.httpPost(url,payload);
+    if(toGet){
+          let url = "/messageCenter/get/message/numbers";
+          let payload = {
+            recipient: toGet,
+          };
+          return this.httpService.httpPost(url, payload);
+    }else{
+     return of(null);
+    }
+
   }
 
   getMessages(toGet){
@@ -37,7 +43,7 @@ export class MessagesService {
     };
     return this.httpService.httpPost(url, payload, true);
   }
-  
+
 
 
   constructor(private httpService:HttpServiceService) { }

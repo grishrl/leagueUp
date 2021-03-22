@@ -88,10 +88,7 @@ createMobileNav(){
     //get any user messages
     this.messages.getMessageNumbers(this.Auth.getUserId()).subscribe( (res)=>{
       if(res){
-        if(res){
-          this.userMessages = parseInt(res);
-        }
-
+         this.userMessages = parseInt(res);
       }
     }, err=>{
       console.log(err);
