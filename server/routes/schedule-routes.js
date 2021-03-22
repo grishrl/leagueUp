@@ -414,48 +414,48 @@ router.get('/get/matches/casted/playing', (req, res) => {
     const path = 'schedule/get/matches/casted/playing';
 
     const start = Date.now();
-    console.log(`${path} starting trace...`)
+    // console.log(`${path} starting trace...`)
     commonResponseHandler(req, res, [], [], async(req, res) => {
         const response = {};
         let now = Date.now();
         let query = {
-            $and: [{
-                casterUrl: {
-                    $exists: true
-                }
-            }, {
-                "scheduledTime.endTime": {
-                    $gt: now
-                }
-            }, {
-                "scheduledTime.startTime": {
-                    $lt: now
-                }
-            }]
-        }
-        console.log(`${path} running A... ${start - Date.now()} ms`);
+                $and: [{
+                    casterUrl: {
+                        $exists: true
+                    }
+                }, {
+                    "scheduledTime.endTime": {
+                        $gt: now
+                    }
+                }, {
+                    "scheduledTime.startTime": {
+                        $lt: now
+                    }
+                }]
+            }
+            // console.log(`${path} running A... ${start - Date.now()} ms`);
         return Match.find(query).lean().then((found) => {
             if (found) {
                 let teams = findTeamIds(found);
                 return addTeamNamesToMatch(teams, found).then((processed) => {
-                    console.log(`${path} success finish... ${start - Date.now()} ms`);
+                    // console.log(`${path} success finish... ${start - Date.now()} ms`);
                     response.status = 200;
                     response.message = utils.returnMessaging(req.originalUrl, 'Found matches', false, processed)
                     return response;
                 }, (err) => {
-                    console.log(`${path} fail finish... ${start - Date.now()} ms`);
+                    // console.log(`${path} fail finish... ${start - Date.now()} ms`);
                     response.status = 400;
                     response.message = utils.returnMessaging(req.originalUrl, 'Error compiling match info', err)
                     return response;
                 });
             } else {
-                console.log(`${path} success A finish... ${start - Date.now()} ms`);
+                // console.log(`${path} success A finish... ${start - Date.now()} ms`);
                 response.status = 200;
                 response.message = utils.returnMessaging(req.originalUrl, 'No matches found for criteria', false, found)
                 return response;
             }
         }, (err) => {
-            console.log(`${path} fail A finish... ${start - Date.now()} ms`);
+            // console.log(`${path} fail A finish... ${start - Date.now()} ms`);
             response.status = 500;
             response.message = utils.returnMessaging(req.originalUrl, 'Error finding matches', err)
             return response;
