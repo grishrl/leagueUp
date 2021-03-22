@@ -16,7 +16,7 @@ function doWork() {
     logObj.timeStamp = Date.now();
     hpUploadHandler.postToHotsProfileHandler(process.env.replayUploadLimit).then(
         (response) => {
-            logObj.action = 'Submitting replays to Hots Profile completed normally ';
+            logObj.action = 'Submitting replays to Hots Profile started';
             logger(logObj);
         },
         err => {
