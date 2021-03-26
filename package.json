@@ -4,7 +4,7 @@
     "description": "Large package encompassing several capabilities for e-sports leagues",
     "main": "server.js",
     "scripts": {
-        "start": "node cluster.js",
+        "start": "node --optimize_for_size --max_old_space_size=460 --gc_interval=100 cluster.js",
         "heroku-postbuild": "node node_modules/heroprotocol/postinstall.js && cd client && npm install"
     },
     "engines": {
