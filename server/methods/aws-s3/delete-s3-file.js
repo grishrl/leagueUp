@@ -2,6 +2,7 @@
  * s3deletefile method
  */
 const AWS = require('aws-sdk');
+const utils = require('../../utils');
 const logger = require('../../subroutines/sys-logging-subs').logger;
 
 /**
@@ -47,10 +48,13 @@ async function s3deleteFile(bucket, folder, fileName) {
             }
         });
 
+        console.log('S3 deleter, ', data);
+
         s3Bucket.deleteObject(data, (err, data) => {
             let returnVal = false;
             if (err) {
                 //log object
+                console.log('S3 deleter, err', data, err);
                 let sysObj = {};
                 sysObj.actor = 'SYSTEM';
                 sysObj.action = 'error deleting from AWS ';
@@ -64,6 +68,7 @@ async function s3deleteFile(bucket, folder, fileName) {
             } else {
                 returnVal = true;
                 //log object
+                console.log('S3 deleter, success', data);
                 let sysObj = {};
                 sysObj.actor = 'SYSTEM';
                 sysObj.action = 'deleted from AWS ';
