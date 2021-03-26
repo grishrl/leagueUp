@@ -410,13 +410,10 @@ router.get('/hero-profile/path', (req, res) => {
     }]
 
     const start = Date.now();
-    console.log(`${path} starting..`);
     commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
         const response = {};
-        console.log(`${path} exectuing..${start-Date.now()} ms`);
         return hpAPI.playerProfile(requiredParameters.displayName.value).then(
             (resp) => {
-                console.log(`${path} calculated.. ${start-Date.now()} ms, returning..`);
                 response.status = 200;
                 response.message = utils.returnMessaging(req.originalUrl, 'Found.', null, resp);
                 return response;
