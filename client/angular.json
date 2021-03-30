@@ -45,10 +45,16 @@
                         ]
                     },
                     "configurations": {
-                        "local-no-server": {
+                        "local-dev-no-server": {
                             "fileReplacements": [{
                                 "replace": "src/environments/environment.ts",
-                                "with": "src/environments/environment.local.no-serv.ts"
+                                "with": "src/environments/environment.local-dev-no-server.ts"
+                            }]
+                        },
+                        "local-prod-no-server": {
+                            "fileReplacements": [{
+                                "replace": "src/environments/environment.ts",
+                                "with": "src/environments/environment.local-prod-no-server.ts"
                             }]
                         },
                         "local": {
@@ -104,8 +110,11 @@
                         "production": {
                             "browserTarget": "client:build:production"
                         },
-                        "local-no-server": {
-                            "browserTarget": "client:build:local-no-server"
+                        "local-dev-no-server": {
+                            "browserTarget": "client:build:local-dev-no-server"
+                        },
+                        "local-prod-no-server": {
+                            "browserTarget": "client:build:local-prod-no-server"
                         }
                     }
                 },
