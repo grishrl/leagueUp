@@ -400,32 +400,43 @@ router.get('/leagueOverallStats', (req, res) => {
 
 });
 
+const queue = {};
+var pathBusy = false;
+
 router.get('/hero-profile/path', (req, res) => {
 
     const path = 'user/hero-profile/path';
+
+
 
     const requiredParameters = [{
         name: 'displayName',
         type: 'string'
     }]
 
-    const start = Date.now();
-    commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
-        const response = {};
-        return hpAPI.playerProfile(requiredParameters.displayName.value).then(
-            (resp) => {
-                response.status = 200;
-                response.message = utils.returnMessaging(req.originalUrl, 'Found.', null, resp);
-                return response;
-            },
-            (err) => {
-                console.log(`${path} error... ${start-Date.now()} ms, returning..`);
-                response.status = 500;
-                response.message = utils.returnMessaging(req.originalUrl, 'Not Found.', err);
-                return response;
-            }
-        )
-    })
+    if (pathBusy) {
+
+    } else {
+        const start = Date.now();
+        commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
+            const response = {};
+            return hpAPI.playerProfile(requiredParameters.displayName.value).then(
+                (resp) => {
+                    response.status = 200;
+                    response.message = utils.returnMessaging(req.originalUrl, 'Found.', null, resp);
+                    return response;
+                },
+                (err) => {
+                    console.log(`${path} error... ${start-Date.now()} ms, returning..`);
+                    response.status = 500;
+                    response.message = utils.returnMessaging(req.originalUrl, 'Not Found.', err);
+                    return response;
+                }
+            )
+        })
+    }
+
+
 
 });
 

@@ -45,6 +45,12 @@
                         ]
                     },
                     "configurations": {
+                        "local-no-server": {
+                            "fileReplacements": [{
+                                "replace": "src/environments/environment.ts",
+                                "with": "src/environments/environment.local.no-serv.ts"
+                            }]
+                        },
                         "local": {
                             "fileReplacements": [{
                                 "replace": "src/environments/environment.ts",
@@ -97,6 +103,9 @@
                     "configurations": {
                         "production": {
                             "browserTarget": "client:build:production"
+                        },
+                        "local-no-server": {
+                            "browserTarget": "client:build:local-no-server"
                         }
                     }
                 },

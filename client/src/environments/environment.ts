@@ -14,6 +14,7 @@ export const environment = {
   heroesProfilePlayer: "https://www.heroesprofile.com/NGS/Profile/?",
   heroesProfile: "https://www.heroesprofile.com/Profile/?",
   heroesProfileTeam: "https://heroesprofile.com/NGS/Team/Single/?team=",
+  serverTLD:''
 };
 
 

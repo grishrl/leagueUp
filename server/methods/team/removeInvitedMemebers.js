@@ -30,9 +30,11 @@ async function removeInvitedMembers(teamName, members) {
             let usersRemoved = [];
 
             for (var i = 0; i < foundTeam.invitedUsers.length; i++) {
-                if (members.indexOf(foundTeam.invitedUsers[i]) > -1) {
-                    indiciesToRemove.push(i);
-                }
+                members.forEach(member => {
+                    if (member.displayName == foundTeam.invitedUsers[i]) {
+                        indiciesToRemove.push(i);
+                    };
+                })
             }
 
             if (indiciesToRemove.length == 0) {
@@ -44,12 +46,12 @@ async function removeInvitedMembers(teamName, members) {
                 indiciesToRemove.forEach(function(index) {
                     let userToRemove = foundTeam.invitedUsers.splice(index, 1);
                     usersRemoved = usersRemoved.concat(userToRemove);
-                    let assCapIndex = foundTeam.assistantCaptain.indexOf(userToRemove[0].displayName);
-                    if (assCapIndex > -1) {
-                        foundTeam.assistantCaptain.splice(assCapIndex, 1);
-                    }
+                    // let assCapIndex = foundTeam.assistantCaptain.indexOf(userToRemove[0]);
+                    // if (assCapIndex > -1) {
+                    //     foundTeam.assistantCaptain.splice(assCapIndex, 1);
+                    // }
                 });
-                UserSub.clearUsersTeam(usersRemoved);
+                // UserSub.clearUsersTeam(usersRemoved);
                 return foundTeam.save().then((savedTeam) => {
                     if (savedTeam) {
                         TeamSub.updateTeamMmrAsynch(foundTeam);
