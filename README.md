@@ -23,6 +23,18 @@ inside the client directory run npx ng build --watch --configuration=local
 Connect to localhost:5000
 
 
+### Client Only Running !
+
+### Prerequisites
+
+* NPM,
+* Clone the repo to your local machine 
+
+Run `npm install` in the client directory - this install any dependencies for the client
+inside the client directory run `npx ng serve --configuration=local-prod-no-server` for running client locally against prod server
+inside the client directory run `npx ng serve --configuration=local-dev-no-server` for running client locally against dev server
+
+
 ### Prerequisites
 
 * Heroku Local CLI
