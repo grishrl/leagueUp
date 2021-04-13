@@ -46,7 +46,9 @@
 
                         <!-- Tab One - Groups List -->
                         <div class="tab-pane" id="groups" [ngClass]="{'active': index==1}">
-                            <app-division-table-view></app-division-table-view>
+                            <div *ngIf="index==1">
+                                <app-division-table-view></app-division-table-view>
+                            </div>
                         </div>
                         <!-- End Tab One - Groups List -->
 
