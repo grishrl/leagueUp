@@ -100,15 +100,10 @@ export class CountdownComponent implements OnInit {
     this.showRegBut = this.auth.getCaptain();
     if (this.timeService.returnWeekNumber() > 0) {
       this.preSeason = false;
-      this.scheduleService.getAllMatchesWithStartTime().subscribe(
-        (res) => {
-          let matches = res;
-          matches = matches.filter((match) => {
-            return this.util.returnBoolByPath(match, "casterName");
-          });
-          let now = Date.now();
-          let nearestMatch = nextDate(now, matches);
 
+      this.scheduleService.getNearestMatch().subscribe(
+        res=>{
+          let nearestMatch = res[0];
           if (nearestMatch) {
             nearestMatch.scheduledTime.startTime = parseInt(
               nearestMatch.scheduledTime.startTime
@@ -120,11 +115,11 @@ export class CountdownComponent implements OnInit {
             this.validMatch = true;
             this.initCountdown();
           }
-        },
-        (err) => {
-          console.log(err);
+        },(err)=>{
+          console.warn(err);
         }
-      );
+      )
+
     } else {
       this.startDate = this.seasonStartDate;
       this.targetMatch.scheduledTime.startTime = this.seasonStartDate;

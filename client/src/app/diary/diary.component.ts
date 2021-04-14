@@ -15,29 +15,9 @@ export class DiaryComponent implements OnInit {
   next4matches = [];
 
   ngOnInit() {
-    this.scheduleService.getAllMatchesWithStartTime().subscribe(
-      res => {
-        let matches = res;
-        let now = Date.now();
-
-        matches = matches.filter( a=>{
-          if (a.scheduledTime && a.scheduledTime.startTime) {
-            a.scheduledTime.startTime = parseInt(a.scheduledTime.startTime);
-          }
-          if(a.scheduledTime && a.scheduledTime.startTime > now){
-            return true;
-          }else{
-            return false;
-          }
-        });
-        matches = matches.sort ( (a, b)=>{
-          if(a.scheduledTime.startTime > b.scheduledTime.startTime){
-            return 1;
-          }else{
-            return -1;
-          }
-        });
-        matches.forEach( (match, ind)=>{
+    this.scheduleService.getNearestMatches(4).subscribe(
+      res=>{
+        res.forEach( (match, ind)=>{
           if(ind<4){
             match.home.logo = this.team.imageFQDN(match.home.logo);
             match.away.logo = this.team.imageFQDN(match.away.logo);
@@ -45,7 +25,9 @@ export class DiaryComponent implements OnInit {
           }
         });
       },
-      err => { }
+      err=>{
+        console.warn(err);
+      }
     )
   }
 

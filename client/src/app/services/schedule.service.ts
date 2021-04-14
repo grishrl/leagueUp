@@ -42,6 +42,94 @@ export class ScheduleService {
     );
   }
 
+  // returns the match starting closest to now
+  getNearestMatch(){
+
+
+    let now = Date.now();
+    let query = [
+        {
+          "scheduledTime.startTime": {
+            "$gt":now
+        }},
+        {
+          "casterName":{"$exists":true}
+        }
+    ];
+    let options =  {
+            "limit": 1,
+            "sort": {
+                "scheduledTime.startTime": 1
+            }
+        };
+
+      const payload = { query, options};
+
+      let url = "schedule/fetch/matches/scheduled";
+
+
+
+      return this.httpService.httpPost(url,payload);
+
+  }
+
+  getNearestMatches(limit){
+
+
+    let now = Date.now();
+    let query = [
+        {
+          "scheduledTime.startTime": {
+            "$gt":now
+        }}
+    ];
+    let options =  {
+            "limit": limit,
+            "sort": {
+                "scheduledTime.startTime": 1
+            }
+        };
+
+      const payload = { query, options };
+
+      let url = "schedule/fetch/matches/scheduled";
+
+
+
+      return this.httpService.httpPost(url,payload);
+
+  }
+
+    getNearestDivisionMatches(division, limit){
+
+
+    let now = Date.now();
+    let query = [
+        {
+          "scheduledTime.startTime": {
+            "$gt":now
+        }},
+        {
+          "divisionConcat":division
+        }
+    ];
+    let options =  {
+            "limit": limit,
+            "sort": {
+                "scheduledTime.startTime": 1
+            }
+        };
+
+      const payload = { query, options };
+
+      let url = "schedule/fetch/matches/scheduled";
+
+
+
+      return this.httpService.httpPost(url,payload);
+
+  }
+
   getMatchupHistory(teamAid: string, teamBid: string) {
     let url = "schedule/fetch/matchup/history";
     let payload = {

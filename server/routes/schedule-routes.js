@@ -635,56 +635,118 @@ router.get('/get/matches/scheduled', async(req, res) => {
     const path = 'schedule/get/matches/scheduled';
 
     commonResponseHandler(req, res, [], [], async(req, res) => {
-        const response = {};
-        let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
-        let season = currentSeasonInfo.value;
 
-        let query = {
-            $and: [{
-                    'scheduledTime.startTime': {
-                        $exists: true
-                    }
-                },
-                {
-                    'scheduledTime.startTime': {
-                        $ne: null
-                    }
-                },
-                {
-                    season: season
-                }
-            ]
-        }
+        return getScheduledMatches(req);
 
-        return Match.find(query).lean().then((found) => {
-            if (found) {
-                let teamIds = findTeamIds(found);
-                return addTeamAndDivsionNames(found).then(
-                    added => {
-                        response.status = 200;
-                        response.message = utils.returnMessaging(req.originalUrl, 'Found scheduled matches', false, added);
-                        return response;
-                    },
-                    err => {
-                        response.status = 500
-                        response.message = utils.returnMessaging(req.originalUrl, 'Failed to get team matches', err, false)
-                        return response;
-                    }
-                );
-            } else {
-                response.status = 400;
-                response.message = utils.returnMessaging(req.originalUrl, 'No matches found')
-                return response;
-            }
-        }, (err) => {
-            response.status = 400;
-            response.message = utils.returnMessaging(req.originalUrl, 'Error in query', err)
-            return response;
-        });
-    })
+    });
 
 });
 
+/*
+
+this route accepts additional query parameters and options to further narrow down the query return
+
+the query parameter must be an array of objects of additional QUERY objects to add to the existing;
+
+the options is an object of query options.
+
+*/
+
+
+router.post('/fetch/matches/scheduled', async(req, res) => {
+    const path = 'schedule/fetch/matches/scheduled';
+
+    const optionalParameters = [{
+            name: 'query',
+            type: 'array'
+        },
+        {
+            name: 'options',
+            type: 'object'
+        }
+    ];
+
+    commonResponseHandler(req, res, [], optionalParameters, async(req, res, required, options) => {
+
+        let adQuery = {};
+
+        if (options.options.valid) {
+            adQuery.options = options.options.value;
+        }
+
+        if (options.query.valid) {
+            adQuery.query = options.query.value;
+        }
+
+        return getScheduledMatches(req, adQuery);
+    })
+
+})
+
+
+async function getScheduledMatches(req, additionalQuery) {
+    const response = {};
+    let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+    let season = currentSeasonInfo.value;
+    let query = {
+        $and: [{
+                'scheduledTime.startTime': {
+                    $exists: true
+                }
+            },
+            {
+                'scheduledTime.startTime': {
+                    $ne: null
+                }
+            },
+            {
+                season: season
+            }
+        ]
+    }
+
+    let options = null;
+
+    if (additionalQuery) {
+
+        if (additionalQuery.options) {
+            options = additionalQuery.options
+        }
+
+        if (additionalQuery.query) {
+            additionalQuery.query.forEach(q => {
+                query.$and.push(q);
+            })
+        }
+
+    }
+
+    return Match.find(query, null, options).lean().then((found) => {
+        if (found) {
+            let teamIds = findTeamIds(found);
+            return addTeamAndDivsionNames(found).then(
+                added => {
+                    response.status = 200;
+                    response.message = utils.returnMessaging(req.originalUrl, 'Found scheduled matches', false, added);
+                    return response;
+                },
+                err => {
+                    response.status = 500
+                    response.message = utils.returnMessaging(req.originalUrl, 'Failed to get team matches', err, false)
+                    return response;
+                }
+            );
+        } else {
+            response.status = 400;
+            response.message = utils.returnMessaging(req.originalUrl, 'No matches found')
+            return response;
+        }
+    }, (err) => {
+        response.status = 400;
+        response.message = utils.returnMessaging(req.originalUrl, 'Error in query', err)
+        return response;
+    });
+}
 
 router.post('/update/match/time', passport.authenticate('jwt', {
     session: false

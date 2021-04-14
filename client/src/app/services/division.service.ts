@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpServiceService } from './http-service.service';
 import { FilterService } from '../services/filter.service';
+import { CacheServiceService } from './cache-service.service';
 
 @Injectable({
   providedIn: "root",
@@ -11,7 +12,7 @@ export class DivisionService {
   //returns and sorts all divisions
   getDivisionInfo() {
     let turl = "/division/get/all";
-    return this.httpService.httpGet(turl, []).pipe(
+    return this.cache.getCached(turl, this.httpService.httpGet(turl, []).pipe(
       map((res) => {
         let divisionArr = res;
         divisionArr = divisionArr.sort((a, b) => {
@@ -19,7 +20,7 @@ export class DivisionService {
         });
         return divisionArr;
       })
-    );
+    ));
   }
 
   //return division given a team name:
@@ -45,16 +46,7 @@ export class DivisionService {
 
   constructor(
     private httpService: HttpServiceService,
-    private fs: FilterService
+    private fs: FilterService,
+    private cache:CacheServiceService
   ) {}
 }
-
-
-  // getDivInfo(divisionName:string){
-  //   let url = 'admin/getDivInfo'
-
-  //   return this.http.get<any>(url + '?division=' + divisionName).pipe(
-  //     map((res) => {
-  //       return res.returnObject;
-  //     }));
-  // }

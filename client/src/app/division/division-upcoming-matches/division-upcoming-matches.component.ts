@@ -20,35 +20,9 @@ export class DivisionUpcomingMatchesComponent implements OnInit {
 
   next4matches=[];
   initSched(filter){
-    this.scheduleService.getAllMatchesWithStartTime().subscribe(
-      res => {
-        this.next4matches = [];
-        let matches = res;
-        let now = Date.now();
-
-        matches = matches.filter(a => {
-          if (a.scheduledTime && a.scheduledTime.startTime) {
-            a.scheduledTime.startTime = parseInt(a.scheduledTime.startTime);
-          }
-          if (a.scheduledTime && a.scheduledTime.startTime > now) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        matches = matches.filter(
-          match => {
-            return match.divisionConcat == filter
-          }
-        )
-        matches = matches.sort((a, b) => {
-          if (a.scheduledTime.startTime > b.scheduledTime.startTime) {
-            return 1;
-          } else {
-            return -1;
-          }
-        });
-        matches.forEach((match, ind) => {
+    this.scheduleService.getNearestDivisionMatches(filter, 4).subscribe(
+      res=>{
+        res.forEach((match, ind) => {
           if (ind < 4) {
             match.home.logo = this.teamServ.imageFQDN(match.home.logo);
             match.away.logo = this.teamServ.imageFQDN(match.away.logo);
@@ -56,8 +30,10 @@ export class DivisionUpcomingMatchesComponent implements OnInit {
           }
         });
       },
-      err => { }
-    )
+      err=>{
+        console.warn(err);
+      }
+    );
   }
 
   ngOnInit() {
