@@ -193,7 +193,8 @@ export class TournamentGeneratorComponent implements OnInit {
     if (
       this.tournamentSeed.length > 3 &&
       this.season &&
-      !this.utils.isNullOrEmpty(this.name)
+      !this.utils.isNullOrEmpty(this.name) &&
+      this.tournName.valid
     ) {
       disable = false;
     }
@@ -202,45 +203,46 @@ export class TournamentGeneratorComponent implements OnInit {
 
   generateBrackets() {
 
+    if(this.divisional){
+      this.adminService
+        .generateTournament(
+          this.tournamentSeed,
+          this.season,
+          this.name,
+          this.division,
+          this.cup,
+          this.description,
+          this.selectedType
+        )
+        .subscribe(
+          (res) => {
+            this.ngOnInit();
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
+      }
 
     if(!this.divisional){
-          this.adminService
-            .generateTournament(
-              this.tournamentSeed,
-              this.season,
-              this.name,
-              this.division,
-              this.cup,
-              this.description,
-              this.selectedType
-            )
-            .subscribe(
-              (res) => {
-                this.ngOnInit();
-              },
-              (err) => {
-                console.log(err);
-              }
-            );
-    }else{
-          this.adminService
-            .generateTournament(
-              this.tournamentSeed,
-              this.season,
-              this.name,
-              null,
-              null,
-              this.description,
-              this.selectedType
-            )
-            .subscribe(
-              (res) => {
-                this.ngOnInit();
-              },
-              (err) => {
-                console.log(err);
-              }
-            );
+      this.adminService
+        .generateTournament(
+          this.tournamentSeed,
+          this.season,
+          this.name,
+          null,
+          null,
+          this.description,
+          this.selectedType
+        )
+        .subscribe(
+          (res) => {
+            this.ngOnInit();
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
     }
   }
 
