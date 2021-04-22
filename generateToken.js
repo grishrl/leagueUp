@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const System = require('./server/models/system-models');
+const _ = require('lodash');
 const mongoose = require('mongoose')
 const teamSubs = require('./server/subroutines/team-subs');
 // const Archive = require('./server/models/system-models').archive;
@@ -9,6 +10,7 @@ const matchCommon = require('./server/methods/matchCommon');
 const groupMakerTest = require('./server/cron-routines/groupMaker');
 const Archive = require('./server/methods/archivalMethods');
 const hpAPI = require('./server/methods/heroesProfileAPI');
+const fs = require('fs');
 
 let tokenObject = {};
 // set this ID to the _id that the API key will be tied to
@@ -32,26 +34,59 @@ if (api) {
 
 
 
-console.log('token ', token);
+// console.log('token ', token);
 
 // connect to mongo db
 mongoose.connect(process.env.mongoURI, () => {
     console.log('connected to mongodb');
 });
 
-new System.system({
-    'dataName': 'apiKey',
-    'value': token
-}).save().then(
-    saved => {
-        console.log('saved ', ' token ', token);
-        process.exit(0);
-    },
-    err => {
-        console.log('not saved ', ' token ', token);
-        process.exit(0);
+// new System.system({
+//     'dataName': 'apiKey',
+//     'value': token
+// }).save().then(
+//     saved => {
+//         console.log('saved ', ' token ', token);
+//         process.exit(0);
+//     },
+//     err => {
+//         console.log('not saved ', ' token ', token);
+//         process.exit(0);
+//     }
+// );
+const list = [];
+
+Match.find({
+    $and: [
+        { season: 11 },
+        { divisionConcat: 'e-east' },
+        { reported: true },
+        { $or: [{ forfeit: false }, { forfeit: { $exists: false } }] }
+    ]
+}).then(
+    (found) => {
+        console.log(found.length);
+        found.forEach(
+            match => {
+                let obj = match.toObject();
+                if (obj.replays) {
+                    _.forEach(obj.replays, (v, k) => {
+                        console.log('V', v);
+                        if (v && v.url) {
+                            console.log(`${process.env.heroProfileReplay}${v.url}`);
+                            list.push(`${process.env.heroProfileReplay}${v.url}`);
+                        }
+                    })
+                }
+            }
+        );
+
+        fs.writeFile('downloadList.txt', JSON.stringify(list), (err) => {
+            console.log(err);
+        });
+
     }
-);
+)
 
 // Archive.archiveDivisions().then(
 //     res => {
