@@ -14,17 +14,19 @@ router.post('/upsert', passport.authenticate('jwt', {
     const path = '/events/upsert';
 
     const requiredParameters = [{
-        name: 'org_event',
-        type: 'object'
-    }, {
         name: 'event',
+        type: 'object'
+    }];
+
+    const optionalParams = [{
+        name: 'org_event',
         type: 'object'
     }]
 
-    commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
+    commonResponseHandler(req, res, requiredParameters, optionalParams, async(req, res, requiredParameters, optionalParams) => {
         const response = {};
 
-        let orig = requiredParameters.org_event.value;
+        let orig = optionalParams.org_event.valid ? optionalParams.org_event.value : {};
         let event = requiredParameters.event.value;
 
         let keys = Object.keys(orig);
