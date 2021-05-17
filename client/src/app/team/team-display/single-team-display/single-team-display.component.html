@@ -1,0 +1,19 @@
+<div class="item-team">
+    <div class="head-team">
+        <img src="{{item.logo}}" alt="location-team">
+        <div class="overlay">
+            <app-team-link [team]="item.teamName" [season]="season">+</app-team-link>
+        </div>
+    </div>
+    <div class="info-team">
+        <span class="logo-team">
+                          <img src="{{item.logo}}" alt="logo-team">
+                        </span>
+        <h4>{{item.teamName}}</h4>
+    </div>
+    <app-team-link [season]="season" [team]="item.teamName">
+        <span class="btn">Team
+                        Profile <i class="fa fa-angle-right" aria-hidden="true"></i></span>
+    </app-team-link>
+
+</div>

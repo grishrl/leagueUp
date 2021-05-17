@@ -31,6 +31,9 @@ export class PlayerSmallCardComponent implements OnInit {
     }
   }
 
+
+  @Input() showTeamLink = false;
+
   player: Profile = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,null);
   matches = 0;
   initPlayer(){

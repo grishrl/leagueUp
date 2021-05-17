@@ -206,8 +206,17 @@ import { VerifiedStormLeagueRanksViewComponent } from './verified-storm-league-r
 import { DeleteTournamentComponent } from './admin/match-management/delete-tournament/delete-tournament.component';
 import { MembersReportingComponent } from './storm-rank-tools/members-reporting/members-reporting.component';
 import { VerifiedStormRanksDisplayNameComponent } from './storm-rank-tools/verified-storm-ranks-display-name/verified-storm-ranks-display-name.component';
+import { PlayerSearchComponent } from './player/player-search/player-search.component';
+import { SingleTeamDisplayComponent } from './team/team-display/single-team-display/single-team-display.component';
+import { MatColorFormats, MAT_COLOR_FORMATS, NgxMatColorPickerModule, NGX_MAT_COLOR_FORMATS } from '@angular-material-components/color-picker';
 
 // const config: SocketIoConfig = { url: environment.socketURL, options:{} }
+
+export const CUSTOM_MAT_COLOR_FORMATS:MatColorFormats = {
+  display:{
+    colorInput:'hex'
+  }
+}
 
 @NgModule({
   declarations: [
@@ -266,7 +275,6 @@ import { VerifiedStormRanksDisplayNameComponent } from './storm-rank-tools/verif
     EventLargeComponent,
     SetDeadlineComponent,
     MatchViewComponent,
-
     DropDownTimeComponent,
     UserMessageCenterComponent,
     TeamMarketComponent,
@@ -397,17 +405,17 @@ import { VerifiedStormRanksDisplayNameComponent } from './storm-rank-tools/verif
     VerifiedStormLeagueRanksViewComponent,
     DeleteTournamentComponent,
     MembersReportingComponent,
-    VerifiedStormRanksDisplayNameComponent
+    VerifiedStormRanksDisplayNameComponent,
+    PlayerSearchComponent,
+    SingleTeamDisplayComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
     ChangeCaptainModalComponent,
     ConfirmRemoveMemberComponent,
     EventModalComponent,
-
     NgsAccordianComponent,
     AssistantCaptainMgmtComponent
-
   ],
   imports: [
     BrowserModule,
@@ -424,14 +432,16 @@ import { VerifiedStormRanksDisplayNameComponent } from './storm-rank-tools/verif
     }),
     // SocketIoModule.forRoot(config),
     DragDropModule,
-    DragScrollModule
+    DragScrollModule,
+    NgxMatColorPickerModule
   ],
   providers: [
     {
     provide:HTTP_INTERCEPTORS,
     useClass:ResponseInterceptor,
     multi:true
-    }
+    },
+    { provide: MAT_COLOR_FORMATS, useValue: CUSTOM_MAT_COLOR_FORMATS }
   ],
   schemas:[
     CUSTOM_ELEMENTS_SCHEMA

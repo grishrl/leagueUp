@@ -8,7 +8,7 @@
                             <h3>Select division to modify:</h3>
                         </div>
                     </div>
-                    <app-division-selector (selectedDiv)="selected($event)" [admin]="true"></app-division-selector>
+                    <app-division-selector (selectedDiv)="selected($event)" [refresh]="selectorRefresh" [admin]="true"></app-division-selector>
                 </div>
                 <div class="col">
                     <h5>Create new division</h5>
@@ -62,6 +62,15 @@
                                     Division Moderator is required
                                 </mat-error>
                             </mat-form-field>
+                            <mat-form-field>
+                                <label>Division Color</label>
+                                <input matInput [ngxMatColorPicker]="picker" [(ngModel)]="deColore" (ngModelChange)="updateColor($event)" [formControl]="colorCtr" [disabled]="disabled">
+                                <ngx-mat-color-toggle matSuffix [for]="picker"></ngx-mat-color-toggle>
+                                <ngx-mat-color-picker #picker [touchUi]="false" [color]="color"></ngx-mat-color-picker>
+                            </mat-form-field>
+                            <div>
+                                <div style="width: 50px; height:50px;" [ngStyle]="{'background-color': '#'+editDivision.divColor}"></div>
+                            </div>
 
                             <mat-checkbox [(ngModel)]="editDivision.public">Visible to Public</mat-checkbox>
                             <mat-checkbox [(ngModel)]="editDivision.cupDiv">Cup Division</mat-checkbox>

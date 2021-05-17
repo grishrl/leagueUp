@@ -60,12 +60,17 @@ import { GrandChampionsViewerComponent } from "./grand-champions-viewer/grand-ch
 import { RankRequirementsComponent } from './admin/rank-requirements/set-rank-requirements/rank-requirements.component';
 import { ValidateRankComponent } from './admin/rank-requirements/validate-rank/validate-rank.component';
 import { DeleteTournamentComponent } from './admin/match-management/delete-tournament/delete-tournament.component';
+import { PlayerSearchComponent } from './player/player-search/player-search.component';
 
 const APP_ROUTES: Routes = [
   { path: "challonge", component: ChallongeTournComponent },
   { path: "directory", component: DirectoryComponent },
   { path: "", component: HomeComponent },
   { path: "login", component: LoginComponent },
+  {
+    path:'playersearch',
+    component:PlayerSearchComponent
+  },
   {
     path: "rules",
     component: BlogViewComponent,

@@ -20,6 +20,14 @@
     <app-player-link [player]="player.displayName">
         <span class="btn">View Player <i class="fa fa-angle-right" aria-hidden="true"></i></span>
     </app-player-link>
+    <div class="mt-1" *ngIf="showTeamLink">
+
+        <app-team-link [team]="player.teamName">
+            <span class="btn">Team
+                        Profile <i class="fa fa-angle-right" aria-hidden="true"></i></span>
+        </app-team-link>
+
+    </div>
     <div class="row mt-1" *ngIf="showRemove()">
         <div class="col">
             <button class="btn-remove" (click)="removeMember(player.displayName)"><i class="fas fa-ban"></i> Remove From
