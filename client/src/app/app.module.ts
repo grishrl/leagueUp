@@ -123,7 +123,7 @@ import { TeamHistoryComponent } from './team/team-history/team-history.component
 import { TeamUpcomingMatchComponent } from './team/team-upcoming-match/team-upcoming-match.component';
 import { DivisionResultsTilesComponent } from './division/division-results-tiles/division-results-tiles.component';
 import { DivisionUpcomingMatchesComponent } from './division/division-upcoming-matches/division-upcoming-matches.component';
-import { NgsAccordianComponent } from './elements/ngs-accordian/ngs-accordian.component';
+// import { NgsAccordianComponent } from './elements/ngs-accordian/ngs-accordian.component';
 import { BannerImageComponent } from './banner-image/banner-image.component';
 import { ResultsTilesComponent } from './results-tiles/results-tiles.component';
 // import { AvatarUploadComponent } from './player/avatar-upload/avatar-upload.component';
@@ -208,15 +208,8 @@ import { MembersReportingComponent } from './storm-rank-tools/members-reporting/
 import { VerifiedStormRanksDisplayNameComponent } from './storm-rank-tools/verified-storm-ranks-display-name/verified-storm-ranks-display-name.component';
 import { PlayerSearchComponent } from './player/player-search/player-search.component';
 import { SingleTeamDisplayComponent } from './team/team-display/single-team-display/single-team-display.component';
-import { MatColorFormats, MAT_COLOR_FORMATS, NgxMatColorPickerModule, NGX_MAT_COLOR_FORMATS } from '@angular-material-components/color-picker';
+// import { MAT_COLOR_FORMATS, NgxMatColorPickerModule, NGX_MAT_COLOR_FORMATS } from '@angular-material-components/color-picker';
 
-// const config: SocketIoConfig = { url: environment.socketURL, options:{} }
-
-export const CUSTOM_MAT_COLOR_FORMATS:MatColorFormats = {
-  display:{
-    colorInput:'hex'
-  }
-}
 
 @NgModule({
   declarations: [
@@ -327,7 +320,7 @@ export const CUSTOM_MAT_COLOR_FORMATS:MatColorFormats = {
     DivisionResultsTilesComponent,
     DivisionUpcomingMatchesComponent,
     SafeHtmlPipe,
-    NgsAccordianComponent,
+    // NgsAccordianComponent,
     BannerImageComponent,
     ResultsTilesComponent,
     ApprovePendingAvatarComponent,
@@ -414,7 +407,6 @@ export const CUSTOM_MAT_COLOR_FORMATS:MatColorFormats = {
     ChangeCaptainModalComponent,
     ConfirmRemoveMemberComponent,
     EventModalComponent,
-    NgsAccordianComponent,
     AssistantCaptainMgmtComponent
   ],
   imports: [
@@ -430,10 +422,9 @@ export const CUSTOM_MAT_COLOR_FORMATS:MatColorFormats = {
       provide: DateAdapter,
       useFactory: adapterFactory
     }),
-    // SocketIoModule.forRoot(config),
     DragDropModule,
     DragScrollModule,
-    NgxMatColorPickerModule
+    // NgxMatColorPickerModule
   ],
   providers: [
     {
@@ -441,7 +432,7 @@ export const CUSTOM_MAT_COLOR_FORMATS:MatColorFormats = {
     useClass:ResponseInterceptor,
     multi:true
     },
-    { provide: MAT_COLOR_FORMATS, useValue: CUSTOM_MAT_COLOR_FORMATS }
+    // { provide: MAT_COLOR_FORMATS, useValue: NGX_MAT_COLOR_FORMATS }
   ],
   schemas:[
     CUSTOM_ELEMENTS_SCHEMA
