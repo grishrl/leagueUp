@@ -13,6 +13,7 @@
  */
 
 const User = require('../models/user-models');
+const Team = require('../models/team-models');
 const logger = require('../subroutines/sys-logging-subs').logger;
 const CustomError = require('./customError');
 const utils = require('../utils');
@@ -21,6 +22,7 @@ const _ = require('lodash');
 const s3deleteFile = require('../methods/aws-s3/delete-s3-file').s3deleteFile;
 const { s3putObject } = require('../methods/aws-s3/put-s3-file');
 const { prepImage } = require('../methods/image-upload-common');
+const Message = require('../subroutines/message-subs');
 
 
 /**
@@ -351,6 +353,8 @@ async function playerRankApproved(rankObj) {
  * @param {string} rankObj.userId id of user to modify
  * @param {number} rankObj.year specified year
  * @param {number} rankObj.season specified season
+ * @param {string} rankObj.reason reason rank was denied
+ * @param {string} rankObj.sender id of user who denied this rank image
  */
 async function playerRankDenied(rankObj) {
 
@@ -419,9 +423,12 @@ async function playerRankDenied(rankObj) {
 
                 successObject.success = true;
 
+                rejectionMessaging(userObj, rankObj);
+
             }
 
         }
+
     } catch (e) {
         console.log('Pending player rank - catch 4', e);
     }
@@ -429,6 +436,25 @@ async function playerRankDenied(rankObj) {
     return successObject;
 }
 
+function rejectionMessaging(userObj, rankObj) {
+    const subject = 'Rank Verification Image Denied';
+
+    const content = `${userObj.displayName} 's Year - ${rankObj.seasonInf.year} , Season - ${rankObj.seasonInf.season}:  Rank Image was denied because: ${rankObj.reason}`;
+    Message(userObj._id, subject, content, rankObj.sender);
+    Team.findById(userObj.teamId).then(
+        foundTeam => {
+            let teamObj = utils.objectify(foundTeam);
+            if (userObj.displayName !== teamObj.captain) {
+                User.findOne({ displayName: teamObj.captain }).then(
+                    foundCapt => {
+                        let capt = utils.objectify(foundCapt);
+                        Message(capt._id, subject, content, rankObj.sender);
+                    }
+                );
+            }
+        }
+    )
+}
 
 module.exports = {
     uploadRankImage,

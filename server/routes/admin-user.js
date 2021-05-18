@@ -519,6 +519,8 @@ router.post('/approveRank', passport.authenticate('jwt', {
 
         } else {
 
+            //append the person who denied this to the obj for messaging.
+            rankObj.sender = req.user._id;
             //method to handle this sit
             return prMethods.playerRankDenied(rankObj).then(
                 success => {

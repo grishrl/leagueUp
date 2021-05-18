@@ -28,6 +28,7 @@ export class ApproveRankViewComponent implements OnInit {
     if(this.hlRankMetal == 'Unranked'){
       this.hlRankDivision = 0;
     }
+
     let payload = {
       seasonInf: { season: this.info.season, year: this.info.year },
       userId: this.info.userId,
@@ -35,6 +36,12 @@ export class ApproveRankViewComponent implements OnInit {
       hlRankDivision: this.hlRankDivision,
       verified: approve,
     };
+
+    if(!approve){
+      let invalidReason = prompt('Enter some feedback for denial.','Invalid Image');
+      payload['reason'] = invalidReason
+    }
+
     this.RankService.adminActionRank(payload).subscribe(
       (res) => {
         this.rankActioner.emit(this.info);
