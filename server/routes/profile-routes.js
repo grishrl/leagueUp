@@ -400,6 +400,36 @@ router.get('/leagueOverallStats', (req, res) => {
 
 });
 
+router.get('/get/casters', (req, res) => {
+
+    const path = 'user/get/casters';
+
+
+    const start = Date.now();
+    commonResponseHandler(req, res, [], [], async(req, res) => {
+        const response = {};
+        return User.find({
+            $and: [
+                { $or: [{ casterName: { $exists: true } }, { casterName: { $ne: null } }] },
+                { $or: [{ twitch: { $exists: true } }, { twitch: { $ne: null } }] }
+
+            ]
+        }).then(
+            foundCasters => {
+                response.status = 200;
+                response.message = utils.returnMessaging(req.originalUrl, 'Found Casters', false, foundCasters);
+                return response;
+            },
+            err => {
+                response.status = 400;
+                response.message = utils.returnMessaging(req.originalUrl, 'Error Getting Casters', err, null, null);
+                return response;
+            }
+        )
+    });
+
+});
+
 const queue = {};
 var pathBusy = false;
 

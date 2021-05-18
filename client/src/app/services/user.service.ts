@@ -33,6 +33,11 @@ export class UserService {
     return this.httpService.httpGet(this.userGetURL, params);
   }
 
+  getCasters(){
+    let url = 'user/get/casters';
+    return this.httpService.httpGet(url, []);
+  }
+
   //   getStatistics(username){
   //   let encodedID = encodeURIComponent(username);
   //   let url = '/user/statistics';
