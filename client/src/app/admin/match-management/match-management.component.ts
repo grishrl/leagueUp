@@ -189,9 +189,18 @@ export class MatchManagementComponent implements OnInit, AfterViewInit {
 
   filterOtherTeam(teamName){
     if(this.filterTeam){
-      let showing = this.displayArray;
-      showing = showing.filter((a) => { return this.filterServ.testName(a, teamName)}  );
-      this.displayArray = showing;
+      if(teamName.length>0){
+        let showing = this.filterMatches;
+        showing = showing.filter((a) => { return this.filterServ.testName(a, teamName)}  );
+        this.filterMatches = showing;
+        this.displayArray = this.filterMatches.slice(0, this.pageSize > this.length ? this.length : this.pageSize);
+        this.length = this.filterMatches.length;
+        this.paginator.firstPage();
+      }else{
+        this.filterMatches = this.originalMatches;
+        this.doFilterMatches(this.selectedDivision, this.selectedRound, this.filterTeam);
+      }
+
     }
   }
 
