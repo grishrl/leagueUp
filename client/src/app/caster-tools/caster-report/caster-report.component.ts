@@ -32,20 +32,9 @@ export class CasterReportComponent implements OnInit {
 
   casterSelected(caster, type){
     if(type=='cocaster'){
-      console.log('caster', caster);
       if(this.casterReport.coCasters.indexOf(caster)==-1 && caster.length>0){
         this.casterReport.coCasters.push(caster);
       }
-      // let ind = -1;
-      // this.casterReport.coCasters.forEach(v=>{
-      //   if(v.displayName == caster.displayName){
-      //     ind = 11
-      //   }
-      // });
-      // if(ind==-1){
-      //   this.casterReport.coCasters.push(caster);
-      //   console.log(this.casterReport);
-      // }
     }
   }
 
@@ -75,8 +64,20 @@ export class CasterReportComponent implements OnInit {
         this.casterReport.matchId = params['params'].matchId;
         this.casterReport.division = params['params'].division;
         console.log(this.casterReport);
+        //get report if it exists
+        this.ScheduleService.getCasterReport(this.casterReport.matchId).subscribe(
+          res=>{
+            if(res){
+            this.casterReport = res;
+            }
+
+          },
+          err=>{
+            console.warn(err);
+          }
+        )
       }
-    )
+    );
     this.casterReport.casterName = this.Auth.getUser();
 
     this.User.getCasters().subscribe(
@@ -89,6 +90,23 @@ export class CasterReportComponent implements OnInit {
       }
     )
 
+  }
+
+  saving='';
+
+  save(){
+    this.saving='Savng..';
+    if(this.casterReport.vodLinks.length>0){
+      this.ScheduleService.casterReport(this.casterReport).subscribe(
+        res=>{
+          this.saving='';
+        },
+        err=>{
+          this.saving='';
+          console.warn(err);
+        }
+      )
+    }
   }
 
 }
