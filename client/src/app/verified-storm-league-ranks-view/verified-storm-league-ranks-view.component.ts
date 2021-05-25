@@ -27,6 +27,7 @@ export class VerifiedStormLeagueRanksViewComponent implements OnInit {
   showUploadButton = false;
   userStatus = "";
 
+  @Input() orientation = 'horizontal';
   @Input() admin = false;
   @Input() verifiedUserRanks;
   @Input() teamName;

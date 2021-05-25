@@ -23,7 +23,10 @@
         </div>
         <div class="row">
             <div class="col">
-                <div *ngIf="player.verifiedRankHistory && player.verifiedRankHistory.length>0; else noMetalDiv">
+                <app-verified-storm-league-ranks-view [orientation]="'vertical'" [admin]="false" [userId]="player._id" [verifiedUserRanks]="player.verifiedRankHistory">
+
+                </app-verified-storm-league-ranks-view>
+                <!-- <div *ngIf="player.verifiedRankHistory && player.verifiedRankHistory.length>0; else noMetalDiv">
                     <div> <strong>Storm Leauge Ranks:</strong></div>
                     <ng-container *ngFor="let r of player.verifiedRankHistory">
                         <div class="border p-2" *ngIf="r?.status == 'verified'">
@@ -40,7 +43,7 @@
                 </div>
                 <ng-template #noMetalDiv>
                     Player has no verified in game ranks!
-                </ng-template>
+                </ng-template> -->
             </div>
         </div>
     </div>
