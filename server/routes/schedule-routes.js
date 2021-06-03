@@ -1281,9 +1281,9 @@ router.post('/generate/schedules', passport.authenticate('jwt', {
         logObj.action = ' generated season schedules ';
         logObj.logLevel = 'STD';
         logObj.target = 'season: ' + season;
-        return scheduleGenerator.generateSeason(season).then((process) => {
+        return scheduleGenerator.generateSeasonTwo(season).then((process) => {
             if (process) {
-                scheduleGenerator.generateRoundRobinSchedule(season);
+                scheduleGenerator.generateRoundRobinScheduleTwo(season);
                 response.status = 200;
                 response.message = utils.returnMessaging(req.originalUrl, 'Schedules generating', false, null, null, logObj)
                 return response;
