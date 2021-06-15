@@ -204,6 +204,7 @@ import { VerifiedStormRanksDisplayNameComponent } from './storm-rank-tools/verif
 import { PlayerSearchComponent } from './player/player-search/player-search.component';
 import { SingleTeamDisplayComponent } from './team/team-display/single-team-display/single-team-display.component';
 import { MAT_COLOR_FORMATS, NgxMatColorPickerModule, NGX_MAT_COLOR_FORMATS } from '@angular-material-components/color-picker';
+import { AdminYoutubeCurator } from './admin/caster/admin-youtube-curator/admin-youtube-curator.component';
 
 
 @NgModule({
@@ -394,7 +395,8 @@ import { MAT_COLOR_FORMATS, NgxMatColorPickerModule, NGX_MAT_COLOR_FORMATS } fro
     MembersReportingComponent,
     VerifiedStormRanksDisplayNameComponent,
     PlayerSearchComponent,
-    SingleTeamDisplayComponent
+    SingleTeamDisplayComponent,
+    AdminYoutubeCurator
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

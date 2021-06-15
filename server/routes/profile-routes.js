@@ -15,7 +15,7 @@ const {
     requireOneInput,
     returnInvalidInputsMessage
 } = require('./../commonResponseHandler');
-const { DataExchange } = require('aws-sdk');
+
 
 /*
 /get

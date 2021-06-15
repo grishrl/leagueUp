@@ -381,4 +381,9 @@ export class ScheduleService {
     ];
     return this.httpService.httpGet(url, payload);
   }
+
+    getUncurratedReport(){
+    let url = '/schedule/report/cast/uncurrated';
+    return this.httpService.httpGet(url, []);
+  }
 }

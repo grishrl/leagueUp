@@ -1,0 +1,53 @@
+<section class="content-info">
+
+
+
+    <div class="container paddings-mini">
+
+        <div class="row mt-2">
+            <div class="col">
+                <a [routerLink]="['/_admin/dashboard']">Back to Dashboard</a>
+            </div>
+        </div>
+        <div class="row">
+
+            <!-- Sidebars -->
+            <div class="col">
+
+                <!-- Widget img-->
+                <div class="panel-box">
+                    <div class="titles no-margin">
+                        <h4>
+                            Cast Reports
+                        </h4>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+
+                            <div class="mt-2"><span>Total Caster Reports: {{reports?.totalBatch}}</span> <span class="ml-3">Total to Send Now:{{reports?.thisBatch}}</span></div>
+                            <div>Total Videos In Reports: {{totalVideos}}</div>
+
+                            <button [disabled]="totalVideos == 0" class="mt-2" (click)="authenticate()"> Click To Log On To Google </button>
+
+                            <div class="mt-2">
+                                <button [disabled]="disableYoutubeButton" (click)="youtube()"> Click to Begin Adding Videos to Channel Playlists </button>
+                            </div>
+
+                            <div class="mt-2">
+                                <span [hidden]="hideWorking">Working...</span>
+                                <div>Uploaded videos: {{playlistAdded}}</div>
+                                <div>Errors: {{errorCount}}</div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- End Widget img-->
+            </div>
+            <!-- End Sidebars -->
+
+        </div>
+    </div>
+
+
+</section>

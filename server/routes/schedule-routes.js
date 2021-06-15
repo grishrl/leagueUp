@@ -14,7 +14,8 @@ const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 const archiveMethods = require('../methods/archivalMethods');
 const AWS = require('aws-sdk');
 const { commonResponseHandler } = require('./../commonResponseHandler');
-const { response } = require('express');
+const getMatches = require('../methods/matches/getMatchesBy');
+
 
 
 /**
@@ -214,80 +215,95 @@ router.post('/fetch/reported/matches', async(req, res) => {
     commonResponseHandler(req, res, requiredParameters, optionalParameters, async(req, res, requiredParameters, optionalParameters) => {
         const response = {};
 
-        let season = requiredParameters.season.value;
 
-        let query = {
-            $and: [{
-                    season: season
-                },
-                {
-                    reported: true
-                }
-            ]
-        }
-
-        let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
-        let pastSeason = season != currentSeasonInfo.value;
-
-        if (optionalParameters.division.valid) {
-            query.$and.push({
-                divisionConcat: optionalParameters.division.value
-            });
-        }
-
-        return Match.find(query).lean().then(
-            found => {
-                if (found) {
-                    if (optionalParameters.sortOrder.value == 'des') {
-                        found = utils.sortMatchesByTime(found);
-                        found.reverse();
-                    } else if (optionalParameters.sortOrder.value == 'asc') {
-                        found = utils.sortMatchesByTime(found);
-                    }
-
-                    if (optionalParameters.limit.valid) {
-                        let limit = optionalParameters.limit.value > found.length ? found.length : optionalParameters.limit.value;
-                        found = found.slice(0, limit);
-                    }
-
-                    if (pastSeason) {
-                        return matchCommon.addTeamInfoFromArchiveToMatch(found, season).then(
-                            processed => {
-                                response.status = 200;
-                                response.message = utils.returnMessaging(req.originalUrl, 'Found these matches', null, processed)
-                                return response;
-                            },
-                            err => {
-                                response.status = 400
-                                response.message = utils.returnMessaging(req.originalUrl, 'Error compiling match info', err)
-                                return response;
-                            }
-                        )
-                    } else {
-                        return matchCommon.addTeamInfoToMatch(found).then(
-                            processed => {
-                                response.status = 200;
-                                response.message = utils.returnMessaging(req.originalUrl, 'Found these matches', null, processed)
-                                return response;
-                            },
-                            err => {
-                                response.status = 400;
-                                response.message = utils.returnMessaging(req.originalUrl, 'Error compiling match info', err)
-                                return response;
-                            }
-                        )
-                    }
-                } else {
-                    response.status = 200;
-                    response.message = utils.returnMessaging(req.originalUrl, 'No Matches Found', null, found)
-                    return response;
-                }
-            }, err => {
+        return getMatches.returnReportedMatches(requiredParameters.season.value,
+            optionalParameters.division.value, optionalParameters.sortOrder.value, optionalParameters.limit.value).then(
+            matches => {
+                response.status = 200;
+                response.message = utils.returnMessaging(req.originalUrl, 'Found these matches', null, matches)
+                return response;
+            },
+            err => {
                 response.status = 500;
                 response.message = utils.returnMessaging(req.originalUrl, 'Error getting matches', err)
                 return response;
             }
         );
+
+        // let season = requiredParameters.season.value;
+
+        // let query = {
+        //     $and: [{
+        //             season: season
+        //         },
+        //         {
+        //             reported: true
+        //         }
+        //     ]
+        // }
+
+        // let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+        // let pastSeason = season != currentSeasonInfo.value;
+
+        // if (optionalParameters.division.valid) {
+        //     query.$and.push({
+        //         divisionConcat: optionalParameters.division.value
+        //     });
+        // }
+
+        // return Match.find(query).lean().then(
+        //     found => {
+        //         if (found) {
+        //             if (optionalParameters.sortOrder.value == 'des') {
+        //                 found = utils.sortMatchesByTime(found);
+        //                 found.reverse();
+        //             } else if (optionalParameters.sortOrder.value == 'asc') {
+        //                 found = utils.sortMatchesByTime(found);
+        //             }
+
+        //             if (optionalParameters.limit.valid) {
+        //                 let limit = optionalParameters.limit.value > found.length ? found.length : optionalParameters.limit.value;
+        //                 found = found.slice(0, limit);
+        //             }
+
+        //             if (pastSeason) {
+        //                 return matchCommon.addTeamInfoFromArchiveToMatch(found, season).then(
+        //                     processed => {
+        //                         response.status = 200;
+        //                         response.message = utils.returnMessaging(req.originalUrl, 'Found these matches', null, processed)
+        //                         return response;
+        //                     },
+        //                     err => {
+        //                         response.status = 400
+        //                         response.message = utils.returnMessaging(req.originalUrl, 'Error compiling match info', err)
+        //                         return response;
+        //                     }
+        //                 )
+        //             } else {
+        //                 return matchCommon.addTeamInfoToMatch(found).then(
+        //                     processed => {
+        //                         response.status = 200;
+        //                         response.message = utils.returnMessaging(req.originalUrl, 'Found these matches', null, processed)
+        //                         return response;
+        //                     },
+        //                     err => {
+        //                         response.status = 400;
+        //                         response.message = utils.returnMessaging(req.originalUrl, 'Error compiling match info', err)
+        //                         return response;
+        //                     }
+        //                 )
+        //             }
+        //         } else {
+        //             response.status = 200;
+        //             response.message = utils.returnMessaging(req.originalUrl, 'No Matches Found', null, found)
+        //             return response;
+        //         }
+        //     }, err => {
+        //         response.status = 500;
+        //         response.message = utils.returnMessaging(req.originalUrl, 'Error getting matches', err)
+        //         return response;
+        //     }
+        // );
     })
 
 });
@@ -1052,6 +1068,44 @@ router.get('/report/cast', passport.authenticate('jwt', {
             saved => {
                 response.status = 200;
                 response.message = utils.returnMessaging(req.originalUrl, 'Found Cast Report', null, saved)
+                return response;
+            },
+            err => {
+                response.status = 500;
+                response.message = utils.returnMessaging(req.originalUrl, 'Error getting cast report', err, null)
+                return response;
+            }
+        );
+    });
+
+});
+
+router.get('/report/cast/uncurrated', passport.authenticate('jwt', {
+    session: false
+}), utils.appendResHeader, async(req, res) => {
+    const path = '/schedule/report/cast/uncurrated';
+
+    commonResponseHandler(req, res, [], [], async(req, res) => {
+        const response = {};
+        return CasterReportMethod.getUnCurratedReports().then(
+            saved => {
+                let toReturn = [];
+                let totalVideos = 0;
+                saved.forEach(
+                    s => {
+                        totalVideos = totalVideos + s.vodLinks.length;
+                        if (totalVideos < 45) {
+                            toReturn.push(s);
+                        }
+                    }
+                );
+                returnObject = {
+                    reportList: toReturn,
+                    thisBatch: toReturn.length,
+                    totalBatch: saved.length
+                }
+                response.status = 200;
+                response.message = utils.returnMessaging(req.originalUrl, 'Found Cast Report', null, returnObject)
                 return response;
             },
             err => {

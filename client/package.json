@@ -31,6 +31,8 @@
         "@angular/router": "^11.0.0-next.0",
         "@auth0/angular-jwt": "^3.0.1",
         "@types/croppie": "^2.5.4",
+        "@types/gapi": "0.0.39",
+        "@types/gapi.auth2": "0.0.54",
         "@types/jquery": "^3.3.31",
         "@types/marked": "^0.6.5",
         "@types/moment-timezone": "^0.5.12",

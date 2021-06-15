@@ -9,7 +9,9 @@ const casterReport = new Schema({
     matchId: String,
     division: String,
     vodLinks: [String],
-    issue: String
+    issue: String,
+    season: Number,
+    playlistCurrated: Boolean
 })
 
 const CasterReport = mongoose.model('casterReport', casterReport);

@@ -62,6 +62,7 @@ import { ValidateRankComponent } from './admin/rank-requirements/validate-rank/v
 import { DeleteTournamentComponent } from './admin/match-management/delete-tournament/delete-tournament.component';
 import { PlayerSearchComponent } from './player/player-search/player-search.component';
 import { CasterReportComponent } from './caster-tools/caster-report/caster-report.component';
+import { AdminYoutubeCurator } from "./admin/caster/admin-youtube-curator/admin-youtube-curator.component";
 
 const APP_ROUTES: Routes = [
   { path: "challonge", component: ChallongeTournComponent },
@@ -133,6 +134,11 @@ const APP_ROUTES: Routes = [
     {
     path: "_casterDashboard",
     component: CasterDashboardComponent,
+    canActivate: [AuthGuardService],
+    data: { role: "caster" },
+  },    {
+    path: "_admin/youtube/playlist",
+    component: AdminYoutubeCurator,
     canActivate: [AuthGuardService],
     data: { role: "caster" },
   },
