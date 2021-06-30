@@ -61,7 +61,7 @@ export class UpdateTeamInfoComponent implements OnInit {
         this.returnedProfile.stormRankAvg = res.newMMR.stormRankAvg;
       },
       err => {
-        console.log(err);
+        console.warn(err);
       }
     );
   }
@@ -124,7 +124,7 @@ export class UpdateTeamInfoComponent implements OnInit {
             this.router.navigate(["/_admin/manageTeam"]);
           },
           err => {
-            console.log(err);
+            console.warn(err);
           }
         );
       }
@@ -153,7 +153,7 @@ export class UpdateTeamInfoComponent implements OnInit {
           this.stratifyTeamMembers();
         },
         err => {
-          console.log(err);
+          console.warn(err);
         }
       );
     } else {
@@ -191,7 +191,7 @@ export class UpdateTeamInfoComponent implements OnInit {
               this.returnedProfile = res;
             },
             err => {
-              console.log(err);
+              console.warn(err);
             }
           );
       }
@@ -207,8 +207,6 @@ export class UpdateTeamInfoComponent implements OnInit {
     this.returnedProfile.teamName_lower = this.returnedProfile.teamName.toLowerCase();
     this.admin.saveTeam(this.originalName, this.returnedProfile).subscribe(
       res => {
-        // console.log(res);
-        // console.log('team was saved!');
         this.originalName = res.teamName_lower;
         if (!res.questionnaire) {
           res.questionnaire = {};
@@ -217,7 +215,7 @@ export class UpdateTeamInfoComponent implements OnInit {
         this.returnedProfile = res;
       },
       err => {
-        console.log(err);
+        console.warn(err);
         alert(err.message);
       }
     );
@@ -244,11 +242,10 @@ export class UpdateTeamInfoComponent implements OnInit {
       .removeMembers(this.returnedProfile.teamName_lower, player)
       .subscribe(
         res => {
-          // console.log('user removed');
           this.init();
         },
         err => {
-          console.log(err);
+          console.warn(err);
         }
       );
   }
@@ -259,7 +256,7 @@ export class UpdateTeamInfoComponent implements OnInit {
         alert('Team matches forfeited');
       },
       err=>{
-        console.log(err);
+        console.warn(err);
       }
     )
   }
@@ -270,11 +267,10 @@ export class UpdateTeamInfoComponent implements OnInit {
       .removeInvitedMembers(this.returnedProfile.teamName_lower, player)
       .subscribe(
         (res) => {
-          // console.log('user removed');
           this.init();
         },
         (err) => {
-          console.log(err);
+          console.warn(err);
         }
       );
   }

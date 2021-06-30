@@ -21,7 +21,7 @@ export class TeamTickerComponent implements OnInit, ControlValueAccessor {
         this.filterWords = res['data']
         this.ngOnInit();
       },
-      err => { console.log(err) }
+      err => { console.warn(err) }
     )
     controlDir.valueAccessor = this;
   }

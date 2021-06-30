@@ -37,13 +37,13 @@ export class AddTeamComponent implements OnInit {
         return 0;
       } )
     }, (err) => {
-      console.log(err)
+      console.warn(err)
     });
     this.divisions=[];
     this.admin.getDivisionList().subscribe(res => {
       this.divisions = res;
     }, (err) => {
-      console.log(err);
+      console.warn(err);
     })
 
   }
@@ -89,7 +89,7 @@ export class AddTeamComponent implements OnInit {
       res => {
         this.ngOnInit();
       }, (err) => {
-        console.log(err)
+        console.warn(err)
       }
     );
   }

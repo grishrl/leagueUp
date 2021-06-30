@@ -55,7 +55,7 @@ export class EventCreateComponent implements OnInit {
           this.suffix = this.util.getSuffixFromMS(this.event['eventDate']);
         },
         err=>{
-          console.log(err);
+          console.warn(err);
         }
       )
     }
@@ -103,7 +103,7 @@ export class EventCreateComponent implements OnInit {
             this.event['_id']=res['_id'];
           },
           err => {
-            console.log(err)
+            console.warn(err)
           }
         )
       } else {
@@ -114,7 +114,7 @@ export class EventCreateComponent implements OnInit {
             this.event['_id'] = res['_id'];
           },
           err => {
-            console.log(err)
+            console.warn(err)
           }
         )
       }

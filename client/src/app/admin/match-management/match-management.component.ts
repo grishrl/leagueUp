@@ -67,7 +67,7 @@ export class MatchManagementComponent implements OnInit, AfterViewInit {
                   );
                 },
                 err=>{
-                  console.log(err);
+                  console.warn(err);
                 }
               );
             }
@@ -76,7 +76,7 @@ export class MatchManagementComponent implements OnInit, AfterViewInit {
       );
 
     }, (err) => {
-      console.log(err);
+      console.warn(err);
     });
   }
 
@@ -95,7 +95,7 @@ export class MatchManagementComponent implements OnInit, AfterViewInit {
         });
       }
     );
-    console.log(`${i} matches merged`);
+    // console.log(`${i} matches merged`);
   }
 
   displayArray = [];

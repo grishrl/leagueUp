@@ -17,42 +17,6 @@ export class WordpressService {
     private http: HttpServiceService
   ) {}
 
-  // getBlogPosts(params?){
-  //   let paramString = '';
-  //   if (params) {
-  //     params.forEach((element, index) => {
-  //       let key = Object.keys(element);
-  //       if (index == 0) {
-  //         paramString += '?' + key[0] + '=' + element[key[0]];
-  //       } else {
-  //         paramString += '&' + key[0] + '=' + element[key[0]];
-  //       }
-
-  //     });
-  //   }
-  //   return this.Http.get(`${this.baseURL}/posts${paramString}`, { observe: 'response' }).pipe(
-  //       map((data:any) => {
-  //         // console.log(data.headers.headers);
-  //         let blogTotal = parseInt(data.headers.headers.get('x-wp-total')[0]);
-  //         let blogPages = parseInt(data.headers.headers.get('x-wp-totalpages')[0]);
-  //         // console.log(blogTotal);
-  //         // console.log(blogPages);
-  //         // console.log(data.body);
-  //         let returnData= {
-  //           totalBlogs:blogTotal,
-  //           pages:blogPages,
-  //           posts:[]
-  //         };
-  //         data.body.forEach(post=>{
-  //           returnData.posts.push(this.postFormater(post));
-  //           this.postCache[post.id] = this.postFormater(post);
-  //         });
-  //         return returnData;
-  //       })
-
-  //   )
-  // }
-
   getBlogPosts(params?) {
     const payload = {
       action: "getBlogPosts"
@@ -72,14 +36,6 @@ export class WordpressService {
     );
   }
 
-  // getBlogPost(id) {
-  //   return this.Http.get(`${this.baseURL}/posts/${id}`).pipe(
-  //     map(data => {
-  //       return this.postFormater(data);
-  //     })
-  //   );
-  // }
-
   getBlogPost(id) {
     const payload = {
       action: "getBlogPost"
@@ -97,18 +53,6 @@ export class WordpressService {
       })
     );
   }
-
-  // getPostByAuthor(authorId) {
-  //   return this.Http.get(`${this.baseURL}/posts?author=${authorId}`).pipe(
-  //     map((data: any[]) => {
-  //       let returnData = [];
-  //       data.forEach(post => {
-  //         returnData.push(this.postFormater(post));
-  //       });
-  //       return returnData;
-  //     })
-  //   );
-  // }
 
   getPostByAuthor(authorId) {
     const payload = {
@@ -128,18 +72,6 @@ export class WordpressService {
     );
   }
 
-  // getPostsByCategory(categoryId) {
-  //   return this.Http.get(`${this.baseURL}/posts?categories=${categoryId}`).pipe(
-  //     map((data: any[]) => {
-  //       let returnData = [];
-  //       data.forEach(post => {
-  //         returnData.push(this.postFormater(post));
-  //       });
-  //       return returnData;
-  //     })
-  //   );
-  // }
-
   getPostsByCategory(categoryId) {
     return this.getBlogPosts([{ categories: categoryId }]).pipe(
       map(data => {
@@ -151,20 +83,6 @@ export class WordpressService {
       })
     );
   }
-
-  // getAuthors() {
-
-  //   return this.Http.get<any[]>(`${this.baseURL}/users?per_page=100`).pipe(
-  //     map(data => {
-  //       let returnData = [];
-  //       data.forEach(auth => {
-  //         this.authorCache[auth.id] = this.authorFormatter(auth);
-  //         returnData.push(this.authorFormatter(auth));
-  //       });
-  //       return returnData;
-  //     })
-  //   );
-  // }
 
   getAuthors() {
     const payload = {
@@ -182,14 +100,6 @@ export class WordpressService {
     );
   }
 
-  // getAuthor(authorId) {
-  //   return this.Http.get(`${this.baseURL}/users/${authorId}`).pipe(
-  //     map(data => {
-  //       return this.authorFormatter(data);
-  //     })
-  //   );
-  // }
-
   getAuthor(authorId) {
     const payload = {
       action: "getAuthor"
@@ -204,28 +114,12 @@ export class WordpressService {
     );
   }
 
-  // getCategories() {
-  //   return this.Http.get(`${this.baseURL}/categories?per_page=100`).pipe(
-  //     data => {
-  //       return data;
-  //     }
-  //   );
-  // }
-
   getCategories() {
     const payload = {
       action: "getCategories"
     };
     return this.http.httpPost(this.baseURL, payload);
   }
-
-  // getMedia(id) {
-  //   return this.Http.get(`${this.baseURL}/media/${id}`).pipe(
-  //     map(data => {
-  //       return this.Util.returnByPath(data, "guid.rendered");
-  //     })
-  //   );
-  // }
 
   getMedia(id) {
     const payload = {

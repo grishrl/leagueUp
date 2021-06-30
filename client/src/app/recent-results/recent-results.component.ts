@@ -26,7 +26,7 @@ export class RecentResultsComponent implements OnInit {
         }
       },
       err=>{
-        console.log(err);
+        console.warn(err);
       }
     )
   }

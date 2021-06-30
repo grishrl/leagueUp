@@ -110,12 +110,12 @@ export class ScheduleViewComponent implements OnInit, OnChanges {
                 }
               },
                 err => {
-                  console.log(err);
+                  console.warn(err);
                 }
               )
             });
         },
-        err => { console.log(err) }
+        err => { console.warn(err) }
       )
 
 
@@ -138,7 +138,6 @@ export class ScheduleViewComponent implements OnInit, OnChanges {
     //   if ((changes.season.currentValue && changes.season.currentValue != null)) {
     //     if (changes.season.previousValue && changes.season.currentValue != changes.season.previousValue || !changes.season.previousValue) {
     //       //do something
-    //       console.log('different season value');
     //       this.seasonVal = changes.season.currentValue;
     //       this.initialize();
     //     }

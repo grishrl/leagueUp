@@ -126,7 +126,7 @@ export class CreateTeamComponent implements OnInit {
               ]);
             },
             err => {
-              console.log(err);
+              console.warn(err);
             }
           );
         } else {
@@ -165,9 +165,9 @@ export class CreateTeamComponent implements OnInit {
 
       if(this.nameControl.errors){
         let key = Object.keys(this.nameControl.errors)[0];
-        console.log(this.nameControl.errors);
+
         valid = false;
-        console.log('namecontrol error key',key);
+
         if (key == "invalidCharacters") {
           this.errors.push("Team Name contains invalid characters!");
         }

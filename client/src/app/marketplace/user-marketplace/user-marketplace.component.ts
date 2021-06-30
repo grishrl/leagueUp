@@ -188,7 +188,7 @@ export class UserMarketplaceComponent implements OnInit {
         this.hasSearched = true;
       },
       (err) => {
-        console.log(err);
+        console.warn(err);
       }
     );
   }
@@ -213,7 +213,7 @@ export class UserMarketplaceComponent implements OnInit {
         this.divisions = res;
       },
       (err) => {
-        console.log(err);
+        console.warn(err);
       }
     );
 
@@ -223,7 +223,7 @@ export class UserMarketplaceComponent implements OnInit {
           this.teamInfo = res;
         },
         (err) => {
-          console.log(err);
+          console.warn(err);
         }
       );
     }
@@ -241,7 +241,7 @@ export class UserMarketplaceComponent implements OnInit {
           this.length = res;
         },
         (err) => {
-          console.log(err);
+          console.warn(err);
         }
       );
     } else {
@@ -250,7 +250,7 @@ export class UserMarketplaceComponent implements OnInit {
           this.length = res;
         },
         (err) => {
-          console.log(err);
+          console.warn(err);
         }
       );
     }
@@ -276,7 +276,7 @@ export class UserMarketplaceComponent implements OnInit {
           this.displayArray = res;
         },
         (err) => {
-          console.log(err);
+          console.warn(err);
         }
       );
     } else {
@@ -285,7 +285,7 @@ export class UserMarketplaceComponent implements OnInit {
           this.displayArray = res;
         },
         (err) => {
-          console.log(err);
+          console.warn(err);
         }
       );
     }

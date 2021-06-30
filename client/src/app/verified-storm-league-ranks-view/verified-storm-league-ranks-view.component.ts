@@ -107,8 +107,7 @@ export class VerifiedStormLeagueRanksViewComponent implements OnInit {
         this.verifiedUserRanks[ind]=rank;
       }
     )
-    console.log(this.verifiedUserRanks);
-    console.log(this.toDisplay);
+
     this.UserServ.getUserById(this.userId).subscribe(
       (userRes) => {
         userRes.verifiedRankHistory = this.verifiedUserRanks;

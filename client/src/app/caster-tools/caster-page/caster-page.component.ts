@@ -35,7 +35,7 @@ export class CasterPageComponent implements OnInit {
         this.edit = false;
       },
       err=>{
-        console.log(err);
+        console.warn(err);
       }
     )
 
@@ -117,7 +117,7 @@ export class CasterPageComponent implements OnInit {
             });
           },
           err => {
-            console.log(err);
+            console.warn(err);
           }
         )
 

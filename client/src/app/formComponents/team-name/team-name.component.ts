@@ -23,7 +23,7 @@ export class TeamNameComponent implements OnInit, ControlValueAccessor {
         this.filterWords = res['data']
         this.ngOnInit();
       },
-      err => { console.log(err) }
+      err => { console.warn(err) }
     )
     controlDir.valueAccessor = this;
   }
@@ -32,7 +32,6 @@ export class TeamNameComponent implements OnInit, ControlValueAccessor {
 
   ngOnInit(): void {
     const control = this.controlDir.control;
-    console.log('control.validator', control.validator);
     let validators = [this.checkInvalidCharacters(), this.validateWords(this.filterWords)];
     if (control.validator) {
       if (Array.isArray(control.validator)) {
@@ -82,10 +81,8 @@ export class TeamNameComponent implements OnInit, ControlValueAccessor {
   checkInvalidCharacters(): ValidatorFn {
     return (control: FormControl) => {
       let regEx = new RegExp(/[%_\/\\`#]/gm);
-      console.log('aaaa')
       let val = control.value;
       let trimmedVal = val ? val.trim() : '';
-      console.log('trimmedVal', trimmedVal, regEx.test(trimmedVal))
       return regEx.test(trimmedVal) ? { invalidCharacters: true } : null;
     };
   }

@@ -17,14 +17,7 @@ export class UserMessageCenterComponent implements OnInit {
 
   constructor(public util:UtilitiesService, public user:UserService, public team:TeamService, private request:RequestService, private auth:AuthService, private messageCenter:MessagesService,
     private notificationService:NotificationService) {
-    // this.socket.fromEvent('newMessage').subscribe(
-    //   res => {
-    //     this.ngOnInit();
-    //   },
-    //   err => {
-    //     console.log(err);
-    //   }
-    // )
+
    }
 
   messages:any = [];
@@ -45,7 +38,7 @@ export class UserMessageCenterComponent implements OnInit {
       res=>{
         this.notificationService.updateMessages.next('Msg center updated');
       },err=>{
-        console.log(err);
+        console.warn(err);
       }
     )
   }
@@ -68,7 +61,7 @@ export class UserMessageCenterComponent implements OnInit {
           }
         }
       }, err => {
-        console.log(err);
+        console.warn(err);
       })
     }
 
@@ -96,7 +89,7 @@ export class UserMessageCenterComponent implements OnInit {
             ind = index;
           }
         });
-        console.log(ind);
+
         if (ind > -1) {
           this.messages.splice(ind, 1);
           if (this.selectedMessage && this.selectedMessage._id == msg._id) {
@@ -104,7 +97,7 @@ export class UserMessageCenterComponent implements OnInit {
           }
         }
       }, err => {
-        console.log(err);
+        console.warn(err);
       })
 
 
@@ -120,7 +113,7 @@ export class UserMessageCenterComponent implements OnInit {
         this.messages = res;
       },
       err=>{
-        console.log(err);
+        console.warn(err);
       }
     )
   }

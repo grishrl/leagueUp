@@ -23,7 +23,7 @@ export class UpdateMemberInfoComponent implements OnInit {
           this.returnedProfile = res;
         },
         err=>{
-          console.log(err);
+          console.warn(err);
         }
       )
 
@@ -37,7 +37,7 @@ export class UpdateMemberInfoComponent implements OnInit {
         this.returnedProfile.teamName = null;
       },
       err => {
-        console.log(err);
+        console.warn(err);
       }
     )
   }
@@ -49,28 +49,19 @@ export class UpdateMemberInfoComponent implements OnInit {
         this.returnedProfile.teamName = res.teamName;
       },
       err => {
-        console.log(err);
+        console.warn(err);
       }
     )
-    // this.team.getTeam(team).subscribe(
-    //   res=>{
-    //     console.log(res);
-    //     this.returnedProfile.teamId = res._id;
-    //     this.returnedProfile.teamName = res.teamName;
-    //   },
-    //   err=>{
-    //     console.log(err);
-    //   }
-    // )
+
   }
 
   adminSave() {
     this.admin.saveUser(this.returnedProfile).subscribe(
       res => {
-        // console.log(res);
+
       },
       err => {
-        console.log(err);
+        console.warn(err);
       }
     )
   }

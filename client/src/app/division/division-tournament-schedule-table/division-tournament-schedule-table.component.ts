@@ -93,7 +93,7 @@ export class DivisionTournamentScheduleTableComponent implements OnInit, OnChang
 
 
           },
-          err => { console.log(err) }
+          err => { console.warn(err) }
         )
   }
 

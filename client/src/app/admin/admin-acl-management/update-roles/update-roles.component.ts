@@ -54,7 +54,7 @@ export class UpdateRolesComponent implements OnInit {
         this.user = res;
       },
       (err)=>{
-        console.log(err);
+        console.warn(err);
       }
     )
   }
@@ -71,7 +71,7 @@ export class UpdateRolesComponent implements OnInit {
     this.adminService.upsertUserAcls(resultantACL).subscribe(res=>{
       this.router.navigate(['/_admin/userACLMgmt']);
     },err=>{
-      console.log(err)
+      console.warn(err)
     })
   }
 

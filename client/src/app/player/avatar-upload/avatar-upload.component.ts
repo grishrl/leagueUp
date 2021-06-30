@@ -110,7 +110,7 @@ export class AvatarUploadComponent implements OnInit {
         this.croppieImage = null;
         this.editClicked = true;
       }, (err) => {
-        console.log(err);
+        console.warn(err);
       });
     }
 
@@ -133,7 +133,7 @@ export class AvatarUploadComponent implements OnInit {
         // fr.readAsDataURL(ret);
       },
       err => {
-        console.log(err);
+        console.warn(err);
       }
     );
     fr.onloadend = loadEvent => {

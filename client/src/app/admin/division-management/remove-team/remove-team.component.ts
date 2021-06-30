@@ -26,7 +26,7 @@ export class RemoveTeamComponent implements OnInit {
     this.selectedDiv = Object.assign({}, div);
   }
 
-  
+
   //toggles provided team into or out of the selectedTeams array
   teamSelected(team) {
     //if team is in the array, remove it
@@ -53,7 +53,7 @@ export class RemoveTeamComponent implements OnInit {
       this.selectedDiv = null;
       this.selectedTeams = [];
     }, (err)=>{
-      console.log(err);
+      console.warn(err);
     })
   }
 }

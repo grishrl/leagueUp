@@ -36,7 +36,7 @@ export class TeamTournamentScheduleTableComponent implements OnInit {
       .getTeamTournamentGames(providedSeason, teamId)
       .subscribe(
         (res) => {
-          console.log("getTeamTournamentGames", res);
+
           let matches = res;
           //set the nomatches state
           if (matches.length == 0) {
@@ -85,7 +85,7 @@ export class TeamTournamentScheduleTableComponent implements OnInit {
           this.matches = matches;
         },
         (err) => {
-          console.log(err);
+          console.warn(err);
         }
       );
   }
@@ -121,7 +121,7 @@ export class TeamTournamentScheduleTableComponent implements OnInit {
         this.activeTourns = res;
       },
       (err) => {
-        console.log(err);
+        console.warn(err);
       }
     );
   }
@@ -144,13 +144,14 @@ export class TeamTournamentScheduleTableComponent implements OnInit {
                     this.closedTourns.push(tourn);
                   }
                 });
-                console.log(this.closedTourns, this.activeTourns);
             }
           );
           // this.getActiveTournaments();
           // this.initHistoricalSchedule(currentSeason, this.teamObj._id);
         },
-        (err) => {}
+        (err) => {
+          console.warn(err);
+        }
       );
     // if (this.seasonVal) {
     //   this.initHistoricalSchedule(this.teamObj._id, this.seasonVal);

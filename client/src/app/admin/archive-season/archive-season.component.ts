@@ -27,7 +27,7 @@ export class ArchiveSeasonComponent implements OnInit {
       )
     ){
       this.admin.archiveSeason().subscribe((res) => {
-          console.log(res);
+          console.warn(res);
         });
 
     }

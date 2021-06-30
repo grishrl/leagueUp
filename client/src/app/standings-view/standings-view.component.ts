@@ -44,7 +44,7 @@ export class StandingsViewComponent implements OnInit {
           }
         },
         (err) => {
-          console.log(err);
+          console.warn(err);
         }
       )
     }
@@ -64,7 +64,7 @@ export class StandingsViewComponent implements OnInit {
           }
         },
         (err) => {
-          console.log(err);
+          console.warn(err);
         }
       )
     }

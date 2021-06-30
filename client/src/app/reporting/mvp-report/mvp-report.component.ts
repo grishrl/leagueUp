@@ -43,7 +43,7 @@ export class MvpReportComponent implements OnInit {
         this.processResponse(res);
       },
       err=>{
-        console.log('err',err);
+        console.warn('err',err);
       }
     )
   }
@@ -93,7 +93,7 @@ export class MvpReportComponent implements OnInit {
                   this.processResponse(res);
                 },
                 err => {
-                  console.log("MVP Submit: ", err);
+                  console.warn("MVP Submit: ", err);
                 }
               );
             }
@@ -103,7 +103,7 @@ export class MvpReportComponent implements OnInit {
                 this.processResponse(res);
               },
               err => {
-                console.log("MVP Submit: ", err);
+                console.warn("MVP Submit: ", err);
               }
             );
           }
@@ -139,57 +139,3 @@ export class MvpReportComponent implements OnInit {
 }
 
 }
-
-// function validateUrl(url) {
-//   const blacklist = [];
-//   console.log(url);
-//   let valid = true;
-//   let returnClip = "";
-//   if (
-//     url.includes("twitch.tv") ||
-//     url.includes("youtube.com/watch") ||
-//     url.includes("youtu.be")
-//   ) {
-//     forEach(blacklist, val => {
-//       if (url.includes(val)) {
-//         valid = false;
-//       }
-//     });
-//     let clipVal = "";
-//     if (url.includes("twitch.tv")) {
-//       returnClip = "https://clips.twitch.tv/embed?clip=";
-//       let clipStr = "clip=";
-//       if (url.includes(clipStr)) {
-//         let index = url.indexOf(clipStr);
-//         clipVal = url.substring(index + clipStr.length, url.length);
-//       } else {
-//         let twitchTLD = "https://clips.twitch.tv/";
-//         let index = url.indexOf(twitchTLD);
-//         clipVal = url.substring(index + twitchTLD.length, url.length);
-//       }
-//       if (clipVal.length > 0) {
-//         returnClip += clipVal;
-//       }
-//     } else if (url.includes("youtu.be")) {
-//       returnClip = "https://www.youtube.com/embed/";
-//       let youtubeTLD = "https://youtu.be/";
-//       clipVal = url.substring(youtubeTLD.length, url.length);
-//       if (clipVal.length > 0) {
-//         returnClip += clipVal;
-//       }
-//     } else if (url.includes("youtube.com/watch")) {
-//       returnClip = "https://www.youtube.com/embed/";
-//       let clipStr = "watch?v=";
-//       let index = url.indexOf(clipStr);
-//       clipVal = url.substring(index + clipStr.length, url.length);
-//       if (clipVal.length > 0) {
-//         returnClip += clipVal;
-//       }
-//     } else if (url.includes("https://www.youtube.com/embed/")) {
-//       returnClip = url;
-//     }
-//   } else {
-//     valid = false;
-//   }
-//   return { valid, returnClip };
-// }

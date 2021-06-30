@@ -15,11 +15,11 @@ import { DivisionService } from 'src/app/services/division.service';
 })
 export class EventLargeComponent implements OnInit {
 
-  id:string;
-  type:string;
-  constructor(private EventService : EventsService,  private router: ActivatedRoute, private scheduleService:ScheduleService, public team:TeamService, public util:UtilitiesService, private standingsService:StandingsService, private route: Router,
-    private divisionService:DivisionService) {
-    if(this.router.snapshot.params['id']){
+  id: string;
+  type: string;
+  constructor(private EventService: EventsService, private router: ActivatedRoute, private scheduleService: ScheduleService, public team: TeamService, public util: UtilitiesService, private standingsService: StandingsService, private route: Router,
+    private divisionService: DivisionService) {
+    if (this.router.snapshot.params['id']) {
       this.id = this.router.snapshot.params['id'];
 
     }
@@ -37,31 +37,31 @@ export class EventLargeComponent implements OnInit {
   ngOnInit() {
     let eventType = this.type ? this.type : this.EventService.getLocalEvent()['type'];
     let eventId = this.id ? this.id : this.EventService.getLocalEvent()['id'];
-    if (eventType){
-      if (eventType == 'match'){
+    if (eventType) {
+      if (eventType == 'match') {
         this.bannerText = "Match Details"
         this.scheduleService.getMatchInfo(eventId).subscribe(
           res => {
             this.match = res;
             let match = res;
             let div = this.match.divisionConcat
-            if(this.util.returnByPath(this.match, 'type')=='grandfinal'){
+            if (this.util.returnByPath(this.match, 'type') == 'grandfinal') {
 
-                      this.divisionService
-                        .getDivisionTeam(this.match.home.teamName)
-                        .subscribe((res) => {
+              this.divisionService
+                .getDivisionTeam(this.match.home.teamName)
+                .subscribe((res) => {
 
-                          this.parseStandings(res.divisionConcat);
+                  this.parseStandings(res.divisionConcat);
 
-                        });
-                      this.divisionService
-                        .getDivisionTeam(this.match.away.teamName)
-                        .subscribe((res) => {
-                          this.parseStandings(res.divisionConcat);
-                        });
+                });
+              this.divisionService
+                .getDivisionTeam(this.match.away.teamName)
+                .subscribe((res) => {
+                  this.parseStandings(res.divisionConcat);
+                });
 
 
-            }else{
+            } else {
               this.parseStandings(div);
             }
 
@@ -88,52 +88,52 @@ export class EventLargeComponent implements OnInit {
 
           },
           err => {
-            console.log(err);
+            console.warn(err);
           }
         )
-      } else if (eventType == 'event'){
+      } else if (eventType == 'event') {
         this.bannerText = "Event Details"
         this.EventService.getEventById(eventId).subscribe(
-          res=>{
+          res => {
             this.event = res;
           },
-          err=>{
-            console.log(err);
+          err => {
+            console.warn(err);
           }
         )
       }
-    }else{
+    } else {
       this.route.navigate(['calendar']);
     }
 
   }
 
-  private parseStandings(div){
-                              this.standingsService.getStandings(div).subscribe(
-                                (res) => {
-                                  let standings = res;
-                                  standings.forEach((standing) => {
-                                    if (
-                                      this.match.home.teamName == standing.teamName
-                                    ) {
-                                      this.match.home["losses"] =
-                                        standing.losses;
-                                      this.match.home["wins"] = standing.wins;
-                                    }
-                                    if (
-                                      this.match.away.teamName ==
-                                      standing.teamName
-                                    ) {
-                                      this.match.away["losses"] =
-                                        standing.losses;
-                                      this.match.away["wins"] = standing.wins;
-                                    }
-                                  });
-                                },
-                                (err) => {
-                                  console.log(err);
-                                }
-                              );
+  private parseStandings(div) {
+    this.standingsService.getStandings(div).subscribe(
+      (res) => {
+        let standings = res;
+        standings.forEach((standing) => {
+          if (
+            this.match.home.teamName == standing.teamName
+          ) {
+            this.match.home["losses"] =
+              standing.losses;
+            this.match.home["wins"] = standing.wins;
+          }
+          if (
+            this.match.away.teamName ==
+            standing.teamName
+          ) {
+            this.match.away["losses"] =
+              standing.losses;
+            this.match.away["wins"] = standing.wins;
+          }
+        });
+      },
+      (err) => {
+        console.warn(err);
+      }
+    );
   }
 
 }

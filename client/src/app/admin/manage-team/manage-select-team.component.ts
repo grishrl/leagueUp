@@ -91,7 +91,7 @@ export class ManageSelectTeamComponent implements OnInit, AfterViewInit {
         this.displayArray = this.teams.slice(0,10);
       },
       (err)=>{
-        console.log(err);
+        console.warn(err);
       }
     )
   }

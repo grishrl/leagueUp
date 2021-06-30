@@ -18,7 +18,7 @@ export class EventListComponent implements OnInit {
         this.events = res;
       },
       err=>{
-        console.log(err);
+        console.warn(err);
       }
     )
 
@@ -40,7 +40,7 @@ export class EventListComponent implements OnInit {
         }
       },
       err=>{
-        console.log(err);
+        console.warn(err);
       }
     )
   }

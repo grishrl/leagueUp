@@ -60,7 +60,7 @@ export class TeamScheduleTableComponent implements OnInit {
                 this.matches = matches;
               }
             },
-            err => { console.log(err) }
+            err => { console.warn(err) }
           )
         }
     )
@@ -115,7 +115,7 @@ export class TeamScheduleTableComponent implements OnInit {
           this.matches = matches;
         }
       },
-      err => { console.log(err) }
+      err => { console.warn(err) }
     )
   }
 

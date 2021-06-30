@@ -20,7 +20,7 @@ export class AppFooterComponent implements OnInit {
     this.divisionService.getDivisionInfo().subscribe(res => {
       this.divisions = res;
     }, err => {
-      console.log(err);
+      console.warn(err);
     });
   }
 

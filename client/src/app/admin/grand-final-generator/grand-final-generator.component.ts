@@ -80,7 +80,6 @@ export class GrandFinalGeneratorComponent implements OnInit {
   }
 
   checkTeamInvolvedInMatch(team, finalMatch) {
-    console.log(team, finalMatch);
     if (team == finalMatch.home.teamName) {
       return "home";
     } else if (team == finalMatch.away.teamName) {
@@ -108,14 +107,13 @@ export class GrandFinalGeneratorComponent implements OnInit {
       },
       (err) => {
         this.fetching = false;
-        console.log(err);
+        console.warn(err);
       }
     );
   }
 
   filterTeamDisplay() {
     this.teamDisplay = this.originalTeamsArray.filter((teamItr) => {
-      console.log(teamItr);
       if (
         teamItr.teamName == this.finalMatch.home.teamName ||
         teamItr.teamName == this.finalMatch.away.teamName
@@ -145,7 +143,7 @@ export class GrandFinalGeneratorComponent implements OnInit {
       },
       (err) => {
         this.fetching = false;
-        console.log(err);
+        console.warn(err);
       }
     );
     this.showAll = true;
@@ -176,7 +174,7 @@ export class GrandFinalGeneratorComponent implements OnInit {
       res=>{
         this.ngOnInit();
       },err=>{
-        console.log(err);
+        console.warn(err);
       }
     )
   }

@@ -140,7 +140,7 @@ export class ImageUploadComponent implements OnInit {
         this.currentImage = `https://placehold.it/${this.widthPx}x${this.heightPx}`;
       },
       err => {
-        console.log(err);
+        console.warn(err);
       }
     );
   }
@@ -234,7 +234,7 @@ export class ImageUploadComponent implements OnInit {
                   this.editClicked = true;
                 },
                 err => {
-                  console.log(err);
+                  console.warn(err);
                 }
               );
             } else {
@@ -245,7 +245,7 @@ export class ImageUploadComponent implements OnInit {
                   this.editClicked = true;
                 },
                 err => {
-                  console.log(err);
+                  console.warn(err);
                 }
               );
             }
@@ -263,7 +263,7 @@ export class ImageUploadComponent implements OnInit {
                 this.editClicked = true;
               },
               err => {
-                console.log(err);
+                console.warn(err);
               }
             );
           } else if (this._imageType == "avatar") {
@@ -279,7 +279,7 @@ export class ImageUploadComponent implements OnInit {
                 this.editClicked = true;
               },
               err => {
-                console.log(err);
+                console.warn(err);
               }
             );
           }else if(this._imageType == "stormVerification"){

@@ -13,21 +13,21 @@ import { TimeserviceService } from 'src/app/services/timeservice.service';
 export class DivisionTournamentResultsTilesComponent implements OnInit, OnChanges {
 
 
-  constructor(private standingsService: StandingsService, private scheduleService: ScheduleService, private timeService:TimeserviceService, public team: TeamService, public util: UtilitiesService) { }
+  constructor(private standingsService: StandingsService, private scheduleService: ScheduleService, private timeService: TimeserviceService, public team: TeamService, public util: UtilitiesService) { }
   divisions: any = [];
   standings: any[] = [];
 
   ngOnInit() {
   }
 
-  ngOnChanges(changes:SimpleChanges){
+  ngOnChanges(changes: SimpleChanges) {
 
     this.displayMatches = new Map<string, [object]>();
 
-    if(changes.hasOwnProperty('division')){
-      let currentDivConcat = changes.division.currentValue ? changes.division.currentValue['divisionConcat'] : null ;
+    if (changes.hasOwnProperty('division')) {
+      let currentDivConcat = changes.division.currentValue ? changes.division.currentValue['divisionConcat'] : null;
       let previousDivConcat = changes.division.previousValue ? changes.division.previousValue['divisionConcat'] : null;
-      if (currentDivConcat != null && currentDivConcat != previousDivConcat){
+      if (currentDivConcat != null && currentDivConcat != previousDivConcat) {
         this.initialise();
       }
     }
@@ -52,7 +52,7 @@ export class DivisionTournamentResultsTilesComponent implements OnInit, OnChange
   }
 
   seasonVal;
-  @Input() set season(val){
+  @Input() set season(val) {
 
     this.seasonVal = val;
 
@@ -62,7 +62,7 @@ export class DivisionTournamentResultsTilesComponent implements OnInit, OnChange
   selectedDivision: any
   rounds: number[] = [];
 
-  getTournamentInfo(){
+  getTournamentInfo() {
     this.scheduleService.getTournamentGames(null, this.seasonVal, this.divVal.divisionConcat).subscribe(res => {
       if (res.tournInfo.length > 0) {
         this.selectedCup = 0;
@@ -70,12 +70,12 @@ export class DivisionTournamentResultsTilesComponent implements OnInit, OnChange
         this.getMatches();
       }
     }, err => {
-      console.log(err);
+      console.warn(err);
     });
 
   }
 
-  initialise(){
+  initialise() {
     if (!this.seasonVal) {
       this.timeService.getSesasonInfo().subscribe(
         res => {
@@ -83,7 +83,7 @@ export class DivisionTournamentResultsTilesComponent implements OnInit, OnChange
           this.getTournamentInfo();
         }
       );
-    }else{
+    } else {
       this.getTournamentInfo();
     }
   }
@@ -93,21 +93,21 @@ export class DivisionTournamentResultsTilesComponent implements OnInit, OnChange
   getMatches() {
     let matches = this.localStoreTournaments[this.selectedCup].matches;
 
-    if(matches.length>0){
-      this.scheduleService.getMatchList(matches,this.seasonVal).subscribe(
+    if (matches.length > 0) {
+      this.scheduleService.getMatchList(matches, this.seasonVal).subscribe(
         res => {
           this.matches = res;
           this.matches = this.matches.filter(match => {
             return match.reported;
           });
-          this.matches.sort((a,b)=>{
-            if(a.round>b.round){
+          this.matches.sort((a, b) => {
+            if (a.round > b.round) {
               return 1;
-            }else{
+            } else {
               return -1;
             }
           });
-          this.matches.forEach(match=>{
+          this.matches.forEach(match => {
             if (match.scheduledTime) {
               if (match.scheduledTime.startTime != null || match.scheduledTime.startTime != undefined) {
                 match['friendlyDate'] = this.util.getDateFromMS(match.scheduledTime.startTime);
@@ -115,17 +115,17 @@ export class DivisionTournamentResultsTilesComponent implements OnInit, OnChange
                 match['suffix'] = this.util.getSuffixFromMS(match.scheduledTime.startTime);
               }
             }
-            if(this.displayMatches.has(match.round)){
+            if (this.displayMatches.has(match.round)) {
               let temp = this.displayMatches.get(match.round);
               temp.push(match);
               this.displayMatches.set(match.round, temp);
-            }else{
+            } else {
               this.displayMatches.set(match.round, [match]);
             }
           });
 
         },
-        err => { console.log(err) }
+        err => { console.warn(err) }
       )
     }
 

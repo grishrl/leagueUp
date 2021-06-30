@@ -37,7 +37,7 @@ export class StaticHtmlLoaderComponent implements OnInit {
           this.pageHeader = data.headerText;
           this.templateLoader(data.template);
         },err=>{
-            console.log(err);
+            console.warn(err);
           });
     }
 
@@ -56,7 +56,7 @@ export class StaticHtmlLoaderComponent implements OnInit {
             }
           },
           err => {
-            console.log(err);
+            console.warn(err);
           }
         )
   }

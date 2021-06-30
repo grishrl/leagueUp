@@ -71,7 +71,7 @@ export class UserDeckComponent implements OnInit {
                 //filter by pending invites?
               },
               (err) => {
-                console.log(err);
+                console.warn(err);
               }
             );
     }else{

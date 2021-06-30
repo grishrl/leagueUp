@@ -35,7 +35,7 @@ export class DivisionCupResultsTilesComponent implements OnInit {
           this.getMatches();
         }
       }, err => {
-        console.log(err);
+        console.warn(err);
       });
     }
   }
@@ -94,7 +94,7 @@ export class DivisionCupResultsTilesComponent implements OnInit {
           //     )
           //   });
         },
-        err => { console.log(err) }
+        err => { console.warn(err) }
       )
     }
 

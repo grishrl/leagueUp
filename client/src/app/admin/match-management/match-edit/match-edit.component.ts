@@ -111,7 +111,7 @@ export class MatchEditComponent implements OnInit {
         this.initTeams();
       },
       (err) => {
-        console.log(err);
+        console.warn(err);
       }
     );
     for (let i = 1; i < 13; i++) {
@@ -131,7 +131,7 @@ export class MatchEditComponent implements OnInit {
         }
       },
       (err) => {
-        console.log("err", err);
+        console.warn("err", err);
       }
     );
   }
@@ -146,7 +146,7 @@ export class MatchEditComponent implements OnInit {
             this.mvpObj = res;
           },
           (err) => {
-            console.log("MVP Submit: ", err);
+            console.warn("MVP Submit: ", err);
           }
         );
       }
@@ -156,7 +156,7 @@ export class MatchEditComponent implements OnInit {
           this.mvpObj = res;
         },
         (err) => {
-          console.log("MVP Submit: ", err);
+          console.warn("MVP Submit: ", err);
         }
       );
     }
@@ -194,7 +194,7 @@ export class MatchEditComponent implements OnInit {
         this.ngOnInit();
       },
       (err) => {
-        console.log(err);
+        console.warn(err);
       }
     );
   }
@@ -228,12 +228,12 @@ export class MatchEditComponent implements OnInit {
       this.uploading = true;
       this.s3uploads.getSignedUrl(inf).subscribe(
         (signedObj) => {
-          console.log("signedObj", signedObj);
+
           report["fileTracking"] = {};
           report["fileTracking"][this.matchRound] = {};
           report["fileTracking"][this.matchRound]["filename"] =
             signedObj[0].file;
-          console.log("a", signedObj, report);
+
           this.s3uploads
             .s3put(signedObj[0].signedUrl, this.filePendingUpload)
             .subscribe(
@@ -251,7 +251,7 @@ export class MatchEditComponent implements OnInit {
                     // this.ngOnInit();
                   },
                   (err) => {
-                    console.log(err);
+                    console.warn(err);
                   }
                 );
               },
@@ -309,7 +309,7 @@ export class MatchEditComponent implements OnInit {
           this.ngOnInit();
         },
         (err) => {
-          console.log(err);
+          console.warn(err);
         }
       );
     }

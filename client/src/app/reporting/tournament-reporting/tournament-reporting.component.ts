@@ -29,7 +29,7 @@ export class TournamentReportingComponent implements OnInit {
     this.team.getTournaments(this.auth.getTeamId()).subscribe(res => {
       this.involvedTournaments = res;
     }, err => {
-      console.log('y ', err);
+      console.warn('y ', err);
     })
 
   }
@@ -61,7 +61,7 @@ export class TournamentReportingComponent implements OnInit {
                 this.matches = tempMatches;
               },
               (err) => {
-                console.log(err);
+                console.warn(err);
               }
             );
     }

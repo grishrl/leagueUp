@@ -73,14 +73,11 @@ export class ScheduleTableComponent implements OnInit {
           }
         }
 
-        console.log('missing round', missingRound);
-
         if(missingRound){
           val.splice(index, 0, {
             round: missingRound,
             type:'bye'
           });
-          console.log(val);
         }
 
     }
@@ -154,7 +151,7 @@ export class ScheduleTableComponent implements OnInit {
         // this.ngOnInit();
       },
       err => {
-        console.log(err);
+        console.warn(err);
       }
     )
 

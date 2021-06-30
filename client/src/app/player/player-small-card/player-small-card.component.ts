@@ -53,7 +53,7 @@ export class PlayerSmallCardComponent implements OnInit {
 
       },
       err=>{
-        console.log(err);
+        console.warn(err);
       }
     )
   }
@@ -110,7 +110,7 @@ export class PlayerSmallCardComponent implements OnInit {
           this.dropEmmiter(player)
         },
         (err) => {
-          console.log(err);
+          console.warn(err);
         }
       )
     }

@@ -31,7 +31,7 @@ export class MiniTeamViewComponent implements OnInit {
         this.teamList=res;
       },
       err=>{
-        console.log(err);
+        console.warn(err);
       }
     )
   }

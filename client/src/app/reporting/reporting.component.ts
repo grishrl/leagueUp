@@ -85,12 +85,12 @@ export class ReportingComponent implements OnInit {
                       this.roundsArray = roundsArray;
                     },
                     (err) => {
-                      console.log(err);
+                      console.warn(err);
                     }
                   );
         },
         err=>{
-          console.log(err);
+          console.warn(err);
         }
       )
 

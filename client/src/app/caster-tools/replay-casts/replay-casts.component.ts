@@ -37,7 +37,7 @@ export class ReplayCastsComponent implements OnInit {
         this.unCastedMatches=res;
       },
       err=>{
-        console.log(err);
+        console.warn(err);
       }
     )
   }

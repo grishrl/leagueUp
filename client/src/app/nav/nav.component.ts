@@ -82,7 +82,7 @@ createMobileNav(){
     this.divisionService.getDivisionInfo().subscribe( res => {
       this.divisions = res;
     }, err=>{
-      console.log(err);
+      console.warn(err);
     });
 
     //get any user messages
@@ -91,22 +91,14 @@ createMobileNav(){
          this.userMessages = parseInt(res);
       }
     }, err=>{
-      console.log(err);
+      console.warn(err);
     })
 
     //set up socket connection for the logged in user
     if(this.Auth.getUserId()){
       // this.socket.emit('storeClientInfo', { userId: this.Auth.getUserId() });
     }
-    //subscribe to the socket emiter if a user gets a message to update their information
-    // this.socket.fromEvent('newMessage').subscribe(
-    //   res=>{
-    //     this.userMessages+=1;
-    //   },
-    //   err=>{
-    //     console.log(err);
-    //   }
-    // )
+
     //updates the unread messages bubble...
     this.notificationService.updateMessages.subscribe(
       message=>{
@@ -118,7 +110,7 @@ createMobileNav(){
           }
 
         }, err => {
-          console.log(err);
+          console.warn(err);
         });
       }
     )

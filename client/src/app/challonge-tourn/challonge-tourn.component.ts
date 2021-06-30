@@ -66,7 +66,7 @@ export class ChallongeTournComponent implements OnInit {
             this.noTourn = true;
           }
         }, err => {
-          console.log(err);
+          console.warn(err);
         });
       }else{
         this.cupDiv = false;
@@ -80,7 +80,7 @@ export class ChallongeTournComponent implements OnInit {
             this.noTourn = true;
           }
         }, err => {
-          console.log(err);
+          console.warn(err);
         });
       }
     }

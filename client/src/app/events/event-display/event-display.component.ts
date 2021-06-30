@@ -54,7 +54,7 @@ export class EventDisplayComponent implements OnInit {
            this.determineShowImage();
         },
         err=>{
-          console.log(err);
+          console.warn(err);
         }
       )
     }else{

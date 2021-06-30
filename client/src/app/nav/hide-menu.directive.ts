@@ -16,7 +16,7 @@ export class HideMenuDirective {
 
       },
       err=>{
-        console.log(err);
+        console.warn(err);
       }
     )
 

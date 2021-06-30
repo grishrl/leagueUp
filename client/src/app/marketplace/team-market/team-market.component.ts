@@ -183,7 +183,7 @@ export class TeamMarketComponent implements OnInit {
       this.length = res.length;
       this.hasSearched = true;
     }, err=>{
-      console.log(err);
+      console.warn(err);
     })
   }
 
@@ -238,7 +238,7 @@ export class TeamMarketComponent implements OnInit {
       this._team.getTeamsOfPageNum(i, true).subscribe(res => {
         this.displayArray = res;
       }, err => {
-        console.log(err);
+        console.warn(err);
       })
     }
 
@@ -261,7 +261,7 @@ export class TeamMarketComponent implements OnInit {
       res=>{
 
       },
-      err=>{console.log(err)}
+      err=>{console.warn(err)}
     )
   }
 
@@ -270,7 +270,7 @@ export class TeamMarketComponent implements OnInit {
     this.divisionService.getDivisionInfo().subscribe((res) => {
       this.divisions = res;
     }, (err) => {
-      console.log(err);
+      console.warn(err);
     });
 
     this.getAllTeams();
@@ -284,7 +284,7 @@ export class TeamMarketComponent implements OnInit {
         this.length = res;
       },
       err => {
-        console.log(err)
+        console.warn(err)
       }
     )
   }
@@ -294,7 +294,7 @@ export class TeamMarketComponent implements OnInit {
       res=>{
         this.displayArray = res;
       },err=>{
-        console.log(err);
+        console.warn(err);
       }
     )
   }

@@ -23,7 +23,7 @@ export class NotesCreateComponent implements OnInit {
 
       },
       err=>{
-        console.log(err);
+        console.warn(err);
       }
     )
 

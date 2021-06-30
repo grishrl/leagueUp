@@ -26,7 +26,7 @@ export class MatchPaginatorComponent implements OnInit {
   @Input() set matches(inp) {
     if (inp) {
       this.originalMatches = inp;
-      // console.log('>>',this.replay)
+
       this.initSchedule();
     }
   }
@@ -171,29 +171,29 @@ export class MatchPaginatorComponent implements OnInit {
   //filters the matches based on selected criteria
   endTimeFlt;
   doFilterMatches() {
-    // console.log(this.originalMatches);
+
     this.filterMatches = this.originalMatches;
     //do we have matches?
     if (this.filterMatches && this.filterMatches.length > 0) {
-      // console.log('a')
+
       //division filter
       if (!this.util.isNullOrEmpty(this.divFlt)) {
-        // console.log("b");
+
         this.filterMatches = this.filterMatches.filter((match) => {
           return this.filterService.testDivision(match, this.divFlt);
         });
-        // console.log(JSON.stringify(this.filterMatches));
+
       }
       //round filter
       if (!this.util.isNullOrEmpty(this.roundFlt)) {
-        // console.log("c");
+
         this.filterMatches = this.filterMatches.filter((match) => {
           return this.filterService.testRound(match, this.roundFlt);
         });
       }
       //team name filter
       if (!this.util.isNullOrEmpty(this.teamFlt)) {
-        // console.log("d");
+
         this.filterMatches = this.filterMatches.filter((match) => {
           return this.filterService.testName(match, this.teamFlt);
         });
@@ -203,7 +203,7 @@ export class MatchPaginatorComponent implements OnInit {
         !this.util.isNullOrEmpty(this.tournamentOnlyFlt) &&
         this.tournamentOnlyFlt
       ) {
-        // console.log("e");
+
         this.filterMatches = this.filterMatches.filter((match) => {
           return this.filterService.testTournament(match);
         });
@@ -213,14 +213,14 @@ export class MatchPaginatorComponent implements OnInit {
         !this.util.isNullOrEmpty(this.scheduledOnlyFlt) &&
         this.scheduledOnlyFlt
       ) {
-        // console.log("f");
+
         this.filterMatches = this.filterMatches.filter((match) => {
           return this.filterService.testScheduled(match);
         });
         //matches that match a given start time
         if (!this.util.isNullOrEmpty(this.startTimeFlt)) {
 
-          // console.log("g", this.startTimeFlt);
+
           this.filterMatches = this.filterMatches.filter((match) => {
             return this.filterService.testTime(
               match,
@@ -230,7 +230,7 @@ export class MatchPaginatorComponent implements OnInit {
           });
         }
       } else {
-        // console.log("h");
+
         // EVERY MATCH SCHEDULED OR NOT
         this.filterMatches = this.filterMatches.filter((match) => {
           return !this.filterService.testScheduled(match);
@@ -239,10 +239,10 @@ export class MatchPaginatorComponent implements OnInit {
       //sort by time;
       this.filterMatches = this.util.sortMatchesByTime(this.filterMatches);
       if(this.replay){
-        // console.log("i");
+
         this.filterMatches.reverse();
       }
-      // console.log('this.filterMatches ',this.filterMatches);
+
       this.length = this.filterMatches.length;
       this.displayArray = this.filterMatches.slice(
         0,

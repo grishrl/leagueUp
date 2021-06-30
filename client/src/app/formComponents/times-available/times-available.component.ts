@@ -195,8 +195,6 @@ export class TimesAvailableComponent implements OnInit, DoCheck {
           } else if (false) {
             ret = false;
           } else {
-            // console.log('checkDay.startTime ', checkDay.startTime);
-            // console.log('checkDay.endTime ', checkDay.endTime);
             let endTimeStrArr = checkDay.endTime.split(':');
             let endTime = new Date();
             endTime.setMinutes(endTimeStrArr[1]);

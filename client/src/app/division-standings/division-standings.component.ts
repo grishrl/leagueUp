@@ -33,7 +33,7 @@ export class DivisionStandingsComponent implements OnInit {
         this.standings = res;
       },
       (err) => {
-        console.log(err);
+        console.warn(err);
       }
     )
   }
@@ -68,7 +68,7 @@ export class DivisionStandingsComponent implements OnInit {
           }
         },
         err => {
-          console.log(err);
+          console.warn(err);
         }
       )
     }else{
@@ -91,7 +91,7 @@ export class DivisionStandingsComponent implements OnInit {
       }
 
     }, (err) => {
-      console.log(err);
+      console.warn(err);
     });
   }
 }

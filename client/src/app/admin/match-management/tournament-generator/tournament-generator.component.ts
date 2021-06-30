@@ -94,7 +94,7 @@ export class TournamentGeneratorComponent implements OnInit {
       },
       (err) => {
         this.fetching = false;
-        console.log(err);
+        console.warn(err);
       }
     );
   }
@@ -108,7 +108,7 @@ export class TournamentGeneratorComponent implements OnInit {
       },
       (err) => {
         this.fetching = false;
-        console.log(err);
+        console.warn(err);
       }
     );
   }
@@ -127,7 +127,7 @@ export class TournamentGeneratorComponent implements OnInit {
       },
       (err) => {
         this.fetching = false;
-        console.log(err);
+        console.warn(err);
       }
     );
     this.showAll = !this.showAll;
@@ -219,7 +219,7 @@ export class TournamentGeneratorComponent implements OnInit {
             this.ngOnInit();
           },
           (err) => {
-            console.log(err);
+            console.warn(err);
           }
         );
       }
@@ -240,7 +240,7 @@ export class TournamentGeneratorComponent implements OnInit {
             this.ngOnInit();
           },
           (err) => {
-            console.log(err);
+            console.warn(err);
           }
         );
     }
@@ -262,7 +262,7 @@ export class TournamentGeneratorComponent implements OnInit {
           this.ngOnInit();
         },
         (err) => {
-          console.log(err);
+          console.warn(err);
         }
       );
   }
@@ -274,7 +274,7 @@ export class TournamentGeneratorComponent implements OnInit {
         this.divisions = res;
       },
       (err) => {
-        console.log(err);
+        console.warn(err);
       }
     );
     this.showAll = false;

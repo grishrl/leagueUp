@@ -14,10 +14,8 @@ export class PlayerSearchComponent implements OnInit {
   selectedUser;
   team;
   receiveUser(u){
-    console.log(u);
     this.User.getUser(u).subscribe(
       res=>{
-        console.log(res);
         this.selectedUser = res;
         if(res.teamName){
           this.Team.getTeam(res.teamName).subscribe(

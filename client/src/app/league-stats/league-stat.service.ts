@@ -36,7 +36,7 @@ export class LeagueStatService {
 
        },
        err => {
-         console.log(err);
+         console.warn(err);
        }
      )
    }

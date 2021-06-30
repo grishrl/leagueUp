@@ -21,13 +21,13 @@ export class DivisionSelectorComponent implements OnInit {
       this.Admin.getDivisionList().subscribe((res) => {
         this.divisions = res;
       }, (err) => {
-        console.log(err);
+        console.warn(err);
       })
     }else{
       this.DivisionService.getDivisionInfo().subscribe((res) => {
         this.divisions = res;
       }, (err) => {
-        console.log(err);
+        console.warn(err);
       })
     }
 

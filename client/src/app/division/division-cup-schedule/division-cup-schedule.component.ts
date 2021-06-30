@@ -90,7 +90,7 @@ export class DivisionCupScheduleComponent implements OnInit {
           //     )
           //   });
         },
-        err => { console.log(err) }
+        err => { console.warn(err) }
       )
     }
 
@@ -99,7 +99,7 @@ export class DivisionCupScheduleComponent implements OnInit {
 
   getTournMatches(season){
     this.scheduleService.getTournamentGames(null, season, this.divsionVal.divisionConcat).subscribe(res => {
-      // console.log(res);
+
       if (res.tournInfo.length > 0) {
         this.selectedCup = 0;
         this.totalCups = res.tournInfo.length;
@@ -107,7 +107,7 @@ export class DivisionCupScheduleComponent implements OnInit {
         this.getMatches();
       }
     }, err => {
-      console.log(err);
+      console.warn(err);
     });
   }
 

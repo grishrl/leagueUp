@@ -50,7 +50,7 @@ export class CasterDashboardMatchDisplayComponent implements OnInit {
         this.match = res;
       },
       (err) => {
-        console.log(err);
+        console.warn(err);
       }
     );
   }

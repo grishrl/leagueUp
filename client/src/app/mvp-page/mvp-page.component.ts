@@ -63,7 +63,6 @@ export class MvpPageComponent implements OnInit {
           this.length = res.length;
           let endSlice = this.pageSize > res.length ? res.length : this.pageSize;
           this.displayArray = res.slice(0, endSlice);
-          console.log(this.displayArray);
         });
   }
 }

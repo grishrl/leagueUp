@@ -54,16 +54,16 @@ index = 0;
           this.homeTeam = homeTeam
           this.homeLogo = this.team.imageFQDN(this.homeTeam.logo);
         }, err => {
-          console.log(err);
+          console.warn(err);
         });
         this.team.getTeam(res.away.teamName).subscribe(awayTeam => {
           this.awayTeam = awayTeam
           this.awayLogo = this.team.imageFQDN(this.awayTeam.logo);
         }, err => {
-          console.log(err);
+          console.warn(err);
         })
        },
-      err=>{ console.log(err) }
+      err=>{ console.warn(err) }
     )
 
     //build out the selectable times for the user, in 15 min intervals
@@ -111,7 +111,7 @@ index = 0;
             this.router.navigateByUrl('/teamProfile/'+this.team.routeFriendlyTeamName(this.Auth.getTeam()));
           },
           err=>{
-            console.log(err)
+            console.warn(err)
           }
         )
       } else {

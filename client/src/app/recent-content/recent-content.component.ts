@@ -62,45 +62,6 @@ export class RecentContentComponent implements OnInit {
 
   ngOnInit() {
 
-    // let showdownPlaylistID = "PLCylT7hBfO1QeuiQil-GTE51yLadORZQ8";
-    // let nexusEdegePlaylistID = 'PLCylT7hBfO1SIMocVH3UWqrCywkKrM8JM'
-    // let podcastPlaylistID = 'PLCylT7hBfO1TfE4U-kdLMSvksc-nx4stD'
-
-    // let showdownURL = 'https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=1&playlistId=' + showdownPlaylistID + '&key=AIzaSyD2eeQyVPBpeCIgytCPdie3jd6YAEzCUNc';
-    // this.http.get(showdownURL).subscribe(
-    //   res => {
-    //     this.showdownItem = res['items'][0];
-    //     this.showdownItem.url = this.createURL(this.showdownItem);
-    //     this.loaded.showdown = true;
-    //   },
-    //   err => {
-    //     console.log(err)
-    //   }
-    // )
-
-    // let edgeURL = 'https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=1&playlistId=' + nexusEdegePlaylistID + '&key=AIzaSyD2eeQyVPBpeCIgytCPdie3jd6YAEzCUNc';
-    // this.http.get(edgeURL).subscribe(
-    //   res => {
-    //     this.edgeItem = res['items'][0];
-    //     this.edgeItem.url = this.createURL(this.edgeItem);
-    //     this.loaded.edge = true;
-    //   },
-    //   err=>{
-    //     console.log(err)
-    //   }
-    // )
-
-    // let podcastURL = 'https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=1&playlistId=' + podcastPlaylistID + '&key=AIzaSyD2eeQyVPBpeCIgytCPdie3jd6YAEzCUNc';
-    // this.http.get(podcastURL).subscribe(
-    //   res => {
-    //     this.podcastItem = res['items'][0];
-    //     this.podcastItem.url = this.createURL(this.podcastItem);
-    //     this.loaded.podcast = true;
-    //   },
-    //   err => {
-    //     console.log(err)
-    //   }
-    // )
   }
 
 }

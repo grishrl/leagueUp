@@ -63,7 +63,7 @@ export class TeamDisplayComponent implements OnInit {
         this._teams = retn;
         this.getLogos();
       }, (error) => {
-        console.log(error);
+        console.warn(error);
       });
     }
   }

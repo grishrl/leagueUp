@@ -108,12 +108,7 @@ export class GeneralImageUploadComponent implements OnInit {
   // }
 
   ngOnInit() {
-    // console.log('oninit')
-    // if (this.util.isNullOrEmpty(this.currentImage)){
-    //   this.currentImage = this.imageUrl;
-    // }
 
-    // this.croppieImage = this.imageUrl;
   }
 
   ngOnChanges(changes: any) {
@@ -141,7 +136,7 @@ export class GeneralImageUploadComponent implements OnInit {
       this.croppieImage = null;
       this.editClicked = true;
     }, (err) => {
-      console.log(err);
+      console.warn(err);
     });
 
   }
@@ -165,7 +160,7 @@ export class GeneralImageUploadComponent implements OnInit {
         // fr.readAsDataURL(ret);
       },
       err => {
-        console.log(err);
+        console.warn(err);
       }
     );
     fr.onloadend = loadEvent => {

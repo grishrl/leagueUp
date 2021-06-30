@@ -33,7 +33,7 @@ export class TeamTournamentsComponent implements OnInit {
           this.involvedTournaments = res;
         },
         err=>{
-          console.log(err);
+          console.warn(err);
         }
       );
     }else{
@@ -42,7 +42,7 @@ export class TeamTournamentsComponent implements OnInit {
               this.involvedTournaments = res;
             },
             (err) => {
-              console.log(err);
+              console.warn(err);
             }
           );
     }

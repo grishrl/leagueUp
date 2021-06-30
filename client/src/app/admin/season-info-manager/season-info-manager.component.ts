@@ -59,10 +59,10 @@ export class SeasonInfoManagerComponent implements OnInit {
       if(pass){
         this.timeservice.postInfo(this.editSeason).subscribe(
           res => {
-            console.log(res);
+
           },
           err => {
-            console.log(err);
+            console.warn(err);
           }
         )
       }else{
@@ -71,10 +71,10 @@ export class SeasonInfoManagerComponent implements OnInit {
     }else{
       this.timeservice.postInfo(this.editSeason).subscribe(
         res => {
-          console.log(res);
+
         },
         err => {
-          console.log(err);
+          console.warn(err);
         }
       )
     }

@@ -214,7 +214,7 @@ colors: {
                  this.refresh.next();
                },
                (err) => {
-                 console.log(err);
+                 console.warn(err);
                }
              );
           }
@@ -225,7 +225,7 @@ colors: {
 
       },
       err => {
-        console.log(err);
+        console.warn(err);
       }
     );
   }

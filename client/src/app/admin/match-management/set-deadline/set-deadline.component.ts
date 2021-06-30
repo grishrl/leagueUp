@@ -37,9 +37,9 @@ export class SetDeadlineComponent implements OnInit {
 
     if (this.selectedDivision.divisionConcat && time && this.selectedWeek){
       this.admin.setScheduleDeadline(this.selectedDivision.divisionConcat, time, this.selectedWeek).subscribe( res=>{
-      console.log(res)
+
     }, err=>{
-      console.log(err);
+      console.warn(err);
     })
     }else{
       alert('Input missing');

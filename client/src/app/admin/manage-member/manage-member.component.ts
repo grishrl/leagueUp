@@ -41,7 +41,7 @@ export class ManageMemberComponent implements OnInit {
             this.turnOnForm = false;
             this.recievedProfile = null;
           }, err => {
-            console.log(err);
+            console.warn(err);
           }
         )
       }

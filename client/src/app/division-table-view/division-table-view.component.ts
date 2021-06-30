@@ -27,7 +27,7 @@ export class DivisionTableViewComponent implements OnInit {
         }
       } );
     }, err => {
-      console.log(err);
+      console.warn(err);
     });
   }
 

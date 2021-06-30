@@ -31,7 +31,7 @@ export class AllTeamsComponent implements OnInit {
         this.loading = false;
       },
       err=>{
-        console.log(err);
+        console.warn(err);
       }
     )
 
@@ -40,7 +40,7 @@ export class AllTeamsComponent implements OnInit {
         this.divisions = res;
       },
       err=>{
-        console.log(err);
+        console.warn(err);
       }
     )
 

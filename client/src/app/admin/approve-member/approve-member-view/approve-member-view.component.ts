@@ -107,7 +107,7 @@ export class ApproveMemberViewComponent implements OnInit {
                 this.resultantMmr = resmmr.resultantMmr;
               },
               (err) => {
-                console.log(err);
+                console.warn(err);
               }
             );
         });
@@ -122,7 +122,7 @@ export class ApproveMemberViewComponent implements OnInit {
         this.accountActioner();
       },
       (err) => {
-        console.log(err);
+        console.warn(err);
       }
     );
   }
@@ -131,12 +131,11 @@ export class ApproveMemberViewComponent implements OnInit {
     if (this.note.length > 0) {
       this.admin.pmqAddNote(this._info, this.note).subscribe(
         (res) => {
-          // console.log(res);
           this._info = res;
           this.note = "";
         },
         (err) => {
-          console.log(err);
+          console.warn(err);
         }
       );
     }
@@ -153,7 +152,7 @@ export class ApproveMemberViewComponent implements OnInit {
           this.accountActioner();
         },
         (err) => {
-          console.log(err);
+          console.warn(err);
         }
       );
     }

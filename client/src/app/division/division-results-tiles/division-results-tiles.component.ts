@@ -121,7 +121,7 @@ export class DivisionResultsTilesComponent implements OnInit {
                     }
                   },
                   (err) => {
-                    console.log(err);
+                    console.warn(err);
                   }
                 );
               });
@@ -160,14 +160,14 @@ export class DivisionResultsTilesComponent implements OnInit {
                     }
                   },
                   (err) => {
-                    console.log(err);
+                    console.warn(err);
                   }
                 );
               });
           }
         },
         (err) => {
-          console.log(err);
+          console.warn(err);
         }
       );
   }

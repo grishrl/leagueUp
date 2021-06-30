@@ -29,7 +29,7 @@ export class NotesViewComponent implements OnInit {
         this.notes = res;
       },
       err=>{
-        console.log(err);
+        console.warn(err);
       }
     );
   }

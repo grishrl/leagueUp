@@ -75,7 +75,7 @@ export class CasterInputsComponent implements OnInit {
                           this.hideForm = true;
                         },
                         (err) => {
-                          console.log(err);
+                          console.warn(err);
                         }
                       );
                   },
@@ -97,7 +97,7 @@ export class CasterInputsComponent implements OnInit {
               this.ngOnInit();
             },
             (err) => {
-              console.log(err);
+              console.warn(err);
             }
           );
     }
@@ -106,7 +106,6 @@ export class CasterInputsComponent implements OnInit {
 
   saveCasterInfo(casterName, casterUrl) {
     let matchId;
-    console.log(this.recMatch, this._id, this.replayCastTime);
     if (this._id != null && this._id != undefined) {
       matchId = this._id;
       if (casterName != null && casterName != undefined) {
@@ -132,7 +131,7 @@ export class CasterInputsComponent implements OnInit {
                         this.hideForm = true;
                       },
                       (err) => {
-                        console.log(err);
+                        console.warn(err);
                       }
                     );
                 },
@@ -153,7 +152,7 @@ export class CasterInputsComponent implements OnInit {
                   this.hideForm = true;
                 },
                 (err) => {
-                  console.log(err);
+                  console.warn(err);
                 }
               );
           }
