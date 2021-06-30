@@ -37,7 +37,7 @@ export class VerifiedStormLeagueRanksViewComponent implements OnInit {
     this.PlayerRankServ.getRequiredRanks().subscribe(
       (res) => {
         if (res && res.data && res.data.length > 0) {
-          console.log(res);
+
           res.data.forEach((item) => {
 
             if (item.required == true) {
