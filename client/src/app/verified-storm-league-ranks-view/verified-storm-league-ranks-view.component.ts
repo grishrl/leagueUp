@@ -38,6 +38,7 @@ export class VerifiedStormLeagueRanksViewComponent implements OnInit {
       (res) => {
         if (res && res.data && res.data.length > 0) {
           res.data.forEach((item) => {
+
             if (item.required == true) {
               item.status = "na";
               this.toDisplay.push(item);
@@ -45,6 +46,15 @@ export class VerifiedStormLeagueRanksViewComponent implements OnInit {
           });
         }
         if (this.verifiedUserRanks && this.verifiedUserRanks.length > 0) {
+
+          this.toDisplay.sort((a,b)=>{
+          		if(a.year == b.year){
+              return a.season < b.season ? -1 : 1;
+              }else{
+              return a.year < b.year ? -1 : 1;
+              }
+          });
+
           this.toDisplay.forEach((reqRank, index) => {
             this.verifiedUserRanks.forEach((verifiedRank) => {
               if (
