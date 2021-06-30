@@ -94,7 +94,7 @@ export class DivisionTournamentResultsTilesComponent implements OnInit, OnChange
     let matches = this.localStoreTournaments[this.selectedCup].matches;
 
     if(matches.length>0){
-      this.scheduleService.getMatchList(matches).subscribe(
+      this.scheduleService.getMatchList(matches,this.seasonVal).subscribe(
         res => {
           this.matches = res;
           this.matches = this.matches.filter(match => {

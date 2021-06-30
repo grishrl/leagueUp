@@ -123,10 +123,8 @@ import { TeamHistoryComponent } from './team/team-history/team-history.component
 import { TeamUpcomingMatchComponent } from './team/team-upcoming-match/team-upcoming-match.component';
 import { DivisionResultsTilesComponent } from './division/division-results-tiles/division-results-tiles.component';
 import { DivisionUpcomingMatchesComponent } from './division/division-upcoming-matches/division-upcoming-matches.component';
-import { NgsAccordianComponent } from './elements/ngs-accordian/ngs-accordian.component';
 import { BannerImageComponent } from './banner-image/banner-image.component';
 import { ResultsTilesComponent } from './results-tiles/results-tiles.component';
-// import { AvatarUploadComponent } from './player/avatar-upload/avatar-upload.component';
 import { ApprovePendingAvatarComponent } from './admin/approve-pending-avatar/approve-pending-avatar.component';
 import { ApproveAvatarViewComponent } from './admin/approve-pending-avatar/approve-avatar-view/approve-avatar-view.component';
 import { TwitchComponent } from './formComponents/twitch/twitch.component';
@@ -141,7 +139,6 @@ import { LeagueStatsComponent } from './league-stats/league-stats.component';
 import { LStatDirective } from './league-stats/l-stat.directive';
 import { MatchResultsViewComponent } from './match/match-results-view/match-results-view.component';
 import { ChallongeTournComponent } from './challonge-tourn/challonge-tourn.component';
-
 import { DivisionLinkComponent } from './LinkComponents/division-link/division-link.component';
 import { TeamLinkComponent } from './LinkComponents/team-link/team-link.component';
 import { PlayerLinkComponent } from './LinkComponents/player-link/player-link.component';
@@ -156,7 +153,6 @@ import { AssistantCaptainMgmtComponent } from './modal/assistant-captain-mgmt/as
 import { PastSeasonsComponent } from './past-seasons/past-seasons.component';
 import { AuthorListComponent } from './blog/author-list/author-list.component';
 import { AuthorPageComponent } from './blog/author-page/author-page.component';
-
 import { DivisionTournamentScheduleTableComponent } from './division/division-tournament-schedule-table/division-tournament-schedule-table.component';
 import { CasterPageComponent } from './caster-tools/caster-page/caster-page.component';
 import { AuthorNameComponent } from './blog/author-name/author-name.component';
@@ -180,7 +176,6 @@ import { CommonPipePipe } from './common/common-pipe.pipe';
 import { TeamNameComponent } from './formComponents/team-name/team-name.component';
 import { RoundColumnComponent } from './elements/schedule-table/round-column/round-column.component';
 import { ActiveTournamentViewerComponent } from './tournament-viewer/active-tournament-viewer/active-tournament-viewer.component';
-
 import { TeamRegisteredComponent } from './team/team-registered/team-registered.component';
 import { ArchiveSeasonComponent } from './admin/archive-season/archive-season.component';
 import { DisplayNameForIdComponent } from './elements/display-name-for-id/display-name-for-id.component';
@@ -206,8 +201,11 @@ import { VerifiedStormLeagueRanksViewComponent } from './verified-storm-league-r
 import { DeleteTournamentComponent } from './admin/match-management/delete-tournament/delete-tournament.component';
 import { MembersReportingComponent } from './storm-rank-tools/members-reporting/members-reporting.component';
 import { VerifiedStormRanksDisplayNameComponent } from './storm-rank-tools/verified-storm-ranks-display-name/verified-storm-ranks-display-name.component';
+import { PlayerSearchComponent } from './player/player-search/player-search.component';
+import { SingleTeamDisplayComponent } from './team/team-display/single-team-display/single-team-display.component';
+import { MAT_COLOR_FORMATS, NgxMatColorPickerModule, NGX_MAT_COLOR_FORMATS } from '@angular-material-components/color-picker';
+import { AdminYoutubeCurator } from './admin/caster/admin-youtube-curator/admin-youtube-curator.component';
 
-// const config: SocketIoConfig = { url: environment.socketURL, options:{} }
 
 @NgModule({
   declarations: [
@@ -266,7 +264,6 @@ import { VerifiedStormRanksDisplayNameComponent } from './storm-rank-tools/verif
     EventLargeComponent,
     SetDeadlineComponent,
     MatchViewComponent,
-
     DropDownTimeComponent,
     UserMessageCenterComponent,
     TeamMarketComponent,
@@ -319,7 +316,6 @@ import { VerifiedStormRanksDisplayNameComponent } from './storm-rank-tools/verif
     DivisionResultsTilesComponent,
     DivisionUpcomingMatchesComponent,
     SafeHtmlPipe,
-    NgsAccordianComponent,
     BannerImageComponent,
     ResultsTilesComponent,
     ApprovePendingAvatarComponent,
@@ -397,17 +393,17 @@ import { VerifiedStormRanksDisplayNameComponent } from './storm-rank-tools/verif
     VerifiedStormLeagueRanksViewComponent,
     DeleteTournamentComponent,
     MembersReportingComponent,
-    VerifiedStormRanksDisplayNameComponent
+    VerifiedStormRanksDisplayNameComponent,
+    PlayerSearchComponent,
+    SingleTeamDisplayComponent,
+    AdminYoutubeCurator
   ],
   entryComponents:[
     DeleteConfrimModalComponent,
     ChangeCaptainModalComponent,
     ConfirmRemoveMemberComponent,
     EventModalComponent,
-
-    NgsAccordianComponent,
     AssistantCaptainMgmtComponent
-
   ],
   imports: [
     BrowserModule,
@@ -422,16 +418,17 @@ import { VerifiedStormRanksDisplayNameComponent } from './storm-rank-tools/verif
       provide: DateAdapter,
       useFactory: adapterFactory
     }),
-    // SocketIoModule.forRoot(config),
     DragDropModule,
-    DragScrollModule
+    DragScrollModule,
+    NgxMatColorPickerModule
   ],
   providers: [
     {
     provide:HTTP_INTERCEPTORS,
     useClass:ResponseInterceptor,
     multi:true
-    }
+    },
+    { provide: MAT_COLOR_FORMATS, useValue: NGX_MAT_COLOR_FORMATS }
   ],
   schemas:[
     CUSTOM_ELEMENTS_SCHEMA

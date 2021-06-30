@@ -4,25 +4,7 @@
         <div class="row portfolioContainer">
             <!-- Item Team Group A-->
             <div class="col-md-6 col-lg-4 col-xl-3 " *ngFor="let item of _teams">
-                <div class="item-team">
-                    <div class="head-team">
-                        <img src="{{item.logo}}" alt="location-team">
-                        <div class="overlay">
-                            <app-team-link [team]="item.teamName" [season]="_season">+</app-team-link>
-                        </div>
-                    </div>
-                    <div class="info-team">
-                        <span class="logo-team">
-                          <img src="{{item.logo}}" alt="logo-team">
-                        </span>
-                        <h4>{{item.teamName}}</h4>
-                    </div>
-                    <app-team-link [season]="_season" [team]="item.teamName">
-                        <span class="btn">Team
-                        Profile <i class="fa fa-angle-right" aria-hidden="true"></i></span>
-                    </app-team-link>
-
-                </div>
+                <app-single-team-display [item]="item" [season]="_season"></app-single-team-display>
             </div>
             <!-- End Item Team Group A-->
 

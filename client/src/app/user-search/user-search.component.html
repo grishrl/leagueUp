@@ -12,11 +12,16 @@
                         {{btag}}
                     </mat-option>
                 </mat-autocomplete>
+                <mat-error *ngIf="userCtrl.hasError('noMatch')">
+                    Sorry we didn't find any matches!
+                </mat-error>
+
             </mat-form-field>
         </form>
     </div>
+
     <div class="col">
-        <button type="button" [disabled]="disableButton" (click)="userSelect(selectedUser)"> {{btnTxt}} </button>
+        <button type="button" class="btn btn-primary" [disabled]="disableButton" (click)="userSelect(selectedUser)"> {{btnTxt}} </button>
     </div>
 </div>
 

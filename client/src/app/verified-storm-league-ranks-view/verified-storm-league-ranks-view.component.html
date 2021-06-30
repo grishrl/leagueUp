@@ -1,21 +1,46 @@
-<div class="row">
-    <div class="col-3 text-center" *ngFor="let rank of toDisplay">
-        {{rank.year}} Season {{rank.season}}
-        <ng-container [ngSwitch]="rank.status">
-            <div *ngIf="admin">
-                <strong>Admin Mod:</strong>
-                <app-storm-league [(division)]="rank.hlRankMetal" [disabled]="false" [(rank)]="rank.hlRankDivision"></app-storm-league>
-                <button class="btn btn-warning" (click)="saveUpdate()">Save</button>
-            </div>
-            <app-storm-league *ngSwitchCase="'verified'" [disabled]="true" [division]="rank.hlRankMetal" [rank]="rank.hlRankDivision">
-            </app-storm-league>
-            <ng-container *ngSwitchCase="'pending'">
-                <div>Pending admin verification</div>
+<ng-container *ngIf="orientation == 'horizontal'">
+    <div class="row">
+        <div class="col-3 text-center" *ngFor="let rank of toDisplay">
+            {{rank.year}} Season {{rank.season}}
+            <ng-container [ngSwitch]="rank.status">
+                <div *ngIf="admin">
+                    <strong>Admin Mod:</strong>
+                    <app-storm-league [(division)]="rank.hlRankMetal" [disabled]="false" [(rank)]="rank.hlRankDivision"></app-storm-league>
+                    <button class="btn btn-warning" (click)="saveUpdate()">Save</button>
+                </div>
+                <app-storm-league *ngSwitchCase="'verified'" [disabled]="true" [division]="rank.hlRankMetal" [rank]="rank.hlRankDivision">
+                </app-storm-league>
+                <ng-container *ngSwitchCase="'pending'">
+                    <div>Pending admin verification</div>
+                </ng-container>
+                <ng-container *ngSwitchCase="'na'" [ngTemplateOutlet]="upload" [ngTemplateOutletContext]="{rank:rank}"></ng-container>
             </ng-container>
-            <ng-container *ngSwitchCase="'na'" [ngTemplateOutlet]="upload" [ngTemplateOutletContext]="{rank:rank}"></ng-container>
-        </ng-container>
+        </div>
     </div>
-</div>
+</ng-container>
+
+<ng-container *ngIf="orientation == 'vertical'">
+    <div class="row mt-3" *ngFor="let rank of toDisplay; let i=index;">
+        <div class="col text-center">
+            <hr *ngIf="i>0"> {{rank.year}} Season {{rank.season}}
+            <ng-container [ngSwitch]="rank.status">
+                <div *ngIf="admin">
+                    <strong>Admin Mod:</strong>
+                    <app-storm-league [(division)]="rank.hlRankMetal" [disabled]="false" [(rank)]="rank.hlRankDivision"></app-storm-league>
+                    <button class="btn btn-warning" (click)="saveUpdate()">Save</button>
+                </div>
+                <app-storm-league *ngSwitchCase="'verified'" [disabled]="true" [division]="rank.hlRankMetal" [rank]="rank.hlRankDivision">
+                </app-storm-league>
+                <ng-container *ngSwitchCase="'pending'">
+                    <div>Pending admin verification</div>
+                </ng-container>
+                <ng-container *ngSwitchCase="'na'" [ngTemplateOutlet]="upload" [ngTemplateOutletContext]="{rank:rank}"></ng-container>
+            </ng-container>
+        </div>
+    </div>
+</ng-container>
+
+
 <div class="row mt-3" *ngIf="uploadImage">
     <div class="col">
         In order for a mod to approve your SL rank screen cap upload, it must have the following:

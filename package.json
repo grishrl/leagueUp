@@ -1,6 +1,6 @@
 {
     "name": "ngsMeanCore",
-    "version": "2.2.3",
+    "version": "2.3.0",
     "description": "Large package encompassing several capabilities for e-sports leagues",
     "main": "server.js",
     "scripts": {
@@ -28,6 +28,7 @@
         "jsonwebtoken": "^8.5.1",
         "lodash": "^4.17.20",
         "luxon": "^1.25.0",
+        "moment": "^2.29.1",
         "mongoose": "^5.9.12",
         "newrelic": "^6.13.0",
         "nodemailer": "^4.7.0",

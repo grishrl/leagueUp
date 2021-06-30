@@ -12,109 +12,99 @@ import { TeamService } from '../services/team.service';
 import { AuthService } from '../services/auth.service';
 import { find } from 'lodash';
 import { CalendarCacheService } from './calendar-cache.service';
+import { DivisionService } from '../services/division.service';
 
 const colors: any = {
-  storm: {
-    //navy
-    primary: "#c5e610",
-    name: "Storm Division",
-    sortOder: 1,
-  },
-  heroic: {
-    //navy
-    primary: "#001f3f",
-    name: "Heroic Division",
-    sortOder: 2,
-  },
-  nexus: {
-    //navy
-    primary: "#EF03E8",
-    name: "Nexus Division",
-    sortOder: 3,
-  },
-  "a-east": {
-    //red
-    primary: "#FF4136",
-    name: "Division A East",
-    sortOder: 4,
-  },
-  "a-west": {
-    //red
-    primary: "#d30c00",
-    name: "Division A West",
-    sortOder: 5,
-  },
-  "b-east": {
-    //teal
-    primary: "#39CCCC",
-    name: "Division B East",
-    sortOder: 6,
-  },
-  "b-northeast": {
-    //teal
-    primary: "#0f8c8c",
-    name: "Division B North East",
-    sortOder: 7,
-  },
-  "b-southeast": {
-    //teal
-    primary: "#15e8e8",
-    name: "Division B South East",
-    sortOder: 8,
-  },
-  "b-west": {
-    //aqua
-    primary: "#7FDBFF",
-    name: "Division B West",
-    sortOder: 9,
-  },
-  "c-east": {
-    //fuchsia
-    primary: "#F012BE",
-    name: "Division C East",
-    sortOder: 10,
-  },
-  "c-west": {
-    //PURPLE
-    primary: "#B10DC9",
-    name: "Division C West",
-    sortOder: 11,
-  },
-  "d-east": {
-    //green
-    primary: "#2ECC40",
-    name: "Division D East",
-    sortOder: 12,
-  },
-  "d-west": {
-    //lime
-    primary: "#01FF70",
-    name: "Division D West",
-    sortOder: 13,
-  },
-  "e-east": {
-    //purple
-    primary: "#FAD165",
-    name: "Division E East",
-    sortOder: 14,
-  },
-  "e-west": {
-    //purple
-    primary: "#D9FA64",
-    name: "Division E West",
-    sortOder: 15,
-  },
-  event: {
-    //orange
-    primary: "#FF851B",
-    name: "NGS Event",
-    sortOder: 16,
-  },
-  tournament: {
-    primary: "#E5D800",
-    name: "Tournament",
-    sortOrder: 17,
-  },
+  // storm: {
+  //   //navy
+  //   primary: "#c5e610",
+  //   name: "Storm Division",
+  //   sortOder: 1,
+  // },
+  // heroic: {
+  //   //navy
+  //   primary: "#001f3f",
+  //   name: "Heroic Division",
+  //   sortOder: 2,
+  // },
+  // nexus: {
+  //   //navy
+  //   primary: "#EF03E8",
+  //   name: "Nexus Division",
+  //   sortOder: 3,
+  // },
+  // "a-east": {
+  //   //red
+  //   primary: "#FF4136",
+  //   name: "Division A East",
+  //   sortOder: 4,
+  // },
+  // "a-west": {
+  //   //red
+  //   primary: "#d30c00",
+  //   name: "Division A West",
+  //   sortOder: 5,
+  // },
+  // "b-east": {
+  //   //teal
+  //   primary: "#39CCCC",
+  //   name: "Division B East",
+  //   sortOder: 6,
+  // },
+  // "b-northeast": {
+  //   //teal
+  //   primary: "#0f8c8c",
+  //   name: "Division B North East",
+  //   sortOder: 7,
+  // },
+  // "b-southeast": {
+  //   //teal
+  //   primary: "#15e8e8",
+  //   name: "Division B South East",
+  //   sortOder: 8,
+  // },
+  // "b-west": {
+  //   //aqua
+  //   primary: "#7FDBFF",
+  //   name: "Division B West",
+  //   sortOder: 9,
+  // },
+  // "c-east": {
+  //   //fuchsia
+  //   primary: "#F012BE",
+  //   name: "Division C East",
+  //   sortOder: 10,
+  // },
+  // "c-west": {
+  //   //PURPLE
+  //   primary: "#B10DC9",
+  //   name: "Division C West",
+  //   sortOder: 11,
+  // },
+  // "d-east": {
+  //   //green
+  //   primary: "#2ECC40",
+  //   name: "Division D East",
+  //   sortOder: 12,
+  // },
+  // "d-west": {
+  //   //lime
+  //   primary: "#01FF70",
+  //   name: "Division D West",
+  //   sortOder: 13,
+  // },
+  // "e-east": {
+  //   //purple
+  //   primary: "#FAD165",
+  //   name: "Division E East",
+  //   sortOder: 14,
+  // },
+  // "e-west": {
+  //   //purple
+  //   primary: "#D9FA64",
+  //   name: "Division E West",
+  //   sortOder: 15,
+  // },
 };
 
 @Component({
@@ -135,7 +125,8 @@ export class CalendarViewComponent implements OnInit {
   key = colors;
   tournamentRefs;
 
-  constructor(private cache:CalendarCacheService, private matches: ScheduleService, public dialog: MatDialog, private router:Router, private eventService:EventsService, public util: UtilitiesService, public teamServ:TeamService, public auth:AuthService, private scheduleService:ScheduleService) { }
+  constructor(private cache:CalendarCacheService, private matches: ScheduleService, public dialog: MatDialog, private router:Router, private eventService:EventsService, public util: UtilitiesService,
+    public teamServ:TeamService, public auth:AuthService, private scheduleService:ScheduleService, private Division:DivisionService) { }
 
   showCasterNameUrl(match) {
     let ret = false;
@@ -169,6 +160,30 @@ export class CalendarViewComponent implements OnInit {
   ngOnInit(){
     let cache = this.cache.getCache(this.calendarInfo);
     let listCache = this.cache.getCache(this.listInfo);
+    this.Division.getDivisionInfo().subscribe(
+      res=>{
+        res.forEach( (v)=>{
+          colors[v.divisionConcat] = {
+            primary:`#${v.divColor}`,
+            name:v.displayName,
+            sortOrder:v.sortOrder
+          }
+        });
+        colors['event']={
+          primary: "#FF851B",
+          name: "NGS Event",
+          sortOder:Object.keys(colors).length
+        };
+        colors['tournament']={
+          primary: "#E5D800",
+          name: "Tournament",
+          sortOrder: Object.keys(colors).length
+        };
+      },
+      err=>{
+        console.warn(err);
+      }
+    )
     if(cache=='getNewData' || cache == null){
       this.initEvents();
     }else{

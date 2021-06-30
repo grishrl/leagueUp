@@ -1,1 +1,83 @@
-<p>caster-report works!</p>
+<app-banner-image [bannerTitle]="'Cast Report'"></app-banner-image>
+<section class="content-info">
+    <div class="container paddings-mini">
+        <div class="row">
+            <div class="col">
+                <div class="panel-box">
+                    <div class="titles no-margin">
+                        <h4>
+                            Cast Report
+                        </h4>
+                    </div>
+                    <div class="row">
+                        <div class="col info-panel">
+                            <div class="example-container text-center">
+                                <!-- caster name -->
+                                <mat-form-field>
+                                    <input matInput placeholder="Caster Name" [disabled]="true" [(ngModel)]="casterReport.casterName">
+                                </mat-form-field>
+                                <!-- additional casters -->
+                                <mat-form-field class="mat-FullWidth">
+                                    <mat-select placeholder="Additional Casters:" [(ngModel)]="selectedCoCaster" (ngModelChange)="casterSelected(selectedCoCaster,'cocaster')" disableOptionCentering>
+                                        <mat-option [value]=""></mat-option>
+                                        <mat-option *ngFor="let caster of castersList; let i = index" [value]="caster.displayName">{{caster.displayName}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <div *ngIf="casterReport.coCasters.length>0">
+                                    <div class="p-1 mt-3" *ngFor="let cocaster of casterReport.coCasters">
+                                        {{cocaster}} <button class="btn btn-danger pull-right" (click)="removecoCaster(cocaster)">Remove Caster</button>
+                                    </div>
+
+                                    <!-- <ul>
+                                        <li *ngFor="let cocaster of casterReport.coCasters">{{cocaster}}
+                                            <button class="btn btn-danger pull-right" (click)="removecoCaster(cocaster)">Remove Caster</button>
+                                        </li>
+                                    </ul> -->
+
+                                </div>
+                                <!-- <mat-form-field>
+                                    <input matInput placeholder="Additional Casters" [formControl]="displayNameControl" [(ngModel)]="casterReport.displayName">
+                                    <mat-error *ngIf="displayNameControl.hasError('required')">
+                                        Display name is required
+                                    </mat-error>
+                                </mat-form-field> -->
+                                <!-- match id -->
+                                <mat-form-field>
+                                    <input matInput placeholder="Match ID" [disabled]="true" [(ngModel)]="casterReport.matchId">
+                                </mat-form-field>
+                                <!-- division -->
+                                <mat-form-field>
+                                    <input matInput placeholder="Division" [disabled]="true" [(ngModel)]="casterReport.division">
+                                </mat-form-field>
+                                <!-- vods -->
+                                <mat-form-field>
+                                    <input matInput placeholder="VOD Links" [(ngModel)]="vodLink">
+                                </mat-form-field>
+                                <button class="btn btn-primary" (click)="addLink()"> Add </button>
+                                <div class="mt-2">
+                                    <div class="p-1 mt-3" *ngFor="let link of casterReport.vodLinks">{{link}}
+                                        <button class="btn btn-danger pull-right" (click)="removeVod(link)">Remove VOD</button>
+                                    </div>
+                                    <!-- <ul>
+                                        <li *ngFor="let link of casterReport.vodLinks">{{link}}
+                                            <button class="btn btn-danger pull-right" (click)="removeVod(link)">Remove VOD</button>
+                                        </li>
+                                    </ul> -->
+                                </div>
+
+                                <!-- issues -->
+                                <mat-form-field>
+                                    <textarea matInput placeholder="Issues" [(ngModel)]="casterReport.issues">
+                                      </textarea>
+                                </mat-form-field>
+                                <button class="btn btn-primary" (click)="save()"> Submit Report</button>
+                                <div class="mt-2"><span>{{saving}}</span></div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -16,6 +16,7 @@ const Stats = require('../models/stats-model');
 const logger = require('../subroutines/sys-logging-subs').logger;
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 const TeamMethods = require('../methods/team/teamCommon');
+const getRegisteredTeams = require('../methods/team/getRegistered');
 const {
     commonResponseHandler,
     requireOneInput,
@@ -187,22 +188,37 @@ router.get('/get/registered', (req, res) => {
 
     commonResponseHandler(req, res, [], [], async(req, res) => {
         const response = {};
-        return Team.find({
-            'questionnaire.registered': true
-        }).lean().then(
-            (foundTeam) => {
-                foundTeam = foundTeam ? foundTeam : {};
-                foundTeam = utils.objectify(foundTeam);
-                foundTeam = TeamMethods.removeDegenerateTeams(foundTeam);
-                response.status = 200;
-                response.message = utils.returnMessaging(req.originalUrl, 'Found team', false, foundTeam);
-                return response;
-            }, (err) => {
-                response.status = 500;
-                response.message = utils.returnMessaging(req.originalUrl, "Error querying teams.", err)
-                return response;
-            }
-        );
+        return getRegisteredTeams().then(
+                foundTeam => {
+                    foundTeam = foundTeam ? foundTeam : {};
+                    foundTeam = utils.objectify(foundTeam);
+                    foundTeam = TeamMethods.removeDegenerateTeams(foundTeam);
+                    response.status = 200;
+                    response.message = utils.returnMessaging(req.originalUrl, 'Found team', false, foundTeam);
+                    return response;
+                },
+                err => {
+                    response.status = 500;
+                    response.message = utils.returnMessaging(req.originalUrl, "Error querying teams.", err)
+                    return response;
+                }
+            )
+            // return Team.find({
+            //     'questionnaire.registered': true
+            // }).lean().then(
+            //     (foundTeam) => {
+            //         foundTeam = foundTeam ? foundTeam : {};
+            //         foundTeam = utils.objectify(foundTeam);
+            //         foundTeam = TeamMethods.removeDegenerateTeams(foundTeam);
+            //         response.status = 200;
+            //         response.message = utils.returnMessaging(req.originalUrl, 'Found team', false, foundTeam);
+            //         return response;
+            //     }, (err) => {
+            //         response.status = 500;
+            //         response.message = utils.returnMessaging(req.originalUrl, "Error querying teams.", err)
+            //         return response;
+            //     }
+            // );
     });
 
 });

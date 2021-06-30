@@ -15,6 +15,7 @@ export class UserSearchComponent implements OnInit {
 
   usersToFilter: any[] = [];
 
+  noResults = false;
   priorSelect: any
   lastChange: number = 0;
   selectedUser:any
@@ -73,6 +74,7 @@ export class UserSearchComponent implements OnInit {
   foundUsers: any[]
   search: string
 
+  unresolved = false;
   constructor(private users: UserService, private Auth:AuthService) {
     this.userCtrl.valueChanges.subscribe(
       data => {
@@ -83,8 +85,14 @@ export class UserSearchComponent implements OnInit {
           if (timestamp - this.lastChange > 1000) {
             this.lastChange = timestamp;
               this.users.userSearch(data, this.userSearchType).subscribe(res => {
+                if(res.length == 0){
+                  this.userCtrl.setErrors({'noMatch':true});
+                }
                 this.foundUsers = this.filterUsers(res, this.usersToFilter);
+                this.unresolved = false;
               });
+          }else{
+            this.unresolved = true;
           }
         }
       }
@@ -94,6 +102,17 @@ export class UserSearchComponent implements OnInit {
 
   ngOnInit(){
     this.usersToFilter.push(this.Auth.getUser());
+    setInterval(()=>{
+      if(this.unresolved){
+          this.users.userSearch(this.userCtrl.value, this.userSearchType).subscribe(res => {
+            if(res.length == 0){
+              this.userCtrl.setErrors({'noMatch':true});
+            }
+            this.foundUsers = this.filterUsers(res, this.usersToFilter);
+            this.unresolved=false;
+          });
+      }
+    },1000)
   }
 
 }

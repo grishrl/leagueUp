@@ -1,6 +1,6 @@
 {
     "name": "ngsMeanCore",
-    "version": "2.2.3",
+    "version": "2.3.0",
     "scripts": {
         "ng": "ng",
         "start": "ng serve",
@@ -12,10 +12,11 @@
     },
     "private": true,
     "dependencies": {
-        "@angular-devkit/build-angular": "^0.1001.0",
+        "@angular-devkit/build-angular": "^0.1102.13",
+        "@angular-material-components/color-picker": "^4.0.0",
         "@angular/animations": "^11.0.0-next.0",
         "@angular/cdk": "^10.2.0",
-        "@angular/cli": "^10.1.0",
+        "@angular/cli": "^11.2.13",
         "@angular/common": "^11.0.0-next.0",
         "@angular/compiler": "^11.0.0-next.0",
         "@angular/compiler-cli": "^11.0.0-next.0",
@@ -30,6 +31,8 @@
         "@angular/router": "^11.0.0-next.0",
         "@auth0/angular-jwt": "^3.0.1",
         "@types/croppie": "^2.5.4",
+        "@types/gapi": "0.0.39",
+        "@types/gapi.auth2": "0.0.54",
         "@types/jquery": "^3.3.31",
         "@types/marked": "^0.6.5",
         "@types/moment-timezone": "^0.5.12",
@@ -58,7 +61,7 @@
         "zone.js": "~0.10.3"
     },
     "devDependencies": {
-        "@angular-devkit/build-angular": "^0.1001.0",
+        "@angular-devkit/build-angular": "^0.1102.13",
         "@angular/animations": "^11.0.0-next.0",
         "@types/croppie": "^2.5.4",
         "@types/jasmine": "^3.5.0",
@@ -77,6 +80,6 @@
         "karma-jasmine-html-reporter": "^1.5.1",
         "protractor": "^7.0.0",
         "ts-node": "~8.4.1",
-        "tslint": "^5.20.1"
+        "tslint": "^6.1.3"
     }
 }

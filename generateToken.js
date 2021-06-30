@@ -11,6 +11,8 @@ const groupMakerTest = require('./server/cron-routines/groupMaker');
 const Archive = require('./server/methods/archivalMethods');
 const hpAPI = require('./server/methods/heroesProfileAPI');
 const fs = require('fs');
+const casterReport = require('./server/methods/casterReportMethods');
+const vodCur = require('./server/workers/vods-playlist-curator');
 
 let tokenObject = {};
 // set this ID to the _id that the API key will be tied to
@@ -41,6 +43,17 @@ mongoose.connect(process.env.mongoURI, () => {
     console.log('connected to mongodb');
 });
 
+vodCur();
+
+// casterReport.generateCastReportData().then(
+//     f => {
+//         console.log('f', f);
+//     },
+//     e => {
+//         console.log('e', e);
+//     }
+// )
+
 // new System.system({
 //     'dataName': 'apiKey',
 //     'value': token
@@ -54,39 +67,39 @@ mongoose.connect(process.env.mongoURI, () => {
 //         process.exit(0);
 //     }
 // );
-const list = [];
+// const list = [];
 
-Match.find({
-    $and: [
-        { season: 11 },
-        { divisionConcat: 'e-east' },
-        { reported: true },
-        { $or: [{ forfeit: false }, { forfeit: { $exists: false } }] }
-    ]
-}).then(
-    (found) => {
-        console.log(found.length);
-        found.forEach(
-            match => {
-                let obj = match.toObject();
-                if (obj.replays) {
-                    _.forEach(obj.replays, (v, k) => {
-                        console.log('V', v);
-                        if (v && v.url) {
-                            console.log(`${process.env.heroProfileReplay}${v.url}`);
-                            list.push(`${process.env.heroProfileReplay}${v.url}`);
-                        }
-                    })
-                }
-            }
-        );
+// Match.find({
+//     $and: [
+//         { season: 11 },
+//         { divisionConcat: 'e-east' },
+//         { reported: true },
+//         { $or: [{ forfeit: false }, { forfeit: { $exists: false } }] }
+//     ]
+// }).then(
+//     (found) => {
+//         console.log(found.length);
+//         found.forEach(
+//             match => {
+//                 let obj = match.toObject();
+//                 if (obj.replays) {
+//                     _.forEach(obj.replays, (v, k) => {
+//                         console.log('V', v);
+//                         if (v && v.url) {
+//                             console.log(`${process.env.heroProfileReplay}${v.url}`);
+//                             list.push(`${process.env.heroProfileReplay}${v.url}`);
+//                         }
+//                     })
+//                 }
+//             }
+//         );
 
-        fs.writeFile('downloadList.txt', JSON.stringify(list), (err) => {
-            console.log(err);
-        });
+//         fs.writeFile('downloadList.txt', JSON.stringify(list), (err) => {
+//             console.log(err);
+//         });
 
-    }
-)
+//     }
+// )
 
 // Archive.archiveDivisions().then(
 //     res => {

@@ -4,7 +4,7 @@
     </div>
 </div>
 <div class="row">
-    <div class="col">
+    <div class="col" #parent>
         <div class="row">
             <div class="col">
                 <img class="img-fluid" [src]="imageToDisplay" alt="" />
@@ -12,7 +12,7 @@
         </div>
         <div class="row mt-1" [hidden]="!_showEdit">
             <div class="col">
-                <span class="finger" (click)="editClicked=!editClicked"><i class="material-icons">launch</i>
+                <span class="finger" (click)="actionEdit()"><i class="material-icons">launch</i>
                   <span style="position: absolute;">Upload New Image</span>
                 </span>
             </div>

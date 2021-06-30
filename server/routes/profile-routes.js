@@ -15,7 +15,7 @@ const {
     requireOneInput,
     returnInvalidInputsMessage
 } = require('./../commonResponseHandler');
-const { DataExchange } = require('aws-sdk');
+
 
 /*
 /get
@@ -133,6 +133,76 @@ router.get('/delete', passport.authenticate('jwt', {
 
 });
 
+router.post('/save/discordid', passport.authenticate('jwt', {
+        session: false
+    }), utils.appendResHeader,
+    function(req, res) {
+        const path = 'user/save/discordid';
+
+        const optionalParameters = [{
+            name: 'user',
+            type: 'string'
+        }, {
+            name: 'userId',
+            type: 'string'
+        }]
+
+        const reqParams = [{
+            name: 'discordId',
+            type: 'string'
+        }]
+
+
+        commonResponseHandler(req, res, reqParams, optionalParameters, async(req, res, reqParams, optionalParameters) => {
+            const response = {};
+
+            var sentUser = req.body;
+
+            //construct log object
+            let logObj = {};
+            logObj.actor = req.user.displayName;
+            logObj.action = 'saving user discord guid';
+            logObj.target = sentUser.displayName;
+            logObj.logLevel = 'STD';
+
+            const query = {}
+            if (optionalParameters.user.valid && optionalParameters.userId.valid) {
+                console.log('sure hope you know what you\'re doing');
+            }
+
+            if (optionalParameters.user.valid) {
+                query[displayName] = optionalParameters.user.value;
+            }
+
+            if (optionalParameters.userId.valid) {
+                query[_id] = optionalParameters.userId.value;
+            }
+
+            return User.findOne(query).then(
+                found => {
+                    found.discordId = reqParams.discordId.value;
+                    return found.save().then(
+                        s => {
+                            response.status = 200;
+                            response.message = utils.returnMessaging(req.originalUrl, 'User Updated', null, null, s);
+                            return response;
+                        },
+                        e => {
+                            response.status = 500;
+                            response.message = utils.returnMessaging(req.originalUrl, 'Error saving user', e, null, null);
+                            return response;
+                        }
+                    )
+                },
+                err => {
+                    response.status = 500;
+                    response.message = utils.returnMessaging(req.originalUrl, 'Error finding user', err, null, null);
+                    return response;
+                }
+            )
+        });
+    });
+
 router.post('/save', passport.authenticate('jwt', {
         session: false
     }), utils.appendResHeader,
@@ -195,6 +265,9 @@ router.post('/save', passport.authenticate('jwt', {
                         }
                         if (utils.returnBoolByPath(sentUser, 'discordTag')) {
                             found.discordTag = sentUser.discordTag
+                        }
+                        if (utils.returnBoolByPath(sentUser, 'discordId')) {
+                            found.discordId = sentUser.discordTag
                         }
                         if (utils.returnBoolByPath(sentUser, 'hlRankMetal')) {
                             found.hlRankMetal = sentUser.hlRankMetal
@@ -397,6 +470,36 @@ router.get('/leagueOverallStats', (req, res) => {
 
     })
 
+
+});
+
+router.get('/get/casters', (req, res) => {
+
+    const path = 'user/get/casters';
+
+
+    const start = Date.now();
+    commonResponseHandler(req, res, [], [], async(req, res) => {
+        const response = {};
+        return User.find({
+            $and: [
+                { $or: [{ casterName: { $exists: true } }, { casterName: { $ne: null } }] },
+                { $or: [{ twitch: { $exists: true } }, { twitch: { $ne: null } }] }
+
+            ]
+        }).then(
+            foundCasters => {
+                response.status = 200;
+                response.message = utils.returnMessaging(req.originalUrl, 'Found Casters', false, foundCasters);
+                return response;
+            },
+            err => {
+                response.status = 400;
+                response.message = utils.returnMessaging(req.originalUrl, 'Error Getting Casters', err, null, null);
+                return response;
+            }
+        )
+    });
 
 });
 

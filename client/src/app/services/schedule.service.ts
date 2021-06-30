@@ -365,4 +365,25 @@ export class ScheduleService {
     let url = "/schedule/get/grandchampions";
     return this.httpService.httpGet(url, [], false);
   }
+
+  casterReport(obj){
+    let url = '/schedule/report/cast';
+    let payload = {
+      report:obj
+    };
+    return this.httpService.httpPost(url, payload);
+  }
+
+  getCasterReport(id){
+    let url = '/schedule/report/cast';
+    const payload = [
+      {matchId:id}
+    ];
+    return this.httpService.httpGet(url, payload);
+  }
+
+    getUncurratedReport(){
+    let url = '/schedule/report/cast/uncurrated';
+    return this.httpService.httpGet(url, []);
+  }
 }

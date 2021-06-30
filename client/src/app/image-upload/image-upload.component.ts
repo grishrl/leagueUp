@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, SimpleChange, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, SimpleChange, Output, EventEmitter, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { TeamService } from '../services/team.service';
 import { UtilitiesService } from '../services/utilities.service';
 import { AdminService } from '../services/admin.service';
@@ -28,6 +28,8 @@ export class ImageUploadComponent implements OnInit {
       console.warn("Invalid Image Type Provided to app-image-upload");
     }
   }
+
+  @ViewChild('parent') div:ElementRef
 
   ngOnChanges(change: SimpleChange) {
     if (this._imageType == "teamlogo") {
@@ -123,6 +125,7 @@ export class ImageUploadComponent implements OnInit {
   croppieHidden = true;
 
   constructor(
+    private renderer:Renderer2,
     private user: UserService,
     private teamService: TeamService,
     private util: UtilitiesService,
@@ -178,21 +181,31 @@ export class ImageUploadComponent implements OnInit {
     }
   }
 
+  actionEdit(){
+    this.editClicked = !this.editClicked;
+  }
+
   croppieObject;
   ngAfterViewInit() {
-    console.log(this.widthPx, this.heightPx);
-    let wB = this.widthPx*1.2;
-    let hB = this.heightPx*1.2;
+
+    let parentContainerWidth = this.div.nativeElement.clientWidth;
+    let totalCroppieWidth = Math.ceil(.9*parentContainerWidth);
+    let totalCroppeHeight = Math.ceil((totalCroppieWidth/16)*9);
+
+    console.log(parentContainerWidth, totalCroppieWidth, totalCroppeHeight)
+
+    let wB = totalCroppieWidth*1.2;
+    let hB = totalCroppeHeight*1.2;
     let ele = `#${this.randomName}`;
     this.croppieObject = $(ele).croppie({
       viewport: {
-        width: this.widthPx,
-        height: this.heightPx,
+        width: Math.ceil(totalCroppieWidth*.8),
+        height: Math.ceil(totalCroppeHeight*.8),
         type:'square'
       },
       boundary: {
-        width: wB,
-        height: hB
+        width: totalCroppieWidth,
+        height: totalCroppeHeight
       },
       enforceBoundary:false
     });
@@ -202,7 +215,7 @@ export class ImageUploadComponent implements OnInit {
     this.croppieObject
       .croppie("result", {
         type: "base64",
-        size: "viewport",
+        size: {height:this.heightPx, width:this.widthPx},
         format: "png",
         quality: 0.8
       })

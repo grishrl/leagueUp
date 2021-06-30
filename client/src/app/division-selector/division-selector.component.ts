@@ -42,6 +42,10 @@ export class DivisionSelectorComponent implements OnInit {
     }
   }
 
+  @Input() set refresh(val){
+    this.ngOnInit();
+  }
+
   @Input() set inputDiv(div){
     if(div){
       this.selectedDivision=div._id;

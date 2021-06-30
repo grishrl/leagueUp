@@ -19,6 +19,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
 
+
 @NgModule({
   imports: [
     MatInputModule,
@@ -38,7 +39,7 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
     MatTabsModule,
     MatSnackBarModule,
     MatPaginatorModule,
-    MatMomentDateModule,
+    MatMomentDateModule
   ],
   exports: [
     MatInputModule,
@@ -59,6 +60,6 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
     MatSnackBarModule,
     MatPaginatorModule,
     MatMomentDateModule,
-  ],
+  ]
 })
 export class InputFormMaterial {}

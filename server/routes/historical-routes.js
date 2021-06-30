@@ -114,45 +114,76 @@ router.post('/season/teams', (req, res) => {
     const requiredParameters = [{
         name: 'season',
         type: 'number'
-    }, {
+    }]
+
+    const optionalParameters = [{
         name: 'teams',
         type: 'array'
     }]
 
-    commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
+    commonResponseHandler(req, res, requiredParameters, optionalParameters, async(req, res, requiredParameters, optionalParameters) => {
         const response = {};
 
-        let season = requiredParameters.season.value;
-        let teams = requiredParameters.teams.value;
+        if (requiredParameters.season.valid && !optionalParameters.teams.valid) {
 
-        let query = {
-            '$and': [{
-                    season: season
-                },
-                {
-                    type: 'team'
-                },
-                {
-                    'object.teamName': {
-                        $in: teams
+            let query = {
+                $and: [{
+                        season: requiredParameters.season.value
+                    },
+                    {
+                        type: 'team'
                     }
+                ]
+            };
+
+            return Archive.find(query).then(
+                found => {
+                    response.status = 200;
+                    response.message = utils.returnMessaging(req.originalUrl, 'Found ' + found.length + ' teams for season ' + requiredParameters.season.value + ':', false, found);
+                    return response;
+                },
+                err => {
+                    response.status = 500;
+                    response.message = utils.returnMessaging(req.originalUrl, 'Error finding teams:', err);
+                    return response
                 }
-            ]
-        };
+            );
+
+        } else {
+
+            let season = requiredParameters.season.value;
+            let teams = optionalParameters.teams.value;
+
+            let query = {
+                '$and': [{
+                        season: season
+                    },
+                    {
+                        type: 'team'
+                    },
+                    {
+                        'object.teamName': {
+                            $in: teams
+                        }
+                    }
+                ]
+            };
 
 
-        return Archive.find(query).then(
-            found => {
-                response.status = 200;
-                response.message = utils.returnMessaging(req.originalUrl, 'Found ' + found.length + ' of ' + teams.length + ' teams for season ' + season + ':', false, found);
-                return response;
-            },
-            err => {
-                response.status = 500;
-                response.message = utils.returnMessaging(req.originalUrl, 'Error finding teams:', err);
-                return response
-            }
-        );
+            return Archive.find(query).then(
+                found => {
+                    response.status = 200;
+                    response.message = utils.returnMessaging(req.originalUrl, 'Found ' + found.length + ' of ' + teams.length + ' teams for season ' + season + ':', false, found);
+                    return response;
+                },
+                err => {
+                    response.status = 500;
+                    response.message = utils.returnMessaging(req.originalUrl, 'Error finding teams:', err);
+                    return response
+                }
+            );
+        }
+
     });
 
 });

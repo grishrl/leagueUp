@@ -331,7 +331,13 @@ function sortMatchesByTime(matches) {
 function objectify(obj) {
     if (obj) {
         try {
-            return obj.toObject();
+            let t = obj.toObject();
+            if (returnBoolByPath(t, '_id')) {
+                if (typeof t._id == 'object') {
+                    t._id = t._id.toString()
+                }
+            }
+            return t;
         } catch {
             return obj;
         }

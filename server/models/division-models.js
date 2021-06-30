@@ -9,6 +9,7 @@ const Schema = mongoose.Schema;
  * @property {string} divisionName - system name of division
  * @property {string} divisionCoast  - coast of the division, if applicable
  * @property {string} divisionConcat  - combination of the divisionName and divisionCoast
+ * @property {string} divColor - hex code for division calendar color
  * @property {number} maxMMR  - top level mmr for division
  * @property {number} minMMR  - lower bound of mmr for division
  * @property {Array.<string>} teams  - list of team display names of the division
@@ -26,6 +27,7 @@ const divisionInfoSchema = new Schema({
     "divisionName": String,
     "divisionCoast": String,
     "divisionConcat": String,
+    "divColor": String,
     "maxMMR": Number,
     "minMMR": Number,
     "teams": [String],

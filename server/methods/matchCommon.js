@@ -180,6 +180,27 @@ async function promoteTournamentMatch(foundMatch) {
             console.log('the loss path match was not found');
         }
 
+        if (winnerID == undefined) {
+            //get the all the references from the schedule; and lets get the winner's partipants reference.
+            let winnerRef = await Scheduling.findOne({
+                challonge_ref: parseInt(foundMatch.challonge_tournament_ref)
+            }).lean().then(found => {
+                return found;
+            }, err => {
+                return null;
+            });
+            if (winnerRef) {
+                //loop through the references
+                winnerRef.participantsRef.forEach(
+                    reference => {
+                        if (reference.id == winner.id) {
+                            winnerID = reference.challonge_ref;
+                        }
+                    }
+                );
+            }
+        }
+
         //hope reporting winner only does the trick
         reportToChallonge(foundMatch, winner, winnerID).then(returned => {})
 
