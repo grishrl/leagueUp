@@ -8,7 +8,9 @@ export class Match {
   scheduledTime: schedule;
   casterName: string;
   casterUrl: string;
-  replays: any;
+  replays: {
+    [key:string]:Replay
+  };
   forfeit: boolean;
   other: any;
   vodLinks:Array<string>;
@@ -65,6 +67,13 @@ export class Match {
   }
 }
 
+export interface Replay {
+  data:string,
+  url:string,
+  parsedUrl:string,
+  map?:string,
+  winner?:string
+}
 
 
 export interface teamInfo {
@@ -77,8 +86,8 @@ export interface teamInfo {
 }
 
 export interface schedule {
-  startTime: string,
-  endTime: string
+  startTime: any,
+  endTime: any
 }
 
 export interface mapBans {

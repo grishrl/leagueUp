@@ -3,6 +3,7 @@ import { FormControl, NgControl, Validators, AbstractControl, AsyncValidatorFn, 
 import { TeamService } from 'src/app/services/team.service';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: "app-team-name",
@@ -10,11 +11,113 @@ import { map } from 'rxjs/operators';
   styleUrls: ["./team-name.component.css"]
 })
 export class TeamNameComponent implements OnInit, ControlValueAccessor {
+
+  filterWords;
   constructor(
     private team: TeamService,
+    private http: HttpClient,
     @Optional() @Self() public controlDir: NgControl
   ) {
+    this.http.get('../assets/filterWords.json').subscribe(
+      res => {
+        this.filterWords = res['data']
+        this.ngOnInit();
+      },
+      err => { console.log(err) }
+    )
     controlDir.valueAccessor = this;
+  }
+
+  nameCtrl = new FormControl();
+
+  ngOnInit(): void {
+    const control = this.controlDir.control;
+    console.log('control.validator', control.validator);
+    let validators = [this.checkInvalidCharacters(), this.validateWords(this.filterWords)];
+    if (control.validator) {
+      if (Array.isArray(control.validator)) {
+        validators = validators.concat(control.validator);
+      } else {
+        validators.push(control.validator);
+      }
+
+    }
+    control.setValidators(validators);
+    control.setAsyncValidators(this.checkNameFree());
+    control.updateValueAndValidity();
+    this.nameCtrl = control as FormControl;
+  }
+
+  checkNameFree(): AsyncValidatorFn {
+    return (
+      control: AbstractControl
+    ): Observable<{ [key: string]: any } | null> => {
+      let val = this.controlDir.value;
+      if (val && val.length > 0) {
+        let trimmedVal = val.trim();
+        if (this.originalValue == control.value) {
+          this.originalValue = trimmedVal;
+          return of(null);
+        } else {
+          return this.team.getTeam(trimmedVal).pipe(
+            map((res) => {
+              let keys = Object.keys(res);
+              if (keys.length > 0) {
+                return { taken: true };
+              }
+            })
+          );
+        }
+      } else {
+        return of(null);
+      }
+
+    };
+  }
+
+  validate(ctrl: AbstractControl) {
+    return ctrl.setErrors(this.controlDir.errors);
+  }
+
+  checkInvalidCharacters(): ValidatorFn {
+    return (control: FormControl) => {
+      let regEx = new RegExp(/[%_\/\\`#]/gm);
+      console.log('aaaa')
+      let val = control.value;
+      let trimmedVal = val ? val.trim() : '';
+      console.log('trimmedVal', trimmedVal, regEx.test(trimmedVal))
+      return regEx.test(trimmedVal) ? { invalidCharacters: true } : null;
+    };
+  }
+
+  // filter undesirable words
+  validateWords(filterWords): ValidatorFn {
+    return (control: FormControl) => {
+      let value = control.value;
+
+      if (filterWords && filterWords.length > 0 && value && value.length > 0) {
+        let invalid = false;
+        let valueArr = value.split(' ');
+        valueArr.forEach(element => {
+          if (filterWords.indexOf(element) > -1) {
+            invalid = true;
+          }
+        });
+        valueArr = value.split(',');
+        valueArr.forEach(element => {
+          if (filterWords.indexOf(element) > -1) {
+            invalid = true;
+          }
+        });
+        if (invalid) {
+          return { 'invalidWord': true };
+        } else {
+          return null;
+        }
+      } else {
+        return null;
+      }
+    }
   }
 
   @Input()
@@ -23,12 +126,11 @@ export class TeamNameComponent implements OnInit, ControlValueAccessor {
   @Input("value")
   val: string;
 
-  invalidWord: boolean = false;
   // Both onChange and onTouched are functions
   onChange: any = () => {
     // this.localValidator(this.value, this.filterWords);
   };
-  onTouched: any = () => {};
+  onTouched: any = () => { };
 
   get value() {
     return this.val;
@@ -57,56 +159,6 @@ export class TeamNameComponent implements OnInit, ControlValueAccessor {
     this.onTouched = fn;
   }
 
-  setDisabledState() {}
+  setDisabledState() { }
 
-  validate(ctrl: AbstractControl) {
-    return ctrl.setErrors(this.controlDir.errors);
-  }
-
-  errors = [];
-
-  lastChange = Date.now();
-  checkNameFree(): AsyncValidatorFn {
-    return (
-      control: AbstractControl
-    ): Observable<{ [key: string]: any } | null> => {
-      let trimmedVal = this.controlDir.value.trim();
-      if (this.originalValue == control.value) {
-        this.originalValue = trimmedVal;
-        return of(null);
-      } else {
-        return this.team.getTeam(trimmedVal).pipe(
-          map((res) => {
-            let keys = Object.keys(res);
-            if (keys.length > 0) {
-              return { taken: true };
-            }
-          })
-        );
-      }
-    };
-  }
-
-  checkInvalidCharacters(): ValidatorFn {
-    return (control: FormControl) => {
-      let regEx = new RegExp(/[%_\/\\`#]/gm);
-      if (regEx.test(control.value.trim())) {
-        return { invalidCharacters: true };
-      } else {
-        return null;
-      }
-    };
-  }
-
-  nameContorl = new FormControl();
-
-  ngOnInit(): void {
-    const control = this.controlDir.control;
-    let validators = control.validator
-      ? [control.validator, Validators.required, this.checkInvalidCharacters]
-      : Validators.required;
-    control.setValidators(validators);
-    control.setAsyncValidators(this.checkNameFree());
-    control.updateValueAndValidity();
-  }
 }

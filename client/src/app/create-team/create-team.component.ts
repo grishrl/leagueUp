@@ -28,9 +28,10 @@ export class CreateTeamComponent implements OnInit {
     private user: UserService
   ) {}
 
-  nameControl = new FormControl();
+  nameControl = new FormControl('',[Validators.required]);
 
   tickerControl = new FormControl("", [
+    Validators.required,
     Validators.maxLength(5),
     Validators.minLength(2)
   ]);
@@ -162,23 +163,19 @@ export class CreateTeamComponent implements OnInit {
         );
       }
 
-      //validate team name is there
-      if (this.nameControl.hasError("taken")) {
-        //do nothing.
-      } else if (
-        !this.util.returnBoolByPath(this.returnedProfile, "teamName")
-      ) {
-        this.nameControl.setErrors({ required: true });
+      if(this.nameControl.errors){
+        let key = Object.keys(this.nameControl.errors)[0];
+        console.log(this.nameControl.errors);
         valid = false;
-        this.errors.push("Team Name is required!");
-      } else {
-        let regEx = new RegExp(/[%_\/\\`#]/gm);
-        if (regEx.test(this.returnedProfile.teamName)) {
-          valid = false;
-          this.nameControl.setErrors({ invalidCharacters: true });
+        console.log('namecontrol error key',key);
+        if (key == "invalidCharacters") {
           this.errors.push("Team Name contains invalid characters!");
-        } else {
-          this.nameControl.setErrors(null);
+        }
+        if(key == "required"){
+          this.errors.push("Team Name is required!");
+        }
+        if(key == "taken"){
+          this.errors.push("Team Name is taken!");
         }
       }
 

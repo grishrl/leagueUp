@@ -15,7 +15,7 @@ import { Observable, of } from 'rxjs';
 export class TeamTickerComponent implements OnInit, ControlValueAccessor {
 
   filterWords;
-  constructor(private team: TeamService, private http: HttpClient,@Optional() @Self() public controlDir:NgControl) {
+  constructor(private team: TeamService, private http: HttpClient, @Optional() @Self() public controlDir: NgControl) {
     this.http.get('../assets/filterWords.json').subscribe(
       res => {
         this.filterWords = res['data']
@@ -24,18 +24,29 @@ export class TeamTickerComponent implements OnInit, ControlValueAccessor {
       err => { console.log(err) }
     )
     controlDir.valueAccessor = this;
-   }
+  }
+
+  tickerCtrl = new FormControl();
 
   ngOnInit() {
     const control = this.controlDir.control;
-    let validators = control.validator ? [ control.validator, Validators.required, this.validTicker(this.filterWords) ] : Validators.required
+    // let validators = control.validator ? [ control.validator, Validators.required, this.validTicker(this.filterWords) ] : Validators.required
+    let validators = [this.validTicker(this.filterWords)];
+    if (control.validator) {
+      if (Array.isArray(control.validator)) {
+        validators = validators.concat(control.validator);
+      } else {
+        validators.push(control.validator);
+      }
+
+    }
     control.setValidators(validators);
     control.setAsyncValidators(this.validateTickerNotTaken());
     control.updateValueAndValidity();
-
+    this.tickerCtrl = control as FormControl;
   }
 
-  validTicker(filterWords):ValidatorFn{
+  validTicker(filterWords): ValidatorFn {
     return (control: FormControl) => {
       let value = control.value;
       if (filterWords && filterWords.length > 0) {
@@ -48,10 +59,10 @@ export class TeamTickerComponent implements OnInit, ControlValueAccessor {
 
   validateTickerNotTaken(): AsyncValidatorFn {
     return (control: AbstractControl): Observable<{ [key: string]: any } | null> => {
-      if (this.originalValue == control.value){
+      if (this.originalValue == control.value) {
         this.originalValue = this.controlDir.value;
         return of(null);
-      }else{
+      } else {
         return this.team.getTeam(null, control.value, null)
           .pipe(
             map(res => {
@@ -66,7 +77,7 @@ export class TeamTickerComponent implements OnInit, ControlValueAccessor {
     };
   }
 
-  validate(ctrl:AbstractControl){
+  validate(ctrl: AbstractControl) {
     return ctrl.setErrors(this.controlDir.errors);
   }
 
@@ -75,7 +86,6 @@ export class TeamTickerComponent implements OnInit, ControlValueAccessor {
   @Input('value')
   val: string;
 
-  invalidWord: boolean = false;
   // Both onChange and onTouched are functions
   onChange: any = () => {
     // this.localValidator(this.value, this.filterWords);
@@ -94,22 +104,22 @@ export class TeamTickerComponent implements OnInit, ControlValueAccessor {
 
   originalValue;
 
-  writeValue(value){
+  writeValue(value) {
     if (value) {
       this.originalValue = value;
       this.value = value;
     }
   }
 
-  registerOnChange(fn){
+  registerOnChange(fn) {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn){
+  registerOnTouched(fn) {
     this.onTouched = fn;
   }
 
-  setDisabledState(){
+  setDisabledState() {
 
   }
 

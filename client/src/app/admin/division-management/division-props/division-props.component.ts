@@ -18,6 +18,7 @@ export class DivisionPropsComponent implements OnInit {
   selectedDivision: any = null;
   safeSource
   editDivision
+  disabled = false;
 
   markFormGroupTouched(formGroup: FormGroup) {
 
@@ -115,6 +116,8 @@ export class DivisionPropsComponent implements OnInit {
   ngOnInit() {
 
   }
+
+  color;
 
   deColore;
 

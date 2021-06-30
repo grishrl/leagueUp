@@ -20,7 +20,7 @@ export class TextInputComponent implements OnInit {
     { val: 5, display: 'High' }
   ]
 
-  competitiveLevelValue: string;
+  competitiveLevelValue: number;
 
   @Output()
   competitiveLevelChange = new EventEmitter();

@@ -3,6 +3,7 @@
         <h4>Games Information</h4>
     </div>
     <div class="info-panel">
+        <!-- forfeit header -->
         <div *ngIf="match.forfeit else gamesInfo">
             <p> This match was forfeit by <span *ngIf="match.home.score == 2 else otherTeam">{{match.away.teamName}}</span>
                 <ng-template #otherTeam>
@@ -10,7 +11,9 @@
                 </ng-template> no other information will be available.
             </p>
         </div>
+        <!-- played games info -->
         <ng-template #gamesInfo>
+            <!-- generic match info, date season etc -->
             <div class="row mt-2">
                 <div class=" col-sm ">
                     <div class="row no-gutter justify-content-md-center ">
@@ -51,7 +54,8 @@
                     </div>
                 </div>
             </div>
-            <div class="row mt-4" *ngIf="util.hasMapBans(match) ">
+            <!-- map bans -->
+            <div class="row mt-4" *ngIf="hasMapBans">
                 <div class="col-sm ">
                     <div class="row no-gutter justify-content-md-center ">
                         <h4>
@@ -91,7 +95,9 @@
                     </div>
                 </div>
             </div>
+            <!-- games played info -->
             <div class="row mt-4 " *ngFor="let replay of resultsMap| keyvalue ">
+                <!-- map and background info -->
                 <div class=" col-12 ">
                     <div class="banner " [ngStyle]="{ 'background': 'url('+ getBackground(replay.value.map) + '), currentColor' } ">
                         <div class="winnerText ">
@@ -104,9 +110,8 @@
                             </p>
                         </div>
                     </div>
-
-
                 </div>
+                <!-- replay issue -->
                 <div class="col mt-2 ">
                     <div *ngIf="replay.value.url">
                         <strong>Replay File:</strong>
@@ -118,6 +123,7 @@
                     </div>
                 </div>
             </div>
+            <!-- vod links for match -->
             <div class="row mt-3 " *ngIf="match.vodLinks ">
                 <div class="col-3 ">
                     <div><strong>VOD LINKS:</strong></div>

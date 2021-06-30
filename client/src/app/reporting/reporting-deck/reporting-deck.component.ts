@@ -142,15 +142,23 @@ removeBan(hero, arr){
     homeTwo: ''
   };
 
-  games = {};
+  games :{
+    [key:string]:{
+      // homeBans:[string],
+      // awayBans:[string],
+      winner:string,
+      replay:any,
+      tmp:any
+    }
+  } = {};
   showAdd:boolean = true;
 
   addGame(){
     let keys = Object.keys(this.games);
     if(keys.length<this.totalGames){
       this.games[(keys.length + 1).toString()] = {
-        homeBans: [],
-        awayBans: [],
+        // homeBans: [],
+        // awayBans: [],
         winner: '',
         replay: null,
         tmp: {}

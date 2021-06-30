@@ -122,6 +122,7 @@ export class Team {
         rangedassassin: false,
         support: false,
         offlane: false,
+        healer:false,
         flex: false,
       };
     }
@@ -215,5 +216,6 @@ interface roles {
   'rangedassassin':boolean,
   offlane: boolean,
   support: boolean,
+  healer:boolean,
   flex: boolean
 }

@@ -1,12 +1,11 @@
 <!-- this block is only visible on large screens -->
 <div class="match-border p-4  d-none d-sm-none d-md-block">
+
     <div class="row">
 
         <div class="col">
-
         </div>
         <div class="col">
-
         </div>
         <div class="col text-center">
             Record
@@ -15,6 +14,7 @@
             Result
         </div>
     </div>
+    <!-- home team info -->
     <div class="row p-2 font-ad" [ngClass]=" 'home' | commonPipe:winningClass:match">
 
         <div class="col text-center  my-auto">
@@ -44,18 +44,11 @@
         </div>
     </div>
 
-    <!-- <div class="row">
-        <div class="col">
-            <div class=" text-center">
-                - VS -
-            </div>
-        </div>
-    </div> -->
-
     <ng-template #dash>
         -
     </ng-template>
 
+    <!-- away team info -->
     <div class="row p-2 font-ad" [ngClass]="'away' | commonPipe:winningClass:match">
         <div class="col text-center my-auto">
             <img class="img-fluid" src="{{awayLogo}}" alt="Team Logo">
@@ -82,7 +75,9 @@
             </ng-template>
         </div>
     </div>
+
     <hr>
+    <!-- general match info -->
     <div class="row">
         <div class="col">
 
@@ -97,6 +92,7 @@
 
         </div>
     </div>
+    <!-- caster info -->
     <div class="row" *ngIf="match.casterName && match.casterUrl">
         <div class="col"></div>
         <div class="col-7 text-center">
@@ -104,6 +100,7 @@
         </div>
         <div class="col"></div>
     </div>
+    <!-- map bans -->
     <div class="row" *ngIf="match.mapBans && match.mapBans.homeOne && match.mapBans.homeTwo && match.mapBans.awayOne && match.mapBans.awayTwo">
         <div class="col-12 text-center">
             <span class="h6">Map Bans:</span>
@@ -119,6 +116,7 @@
 
         </div>
     </div>
+    <!-- match vod links -->
     <div class="row" *ngIf="match.vodLinks && match.vodLinks.length>0">
         <div class="col-12 text-center">
             <span class="h6">VOD LINKS:</span>
@@ -127,6 +125,7 @@
             <div *ngFor="let vod of match.vodLinks"><a href="{{vod}}" target="_blank">VOD Link</a></div>
         </div>
     </div>
+    <!-- match click to show / hide replay list -->
     <div class="row" *ngIf="match.replays">
         <div class="col text-center">
             <a style="color:#007bff" class="finger" (click)="showReplay = !showReplay"> <span *ngIf="!showReplay else hide">Show</span>
@@ -135,6 +134,7 @@
                 <ng-template #hideCar><i class="fas fa-caret-up"></i></ng-template><i *ngIf="!showReplay else hideCar" class="fas fa-caret-down"></i></a>
         </div>
     </div>
+    <!-- show replay lists -->
     <div class="row" *ngIf="showReplay">
         <div class="col">
             <div class="row">
@@ -164,10 +164,13 @@
 
 <!-- this block is only visible on small screens -->
 <div class="d-block d-sm-none match-border">
+
+    <!-- match view verticle -->
     <div class="row mt-4 p-3">
         <div class="col">
-            <div class="row" [ngClass]="'home'|commonPipe:winningClass:match">
 
+            <!-- home team info -->
+            <div class="row" [ngClass]="'home'|commonPipe:winningClass:match">
                 <div class="col">
                     <img class="img-fluid" src="{{homeLogo}}" alt="Team Logo">
                 </div>
@@ -189,6 +192,7 @@
                     {{match.home.score}}
                 </div>
             </div>
+            <!-- away team info -->
             <div class="row" [ngClass]="'away' | commonPipe:winningClass:match">
                 <div class="col">
                     <img class="img-fluid" src="{{awayLogo}}" alt="Team Logo">

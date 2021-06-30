@@ -63,7 +63,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="matchup" *ngIf="tournamentObject.rol16_4" (click)="ClickMatch(tournamentObject.rol16_4)">
+                                    <div class="matchup" *ngIf="tournamentObject.rol16_4">
                                         <div class="participants border border-secondary">
                                             <div class="participant" [ngClass]="{'winner': winner(tournamentObject.rol16_4, 'home')}">
                                                 <span *ngIf="tournamentObject.rol16_4.home else tbd">
@@ -87,7 +87,7 @@
                             </div>
                             <div class="winners" *ngIf="tournamentObject.rol16_5 && tournamentObject.rol16_6">
                                 <div class="matchups">
-                                    <div class="matchup" *ngIf="tournamentObject.rol16_5" (click)="ClickMatch(tournamentObject.rol16_5)">
+                                    <div class="matchup" *ngIf="tournamentObject.rol16_5">
                                         <div class="participants border border-secondary">
                                             <div class="participant" [ngClass]="{'winner': winner(tournamentObject.rol16_5, 'home')}">
                                                 <span *ngIf="tournamentObject.rol16_5.home else tbd">
@@ -103,7 +103,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="matchup" *ngIf="tournamentObject.rol16_6" (click)="ClickMatch(tournamentObject.rol16_6)">
+                                    <div class="matchup" *ngIf="tournamentObject.rol16_6">
                                         <div class="participants border border-secondary">
                                             <div class="participant" [ngClass]="{'winner': winner(tournamentObject.rol16_6, 'home')}">
                                                 <span *ngIf="tournamentObject.rol16_6.home else tbd">
@@ -127,7 +127,7 @@
                             </div>
                             <div class="winners" *ngIf="tournamentObject.rol16_7 && tournamentObject.rol16_8">
                                 <div class="matchups">
-                                    <div class="matchup" *ngIf="tournamentObject.rol16_7" (click)="ClickMatch(tournamentObject.rol16_7)">
+                                    <div class="matchup" *ngIf="tournamentObject.rol16_7">
                                         <div class="participants border border-secondary">
                                             <div class="participant" [ngClass]="{'winner': winner(tournamentObject.rol16_7, 'home')}">
                                                 <span *ngIf="tournamentObject.rol16_7.home else tbd">
@@ -143,7 +143,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="matchup" *ngIf="tournamentObject.rol16_8" (click)="ClickMatch(tournamentObject.rol16_8)">
+                                    <div class="matchup" *ngIf="tournamentObject.rol16_8">
                                         <div class="participants border border-secondary">
                                             <div class="participant" [ngClass]="{'winner': winner(tournamentObject.rol16_8, 'home')}">
                                                 <span *ngIf="tournamentObject.rol16_8.home else tbd">
@@ -169,7 +169,7 @@
                         <section class="round quarterfinals">
                             <div class="winners" *ngIf="tournamentObject.quarterFinal1 && tournamentObject.quarterFinal2">
                                 <div class="matchups">
-                                    <div class="matchup" *ngIf="tournamentObject.quarterFinal1" (click)="ClickMatch(tournamentObject.quarterFinal1)">
+                                    <div class="matchup" *ngIf="tournamentObject.quarterFinal1">
                                         <div class="participants border border-secondary">
                                             <div class="participant" [ngClass]="{'winner': winner(tournamentObject.quarterFinal1, 'home')}">
                                                 <span *ngIf="tournamentObject.quarterFinal1.home else tbd">
@@ -185,7 +185,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="matchup" *ngIf="tournamentObject.quarterFinal2" (click)="ClickMatch(tournamentObject.quarterFinal2)">
+                                    <div class="matchup" *ngIf="tournamentObject.quarterFinal2">
                                         <div class="participants border border-secondary">
                                             <div class="participant" [ngClass]="{'winner': winner(tournamentObject.quarterFinal2, 'home')}">
                                                 <span *ngIf="tournamentObject.quarterFinal2.home else tbd">
@@ -209,7 +209,7 @@
                             </div>
                             <div class="winners" *ngIf="tournamentObject.quarterFinal3 && tournamentObject.quarterFinal4">
                                 <div class="matchups">
-                                    <div class="matchup" *ngIf="tournamentObject.quarterFinal3" (click)="ClickMatch(tournamentObject.quarterFinal3)">
+                                    <div class="matchup" *ngIf="tournamentObject.quarterFinal3">
                                         <div class="participants border border-secondary">
                                             <div class="participant" [ngClass]="{'winner': winner(tournamentObject.quarterFinal3, 'home')}">
                                                 <span *ngIf="tournamentObject.quarterFinal3.home else tbd">
@@ -225,7 +225,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="matchup" *ngIf="tournamentObject.quarterFinal4" (click)="ClickMatch(tournamentObject.quarterFinal4)">
+                                    <div class="matchup" *ngIf="tournamentObject.quarterFinal4">
                                         <div class="participants border border-secondary">
                                             <div class="participant" [ngClass]="{'winner': winner(tournamentObject.quarterFinal4, 'home')}">
                                                 <span *ngIf="tournamentObject.quarterFinal4.home else tbd">
@@ -251,7 +251,7 @@
                         <section class="round semifinals">
                             <div class="winners" *ngIf="tournamentObject.semiFinalRight && tournamentObject.semiFinalLeft">
                                 <div class="matchups">
-                                    <div class="matchup" *ngIf="tournamentObject.semiFinalLeft" (click)="ClickMatch(tournamentObject.semiFinalLeft)">
+                                    <div class="matchup" *ngIf="tournamentObject.semiFinalLeft">
                                         <div class="participants border border-secondary">
                                             <div class="participant" [ngClass]="{'winner': winner(tournamentObject.semiFinalLeft, 'home')}">
                                                 <span *ngIf="tournamentObject.semiFinalLeft.home else tbd">
@@ -267,7 +267,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="matchup" *ngIf="tournamentObject.semiFinalRight" (click)="ClickMatch(tournamentObject.semiFinalRight)">
+                                    <div class="matchup" *ngIf="tournamentObject.semiFinalRight">
                                         <div class="participants border border-secondary">
                                             <div class="participant" [ngClass]="{'winner': winner(tournamentObject.semiFinalRight, 'home')}">
                                                 <span *ngIf="tournamentObject.semiFinalRight.home else tbd">
@@ -292,7 +292,7 @@
                                 </div>
                             </div>
                         </section>
-                        <section class="round finals" *ngIf="tournamentObject.championship" (click)="ClickMatch(tournamentObject.championship)">
+                        <section class="round finals" *ngIf="tournamentObject.championship">
                             <div class="winners">
                                 <div class="matchups">
                                     <div class="matchup">

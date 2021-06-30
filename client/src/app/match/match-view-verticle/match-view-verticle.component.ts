@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { UtilitiesService } from '../../services/utilities.service';
 import { TeamService } from '../../services/team.service';
+import { Match } from 'src/app/classes/match.class';
 
 @Component({
   selector: 'app-match-view-verticle',
@@ -12,38 +13,39 @@ export class MatchViewVerticleComponent implements OnInit {
   constructor(public team: TeamService, public util: UtilitiesService) { }
 
   showReplay = false;
-  match = {
-    home: {
-      teamName: '',
-      logo: '',
-      wins: null,
-      losses: null,
-      score:null,
-      dominator: null
-    },
-    away: {
-      teamName: '',
-      logo: '',
-      wins: null,
-      losses: null,
-      score: null,
-      dominator:null
-    },
-    mapBans:{
-      homeOne: null,
-      homeTwo: null,
-      awayOne: null,
-      awayTwo: null
-    },
-    scheduledTime: {
-      startTime: null,
-      endTime: null
-    },
-    vodLinks:[],
-    casterName: '',
-    casterUrl: '',
-    replays:null
-  }
+  match : Match = new Match();
+  // match = {
+  //   home: {
+  //     teamName: '',
+  //     logo: '',
+  //     wins: null,
+  //     losses: null,
+  //     score:null,
+  //     dominator: null
+  //   },
+  //   away: {
+  //     teamName: '',
+  //     logo: '',
+  //     wins: null,
+  //     losses: null,
+  //     score: null,
+  //     dominator:null
+  //   },
+  //   mapBans:{
+  //     homeOne: null,
+  //     homeTwo: null,
+  //     awayOne: null,
+  //     awayTwo: null
+  //   },
+  //   scheduledTime: {
+  //     startTime: null,
+  //     endTime: null
+  //   },
+  //   vodLinks:[],
+  //   casterName: '',
+  //   casterUrl: '',
+  //   replays:null
+  // }
   homeLogo;
   awayLogo;
   @Input() set passMatch(_match) {

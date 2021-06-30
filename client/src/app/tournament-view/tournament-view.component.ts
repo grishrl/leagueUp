@@ -50,10 +50,6 @@ export class TournamentViewComponent implements OnInit {
     //  }
    }
 
-   ClickMatch(){
-     console.log('xxx');
-   }
-
   matches: any = [];
   tournamentObject:any;
   ngOnInit() {

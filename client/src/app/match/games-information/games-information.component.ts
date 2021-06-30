@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { forEach as _forEach } from 'lodash';
 import { HeroesProfileService } from 'src/app/services/heroes-profile.service';
+import { Replay } from 'src/app/classes/match.class';
 
 
 @Component({
@@ -20,9 +21,12 @@ export class GamesInformationComponent implements OnInit, OnChanges {
     private scheduleService: ScheduleService
   ) {}
 
+  hasMapBans = false;
+
   @Input() match;
   ngOnInit() {
-    this.resultsMap = new Map<string, object>();
+    this.hasMapBans = this.util.hasMapBans(this.match);
+    this.resultsMap = new Map<string, Replay>();
     if (this.match.hasOwnProperty("replays")) {
       _forEach(this.match.replays, (value, key) => {
         if (key != "_id") {
@@ -43,7 +47,7 @@ export class GamesInformationComponent implements OnInit, OnChanges {
     this.ngOnInit();
   }
 
-  resultsMap = new Map<string, object>();
+  resultsMap = new Map<string, Replay>();
 
   //test
 

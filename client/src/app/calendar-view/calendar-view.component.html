@@ -70,7 +70,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let item of key|keyvalue:sortOrder ">
+                                <tr *ngFor="let item of colors|keyvalue:sortOrder ">
                                     <td [style.background-color]="item.value.primary "></td>
                                     <td>{{item.value.name}}</td>
                                 </tr>
@@ -98,7 +98,7 @@
 
                 <ng-template #customOpenDayEventsTemplate let-events="events " let-eventClicked="eventClicked " let-isOpen="isOpen ">
                     <div class="cal-open-day-events " [@collapse] *ngIf="isOpen ">
-                        <div *ngFor="let event of events; trackBy:event; " [ngClass]="event?.cssClass " mwlDraggable [dropData]="{event: event} " [dragAxis]="{x: event.draggable, y: event.draggable} ">
+                        <div *ngFor="let event of events; " [ngClass]="event?.cssClass " mwlDraggable [dropData]="{event: event} " [dragAxis]="{x: event.draggable, y: event.draggable} ">
                             <span class="cal-event " [style.background-color]="event.color.primary "></span>
                             <mwl-calendar-event-title [event]="event " [customTemplate]="eventTitleTemplate " view="month " (mwlClick)="eventClicked.emit({event: event}) ">
                             </mwl-calendar-event-title>

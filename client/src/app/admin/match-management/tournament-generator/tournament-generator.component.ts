@@ -13,7 +13,7 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
   styleUrls: ["./tournament-generator.component.css"],
 })
 export class TournamentGeneratorComponent implements OnInit {
-  selectFromList: AnalyserNode;
+  selectFromList: any;
   selectedList: any;
   divisional:boolean = false;
 
