@@ -443,14 +443,16 @@ function rejectionMessaging(userObj, rankObj) {
     Message(userObj._id, subject, content, rankObj.sender);
     Team.findById(userObj.teamId).then(
         foundTeam => {
-            let teamObj = utils.objectify(foundTeam);
-            if (userObj.displayName !== teamObj.captain) {
-                User.findOne({ displayName: teamObj.captain }).then(
-                    foundCapt => {
-                        let capt = utils.objectify(foundCapt);
-                        Message(capt._id, subject, content, rankObj.sender);
-                    }
-                );
+            if (foundTeam) {
+                let teamObj = utils.objectify(foundTeam);
+                if (userObj.displayName !== teamObj.captain) {
+                    User.findOne({ displayName: teamObj.captain }).then(
+                        foundCapt => {
+                            let capt = utils.objectify(foundCapt);
+                            Message(capt._id, subject, content, rankObj.sender);
+                        }
+                    );
+                }
             }
         }
     )
