@@ -17,8 +17,14 @@ router.post('/user', passport.authenticate('jwt', {
     const requiredParameters = [{
         name: 'userName',
         type: 'string'
-    }]
-    commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
+    }];
+
+    const optionalParameters = [{
+        name: 'fullProfile',
+        type: 'boolean'
+    }];
+
+    commonResponseHandler(req, res, requiredParameters, optionalParameters, async(req, res, requiredParameters, optionalParameters) => {
         const response = {};
         let payload = requiredParameters.userName.value;
         let regEx = new RegExp(payload, "i");
@@ -27,9 +33,17 @@ router.post('/user', passport.authenticate('jwt', {
         }).exec().then((foundUsers) => {
             if (foundUsers && foundUsers.length > 0) {
                 let ret = [];
-                foundUsers.forEach(function(user) {
-                    ret.push(user.displayName);
-                })
+
+                if (optionalParameters.fullProfile.valid && optionalParameters.fullProfile.value) {
+                    foundUsers.forEach(function(user) {
+                        ret.push(user);
+                    })
+                } else {
+                    foundUsers.forEach(function(user) {
+                        ret.push(user.displayName);
+                    })
+                }
+
                 response.status = 200;
                 response.message = utils.returnMessaging(req.originalUrl, "Found Users", false, ret)
                 return response;

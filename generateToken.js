@@ -14,11 +14,14 @@ const fs = require('fs');
 const casterReport = require('./server/methods/casterReportMethods');
 const vodCur = require('./server/workers/vods-playlist-curator');
 
+// connect to mongo db
+mongoose.connect(process.env.mongoURI, () => {
+    console.log('connected to mongodb');
+});
+
 let tokenObject = {};
 // set this ID to the _id that the API key will be tied to
-tokenObject.id = "5f29560ebc72845259ccb3f9";
-//"5c633b8ea55a147ce08c96bc";
-//"5c62f9d8a55a147ce08c9674";
+tokenObject.id = "60ddff203070414c13d74468";
 
 //set this to false to create a std JWToken for API calls, or true for an API key :)
 //to remind you; the api key will only work in instances that are set to validate it IE it will fail jwt because
@@ -33,17 +36,26 @@ if (api) {
         expiresIn: '7d'
     });
 }
-
-
+//!!!!!!!!!!!!!!!!!!!!!!! API KEY GENERATOR  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+new System.system({
+    'dataName': 'apiKey',
+    'value': token
+}).save().then(
+    saved => {
+        console.log('saved ', ' token ', token);
+        process.exit(0);
+    },
+    err => {
+        console.log('not saved ', ' token ', token);
+        process.exit(0);
+    }
+);
 
 // console.log('token ', token);
 
-// connect to mongo db
-mongoose.connect(process.env.mongoURI, () => {
-    console.log('connected to mongodb');
-});
 
-vodCur();
+
+// vodCur();
 
 // casterReport.generateCastReportData().then(
 //     f => {
