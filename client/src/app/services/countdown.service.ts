@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Iinterval } from '../model/iinterval';
+import { Iinterval } from './iinterval';
 import { Observable, interval } from 'rxjs';
 import { takeWhile, map } from 'rxjs/operators';
 

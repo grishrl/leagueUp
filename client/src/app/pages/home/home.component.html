@@ -1,0 +1,127 @@
+<app-currently-live-games></app-currently-live-games>
+<!-- section-hero-posts-->
+<app-large-carousel></app-large-carousel>
+
+<!-- Section Area - Content Central -->
+<section class="content-info">
+    <!-- Dark Home -->
+    <div class="dark-home">
+        <div class="container">
+            <div class="row">
+                <!-- Left Content - Tabs and Carousel -->
+                <div class="col-xl-9 col-md-12">
+                    <!-- Nav Tabs -->
+                    <ul class="nav nav-tabs" id="myTab">
+                        <li [ngClass]="{'active': index==0}"><a href="#statistics" data-toggle="tab" (click)="index=0">STATISTICS</a></li>
+                        <li [ngClass]="{'active': index==1}"><a href="#groups" data-toggle="tab" (click)="index=1">GROUPS</a></li>
+                        <li [ngClass]="{'active': index==2}"><a href="#description" (click)="index=2" data-toggle="tab">DESCRIPTION</a></li>
+                    </ul>
+                    <!-- End Nav Tabs -->
+
+                    <!-- Content Tabs -->
+                    <div class="tab-content">
+                        <!-- Tab Theree - statistics -->
+                        <div class="tab-pane" [ngClass]="{'active': index==0}" id="statistics">
+                            <div class="row">
+                                <!-- Club Ranking -->
+                                <div class="col-lg-4">
+                                    <app-division-standings></app-division-standings>
+                                </div>
+                                <!-- End Club Ranking -->
+
+                                <!-- recent-results -->
+                                <div class="col-lg-4">
+                                    <app-recent-results></app-recent-results>
+                                </div>
+                                <!-- end recent-results -->
+
+                                <!-- Top player -->
+                                <div class="col-lg-4">
+                                    <app-top-stats-widget></app-top-stats-widget>
+                                </div>
+                                <!-- End Top player -->
+                            </div>
+                        </div>
+                        <!-- Tab Theree - statistics -->
+
+                        <!-- Tab One - Groups List -->
+                        <div class="tab-pane" id="groups" [ngClass]="{'active': index==1}">
+                            <div *ngIf="index==1">
+                                <app-division-table-view></app-division-table-view>
+                            </div>
+                        </div>
+                        <!-- End Tab One - Groups List -->
+
+                        <!-- Tab Two - Destinations -->
+                        <div class="tab-pane" id="description" [ngClass]="{'active': index==2}">
+                            <div class="info-general">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <img src="https://ngs-image-storage.s3.amazonaws.com/defaultTeamLogo.png" alt="">
+                                    </div>
+
+                                    <div class="col-md-8">
+                                        <h3>Nexus Gaming Series</h3>
+                                        <p class="lead">The Nexus Gaming Series is a North American based Heroes of the Storm free amateur competitive league. Community members form their own squad of players and do battle in fun and enjoyable pixel-to-pixel combat!
+                                            These teams strive to become champions of their assigned Divisions based on their skill level.</p>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <p>NGS is open to all, so get involved! Enjoy one of the best Heroes of the Storm experiences available. Including organized play, balanced competition, casted matches, written articles and more!</p>
+                                        <h4>By the players; for the players</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End Tab Two - Destinations -->
+                    </div>
+                    <!-- Content Tabs -->
+                </div>
+                <!-- Left Content - Tabs and Carousel -->
+
+                <!-- Right Content - Content Counter -->
+                <div class="col-xl-3 col-md-12">
+                    <app-countdown></app-countdown>
+                </div>
+                <!-- End Right Content - Content Counter -->
+            </div>
+        </div>
+    </div>
+    <!-- Dark Home -->
+
+    <!-- Content Central -->
+    <div class="container padding-top padding-bottom">
+        <app-mvp-display></app-mvp-display>
+        <div class="mt-2">
+            <app-recent-content></app-recent-content>
+        </div>
+        <div class="row">
+            <!-- content Column Left -->
+            <div class="col-lg-9 col-xl-10">
+                <app-recent-news></app-recent-news>
+                <div class="row mb-4">
+                    <div class="col">
+                    </div>
+                    <div class="col">
+                        <div class="text-center h5">NGS Community Has:</div>
+                        <app-league-stats></app-league-stats>
+                    </div>
+                    <div class="col">
+                    </div>
+
+                </div>
+            </div>
+            <!-- End content Left -->
+
+            <!-- content Sidebar Right -->
+            <aside class="col-sm-6 col-lg-3 col-xl-2">
+                <app-upcoming-matches></app-upcoming-matches>
+            </aside>
+            <!-- End content Sidebar Right -->
+
+        </div>
+
+    </div>
+    <!-- End Content Central -->
+
+</section>
