@@ -4,12 +4,19 @@ import { environment } from '../../environments/environment';
 import * as moment from 'moment-timezone';
 import { Match } from '../classes/match.class';
 import { forEach } from 'lodash';
+import { HttpServiceService } from './http-service.service';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: "root"
 })
 export class UtilitiesService {
-  constructor() {}
+  constructor(private HttpService:HttpServiceService) {}
+
+  getYtO():Observable<any>{
+    let url = 'api/utility/ytoa';
+    return this.HttpService.httpGet(url,[]);
+  }
 
   calculateRounds(div): Array<number> {
     let provDiv = div;
