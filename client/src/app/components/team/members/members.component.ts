@@ -21,8 +21,9 @@ export class MembersComponent implements OnInit {
   handleRemove(obj){
     let index = -1;
     this.teamMembers.forEach((ele, ind) => {
-      index = ind;
-      ele.displayName == obj
+      if(ele.displayName == obj){
+        index = ind;
+      }
     });
     if(index>-1){
       this.teamMembers.splice(index, 1);
