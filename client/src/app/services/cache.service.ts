@@ -5,7 +5,7 @@ import { map, shareReplay } from 'rxjs/operators';
 @Injectable({
   providedIn: "root",
 })
-export class CacheServiceService {
+export class CacheService {
   constructor() {}
 
   cache: Map<string, any> = new Map();

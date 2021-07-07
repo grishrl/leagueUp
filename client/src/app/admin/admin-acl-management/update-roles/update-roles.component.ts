@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminService } from 'src/app/services/admin.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AclServiceService } from '../acl-service.service';
+import { AclService } from '../acl.service';
 import { cloneDeep } from 'lodash';
 import { forEach as _forEach } from 'lodash'
 
@@ -20,7 +20,7 @@ export class UpdateRolesComponent implements OnInit {
   };  //prototype user object
   rights: any //application rights
 
-  constructor(private adminService: AdminService, private route: ActivatedRoute, private router: Router, private aclSerive:AclServiceService) {
+  constructor(private adminService: AdminService, private route: ActivatedRoute, private router: Router, private aclSerive:AclService) {
     //get id from route
     if (this.route.snapshot.params['id']) {
       this.recId = this.route.snapshot.params['id'];

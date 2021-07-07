@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { DivisionService } from 'src/app/services/division.service';
 import { ScheduleService } from 'src/app/services/schedule.service';
-import { TimeserviceService } from 'src/app/services/timeservice.service';
+import { TimeService } from 'src/app/services/time.service';
 import { find } from 'lodash';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 
@@ -16,7 +16,7 @@ export class AdminYoutubeCurator implements OnInit {
 
   google_oauth_id;
   google_api_key;
-  constructor(private DivisionService: DivisionService, private UtilityService:UtilitiesService, private ScheduleService: ScheduleService, private timeService: TimeserviceService, private cd: ChangeDetectorRef) {
+  constructor(private DivisionService: DivisionService, private UtilityService:UtilitiesService, private ScheduleService: ScheduleService, private timeService: TimeService, private cd: ChangeDetectorRef) {
     this.UtilityService.getYtO().subscribe(
       res=>{
         this.google_oauth_id = res.oauth_key;

@@ -3,7 +3,7 @@ import { StandingsService } from '../../services/standings.service';
 import { TeamService } from '../../services/team.service';
 import { AuthService } from '../../services/auth.service';
 import { DivisionService } from '../../services/division.service';
-import { TimeserviceService } from '../../services/timeservice.service';
+import { TimeService } from '../../services/time.service';
 
 @Component({
   selector: 'app-division-standings',
@@ -13,7 +13,7 @@ import { TimeserviceService } from '../../services/timeservice.service';
 export class DivisionStandingsComponent implements OnInit {
 
   offSeason:boolean=false;
-  constructor(private standingsService: StandingsService, public team: TeamService, private auth: AuthService, private DivisionService: DivisionService, private timeService:TimeserviceService) {
+  constructor(private standingsService: StandingsService, public team: TeamService, private auth: AuthService, private DivisionService: DivisionService, private timeService:TimeService) {
         this.timeService.getSesasonInfo().subscribe(res => {
           if(Date.now() < res["data"].seasonStartDate ){
             this.offSeason=true;

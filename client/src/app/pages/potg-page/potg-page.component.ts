@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MvpService } from '../../services/mvp.service';
-import { TimeserviceService } from '../../services/timeservice.service';
+import { TimeService } from '../../services/time.service';
 import { PageEvent, MatPaginator } from "@angular/material/paginator";
 import { UtilitiesService } from '../../services/utilities.service';
 
@@ -12,7 +12,7 @@ import { UtilitiesService } from '../../services/utilities.service';
 export class PotgPageComponent implements OnInit {
   constructor(
     private mvpServ: MvpService,
-    private timeService: TimeserviceService,
+    private timeService: TimeService,
     private util:UtilitiesService
   ) {
                 this.timeService.getSesasonInfo().subscribe((res) => {

@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpServiceService } from "./http-service.service";
+import { HttpService } from "./http.service";
 import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: "root",
 })
 export class NotesService {
-  constructor(private http: HttpServiceService, private auth:AuthService) {}
+  constructor(private http: HttpService, private auth:AuthService) {}
 
   // getTeamNotes(id) {
   //   let url = "admin/notes/fetch/team";

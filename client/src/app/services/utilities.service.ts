@@ -4,14 +4,14 @@ import { environment } from '../../environments/environment';
 import * as moment from 'moment-timezone';
 import { Match } from '../classes/match.class';
 import { forEach } from 'lodash';
-import { HttpServiceService } from './http-service.service';
+import { HttpService } from './http.service';
 import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: "root"
 })
 export class UtilitiesService {
-  constructor(private HttpService:HttpServiceService) {}
+  constructor(private HttpService:HttpService) {}
 
   getYtO():Observable<any>{
     let url = 'api/utility/ytoa';

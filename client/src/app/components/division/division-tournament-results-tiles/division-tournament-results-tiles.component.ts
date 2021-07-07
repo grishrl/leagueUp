@@ -3,7 +3,7 @@ import { StandingsService } from 'src/app/services/standings.service';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { TeamService } from 'src/app/services/team.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
-import { TimeserviceService } from 'src/app/services/timeservice.service';
+import { TimeService } from 'src/app/services/time.service';
 
 @Component({
   selector: 'app-division-tournament-results-tiles',
@@ -13,7 +13,7 @@ import { TimeserviceService } from 'src/app/services/timeservice.service';
 export class DivisionTournamentResultsTilesComponent implements OnInit, OnChanges {
 
 
-  constructor(private standingsService: StandingsService, private scheduleService: ScheduleService, private timeService: TimeserviceService, public team: TeamService, public util: UtilitiesService) { }
+  constructor(private standingsService: StandingsService, private scheduleService: ScheduleService, private timeService: TimeService, public team: TeamService, public util: UtilitiesService) { }
   divisions: any = [];
   standings: any[] = [];
 

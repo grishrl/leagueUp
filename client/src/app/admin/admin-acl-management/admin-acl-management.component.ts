@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { AdminService } from 'src/app/services/admin.service';
-import { AclServiceService } from './acl-service.service';
+import { AclService } from './acl.service';
 import { PageEvent, MatPaginator } from '@angular/material/paginator'
 import { UtilitiesService } from 'src/app/services/utilities.service';
 
@@ -38,7 +38,7 @@ export class AdminAclManagementComponent implements OnInit, AfterViewInit {
     this.paginator.pageIndex = 0;
   }
 
-  constructor(private adminService:AdminService, private aclService: AclServiceService, private util: UtilitiesService) { }
+  constructor(private adminService:AdminService, private aclService: AclService, private util: UtilitiesService) { }
 
   filterUsers(filterName){
     if(filterName == null || filterName == undefined || filterName.length == 0){

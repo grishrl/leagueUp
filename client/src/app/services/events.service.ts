@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpServiceService } from './http-service.service';
+import { HttpService } from './http.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EventsService {
 
-  constructor(private httpService:HttpServiceService) { }
+  constructor(private httpService:HttpService) { }
 
   localEvent = {};
 
@@ -29,7 +29,7 @@ export class EventsService {
     };
     return this.httpService.httpPost(url, payload, true);
   }
-  
+
   upsertEvent(orig, upsert){
     let url = '/events/upsert';
     let payload = {

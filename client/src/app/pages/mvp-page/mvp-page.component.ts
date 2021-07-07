@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MvpService } from '../../services/mvp.service';
-import { TimeserviceService } from '../../services/timeservice.service';
+import { TimeService } from '../../services/time.service';
 import { PageEvent } from '@angular/material/paginator';
 
 @Component({
@@ -9,7 +9,7 @@ import { PageEvent } from '@angular/material/paginator';
   styleUrls: ["./mvp-page.component.css"]
 })
 export class MvpPageComponent implements OnInit {
-  constructor(private mvpService: MvpService, private timeService:TimeserviceService) {
+  constructor(private mvpService: MvpService, private timeService:TimeService) {
             this.timeService.getSesasonInfo().subscribe((res) => {
               this.currentSeason = res["value"];
               this.selectedSeason = res["value"];

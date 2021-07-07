@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { map, tap, share, shareReplay } from 'rxjs/operators';
 import { Profile } from  '../classes/profile.class';
 import { Observable, of } from 'rxjs';
-import { HttpServiceService } from './http-service.service';
+import { HttpService } from './http.service';
 import { environment } from '../../environments/environment'
-import { CacheServiceService } from './cache-service.service';
+import { CacheService } from './cache.service';
 
 
 
@@ -204,7 +204,7 @@ export class UserService {
   }
 
   constructor(
-    private httpService: HttpServiceService,
-    private cache: CacheServiceService
+    private httpService: HttpService,
+    private cache: CacheService
   ) {}
 }

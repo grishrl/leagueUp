@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { UtilitiesService } from 'src/app/services/utilities.service';
-import { TimeserviceService } from 'src/app/services/timeservice.service';
+import { TimeService } from 'src/app/services/time.service';
 import { environment } from 'src/environments/environment';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { forEach as _forEach } from 'lodash';
@@ -16,7 +16,7 @@ import { Replay } from 'src/app/classes/match.class';
 export class GamesInformationComponent implements OnInit, OnChanges {
   constructor(
     public util: UtilitiesService,
-    private timeService: TimeserviceService,
+    private timeService: TimeService,
     private hp: HeroesProfileService,
     private scheduleService: ScheduleService
   ) {}

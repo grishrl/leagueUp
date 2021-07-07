@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { UtilitiesService } from './utilities.service';
 import { map, share, shareReplay } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { HttpServiceService } from './http-service.service';
+import { HttpService } from './http.service';
 
 @Injectable({
   providedIn: "root"
@@ -14,7 +14,7 @@ export class WordpressService {
   constructor(
     private Http: HttpClient,
     private Util: UtilitiesService,
-    private http: HttpServiceService
+    private http: HttpService
   ) {}
 
   getBlogPosts(params?) {

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { TimeserviceService } from 'src/app/services/timeservice.service';
+import { TimeService } from 'src/app/services/time.service';
 
 @Component({
   selector: 'app-season-info-manager',
@@ -8,7 +8,7 @@ import { TimeserviceService } from 'src/app/services/timeservice.service';
 })
 export class SeasonInfoManagerComponent implements OnInit {
 
-  constructor(private timeservice:TimeserviceService) {
+  constructor(private timeservice:TimeService) {
 
    }
 

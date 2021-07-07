@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MvpService } from '../../services/mvp.service';
 import { ScheduleService } from '../../services/schedule.service';
 import { find } from 'lodash';
-import { TimeserviceService } from '../../services/timeservice.service';
+import { TimeService } from '../../services/time.service';
 
 @Component({
   selector: "app-mvp-display",
@@ -13,7 +13,7 @@ export class MvpDisplayComponent implements OnInit {
   constructor(
     private scheduleService: ScheduleService,
     private mvpService: MvpService,
-    private timeService:TimeserviceService
+    private timeService:TimeService
   ) {
     this.timeService.getSesasonInfo().subscribe((res) => {
       this.currentSeason = res["value"];

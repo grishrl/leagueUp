@@ -1,6 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { UserService } from 'src/app/services/user.service';
-import { CacheServiceService } from 'src/app/services/cache-service.service';
 
 @Component({
   selector: 'app-display-name-for-id',

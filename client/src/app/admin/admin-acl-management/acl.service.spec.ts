@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { TimeserviceService } from './timeservice.service';
+import { AclService } from './acl.service';
 
-describe('TimeserviceService', () => {
+describe('AclService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: TimeserviceService = TestBed.get(TimeserviceService);
+    const service: AclService = TestBed.get(AclService);
     expect(service).toBeTruthy();
   });
 });

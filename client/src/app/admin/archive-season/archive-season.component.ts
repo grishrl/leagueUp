@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { TimeserviceService } from 'src/app/services/timeservice.service';
+import { TimeService } from 'src/app/services/time.service';
 import { AdminService } from 'src/app/services/admin.service';
 
 @Component({
@@ -11,7 +11,7 @@ export class ArchiveSeasonComponent implements OnInit {
 
   currentSeason:number;
 
-  constructor(private timeService:TimeserviceService, private admin:AdminService) {
+  constructor(private timeService:TimeService, private admin:AdminService) {
         this.timeService.getSesasonInfo().subscribe((res) => {
           this.currentSeason = res['value'];
         });

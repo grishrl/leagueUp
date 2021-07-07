@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpServiceService } from './http-service.service';
-import { TimeserviceService } from './timeservice.service';
+import { HttpService } from './http.service';
+import { TimeService } from './time.service';
 import { map, switchMap } from 'rxjs/operators';
 
 @Injectable({
@@ -9,8 +9,8 @@ import { map, switchMap } from 'rxjs/operators';
 export class ScheduleService {
   currentSeason;
   constructor(
-    private httpService: HttpServiceService,
-    private timeService: TimeserviceService
+    private httpService: HttpService,
+    private timeService: TimeService
   ) {}
 
   matchQuery(obj) {

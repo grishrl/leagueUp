@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpServiceService } from './http-service.service';
+import { HttpService } from './http.service';
 
 @Injectable({
   providedIn: 'root'
@@ -45,5 +45,5 @@ export class RequestService {
     return this.httpService.httpPost(url, payload, true);
   }
 
-  constructor(private httpService: HttpServiceService) { }
+  constructor(private httpService: HttpService) { }
 }

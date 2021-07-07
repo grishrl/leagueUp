@@ -3,7 +3,7 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { ActivatedRoute } from '@angular/router';
 import { TeamService } from 'src/app/services/team.service';
-import { TimeserviceService } from 'src/app/services/timeservice.service';
+import { TimeService } from 'src/app/services/time.service';
 import { Match } from 'src/app/classes/match.class';
 
 @Component({
@@ -17,7 +17,7 @@ export class MatchResultsHeaderComponent implements OnInit {
   constructor(
     public util: UtilitiesService,
     public team: TeamService,
-    private timeService: TimeserviceService
+    private timeService: TimeService
   ) {
     this.timeService.getSesasonInfo().subscribe((time) => {
       this.seasonVal = time.value;

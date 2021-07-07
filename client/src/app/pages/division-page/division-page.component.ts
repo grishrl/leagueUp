@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { Team } from '../../classes/team.class';
 import { Division } from '../../classes/division';
 import { TeamService } from '../../services/team.service';
-import { TimeserviceService } from '../../services/timeservice.service';
+import { TimeService } from '../../services/time.service';
 import { TabTrackerService } from '../../services/tab-tracker.service';
 import { environment } from "../../../environments/environment";
 
@@ -32,7 +32,7 @@ export class DivisionComponent implements OnInit, OnChanges {
 
 
   constructor(private division:DivisionService, private teamService:TeamService, private route:ActivatedRoute, private router: Router,
-    private timeService:TimeserviceService, private tabTacker:TabTrackerService) {
+    private timeService:TimeService, private tabTacker:TabTrackerService) {
 
 
     this.navigationSubscription = this.router.events.subscribe((e: any) => {

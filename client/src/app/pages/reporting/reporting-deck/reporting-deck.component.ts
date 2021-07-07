@@ -5,7 +5,7 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TeamService } from 'src/app/services/team.service';
 import {merge, forEach as _forEach } from 'lodash';
 import { Match } from 'src/app/classes/match.class';
-import { S3uploadServiceService } from 'src/app/services/s3upload-service.service';
+import { S3uploadService } from 'src/app/services/s3upload.service';
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -96,7 +96,7 @@ export class ReportingDeckComponent implements OnInit {
 
   }
 
-  constructor(private scheduleService: ScheduleService, private util: UtilitiesService, public team:TeamService, private s3uploads:S3uploadServiceService ) { }
+  constructor(private scheduleService: ScheduleService, private util: UtilitiesService, public team:TeamService, private s3uploads:S3uploadService ) { }
 
   maps = {
   ControlPoints: 'Sky Temple',

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HistoryService } from '../../services/history.service';
-import { TimeserviceService } from '../../services/timeservice.service';
+import { TimeService } from '../../services/time.service';
 import { FilterService } from '../../services/filter.service';
 
 @Component({
@@ -10,7 +10,7 @@ import { FilterService } from '../../services/filter.service';
 })
 export class PastSeasonsComponent implements OnInit {
 
-  constructor(private HS: HistoryService, private timeService: TimeserviceService, private FS:FilterService) { }
+  constructor(private HS: HistoryService, private timeService: TimeService, private FS:FilterService) { }
 
   seasonsList = [];
   selectedSeason;

@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { HttpServiceService } from './http-service.service';
+import { HttpService } from './http.service';
 import { FilterService } from '../services/filter.service';
-import { CacheServiceService } from './cache-service.service';
+import { CacheService } from './cache.service';
 
 @Injectable({
   providedIn: "root",
@@ -45,8 +45,8 @@ export class DivisionService {
   }
 
   constructor(
-    private httpService: HttpServiceService,
+    private httpService: HttpService,
     private fs: FilterService,
-    private cache:CacheServiceService
+    private cache:CacheService
   ) {}
 }

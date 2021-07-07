@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { HttpServiceService } from './http-service.service';
+import { HttpService } from './http.service';
 import { Team } from '../classes/team.class';
 import { SpecialCharactersService } from './special-characters.service';
-import { TimeserviceService } from 'src/app/services/timeservice.service';
+import { TimeService } from 'src/app/services/time.service';
 
 @Injectable({
   providedIn: 'root'
@@ -257,5 +257,5 @@ export class TeamService {
   //   return this.httpService.httpGet(url, params);
   // }
 
-  constructor(private httpService: HttpServiceService, private charServ: SpecialCharactersService, private timeService:TimeserviceService) { }
+  constructor(private httpService: HttpService, private charServ: SpecialCharactersService, private timeService:TimeService) { }
 }

@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators'
-import { HttpServiceService } from './http-service.service';
+import { HttpService } from './http.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class QueuesService {
 
-  constructor( private httpService:HttpServiceService) {
+  constructor( private httpService:HttpService) {
 
    }
 

@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TeamService } from 'src/app/services/team.service';
-import { TimeserviceService } from 'src/app/services/timeservice.service';
+import { TimeService } from 'src/app/services/time.service';
 
 @Component({
   selector: 'app-division-cup-schedule',
@@ -11,7 +11,7 @@ import { TimeserviceService } from 'src/app/services/timeservice.service';
 })
 export class DivisionCupScheduleComponent implements OnInit {
 
-  constructor(private scheduleService:ScheduleService, public util:UtilitiesService, public team:TeamService, private timeService:TimeserviceService) { }
+  constructor(private scheduleService:ScheduleService, public util:UtilitiesService, public team:TeamService, private timeService:TimeService) { }
 
   totalCups = 0;
   selectedCup;

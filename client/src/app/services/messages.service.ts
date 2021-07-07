@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
-import { HttpServiceService } from './http-service.service';
+import { HttpService } from './http.service';
 
 @Injectable({
   providedIn: 'root'
@@ -46,5 +46,5 @@ export class MessagesService {
 
 
 
-  constructor(private httpService:HttpServiceService) { }
+  constructor(private httpService:HttpService) { }
 }

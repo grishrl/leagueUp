@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpServiceService } from './http-service.service';
+import { HttpService } from './http.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HistoryService {
 
-  constructor(private httpService: HttpServiceService) { }
+  constructor(private httpService: HttpService) { }
 
   getPastSeasons(){
     let url = '/history/seasons';

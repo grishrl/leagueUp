@@ -5,7 +5,7 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 import { StandingsService } from 'src/app/services/standings.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
-import { TimeserviceService } from 'src/app/services/timeservice.service';
+import { TimeService } from 'src/app/services/time.service';
 
 @Component({
   selector: "app-team-tournament-schedule-table",
@@ -20,7 +20,7 @@ export class TeamTournamentScheduleTableComponent implements OnInit {
     private standingsService: StandingsService,
     private Auth: AuthService,
     private router: Router,
-    private timeService: TimeserviceService,
+    private timeService: TimeService,
   ) {}
 
   noMatches;

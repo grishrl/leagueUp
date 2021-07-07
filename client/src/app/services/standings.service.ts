@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpServiceService } from './http-service.service';
-import { TimeserviceService } from './timeservice.service';
+import { HttpService } from './http.service';
+import { TimeService } from './time.service';
 import { switchMap } from 'rxjs/operators';
 
 @Injectable({
@@ -37,6 +37,6 @@ export class StandingsService {
   }
 
 
-  constructor(private httpService: HttpServiceService, private timeService:TimeserviceService) {
+  constructor(private httpService: HttpService, private timeService:TimeService) {
    }
 }

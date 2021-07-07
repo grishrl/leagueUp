@@ -4,7 +4,7 @@ import { UtilitiesService } from '../../services/utilities.service';
 import { TeamService } from '../../services/team.service';
 import { CountdownService } from '../../services/countdown.service';
 import { Iinterval } from '../../services/iinterval';
-import { TimeserviceService } from '../../services/timeservice.service';
+import { TimeService } from '../../services/time.service';
 import { AuthService } from '../../services/auth.service';
 
 
@@ -19,7 +19,7 @@ export class CountdownComponent implements OnInit {
     public util: UtilitiesService,
     public team: TeamService,
     private countdownService: CountdownService,
-    private timeService: TimeserviceService,
+    private timeService: TimeService,
     private auth:AuthService
   ) {
     this.timeService.getSesasonInfo().subscribe((res) => {

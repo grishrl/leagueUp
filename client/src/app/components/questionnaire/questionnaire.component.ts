@@ -3,7 +3,7 @@ import { TeamService } from '../../services/team.service';
 import { merge, forEach as _forEach, includes as _includes } from 'lodash';
 import { UtilitiesService } from '../../services/utilities.service';
 import { AuthService } from '../../services/auth.service';
-import { TimeserviceService } from '../../services/timeservice.service';
+import { TimeService } from '../../services/time.service';
 import { PlayerRankService } from '../../services/player-rank.service';
 
 
@@ -23,7 +23,7 @@ export class QuestionnaireComponent implements OnInit {
     private teamService: TeamService,
     private util: UtilitiesService,
     public auth: AuthService,
-    private timeService: TimeserviceService,
+    private timeService: TimeService,
     private playerRank: PlayerRankService
   ) {}
 

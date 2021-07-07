@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpServiceService } from './http-service.service';
+import { HttpService } from './http.service';
 
 @Injectable({
   providedIn: "root",
 })
 export class PlayerRankService {
-  constructor(private http: HttpServiceService) {}
+  constructor(private http: HttpService) {}
 
   getRequiredRanks() {
     let url = "playerrank/get/required";

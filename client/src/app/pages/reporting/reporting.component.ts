@@ -4,7 +4,7 @@ import { ScheduleService } from '../../services/schedule.service';
 import { AuthService } from '../../services/auth.service';
 import { TeamService } from '../../services/team.service';
 import { environment } from '../../../environments/environment';
-import { TimeserviceService } from '../../services/timeservice.service';
+import { TimeService } from '../../services/time.service';
 import { DivisionService } from '../../services/division.service';
 import { UtilitiesService } from '../../services/utilities.service';
 
@@ -19,7 +19,7 @@ export class ReportingComponent implements OnInit {
   currentSeason;
   division;
   constructor(private Auth: AuthService, private teamService:TeamService, private route: ActivatedRoute,
-    private scheduleService: ScheduleService, private timeService:TimeserviceService, private divisionService:DivisionService, private util:UtilitiesService) {
+    private scheduleService: ScheduleService, private timeService:TimeService, private divisionService:DivisionService, private util:UtilitiesService) {
     if (this.route.snapshot.params['id']) {
       this.recTeam = this.route.snapshot.params['id'];
     }

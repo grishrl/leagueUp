@@ -3,7 +3,7 @@ import { StandingsService } from 'src/app/services/standings.service';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { TeamService } from 'src/app/services/team.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
-import { TimeserviceService } from 'src/app/services/timeservice.service';
+import { TimeService } from 'src/app/services/time.service';
 
 @Component({
   selector: "app-division-results-tiles",
@@ -16,7 +16,7 @@ export class DivisionResultsTilesComponent implements OnInit {
     private scheduleService: ScheduleService,
     public team: TeamService,
     public util: UtilitiesService,
-    private timeService: TimeserviceService
+    private timeService: TimeService
   ) {}
 
   currentSeason;

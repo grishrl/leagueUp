@@ -6,7 +6,7 @@ import { StandingsService } from 'src/app/services/standings.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 import { map } from 'rxjs/operators';
-import { TimeserviceService } from 'src/app/services/timeservice.service';
+import { TimeService } from 'src/app/services/time.service';
 
 @Component({
   selector: 'app-team-schedule-table',
@@ -18,7 +18,7 @@ export class TeamScheduleTableComponent implements OnInit {
   currentSeason;
   constructor(public teamServ:TeamService, private scheduleService:ScheduleService,
     public util:UtilitiesService, private standingsService:StandingsService, private Auth:AuthService,
-    private router:Router, private timeService:TimeserviceService) {
+    private router:Router, private timeService:TimeService) {
     this.timeService.getSesasonInfo().subscribe(res => {
       this.currentSeason = res['value'];
     });;

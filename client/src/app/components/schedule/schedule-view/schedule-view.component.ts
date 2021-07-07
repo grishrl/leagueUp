@@ -3,7 +3,7 @@ import { ScheduleService } from 'src/app/services/schedule.service';
 import { TeamService } from 'src/app/services/team.service';
 import { StandingsService } from 'src/app/services/standings.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
-import { TimeserviceService } from 'src/app/services/timeservice.service';
+import { TimeService } from 'src/app/services/time.service';
 
 @Component({
   selector: 'app-schedule-view',
@@ -14,7 +14,7 @@ export class ScheduleViewComponent implements OnInit, OnChanges {
 
   constructor( private standingsService:StandingsService,
     private scheduleService: ScheduleService, public team: TeamService, public util:UtilitiesService,
-    private timeService:TimeserviceService) {
+    private timeService:TimeService) {
   }
   divisions:any=[];
   standings:any[]=[];

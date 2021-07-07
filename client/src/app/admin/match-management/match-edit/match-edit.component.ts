@@ -7,7 +7,7 @@ import * as moment from 'moment-timezone';
 import { Match } from '../../../classes/match.class';
 import { MvpService } from 'src/app/services/mvp.service';
 import { forEach } from 'lodash';
-import { S3uploadServiceService } from 'src/app/services/s3upload-service.service';
+import { S3uploadService } from 'src/app/services/s3upload.service';
 import { timeout } from 'rxjs/operators';
 import { TeamService } from 'src/app/services/team.service';
 
@@ -60,7 +60,7 @@ export class MatchEditComponent implements OnInit {
     private adminService: AdminService,
     private util: UtilitiesService,
     private mvpServ: MvpService,
-    private s3uploads: S3uploadServiceService,
+    private s3uploads: S3uploadService,
     private team: TeamService
   ) {
     if (this.route.snapshot.params["id"]) {

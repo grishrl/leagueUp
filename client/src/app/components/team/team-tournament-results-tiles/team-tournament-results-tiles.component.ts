@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TeamService } from 'src/app/services/team.service';
-import { TimeserviceService } from 'src/app/services/timeservice.service';
+import { TimeService } from 'src/app/services/time.service';
 
 
 @Component({
@@ -14,7 +14,7 @@ export class TeamTournamentResultsTilesComponent implements OnInit {
 
 
 
-  constructor(private scheduleService: ScheduleService, public util: UtilitiesService, public teamServ: TeamService, private timeService:TimeserviceService) { }
+  constructor(private scheduleService: ScheduleService, public util: UtilitiesService, public teamServ: TeamService, private timeService:TimeService) { }
 
   displayArray = [];
 

@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from "@angular/common/http";
-import { HttpServiceService } from "../services/http-service.service";
+import { HttpService } from "./http.service";
 
 @Injectable({
   providedIn: 'root'
 })
-export class S3uploadServiceService {
+export class S3uploadService {
 
-  constructor(private nativeHttp:HttpClient, private ngsHttp:HttpServiceService) { }
+  constructor(private nativeHttp:HttpClient, private ngsHttp:HttpService) { }
 
   getSignedUrl(inf){
     let url = "api/s3/sign";

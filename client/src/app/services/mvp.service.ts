@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpServiceService } from "./http-service.service";
+import { HttpService } from "./http.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class MvpService {
 
-  constructor(private http:HttpServiceService) { }
+  constructor(private http:HttpService) { }
 
   getAll(){
       let url = "/mvp/get";

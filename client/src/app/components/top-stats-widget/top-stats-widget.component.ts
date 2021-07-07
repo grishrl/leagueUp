@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HeroesProfileService } from '../../services/heroes-profile.service';
 import { UserService } from '../../services/user.service';
 import { forEach as _forEach } from 'lodash';
-import { TimeserviceService } from '../../services/timeservice.service';
+import { TimeService } from '../../services/time.service';
 
 @Component({
   selector: 'app-top-stats-widget',
@@ -12,7 +12,7 @@ import { TimeserviceService } from '../../services/timeservice.service';
 export class TopStatsWidgetComponent implements OnInit {
 
   offSeason:boolean = false;
-  constructor(private hp: HeroesProfileService, public user: UserService, private timeService:TimeserviceService) {
+  constructor(private hp: HeroesProfileService, public user: UserService, private timeService:TimeService) {
             this.timeService.getSesasonInfo().subscribe(res => {
               if (Date.now() < res["data"].seasonStartDate) {
                 this.offSeason = true;

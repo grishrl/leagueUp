@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { AclServiceService } from './acl-service.service';
+import { HttpService } from './http.service';
 
-describe('AclServiceService', () => {
+describe('HttpService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: AclServiceService = TestBed.get(AclServiceService);
+    const service: HttpService = TestBed.get(HttpService);
     expect(service).toBeTruthy();
   });
 });

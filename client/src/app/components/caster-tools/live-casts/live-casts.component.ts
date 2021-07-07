@@ -3,7 +3,7 @@ import { TeamService } from 'src/app/services/team.service';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { FilterService } from 'src/app/services/filter.service';
-import { TimeserviceService } from 'src/app/services/timeservice.service';
+import { TimeService } from 'src/app/services/time.service';
 import * as moment from 'moment-timezone';
 
 @Component({
@@ -19,7 +19,7 @@ export class LiveCastsComponent implements OnInit {
     private scheduleService: ScheduleService,
     public util: UtilitiesService,
     private filterService: FilterService,
-    private timeService: TimeserviceService
+    private timeService: TimeService
   ) {
     this.timeService.getSesasonInfo().subscribe((res) => {
       this.currentSeason = res["value"];

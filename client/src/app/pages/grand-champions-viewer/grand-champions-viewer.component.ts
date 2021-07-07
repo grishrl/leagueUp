@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ScheduleService } from '../../services/schedule.service';
-import { TimeserviceService } from '../../services/timeservice.service';
+import { TimeService } from '../../services/time.service';
 import { forEach } from 'lodash';
 
 @Component({
@@ -18,7 +18,7 @@ export class GrandChampionsViewerComponent implements OnInit {
   doneLoading=false;
   constructor(
     private sched: ScheduleService,
-    private timeServ: TimeserviceService
+    private timeServ: TimeService
   ) {
     this.timeServ.getSesasonInfo().subscribe((res) => {
       this.currentSeason = res.value;

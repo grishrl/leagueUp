@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
-import { HttpServiceService } from './http-service.service';
+import { HttpService } from './http.service';
 import { Team } from '../classes/team.class';
 import { FilterService } from '../services/filter.service';
 
@@ -9,7 +9,7 @@ import { FilterService } from '../services/filter.service';
 })
 export class AdminService {
   constructor(
-    private httpService: HttpServiceService,
+    private httpService: HttpService,
     private FS: FilterService
   ) {}
 

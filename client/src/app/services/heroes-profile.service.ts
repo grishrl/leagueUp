@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UtilitiesService } from './utilities.service';
 import { environment } from '../../environments/environment';
-import { HttpServiceService } from './http-service.service';
+import { HttpService } from './http.service';
 import { Subject } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { map } from 'rxjs/operators';
@@ -11,7 +11,7 @@ import { map } from 'rxjs/operators';
 })
 export class HeroesProfileService {
 
-  constructor(private util:UtilitiesService, private http: HttpServiceService) { }
+  constructor(private util:UtilitiesService, private http: HttpService) { }
 
   getTopStats(stat){
     let url = '/user/frontPageStats'

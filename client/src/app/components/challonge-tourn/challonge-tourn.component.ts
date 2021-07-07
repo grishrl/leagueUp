@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { UtilitiesService } from '../../services/utilities.service';
 import { environment } from '../../../environments/environment';
 import { ScheduleService } from '../../services/schedule.service';
-import { TimeserviceService } from '../../services/timeservice.service';
+import { TimeService } from '../../services/time.service';
 
 @Component({
   selector: 'app-challonge-tourn',
@@ -11,7 +11,7 @@ import { TimeserviceService } from '../../services/timeservice.service';
 })
 export class ChallongeTournComponent implements OnInit {
 
-  constructor(private utils:UtilitiesService, private scheduleService:ScheduleService, private timeService:TimeserviceService) {
+  constructor(private utils:UtilitiesService, private scheduleService:ScheduleService, private timeService:TimeService) {
     this.timeService.getSesasonInfo().subscribe(
       res=>{
         this.currentSeason = res['value'];

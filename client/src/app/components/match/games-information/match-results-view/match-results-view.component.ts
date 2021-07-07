@@ -7,7 +7,7 @@ import { Match } from 'src/app/classes/match.class';
 import { HeroesProfileService } from 'src/app/services/heroes-profile.service';
 import { environment } from 'src/environments/environment';
 import { forEach as _forEach } from 'lodash';
-import { TimeserviceService } from 'src/app/services/timeservice.service';
+import { TimeService } from 'src/app/services/time.service';
 
 @Component({
   selector: "app-match-results-view",
@@ -18,7 +18,7 @@ export class MatchResultsViewComponent implements OnInit {
   recId;
 
   constructor(
-    private timeService: TimeserviceService,
+    private timeService: TimeService,
     private scheduleService: ScheduleService,
     private route: ActivatedRoute
   ) {
@@ -40,7 +40,7 @@ export class MatchResultsViewComponent implements OnInit {
     );
   }
   // recId;
-  // constructor(public util: UtilitiesService, private scheduleService:ScheduleService, private route: ActivatedRoute, public team: TeamService,  private timeService:TimeserviceService) {
+  // constructor(public util: UtilitiesService, private scheduleService:ScheduleService, private route: ActivatedRoute, public team: TeamService,  private timeService:TimeService) {
   //   if (this.route.snapshot.params['id']) {
   //     this.recId = this.route.snapshot.params['id'];
   //   }

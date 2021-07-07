@@ -17,7 +17,7 @@ import { DivisionService } from '../../services/division.service';
 import { AssistantCaptainMgmtComponent } from 'src/app/modal/assistant-captain-mgmt/assistant-captain-mgmt.component';
 import { HistoryService } from 'src/app/services/history.service';
 import { TabTrackerService } from 'src/app/services/tab-tracker.service';
-import { TimeserviceService } from 'src/app/services/timeservice.service';
+import { TimeService } from 'src/app/services/time.service';
 import { MatDialog } from "@angular/material/dialog";
 
 
@@ -70,7 +70,7 @@ export class TeamProfileComponent implements OnInit {
   //constructor
   constructor(public auth: AuthService, public user: UserService, public team: TeamService, private route: ActivatedRoute, public dialog: MatDialog, private router: Router,
     private admin:AdminService, public util:UtilitiesService, private requestService:RequestService, public heroProfile: HeroesProfileService, private divisionServ: DivisionService,
-    private history:HistoryService, private tabTracker:TabTrackerService, private timeService:TimeserviceService) {
+    private history:HistoryService, private tabTracker:TabTrackerService, private timeService:TimeService) {
 
       //so that people can manually enter different tags from currently being on a profile page; we can reinitialize the component with the new info
     this.router.events.subscribe((e: any) => {

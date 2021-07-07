@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { HttpServiceService } from './http-service.service';
+import { HttpService } from './http.service';
 import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TimeserviceService {
+export class TimeService {
 
   getSeasonInfoULR = '/admin/getSeasonInfo';
   cacheCall;
 
-  constructor(private httpService:HttpServiceService) {
+  constructor(private httpService:HttpService) {
     this.cacheCall = this.httpService.httpGetShareable(this.getSeasonInfoULR,[]);
     this.init();
   }
