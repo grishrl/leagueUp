@@ -105,7 +105,9 @@
                                 </li>
                                 <!-- <ng-template #loggedIn> -->
                                 <li class="current" [hidden]="!Auth.isAuthenticated()">
-                                    <a class="linkColorFix finger">{{Auth.getUser()}}</a>
+                                    <a class="linkColorFix finger">{{Auth.getUser()}}
+                                      <span *ngIf="userMessages>0" class="badge badge-pill ml-1"><i class="linkColorFix fas fa-envelope"></i></span>
+                                    </a>
                                     <ul class="sub-current" appHideMenu>
                                         <li>
                                             <a [routerLink]="['/messageCenter']">

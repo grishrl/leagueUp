@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { of } from 'rxjs';
+import { Observable, of, interval } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 import { HttpService } from './http.service';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +16,27 @@ export class MessagesService {
             recipient: toGet,
           };
           return this.httpService.httpPost(url, payload);
+    }else{
+     return of(null);
+    }
+
+  }
+
+    getMessageNumbersInterval(toGet){
+
+    if(toGet){
+          this.getMessageNumbers(toGet).subscribe(
+            res=>{
+              this.NotificationService.updateMessages.next(res);
+            }
+          )
+          interval(2*60*1000).pipe(
+            mergeMap( ()=>this.getMessageNumbers(toGet) )
+            ).subscribe(
+              data=>{
+                this.NotificationService.updateMessages.next(data);
+              }
+            );
     }else{
      return of(null);
     }
@@ -46,5 +69,5 @@ export class MessagesService {
 
 
 
-  constructor(private httpService:HttpService) { }
+  constructor(private httpService:HttpService, private NotificationService:NotificationService) { }
 }

@@ -11,8 +11,9 @@
             </div>
             <div class="row mt-3">
                 <div class="col" *ngIf="messages.length>0 else noMessages">
-                    <div class="list-group">
-                        <div class="list-group-item" *ngFor="let message of messages" [ngClass]="{'border bg-secondary text-white': isSelected(message)}">
+                    <ul class="list-group">
+                        <!-- 'border bg-secondary text-white' -->
+                        <li class="list-group-item" *ngFor="let message of messages" [ngClass]="{'active': isSelected(message)}">
                             <div class="row">
                                 <div class="col-10 finger" (click)="selectMessage(message)">
                                     <div class="row">
@@ -34,8 +35,8 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        </li>
+                    </ul>
                 </div>
                 <ng-template #noMessages>
                     <div class="col p-5 text-center">
@@ -51,7 +52,7 @@
                 <h4>Selected Message</h4>
             </div>
             <div class="row p-4">
-                <div class="col">
+                <div class="col messageContainer">
                     <div class="row mt-1">
                         <div class="col">
                             <strong>Sender:</strong> {{selectedMessage.sender}}
@@ -60,16 +61,19 @@
                             <strong>Time:</strong> {{selectedMessage.timeStamp | commonPipe:util.getFormattedDate:'dddd M/D/YYYY h:mm A zz'}}
                         </div>
                     </div>
+                    <hr>
                     <div class="row mt-2">
                         <div class="col">
                             <strong>Subject:</strong> {{selectedMessage.subject}}
                         </div>
                     </div>
+                    <hr>
                     <div class="row mt-1">
                         <div class="col">
                             <strong>Content:</strong> {{selectedMessage.content}}
                         </div>
                     </div>
+
                     <!-- action -->
                     <div *ngIf="selectedMessage.request">
                         <div *ngIf="selectedMessage.request.instance=='team' || selectedMessage.request.instance=='user'">
