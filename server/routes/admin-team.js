@@ -305,15 +305,13 @@ router.post('/team/removeInvitedMember', passport.authenticate('jwt', {
 
             },
             fail => {
+                let message = 'Default error message';
                 if (fail.error) {
                     logObj.error = fail.error;
+                    message = fail.error;
                 }
                 if (fail.logLevel) {
                     logObj.logLevel = fail.logLevel;
-                }
-                let message = 'Default error message';
-                if (fail.message) {
-                    message = fail.message;
                 }
 
                 response.status = 400;
@@ -472,6 +470,7 @@ router.post('/delete/team', passport.authenticate('jwt', {
             teamName_lower: team
         }).then((deleted) => {
             if (deleted) {
+                //TODO: Delete any dangling invited users!
                 UserSub.clearUsersTeam(deleted.teamMembers);
                 teamSub.markTeamWithdrawnInMatches(deleted.toObject());
                 DivSub.updateTeamNameDivision(deleted.teamName, deleted.teamName + ' (withdrawn)');

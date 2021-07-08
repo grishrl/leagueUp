@@ -13,6 +13,7 @@ const hpAPI = require('./server/methods/heroesProfileAPI');
 const fs = require('fs');
 const casterReport = require('./server/methods/casterReportMethods');
 const vodCur = require('./server/workers/vods-playlist-curator');
+const UserSub = require('./server/subroutines/user-subs');
 
 // connect to mongo db
 mongoose.connect(process.env.mongoURI, () => {
@@ -37,19 +38,23 @@ if (api) {
     });
 }
 //!!!!!!!!!!!!!!!!!!!!!!! API KEY GENERATOR  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-new System.system({
-    'dataName': 'apiKey',
-    'value': token
-}).save().then(
-    saved => {
-        console.log('saved ', ' token ', token);
-        process.exit(0);
-    },
-    err => {
-        console.log('not saved ', ' token ', token);
-        process.exit(0);
-    }
-);
+// new System.system({
+//     'dataName': 'apiKey',
+//     'value': token
+// }).save().then(
+//     saved => {
+//         console.log('saved ', ' token ', token);
+//         process.exit(0);
+//     },
+//     err => {
+//         console.log('not saved ', ' token ', token);
+//         process.exit(0);
+//     }
+// );
+
+
+/// 7-7-21 Clear User Sub Testing...
+UserSub.clearUsersTeam(['DHCæsarsalad#1517'], true);
 
 // console.log('token ', token);
 

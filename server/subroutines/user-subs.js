@@ -35,9 +35,9 @@ function scrubUser(username) {
  * 
  * @param {Array.<User>} usersRemoved : Array of user objects
  */
-function clearUsersTeam(usersRemoved) {
+function clearUsersTeam(usersRemoved, wasPending) {
     usersRemoved.forEach(function(user) {
-        clearUserTeam(user);
+        clearUserTeam(user, wasPending);
     });
 }
 
@@ -49,60 +49,84 @@ function clearUsersTeam(usersRemoved) {
  * 
  * @param {User} user : User object
  */
-function clearUserTeam(user) {
-    let logObj = {};
-    logObj.actor = 'SYSTEM; clearUserTeam ';
-    logObj.action = ' remove all team info from user ';
-    logObj.target = user.displayName;
-    logObj.timeStamp = new Date().getTime();
-    logObj.logLevel = 'STD';
-    //get the user from the db associated with this user
-    SeasonInfoCommon.getSeasonInfo().then(
-        (rep) => {
-            let seasonNum = rep.value;
-            User.findOne({
-                displayName: user.displayName
-            }).then((foundUser) => {
-                //update the fetched users info
-                if (foundUser) {
-                    foundUser.teamId = null;
-                    let teamname = foundUser.teamName;
-                    foundUser.teamName = null;
-                    foundUser.isCaptain = null;
-                    if (foundUser.history) {
-                        foundUser.history.push({
-                            timestamp: Date.now(),
-                            action: 'Left team',
-                            target: teamname,
-                            season: seasonNum
+function clearUserTeam(user, wasPending) {
+
+    let username;
+
+    if (typeof user == 'string') {
+        username = user;
+    } else if (typeof user == 'object' && util.returnBoolByPath(user, 'displayName')) {
+        username = user.displayName;
+    }
+
+
+    if (username) {
+        let logObj = {};
+        logObj.actor = 'SYSTEM; clearUserTeam ';
+        logObj.action = ' remove all team info from user ';
+        logObj.target = username;
+        logObj.timeStamp = new Date().getTime();
+        logObj.logLevel = 'STD';
+        //get the user from the db associated with this user
+        SeasonInfoCommon.getSeasonInfo().then(
+            (rep) => {
+                let seasonNum = rep.value;
+                User.findOne({
+                    displayName: username
+                }).then((foundUser) => {
+                    //update the fetched users info
+                    if (foundUser) {
+
+                        foundUser.teamId = null;
+                        let teamname = foundUser.teamName;
+                        foundUser.teamName = null;
+                        foundUser.isCaptain = null;
+                        foundUser.pendingTeam = false;
+                        // check to make sure we are not adding history to a player for a pending invite being remove
+                        if (!wasPending) {
+
+                            if (foundUser.history) {
+                                foundUser.history.push({
+                                    timestamp: Date.now(),
+                                    action: 'Left team',
+                                    target: teamname,
+                                    season: seasonNum
+                                });
+                            } else {
+                                foundUser.history = [{
+                                    timestamp: Date.now(),
+                                    action: 'Left team',
+                                    target: teamname,
+                                    season: seasonNum
+                                }];
+                            }
+                        }
+
+                        foundUser.save().then((savedUser) => {
+
+                            logger(logObj);
+                        }, (err) => {
+
+                            logObj.logLevel = 'ERROR';
+                            logObj.error = err;
+                            logger(logObj);
                         });
                     } else {
-                        foundUser.history = [{
-                            timestamp: Date.now(),
-                            action: 'Left team',
-                            target: teamname,
-                            season: seasonNum
-                        }];
-                    }
-                    foundUser.save().then((savedUser) => {
-                        logger(logObj);
-                    }, (err) => {
+
                         logObj.logLevel = 'ERROR';
-                        logObj.error = err;
+                        logObj.error = 'user not found';
                         logger(logObj);
-                    });
-                } else {
+                    }
+                }, (err) => {
                     logObj.logLevel = 'ERROR';
-                    logObj.error = 'user not found';
+                    logObj.error = err;
                     logger(logObj);
-                }
-            }, (err) => {
-                logObj.logLevel = 'ERROR';
-                logObj.error = err;
-                logger(logObj);
-            });
-        }
-    )
+                });
+            }
+        )
+    }
+
+
 
 }
 
@@ -336,6 +360,9 @@ async function updateUserName(id, newUserName) {
                 'teamMembers.displayName': user.displayName
             }, {
                 'pendingMembers.displayName': user.displayName
+            },
+            {
+                'invitedUsers': user.displayName
             }
         ]
     }).then((foundTeam) => {
@@ -362,6 +389,7 @@ async function updateUserName(id, newUserName) {
         team.pendingMembers.forEach(member => {
             if (member.displayName == user.displayName) {
                 member.displayName = newUserName;
+                team.markModified('pendingMembers');
             }
         });
         //if the user was an AC - update their name in the ac array
@@ -370,15 +398,26 @@ async function updateUserName(id, newUserName) {
             if (index > -1) {
                 team.assistantCaptain.splice(index, 1);
                 team.assistantCaptain.push(newUserName);
+                team.markModified('assistantCaptain');
             }
         }
+        //if the user was invited users...
+
+        team.invitedUsers.forEach((invitedUser, i) => {
+            if (invitedUser == user.displayName) {
+                team.invitedUsers[i] = newUserName;
+                team.markModified('invitedUsers');
+            }
+        });
         let teamSave = await team.save().then(
             (saved) => { return saved; },
             (err) => { return null; }
         );
     }
+    let oldusername = user.displayName;
     user.displayName = newUserName;
     let userSave = await user.save().then(saved => {
+        QueueSubs.updatePendingMemberQueueUsername(oldusername, newUserName);
         return saved;
     }, err => {
         return null;

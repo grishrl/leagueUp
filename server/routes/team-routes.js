@@ -322,6 +322,7 @@ router.post('/delete', passport.authenticate('jwt', {
             teamName_lower: payloadTeamName
         }).then((deletedTeam) => {
             if (deletedTeam) {
+                //TODO: handle any dangling invited users!
                 UserSub.clearUsersTeam(deletedTeam.teamMembers);
                 TeamSub.markTeamWithdrawnInMatches(deletedTeam.toObject());
                 DivSub.updateTeamNameDivision(deletedTeam.teamName, deletedTeam.teamName + ' (withdrawn)');

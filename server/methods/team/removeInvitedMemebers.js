@@ -14,9 +14,9 @@ const TeamSub = require('../../subroutines/team-subs');
  * @param {string} teamName 
  * @param {Array.<string> | string} members 
  */
-async function removeInvitedMembers(teamName, members) {
-    if (Array.isArray(members) == false) {
-        members = [members];
+async function removeInvitedMembers(teamName, membersToRemove) {
+    if (Array.isArray(membersToRemove) == false) {
+        membersToRemove = [membersToRemove];
     }
 
     let returnObject = {};
@@ -27,11 +27,10 @@ async function removeInvitedMembers(teamName, members) {
             returnObject.foundTeam = foundTeam;
 
             let indiciesToRemove = [];
-            let usersRemoved = [];
 
             for (var i = 0; i < foundTeam.invitedUsers.length; i++) {
-                members.forEach(member => {
-                    if (member.displayName == foundTeam.invitedUsers[i]) {
+                membersToRemove.forEach(member => {
+                    if (member == foundTeam.invitedUsers[i]) {
                         indiciesToRemove.push(i);
                     };
                 })
@@ -43,15 +42,8 @@ async function removeInvitedMembers(teamName, members) {
                 throw returnObject;
             } else {
 
-                indiciesToRemove.forEach(function(index) {
-                    let userToRemove = foundTeam.invitedUsers.splice(index, 1);
-                    usersRemoved = usersRemoved.concat(userToRemove);
-                    // let assCapIndex = foundTeam.assistantCaptain.indexOf(userToRemove[0]);
-                    // if (assCapIndex > -1) {
-                    //     foundTeam.assistantCaptain.splice(assCapIndex, 1);
-                    // }
-                });
-                // UserSub.clearUsersTeam(usersRemoved);
+                let result = removeMultipleIndicies(foundTeam.invitedUsers, indiciesToRemove);
+                UserSub.clearUsersTeam(result.removed, true);
                 return foundTeam.save().then((savedTeam) => {
                     if (savedTeam) {
                         TeamSub.updateTeamMmrAsynch(foundTeam);
@@ -86,3 +78,19 @@ async function removeInvitedMembers(teamName, members) {
 }
 
 module.exports = { removeInvitedMembers };
+
+function removeMultipleIndicies(arr, indices) {
+
+
+    let modified = arr;
+    let removed = [];
+
+    for (var i = arr.length - 1; i > -1; i--) {
+        if (indices.indexOf(i) > -1) {
+            removed = removed.concat(modified.splice(i, 1));
+        }
+    }
+
+    return { modified, removed };
+
+}

@@ -258,9 +258,7 @@ returnBoolByPath = function(obj, path) {
         return null;
     }
 
-    if (obj.hasOwnProperty('toObject')) {
-        obj = obj.toObject();
-    }
+    obj = objectify(obj);
     //path is a string representing a dot notation object path;
     //create an array of the string for easier manipulation
     let pathArr = path.split('.');

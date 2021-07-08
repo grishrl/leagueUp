@@ -16,9 +16,9 @@ const TeamSub = require('../../subroutines/team-subs');
  * @param {Array.<string> | string} members member or list of members display name to remove
  * @param {boolean} captRestrict flag to enable or diable the removing a member if they are a captain
  */
-async function removeTeamMembers(teamName, members, captRestrict) {
-    if (Array.isArray(members) == false) {
-        members = [members];
+async function removeTeamMembers(teamName, membersToRemove, captRestrict) {
+    if (Array.isArray(membersToRemove) == false) {
+        membersToRemove = [membersToRemove];
     }
 
     let returnObject = {};
@@ -39,10 +39,19 @@ async function removeTeamMembers(teamName, members, captRestrict) {
             }
 
             for (var i = 0; i < foundTeam.teamMembers.length; i++) {
-                if (members.indexOf(foundTeam.teamMembers[i].displayName) > -1) {
+                if (membersToRemove.indexOf(foundTeam.teamMembers[i].displayName) > -1) {
                     indiciesToRemove.push(i);
                 }
             }
+
+
+            foundTeam.assistantCaptain.forEach(aC => {
+                let acIndex = membersToRemove.indexOf(aC)
+                if (acIndex > -1) {
+                    foundTeam.assistantCaptain.splice(acIndex, 1);
+                    foundTeam.markModified('assistantCaptain');
+                }
+            })
 
             if (indiciesToRemove.length == 0) {
                 returnObject.level = 'ERROR';
@@ -50,15 +59,12 @@ async function removeTeamMembers(teamName, members, captRestrict) {
                 throw returnObject;
             } else {
 
-                indiciesToRemove.forEach(function(index) {
-                    let userToRemove = foundTeam.teamMembers.splice(index, 1);
-                    usersRemoved = usersRemoved.concat(userToRemove);
-                    let assCapIndex = foundTeam.assistantCaptain.indexOf(userToRemove[0].displayName);
-                    if (assCapIndex > -1) {
-                        foundTeam.assistantCaptain.splice(assCapIndex, 1);
-                    }
-                });
-                UserSub.clearUsersTeam(usersRemoved);
+                let result = removeMultipleIndicies(foundTeam.teamMembers, indiciesToRemove);
+
+                console.log('result.removed', result.removed);
+                UserSub.clearUsersTeam(result.removed);
+                foundTeam.teamMembers = result.modified;
+                foundTeam.markModified('teamMembers');
                 return foundTeam.save().then((savedTeam) => {
                     if (savedTeam) {
                         TeamSub.updateTeamMmrAsynch(foundTeam);
@@ -93,3 +99,19 @@ async function removeTeamMembers(teamName, members, captRestrict) {
 }
 
 module.exports = { removeTeamMembers };
+
+function removeMultipleIndicies(arr, indices) {
+
+
+    let modified = arr;
+    let removed = [];
+
+    for (var i = arr.length - 1; i > -1; i--) {
+        if (indices.indexOf(i) > -1) {
+            removed = removed.concat(modified.splice(i, 1));
+        }
+    }
+
+    return { modified, removed };
+
+}

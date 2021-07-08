@@ -30,7 +30,7 @@ export class MessagesService {
               this.NotificationService.updateMessages.next(res);
             }
           )
-          interval(2*60*1000).pipe(
+          interval((2*60*1000)).pipe(
             mergeMap( ()=>this.getMessageNumbers(toGet) )
             ).subscribe(
               data=>{

@@ -138,6 +138,29 @@ function removePendingQueueByUsername(username) {
     })
 }
 
+/**
+ * @name updatePendingMemberQueueUsername
+ * @function
+ * @description updates a pending member queue by username, this will primarily be used when a user changes their bnet tag
+ * @param {string} oldusername 
+ * @param {string} newusername
+ */
+function updatePendingMemberQueueUsername(oldusername, newusername) {
+    //find all pending member queues by this user name
+    Admin.PendingQueue.find({ userName: oldusername }).then((toEdit) => {
+        if (toEdit && toEdit.length > 0) {
+            //iterate through and delete them
+            toEdit.forEach(ele => {
+                ele.userName = newusername;
+                ele.save();
+                util.errLogger('queue-subs', null, `attempt to update btag change ${oldusername} to ${newusername}`);
+            });
+        }
+    }, (err) => {
+        util.errLogger('queue-subs', err, 'Error ' + username + ' not removed from queue')
+    })
+}
+
 //
 //teamLower:string - team name as lower case;
 //user:string battle tag of user
@@ -184,5 +207,6 @@ module.exports = {
     removePendingByTeamAndUser: removePendingByTeamAndUser,
     addToPendingTeamMemberQueue: addToPendingTeamMemberQueue,
     removePendingQueueByUsername: removePendingQueueByUsername,
-    removePendingAvatarQueue: removePendingAvatarQueue
+    removePendingAvatarQueue: removePendingAvatarQueue,
+    updatePendingMemberQueueUsername: updatePendingMemberQueueUsername
 }
