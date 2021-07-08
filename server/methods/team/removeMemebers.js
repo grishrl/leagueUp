@@ -31,7 +31,7 @@ async function removeTeamMembers(teamName, membersToRemove, captRestrict) {
             let indiciesToRemove = [];
             let usersRemoved = [];
 
-            if (captRestrict && members.indexOf(foundTeam.captain) > -1) {
+            if (captRestrict && membersToRemove.indexOf(foundTeam.captain) > -1) {
                 returnObject.logLevel = 'ERROR';
                 returnObject.error = 'Tried to remove captain';
                 returnObject.message = 'Can not remove team captain.';
