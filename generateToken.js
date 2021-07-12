@@ -12,7 +12,6 @@ const Archive = require('./server/methods/archivalMethods');
 const hpAPI = require('./server/methods/heroesProfileAPI');
 const fs = require('fs');
 const casterReport = require('./server/methods/casterReportMethods');
-const vodCur = require('./server/workers/vods-playlist-curator');
 const UserSub = require('./server/subroutines/user-subs');
 
 // connect to mongo db

@@ -397,12 +397,10 @@ router.post('/user/join/response', passport.authenticate('jwt', {
     }, {
         name: 'approval',
         type: 'boolean'
-    }]
-
-    console.log('!!!! ', JSON.stringify(requiredParameters));
+    }];
 
     const start = Date.now();
-    console.log(`${path} starting..`);
+
     commonResponseHandler(req, res, requiredParameters, [], async(req, res, requiredParameters) => {
         const response = {};
 
@@ -424,7 +422,6 @@ router.post('/user/join/response', passport.authenticate('jwt', {
         //set their pending member, 
         //and send them a confirmation
         //delete any outstanding messages from the user
-        console.log(`${path} beginning work.. ${start - Date.now()} ms`);
         if (approval) {
             //grab the team
             return Team.findOne({
@@ -436,7 +433,7 @@ router.post('/user/join/response', passport.authenticate('jwt', {
                     if (pendingMembers && cont) {
                         pendingMembers.forEach(function(member) {
                             if (member.displayName == payloadMemberToAdd) {
-                                console.log(`${path} finishing work A.. ${start - Date.now()} ms`);
+
                                 cont = false;
                                 logObj.error = 'User was all ready pending team member';
                                 response.status = 403;
@@ -449,7 +446,7 @@ router.post('/user/join/response', passport.authenticate('jwt', {
                     if (currentMembers && cont) { //current members
                         currentMembers.forEach(function(member) {
                             if (member.displayName == payloadMemberToAdd) {
-                                console.log(`${path} finishing work B.. ${start - Date.now()} ms`);
+
                                 cont = false;
                                 logObj.error = 'User was all ready team member';
                                 response.status = 403;
@@ -465,7 +462,7 @@ router.post('/user/join/response', passport.authenticate('jwt', {
                             if (foundUser) {
                                 //double check that the user has not been added to another team in the mean time
                                 if (foundUser.pendingTeam || !utils.isNullorUndefined(foundUser.teamName) || !utils.isNullorUndefined(foundUser.teamId)) {
-                                    console.log(`${path} finishing work C.. ${start - Date.now()} ms`);
+
                                     logObj.logLevel = "ERROR";
                                     logObj.error = 'User was all ready on a team or pending team'
                                     response.status = 400;
@@ -510,12 +507,12 @@ router.post('/user/join/response', passport.authenticate('jwt', {
                                             }
                                         );
                                         Message.findByIdAndDelete(messageId);
-                                        console.log(`${path} finishing work D.. ${start - Date.now()} ms`);
+
                                         response.status = 200;
                                         response.message = utils.returnMessaging(path, "Team invite accepted!", false, saveOK, null, logObj)
                                         return response;
                                     }, (teamSaveErr) => {
-                                        console.log(`${path} finishing work E.. ${start - Date.now()} ms`);
+
                                         logObj.logLevel = 'ERROR';
                                         response.status = 500;
                                         response.message = utils.returnMessaging(path, "error adding user to team", teamSaveErr, null, null, logObj);
@@ -525,7 +522,7 @@ router.post('/user/join/response', passport.authenticate('jwt', {
 
                             }
                         }, (err) => {
-                            console.log(`${path} finishing work F.. ${start - Date.now()} ms`);
+
                             response.status = 500;
                             response.message = utils.returnMessaging(path, "error finding user", err, null, null, logObj);
                             return response;
@@ -533,7 +530,7 @@ router.post('/user/join/response', passport.authenticate('jwt', {
                     }
 
                 } else {
-                    console.log(`${path} finishing work G.. ${start - Date.now()} ms`);
+
                     logObj.logLevel = 'ERROR';
                     logObj.error = 'team was not found';
                     response.status = 500;
@@ -560,14 +557,14 @@ router.post('/user/join/response', passport.authenticate('jwt', {
             )
             return Message.findByIdAndDelete(messageId).then(
                 msgDel => {
-                    console.log(`${path} finishing work H.. ${start - Date.now()} ms`);
+
                     logObj.action = 'Invite declined by player';
                     response.status = 200;
                     response.message = utils.returnMessaging(path, "Team invite declined!", false, msgDel, null, logObj)
                     return response;
                 },
                 err => {
-                    console.log(`${path} finishing work I.. ${start - Date.now()} ms`);
+
                     response.status = 500;
                     response.message = utils.returnMessaging(path, "Error deleting message", err, null, null, logObj)
                     return response;

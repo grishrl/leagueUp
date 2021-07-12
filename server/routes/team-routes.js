@@ -79,7 +79,6 @@ router.get('/get', (req, res) => {
                     return response;
                 },
                 err => {
-                    console.log('err', err)
                     response.status = 500;
                     response.message = utils.returnMessaging(req.originalUrl, "Error querying teams.", err)
                     return response;

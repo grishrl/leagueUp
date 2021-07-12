@@ -8,12 +8,6 @@ const logger = require('../../subroutines/sys-logging-subs').logger;
 const util = require('../../utils');
 
 const location = 'sheets.js';
-// const mongoose = require('mongoose');
-
-// mongoose.connect(process.env.mongoURI, () => {
-//     console.log('connected to mongodb');
-// });
-
 
 //const client = new google.auth.JWT(process.env.client_email, null, String(process.env.sheets_private_key), ['https://www.googleapis.com/auth/spreadsheets']);
 function readInVods() {
@@ -76,8 +70,7 @@ async function gsRun(client) {
 
     for (var i = 0; i < newDataArray.length; i++) {
         let obj = newDataArray[i];
-        // console.log(obj);
-        // console.log(readInRow(obj.sysRead));
+
         if (obj.matchId && (obj.youtubeURL || obj.vod1 || obj.vod2) && readInRow(obj.sysRead)) {
             updateRequired = true;
             x += 1;

@@ -256,7 +256,6 @@ function confirmCanUpload(req, res, next) {
                         if (callingUser.displayName == found.displayName || ind > -1) {
                             next();
                         } else {
-                            console.log('going there');
                             levelRestrict.userLevel(req, res, next);
                         }
                         // } else if () {

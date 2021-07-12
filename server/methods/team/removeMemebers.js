@@ -61,7 +61,6 @@ async function removeTeamMembers(teamName, membersToRemove, captRestrict) {
 
                 let result = removeMultipleIndicies(foundTeam.teamMembers, indiciesToRemove);
 
-                console.log('result.removed', result.removed);
                 UserSub.clearUsersTeam(result.removed);
                 foundTeam.teamMembers = result.modified;
                 foundTeam.markModified('teamMembers');

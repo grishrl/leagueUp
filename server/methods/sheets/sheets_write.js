@@ -63,35 +63,41 @@ async function gsRun(client, reportToWrite) {
     for (index in RANGES) {
         let range = RANGES[index];
 
+        console.log('range', range);
+
         if (range in reportToWrite) {
             let values = [];
 
             var ct = reportToWrite[range];
 
-            var headers = Object.keys(ct[0]);
+            console.log('ct', ct);
 
-            values.push(['Last Updated', Date.now()])
-            values.push(headers);
+            if (ct[0]) {
+                var headers = Object.keys(ct[0]);
 
-            for (objind in ct) {
-                let obj = ct[objind];
-                let tempArray = [];
-                headers.forEach(hind => {
+                values.push(['Last Updated', Date.now()])
+                values.push(headers);
 
-                    var dat = obj[hind];
-                    if (Array.isArray(dat)) {
-                        dat = dat.join(',');
-                    }
+                for (objind in ct) {
+                    let obj = ct[objind];
+                    let tempArray = [];
+                    headers.forEach(hind => {
 
-                    dat = dat ? dat : '';
-                    tempArray.push(dat);
+                        var dat = obj[hind];
+                        if (Array.isArray(dat)) {
+                            dat = dat.join(',');
+                        }
+
+                        dat = dat ? dat : '';
+                        tempArray.push(dat);
+                    });
+                    values.push(tempArray);
+                }
+                data.push({
+                    range: range,
+                    values: values
                 });
-                values.push(tempArray);
             }
-            data.push({
-                range: range,
-                values: values
-            });
         }
     }
 

@@ -14,18 +14,11 @@ function doWork() {
     logObj.timeStamp = new Date().getTime();
     logObj.logLevel = 'STD';
     logObj.target = 'hourly import of vod links..';
-    CasterReportMethods.getCasterReport().then(
+    CasterReportMethods.generateCastReportData().then(
         report => {
-            writeSheet.writeSheet(report).then(
-                s => {
-                    logObj.action = ' wrote caster report ';
-                    logger(logObj);
-                },
-                f => {
-                    logObj.error = f;
-                    logger(logObj);
-                }
-            );
+            writeSheet.writeSheet(report);
+            logObj.action = ' wrote caster report ';
+            logger(logObj);
         },
         f => {
             logObj.error = f;

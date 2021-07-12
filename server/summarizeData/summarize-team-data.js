@@ -144,18 +144,18 @@ function summarizeTeamData(team, docs) {
     };
 
 
-    // console.log('docs.length ', docs.length)
+
     for (let match of docs) {
 
         match = match.match;
 
         let winner = match.winner;
-        // console.log('winner ', winner);
+
         // determine what team we want
         let t;
         // let count = 0;
         // let required = team.players.length > 5 ? 5 : team.players.length;
-        // console.log('match.teams[0].teamId ', match.teams[0].teamId);
+
         if (team == match.teams[0].teamId) {
             t = 0;
         }
@@ -163,7 +163,7 @@ function summarizeTeamData(team, docs) {
             t = 1;
         }
 
-        // console.log(' t ', t);
+
         // for (let i in match.teams[0].ids) {
         //   if (team.players.indexOf(match.teams[0].ids[i]) >= 0) count += 1;
         // }

@@ -235,26 +235,6 @@ router.post('/team/market', passport.authenticate('jwt', {
                 // return response;
         }
     );
-    // commonResponseHandler(req, res, [], optionalParmateres, async(req, res, [], optionalParmateres) => {
-    //     const response = {};
-    //     console.log('asdfasdf')
-    //     let payload = optionalParmateres.searchObj.value;
-    //     let formedSearchObject = createTeamSearchObject(payload, req.user);
-    //     console.log('zzz', formedSearchObject);
-    //     // return { status: 500, message: { message: 'error' } }
-    //     return Team.find(formedSearchObject).then(
-    //         (found) => {
-    //             response.status = 200;
-    //             response.message = utils.returnMessaging(req.originalUrl, "Found these teams", null, found);
-    //             return response;
-    //         }, (err) => {
-    //             response.status = 500;
-    //             response.message = utils.returnMessaging(req.originalUrl, "Error finding teams", err);
-    //             return response;
-    //         }
-    //     );
-    // })
-
 
 });
 

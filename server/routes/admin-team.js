@@ -428,6 +428,7 @@ router.post('/approveMemberAdd', passport.authenticate('jwt', {
                 if (success.user) {
                     msg.recipient = success.user._id.toString();
                     //sending message to user
+                    //TODO: add a message to the team captain
                     messageSub(msg);
                 }
                 response.status = 200;
