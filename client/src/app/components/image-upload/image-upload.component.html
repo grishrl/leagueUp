@@ -30,7 +30,7 @@
                 <div class="row">
                     <div class="col" [hidden]="!_showEdit">
                         <div [hidden]="croppieHidden">
-                            <div class="mt-2" [id]="randomName"></div>
+                            <div class="mt-2" [id]="randomName" style="display:inline-block;" [style.width.px]="styleW" [style.height.px]="styleH"></div>
                         </div>
                         <div>
                             <input type="file" id="fileupload" #imageUpload (change)="imageUploadEvent($event)" accept="image/gif, image/jpeg, image/png" />

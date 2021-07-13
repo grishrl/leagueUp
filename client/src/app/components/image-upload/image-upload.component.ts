@@ -12,6 +12,10 @@ import { UserService } from '../../services/user.service';
 export class ImageUploadComponent implements OnInit {
   randomName;
   _teamName: string;
+
+  styleW;
+  styleH;
+
   @Input() set teamName(name) {
     if (name != null && name != undefined && name.length) {
       this._teamName = name;
@@ -137,7 +141,7 @@ export class ImageUploadComponent implements OnInit {
   removeImage() {
     this.admin.teamRemoveLogo(this._teamName).subscribe(
       res => {
-        this.currentImage = `https://placehold.it/${this.widthPx}x${this.heightPx}`;
+        this.currentImage = `https://via.placeholder.com/${this.widthPx}x${this.heightPx}`;
       },
       err => {
         console.warn(err);
@@ -152,7 +156,7 @@ export class ImageUploadComponent implements OnInit {
     } else if (this.imageUrl) {
       imgRet = this.imageUrl;
     } else {
-      imgRet = `https://placehold.it/${this.widthPx}x${this.heightPx}`;
+      imgRet = `https://via.placeholder.com/${this.widthPx}x${this.heightPx}`;
     }
     return imgRet;
   }
@@ -188,34 +192,62 @@ export class ImageUploadComponent implements OnInit {
   croppieObject;
   ngAfterViewInit() {
 
-    let parentContainerWidth = this.div.nativeElement.clientWidth;
-    let totalCroppieWidth = Math.ceil(.9*parentContainerWidth);
-    let totalCroppeHeight = Math.ceil((totalCroppieWidth/16)*9);
+    //buckle up for some black magic...
+    //in order to keep the croppie from overflowing the parent element and trashing the page we have
+    //to do some dark magics... but doing those magics come at a cost...
 
-    console.log(parentContainerWidth, totalCroppieWidth, totalCroppeHeight)
-
-    let wB = totalCroppieWidth*1.2;
-    let hB = totalCroppeHeight*1.2;
     let ele = `#${this.randomName}`;
+
+    //get the width of the croppies parent element..
+    let parentContainerWidth = this.div.nativeElement.clientWidth;
+
+    //we will use 90% of the parents width to give out croppie some room
+    let totalCroppieWidth = Math.floor(.9*parentContainerWidth);
+
+    //because this componenet allows custom W:H we need to make sure we always are calculating the proper ratio for
+    //the croppie / output or else we get squishy images
+    let totalCroppeHeight = defaultRatioCalculation(this.widthPx, this.heightPx, totalCroppieWidth);
+
+    // attach the W:H to the div containing croppie
+    this.styleH = totalCroppeHeight;
+    this.styleW = totalCroppieWidth;
+
+    let boundryWitdh, boundryHeight, viewportWidth, viewportHeight;
+
+    // IF the width provided to the component + 20% is less than containing div width then we shall use the
+    // component provided W:H  otherwise; the provided W:H will cause an overflow of the div and we need to scale it accordingly
+    if(totalCroppieWidth < (this.widthPx*1.2)){
+      boundryHeight = totalCroppeHeight;
+      boundryWitdh = totalCroppieWidth;
+      viewportHeight = Math.floor(totalCroppeHeight*.8);
+      viewportWidth = Math.floor(totalCroppieWidth*.8);
+    }else{
+      boundryHeight = Math.floor(this.heightPx * 1.2);
+      boundryWitdh = Math.floor(this.widthPx * 1.2);
+      viewportHeight = this.heightPx;
+      viewportWidth = this.widthPx;
+    }
+
     this.croppieObject = $(ele).croppie({
       viewport: {
-        width: Math.ceil(totalCroppieWidth*.8),
-        height: Math.ceil(totalCroppeHeight*.8),
+        width: viewportWidth,
+        height: viewportHeight,
         type:'square'
       },
       boundary: {
-        width: totalCroppieWidth,
-        height: totalCroppeHeight
+        width: boundryWitdh,
+        height: boundryHeight
       },
       enforceBoundary:false
     });
   }
 
   saveImageFromCroppie() {
+    console.log(this.heightPx, this.widthPx);
     this.croppieObject
       .croppie("result", {
         type: "base64",
-        size: {height:this.heightPx, width:this.widthPx},
+        size: {width:parseInt(this.widthPx),height:parseInt(this.heightPx)},
         format: "png",
         quality: 0.8
       })
@@ -326,6 +358,7 @@ export class ImageUploadComponent implements OnInit {
     }
     const fr = new FileReader();
     fr.onloadend = loadEvent => {
+      console.log('load event')
       this.croppieImage = "";
       this.croppieHidden = false;
       this.croppieObject.croppie("bind", { url: fr.result }).then(res => {
@@ -335,3 +368,25 @@ export class ImageUploadComponent implements OnInit {
     fr.readAsDataURL(file);
   }
 }
+
+ var gcd = function(a, b) {
+  if (!b) {
+    return a;
+  }
+
+  return gcd(b, a % b);
+}
+
+ var defaultRatioCalculation = function( providedWidth, providedHeight, containerWidth ){
+
+      providedWidth = parseInt(providedWidth);
+      providedHeight = parseInt(providedHeight);
+
+      let GCF = gcd(providedWidth, providedHeight);
+
+      let widthRatio = Math.floor(providedWidth/GCF);
+      let heightRatio = Math.floor(providedHeight/GCF);
+
+      let ratioedWidth = Math.floor((containerWidth/widthRatio)*heightRatio);
+      return ratioedWidth;
+    }
