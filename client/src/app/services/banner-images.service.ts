@@ -13,6 +13,7 @@ export class BannerImagesService {
   returnImage() {
     let ind = this.uniqueNumGen();
     let imageName = this.images[ind];
+    // imageName = this.images[28];
     return this.url + imageName;
   }
 
@@ -49,6 +50,9 @@ export class BannerImagesService {
     "Arthas_v_Artanis.png",
     "hog_banner_2.jpg",
     "hog_time_3.jpg",
+    "Overwatch_Cosplay_1.png",
+    "Overwatch_Cosplay_3.png",
+    // "Overwatch_Cosplay_4.png"
   ];
 
   uniqueNumGen(val?) {
