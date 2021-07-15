@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Observable, of } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+import { Profile } from 'src/app/classes/profile.class';
 import { AuthService } from 'src/app/services/auth.service';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { UserService } from 'src/app/services/user.service';
@@ -13,9 +16,12 @@ import { UserService } from 'src/app/services/user.service';
 export class CasterReportComponent implements OnInit {
 
   constructor(private Auth:AuthService, private User:UserService, private ScheduleService:ScheduleService,
-    private AR:ActivatedRoute) { }
+    private AR:ActivatedRoute, private router:Router) { }
 
   displayNameControl=new FormControl();
+
+  coCastCtrl = new FormControl();
+  filteredOptions: Observable<Profile[]>;
 
   casterReport = {
     casterName:'',
@@ -70,7 +76,6 @@ export class CasterReportComponent implements OnInit {
             if(res){
             this.casterReport = res;
             }
-
           },
           err=>{
             console.warn(err);
@@ -82,8 +87,16 @@ export class CasterReportComponent implements OnInit {
 
     this.User.getCasters().subscribe(
       casters=>{
-        console.log('casters', casters);
+
         this.castersList = casters;
+        this.castersList = this.castersList.sort( (a,b)=>{
+          return a.displayName < b.displayName ? -1:1;
+        })
+        this.filteredOptions = this.coCastCtrl.valueChanges.
+    pipe(
+        startWith(''),
+        map(value => this._filter(value))
+      );
       },
       err=>{
         console.warn(err);
@@ -92,14 +105,28 @@ export class CasterReportComponent implements OnInit {
 
   }
 
+  select(e){
+    if(e.option.value){
+      this.casterSelected(e.option.value, 'cocaster');
+    }
+  }
+
+  private _filter(val):Profile[]{
+    if(val !== undefined){
+      let filterVal = val.toLowerCase();
+      return this.castersList.filter(option=>option.displayName.toLowerCase().includes(filterVal));
+    }
+  }
+
   saving='';
 
   save(){
-    this.saving='Savng..';
+    this.saving='Saving..';
     if(this.casterReport.vodLinks.length>0){
       this.ScheduleService.casterReport(this.casterReport).subscribe(
         res=>{
-          this.saving='';
+          this.saving='Completed';
+          this.router.navigate(["_casterPage"]);
         },
         err=>{
           this.saving='';

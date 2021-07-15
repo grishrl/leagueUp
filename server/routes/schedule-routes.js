@@ -1036,7 +1036,27 @@ router.post('/report/cast', passport.authenticate('jwt', {
 
     commonResponseHandler(req, res, [], [], async(req, res) => {
         const response = {};
-        return CasterReportMethod.upsertCasterReport(req.body.report).then(
+
+
+        // if()
+        let castReportObject = req.body.report;
+
+        // some matches might be part of events or qualifier tournaments, lets zip this up now on the server to simplify the client work
+        if (castReportObject.division == "undefined" || castReportObject.division == "null" || castReportObject.division == null || castReportObject.division == undefined) {
+
+            let query = {
+                matches: castReportObject.matchId
+            }
+
+            let parentSchedule = await queryScheduling(query);
+            if (parentSchedule) {
+                parentSchedule = utils.objectify(parentSchedule[0]);
+                castReportObject.event = parentSchedule.name;
+            }
+
+        }
+
+        return CasterReportMethod.upsertCasterReport(castReportObject).then(
             saved => {
                 response.status = 200;
                 response.message = utils.returnMessaging(req.originalUrl, 'Match Reported!', null, saved)

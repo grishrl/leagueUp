@@ -157,7 +157,7 @@ export class AdminYoutubeCurator implements OnInit {
     let results = await this.getPlaylistInfo(npt);
     console.log(npt);
     console.log(results);
-    confirm('halting');
+    // confirm('halting');
     if (results.items) {
       this.playlistList = this.playlistList.concat(results.items);
       console.log('concating..', this.playlistList);
@@ -222,9 +222,16 @@ export class AdminYoutubeCurator implements OnInit {
     let tracked = {};
 
     this.reports.reportList.forEach(report => {
-      let reportDiv = report.division;
-      let divInf = find(this.divisionInfo, { divisionConcat: reportDiv });
-      let playListName = `Season ${this.seasonValue} ${divInf.displayName}`;
+      console.log(report);
+      let playListName;
+      if(report.division && report.division != "undefined" ){
+        let reportDiv = report.division;
+        let divInf = find(this.divisionInfo, { divisionConcat: reportDiv });
+        playListName = `Season ${this.seasonValue} ${divInf.displayName.trim()}`;
+      }else{
+        playListName = `Season ${this.seasonValue} ${report.event.trim()}`;
+      }
+
       let youtubeplaylist = find(this.parsedList, { title: playListName });
       report.vodLinks.forEach(link => {
         let id = this.returnId(link);

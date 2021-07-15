@@ -11,6 +11,7 @@ const casterReport = new Schema({
     vodLinks: [String],
     issue: String,
     season: Number,
+    event: String,
     playlistCurrated: Boolean
 })
 
