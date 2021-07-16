@@ -29,6 +29,8 @@ export class ApproveRankViewComponent implements OnInit {
       this.hlRankDivision = 0;
     }
 
+    let cancelAction = false;
+
     let payload = {
       seasonInf: { season: this.info.season, year: this.info.year },
       userId: this.info.userId,
@@ -39,10 +41,12 @@ export class ApproveRankViewComponent implements OnInit {
 
     if(!approve){
       let invalidReason = prompt('Enter some feedback for denial.','Invalid Image');
+      cancelAction = invalidReason == null;
       payload['reason'] = invalidReason
     }
 
-    this.RankService.adminActionRank(payload).subscribe(
+    if(!cancelAction){
+          this.RankService.adminActionRank(payload).subscribe(
       (res) => {
         this.rankActioner.emit(this.info);
       },
@@ -50,6 +54,7 @@ export class ApproveRankViewComponent implements OnInit {
         console.warn(err);
       }
     );
+    }
 
     console.log(this.hlRankMetal, this.hlRankDivision, approve);
   }
