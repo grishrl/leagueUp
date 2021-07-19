@@ -2,7 +2,6 @@
   const grabTopStatsWorker = require('./server/workers/grab-top-stats');
   const groupMakerWorker = require('./server/workers/group-maker');
   const leagueStatRunnerWorker = require('./server/workers/league-fun-stat-runner');
-  const readInVodsWorker = require('./server/workers/read-in-vods');
   const createStandingsTouchPoint = require('./server/workers/standings-touch-point');
   const tabulateTeamStatsWorker = require('./server/workers/tabulate-stats-team');
   const tabulateUserStatsWorker = require('./server/workers/tabulate-stats-user');
@@ -25,7 +24,6 @@
       'topStats': grabTopStatsWorker,
       'leagueStat': leagueStatRunnerWorker,
       'groupMaker': groupMakerWorker,
-      'readInVods': readInVodsWorker,
       'heroesProfileUploader': uploadToHeroesProfileWorker,
       'writeCasterReport': writeCasterReportWorker
   }
@@ -76,7 +74,6 @@
       }
 
       //hourly schedule
-      workersList.readInVods();
       workersList.heroesProfileUploader();
   }
 

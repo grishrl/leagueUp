@@ -12,7 +12,8 @@ const casterReport = new Schema({
     issue: String,
     season: Number,
     event: String,
-    playlistCurrated: Boolean
+    playlistCurrated: Boolean,
+    error: String
 })
 
 const CasterReport = mongoose.model('casterReport', casterReport);

@@ -30,6 +30,8 @@ export class AdminYoutubeCurator implements OnInit {
   seasonValue;
   totalVideos = 0;
 
+  matchResultsArr = [];
+
   async ngOnInit(){
 
   }
@@ -178,7 +180,7 @@ export class AdminYoutubeCurator implements OnInit {
       "part": [
         "snippet, contentDetails"
       ],
-      "channelId": "UCOf6CO75ePUy5Q5lCthv2Jg",
+      "channelId": "UCnfohSTrlMyqiCwI5-3jXmw",
       "maxResults": 50
     }
     if (nextPageToken) {
@@ -222,7 +224,7 @@ export class AdminYoutubeCurator implements OnInit {
     let tracked = {};
 
     this.reports.reportList.forEach(report => {
-      console.log(report);
+      console.log('report',report);
       let playListName;
       if(report.division && report.division != "undefined" ){
         let reportDiv = report.division;
@@ -237,13 +239,13 @@ export class AdminYoutubeCurator implements OnInit {
         let id = this.returnId(link);
         if (id) {
           if (youtubeplaylist) {
-            this.insertVidToList(youtubeplaylist.id, id);
+            this.insertVidToList(youtubeplaylist.id, id, report.matchId);
           } else if (!tracked[playListName]) {
             tracked[playListName] = true;
             this.createPlaylist(playListName);
-            this.deferredInserts.push({ playListName, id });
+            this.deferredInserts.push({ playListName, id, matchId:report.matchId });
           }else if(tracked[playListName]){
-            this.deferredInserts.push({ playListName, id });
+            this.deferredInserts.push({ playListName, id, matchId:report.matchId });
           }
         }
       });
@@ -271,7 +273,7 @@ export class AdminYoutubeCurator implements OnInit {
               console.log('deffered insert defIns', defIns);
               console.log('parsedList', this.parsedList);
               let youtubeplaylist = find(this.parsedList, { title: defIns.playListName });
-              this.insertVidToList(youtubeplaylist.id, defIns.id);
+              this.insertVidToList(youtubeplaylist.id, defIns.id, defIns.matchId);
             });
           if(this.playlistaddarr.length>0){
             this.insertVideos();
@@ -291,8 +293,13 @@ export class AdminYoutubeCurator implements OnInit {
   async insertVideos(){
 
     let results = [];
-    let errorArray = [];
-    let successArray = [];
+
+    /*
+    {
+      matchId:string,
+      success:bool
+    }
+    */
 
     for(var i = 0; i<this.playlistaddarr.length; i++){
       let request = this.playlistaddarr[i];
@@ -300,16 +307,46 @@ export class AdminYoutubeCurator implements OnInit {
       try{
         let r = await gapi.client.youtube.playlistItems.insert(request);
         results.push(r);
+        this.matchResultsArr.forEach(
+          i=>{
+            if(i.vidId === request.resource.snippet.resourceId.videoId){
+              results.push({matchId:i.matchId, result:r});
+              i.success=true;
+            }
+          }
+        )
         this.playlistAdded +=1;
+
       }catch(e){
         console.log(e);
+
         this.errorCount += 1;
+        this.matchResultsArr.forEach(
+          i=>{
+            if(i.vidId === request.resource.snippet.resourceId.videoId){
+              results.push({matchId:i.matchId, result:e});
+              i.success=false;
+            }
+          }
+        )
       }
     }
 
+    console.log('this.matchResultsArr',this.matchResultsArr, results);
+
     this.reports.reportList.forEach(
       r=>{
-        r.playlistCurrated = true;
+        // console.log(results);
+        this.matchResultsArr.forEach(
+          i=>{
+            r.playlistCurrated = true;
+            let e = find(results, {matchId:i.matchId});
+            if(i.matchId == r.matchId && i.success == false){
+              r.error=`${e.result.body}`;
+            }
+          }
+        )
+
       }
     );
 
@@ -330,7 +367,12 @@ export class AdminYoutubeCurator implements OnInit {
     return getAllUrlParams(str)['v'];
   }
 
-  insertVidToList(playlistId, vidId) {
+  insertVidToList(playlistId, vidId, matchId) {
+
+    this.matchResultsArr.push(
+      {matchId,vidId,success:false}
+    );
+
     let request = {
       "part": [
         "snippet"
@@ -383,7 +425,7 @@ export class AdminYoutubeCurator implements OnInit {
 
 }
 
-function getAllUrlParams(url) {
+function getAllUrlParams(url, forceLower?) {
 
   // get query string from url (optional) or window
   var queryString = url ? url.split('?')[1] : window.location.search.slice(1);
@@ -409,8 +451,12 @@ function getAllUrlParams(url) {
       var paramValue = typeof (a[1]) === 'undefined' ? true : a[1];
 
       // (optional) keep case consistent
-      paramName = paramName.toLowerCase();
-      if (typeof paramValue === 'string') paramValue = paramValue.toLowerCase();
+      paramName = paramName;
+      if(forceLower){
+      	paramName = paramName.toLowerCase();
+      }
+
+      if (typeof paramValue === 'string') paramValue = forceLower ? paramValue.toLowerCase() : paramValue;
 
       // if the paramName ends with square brackets, e.g. colors[] or colors[2]
       if (paramName.match(/\[(\d+)?\]$/)) {

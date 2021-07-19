@@ -40,7 +40,7 @@ async function gsRun(client, reportToWrite) {
     const RANGES = [CASTER_TOTALS, TEAM_CAST_TOTALS, UNCASTED_TEAMS, LOWEST_20, MISSED_LAST_WEEK];
 
     const opts = {
-        spreadsheetId: '1RXgNjCp30Oz0_A3w_m1_LbOXBQleIto_j1HbEd7_M3E',
+        spreadsheetId: process.env.caster_report_sheet_id,
         ranges: RANGES
     };
 
@@ -75,7 +75,9 @@ async function gsRun(client, reportToWrite) {
             if (ct[0]) {
                 var headers = Object.keys(ct[0]);
 
-                values.push(['Last Updated', Date.now()])
+                var date = moment(Date.now());
+
+                values.push(['Last Updated', date.format("M/D/YYYY - HH:MM")]);
                 values.push(headers);
 
                 for (objind in ct) {
@@ -108,7 +110,7 @@ async function gsRun(client, reportToWrite) {
     }
 
     const writeOpts = {
-        spreadsheetId: '1RXgNjCp30Oz0_A3w_m1_LbOXBQleIto_j1HbEd7_M3E',
+        spreadsheetId: process.env.caster_report_sheet_id,
         resource: body
     }
 
