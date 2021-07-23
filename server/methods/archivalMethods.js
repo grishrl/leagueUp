@@ -5,6 +5,7 @@ reviewer: wraith
 */
 const Team = require('../models/team-models');
 const User = require('../models/user-models');
+const Replays = require('../models/replay-parsed-models');
 const Division = require('../models/division-models');
 const Archive = require('../models/system-models').archive;
 const archiveTeamLogo = require('./teamLogoUpload').archiveTeamLogo;
@@ -13,6 +14,7 @@ const _ = require('lodash');
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 const util = require('../utils');
 const removeTeamsFromDivisions = require('../methods/division/removeTeamsFromDivision');
+const s3Archive = require('./aws-s3/archive-s3-object');
 
 const location = 'archivalMethod';
 
@@ -394,10 +396,45 @@ async function getTeamFromArchiveByNameSesaon(teamId, season) {
         });
 }
 
+async function archiveFullyAssociatedReplays(limit) {
+
+    if (!limit) {
+        limit = 20;
+    }
+
+    let replayItems = await Replays.find({
+        fullyAssociated: true,
+        leagueStats: true,
+        archiveId: { $exists: false }
+    }).limit(limit);
+
+    for (var i = 0; i < replayItems.length; i++) {
+
+        let replayItem = replayItems[i];
+        let replayObject = util.objectify(replayItem);
+        let putResult;
+        try {
+            putResult = await s3Archive.s3archivePut(replayObject);
+        } catch (e) {
+            console.log(e);
+        }
+
+        if (putResult) {
+            replayItem.match = {};
+            replayItem.players = {};
+            replayItem.archiveId = putResult;
+            replayItem.save();
+        }
+
+    }
+
+}
+
 module.exports = {
     archiveDivisions: archiveDivisions,
     archiveUser: archiveUser,
     retrieveAndRemoveArchiveUser: retrieveAndRemoveArchiveUser,
     getTeamFromArchiveByNameSesaon: getTeamFromArchiveByNameSesaon,
-    getTeamFromArchiveByNameSesaon: getTeamFromArchiveByNameSesaon
+    getTeamFromArchiveByNameSesaon: getTeamFromArchiveByNameSesaon,
+    archiveFullyAssociatedReplays: archiveFullyAssociatedReplays
 };

@@ -14,6 +14,7 @@ const fs = require('fs');
 const casterReport = require('./server/methods/casterReportMethods');
 const UserSub = require('./server/subroutines/user-subs');
 
+
 // connect to mongo db
 mongoose.connect(process.env.mongoURI, () => {
     console.log('connected to mongodb');
@@ -52,8 +53,11 @@ if (api) {
 // );
 
 
+//7-22-2021
+Archive.archiveFullyAssociatedReplays();
+
 /// 7-7-21 Clear User Sub Testing...
-UserSub.clearUsersTeam(['DHCæsarsalad#1517'], true);
+// UserSub.clearUsersTeam(['DHCæsarsalad#1517'], true);
 
 // console.log('token ', token);
 
