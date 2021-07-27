@@ -25,7 +25,9 @@ export class MatchManagementComponent implements OnInit, AfterViewInit {
   filterTeam: any
   filterTeam2:string
   rounds = [];
-  divisions = []
+  divisions = [];
+  matchId:string;
+
 
   constructor(private scheduleService: ScheduleService, private adminService: AdminService,
     public util: UtilitiesService, private timeService:TimeService, private filterServ: FilterService) { }
