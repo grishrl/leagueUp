@@ -46,6 +46,19 @@
                     </mat-form-field>
                 </div>
             </div>
+            <div class="row mt-2 text-center">
+                <div class="col-12 mb-1">
+                    <div class="bg-light">Warning: This has the power to see through all time and space; please use responsibly:</div>
+                </div>
+                <div class="col">
+                    <mat-form-field class="mat-FullWidth">
+                        <input matInput placeholder="Match Id" [(ngModel)]="matchId">
+                    </mat-form-field>
+                </div>
+                <div class="col-3">
+                    <a class="btn btn-primary" [routerLink]="['match/',matchId]">  Go! </a>
+                </div>
+            </div>
             <mat-paginator [length]="length" [pageIndex]="pageIndex" [pageSize]="pageSize" (page)="pageEventHandler($event)">
 
             </mat-paginator>

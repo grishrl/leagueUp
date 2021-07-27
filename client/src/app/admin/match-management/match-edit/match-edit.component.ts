@@ -74,6 +74,9 @@ export class MatchEditComponent implements OnInit {
     }
     this.scheduleService.getMatchInfo(this.matchId).subscribe(
       (res) => {
+        if(this.util.returnBoolByPath(res, 'other')==false){
+          res.other = {};
+        }
         this.match = res;
         if (this.util.returnByPath(res, "other.team_one_player")) {
           this.homeTeamPlayer = this.util.returnByPath(
@@ -87,6 +90,7 @@ export class MatchEditComponent implements OnInit {
             "other.team_two_player"
           );
         }
+
         if (this.util.returnBoolByPath(this.match, "away.score")) {
           this.awayScore = this.match.away.score;
         }
@@ -302,6 +306,7 @@ export class MatchEditComponent implements OnInit {
       match.scheduledTime.startTime = msDate;
       match.scheduledTime.endTime = endDate;
     }
+
 
     if (submittable) {
       this.adminService.matchUpdate(match).subscribe(
