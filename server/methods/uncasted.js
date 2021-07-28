@@ -23,7 +23,7 @@ function uncasted(teamData, reportedMatches) {
 
     // go through all reported matches, and find those with casters assigned
     for (const match of reportedMatches) {
-        if (!match.divisionConcat) continue;
+        // if (!match.divisionConcat) continue;
 
         // invalid
         date = moment().subtract(1, 'year');
