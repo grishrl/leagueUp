@@ -204,6 +204,7 @@ import { PlayerSearchComponent } from './pages/player-search/player-search.compo
 import { SingleTeamDisplayComponent } from './components/team/team-display/single-team-display/single-team-display.component';
 import { MAT_COLOR_FORMATS, NgxMatColorPickerModule, NGX_MAT_COLOR_FORMATS } from '@angular-material-components/color-picker';
 import { AdminYoutubeCurator } from './admin/caster/admin-youtube-curator/admin-youtube-curator.component';
+import { CreateThreadComponent } from './admin/thread/create-thread/create-thread.component';
 
 
 @NgModule({
@@ -392,7 +393,8 @@ import { AdminYoutubeCurator } from './admin/caster/admin-youtube-curator/admin-
     VerifiedStormRanksDisplayNameComponent,
     PlayerSearchComponent,
     SingleTeamDisplayComponent,
-    AdminYoutubeCurator
+    AdminYoutubeCurator,
+    CreateThreadComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

@@ -63,8 +63,15 @@ import { DeleteTournamentComponent } from './admin/match-management/delete-tourn
 import { PlayerSearchComponent } from './pages/player-search/player-search.component';
 import { CasterReportComponent } from './pages/caster-report/caster-report.component';
 import { AdminYoutubeCurator } from "./admin/caster/admin-youtube-curator/admin-youtube-curator.component";
+import { CreateThreadComponent } from './admin/thread/create-thread/create-thread.component';
 
 const APP_ROUTES: Routes = [
+  {
+    path:"_admin/thread/create",
+    component:CreateThreadComponent,
+    canActivate: [AuthGuardService],
+    data: { role: "schedulegen" },
+  },
   { path: "challonge", component: ChallongeTournComponent },
   { path: "", component: HomeComponent },
   { path: "login", component: LoginComponent },
