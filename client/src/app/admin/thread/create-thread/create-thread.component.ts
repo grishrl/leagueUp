@@ -7,9 +7,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CreateThreadComponent implements OnInit {
 
+  threadName;
+
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  createThread(a){
+    console.log(a);
   }
 
 }
