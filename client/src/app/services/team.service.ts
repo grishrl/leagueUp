@@ -191,6 +191,11 @@ export class TeamService {
 
   //retuns a formatted string that includes the requisite info to retrieve an image from s3 bucket
   imageFQDN(img, season?) {
+    // add a break fast option in case the fqdn is all ready pre-pended.
+    if(img.includes('https://s3.amazonaws.com/')){
+      return img;
+    }
+
     if(season){
       let imgFQDN = 'https://s3.amazonaws.com/' + environment.s3bucketArchiveImage + '/';
             if (img) {
