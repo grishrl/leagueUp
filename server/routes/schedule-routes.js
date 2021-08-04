@@ -15,6 +15,7 @@ const archiveMethods = require('../methods/archivalMethods');
 const AWS = require('aws-sdk');
 const { commonResponseHandler } = require('./../commonResponseHandler');
 const getMatches = require('../methods/matches/getMatchesBy');
+const { cast } = require('mongoose');
 
 
 
@@ -1042,8 +1043,8 @@ router.post('/report/cast', passport.authenticate('jwt', {
         let castReportObject = req.body.report;
 
         // some matches might be part of events or qualifier tournaments, lets zip this up now on the server to simplify the client work
-        if (castReportObject.division == "undefined" || castReportObject.division == "null" || castReportObject.division == null || castReportObject.division == undefined) {
-
+        // if (castReportObject.division == "undefined" || castReportObject.division == "null" || castReportObject.division == null || castReportObject.division == undefined || castReportObject.length == 0) {
+        if (utils.returnBoolByPath(castReportObject, 'division') == false) {
             let query = {
                 matches: castReportObject.matchId
             }

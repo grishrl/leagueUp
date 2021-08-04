@@ -140,7 +140,7 @@ router.post('/save/discordid', passport.authenticate('jwt', {
         const path = 'user/save/discordid';
 
         const optionalParameters = [{
-            name: 'user',
+            name: 'displayName',
             type: 'string'
         }, {
             name: 'userId',
@@ -156,26 +156,28 @@ router.post('/save/discordid', passport.authenticate('jwt', {
         commonResponseHandler(req, res, reqParams, optionalParameters, async(req, res, reqParams, optionalParameters) => {
             const response = {};
 
-            var sentUser = req.body;
-
             //construct log object
             let logObj = {};
             logObj.actor = req.user.displayName;
             logObj.action = 'saving user discord guid';
-            logObj.target = sentUser.displayName;
+
             logObj.logLevel = 'STD';
 
             const query = {}
-            if (optionalParameters.user.valid && optionalParameters.userId.valid) {
+            if (optionalParameters.displayName.valid && optionalParameters.userId.valid) {
                 console.log('sure hope you know what you\'re doing');
             }
 
-            if (optionalParameters.user.valid) {
-                query[displayName] = optionalParameters.user.value;
+
+
+            if (optionalParameters.displayName.valid) {
+                query['displayName'] = optionalParameters.displayName.value;
+                logObj.target = optionalParameters.displayName.value;
             }
 
             if (optionalParameters.userId.valid) {
-                query[_id] = optionalParameters.userId.value;
+                query['_id'] = optionalParameters.userId.value;
+                logObj.target = optionalParameters.userId.value;
             }
 
             return User.findOne(query).then(
@@ -184,7 +186,7 @@ router.post('/save/discordid', passport.authenticate('jwt', {
                     return found.save().then(
                         s => {
                             response.status = 200;
-                            response.message = utils.returnMessaging(req.originalUrl, 'User Updated', null, null, s);
+                            response.message = utils.returnMessaging(req.originalUrl, 'User Updated', null, null, utils.objectify(s));
                             return response;
                         },
                         e => {

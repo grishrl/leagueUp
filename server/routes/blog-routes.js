@@ -130,7 +130,8 @@ router.post('/blogs', (req, res) => {
                     err => {
                         util.errLogger(req.originalUrl, err, 'getMedia');
                         response.status = 500;
-                        response.message = util.returnMessaging(req.originalUrl, 'Invalid request', err, null)
+                        response.message = util.returnMessaging(req.originalUrl, 'Invalid request', err, null);
+                        return response;
                     }
                 )
                 break;
