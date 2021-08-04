@@ -19,9 +19,12 @@ export class UpcomingMatchesComponent implements OnInit {
       res=>{
         res.forEach( (match, ind)=>{
           if(ind<4){
-            match.home.logo = this.team.imageFQDN(match.home.logo);
-            match.away.logo = this.team.imageFQDN(match.away.logo);
-            this.next4matches.push(match);
+            if(this.util.returnBoolByPath(match, 'home.logo')){
+              match.home.logo = this.team.imageFQDN(match.home.logo);
+            }
+            if(this.util.returnBoolByPath(match, 'away.logo')){
+              match.away.logo = this.team.imageFQDN(match.away.logo);
+            }
           }
         });
       },
