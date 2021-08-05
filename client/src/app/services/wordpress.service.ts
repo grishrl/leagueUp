@@ -11,11 +11,55 @@ import { HttpService } from './http.service';
 export class WordpressService {
   baseURL = "blog/blogs";
 
+
+  categoriesCache;
+  categoriesInfo;
   constructor(
     private Http: HttpClient,
     private Util: UtilitiesService,
     private http: HttpService
-  ) {}
+  ) {
+        const payload = {
+      action: "getCategories"
+    };
+    this.categoriesCache = this.http.httpPostShareable(this.baseURL, payload);
+    this.init();
+  }
+
+  private init(){
+    this.categoriesCache.subscribe(
+      res=>{
+        this.categoriesInfo = res;
+      }
+    )
+  }
+
+  getCategoryId(catName){
+    return this.categoriesCache.pipe(
+      map(
+        (res:[any])=>{
+        let catId = null
+        res.forEach(
+          category=>{
+            if(this.Util.returnByPath(category, 'name') == catName){
+              catId = this.Util.returnByPath(category, 'id');
+            }
+          }
+        );
+        return catId;
+      }
+      )
+
+    )
+  }
+
+    getCategories() {
+    // const payload = {
+    //   action: "getCategories"
+    // };
+    // return this.http.httpPost(this.baseURL, payload);
+    return this.categoriesCache;
+  }
 
   getBlogPosts(params?) {
     const payload = {
@@ -112,13 +156,6 @@ export class WordpressService {
         return this.authorFormatter(data);
       })
     );
-  }
-
-  getCategories() {
-    const payload = {
-      action: "getCategories"
-    };
-    return this.http.httpPost(this.baseURL, payload);
   }
 
   getMedia(id) {

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { WordpressService } from '../../services/wordpress.service';
+import { map, mergeMap } from 'rxjs/operators'
 
 @Component({
   selector: 'app-recent-news',
@@ -8,15 +9,23 @@ import { WordpressService } from '../../services/wordpress.service';
 })
 export class RecentNewsComponent implements OnInit {
 
+  private CATSTRING = 'News'
+
   constructor( private WP: WordpressService) { }
 
   blogs = [];
   ngOnInit() {
-    this.WP.getBlogPosts([{ categories: '14' }, { 'filter[orderby]': 'date' }, { 'order': 'desc' }, {per_page: 4}]).subscribe(
+    this.WP.getCategoryId(this.CATSTRING).pipe(
+      mergeMap(
+        catId=>{
+              return this.WP.getBlogPosts([{ categories: catId }, { 'filter[orderby]': 'date' }, { 'order': 'desc' }, {per_page: 4}]);
+        }
+    )).subscribe(
       res=>{
         this.blogs = res.posts;
       }
     )
+
   }
 
 }
