@@ -2,9 +2,15 @@
 <section class="content-info">
 
     <div class="container">
+        <div class="row">
+            <div class="col">
+                <app-loading [showLoading]="loading"></app-loading>
+            </div>
+        </div>
         <!-- Content Text-->
         <app-match-paginator [matches]="filterMatches"></app-match-paginator>
         <!-- End Content Text-->
+
     </div>
 
 </section>

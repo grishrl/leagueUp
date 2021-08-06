@@ -164,14 +164,14 @@ export class ScheduleService {
   }
 
   //returns matches that match criteria of season, division, round
-  getScheduleMatches(season, division: string, round: number) {
+  getScheduleMatches(season, division: string, round: number, showNotification:boolean=false) {
     let url = "schedule/fetch/matches";
     let payload = {
       season: season,
       division: division,
       round: round,
     };
-    return this.httpService.httpPost(url, payload);
+    return this.httpService.httpPost(url, payload, showNotification);
   }
 
   //returns matches that match criteria of provided season and team

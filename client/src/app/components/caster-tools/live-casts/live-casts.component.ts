@@ -31,6 +31,8 @@ export class LiveCastsComponent implements OnInit {
 
   friendlyDate;
 
+  loading = false;
+
   ngAfterViewInit() {
 
   }
@@ -47,9 +49,11 @@ export class LiveCastsComponent implements OnInit {
   }
 
   initSchedule() {
+    this.loading = true;
     this.scheduleService
       .getScheduleMatches(this.currentSeason, null, null)
       .subscribe((sched) => {
+        this.loading = false;
         this.filterMatches = sched;
         this.filterMatches.forEach((match) => {
           match.submitCaster = {
