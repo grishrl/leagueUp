@@ -56,16 +56,6 @@ export class ScheduleTableComponent implements OnInit {
           }
         });
 
-        let arr1 = [];
-        let arr2 = [];
-        val.forEach(match => {
-          if (!this.util.returnBoolByPath(match, "scheduleDeadline")) {
-            arr1.push(match);
-          }else{
-            arr2.push(match);
-          }
-        });
-        matchesFlexOnTop = arr1.concat(arr2);
       } else if (this.sortOrder == SCHEDULEDTIME) {
         val = this.util.sortMatchesByTime(val);
       }
@@ -76,23 +66,27 @@ export class ScheduleTableComponent implements OnInit {
         let missingRound;
         let index = 0;
 
-        for (var i = 0; i < matchesFlexOnTop.length; i++) {
+        for (var i = 0; i < val.length; i++) {
 
           let round = i + 1;
           let found = false;
 
-          matchesFlexOnTop.forEach((match, iindex) => {
+          val.forEach((match, iindex) => {
+
             if (match.round == round) {
               found = true;
-              // index = iindex;
-            }else{
-              index = iindex;
             }
+
           });
+
           if (found == false) {
             missingRound = round;
-
             // index = i;
+            val.forEach((match, iindex) => {
+            if (match.round == missingRound-1) {
+              index = iindex+1;
+            }
+          });
           }
 
         }
@@ -100,12 +94,29 @@ export class ScheduleTableComponent implements OnInit {
 
         if (missingRound) {
 
-          matchesFlexOnTop.splice(index, 0, {
+          val.splice(index, 0, {
             round: missingRound,
             type: 'bye'
           });
         }
 
+      }
+
+      if(true){
+        let arr1 = [];
+        let arr2 = [];
+        val.forEach(match => {
+
+          if (!this.util.returnBoolByPath(match, "scheduleDeadline") && match.type != 'bye') {
+
+            arr1.push(match);
+          }else{
+            arr2.push(match);
+          }
+        });
+        matchesFlexOnTop = arr1.concat(arr2);
+      }else{
+        matchesFlexOnTop = val;
       }
 
       this.matchesVal = matchesFlexOnTop;

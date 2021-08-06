@@ -15,7 +15,6 @@ export class RoundColumnComponent implements OnInit {
   showRound;
   ngOnInit(): void {
     if(this.match){
-      console.log(this.match);
       let type = this.util.returnByPath(this.match, 'type');
       if(type == 'tournament'){
           this.showRound = 'round';
