@@ -15,13 +15,16 @@ export class RoundColumnComponent implements OnInit {
   showRound;
   ngOnInit(): void {
     if(this.match){
-      if(this.util.returnBoolByPath(this.match, 'type')){
-        if(this.match.type == 'tournament'){
+      console.log(this.match);
+      let type = this.util.returnByPath(this.match, 'type');
+      if(type == 'tournament'){
           this.showRound = 'round';
-        }else{
-          this.showRound = "round";
-        }
-      }else if(!this.util.returnBoolByPath(this.match, 'type')){
+      }else if(type == 'bye'){
+        this.showRound = "round";
+      }
+      else if(type == 'seasonal' ){
+        this.showRound = this.util.returnBoolByPath( this.match, "scheduleDeadline" ) ? "round" : "flex";
+      }else{
         this.showRound = this.util.returnBoolByPath( this.match, "scheduleDeadline" ) ? "round" : "flex";
       }
     }
