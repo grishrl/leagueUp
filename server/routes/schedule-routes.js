@@ -231,80 +231,6 @@ router.post('/fetch/reported/matches', async(req, res) => {
             }
         );
 
-        // let season = requiredParameters.season.value;
-
-        // let query = {
-        //     $and: [{
-        //             season: season
-        //         },
-        //         {
-        //             reported: true
-        //         }
-        //     ]
-        // }
-
-        // let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
-        // let pastSeason = season != currentSeasonInfo.value;
-
-        // if (optionalParameters.division.valid) {
-        //     query.$and.push({
-        //         divisionConcat: optionalParameters.division.value
-        //     });
-        // }
-
-        // return Match.find(query).lean().then(
-        //     found => {
-        //         if (found) {
-        //             if (optionalParameters.sortOrder.value == 'des') {
-        //                 found = utils.sortMatchesByTime(found);
-        //                 found.reverse();
-        //             } else if (optionalParameters.sortOrder.value == 'asc') {
-        //                 found = utils.sortMatchesByTime(found);
-        //             }
-
-        //             if (optionalParameters.limit.valid) {
-        //                 let limit = optionalParameters.limit.value > found.length ? found.length : optionalParameters.limit.value;
-        //                 found = found.slice(0, limit);
-        //             }
-
-        //             if (pastSeason) {
-        //                 return matchCommon.addTeamInfoFromArchiveToMatch(found, season).then(
-        //                     processed => {
-        //                         response.status = 200;
-        //                         response.message = utils.returnMessaging(req.originalUrl, 'Found these matches', null, processed)
-        //                         return response;
-        //                     },
-        //                     err => {
-        //                         response.status = 400
-        //                         response.message = utils.returnMessaging(req.originalUrl, 'Error compiling match info', err)
-        //                         return response;
-        //                     }
-        //                 )
-        //             } else {
-        //                 return matchCommon.addTeamInfoToMatch(found).then(
-        //                     processed => {
-        //                         response.status = 200;
-        //                         response.message = utils.returnMessaging(req.originalUrl, 'Found these matches', null, processed)
-        //                         return response;
-        //                     },
-        //                     err => {
-        //                         response.status = 400;
-        //                         response.message = utils.returnMessaging(req.originalUrl, 'Error compiling match info', err)
-        //                         return response;
-        //                     }
-        //                 )
-        //             }
-        //         } else {
-        //             response.status = 200;
-        //             response.message = utils.returnMessaging(req.originalUrl, 'No Matches Found', null, found)
-        //             return response;
-        //         }
-        //     }, err => {
-        //         response.status = 500;
-        //         response.message = utils.returnMessaging(req.originalUrl, 'Error getting matches', err)
-        //         return response;
-        //     }
-        // );
     })
 
 });
@@ -2581,3 +2507,79 @@ function parseTournamentReturnObjects(tournaments, returnArray, tournamentIdsArr
         returnArray.push(returnObject);
     });
 }
+
+
+// let season = requiredParameters.season.value;
+
+// let query = {
+//     $and: [{
+//             season: season
+//         },
+//         {
+//             reported: true
+//         }
+//     ]
+// }
+
+// let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+// let pastSeason = season != currentSeasonInfo.value;
+
+// if (optionalParameters.division.valid) {
+//     query.$and.push({
+//         divisionConcat: optionalParameters.division.value
+//     });
+// }
+
+// return Match.find(query).lean().then(
+//     found => {
+//         if (found) {
+//             if (optionalParameters.sortOrder.value == 'des') {
+//                 found = utils.sortMatchesByTime(found);
+//                 found.reverse();
+//             } else if (optionalParameters.sortOrder.value == 'asc') {
+//                 found = utils.sortMatchesByTime(found);
+//             }
+
+//             if (optionalParameters.limit.valid) {
+//                 let limit = optionalParameters.limit.value > found.length ? found.length : optionalParameters.limit.value;
+//                 found = found.slice(0, limit);
+//             }
+
+//             if (pastSeason) {
+//                 return matchCommon.addTeamInfoFromArchiveToMatch(found, season).then(
+//                     processed => {
+//                         response.status = 200;
+//                         response.message = utils.returnMessaging(req.originalUrl, 'Found these matches', null, processed)
+//                         return response;
+//                     },
+//                     err => {
+//                         response.status = 400
+//                         response.message = utils.returnMessaging(req.originalUrl, 'Error compiling match info', err)
+//                         return response;
+//                     }
+//                 )
+//             } else {
+//                 return matchCommon.addTeamInfoToMatch(found).then(
+//                     processed => {
+//                         response.status = 200;
+//                         response.message = utils.returnMessaging(req.originalUrl, 'Found these matches', null, processed)
+//                         return response;
+//                     },
+//                     err => {
+//                         response.status = 400;
+//                         response.message = utils.returnMessaging(req.originalUrl, 'Error compiling match info', err)
+//                         return response;
+//                     }
+//                 )
+//             }
+//         } else {
+//             response.status = 200;
+//             response.message = utils.returnMessaging(req.originalUrl, 'No Matches Found', null, found)
+//             return response;
+//         }
+//     }, err => {
+//         response.status = 500;
+//         response.message = utils.returnMessaging(req.originalUrl, 'Error getting matches', err)
+//         return response;
+//     }
+// );

@@ -4,7 +4,7 @@ import { MarkdownParserService } from '../../services/markdown-parser.service';
 import { UtilitiesService } from '../../services/utilities.service';
 import { environment } from 'src/environments/environment';
 import { timer, Subscription, Subject, Observable, BehaviorSubject, interval } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { switchMap, mergeMap } from 'rxjs/operators';
 import { animate, AnimationBuilder, AnimationFactory, AnimationPlayer, style, trigger, state, transition } from '@angular/animations';
 import { WordpressService } from '../../services/wordpress.service';
 
@@ -15,6 +15,8 @@ import { WordpressService } from '../../services/wordpress.service';
 })
 export class LargeCarouselComponent implements OnInit {
 
+
+  private CATSTRING = 'Jumbotron';
 
 
   constructor(private router: Router, public md: MarkdownParserService, public util: UtilitiesService, private builder: AnimationBuilder, private WP:WordpressService) { }
@@ -140,7 +142,13 @@ timing = 300;
 
 
   ngOnInit() {
-    this.WP.getBlogPosts([{ categories: '9' }, { 'filter[orderby]': 'date' }, { 'order': 'desc' }, { per_page: 3 }]).subscribe(
+    this.WP.getCategoryId(this.CATSTRING).pipe(
+      mergeMap(
+        (catId:string) => {
+         return this.WP.getBlogPosts([{ categories: catId }, { 'filter[orderby]': 'date' }, { 'order': 'desc' }, { per_page: 3 }]);
+      }
+      )
+    ).subscribe(
       res=>{
         this.carousel = res.posts;
         this.carousel.forEach(
@@ -156,6 +164,7 @@ timing = 300;
 
       }
     )
+
   }
 
   subscription: Subscription

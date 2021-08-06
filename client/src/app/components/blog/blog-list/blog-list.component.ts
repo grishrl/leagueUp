@@ -5,6 +5,8 @@ import { UtilitiesService } from '../../../services/utilities.service';
 import { WordpressService } from 'src/app/services/wordpress.service';
 import { PageEvent, MatPaginator } from "@angular/material/paginator";
 
+import { NotificationService } from 'src/app/services/notification.service';
+
 @Component({
   selector: 'app-blog-list',
   templateUrl: './blog-list.component.html',
@@ -14,7 +16,7 @@ import { PageEvent, MatPaginator } from "@angular/material/paginator";
 export class BlogListComponent implements OnInit, AfterViewInit {
   perColumn: number = 3;
   posts = [];
-  constructor(private router: Router, public md: MarkdownParserService, public util: UtilitiesService, private WP:WordpressService) { }
+  constructor(private router: Router, public md: MarkdownParserService, public util: UtilitiesService, private WP:WordpressService,private notificationService:NotificationService) { }
   rows: any []=[];
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
@@ -30,12 +32,23 @@ export class BlogListComponent implements OnInit, AfterViewInit {
       {'filter[orderby]':'date'},
       {'order':'desc'}
     ]
+
+      this.loadingNotification();
       this.WP.getBlogPosts(params).subscribe(
         (data: any)=>{
           this.length = data.totalBlogs;
           this.posts = data.posts;
+          this.doneNotification();
         }
       )
+  }
+
+  private loadingNotification(){
+    this.notificationService.subj_notification.next('Loading Content...');
+  }
+
+  private doneNotification(){
+    this.notificationService.subj_notification.next('Done.');
   }
 
   categorySelection:string;
@@ -70,16 +83,18 @@ export class BlogListComponent implements OnInit, AfterViewInit {
     if (this.categorySelection && this.categorySelection != 'all') {
       query.push({ 'categories': this.categorySelection });
     }
-
+    this.loadingNotification();
     this.WP.getBlogPosts(query).subscribe(
       res => {
         this.posts = res.posts;
+        this.doneNotification();
       }
     )
 
   }
 
   private getBlogsOfVal() {
+    this.loadingNotification();
     let query = [];
 
     query.push({ 'filter[orderby]': 'date' });
@@ -99,6 +114,7 @@ export class BlogListComponent implements OnInit, AfterViewInit {
         this.length = res.totalBlogs;
         this.posts = res.posts;
         this.paginator.firstPage();
+        this.doneNotification();
       }
     )
 

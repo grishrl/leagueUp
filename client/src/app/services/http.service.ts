@@ -75,30 +75,30 @@ export class HttpService {
     //     url = `api/${url}`;
     //   }
     // }
-   url = this.buildUri(url);
-   if(parameters){
-     if(Array.isArray(parameters)){
-           parameters.forEach((element, index) => {
-             let key = Object.keys(element);
-             if (index == 0) {
-               url += "?" + key[0] + "=" + element[key[0]];
-             } else {
-               url += "&" + key[0] + "=" + element[key[0]];
-             }
-           });
-     }else if(typeof parameters === 'object'){
-       let index = 0;
-       forEach(parameters, (value, key) => {
-         if (index == 0) {
-           url += "?" + key + "=" + value;
-         } else {
-           url += "&" + key + "=" + value;
-         }
-         index++;
-       });
-     }
+   url = `${this.buildUri(url)}${this.getPostFixBuilder(parameters)}`;
+  //  if(parameters){
+  //    if(Array.isArray(parameters)){
+  //          parameters.forEach((element, index) => {
+  //            let key = Object.keys(element);
+  //            if (index == 0) {
+  //              url += "?" + key[0] + "=" + element[key[0]];
+  //            } else {
+  //              url += "&" + key[0] + "=" + element[key[0]];
+  //            }
+  //          });
+  //    }else if(typeof parameters === 'object'){
+  //      let index = 0;
+  //      forEach(parameters, (value, key) => {
+  //        if (index == 0) {
+  //          url += "?" + key + "=" + value;
+  //        } else {
+  //          url += "&" + key + "=" + value;
+  //        }
+  //        index++;
+  //      });
+  //    }
 
-   }
+  //  }
 
     if (showNotification) {
       this.notificationService.subj_notification.next('Working..');
@@ -124,27 +124,39 @@ export class HttpService {
     )
   }
 
-  httpGetShareable(url, parameters, showNotification?: boolean) {
-    /*
-    [{parameter:query}]
-    */
-      //  if (url.indexOf("api") == -1) {
-      //    if (url.charAt(0) == "/") {
-      //      url = `api${url}`;
-      //    } else {
-      //      url = `api/${url}`;
-      //    }
-      //  }
-    url = this.buildUri(url);
-    parameters.forEach((element, index) => {
-      let key = Object.keys(element);
-      if (index == 0) {
-        url += '?' + key[0] + '=' + element[key[0]];
-      } else {
-        url += '&' + key[0] + '=' + element[key[0]];
-      }
+  httpPostShareable(url:string, parameters:any, showNotification?:boolean){
 
-    });
+    url = `${this.buildUri(url)}`;
+
+    if (showNotification) {
+      this.notificationService.subj_notification.next('Working..');
+    }
+    return this.http.post(url, parameters).pipe(
+      map(
+        res => {
+          if (showNotification) {
+            this.notificationService.subj_notification.next(res['message']);
+          }
+          return res['returnObject']
+        },
+        catchError(err => {
+          if (err.error && showNotification) {
+            this.notificationService.subj_notification.next(err.error['message']);
+          }
+          const returnObjs = Observable.create(function (observer) {
+            observer.error(err);
+          });
+          return returnObjs;
+        })
+      ),
+      shareReplay(1)
+    )
+  }
+
+  httpGetShareable(url, parameters, showNotification?: boolean) {
+
+    url = `${this.buildUri(url)}${this.getPostFixBuilder(parameters)}`;
+
     if (showNotification) {
       this.notificationService.subj_notification.next('Working..');
     }
@@ -168,5 +180,34 @@ export class HttpService {
       ),
       shareReplay(1)
     )
+  }
+
+  getPostFixBuilder(obj){
+    let url = '';
+       if(obj){
+     if(Array.isArray(obj)){
+           obj.forEach((element, index) => {
+             let key = Object.keys(element);
+             if (index == 0) {
+               url += "?" + key[0] + "=" + element[key[0]];
+             } else {
+               url += "&" + key[0] + "=" + element[key[0]];
+             }
+           });
+     }else if(typeof obj === 'object'){
+       let index = 0;
+       forEach(obj, (value, key) => {
+         if (index == 0) {
+           url += "?" + key + "=" + value;
+         } else {
+           url += "&" + key + "=" + value;
+         }
+         index++;
+       });
+     }
+
+   }
+
+   return url;
   }
 }
