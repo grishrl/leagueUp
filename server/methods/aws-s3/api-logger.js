@@ -31,6 +31,9 @@ const APILogging = function(app, saveInterval) {
 
     APILogging.sumCaller = function(req) {
         let tallyPath = `${req.ip}::${req.method}::${req.path}`;
+        // if(req.header.authorization){
+        //     tallyPath+=`::${}`
+        // }
         if (this.log.callerSummary.hasOwnProperty(tallyPath)) {
             this.log.callerSummary[tallyPath] += 1;
         } else {
