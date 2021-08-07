@@ -44,7 +44,12 @@ const passport = require('passport');
 const passportSetup = require('./server/configs/passport-setup');
 const path = require('path');
 
+const ApiLogger = require('./server/methods/aws-s3/api-logger');
+
+
 function startApp() {
+
+    var serverLogger;
     // //bootstrap express server
     // const app = express();
 
@@ -73,6 +78,9 @@ function startApp() {
     });
 
     app.use(function(req, res, next) {
+        if (process.env.enableApiDeepLogger && process.env.enableApiDeepLogger != 'false') {
+            serverLogger.addToLog(req);
+        }
         res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
         res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
         res.header("Access-Control-Allow-Headers", "Authorization, Origin, X-Requested-With, Content-Type, Accept");
@@ -118,5 +126,11 @@ function startApp() {
     app.get('*', function(req, res) {
         res.sendFile(path.join(__dirname, './client/dist/client/index.html'));
     });
+
+    if (process.env.enableApiDeepLogger && process.env.enableApiDeepLogger != 'false') {
+        serverLogger = ApiLogger(app);
+    }
+
+
 }
 startApp();
