@@ -1,5 +1,6 @@
 const { getRoutes } = require('get-routes');
 const { s3putObject } = require('./put-s3-file');
+const moment = require('moment');
 
 const LOGSBUCKET = 'ngs-api-logs';
 
@@ -30,10 +31,15 @@ const APILogging = function(app, saveInterval) {
     }
 
     APILogging.sumCaller = function(req) {
-        let tallyPath = `${req.ip}::${req.method}::${req.path}`;
+        let tallyPath = '';
+        if (req.headers.origin) {
+            tallyPath += `${req.headers.origin}::`;
+        }
+        tallyPath += `${req.ip}::${req.method}::${req.path}`;
         // if(req.header.authorization){
         //     tallyPath+=`::${}`
         // }
+
         if (this.log.callerSummary.hasOwnProperty(tallyPath)) {
             this.log.callerSummary[tallyPath] += 1;
         } else {
@@ -66,7 +72,8 @@ const APILogging = function(app, saveInterval) {
                 APILogging.log.start = born;
                 APILogging.log.end = death;
                 APILogging.log.env = process.env.environment;
-                s3putObject(LOGSBUCKET, null, `${Date.now()}-log.json`, JSON.stringify(APILogging.log)).then().finally(() => {
+                let dateString = moment(Date.now());
+                s3putObject(LOGSBUCKET, null, `${process.env.environment}-${dateString.format('M-D-YYYY-T-HH-mm')}-log.json`, JSON.stringify(APILogging.log)).then().finally(() => {
                     APILogging.log = JSON.parse(JSON.stringify(defaultLog));
                     born = death;
                 });
