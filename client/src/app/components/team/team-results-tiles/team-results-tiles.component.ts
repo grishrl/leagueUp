@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TeamService } from 'src/app/services/team.service';
@@ -9,21 +9,20 @@ import { TimeService } from 'src/app/services/time.service';
   templateUrl: "./team-results-tiles.component.html",
   styleUrls: ["./team-results-tiles.component.css"],
 })
-export class TeamResultsTilesComponent implements OnInit {
+export class TeamResultsTilesComponent implements OnInit, OnChanges {
   currentSeason;
   constructor(
     private scheduleService: ScheduleService,
     public util: UtilitiesService,
     public teamServ: TeamService,
     private timeService: TimeService
-  ) {}
+  ) { }
 
   fetching = false;
   displayArray = [];
 
   getTeamMatches(season, teamName) {
     this.fetching = true;
-
     this.scheduleService.getTeamSchedules(season, teamName).subscribe(
       (res) => {
         this.displayArray = [];
@@ -36,8 +35,16 @@ export class TeamResultsTilesComponent implements OnInit {
           });
         }
       },
-      (err) => {}
+      (err) => { }
     );
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.season.currentValue && changes.team.currentValue) {
+      this.init();
+    }else if (changes.team.currentValue) {
+      this.init();
+    }
   }
 
   header;
@@ -75,7 +82,6 @@ export class TeamResultsTilesComponent implements OnInit {
   @Input() set team(val) {
     if (val) {
       this.teamVal = val;
-      this.ngOnInit()
     }
   }
 
@@ -83,11 +89,14 @@ export class TeamResultsTilesComponent implements OnInit {
   @Input() set season(val) {
     if (val) {
       this.seasonVal = val;
-      this.ngOnInit();
     }
   }
 
   ngOnInit() {
+
+  }
+
+  private init() {
     if (this.seasonVal) {
       this.getTeamMatches(this.seasonVal, this.teamVal);
     } else {

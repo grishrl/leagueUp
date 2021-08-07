@@ -323,13 +323,13 @@ async function retrieveAndRemoveArchiveUser(user) {
 
 
 /**
- * @name getTeamFromArchiveByNameSesaon
+ * @name getTeamFromArchiveByNameSeason
  * @function
  * @description retrivies a team object from archive provided the teamName and season number
  * @param {string} teamName 
  * @param {number} season 
  */
-async function getTeamFromArchiveByNameSesaon(teamName, season) {
+async function getTeamFromArchiveByNameSeason(teamName, season) {
     teamName = teamName.toLowerCase();
     let query = {
         $and: [{
@@ -366,7 +366,7 @@ async function getTeamFromArchiveByNameSesaon(teamName, season) {
  * @param {string} teamId 
  * @param {number} season 
  */
-async function getTeamFromArchiveByNameSesaon(teamId, season) {
+async function getTeamFromArchiveByIdSeason(teamId, season) {
     teamName = teamName.toLowerCase();
     let query = {
         $and: [{
@@ -398,6 +398,6 @@ module.exports = {
     archiveDivisions: archiveDivisions,
     archiveUser: archiveUser,
     retrieveAndRemoveArchiveUser: retrieveAndRemoveArchiveUser,
-    getTeamFromArchiveByNameSesaon: getTeamFromArchiveByNameSesaon,
-    getTeamFromArchiveByNameSesaon: getTeamFromArchiveByNameSesaon
+    getTeamFromArchiveByNameSeason: getTeamFromArchiveByNameSeason,
+    getTeamFromArchiveByIdSeason: getTeamFromArchiveByIdSeason
 };

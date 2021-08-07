@@ -60,7 +60,7 @@ function s3putObject(bucket, folder, fileName, body) {
             sysObj.actor = 'SYSTEM';
             sysObj.action = 'error uploading to AWS ';
             sysObj.logLevel = 'ERROR';
-            sysObj.error = err;
+            sysObj.error = failure;
             sysObj.location = 'AWS PUT FILE';
             sysObj.target = path;
             sysObj.timeStamp = new Date().getTime();

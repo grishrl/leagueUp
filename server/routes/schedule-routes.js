@@ -497,7 +497,7 @@ router.post('/fetch/matches/team', async(req, res) => {
         team = team.toLowerCase();
         let foundTeam;
         if (pastSeason) {
-            foundTeam = await archiveMethods.getTeamFromArchiveByNameSesaon(team, season);
+            foundTeam = await archiveMethods.getTeamFromArchiveByNameSeason(team, season);
         } else {
             foundTeam = await Team.findOne({
                 teamName_lower: team
@@ -512,7 +512,9 @@ router.post('/fetch/matches/team', async(req, res) => {
                 return null;
             });
         }
+
         if (foundTeam) {
+
             let teamId = foundTeam._id;
             return Match.find({
                 $and: [{
@@ -563,6 +565,7 @@ router.post('/fetch/matches/team', async(req, res) => {
                 return response;
             });
         } else {
+
             response.status = 500
             response.message = utils.returnMessaging(req.originalUrl, 'Failed to get team matches')
         }

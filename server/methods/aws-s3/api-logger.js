@@ -1,14 +1,19 @@
 const { getRoutes } = require('get-routes');
-const s3put = require('./put-s3-file');
+const { s3putObject } = require('./put-s3-file');
+
+const LOGSBUCKET = 'ngs-api-logs';
+
+const LOGGINGINTERVAL = (1000 * 60) * (process.env.logInterval ? process.env.logInterval : 30);
 
 const APILogging = function(app, saveInterval) {
-
+    console.log('LOGGINGINTERVAL', LOGGINGINTERVAL)
     const defaultLog = {
         summary: {},
-        logList: []
+        logList: [],
+        callerSummary: {}
     };
 
-    // var born = Date.now();
+    var born = Date.now();
 
     const APILogging = {};
 
@@ -20,6 +25,16 @@ const APILogging = function(app, saveInterval) {
         if (req && this.checkLoggable(req.path, req.method.toLowerCase())) {
             this.tallyCalls(req);
             this.pushOnList(req);
+            this.sumCaller(req);
+        }
+    }
+
+    APILogging.sumCaller = function(req) {
+        let tallyPath = `${req.ip}::${req.method}::${req.path}`;
+        if (this.log.callerSummary.hasOwnProperty(tallyPath)) {
+            this.log.callerSummary[tallyPath] += 1;
+        } else {
+            this.log.callerSummary[tallyPath] = 1;
         }
     }
 
@@ -43,11 +58,21 @@ const APILogging = function(app, saveInterval) {
 
     setInterval(
         function() {
-            console.log('Logging to S3...');
-            console.log(APILogging.log);
-            APILogging.log = JSON.parse(JSON.stringify(defaultLog));
+            try {
+                var death = Date.now();
+                APILogging.log.start = born;
+                APILogging.log.end = death;
+                APILogging.log.env = process.env.environment;
+                s3putObject(LOGSBUCKET, null, `${Date.now()}-log.json`, JSON.stringify(APILogging.log)).then().finally(() => {
+                    APILogging.log = JSON.parse(JSON.stringify(defaultLog));
+                    born = death;
+                });
+            } catch (e) {
+                console.log(e);
+            }
+
         },
-        30000
+        LOGGINGINTERVAL
     );
 
 

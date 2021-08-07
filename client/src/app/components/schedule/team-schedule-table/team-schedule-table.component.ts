@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { TeamService } from 'src/app/services/team.service';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
@@ -13,7 +13,7 @@ import { TimeService } from 'src/app/services/time.service';
   templateUrl: './team-schedule-table.component.html',
   styleUrls: ['./team-schedule-table.component.css']
 })
-export class TeamScheduleTableComponent implements OnInit {
+export class TeamScheduleTableComponent implements OnInit, OnChanges {
 
   currentSeason;
   constructor(public teamServ:TeamService, private scheduleService:ScheduleService,
@@ -71,9 +71,6 @@ export class TeamScheduleTableComponent implements OnInit {
   @Input() set teamName(val){
     if(val){
       this.teamNameVal = val;
-      if(this.teamNameVal){
-        this.ngOnInit()
-      }
     }
   }
 
@@ -81,9 +78,6 @@ export class TeamScheduleTableComponent implements OnInit {
   @Input() set season(val) {
     if (val) {
       this.seasonVal = val;
-      if (this.teamNameVal) {
-        this.ngOnInit()
-      }
     }
   }
 
@@ -128,13 +122,23 @@ export class TeamScheduleTableComponent implements OnInit {
     }
   }
 
+  ngOnChanges(changes:SimpleChanges){
+    if(changes.season.currentValue){
+      if(this.teamName){
+        this.initWithSeason();
+      }
+    }
+    if(changes.teamName.currentValue){
+      if(this.seasonVal){
+         this.initWithSeason();
+      }else{
+        this.initTeamSchedule(this.teamNameVal);
+      }
+    }
+  }
+
 
   ngOnInit() {
-    if (this.seasonVal){
-      this.initWithSeason();
-    }else{
-      this.initTeamSchedule(this.teamNameVal);
-    }
   }
 
 }

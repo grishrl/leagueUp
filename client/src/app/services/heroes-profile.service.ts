@@ -66,7 +66,6 @@ getHPProfileLink(toonHandle, displayName) {
     let returnUrl = '';
     //https://www.heroesprofile.com/Profile/?blizz_id=7905329&battletag=wraithling&region=1
     if (this.util.isNullOrEmpty(toonHandle)) {
-
       this.http.httpGet('user/hero-profile/path', [{'displayName':encodeURIComponent(displayName)}]).subscribe(
         res=>{
           if(res){
