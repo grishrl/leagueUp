@@ -31,10 +31,29 @@ export class MvpDisplayComponent implements OnInit {
           reportedMvps.sort( (a,b)=>{
             return a.timeStamp>b.timeStamp ? -1 : 1;
           })
+          let tempArr = [];
           let arrayBounds = reportedMvps.length > 10 ? 10 : reportedMvps.length;
           for (let i = 0; i < arrayBounds; i++) {
-            this.display.push(reportedMvps[i]);
+            tempArr.push(reportedMvps[i]);
           }
+          let matchList = [];
+          tempArr.forEach( (mvp)=>{
+            matchList.push(mvp.match_id);
+          });
+          let displayArray = [];
+          this.scheduleService.getMatchList(matchList).subscribe(
+            res=>{
+              res.forEach(match=>{
+                  tempArr.forEach(
+                    (mvp)=>{
+                      if(match.matchId == mvp.match_id){
+                        displayArray.push({mvp, match});
+                      }
+                    });
+                });
+                this.display = displayArray;
+            });
+
         });
   }
 

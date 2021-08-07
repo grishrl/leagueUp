@@ -2,9 +2,9 @@
 <div #potgContainer class="container">
     <div class="panel-box">
         <div class="titles no-margin text-center">
-            <h4> {{matchInfo.home.teamName}}
+            <h4> {{match.home.teamName}}
                 <br>-VS-
-                <br>{{matchInfo.away.teamName}} </h4>
+                <br>{{match.away.teamName}} </h4>
         </div>
         <!-- <div class="row pb-2">
             <div class="col"> -->
@@ -33,7 +33,7 @@
         </div>
 
         <div *ngIf="loadReady" class="mt-1 p-2 text-center">
-            <a *ngIf="matchInfo.matchId" [routerLink]="['/match/view/', matchInfo.matchId]" class="btn btn-primary">View
+            <a *ngIf="match.matchId" [routerLink]="['/match/view/', match.matchId]" class="btn btn-primary">View
                     Match Info</a>
         </div>
     </div>

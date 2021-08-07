@@ -9,7 +9,7 @@
             <ng-container *ngFor="let data of display">
                 <div class="col-sm-12 col-md-12 col-lg-4" drag-scroll-item>
                     <div style="cursor: auto;">
-                        <app-potg-display [potg]="data" [showPotg]="true" [showMvp]="true"></app-potg-display>
+                        <app-potg-display [potg]="data.mvp" [match]="data.match" [showPotg]="true" [showMvp]="true"></app-potg-display>
                     </div>
                 </div>
             </ng-container>
