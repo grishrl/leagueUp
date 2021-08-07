@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { StandingsService } from '../../../services/standings.service';
 import { TeamService } from '../../../services/team.service';
 import { UtilitiesService } from '../../../services/utilities.service';
@@ -8,7 +8,7 @@ import { UtilitiesService } from '../../../services/utilities.service';
   templateUrl: './standings-view.component.html',
   styleUrls: ['./standings-view.component.css']
 })
-export class StandingsViewComponent implements OnInit {
+export class StandingsViewComponent implements OnInit, OnChanges {
 
   constructor(public team: TeamService,private standingsService:StandingsService, private Utl:UtilitiesService) { }
 
@@ -18,7 +18,6 @@ export class StandingsViewComponent implements OnInit {
   @Input() set division(div){
     if(div!=null&&div!=undefined){
       this.div = div;
-      this.ngOnInit();
     }
   }
 
@@ -26,7 +25,23 @@ export class StandingsViewComponent implements OnInit {
   @Input() set season(season){
     if(season){
       this.seasonVal=season;
-      // this.pastStandingsIntialise();
+    }
+  }
+
+  ngOnChanges(changes:SimpleChanges){
+    if(changes.season && changes.season.currentValue){
+      this.whatToRun();
+    } else if(changes.division && changes.division.currentValue){
+      this.whatToRun();
+    }
+  }
+
+  private whatToRun(){
+
+    if(this.seasonVal && this.div.displayName){
+      this.pastStandingsIntialise();
+    }else if(this.div.displayName){
+      this.getStandings(this.div.divisionConcat);
     }
   }
 
@@ -40,7 +55,8 @@ export class StandingsViewComponent implements OnInit {
             // let allTeams = this.div.teams.concat(this.div.participants);
             // allTeams
           } else {
-            this.standings = res;
+            let results = res ? res : [];
+            this.standings = results;
           }
         },
         (err) => {
@@ -60,7 +76,8 @@ export class StandingsViewComponent implements OnInit {
             // let allTeams = this.div.teams.concat(this.div.participants);
             // allTeams
           } else {
-            this.standings = res;
+            let results = res ? res : [];
+            this.standings = results;
           }
         },
         (err) => {
@@ -72,11 +89,6 @@ export class StandingsViewComponent implements OnInit {
   }
 
   ngOnInit() {
-    if(this.seasonVal){
-      this.pastStandingsIntialise();
-    }else{
-      this.getStandings(this.div.divisionConcat);
-    }
 
   }
 
