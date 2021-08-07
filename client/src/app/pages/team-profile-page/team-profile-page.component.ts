@@ -1,4 +1,4 @@
-import { Component, OnInit, Input} from '@angular/core';
+import { Component, OnInit, Input, OnDestroy} from '@angular/core';
 import { DeleteConfrimModalComponent } from '../../modal/delete-confrim-modal/delete-confrim-modal.component'
 import { ChangeCaptainModalComponent } from '../../modal/change-captain-modal/change-captain-modal.component';
 import { TeamService } from '../../services/team.service';
@@ -26,7 +26,7 @@ import { MatDialog } from "@angular/material/dialog";
   templateUrl: './team-profile-page.component.html',
   styleUrls: ['./team-profile-page.component.css']
 })
-export class TeamProfileComponent implements OnInit {
+export class TeamProfileComponent implements OnInit, OnDestroy {
 
   index=0;
   //these properties are used for inputs
@@ -40,6 +40,7 @@ export class TeamProfileComponent implements OnInit {
   season = null;
   hpLink;
   registrationOpen:boolean=false;
+  routerWatch;
 
   errors=[];
 
@@ -73,7 +74,7 @@ export class TeamProfileComponent implements OnInit {
     private history:HistoryService, private tabTracker:TabTrackerService, private timeService:TimeService) {
 
       //so that people can manually enter different tags from currently being on a profile page; we can reinitialize the component with the new info
-    this.router.events.subscribe((e: any) => {
+    this.routerWatch = this.router.events.subscribe((e: any) => {
       // If it is a NavigationEnd event re-initalise the component
       if (e instanceof NavigationEnd) {
         this.teamName = team.realTeamName(this.route.snapshot.params['id']);
@@ -89,6 +90,10 @@ export class TeamProfileComponent implements OnInit {
           this.registrationOpen = res["data"].registrationOpen;
         });
 
+  }
+
+  ngOnDestroy(){
+    this.routerWatch.unsubscribe();
   }
 
 
