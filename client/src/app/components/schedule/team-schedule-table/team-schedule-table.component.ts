@@ -123,7 +123,7 @@ export class TeamScheduleTableComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes:SimpleChanges){
-    if(changes.season.currentValue){
+    if(changes.season && changes.season.currentValue){
       if(this.teamName){
         this.initWithSeason();
       }

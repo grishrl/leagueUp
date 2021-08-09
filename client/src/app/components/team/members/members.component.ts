@@ -14,7 +14,9 @@ export class MembersComponent implements OnInit {
   @Input() set teamProfile(val){
     if(val){
       this.profile = val;
+      this.teamMembers.length = 0;
       this.teamMembers = val.teamMembers;
+      console.log('this.teamMembers',this.teamMembers);
     }
   }
 
@@ -31,6 +33,11 @@ export class MembersComponent implements OnInit {
   }
 
   ngOnInit() {
+    // this.teamMembers.length = 0;
+  }
+
+  ngOnDestroy(){
+    this.teamMembers.length = 0;
   }
 
 }
