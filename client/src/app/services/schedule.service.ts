@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
 import { TimeService } from './time.service';
 import { map, switchMap } from 'rxjs/operators';
+import { CacheService } from './cache.service';
 
 @Injectable({
   providedIn: "root",
@@ -10,7 +11,8 @@ export class ScheduleService {
   currentSeason;
   constructor(
     private httpService: HttpService,
-    private timeService: TimeService
+    private timeService: TimeService,
+    private cacheService:CacheService
   ) {}
 
   matchQuery(obj) {
@@ -67,10 +69,8 @@ export class ScheduleService {
 
       let url = "schedule/fetch/matches/scheduled";
 
-
-
-      return this.httpService.httpPost(url,payload);
-
+      // return this.httpService.httpPost(url,payload);
+      return this.cacheService.getCached(`${url}-nearest`,this.httpService.httpPost(url,payload),15)
   }
 
   getNearestMatches(limit){
@@ -93,8 +93,6 @@ export class ScheduleService {
       const payload = { query, options };
 
       let url = "schedule/fetch/matches/scheduled";
-
-
 
       return this.httpService.httpPost(url,payload);
 
@@ -124,9 +122,8 @@ export class ScheduleService {
 
       let url = "schedule/fetch/matches/scheduled";
 
-
-
-      return this.httpService.httpPost(url,payload);
+      // return this.httpService.httpPost(url,payload);
+      return this.cacheService.getCached(`${url}-${division}-${limit}`, this.httpService.httpPost(url,payload), 15);
 
   }
 
