@@ -4,7 +4,6 @@ import { map } from 'rxjs/operators';
 import { HttpService } from './http.service';
 import { FilterService } from '../services/filter.service';
 import { CacheService } from './cache.service';
-import { all } from 'dist/client/scripts';
 
 @Injectable({
   providedIn: "root",
