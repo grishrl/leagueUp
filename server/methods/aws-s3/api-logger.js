@@ -62,7 +62,22 @@ const APILogging = function(app, saveInterval) {
     }
 
     APILogging.pushOnList = function(req) {
-        this.log.logList.push({ timestamp: Date.now(), path: req.path, method: req.method, params: JSON.stringify(req.params), query: JSON.stringify(req.query), body: JSON.stringify(req.body), ip: req.ip });
+
+        const logobj = {
+            timestamp: Date.now(),
+            path: req.path,
+            method: req.method,
+            authHeader: JSON.stringify(req.header.authorization),
+            params: JSON.stringify(req.params),
+            query: JSON.stringify(req.query),
+            body: JSON.stringify(req.body),
+            ip: req.ip
+        };
+        if (req.headers.origin) {
+            logobj['origin'] = `${req.headers.origin}`;
+        }
+
+        this.log.logList.push(logobj);
     }
 
     setInterval(

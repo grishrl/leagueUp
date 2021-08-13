@@ -81,7 +81,13 @@ export class UserService {
       url = allUrl;
     }
 
-    return this.httpService.httpPost(url, id);
+    if(id.length == 0){
+      return of([]);
+    }else{
+      return this.httpService.httpPost(url, id);
+    }
+
+
   }
 
   //saves user profile
