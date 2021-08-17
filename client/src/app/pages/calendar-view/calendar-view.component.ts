@@ -146,6 +146,7 @@ colors: {
               let endDate: Date = new Date(
                 parseInt(match.scheduledTime.startTime) + 1
               );
+
               let event: CalendarEvent = {
                 start: startDate,
                 end: endDate,
@@ -176,6 +177,7 @@ colors: {
                   match.scheduledTime.startTime,
                   "dddd MMM D"
                 );
+
                 if (this.list.has(formatDate)) {
                   let tempArr = this.list.get(formatDate);
                   tempArr.push(match);

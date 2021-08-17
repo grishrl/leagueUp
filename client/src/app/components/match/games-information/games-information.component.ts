@@ -35,7 +35,11 @@ export class GamesInformationComponent implements OnInit, OnChanges {
             if (reply && reply.name) {
               item["map"] = reply.name;
             }
-            item["winner"] = this.match["other"][key]["winner"];
+            if(this.util.returnBoolByPath(this.match, `other.${key}.winner`)){
+              item["winner"] = this.match["other"][key]["winner"];
+            }else{
+              item["winner"] = "Unreported";
+            }
             this.resultsMap.set(key, item);
           });
         }

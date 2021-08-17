@@ -25,6 +25,8 @@ export class ScheduleTableComponent implements OnInit {
 
   @Input() showBye = false;
 
+  @Input() flexOnTop = false;
+
 
   @Input() set matches(val) {
     if (val) {
@@ -102,7 +104,7 @@ export class ScheduleTableComponent implements OnInit {
 
       }
 
-      if(true){
+      if(this.flexOnTop){
         let arr1 = [];
         let arr2 = [];
         val.forEach(match => {
