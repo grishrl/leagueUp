@@ -13,6 +13,7 @@ const hpAPI = require('./server/methods/heroesProfileAPI');
 const fs = require('fs');
 const casterReport = require('./server/methods/casterReportMethods');
 const UserSub = require('./server/subroutines/user-subs');
+const testing = require('./server/workers/vods-playlist-curator');
 
 // connect to mongo db
 mongoose.connect(process.env.mongoURI, () => {
@@ -52,8 +53,17 @@ if (api) {
 // );
 
 
+
+//8-18-2021 vod curator testing...
+
+testing().then(
+    s => {
+        console.log('done');
+    }
+)
+
 /// 7-7-21 Clear User Sub Testing...
-UserSub.clearUsersTeam(['DHCæsarsalad#1517'], true);
+// UserSub.clearUsersTeam(['DHCæsarsalad#1517'], true);
 
 // console.log('token ', token);
 
