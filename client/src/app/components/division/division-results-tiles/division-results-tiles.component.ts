@@ -87,22 +87,8 @@ export class DivisionResultsTilesComponent implements OnInit {
             return match.reported;
           });
           if (this.seasonVal) {
-            this.standingsService
-              .getPastStandings(this.provDiv.divisionConcat, this.currentSeason)
-              .subscribe((res) => {
-                this.standings = res;
                 this.matches.forEach(
                   (match) => {
-                    this.standings.forEach((standing) => {
-                      if (match.home.teamName == standing.teamName) {
-                        match.home["losses"] = standing.losses;
-                        match.home["wins"] = standing.wins;
-                      }
-                      if (match.away.teamName == standing.teamName) {
-                        match.away["losses"] = standing.losses;
-                        match.away["wins"] = standing.wins;
-                      }
-                    });
                     if (match.scheduledTime) {
                       if (
                         match.scheduledTime.startTime != null ||
@@ -119,12 +105,43 @@ export class DivisionResultsTilesComponent implements OnInit {
                         );
                       }
                     }
-                  },
-                  (err) => {
-                    console.warn(err);
-                  }
-                );
-              });
+                  });
+            // this.standingsService.getPastStandings(this.provDiv.divisionConcat, this.currentSeason).subscribe((res) => {
+            //     this.standings = res;
+            //     this.matches.forEach(
+            //       (match) => {
+            //         this.standings.forEach((standing) => {
+            //           if (match.home.teamName == standing.teamName) {
+            //             match.home["losses"] = standing.losses;
+            //             match.home["wins"] = standing.wins;
+            //           }
+            //           if (match.away.teamName == standing.teamName) {
+            //             match.away["losses"] = standing.losses;
+            //             match.away["wins"] = standing.wins;
+            //           }
+            //         });
+            //         if (match.scheduledTime) {
+            //           if (
+            //             match.scheduledTime.startTime != null ||
+            //             match.scheduledTime.startTime != undefined
+            //           ) {
+            //             match["friendlyDate"] = this.util.getDateFromMS(
+            //               match.scheduledTime.startTime
+            //             );
+            //             match["friendlyTime"] = this.util.getTimeFromMS(
+            //               match.scheduledTime.startTime
+            //             );
+            //             match["suffix"] = this.util.getSuffixFromMS(
+            //               match.scheduledTime.startTime
+            //             );
+            //           }
+            //         }
+            //       },
+            //       (err) => {
+            //         console.warn(err);
+            //       }
+            //     );
+            //   });
           } else {
             this.standingsService
               .getStandings(this.provDiv.divisionConcat)

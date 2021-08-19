@@ -172,7 +172,6 @@ async function generateCastReportData() {
             let id = ci._id.toString();
             console.log('id', id, 'k', k, 'id === k', id === k)
             if (id === k) {
-                console.log('>>>> ', k)
                 v['btag'] = ci.displayName;
                 v['castername'] = ci.casterName;
                 reportByCastersInfo.push(v);

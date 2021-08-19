@@ -1,4 +1,4 @@
-<div class="item-player" *ngIf="player.displayName else error">
+<div class="item-player" *ngIf="player?.displayName else error">
     <div class="head-player">
         <img src="{{player.avatar | commonPipe:user.avatarFQDN}}" alt="player-avatar">
         <div class="overlay">

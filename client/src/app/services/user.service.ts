@@ -14,8 +14,12 @@ import { CacheService } from './cache.service';
 @Injectable({ providedIn: "root" })
 export class UserService {
   userGetURL = "user/get";
+
+
+
   //gets the user profile to match
   getUser(id): Observable<Profile> {
+    console.log('id');
     let encodedID = encodeURIComponent(id);
     let params = [{ user: encodedID }];
     return this.httpService.httpGet(this.userGetURL, params);
@@ -77,7 +81,13 @@ export class UserService {
       url = allUrl;
     }
 
-    return this.httpService.httpPost(url, id);
+    if(id.length == 0){
+      return of([]);
+    }else{
+      return this.httpService.httpPost(url, id);
+    }
+
+
   }
 
   //saves user profile

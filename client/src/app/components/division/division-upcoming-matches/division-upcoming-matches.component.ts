@@ -20,6 +20,7 @@ export class DivisionUpcomingMatchesComponent implements OnInit {
 
   next4matches=[];
   initSched(filter){
+    this.next4matches.length = 0;
     this.scheduleService.getNearestDivisionMatches(filter, 4).subscribe(
       res=>{
         res.forEach((match, ind) => {

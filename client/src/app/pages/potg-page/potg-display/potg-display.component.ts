@@ -18,7 +18,7 @@ export class PotgDisplayComponent implements OnInit {
 
   @Input() potg ;
 
-  @Input() match;
+  @Input() match = new Match();
 
   @Input() showPotg:boolean = true;
 
@@ -28,21 +28,18 @@ export class PotgDisplayComponent implements OnInit {
 
   loadReady=false;
 
-  matchInfo: Match = new Match();
   ngOnInit(): void {
-    if (this.potg && !this.match) {
+    if (this.potg && !this.match.matchId) {
       this.ScheduleServ.getMatchInfo(this.potg.match_id).subscribe(res => {
-        this.matchInfo = res;
+        this.match = res;
         this.correctAutoPlay();
       });
-    }else if(this.match && !this.potg){
-      this.matchInfo = this.match;
+    }else if(this.match.matchId && !this.potg){
       this.MvpServ.getMvpById('match_id', this.match.matchId).subscribe(res=>{
         this.potg = res;
         this.correctAutoPlay();
       })
     }else{
-      this.matchInfo = this.match;
       this.correctAutoPlay();
     }
   }

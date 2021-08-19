@@ -43,7 +43,7 @@ export class PlayerProfile implements OnInit {
       // If it is a NavigationEnd event re-initalise the component
       if (e instanceof NavigationEnd) {
         this.displayName = user.realUserName(this.route.snapshot.params["id"]);
-        this.ngOnInit();
+        this.init();
       }
     });
   }
@@ -84,18 +84,19 @@ export class PlayerProfile implements OnInit {
     null
   );
   //subscription to profiles
-  profSub: Subscription;
+  // profSub: Subscription;
   //temp profile; stores old information in case a user hits cancel we have a copy to replace errant changes.
   tempProfile: Profile;
 
-  //if this componenet is embedded we can pass a user name as a string for it (instead of getting it from the router)
-  providedProfile: string;
-  @Input() set passedProfile(profile) {
-    if (profile != null && profile != undefined) {
-      this.providedProfile = profile;
-      this.ngOnInit();
-    }
-  }
+  // //if this componenet is embedded we can pass a user name as a string for it (instead of getting it from the router)
+  // providedProfile: string;
+  // @Input() set passedProfile(profile) {
+  //   if (profile != null && profile != undefined) {
+  //     console.log('passedProfile', profile);
+  //     this.providedProfile = profile;
+  //     this.ngOnInit();
+  //   }
+  // }
 
   //if this component is embedded we can include a source; special flags for 'admin' to allow the admin options to open
   embedSource: string = "";
@@ -175,13 +176,13 @@ export class PlayerProfile implements OnInit {
   }
 
   //checks the validity of showing admin options
-  adminShow() {
-    let ret = false;
-    if (this.providedProfile && this.embedSource == "admin") {
-      ret = true;
-    }
-    return ret;
-  }
+  // adminShow() {
+  //   let ret = false;
+  //   if (this.providedProfile && this.embedSource == "admin") {
+  //     ret = true;
+  //   }
+  //   return ret;
+  // }
 
   //dialog options for deleting a user account
   confirm: string;
@@ -271,16 +272,14 @@ export class PlayerProfile implements OnInit {
   }
 
   //init method ; checks to see if the name we're getting comes from the router URL, or the displayName property
-  ngOnInit() {
+  ngOnInit() {}
+
+  private init(){
+
     this.hpProfileLink = '';
-    let getProfile: string;
-    if (this.providedProfile) {
-      getProfile = this.providedProfile;
-    } else if (this.displayName) {
-      getProfile = this.displayName;
-    }
     this.discordTagFormControl.markAsTouched();
-    this.profSub = this.user.getUser(getProfile).subscribe((res) => {
+    this.user.getUser(this.displayName).subscribe((res) => {
+
       merge(this.returnedProfile, res);
       this.index = this.tabTracker.returnTabIndexIfSameRoute("profile");
       this.hotsProfile.getHPProfileLinkStream.subscribe((subj) => {
@@ -301,6 +300,7 @@ export class PlayerProfile implements OnInit {
         }
       );
     });
+
   }
 
   //method for receiving times-availability object back from the avail-component; checks to make sure it retuns times meeting criteria
@@ -393,6 +393,6 @@ export class PlayerProfile implements OnInit {
   }
 
   ngOnDestroy() {
-    this.profSub.unsubscribe();
+    this.navigationSubscription.unsubscribe();
   }
 }

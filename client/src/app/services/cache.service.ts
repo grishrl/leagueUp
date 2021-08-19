@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { DateRange } from '@angular/material/datepicker';
 import { Observable, of } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 
@@ -11,27 +12,51 @@ export class CacheService {
   cache: Map<string, any> = new Map();
 
   //return user name by id; or from cache if it exists
-  getCached(cacheId, observable:Observable<any> ): Observable<any> {
+  getCached(cacheId:string, observable:Observable<any>, timeOutMins?:number ): Observable<any> {
+    let pendingKey = `${cacheId}-pending`;
     if (this.cache.has(cacheId)) {
+      let cached = this.cache.get(cacheId);
+      if(cached.hasOwnProperty('timeout')  ){
 
-      return of(this.cache.get(cacheId));
+        let timeout = cached.timeout;
+        let born = cached.timestamp;
+        let age = timeout+born;
+
+        if(Date.now()>age){
+          return this.doCacheWork(observable, timeOutMins, cacheId, pendingKey);
+        }else{
+          return of(cached.data);
+        }
+      }else{
+        return of(this.cache.get(cacheId));
+      }
     } else {
-      let pendingKey = `${cacheId}-pending`;
       if (this.cache.has(pendingKey)) {
-
         return this.cache.get(pendingKey);
       } else {
+        return this.doCacheWork(observable, timeOutMins, cacheId, pendingKey);
+      }
+    }
+  }
 
-        let returnObservable = observable.pipe(
+  private doCacheWork(observable, timeOutMins, cacheId, pendingKey){
+            let returnObservable = observable.pipe(
           map((res) => {
-            this.cache.set(cacheId, res);
+            if(timeOutMins){
+              let cacheObj = {
+                timestamp:Date.now(),
+                timeout: timeOutMins*60*1000
+              }
+              cacheObj['data']=res;
+              this.cache.set(cacheId, cacheObj);
+            }else{
+              this.cache.set(cacheId, res);
+            }
             return res;
           }),
           shareReplay(1)
         );
         this.cache.set(pendingKey, returnObservable);
         return returnObservable;
-      }
-    }
   }
 }

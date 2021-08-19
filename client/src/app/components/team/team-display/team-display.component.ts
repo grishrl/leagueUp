@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Team } from '../../../classes/team.class';
 import { TeamService } from '../../../services/team.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
@@ -9,7 +9,7 @@ import { HistoryService } from 'src/app/services/history.service';
   templateUrl: './team-display.component.html',
   styleUrls: ['./team-display.component.css']
 })
-export class TeamDisplayComponent implements OnInit {
+export class TeamDisplayComponent implements OnInit, OnChanges {
   _teams: Team[] = [];
   MemberRows: Array<any> = [];
 
@@ -17,7 +17,6 @@ export class TeamDisplayComponent implements OnInit {
   @Input() set teams(teams:Team[]){
     if(teams != null && teams != undefined){
       this._teamList = teams;
-      this.initComponent();
     }else{
       this._teams = [];
       this.rows = [];
@@ -33,6 +32,13 @@ export class TeamDisplayComponent implements OnInit {
   @Input() set season(val) {
     if (val) {
       this._season = val;
+    }
+  }
+
+  ngOnChanges(changes:SimpleChanges){
+    if(changes.season && changes.season.currentValue && changes.teams.currentValue){
+      this.initComponent();
+    }else if(changes.teams.currentValue){
       this.initComponent();
     }
   }
@@ -83,8 +89,6 @@ export class TeamDisplayComponent implements OnInit {
    }
 
   ngOnInit() {
-
-    this.initComponent();
 
   }
 

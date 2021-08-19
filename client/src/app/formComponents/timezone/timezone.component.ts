@@ -52,7 +52,6 @@ export class TimezoneComponent implements OnInit {
   set error(val) {
     if(val && val.hasOwnProperty('error') && val.error){
       this.timezoneControl.setErrors({ required: true });
-
     }else{
       this.timezoneControl.setErrors(null);
     }

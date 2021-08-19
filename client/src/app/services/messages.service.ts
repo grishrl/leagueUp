@@ -9,6 +9,8 @@ import { NotificationService } from './notification.service';
 })
 export class MessagesService {
 
+  private REFRESH = 5;
+
   getMessageNumbers(toGet){
     if(toGet){
           let url = "/messageCenter/get/message/numbers";
@@ -30,7 +32,7 @@ export class MessagesService {
               this.NotificationService.updateMessages.next(res);
             }
           )
-          interval((2*60*1000)).pipe(
+          interval((this.REFRESH*60*1000)).pipe(
             mergeMap( ()=>this.getMessageNumbers(toGet) )
             ).subscribe(
               data=>{

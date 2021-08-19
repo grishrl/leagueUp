@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, SimpleChanges, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, SimpleChanges, OnChanges, OnDestroy } from '@angular/core';
 import { DivisionService } from '../../services/division.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -17,7 +17,7 @@ import { environment } from "../../../environments/environment";
   styleUrls: ['./division-page.component.css']
 })
 
-export class DivisionComponent implements OnInit, OnChanges {
+export class DivisionComponent implements OnInit, OnChanges, OnDestroy {
 
 
 
@@ -28,6 +28,7 @@ export class DivisionComponent implements OnInit, OnChanges {
   divDisplay = new Division();
   teamAggregate = [];
   divisionImage;
+  routerWatcher;
 
 
 
@@ -35,7 +36,7 @@ export class DivisionComponent implements OnInit, OnChanges {
     private timeService:TimeService, private tabTacker:TabTrackerService) {
 
 
-    this.navigationSubscription = this.router.events.subscribe((e: any) => {
+    this.routerWatcher = this.navigationSubscription = this.router.events.subscribe((e: any) => {
       // If it is a NavigationEnd event re-initalise the component
       if (e instanceof NavigationEnd) {
         this.param = this.route.snapshot.params['division'];
@@ -43,6 +44,10 @@ export class DivisionComponent implements OnInit, OnChanges {
       }
     });
 
+   }
+
+   ngOnDestroy(){
+     this.routerWatcher.unsubscribe();
    }
 
    currentSeason;

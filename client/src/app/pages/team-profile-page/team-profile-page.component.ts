@@ -1,4 +1,4 @@
-import { Component, OnInit, Input} from '@angular/core';
+import { Component, OnInit, Input, OnDestroy} from '@angular/core';
 import { DeleteConfrimModalComponent } from '../../modal/delete-confrim-modal/delete-confrim-modal.component'
 import { ChangeCaptainModalComponent } from '../../modal/change-captain-modal/change-captain-modal.component';
 import { TeamService } from '../../services/team.service';
@@ -26,7 +26,7 @@ import { MatDialog } from "@angular/material/dialog";
   templateUrl: './team-profile-page.component.html',
   styleUrls: ['./team-profile-page.component.css']
 })
-export class TeamProfileComponent implements OnInit {
+export class TeamProfileComponent implements OnInit, OnDestroy {
 
   index=0;
   //these properties are used for inputs
@@ -40,6 +40,7 @@ export class TeamProfileComponent implements OnInit {
   season = null;
   hpLink;
   registrationOpen:boolean=false;
+  routerWatch;
 
   errors=[];
 
@@ -73,7 +74,7 @@ export class TeamProfileComponent implements OnInit {
     private history:HistoryService, private tabTracker:TabTrackerService, private timeService:TimeService) {
 
       //so that people can manually enter different tags from currently being on a profile page; we can reinitialize the component with the new info
-    this.router.events.subscribe((e: any) => {
+    this.routerWatch = this.router.events.subscribe((e: any) => {
       // If it is a NavigationEnd event re-initalise the component
       if (e instanceof NavigationEnd) {
         this.teamName = team.realTeamName(this.route.snapshot.params['id']);
@@ -82,13 +83,17 @@ export class TeamProfileComponent implements OnInit {
           this.setTab(this.route.snapshot.queryParams["tab"]);
         }
         // this.index = this.route.snapshot.queryParams['tab'];
-        this.ngOnInit();
+        this.initProfile();
       }
     });
         this.timeService.getSesasonInfo().subscribe((res) => {
           this.registrationOpen = res["data"].registrationOpen;
         });
 
+  }
+
+  ngOnDestroy(){
+    this.routerWatch.unsubscribe();
   }
 
 
@@ -150,10 +155,17 @@ export class TeamProfileComponent implements OnInit {
   //init implementation
   ngOnInit() {
     this.disabled = true;
-    if(this.componentEmbedded && this.embedSource == 'admin'){
-      this.disabled = false;
-    }
     this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+
+  }
+
+  private initProfile(){
+
+
+    // if(this.componentEmbedded && this.embedSource == 'admin'){
+    //   this.disabled = false;
+    // }
+
     let getProfile: string;
 
     if(this.season){
@@ -174,7 +186,7 @@ export class TeamProfileComponent implements OnInit {
       if (this.providedProfile != null && this.providedProfile != undefined) {
         if (typeof this.providedProfile == 'string') {
           getProfile = this.providedProfile;
-          this.getTeamByString(getProfile);
+          this.getTeamByString(getProfile, 'a');
         } else {
           merge(this.returnedProfile, this.providedProfile);
           this.setUpTeamMemberFilter(this.returnedProfile);
@@ -184,12 +196,11 @@ export class TeamProfileComponent implements OnInit {
         }
       } else {
         getProfile = this.teamName;
-        this.getTeamByString(getProfile);
+        this.getTeamByString(getProfile, 'b');
       }
     }
 
     this.hpLink = this.heroProfile.getHPTeamLink(this.teamName);
-
   }
 
   checkRosterSize()
@@ -227,7 +238,7 @@ export class TeamProfileComponent implements OnInit {
   }
 
   //this boolean will keep up with wether the component is embedded in another or is acting as it's own standalone page
-  componentEmbedded: boolean = false;
+  // componentEmbedded: boolean = false;
 
   //provided profile holds anything bound to the component when it's embedded
   providedProfile: any;
@@ -236,10 +247,9 @@ export class TeamProfileComponent implements OnInit {
     if (profile != null && profile != undefined) {
       this.providedProfile = profile;
       //if we received a profile; the component is embedded:
-      this.componentEmbedded = true;
+      // this.componentEmbedded = true;
       this.disabled = false;
-
-      this.ngOnInit();
+      this.initProfile();
     }
   }
 
@@ -531,7 +541,7 @@ export class TeamProfileComponent implements OnInit {
   }
 
   //method to get team by provided string
-  private getTeamByString(getProfile: string) {
+  private getTeamByString(getProfile: string, caller) {
     this.team.getTeam(getProfile).subscribe((res) => {
       merge(this.returnedProfile, res);
       this.setUpTeamMemberFilter(this.returnedProfile);
@@ -543,15 +553,15 @@ export class TeamProfileComponent implements OnInit {
   //method to determine if user is a member of a team but not captain
   //shows button to leave team if so, and is not admin embedded
   showLeaveTeam(playerName){
-    if(this.componentEmbedded){
-      return false;
-    }else{
+    // if(this.componentEmbedded){
+    //   return false;
+    // }else{
       if ( this.returnedProfile.captain != this.auth.getUser() && playerName == this.auth.getUser()) {
         return true;
       } else {
         return false;
       }
-    }
+    // }
   }
 
   timeValid;
