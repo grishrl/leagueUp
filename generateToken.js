@@ -54,7 +54,7 @@ if (api) {
 
 
 //7-22-2021
-Archive.archiveFullyAssociatedReplays();
+// Archive.archiveFullyAssociatedReplays();
 
 /// 7-7-21 Clear User Sub Testing...
 // UserSub.clearUsersTeam(['DHCæsarsalad#1517'], true);

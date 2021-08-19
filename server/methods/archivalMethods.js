@@ -434,12 +434,6 @@ module.exports = {
     archiveDivisions: archiveDivisions,
     archiveUser: archiveUser,
     retrieveAndRemoveArchiveUser: retrieveAndRemoveArchiveUser,
-<<<<<<< HEAD
-    getTeamFromArchiveByNameSesaon: getTeamFromArchiveByNameSesaon,
-    getTeamFromArchiveByNameSesaon: getTeamFromArchiveByNameSesaon,
-    archiveFullyAssociatedReplays: archiveFullyAssociatedReplays
-=======
     getTeamFromArchiveByNameSeason: getTeamFromArchiveByNameSeason,
     getTeamFromArchiveByIdSeason: getTeamFromArchiveByIdSeason
->>>>>>> b459132826d7c83195f2ad63a6dd86684329a088
 };
