@@ -57,7 +57,8 @@ export class PotgDisplayComponent implements OnInit {
             if (!this.potg.potg_link.includes("autoplay")) {
               this.potg.potg_link += "&autoplay=false";
             }
-            this.potg.potg_link = `${this.potg.potg_link}&parent=localhost&parent=prod-ngs.herokuapp.com&parent=herokuapp.com&parent=www.nexusgamingseries.org&parent=nexusgamingseries.org`;
+            //&parent=localhost&parent=prod-ngs.herokuapp.com&parent=herokuapp.com&parent=www.nexusgamingseries.org
+            this.potg.potg_link = `${this.potg.potg_link}&parent=nexusgamingseries.org`;
           }
           if(!this.potg.potg_link.includes('https://')){
             this.potg.potg_link = `https://${this.potg.potg_link}`;

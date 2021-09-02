@@ -59,6 +59,7 @@ typings/
 
 # dotenv environment variables file
 .env
+.env_copy
 .env.test
 .env_dev
 .env_prod

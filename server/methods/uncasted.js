@@ -65,7 +65,7 @@ function uncasted(teamData, reportedMatches) {
 
     // 20 teams with lowest casts
     const sorted = TeamCastsArray.sort((a, b) => {
-        return a.casts - b.casts;
+        return b.casts - a.casts;
     });
 
     const lowest20 = sorted.slice(0, 20);

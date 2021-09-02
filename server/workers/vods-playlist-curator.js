@@ -27,7 +27,8 @@ const gsapi = google.youtube("v3");
 
 //ngs channel id : UCnfohSTrlMyqiCwI5-3jXmw
 //ngs web channel id : UCOf6CO75ePUy5Q5lCthv2Jg
-const CHANNELID = 'UCOf6CO75ePUy5Q5lCthv2Jg';
+const CHANNELID = process.env.youtube_channel_id;
+
 
 function PlaylistCurator() {
 
@@ -96,11 +97,12 @@ function PlaylistCurator() {
     curator.recursePlaylist = function(npt) {
         this.getPlaylistInfo(npt).then(
             dat => {
+                // console.log('dat', dat);
                 this.playlistList = this.playlistList.concat(dat.items);
                 if (dat.nextPageToken) {
-                    this.recursePlaylist(results.nextPageToken);
+                    this.recursePlaylist(dat.nextPageToken);
                 } else {
-                    console.log('might be done', this.playlistList);
+                    console.log('might be done with playlist');
                     this.parseList();
                 }
             }
@@ -121,7 +123,7 @@ function PlaylistCurator() {
                 this.parsedList.push(obj);
             }
         )
-        console.log('parsed youtube lists', this.parsedList);
+
         this.currateList();
     }
 
@@ -136,13 +138,10 @@ function PlaylistCurator() {
         if (nextPageToken) {
             requestDetails['pageToken'] = nextPageToken;
         }
-        console.log('calling..');
+
         return gsapi.playlists.list(requestDetails).then(
             dat => {
-                // console.log(dat.data);
-                // fs.writeFile('playListInfo.json', JSON.stringify(dat.data), (err) => {
-                //     console.log(err);
-                // });
+
                 return dat.data;
 
             },
@@ -151,40 +150,33 @@ function PlaylistCurator() {
             }
         );
 
-        //CACHED LIST INFO FOR TESTING...
-        // return new Promise((resolve, reject) => {
-        //     fs.readFile('playListInfo.json', 'utf8', function(err, data) {
-        //         if (err) {
-        //             reject(err);
-        //         }
-
-        //         resolve(JSON.parse(data));
-        //     });
-        // })
     }
 
     /**
      * run through the parsed list and create a playlist if needed, then upload all the videos to youtube lists
      */
-    curator.currateList = function() {
+    curator.currateList = async function() {
 
         let tracked = {};
 
         this.reports.reportList.forEach(report => {
-            console.log('report', report);
+            // console.log('report', report);
             let playListName;
             if (report.division && report.division != "undefined") {
                 let reportDiv = report.division;
                 let divInf = _.find(this.divisionInfo, { divisionConcat: reportDiv });
-                playListName = `Season ${this.seasonValue} ${divInf.displayName.trim()}`;
+                playListName = `Season ${this.seasonValue} ${divInf.displayName.trim()} Division`;
             } else {
                 playListName = `Season ${this.seasonValue} ${report.event.trim()}`;
             }
 
             let youtubeplaylist = _.find(this.parsedList, { title: playListName });
             report.vodLinks.forEach(link => {
+                // console.log('link', link);
                 let id = returnId(link);
+                // console.log('id', id);
                 if (id) {
+                    // console.log('youtubeplaylist', youtubeplaylist);
                     if (youtubeplaylist) {
                         this.insertVidToList(youtubeplaylist.id, id, report.matchId);
                     } else if (!tracked[playListName]) {
@@ -199,41 +191,41 @@ function PlaylistCurator() {
         });
 
         if (Object.keys(tracked).length > 0) {
-            Promise.all(this.createPlaylistArr).then(
-                res => {
-                    console.log('Promise.all', res);
-                    let responseResults = [];
-                    res.forEach(iter => {
-                        responseResults.push(iter.result);
-                    })
-                    responseResults.forEach(
-                        insertedList => {
-                            console.log(insertedList)
-                            let obj = {};
-                            obj['id'] = insertedList.id;
-                            obj['etag'] = insertedList.etag;
-                            obj['kind'] = insertedList.kind;
-                            obj['title'] = insertedList.snippet.localized.title;
-                            this.parsedList.push(obj);
-                        }
-                    );
+
+            for (var i = 0; i < this.createPlaylistArr.length; i++) {
+                let request = this.createPlaylistArr[i];
+                // console.log('request', request);
+                let createdPlaylist = await gsapi.playlists.insert(request).catch(e => { console.log('err', e) });
+                if (createdPlaylist) {
+
+                    console.log('createdPlaylist:', createdPlaylist)
+                    let obj = {};
+                    obj['id'] = createdPlaylist.data.id;
+                    obj['etag'] = createdPlaylist.data.etag;
+                    obj['kind'] = createdPlaylist.data.kind;
+                    obj['title'] = createdPlaylist.data.snippet.localized.title;
+                    this.parsedList.push(obj);
+
                     this.deferredInserts.forEach(
                         defIns => {
-                            console.log('deffered insert defIns', defIns);
-                            console.log('parsedList', this.parsedList);
                             let youtubeplaylist = _.find(this.parsedList, { title: defIns.playListName });
-                            this.insertVidToList(youtubeplaylist.id, defIns.id, defIns.matchId);
+                            if (youtubeplaylist) {
+                                this.insertVidToList(youtubeplaylist.id, defIns.id, defIns.matchId);
+                            }
                         });
-                    if (this.playlistaddarr.length > 0) {
-                        // this.insertVideos();
-                    }
-                },
-                err => {
-                    console.warn('play list insert failure', err);
+                } else {
+                    console.log('playlist create error!');
                 }
-            )
+
+                await promMock(2000, 'delay');
+
+            }
+            if (this.playlistaddarr.length > 0) {
+                this.insertVideos();
+            }
+
         } else {
-            // this.insertVideos();
+            this.insertVideos();
         }
 
     }
@@ -244,7 +236,7 @@ function PlaylistCurator() {
 
         for (var i = 0; i < this.playlistaddarr.length; i++) {
             let request = this.playlistaddarr[i];
-            console.log('request', request);
+            // console.log('request', request);
             try {
 
                 let r = await gsapi.playlistItems.insert(request).then(r => { return r }, e => { throw e });
@@ -258,6 +250,8 @@ function PlaylistCurator() {
                     }
                 )
                 this.playlistAdded += 1;
+
+                await promMock(2000, 'delay');
 
             } catch (e) {
                 console.log(e);
@@ -274,7 +268,7 @@ function PlaylistCurator() {
             }
         }
 
-        console.log('this.matchResultsArr', this.matchResultsArr, results);
+        // console.log('this.matchResultsArr', this.matchResultsArr, results);
 
         this.reports.reportList.forEach(
             r => {
@@ -282,7 +276,7 @@ function PlaylistCurator() {
                 this.matchResultsArr.forEach(
                     i => {
                         r.playlistCurrated = true;
-                        let e = find(results, { matchId: i.matchId });
+                        let e = _.find(results, { matchId: i.matchId });
                         if (i.matchId == r.matchId && i.success == false) {
                             r.error = `${e.result.body}`;
                         }
@@ -312,8 +306,9 @@ function PlaylistCurator() {
             }
         }
 
-        let prom = gsapi.playlists.insert(request);
-        this.createPlaylistArr.push(prom);
+        // let prom = gsapi.playlists.insert(request);
+        // this.createPlaylistArr.push(prom);
+        this.createPlaylistArr.push(request);
     }
 
     curator.insertVidToList = function(playlistId, vidId, matchId) {
@@ -468,8 +463,26 @@ function getAllUrlParams(url, forceLower) {
         }
     }
 
+    if (Object.keys(obj).length == 0) {
+        let urlArr = url.split('/');
+        obj['v'] = urlArr[urlArr.length - 1];
+    }
+
     return obj;
 }
 
 
 module.exports = myFunction;
+
+
+function promMock(delay, toReturn, toReject) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            if (toReject) {
+                reject(toReturn);
+            } else {
+                resolve(toReturn)
+            }
+        }, delay);
+    })
+}

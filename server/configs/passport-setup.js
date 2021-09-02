@@ -117,6 +117,7 @@ passport.use(new BnetStrategy({
                 //run the update username sub; attempt to rename their display and send this request back to client
                 UserSub.updateUserName(prof._id, profile.battletag).then(
                     (updatedUser) => {
+                        logObj.target += '/' + profile.battletag;
                         logObj.action = ' an existing user changed their battletag attempted to clean up '
                         logger(logObj)
                         returnUserToClient(updatedUser, done);
