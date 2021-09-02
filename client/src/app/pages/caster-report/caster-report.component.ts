@@ -66,10 +66,10 @@ export class CasterReportComponent implements OnInit {
   ngOnInit(): void {
       this.AR.paramMap.subscribe(
       params=>{
-        console.log('params', params);
+        // console.log('params', params);
         this.casterReport.matchId = params['params'].matchId;
         this.casterReport.division = params['params'].division;
-        console.log(this.casterReport);
+        // console.log(this.casterReport);
         //get report if it exists
         this.ScheduleService.getCasterReport(this.casterReport.matchId).subscribe(
           res=>{

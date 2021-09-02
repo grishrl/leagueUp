@@ -77,12 +77,9 @@ export class DivisionService {
 
   private checkCache(div){
     if(this.divisionCache.hasOwnProperty(div)){
-      console.log('div',JSON.parse(this.divisionCache[div]));
+      // console.log('div',JSON.parse(this.divisionCache[div]));
       return JSON.parse(this.divisionCache[div]);
     }else{
-      console.log(
-        'div',false
-      )
       return false;
     }
   }

@@ -56,6 +56,6 @@ export class ApproveRankViewComponent implements OnInit {
     );
     }
 
-    console.log(this.hlRankMetal, this.hlRankDivision, approve);
+    // console.log(this.hlRankMetal, this.hlRankDivision, approve);
   }
 }

@@ -18,6 +18,10 @@ export class UtilitiesService {
     return this.HttpService.httpGet(url,[]);
   }
 
+  objectCopy(obj){
+    return JSON.parse( JSON.stringify(obj) );
+  }
+
   calculateRounds(div): Array<number> {
     let provDiv = div;
     let roundNumber = 0;

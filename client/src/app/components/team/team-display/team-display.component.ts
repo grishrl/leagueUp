@@ -36,6 +36,7 @@ export class TeamDisplayComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes:SimpleChanges){
+    // console.log('team-display: changes: ', changes);
     if(changes.season && changes.season.currentValue && changes.teams.currentValue){
       this.initComponent();
     }else if(changes.teams.currentValue){

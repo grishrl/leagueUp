@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { UtilitiesService } from 'src/app/services/utilities.service';
 
 @Component({
   selector: 'app-members',
@@ -7,16 +8,21 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class MembersComponent implements OnInit {
 
-  constructor() { }
+  constructor(private util:UtilitiesService) { }
 
   teamMembers=[];
   profile;
   @Input() set teamProfile(val){
+    // console.log('team members - val', val);
+    this.teamMembers.length = 0;
     if(val){
-      this.profile = val;
-      this.teamMembers.length = 0;
-      this.teamMembers = val.teamMembers;
-      console.log('this.teamMembers',this.teamMembers);
+
+      if(this.util.returnBoolByPath(val, 'teamMembers')){
+        this.profile = this.util.objectCopy(val);
+        this.teamMembers = this.util.objectCopy(val.teamMembers);
+      }
+
+      // console.log('this.teamMembers',this.teamMembers);
     }
   }
 

@@ -122,8 +122,8 @@ export class DivisionComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit() {
-    this.teamAggregate = [];
     if (this._passDivision){
+      this.teamAggregate = [];
       this.divDisplay = this._passDivision;
       if (this._passDivision.cupDiv) {
         this.teamAggregate = this._passDivision.teams.concat(this._passDivision.participants);
@@ -131,7 +131,6 @@ export class DivisionComponent implements OnInit, OnChanges, OnDestroy {
         this.teamAggregate = this._passDivision.teams
       }
     }
-
   }
 
 }
