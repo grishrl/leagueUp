@@ -80,7 +80,9 @@ function startApp() {
     var forceSsl = function(req, res, next) {
 
         if (process.env.environment !== 'local') {
+
             if (req.headers['x-forwarded-proto'] !== 'https') {
+                console.log("FORCE SSL !!!! REDIRECTING THIS REQUEST");
                 return res.redirect(['https://', req.get('Host'), req.url].join(''));
             }
             return next();
