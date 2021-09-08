@@ -7,6 +7,7 @@ import { Profile } from 'src/app/classes/profile.class';
 import { AuthService } from 'src/app/services/auth.service';
 import { ScheduleService } from 'src/app/services/schedule.service';
 import { UserService } from 'src/app/services/user.service';
+import { UtilitiesService } from 'src/app/services/utilities.service';
 
 @Component({
   selector: 'app-caster-report',
@@ -16,7 +17,7 @@ import { UserService } from 'src/app/services/user.service';
 export class CasterReportComponent implements OnInit {
 
   constructor(private Auth:AuthService, private User:UserService, private ScheduleService:ScheduleService,
-    private AR:ActivatedRoute, private router:Router) { }
+    private AR:ActivatedRoute, private router:Router, private util:UtilitiesService) { }
 
   displayNameControl=new FormControl();
 
@@ -58,7 +59,10 @@ export class CasterReportComponent implements OnInit {
 
   addLink(){
     if(this.casterReport.vodLinks.indexOf(this.vodLink)==-1 && this.vodLink.length>0){
-      this.casterReport.vodLinks.push(this.vodLink);
+      let validated = this.util.validateClipUrl2(this.vodLink);
+      if(validated.valid){
+        this.casterReport.vodLinks.push(this.vodLink);
+      }
       this.vodLink='';
     }
   }

@@ -142,7 +142,7 @@ export class MatchEditComponent implements OnInit {
 
   saveMVP(obj) {
     if (obj.potg_link) {
-      let valObj = this.util.validateClipUrl(obj.potg_link);
+      let valObj = this.util.validateClipUrl2(obj.potg_link);
       if (valObj.valid) {
         obj.potg_link = valObj.returnClip;
         this.mvpServ.upsertMvp(obj).subscribe(
