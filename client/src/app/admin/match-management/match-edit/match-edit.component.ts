@@ -142,10 +142,11 @@ export class MatchEditComponent implements OnInit {
 
   saveMVP(obj) {
     if (obj.potg_link) {
-      let valObj = this.util.validateClipUrl2(obj.potg_link);
+      let valObj = this.util.twitchEmbeddify(obj.potg_link);
 
       if (valObj.valid) {
         obj.potg_link = valObj.returnClip;
+        obj.match_id = this.matchId;
         this.adminService.upsertMvp(obj).subscribe(
           (res) => {
             this.mvpObj = res;

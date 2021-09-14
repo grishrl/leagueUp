@@ -499,7 +499,17 @@ export class UtilitiesService {
     if(!valid){
             alert("Unable to parse this url for valid link, please try again.");
     }
+
     return {valid, returnClip};
+  }
+
+  twitchEmbeddify(clip){
+    let obj = this.validateClipUrl2(clip);
+    if(obj.valid){
+      let embeddClip = 'clips.twitch.tv/embed?clip=' + obj.returnClip + '&autoplay=false';
+      obj.returnClip = embeddClip
+    }
+    return obj;
   }
 
 }

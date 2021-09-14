@@ -85,7 +85,7 @@ export class MvpReportComponent implements OnInit {
         //require some input before creating the post...
         if (this.mvpObj.displayName || this.mvpObj.potg_link) {
           if (this.mvpObj.potg_link && this.mvpObj.potg_link.includes('twitch')) {
-            let urlObj = this.util.validateClipUrl2(this.mvpObj.potg_link);
+            let urlObj = this.util.twitchEmbeddify(this.mvpObj.potg_link);
             if (urlObj.valid) {
               this.mvpObj.potg_link = urlObj.returnClip;
               this.mvpServ.upsertMvp(this.mvpObj).subscribe(
