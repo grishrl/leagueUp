@@ -35,6 +35,11 @@ export class AdminService {
     );
   }
 
+    upsertMvp( mvp ){
+    let url = '/admin/mvp/upsert';
+    return this.httpService.httpPost(url, mvp, true);
+  }
+
   teamLogoUpload(img, teamName?) {
     let url = "/admin/team/uploadLogo";
     let imgInput;

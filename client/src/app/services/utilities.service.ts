@@ -488,10 +488,12 @@ export class UtilitiesService {
 
     let obj = getAllUrlParams(url, false);
 
-    if(this.returnBoolByPath(obj, 'v') || this.returnBoolByPath(obj, 'vi')){
+    if(this.returnBoolByPath(obj, 'v') ){
       valid = true;
-      returnClip = this.returnBoolByPath(obj, 'v') ? this.returnByPath(obj, 'v') : '';
-      returnClip = this.returnBoolByPath(obj, 'vi') ? this.returnByPath(obj, 'vi') : '';
+      returnClip = this.returnByPath(obj, 'v') ;
+
+    }else if(this.returnBoolByPath(obj, 'vi')){
+      returnClip =this.returnByPath(obj, 'vi');
     }
 
     if(!valid){
