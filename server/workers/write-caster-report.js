@@ -13,7 +13,7 @@ function doWork() {
     logObj.action = ' writing caster report ';
     logObj.timeStamp = new Date().getTime();
     logObj.logLevel = 'STD';
-    logObj.target = 'hourly import of vod links..';
+    logObj.target = 'writing caster report';
     CasterReportMethods.generateCastReportData().then(
         report => {
             writeSheet.writeSheet(report);

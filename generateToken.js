@@ -11,9 +11,10 @@ const groupMakerTest = require('./server/cron-routines/groupMaker');
 const Archive = require('./server/methods/archivalMethods');
 const hpAPI = require('./server/methods/heroesProfileAPI');
 const fs = require('fs');
-const casterReport = require('./server/methods/casterReportMethods');
+// const casterReport = require('./server/methods/casterReportMethods');
 const UserSub = require('./server/subroutines/user-subs');
-
+const testing = require('./server/workers/vods-playlist-curator');
+const CasterReportWorker = require('./server/workers/write-caster-report');
 
 // connect to mongo db
 mongoose.connect(process.env.mongoURI, () => {
@@ -37,6 +38,9 @@ if (api) {
         expiresIn: '7d'
     });
 }
+
+
+
 //!!!!!!!!!!!!!!!!!!!!!!! API KEY GENERATOR  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // new System.system({
 //     'dataName': 'apiKey',
@@ -53,8 +57,16 @@ if (api) {
 // );
 
 
-//7-22-2021
-// Archive.archiveFullyAssociatedReplays();
+//9-1-2021 Caster report testing..
+CasterReportWorker();
+
+//8-18-2021 vod curator testing...
+
+// testing().then(
+//     s => {
+//         console.log('done');
+//     }
+// )
 
 /// 7-7-21 Clear User Sub Testing...
 // UserSub.clearUsersTeam(['DHCæsarsalad#1517'], true);

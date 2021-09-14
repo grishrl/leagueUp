@@ -47,7 +47,7 @@ async function handleCasterReportObj(obj) {
         // console.log(users);
 
         let xref = [];
-        if (users) {
+        if (users.length > 0) {
 
 
 
@@ -156,6 +156,7 @@ async function generateCastReportData() {
 
     const report = uncasted(teamData, reportedMatches);
     const casterReports = await CasterReport.CasterReport.find({ season: season });
+
 
     const casterData = reportByCasters(casterReports);
 

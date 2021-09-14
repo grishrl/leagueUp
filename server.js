@@ -77,7 +77,27 @@ function startApp() {
         console.log('connected to mongodb');
     });
 
+    var forceSsl = function(req, res, next) {
+
+        if (process.env.environment !== 'local') {
+
+            if (req.headers['x-forwarded-proto'] !== 'https') {
+                console.log("FORCE SSL !!!! REDIRECTING THIS REQUEST");
+                return res.redirect(['https://', req.get('Host'), req.url].join(''));
+            }
+            return next();
+
+        } else {
+            return next();
+        }
+
+    };
+
+
+    app.use(forceSsl);
+
     app.use(function(req, res, next) {
+
         if (process.env.enableApiDeepLogger && process.env.enableApiDeepLogger != 'false') {
             serverLogger.addToLog(req);
         }
@@ -85,6 +105,7 @@ function startApp() {
         res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
         res.header("Access-Control-Allow-Headers", "Authorization, Origin, X-Requested-With, Content-Type, Accept");
         next();
+
     });
 
 

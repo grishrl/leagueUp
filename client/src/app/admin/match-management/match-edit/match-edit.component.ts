@@ -142,10 +142,12 @@ export class MatchEditComponent implements OnInit {
 
   saveMVP(obj) {
     if (obj.potg_link) {
-      let valObj = this.util.validateClipUrl(obj.potg_link);
+      let valObj = this.util.twitchEmbeddify(obj.potg_link);
+
       if (valObj.valid) {
         obj.potg_link = valObj.returnClip;
-        this.mvpServ.upsertMvp(obj).subscribe(
+        obj.match_id = this.matchId;
+        this.adminService.upsertMvp(obj).subscribe(
           (res) => {
             this.mvpObj = res;
           },
@@ -155,7 +157,7 @@ export class MatchEditComponent implements OnInit {
         );
       }
     } else {
-      this.mvpServ.upsertMvp(obj).subscribe(
+      this.adminService.upsertMvp(obj).subscribe(
         (res) => {
           this.mvpObj = res;
         },

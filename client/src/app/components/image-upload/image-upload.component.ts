@@ -243,7 +243,7 @@ export class ImageUploadComponent implements OnInit {
   }
 
   saveImageFromCroppie() {
-    console.log(this.heightPx, this.widthPx);
+    // console.log(this.heightPx, this.widthPx);
     this.croppieObject
       .croppie("result", {
         type: "base64",
@@ -358,7 +358,7 @@ export class ImageUploadComponent implements OnInit {
     }
     const fr = new FileReader();
     fr.onloadend = loadEvent => {
-      console.log('load event')
+      // console.log('load event')
       this.croppieImage = "";
       this.croppieHidden = false;
       this.croppieObject.croppie("bind", { url: fr.result }).then(res => {

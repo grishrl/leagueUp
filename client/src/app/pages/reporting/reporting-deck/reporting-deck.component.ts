@@ -125,7 +125,7 @@ returnMaps(ban1, ban2, ban3){
     }
   });
 
-  return selectable;
+  return selectable.sort();
 }
 
 removeBan(hero, arr){

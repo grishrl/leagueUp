@@ -15,6 +15,32 @@ const uploadMethods = require('../methods/replayUpload');
 const streamMethod = require('../methods/streamEventCreator');
 const ArchiveMethods = require('../methods/archivalMethods');
 const reportMatch = require('../methods/matches/report-match');
+const MvpMethods = require('../methods/mvpMethods');
+
+
+router.post('/mvp/upsert', passport.authenticate('jwt', {
+    session: false
+}), levelRestrict.matchLevel, (req, res) => {
+
+    const path = '/mvp/upsert';
+    MvpMethods.upsert(req.body).then(
+        found => {
+            found = util.objectify(found);
+            if (req.body.displayName) {
+                found.displayName = req.body.displayName;
+            }
+            res.status(200).send(
+                util.returnMessaging(req.originalUrl, 'Record created', false, found)
+            );
+        },
+        err => {
+            res.status(500).send(
+                util.returnMessaging(req.originalUrl, 'Error creating record', err)
+            );
+        }
+    )
+
+});
 
 
 router.post('/match/update', passport.authenticate('jwt', {
