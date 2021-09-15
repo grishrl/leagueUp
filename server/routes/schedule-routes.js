@@ -363,18 +363,24 @@ router.get('/get/matches/casted/playing', (req, res) => {
         let now = Date.now();
         let query = {
             $and: [{
-                casterUrl: {
-                    $exists: true
+                    casterUrl: {
+                        $exists: true
+                    }
+                }, {
+                    casterUrl: {
+                        $ne: ""
+                    }
+                }, {
+                    "scheduledTime.endTime": {
+                        $gt: now
+                    }
+                },
+                {
+                    "scheduledTime.startTime": {
+                        $lt: now
+                    }
                 }
-            }, {
-                "scheduledTime.endTime": {
-                    $gt: now
-                }
-            }, {
-                "scheduledTime.startTime": {
-                    $lt: now
-                }
-            }]
+            ]
         }
 
         return Match.find(query).lean().then((found) => {
