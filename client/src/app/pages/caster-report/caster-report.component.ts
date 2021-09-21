@@ -125,8 +125,8 @@ export class CasterReportComponent implements OnInit {
   saving='';
 
   save(){
-    this.saving='Saving..';
     if(this.casterReport.vodLinks.length>0){
+      this.saving='Saving..';
       this.ScheduleService.casterReport(this.casterReport).subscribe(
         res=>{
           this.saving='Completed';
