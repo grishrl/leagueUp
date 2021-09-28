@@ -167,10 +167,10 @@ async function generateCastReportData() {
     const reportByCastersInfo = [];
 
     _.forEach(casterData, (v, k) => {
-        console.log('v,k', v, k);
+        // console.log('v,k', v, k);
         CastersInfo.forEach(ci => {
             let id = ci._id.toString();
-            console.log('id', id, 'k', k, 'id === k', id === k)
+            // console.log('id', id, 'k', k, 'id === k', id === k)
             if (id === k) {
                 v['btag'] = ci.displayName;
                 v['castername'] = ci.casterName;

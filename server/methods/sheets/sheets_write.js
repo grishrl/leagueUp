@@ -63,14 +63,14 @@ async function gsRun(client, reportToWrite) {
     for (index in RANGES) {
         let range = RANGES[index];
 
-        console.log('range', range);
+        // console.log('range', range);
 
         if (range in reportToWrite) {
             let values = [];
 
             var ct = reportToWrite[range];
 
-            console.log('ct', ct);
+            // console.log('ct', ct);
 
             if (ct[0]) {
                 var headers = Object.keys(ct[0]);
