@@ -21,7 +21,7 @@ export class PastSeasonsComponent implements OnInit {
   ngOnInit() {
     this.timeService.getSesasonInfo().subscribe(
       res => {
-        let currentSeason = res.value;
+        let currentSeason = res.data.value;
         this.HS.getPastSeasons().subscribe(
           res => {
             res.forEach(element => {

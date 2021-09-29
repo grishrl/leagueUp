@@ -18,7 +18,7 @@ export class StandingsService {
         res=>{
           let payload = {
             division: div,
-            season: res['value']
+            season: res['data']['value']
           };
           return this.httpService.httpPost(url, payload);
         }

@@ -369,7 +369,7 @@ async function calcLeagueStats(replay) {
                 dataName: "leagueRunningFunStats"
             },
             {
-                span: "overall"
+                'data.span': "overall"
             }
         ]
     }
@@ -383,10 +383,10 @@ async function calcLeagueStats(replay) {
 
     if (overall) {
         _.forEach(objectiveInfo, (value, key) => {
-            if (util.returnBoolByPath(overall.data, key)) {
-                overall.data[key] += value;
+            if (util.returnBoolByPath(overall.data.totals, key)) {
+                overall.data.totals[key] += value;
             } else {
-                overall.data[key] = value;
+                overall.data.totals[key] = value;
             }
         });
 
@@ -399,12 +399,11 @@ async function calcLeagueStats(replay) {
         )
     } else {
         let newObj = {
-            span: "overall",
             dataName: "leagueRunningFunStats",
-            data: {}
+            data: { span: "overall", totals: {} }
         }
         _.forEach(objectiveInfo, (value, key) => {
-            newObj.data[key] = value;
+            newObj.data.totals[key] = value;
         });
 
         overallSave = await new System(newObj).save().then(
@@ -421,7 +420,7 @@ async function calcLeagueStats(replay) {
                 dataName: "leagueRunningFunStats"
             },
             {
-                span: seasonNum
+                'data.span': seasonNum
             }
         ]
     };
@@ -435,10 +434,10 @@ async function calcLeagueStats(replay) {
 
     if (season) {
         _.forEach(objectiveInfo, (value, key) => {
-            if (util.returnBoolByPath(season.data, key)) {
-                season.data[key] += value;
+            if (util.returnBoolByPath(season.data.totals, key)) {
+                season.data.totals[key] += value;
             } else {
-                season.data[key] = value;
+                season.data.totals[key] = value;
             }
         });
 
@@ -453,12 +452,14 @@ async function calcLeagueStats(replay) {
         )
     } else {
         let newObj = {
-            span: seasonNum,
             dataName: "leagueRunningFunStats",
-            data: {}
+            data: {
+                span: seasonNum,
+                totals: {}
+            }
         }
         _.forEach(objectiveInfo, (value, key) => {
-            newObj.data[key] = value;
+            newObj.data.totals[key] = value;
         });
 
         seasonSave = await new System(newObj).save().then(

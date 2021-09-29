@@ -48,7 +48,7 @@ export class TimeService {
   init() {
     this.cacheCall.subscribe(
       res=>{
-        this.localInfo = res;
+        this.localInfo = res.data.value;
       }
     )
   }

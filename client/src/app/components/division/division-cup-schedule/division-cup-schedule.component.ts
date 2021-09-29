@@ -116,7 +116,7 @@ export class DivisionCupScheduleComponent implements OnInit {
       this.getTournMatches(this.seasonVal);
     }else{
       this.timeService.getSesasonInfo().subscribe(res => {
-        this.seasonVal = res['value'];
+        this.seasonVal = res.data['value'];
         this.getTournMatches(this.seasonVal);
       });
 

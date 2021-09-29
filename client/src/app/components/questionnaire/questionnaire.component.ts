@@ -185,7 +185,7 @@ export class QuestionnaireComponent implements OnInit {
 
   ngOnInit() {
     this.timeService.getSesasonInfo().subscribe((res) => {
-      this.seasonNumber = res["value"];
+      this.seasonNumber = res.data["value"];
       if (this.source == "admin") {
         this.registrationOpen = true;
       } else {

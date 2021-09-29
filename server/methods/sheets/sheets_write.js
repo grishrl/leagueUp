@@ -77,7 +77,7 @@ async function gsRun(client, reportToWrite) {
 
                 var date = moment(Date.now());
 
-                values.push(['Last Updated', date.format("M/D/YYYY - HH:MM")]);
+                values.push(['Last Updated', date.format("M/D/YYYY - HH:mm")]);
                 values.push(headers);
 
                 for (objind in ct) {

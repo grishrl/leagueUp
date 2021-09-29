@@ -224,7 +224,7 @@ export class TopStatsWidgetComponent implements OnInit {
           this.hp.getTopStats(this.currStat.stat).subscribe(
             (res) => {
               if (res) {
-                let object = res.data;
+                let object = res.data.list;
                 _forEach(object, (value, key) => {
                   let tO = {};
 

@@ -134,7 +134,7 @@ export class TeamTournamentScheduleTableComponent implements OnInit {
     this.todayDate = new Date().getTime();
     this.timeService.getSesasonInfo().subscribe(
         (res) => {
-          let currentSeason = res["value"];
+          let currentSeason = res.data["value"];
           this.teamServ.getSeasonTournaments(this.teamObj._id, currentSeason).subscribe(
             res=>{
                 res.forEach(tourn=>{

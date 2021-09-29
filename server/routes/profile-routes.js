@@ -416,10 +416,10 @@ router.get('/frontPageStats', async(req, res) => {
                     'dataName': 'TopStatList'
                 },
                 {
-                    'span': currentSeasonInfo.value
+                    'data.span': currentSeasonInfo.value
                 },
                 {
-                    'stat': requiredParameters.stat.value
+                    'data.stat': requiredParameters.stat.value
                 }
             ]
         }
@@ -452,7 +452,7 @@ router.get('/leagueOverallStats', (req, res) => {
                     dataName: "leagueRunningFunStats"
                 },
                 {
-                    span: "overall"
+                    'data.span': "overall"
                 }
             ]
         }

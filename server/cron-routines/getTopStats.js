@@ -101,20 +101,24 @@ getTopStats = async function() {
                             'dataName': 'TopStatList'
                         },
                         {
-                            'span': season
+                            'data.span': season
                         },
                         {
-                            'stat': stat
+                            'data.stat': stat
                         }
                     ]
                 };
 
+                const dataObj = {
+                    span: season,
+                    stat: stat,
+                    list: rtval[i].data
+                }
+
                 System.findOneAndUpdate(
                     query, {
                         "dataName": "TopStatList",
-                        "stat": stat,
-                        "span": season,
-                        "data": rtval[i].data
+                        "data": dataObj
                     }, {
                         new: true,
                         upsert: true

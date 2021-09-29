@@ -40,6 +40,56 @@ if (api) {
 }
 
 
+function updateSystemSchema() {
+    const factory = {};
+
+    factory.doNotCopy = ['_id', 'span', 'stat', 'value'];
+    factory.okObjects = ['youtubeReport'];
+    factory.objects = [];
+    factory.runMore = false;
+    factory.getObjects = function() {
+        System.system.find().limit(50).then(
+            (found) => {
+                if (found.length == 50) {
+                    this.runMore = true;
+                }
+                this.objects.length = 0;
+                this.objects = found;
+            }
+        )
+    }
+    factory.updateObjects = function() {
+        this.objects.forEach(
+            item => {
+                let keys = Object.keys(item);
+                let dataName = item.dataName;
+                if (this.okObjects.indexOf(dataName) == -1) {
+                    if (dataName == 'TopStatList') {
+                        let tDat = item.data;
+                        let newDat = {};
+                        newDat.span = item.span;
+                        newDat.list = tDat;
+                        newDat.stat = item.stat;
+                        item.data = newDat;
+                    } else if (dataName == 'leagueRunningFunStats') {
+                        item.data.span = item.span;
+                    } else if (dataName == 'apiKey') {
+                        item.data = {};
+                        item.data.value = item.value;
+                    } else if (dataName == 'seasonInfo') {
+                        item.data.value = item.value;
+                    } else if (item.season) {
+                        let tDat = item.data;
+                        let newDat = {};
+                        newDat.standings = tDat;
+                        newDat.season = item.season;
+                    }
+                }
+            });
+    }
+
+    return factory;
+}
 
 //!!!!!!!!!!!!!!!!!!!!!!! API KEY GENERATOR  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // new System.system({

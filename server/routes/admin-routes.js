@@ -29,14 +29,14 @@ router.post('/upsertSeasonInfo', passport.authenticate('jwt', {
                         'dataName': 'seasonInfo'
                     },
                     {
-                        'value': season.value
+                        'data.value': season.value
                     }
                 ]
             };
             let postedInfo = {
                 'dataName': 'seasonInfo',
-                'value': season.value,
                 'data': {
+                    'value': season.value,
                     'registrationOpen': req.body.data.registrationOpen,
                     'seasonStartDate': req.body.data.seasonStartDate,
                     'seasonEndDate': req.body.data.seasonEndDate,
