@@ -1,13 +1,17 @@
 const { google } = require('googleapis');
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
-const util = require('../utils');
-const location = 'vod-playlist-curator.js';
-const fs = require('fs');
+const utils = require('../utils');
 const Division = require('../models/division-models');
 const CasterReportMethod = require('../methods/casterReportMethods');
 const _ = require('lodash');
+const logger = require('../subroutines/sys-logging-subs').logger;
+
+
+const System = require('../models/system-models').system;
 
 const gsapi = google.youtube("v3");
+
+const UNCURRATED_AMOUNT = 45;
 
 /**
  *   ready (sets up google authentication and gets needed data for currator) ->
@@ -172,19 +176,22 @@ function PlaylistCurator() {
 
             let youtubeplaylist = _.find(this.parsedList, { title: playListName });
             report.vodLinks.forEach(link => {
-                // console.log('link', link);
-                let id = returnId(link);
-                // console.log('id', id);
-                if (id) {
-                    // console.log('youtubeplaylist', youtubeplaylist);
-                    if (youtubeplaylist) {
-                        this.insertVidToList(youtubeplaylist.id, id, report.matchId);
-                    } else if (!tracked[playListName]) {
-                        tracked[playListName] = true;
-                        this.createPlaylist(playListName);
-                        this.deferredInserts.push({ playListName, id, matchId: report.matchId });
-                    } else if (tracked[playListName]) {
-                        this.deferredInserts.push({ playListName, id, matchId: report.matchId });
+                //these must be youtube videos...
+                if (link.indexOf('you') > -1) {
+                    // console.log('link', link);
+                    let id = returnId(link);
+                    // console.log('id', id);
+                    if (id) {
+                        // console.log('youtubeplaylist', youtubeplaylist);
+                        if (youtubeplaylist) {
+                            this.insertVidToList(youtubeplaylist.id, id, report.matchId);
+                        } else if (!tracked[playListName]) {
+                            tracked[playListName] = true;
+                            this.createPlaylist(playListName);
+                            this.deferredInserts.push({ playListName, id, matchId: report.matchId });
+                        } else if (tracked[playListName]) {
+                            this.deferredInserts.push({ playListName, id, matchId: report.matchId });
+                        }
                     }
                 }
             });
@@ -270,19 +277,69 @@ function PlaylistCurator() {
 
         // console.log('this.matchResultsArr', this.matchResultsArr, results);
 
+        let reportedMatchIds = [];
+
         this.reports.reportList.forEach(
             r => {
                 // console.log(results);
                 this.matchResultsArr.forEach(
                     i => {
-                        r.playlistCurrated = true;
-                        let e = _.find(results, { matchId: i.matchId });
-                        if (i.matchId == r.matchId && i.success == false) {
-                            r.error = `${e.result.body}`;
+                        try {
+                            r.playlistCurrated = true;
+                            let e = _.find(results, { matchId: i.matchId });
+                            if (i.matchId == r.matchId && i.success == false) {
+                                // console.log('///////', e.result.response.data);
+                                r.error = `${utils.returnByPath(e,'result.response.data.error.code')} - ${utils.returnByPath(e,'result.response.data.error.message')} `;
+                            }
+                        } catch (e) {
+                            console.log(' i ', i);
+                            console.log(' e ', e);
                         }
+
                     }
                 )
 
+            }
+        );
+        console.log('Finished Reporting to Youtube; upserting caster reports.');
+
+        var timestamp = Date.now();
+
+        const dataObj = {
+            timestamp: timestamp,
+            results: this.matchResultsArr
+        }
+
+        const youtubeReport = {
+            dataName: "youtubeReport",
+            span: '',
+            stat: '',
+            data: dataObj
+        }
+
+        System.findOneAndUpdate({
+            "data.timeStamp": timestamp
+        }, youtubeReport, {
+            new: true,
+            upsert: true
+        }).then(
+            saved => {
+                const logObj = {};
+                logObj.logLevel = 'SYSTEM/Worker';
+                logObj.timeStamp = new Date().getTime();
+                logObj.location = 'YouTubeCurator'
+                logObj.action = `Upload Youtube Playlists`
+                logger(logObj);
+                utils.errLogger('youtube curator run', null, 'youtube currator ran ok');
+            },
+            err => {
+                const logObj = {};
+                logObj.logLevel = 'ERR:SYSTEM/Worker';
+                logObj.timeStamp = new Date().getTime();
+                logObj.location = 'YouTubeCurator'
+                logObj.action = `Error saving youtube playlist`
+                logger(logObj);
+                utils.errLogger('youtube curator run', err);
             }
         );
 
@@ -373,12 +430,15 @@ function getUncrrated() {
             let totalVideos = 0;
             saved.forEach(
                 s => {
-                    totalVideos = totalVideos + s.vodLinks.length;
-                    if (totalVideos < 45) {
+                    console.log(s);
+
+                    if (totalVideos < UNCURRATED_AMOUNT) {
+                        totalVideos = totalVideos + s.vodLinks.length;
                         toReturn.push(s);
                     }
                 }
             );
+
             returnObject = {
                 reportList: toReturn,
                 thisBatch: toReturn.length,

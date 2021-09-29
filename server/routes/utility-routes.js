@@ -7,6 +7,7 @@ const { s3deleteFile } = require('../methods/aws-s3/delete-s3-file');
 const { s3putObject } = require('../methods/aws-s3/put-s3-file');
 const { prepImage } = require('../methods/image-upload-common');
 const levelRestrict = require("../configs/admin-leveling");
+const playlistCurator = require('../workers/vods-playlist-curator');
 
 
 router.get('/replay/map/name', (req, res) => {
@@ -29,6 +30,11 @@ router.get('/replay/map/name', (req, res) => {
 
 
 });
+
+router.get('/youtube-curator', (req, res) => {
+    playlistCurator();
+    res.status(200).send(util.returnMessaging('/youtube-curator', 'Youtube Curator Started:', null, {}))
+})
 
 router.get('/ytoa', passport.authenticate('jwt', {
     session: false
