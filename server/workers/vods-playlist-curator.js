@@ -318,7 +318,7 @@ function PlaylistCurator() {
         }
 
         System.findOneAndUpdate({
-            "data.timeStamp": timestamp
+            "data.timestamp": timestamp
         }, youtubeReport, {
             new: true,
             upsert: true

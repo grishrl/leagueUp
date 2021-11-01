@@ -8,6 +8,7 @@
   const updateTeams = require('./server/workers/update-teams');
   const uploadToHeroesProfileWorker = require('./server/workers/upload-to-heroes-profile');
   const writeCasterReportWorker = require('./server/workers/write-caster-report');
+  const playlistCuratorWorker = require('./server/workers/vods-playlist-curator');
 
   const mongoose = require('mongoose');
 
@@ -25,7 +26,8 @@
       'leagueStat': leagueStatRunnerWorker,
       'groupMaker': groupMakerWorker,
       'heroesProfileUploader': uploadToHeroesProfileWorker,
-      'writeCasterReport': writeCasterReportWorker
+      'writeCasterReport': writeCasterReportWorker,
+      'playlistCurator':playlistCuratorWorker
   }
 
 
@@ -67,6 +69,7 @@
       workersList.topStats();
       workersList.leagueStat();
       workersList.writeCasterReport();
+      workersList.playlistCurator();
 
       //once daily in off season
       if (process.env.groupMakerEnable == 'true') {
