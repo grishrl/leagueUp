@@ -165,8 +165,10 @@ function PlaylistCurator() {
 
         this.reports.reportList.forEach(report => {
             // console.log('report', report);
+            try{
+
             let playListName;
-            if (report.division && report.division != "undefined") {
+            if (report.division && report.division.length > 0 && report.division != "undefined") {
                 let reportDiv = report.division;
                 let divInf = _.find(this.divisionInfo, { divisionConcat: reportDiv });
                 playListName = `Season ${this.seasonValue} ${divInf.displayName.trim()} Division`;
@@ -195,6 +197,12 @@ function PlaylistCurator() {
                     }
                 }
             });
+
+            }catch(e){
+                console.log(e);
+                this.matchResultsArr.push({ matchId:report.matchId, vidId:'null', success: false });
+            }
+
         });
 
         if (Object.keys(tracked).length > 0) {
