@@ -7,7 +7,7 @@ const { s3deleteFile } = require('../methods/aws-s3/delete-s3-file');
 const { s3putObject } = require('../methods/aws-s3/put-s3-file');
 const { prepImage } = require('../methods/image-upload-common');
 const levelRestrict = require("../configs/admin-leveling");
-const playlistCurator = require('../workers/vods-playlist-curator');
+// const playlistCurator = require('../workers/vods-playlist-curator');
 
 
 router.get('/replay/map/name', (req, res) => {
@@ -31,22 +31,22 @@ router.get('/replay/map/name', (req, res) => {
 
 });
 
-router.get('/youtube-curator', (req, res) => {
-    playlistCurator();
-    res.status(200).send(util.returnMessaging('/youtube-curator', 'Youtube Curator Started:', null, {}))
-})
+// router.get('/youtube-curator', (req, res) => {
+//     playlistCurator();
+//     res.status(200).send(util.returnMessaging('/youtube-curator', 'Youtube Curator Started:', null, {}))
+// })
 
-router.get('/ytoa', passport.authenticate('jwt', {
-    session: false
-}), levelRestrict.casterLevel, (req, res) => {
+// router.get('/ytoa', passport.authenticate('jwt', {
+//     session: false
+// }), levelRestrict.casterLevel, (req, res) => {
 
-    const path = 'api/utility/ytoa';
+//     const path = 'api/utility/ytoa';
 
-    const returnVal = { oauth_key: process.env.youtube_oauth, google_api_key: process.env.youtube_apikey };
+//     const returnVal = { oauth_key: process.env.youtube_oauth, google_api_key: process.env.youtube_apikey };
 
-    res.status(200).send(util.returnMessaging(path, 'Youtube Oauth:', null, returnVal));
+//     res.status(200).send(util.returnMessaging(path, 'Youtube Oauth:', null, returnVal));
 
-})
+// })
 
 //post
 // path: /team/uploadLogo
