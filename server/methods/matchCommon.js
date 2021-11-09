@@ -160,9 +160,18 @@ async function promoteTournamentMatch(foundMatch) {
                         }
                     );
 
-                    //match up the challonge parent match ID with the winner match
-                    //this will allow us to have proper teams always promoted into a matching position to challonge
-                    if (parentChallongeMatch.match.player1_prereq_match_id == foundMatch.challonge_match_ref) {
+                    // if this is a double elim tournament then this could be the semi final IE the loser of this semi final had no losses;
+                    if(parentChallongeMatch.match.player2_prereq_match_id == foundMatch.challonge_match_ref && parentChallongeMatch.match.player1_prereq_match_id == foundMatch.challonge_match_ref){
+                        if(parentChallongeMatch.match.player1_is_prereq_match_loser){
+                            lossPathMatch.home = loser;
+                            lossPathMatch.away = winner;
+                        }else{
+                            lossPathMatch.home = winner;
+                            lossPathMatch.away = loser;
+                        }
+                    }else if (parentChallongeMatch.match.player1_prereq_match_id == foundMatch.challonge_match_ref) {
+                       //match up the challonge parent match ID with the winner match
+                      //this will allow us to have proper teams always promoted into a matching position to challonge
                         lossPathMatch.home = loser;
                         lossPathMatch.markModified('home');
                     } else {
