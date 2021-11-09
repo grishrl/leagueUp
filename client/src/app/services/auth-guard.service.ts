@@ -2,16 +2,22 @@ import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router, Route } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuardService implements CanActivate {
 
-  constructor(private auth:AuthService, private router: Router) { }
+  constructor(private auth:AuthService, private router: Router, private notificationService:NotificationService) { }
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-    
+
+    let token = this.auth.decryptToken();
+    let tokenExp = token.exp*1000;
+
+    if(Date.now() < tokenExp){
+
     if (next.data.role == 'caster'){
       if(this.auth.getCaster()){
         return true;
@@ -27,5 +33,11 @@ export class AuthGuardService implements CanActivate {
     this.router.navigate(['/noAccess/', next.data.role]);
     // you can save redirect url so after authing we can move them back to the page they requested
     return false;
+    }else{
+      this.auth.destroyAuth('/');
+      this.notificationService.subj_notification.next('Your token has expired.');
+    }
+
+
   }
 }
