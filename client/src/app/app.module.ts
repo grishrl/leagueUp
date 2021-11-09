@@ -45,8 +45,8 @@ import { ngfModule } from 'angular-file';
 import { DashboardComponent } from './admin/dashboard/dashboard.component';
 import { CasterDashboardComponent } from './pages/caster-dashboard/caster-dashboard.component';
 import { CasterInputsComponent } from './pages/caster-dashboard/caster-inputs/caster-inputs.component';
-import { MatchEditComponent } from './admin/match-management/match-edit/match-edit.component';
-import { MatchManagementComponent } from './admin/match-management/match-management.component';
+import { MatchEditComponent } from './admin/match-admin/match-edit/match-edit.component';
+import { MatchManagementComponent } from './admin/match-admin/match-management/match-management.component';
 import { AdminAclManagementComponent } from './admin/admin-acl-management/admin-acl-management.component';
 import { UpdateRolesComponent } from './admin/admin-acl-management/update-roles/update-roles.component';
 import { StandingsViewComponent } from './components/division/standings-view/standings-view.component';
@@ -63,7 +63,7 @@ import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { EventModalComponent } from './pages/calendar-view/event-modal/event-modal.component';
 import { EventLargeComponent } from './pages/calendar-view/event-large/event-large.component';
-import { SetDeadlineComponent } from './admin/match-management/set-deadline/set-deadline.component';
+import { SetDeadlineComponent } from './admin/match-admin/set-deadline/set-deadline.component';
 import { MatchViewComponent } from './components/match/match-view/match-view.component';
 import { DropDownTimeComponent } from './formComponents/times-available/drop-down-time/drop-down-time.component';
 import { UserMessageCenterComponent } from './pages/messageCenter/user-message-center/user-message-center.component';
@@ -72,8 +72,8 @@ import { UserMarketplaceComponent } from './marketplace/user-marketplace/user-ma
 import { UserDeckComponent } from './marketplace/user-marketplace/user-deck/user-deck.component';
 
 import { ConfirmRemoveMemberComponent } from './modal/confirm-remove-member/confirm-remove-member.component';
-import { TournamentGeneratorComponent } from './admin/match-management/tournament-generator/tournament-generator.component';
-import { GenerateSeasonComponent } from './admin/match-management/generate-season/generate-season.component';
+import { TournamentGeneratorComponent } from './admin/match-admin/tournament-generator/tournament-generator.component';
+import { GenerateSeasonComponent } from './admin/match-admin/generate-season/generate-season.component';
 
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { TournamentViewComponent } from './components/tournament-view/tournament-view.component';
@@ -197,7 +197,7 @@ import { RankRequirementsComponent } from './admin/rank-requirements/set-rank-re
 import { ValidateRankComponent } from './admin/rank-requirements/validate-rank/validate-rank.component';
 import { ApproveRankViewComponent } from './admin/rank-requirements/validate-rank/approve-rank-view/approve-rank-view.component';
 import { VerifiedStormLeagueRanksViewComponent } from './components/verified-storm-league-ranks-view/verified-storm-league-ranks-view.component';
-import { DeleteTournamentComponent } from './admin/match-management/delete-tournament/delete-tournament.component';
+import { DeleteTournamentComponent } from './admin/match-admin/delete-tournament/delete-tournament.component';
 import { MembersReportingComponent } from './components/storm-rank-tools/members-reporting/members-reporting.component';
 import { VerifiedStormRanksDisplayNameComponent } from './components/storm-rank-tools/verified-storm-ranks-display-name/verified-storm-ranks-display-name.component';
 import { PlayerSearchComponent } from './pages/player-search/player-search.component';
@@ -205,6 +205,7 @@ import { SingleTeamDisplayComponent } from './components/team/team-display/singl
 import { MAT_COLOR_FORMATS, NgxMatColorPickerModule, NGX_MAT_COLOR_FORMATS } from '@angular-material-components/color-picker';
 import { AdminYoutubeCurator } from './admin/caster/admin-youtube-curator/admin-youtube-curator.component';
 import { CreateThreadComponent } from './admin/thread/create-thread/create-thread.component';
+import { GenerateNonSeasonalSchedulesComponent } from './admin/match-admin/generate-non-seasonal-schedules/generate-non-seasonal-schedules.component';
 
 
 @NgModule({
@@ -394,7 +395,8 @@ import { CreateThreadComponent } from './admin/thread/create-thread/create-threa
     PlayerSearchComponent,
     SingleTeamDisplayComponent,
     AdminYoutubeCurator,
-    CreateThreadComponent
+    CreateThreadComponent,
+    GenerateNonSeasonalSchedulesComponent
   ],
   entryComponents:[
     DeleteConfrimModalComponent,

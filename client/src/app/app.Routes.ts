@@ -19,8 +19,8 @@ import { MatchSchedulerComponent } from "./pages/match-scheduler/match-scheduler
 import { ReportingComponent } from "./pages/reporting/reporting.component";
 import { DashboardComponent } from "./admin/dashboard/dashboard.component";
 import { CasterDashboardComponent } from "./pages/caster-dashboard/caster-dashboard.component";
-import { MatchManagementComponent } from "./admin/match-management/match-management.component";
-import { MatchEditComponent } from "./admin/match-management/match-edit/match-edit.component";
+import { MatchManagementComponent } from "./admin/match-admin/match-management/match-management.component";
+import { MatchEditComponent } from "./admin/match-admin/match-edit/match-edit.component";
 import { AdminAclManagementComponent } from './admin/admin-acl-management/admin-acl-management.component';
 import { UpdateRolesComponent } from "./admin/admin-acl-management/update-roles/update-roles.component";
 import { ManageTeamViewComponent } from './admin/manage-team/manage-team-view/manage-team-view.component';
@@ -29,14 +29,14 @@ import { NoAccessComponent } from "./pages/no-access/no-access.component";
 import { SessionTimeoutComponent } from "./pages/session-timeout/session-timeout.component";
 import { CalendarViewComponent } from "./pages/calendar-view/calendar-view.component";
 import { EventLargeComponent } from "./pages/calendar-view/event-large/event-large.component";
-import { SetDeadlineComponent } from "./admin/match-management/set-deadline/set-deadline.component";
+import { SetDeadlineComponent } from "./admin/match-admin/set-deadline/set-deadline.component";
 import { UserMessageCenterComponent } from "./pages/messageCenter/user-message-center/user-message-center.component";
 import { TeamMarketComponent } from "./marketplace/team-market/team-market.component";
 import { UserMarketplaceComponent } from "./marketplace/user-marketplace/user-marketplace.component";
-import { GenerateSeasonComponent } from "./admin/match-management/generate-season/generate-season.component";
-import { TournamentGeneratorComponent } from "./admin/match-management/tournament-generator/tournament-generator.component";
+import { GenerateSeasonComponent } from "./admin/match-admin/generate-season/generate-season.component";
+import { TournamentGeneratorComponent } from "./admin/match-admin/tournament-generator/tournament-generator.component";
 import { ReplayBrowserComponent } from "./pages/replay-browser/replay-browser.component";
-
+import { GenerateNonSeasonalSchedulesComponent } from "./admin/match-admin/generate-non-seasonal-schedules/generate-non-seasonal-schedules.component";
 import { EventCreateComponent } from './admin/events/event-create/event-create.component';
 import { EventListComponent } from './admin/events/event-list/event-list.component';
 import { StaticHtmlLoaderComponent } from './static-html-loader/static-html-loader.component';
@@ -59,7 +59,7 @@ import { GrandFinalGeneratorComponent } from './admin/grand-final-generator/gran
 import { GrandChampionsViewerComponent } from "./pages/grand-champions-viewer/grand-champions-viewer.component";
 import { RankRequirementsComponent } from './admin/rank-requirements/set-rank-requirements/rank-requirements.component';
 import { ValidateRankComponent } from './admin/rank-requirements/validate-rank/validate-rank.component';
-import { DeleteTournamentComponent } from './admin/match-management/delete-tournament/delete-tournament.component';
+import { DeleteTournamentComponent } from './admin/match-admin/delete-tournament/delete-tournament.component';
 import { PlayerSearchComponent } from './pages/player-search/player-search.component';
 import { CasterReportComponent } from './pages/caster-report/caster-report.component';
 import { AdminYoutubeCurator } from "./admin/caster/admin-youtube-curator/admin-youtube-curator.component";
@@ -77,7 +77,8 @@ const APP_ROUTES: Routes = [
   { path: "login", component: LoginComponent },
   {
     path:'playersearch',
-    component:PlayerSearchComponent
+    component:PlayerSearchComponent,
+    canActivate: [AuthGuardService],
   },
   {
     path: "rules",
@@ -113,7 +114,7 @@ const APP_ROUTES: Routes = [
   { path: "allTeams", component: AllTeamsComponent },
   { path: "pastSeasons", component: PastSeasonsComponent },
   { path: "grandchamps", component: GrandChampionsViewerComponent },
-  { path: "teamCreate", component: CreateTeamComponent },
+  { path: "teamCreate", component: CreateTeamComponent,canActivate: [AuthGuardService], },
   {
     path: "division/:division",
     component: DivisionComponent,
@@ -239,6 +240,12 @@ const APP_ROUTES: Routes = [
     data: { role: "schedulegen" },
   },
   {
+    path: "_admin/nonSeasonScheduleGenerator",
+    component: GenerateNonSeasonalSchedulesComponent,
+    canActivate: [AuthGuardService],
+    data: { role: "schedulegen" },
+  },
+  {
     path: "_admin/deleteTournament",
     component: DeleteTournamentComponent,
     canActivate: [AuthGuardService],
@@ -269,7 +276,10 @@ const APP_ROUTES: Routes = [
     data: { role: "event" },
   },
   { path: "schedule/scheduleMatch/:id", component: MatchSchedulerComponent },
-  { path: "reporting/:id", component: ReportingComponent }, //accepts team name as url parameter
+  { path: "reporting/:id", component: ReportingComponent,
+    canActivate: [AuthGuardService],
+    // data:{role:"captain"}
+  }, //accepts team name as url parameter
   {
     path: "_admin/dashboard",
     component: DashboardComponent,
