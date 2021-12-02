@@ -16,6 +16,7 @@ const teamLogoDelete = require('../methods/teamLogoUpload').teamLogoDelete;
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 const notesMethods = require('../methods/notes/notes');
 const { commonResponseHandler } = require('../commonResponseHandler');
+const TeamMethods = require('../methods/team/teamCommon');
 
 
 //returns the lists of users who are awaiting admin attention to complete the team join process
@@ -1100,6 +1101,13 @@ router.post('/team/memberAdd',
 
         });
     });
+
+//admin get team info
+router.get('/team/get', (req, res) => {
+    const path = '/admin/team/uploadLogo';
+    TeamMethods.getTeamBy(req, res);
+
+});  
 
 //returns a list of all teams!
 router.post('/team/uploadLogo', passport.authenticate('jwt', {

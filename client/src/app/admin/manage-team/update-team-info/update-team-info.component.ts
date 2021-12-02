@@ -143,7 +143,7 @@ export class UpdateTeamInfoComponent implements OnInit {
       ? this.returnedProfile.teamName
       : this.originalName;
     if (teamToGet) {
-      this.team.getTeam(teamToGet).subscribe(
+      this.admin.getTeam(teamToGet).subscribe(
         res => {
           if (!res.questionnaire) {
             res.questionnaire = {};
