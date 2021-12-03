@@ -136,7 +136,13 @@ async function playerSeasonFinalize() {
             let count = 0;
             found.forEach(player => {
                 let save = false;
-
+                
+                //set player to not LFG
+                if(player.lookingForGroup){
+                    save = true;
+                    player.lookingForGroup = false;
+                }
+                
                 //archive the replays in the user object (this just moves them in the obj)
                 if (player.replays && player.replays.length > 0) {
                     let tO = {
