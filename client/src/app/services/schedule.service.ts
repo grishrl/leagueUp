@@ -219,7 +219,6 @@ export class ScheduleService {
 
     return this.timeService.getSesasonInfo().pipe(
       switchMap((res) => {
-        console.log(res);
         let payload = {
           season: res["data"]["value"],
         };

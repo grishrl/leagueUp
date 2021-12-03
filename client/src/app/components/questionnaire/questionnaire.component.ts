@@ -71,7 +71,7 @@ export class QuestionnaireComponent implements OnInit {
       );
     }
 
-    this.team.getTeamQuestionnaire(this.passedTeam._id).subscribe((res) => {
+    this.teamService.getTeamQuestionnaire(this.passedTeam._id).subscribe((res) => {
       let questionnaire = res;
       if (
         questionnaire != null &&

@@ -571,8 +571,8 @@ router.post('/fetch/matches/team', async(req, res) => {
             });
         } else {
 
-            response.status = 500
-            response.message = utils.returnMessaging(req.originalUrl, 'Failed to get team matches')
+            response.status = 400
+            response.message = utils.returnMessaging(req.originalUrl, 'No matches found.')
         }
 
         return response;

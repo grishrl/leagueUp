@@ -13,6 +13,7 @@ const {
     requireOneInput,
     returnInvalidInputsMessage
 } = require('../../commonResponseHandler');
+const utils = require('../../utils');
 
 const degenerate = [
     'withdrawn',
@@ -88,12 +89,13 @@ async function getCptId(cptName) {
  * @returns {Array.<object>}
  */
 function removeRegistrationInfo(teamsArray){
-    return teamsArray.forEach(
+    teamsArray.forEach(
         team=>{
             let registrationStatus = team.questionnaire.registered;
             team.questionnaire = {registered:registrationStatus};
         }
     )
+    return teamsArray;
 }
 
 /**
@@ -130,7 +132,7 @@ async  function getTeamBy(req, res) {
           foundTeam => {
             foundTeam = foundTeam ? foundTeam : {};
             if(!admin){
-                let registrationStatus = foundTeam.questionnaire.registered;
+                let registrationStatus = utils.returnByPath(foundTeam, 'questionnaire.registration');
                 foundTeam.questionnaire = {registered:registrationStatus};
             }
             response.status = 200;
