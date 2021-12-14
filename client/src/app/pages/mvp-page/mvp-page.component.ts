@@ -11,8 +11,8 @@ import { PageEvent } from '@angular/material/paginator';
 export class MvpPageComponent implements OnInit {
   constructor(private mvpService: MvpService, private timeService:TimeService) {
             this.timeService.getSesasonInfo().subscribe((res) => {
-              this.currentSeason = res.data["value"];
-              this.selectedSeason = res.data["value"];
+              this.currentSeason = res.value;
+              this.selectedSeason = res.value;
               for (let i = 9; i <= this.currentSeason; i++) {
                 this.seasonDropdown.push(i);
               }

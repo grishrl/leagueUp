@@ -26,7 +26,6 @@ export class ReportingComponent implements OnInit {
 
     this.timeService.getSesasonInfo().subscribe(
       res => {
-        console.log(res);
         this.currentSeason = res.value;
         this.ngOnInit();
       }

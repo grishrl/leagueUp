@@ -198,7 +198,7 @@ export class QuestionnaireComponent implements OnInit {
       if (this.source == "admin") {
         this.registrationOpen = true;
       } else {
-        this.registrationOpen = res["data"].registrationOpen;
+        this.registrationOpen = res.registrationOpen;
       }
     });
   }
