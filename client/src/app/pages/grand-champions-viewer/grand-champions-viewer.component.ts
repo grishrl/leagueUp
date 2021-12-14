@@ -21,7 +21,7 @@ export class GrandChampionsViewerComponent implements OnInit {
     private timeServ: TimeService
   ) {
     this.timeServ.getSesasonInfo().subscribe((res) => {
-      this.currentSeason = res.data.value;
+      this.currentSeason = res.value;
       this.lastSeason = this.currentSeason - 1;
       this.selectedSeason = this.lastSeason;
       for (var i = 1; i < this.currentSeason; i++) {

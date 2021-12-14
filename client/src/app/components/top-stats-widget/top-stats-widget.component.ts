@@ -14,7 +14,7 @@ export class TopStatsWidgetComponent implements OnInit {
   offSeason:boolean = false;
   constructor(private hp: HeroesProfileService, public user: UserService, private timeService:TimeService) {
             this.timeService.getSesasonInfo().subscribe(res => {
-              if (Date.now() < res["data"].seasonStartDate) {
+              if (Date.now() < res.seasonStartDate) {
                 this.offSeason = true;
               }
               // this.seasonStartDate = ;

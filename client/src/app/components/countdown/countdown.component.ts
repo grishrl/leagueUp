@@ -23,9 +23,9 @@ export class CountdownComponent implements OnInit {
     private auth:AuthService
   ) {
     this.timeService.getSesasonInfo().subscribe((res) => {
-      this.seasonStartDate = res["data"].seasonStartDate;
-      this.registrationEndDate = res["data"].registrationEndDate;
-      this.registrationOpen = res["data"].registrationOpen;
+      this.seasonStartDate = res.seasonStartDate;
+      this.registrationEndDate = res.registrationEndDate;
+      this.registrationOpen = res.registrationOpen;
       this.ngOnInit();
     });
   }

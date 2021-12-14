@@ -40,7 +40,7 @@ export class AdminYoutubeCurator implements OnInit {
 
     this.timeService.getSesasonInfo().subscribe(
       res => {
-        this.seasonValue = res.data['value'];
+        this.seasonValue = res.value;
         console.warn(this.seasonValue);
       }
     )

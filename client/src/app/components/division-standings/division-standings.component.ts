@@ -15,7 +15,7 @@ export class DivisionStandingsComponent implements OnInit {
   offSeason:boolean=false;
   constructor(private standingsService: StandingsService, public team: TeamService, private auth: AuthService, private DivisionService: DivisionService, private timeService:TimeService) {
         this.timeService.getSesasonInfo().subscribe(res => {
-          if(Date.now() < res["data"].seasonStartDate ){
+          if(Date.now() < res.seasonStartDate ){
             this.offSeason=true;
           }
           // this.seasonStartDate = ;

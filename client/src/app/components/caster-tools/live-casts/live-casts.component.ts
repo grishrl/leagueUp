@@ -22,7 +22,7 @@ export class LiveCastsComponent implements OnInit {
     private timeService: TimeService
   ) {
     this.timeService.getSesasonInfo().subscribe((res) => {
-      this.currentSeason = res.data["value"];
+      this.currentSeason = res.value;
       this.initSchedule();
     });
   }

@@ -20,8 +20,8 @@ export class MatchResultsHeaderComponent implements OnInit {
     private timeService: TimeService
   ) {
     this.timeService.getSesasonInfo().subscribe((res) => {
-      this.seasonVal = res.data.value;
-      this.timeVal = res.data.value;
+      this.seasonVal = res.value;
+      this.timeVal = res.value;
       this.init();
     });
   }

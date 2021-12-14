@@ -35,7 +35,7 @@ async function getSeasonInfo(season) {
                     return 1;
                 }
             });
-            return found[0]
+            return found[0].data;
         },
         err => {
             return null;

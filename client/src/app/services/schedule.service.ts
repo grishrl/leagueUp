@@ -37,7 +37,7 @@ export class ScheduleService {
     return this.timeService.getSesasonInfo().pipe(
       switchMap((res) => {
         let payload = {
-          season: res["data"]["value"],
+          season: res["value"],
         };
         return this.httpService.httpGet(url, [payload]);
       })
@@ -220,7 +220,7 @@ export class ScheduleService {
     return this.timeService.getSesasonInfo().pipe(
       switchMap((res) => {
         let payload = {
-          season: res["data"]["value"],
+          season: res["value"],
         };
         if (sort) {
           payload["sortOrder"] = sort;
@@ -244,7 +244,7 @@ export class ScheduleService {
     return this.timeService.getSesasonInfo().pipe(
       switchMap((res) => {
         let payload = {
-          season: res["data"]["value"],
+          season: res["value"],
           division: division,
         };
         return this.httpService.httpPost(url, payload, showSnack);
