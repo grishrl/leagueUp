@@ -8,19 +8,18 @@ import { TeamService } from 'src/app/services/team.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 
 @Component({
-  selector: 'app-generate-non-seasonal-schedules',
-  templateUrl: './generate-non-seasonal-schedules.component.html',
-  styleUrls: ['./generate-non-seasonal-schedules.component.css']
+  selector: "app-generate-non-seasonal-schedules",
+  templateUrl: "./generate-non-seasonal-schedules.component.html",
+  styleUrls: ["./generate-non-seasonal-schedules.component.css"],
 })
 export class GenerateNonSeasonalSchedulesComponent implements OnInit {
-
   constructor(
     private adminService: AdminService,
     private standingsService: StandingsService,
     private admin: AdminService,
     private team: TeamService,
     private utils: UtilitiesService
-  ) { }
+  ) {}
 
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
@@ -33,7 +32,7 @@ export class GenerateNonSeasonalSchedulesComponent implements OnInit {
 
   fetching = false;
 
-    tournTypes = [
+  tournTypes = [
     {
       type: "single elimination",
       display: "Single Elim",
@@ -60,10 +59,9 @@ export class GenerateNonSeasonalSchedulesComponent implements OnInit {
     Validators.pattern("^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$"),
   ]);
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
-    revealAllTeams() {
+  revealAllTeams() {
     this.standings = [];
     this.fetching = true;
     this.admin.getTeams().subscribe(
@@ -82,18 +80,19 @@ export class GenerateNonSeasonalSchedulesComponent implements OnInit {
     this.showAll = !this.showAll;
   }
 
-   selectedFromList(team) {
+  selectedFromList(team) {
     this.tournamentSeed.push(team);
-    let ind = this.teamInd(this.displayArray,team);
-    this.displayArray.splice(ind,1);
+    let ind = this.teamInd(this.displayArray, team);
+    this.displayArray.splice(ind, 1);
   }
 
-    remove(item) {
-
-    let removedTeam = this.tournamentSeed.splice(this.teamInd(this.tournamentSeed, item), 1);
+  remove(item) {
+    let removedTeam = this.tournamentSeed.splice(
+      this.teamInd(this.tournamentSeed, item),
+      1
+    );
     this.filterTeams(null);
-
-    }
+  }
 
   reset() {
     this.tournamentSeed = [];
@@ -111,7 +110,7 @@ export class GenerateNonSeasonalSchedulesComponent implements OnInit {
       filterName != null &&
       filterName != undefined &&
       filterName.length != 0
-    )  {
+    ) {
       this.filteredArray = [];
       this.allTeams.forEach((element) => {
         if (
@@ -122,29 +121,25 @@ export class GenerateNonSeasonalSchedulesComponent implements OnInit {
           this.filteredArray.push(element);
         }
       });
-
-    }else{
+    } else {
       this.filteredArray = this.allTeams.slice();
     }
 
-    this.filteredArray.forEach(
-      (filterEle, indexA)=>{
-        let teamIndex = -1;
-        this.tournamentSeed.forEach( (tournListEle, indexB)=>{
-
-          if(tournListEle.teamName_lower == filterEle.teamName_lower){
-            teamIndex = indexA;
-          }
-
-        })
-        if(teamIndex > -1){
-          this.filteredArray.splice(teamIndex,1);
+    this.filteredArray.forEach((filterEle, indexA) => {
+      let teamIndex = -1;
+      this.tournamentSeed.forEach((tournListEle, indexB) => {
+        if (tournListEle.teamName_lower == filterEle.teamName_lower) {
+          teamIndex = indexA;
         }
-      })
+      });
+      if (teamIndex > -1) {
+        this.filteredArray.splice(teamIndex, 1);
+      }
+    });
 
-      this.length = this.filteredArray.length;
-      this.displayArray = this.filteredArray.slice(0, 10);
-      this.paginator.firstPage();
+    this.length = this.filteredArray.length;
+    this.displayArray = this.filteredArray.slice(0, 10);
+    this.paginator.firstPage();
   }
 
   pageEventHandler(pageEvent: PageEvent) {
@@ -157,7 +152,7 @@ export class GenerateNonSeasonalSchedulesComponent implements OnInit {
     this.displayArray = this.filteredArray.slice(i, endSlice);
   }
 
-    disableGenerate() {
+  disableGenerate() {
     let disable = true;
     if (
       this.tournamentSeed.length > 3 &&
@@ -170,7 +165,7 @@ export class GenerateNonSeasonalSchedulesComponent implements OnInit {
     return disable;
   }
 
-    teamInd(arr, team) {
+  teamInd(arr, team) {
     let ind = -1;
     arr.forEach((element, index) => {
       if (team.teamName == element.teamName) {
@@ -180,7 +175,7 @@ export class GenerateNonSeasonalSchedulesComponent implements OnInit {
     return ind;
   }
 
-    drop(event: CdkDragDrop<string[]>) {
+  drop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(
         event.container.data,
@@ -197,34 +192,40 @@ export class GenerateNonSeasonalSchedulesComponent implements OnInit {
     }
   }
 
+  typeSelected(type){
+
+
+    // something will go here eventually
+
+    console.log(type);
+
+  };
+
   generateBrackets() {
-    console.log('you clicked it');
+    console.log("you clicked it");
 
-    if(this.eventType == 'roundrobin'){
-
-    }else if(this.eventType == 'tournament'){
-
-    //   this.adminService
-    //     .generateTournament(
-    //       this.tournamentSeed,
-    //       this.season,
-    //       this.name,
-    //       null,
-    //       null,
-    //       this.description,
-    //       this.selectedType
-    //     )
-    //     .subscribe(
-    //       (res) => {
-    //         this.ngOnInit();
-    //       },
-    //       (err) => {
-    //         console.warn(err);
-    //       }
-    //     );
-
-    }else{
-      alert('How\'d you do this?');
+    if (this.eventType == "roundrobin") {
+    } else if (this.eventType == "tournament") {
+      //   this.adminService
+      //     .generateTournament(
+      //       this.tournamentSeed,
+      //       this.season,
+      //       this.name,
+      //       null,
+      //       null,
+      //       this.description,
+      //       this.selectedType
+      //     )
+      //     .subscribe(
+      //       (res) => {
+      //         this.ngOnInit();
+      //       },
+      //       (err) => {
+      //         console.warn(err);
+      //       }
+      //     );
+    } else {
+      alert("How'd you do this?");
     }
     // if(this.divisional){
     //   this.adminService
@@ -268,6 +269,4 @@ export class GenerateNonSeasonalSchedulesComponent implements OnInit {
     //     );
     // }
   }
-
-
 }

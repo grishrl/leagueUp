@@ -3,13 +3,12 @@ import { NgModule, Injector, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './pages/home/home.component';
-
+import { InputFormMaterial } from "./classes/aM-input-Import.class";
 import { AppRoutingModule } from './app.Routes';
 import { NavComponent } from './nav/nav.component';
 import { LoginComponent } from './pages/login/login.component';
 import { ResponseInterceptor } from './services/token-interceptor.service';
 import { PlayerProfile } from './pages/player-profile-page/player-profile-page.component';
-import { InputFormMaterial } from './classes/aM-input-Import.class';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TeamProfileComponent } from './pages/team-profile-page/team-profile-page.component';

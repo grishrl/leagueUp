@@ -36,7 +36,7 @@ import { UserMarketplaceComponent } from "./marketplace/user-marketplace/user-ma
 import { GenerateSeasonComponent } from "./admin/match-admin/generate-season/generate-season.component";
 import { TournamentGeneratorComponent } from "./admin/match-admin/tournament-generator/tournament-generator.component";
 import { ReplayBrowserComponent } from "./pages/replay-browser/replay-browser.component";
-import { GenerateNonSeasonalSchedulesComponent } from "./admin/match-admin/generate-non-seasonal-schedules/generate-non-seasonal-schedules.component";
+// import { GenerateNonSeasonalSchedulesComponent } from "./admin/match-admin/generate-non-seasonal-schedules/generate-non-seasonal-schedules.component";
 import { EventCreateComponent } from './admin/events/event-create/event-create.component';
 import { EventListComponent } from './admin/events/event-list/event-list.component';
 import { StaticHtmlLoaderComponent } from './static-html-loader/static-html-loader.component';
@@ -239,12 +239,12 @@ const APP_ROUTES: Routes = [
     canActivate: [AuthGuardService],
     data: { role: "schedulegen" },
   },
-  {
-    path: "_admin/nonSeasonScheduleGenerator",
-    component: GenerateNonSeasonalSchedulesComponent,
-    canActivate: [AuthGuardService],
-    data: { role: "schedulegen" },
-  },
+  // {
+  //   path: "_admin/nonSeasonScheduleGenerator",
+  //   component: GenerateNonSeasonalSchedulesComponent,
+  //   canActivate: [AuthGuardService],
+  //   data: { role: "schedulegen" },
+  // },
   {
     path: "_admin/deleteTournament",
     component: DeleteTournamentComponent,
