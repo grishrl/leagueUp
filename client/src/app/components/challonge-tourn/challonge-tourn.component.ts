@@ -14,7 +14,7 @@ export class ChallongeTournComponent implements OnInit {
   constructor(private utils:UtilitiesService, private scheduleService:ScheduleService, private timeService:TimeService) {
     this.timeService.getSesasonInfo().subscribe(
       res=>{
-        this.currentSeason = res['value'];
+        this.currentSeason = res.value;
       }
     );
    }

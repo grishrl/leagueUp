@@ -497,19 +497,22 @@ router.post('/fetch/matches/team', async(req, res) => {
         let pastSeason = false;
 
         let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+        console.log(currentSeasonInfo);
         pastSeason = season != currentSeasonInfo.value;
 
         team = team.toLowerCase();
         let foundTeam;
         if (pastSeason) {
+            console.log('111');
             foundTeam = await archiveMethods.getTeamFromArchiveByNameSeason(team, season);
         } else {
+            console.log('zzz');
             foundTeam = await Team.findOne({
                 teamName_lower: team
-            }).then((foundTeam) => {
-                if (foundTeam) {
-                    return foundTeam;
-
+            }).then((fT) => {
+                console.log('ft',fT);
+                if (fT) {
+                    return fT;
                 } else {
                     return null;
                 }
@@ -517,6 +520,8 @@ router.post('/fetch/matches/team', async(req, res) => {
                 return null;
             });
         }
+
+        console.log('foundTeam', foundTeam);
 
         if (foundTeam) {
 
@@ -571,8 +576,8 @@ router.post('/fetch/matches/team', async(req, res) => {
             });
         } else {
 
-            response.status = 500
-            response.message = utils.returnMessaging(req.originalUrl, 'Failed to get team matches')
+            response.status = 400
+            response.message = utils.returnMessaging(req.originalUrl, 'No matches found.')
         }
 
         return response;

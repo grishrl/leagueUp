@@ -102,7 +102,7 @@ export class DivisionComponent implements OnInit, OnChanges, OnDestroy {
     this.teamAggregate=[];
     this.divDisplay = new Division();
     this.timeService.getSesasonInfo().subscribe(res => {
-      this.currentSeason = res['value'];
+      this.currentSeason = res.value;
     });
     this.divSub = this.division.getDivision(this.param).subscribe((res) => {
       if(res!=undefined&&res!=null){

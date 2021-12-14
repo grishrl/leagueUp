@@ -101,7 +101,7 @@ export class TeamResultsTilesComponent implements OnInit, OnChanges {
       this.getTeamMatches(this.seasonVal, this.teamVal);
     } else {
       this.timeService.getSesasonInfo().subscribe((res) => {
-        let currentSeason = res["value"];
+        let currentSeason = res.value;
         this.getTeamMatches(currentSeason, this.teamVal);
       });
     }

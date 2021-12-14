@@ -87,7 +87,7 @@ export class TeamProfileComponent implements OnInit, OnDestroy {
       }
     });
         this.timeService.getSesasonInfo().subscribe((res) => {
-          this.registrationOpen = res["data"].registrationOpen;
+          this.registrationOpen = res.registrationOpen;
         });
 
   }

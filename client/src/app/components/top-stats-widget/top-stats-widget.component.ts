@@ -14,7 +14,7 @@ export class TopStatsWidgetComponent implements OnInit {
   offSeason:boolean = false;
   constructor(private hp: HeroesProfileService, public user: UserService, private timeService:TimeService) {
             this.timeService.getSesasonInfo().subscribe(res => {
-              if (Date.now() < res["data"].seasonStartDate) {
+              if (Date.now() < res.seasonStartDate) {
                 this.offSeason = true;
               }
               // this.seasonStartDate = ;
@@ -224,7 +224,7 @@ export class TopStatsWidgetComponent implements OnInit {
           this.hp.getTopStats(this.currStat.stat).subscribe(
             (res) => {
               if (res) {
-                let object = res.data;
+                let object = res.data.list;
                 _forEach(object, (value, key) => {
                   let tO = {};
 

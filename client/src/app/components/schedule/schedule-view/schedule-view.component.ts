@@ -32,7 +32,7 @@ export class ScheduleViewComponent implements OnInit, OnChanges {
     }
     else {
       this.timeService.getSesasonInfo().subscribe(res => {
-        this.currentSeason = res['value'];
+        this.currentSeason = res.value;
         let week = this.timeService.returnWeekNumber();
         if (week > 0) {
           this.selectedRound = week;

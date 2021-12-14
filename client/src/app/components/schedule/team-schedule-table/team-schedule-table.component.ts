@@ -20,7 +20,7 @@ export class TeamScheduleTableComponent implements OnInit, OnChanges {
     public util:UtilitiesService, private standingsService:StandingsService, private Auth:AuthService,
     private router:Router, private timeService:TimeService) {
     this.timeService.getSesasonInfo().subscribe(res => {
-      this.currentSeason = res['value'];
+      this.currentSeason = res.value;
     });;
     }
 
@@ -32,7 +32,7 @@ export class TeamScheduleTableComponent implements OnInit, OnChanges {
   initTeamSchedule(teamName){
     this.timeService.getSesasonInfo().subscribe(
         res => {
-          this.currentSeason = res['value'];
+          this.currentSeason = res.value;
           this.scheduleService.getTeamSchedules(this.currentSeason, teamName).subscribe(
             res => {
               let matches = res;

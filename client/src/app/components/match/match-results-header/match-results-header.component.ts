@@ -19,9 +19,9 @@ export class MatchResultsHeaderComponent implements OnInit {
     public team: TeamService,
     private timeService: TimeService
   ) {
-    this.timeService.getSesasonInfo().subscribe((time) => {
-      this.seasonVal = time.value;
-      this.timeVal = time.value;
+    this.timeService.getSesasonInfo().subscribe((res) => {
+      this.seasonVal = res.value;
+      this.timeVal = res.value;
       this.init();
     });
   }

@@ -20,7 +20,7 @@ async function getSeasonInfo(season) {
                 'dataName': 'seasonInfo'
             },
             {
-                'value': season
+                'data.value': season
             }
         ];
     } else {
@@ -29,13 +29,13 @@ async function getSeasonInfo(season) {
     let seasonInfoObj = await System.system.find(query).lean().then(
         found => {
             found = found.sort((a, b) => {
-                if (a.value > b.value) {
+                if (a.data.value > b.data.value) {
                     return -1;
                 } else {
                     return 1;
                 }
             });
-            return found[0]
+            return found[0].data;
         },
         err => {
             return null;

@@ -124,13 +124,13 @@ async function cupDivStanding(division, season) {
 
     let schedQuery = {
         '$and': [{
-                'division': division
+                'data.division': division
             },
             {
-                'season': season
+                'data.season': season
             },
             {
-                'type': 'tournament'
+                'data.type': 'tournament'
             }
         ]
     };
@@ -147,8 +147,8 @@ async function cupDivStanding(division, season) {
         });
         if (standingsData) {
             //go through the standings data all ready compiled; //if the tournament has been compiled all ready remove it from the list to check now
-            if (standingsData.data.parsedTournaments) {
-                standingsData.data.parsedTournaments.forEach(parsed => {
+            if (standingsData.data.standings.parsedTournaments) {
+                standingsData.data.standings.parsedTournaments.forEach(parsed => {
                     if (tournamentIds.indexOf(parsed) > -1) {
                         tournamentIds.splice(tournamentIds.indexOf(parsed), 1);
                     }
@@ -181,10 +181,10 @@ async function cupDivStanding(division, season) {
                 //check if the tournament is closed and complete..
                 if (tourn.state == 'complete') {
                     //add this tournament id to our standings info object so it wont be compiled next time
-                    if (standingsData.data.parsedTournaments) {
-                        standingsData.data.parsedTournaments.push(tourn.id)
+                    if (standingsData.data.standings.parsedTournaments) {
+                        standingsData.data.standings.parsedTournaments.push(tourn.id)
                     } else {
-                        standingsData.data.parsedTournaments = [tourn.id];
+                        standingsData.data.standings.parsedTournaments = [tourn.id];
                     }
 
                     //loop through the participants; if the participant earned rank points; calculate them and add them to the standings
@@ -203,13 +203,13 @@ async function cupDivStanding(division, season) {
                                         points: pts
                                     }
                                     //check if this participant had a score in the database all ready
-                                let exists = returnObjectForKeyMatch(standingsData.data.points, 'teamName', part.name);
+                                let exists = returnObjectForKeyMatch(standingsData.data.standings.points, 'teamName', part.name);
                                 if (exists) {
                                     //if so add the scores together
                                     exists.points += exists.points;
                                 } else {
                                     //if not add the participant to the standings
-                                    standingsData.data.points.push(obj);
+                                    standingsData.data.standings.points.push(obj);
                                 }
                             }
                         }
@@ -218,8 +218,8 @@ async function cupDivStanding(division, season) {
             });
 
             //if we had some points from compilation assign them to the return value
-            if (standingsData.data.points) {
-                returnStanding = standingsData.data.points;
+            if (standingsData.data.standings.points) {
+                returnStanding = standingsData.data.standings.points;
             }
 
             //update the standings info object
@@ -360,8 +360,10 @@ async function stdDivStanding(division, season, pastSeason, noDeltas) {
 
             //retrieve data from db of stored standings
             let query = {
-                dataName: `${division.divisionConcat}`,
-                season: season
+                $and: [
+                    { dataName: `${division.divisionConcat}` },
+                    { 'data.season': season }
+                ]
             }
 
             //pull saved standings data from the database
@@ -381,7 +383,7 @@ async function stdDivStanding(division, season, pastSeason, noDeltas) {
             try {
 
                 if (data) {
-                    _.forEach(data.data, (oldDataV, oldDataK) => {
+                    _.forEach(data.data.standings, (oldDataV, oldDataK) => {
                         let storedStanding = oldDataV;
                         _.forEach(standings, (standingV, standingK) => {
                             let calcStanding = standingV;

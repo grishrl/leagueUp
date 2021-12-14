@@ -1,11 +1,10 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { TeamService } from '../../services/team.service';
-import { merge, forEach as _forEach, includes as _includes } from 'lodash';
-import { UtilitiesService } from '../../services/utilities.service';
-import { AuthService } from '../../services/auth.service';
-import { TimeService } from '../../services/time.service';
-import { PlayerRankService } from '../../services/player-rank.service';
-
+import { Component, OnInit, Input } from "@angular/core";
+import { TeamService } from "../../services/team.service";
+import { merge, forEach as _forEach, includes as _includes } from "lodash";
+import { UtilitiesService } from "../../services/utilities.service";
+import { AuthService } from "../../services/auth.service";
+import { TimeService } from "../../services/time.service";
+import { PlayerRankService } from "../../services/player-rank.service";
 
 @Component({
   selector: "app-questionnaire",
@@ -29,35 +28,14 @@ export class QuestionnaireComponent implements OnInit {
 
   @Input() source;
 
+  // this component needs to be reworked to make a call to get questionnaire info
+
   @Input() set team(_team) {
     if (_team != undefined || _team != null) {
       this.passedTeam = _team;
 
       //timing must be right to have team members; so we dont get false red X
-          if (this.passedTeam.teamMembers && this.passedTeam.teamMembers.length>0){
-            this.playerRank
-              .getReportingCount(this.passedTeam.teamMembers)
-              .subscribe(
-                (res) => {
-                  if (res.reported == this.passedTeam.teamMembers.length) {
-                    this.ranksVerified = true;
-                  }
-                },
-                (err) => {
-                  console.warn(err);
-                }
-              );
-          }
-
-      if (_team.questionnaire != null && _team.questionnaire != undefined) {
-        this.responses = _team.questionnaire;
-        if (
-          _team.questionnaire.pickedMaps != null &&
-          _team.questionnaire.pickedMaps != undefined
-        ) {
-          this.pickedMaps = _team.questionnaire.pickedMaps;
-        }
-      }
+      this.initQuestionnaire();
     }
   }
 
@@ -78,6 +56,37 @@ export class QuestionnaireComponent implements OnInit {
   };
 
   selectedMap: string;
+
+  private initQuestionnaire() {
+    if (this.passedTeam.teamMembers && this.passedTeam.teamMembers.length > 0) {
+      this.playerRank.getReportingCount(this.passedTeam.teamMembers).subscribe(
+        (res) => {
+          if (res.reported == this.passedTeam.teamMembers.length) {
+            this.ranksVerified = true;
+          }
+        },
+        (err) => {
+          console.warn(err);
+        }
+      );
+    }
+
+    this.teamService.getTeamQuestionnaire(this.passedTeam._id).subscribe((res) => {
+      let questionnaire = res;
+      if (
+        questionnaire != null &&
+        questionnaire != undefined
+      ) {
+        this.responses = questionnaire;
+        if (
+          questionnaire.pickedMaps != null &&
+          questionnaire.pickedMaps != undefined
+        ) {
+          this.pickedMaps = questionnaire.pickedMaps;
+        }
+      }
+    });
+  }
 
   checkTeamMates() {
     if (this.passedTeam && this.passedTeam.teamMembers) {
@@ -185,7 +194,7 @@ export class QuestionnaireComponent implements OnInit {
 
   ngOnInit() {
     this.timeService.getSesasonInfo().subscribe((res) => {
-      this.seasonNumber = res["value"];
+      this.seasonNumber = res.value;
       if (this.source == "admin") {
         this.registrationOpen = true;
       } else {

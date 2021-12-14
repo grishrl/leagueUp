@@ -22,7 +22,7 @@ export class TimeService {
   returnWeekNumber(){
     if(this.localInfo){
       let now = Date.now();
-      let difference = now - this.localInfo.data.seasonStartDate;
+      let difference = now - this.localInfo.seasonStartDate;
       let weeks = difference / this.weekMS;
       return Math.ceil(weeks);
     }else{
@@ -48,7 +48,7 @@ export class TimeService {
   init() {
     this.cacheCall.subscribe(
       res=>{
-        this.localInfo = res;
+        this.localInfo = res.data;
       }
     )
   }

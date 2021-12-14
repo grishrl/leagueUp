@@ -62,7 +62,7 @@ export class DivisionResultsTilesComponent implements OnInit {
       this.rounds = this.util.calculateRounds(this.provDiv);
     } else {
       this.timeService.getSesasonInfo().subscribe((res) => {
-        this.currentSeason = res["value"];
+        this.currentSeason = res.value;
         this.rounds = this.util.calculateRounds(this.provDiv);
       });
     }

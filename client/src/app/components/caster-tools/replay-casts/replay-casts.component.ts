@@ -14,7 +14,7 @@ export class ReplayCastsComponent implements OnInit {
   unCastedMatches;
   constructor(private timeService:TimeService, private scheduleService:ScheduleService, private util:UtilitiesService) {
         this.timeService.getSesasonInfo().subscribe((res) => {
-          this.currentSeason = res["value"];
+          this.currentSeason = res.value;
           this.initSchedule();
         });
    }

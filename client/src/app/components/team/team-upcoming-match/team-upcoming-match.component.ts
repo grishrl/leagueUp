@@ -15,7 +15,7 @@ export class TeamUpcomingMatchComponent implements OnInit {
   constructor(private scheduleService:ScheduleService, public util:UtilitiesService, public teamServ:TeamService, private timeService:TimeService) {
     this.timeService.getSesasonInfo().subscribe(
       res => {
-        this.currentSeason = res['value'];
+        this.currentSeason = res.value;
       }
     );
    }

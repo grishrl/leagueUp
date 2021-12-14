@@ -100,6 +100,11 @@ export class TeamService {
     return this.httpService.httpPost(url, team, true);
   }
 
+  getTeamQuestionnaire(teamId){
+    let url = '/team/questionnaire';
+    return this.httpService.httpGet(url,[{teamId}]);
+  }
+
   //saves team questionnaire
   saveTeamQuestionnaire(team, questionnaire) {
     let url = '/team/questionnaire/save';

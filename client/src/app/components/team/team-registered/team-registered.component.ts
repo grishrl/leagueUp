@@ -15,7 +15,7 @@ export class TeamRegisteredComponent implements OnInit {
 
     this.TimeServ.getSesasonInfo().subscribe(
       res=>{
-        this.registrationOpen = res['data'].registrationOpen;
+        this.registrationOpen = res.registrationOpen;
         this.ngOnInit();
       }
     );

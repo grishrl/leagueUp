@@ -143,6 +143,10 @@ export class AuthService {
     localStorage.removeItem('token');
   }
 
+  decryptToken(){
+    return this.helper.decodeToken(localStorage.getItem('token'));
+  }
+
   //user methods:
   setUser(user){
     localStorage.setItem('userName',user);

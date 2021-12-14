@@ -3,6 +3,8 @@ import { map } from 'rxjs/operators';
 import { HttpService } from './http.service';
 import { Team } from '../classes/team.class';
 import { FilterService } from '../services/filter.service';
+import { SpecialCharactersService } from './special-characters.service';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: "root",
@@ -10,7 +12,8 @@ import { FilterService } from '../services/filter.service';
 export class AdminService {
   constructor(
     private httpService: HttpService,
-    private FS: FilterService
+    private FS: FilterService,
+    private charServ: SpecialCharactersService
   ) {}
 
   //uploads team logo
@@ -60,6 +63,34 @@ export class AdminService {
       teamName: team,
     };
     return this.httpService.httpPost(url, payload, true);
+  }
+
+    //returns requested team
+  getTeam(name?:string, ticker?:string, id?:string):Observable<any>{
+    let url = 'admin/team/get';
+    let params = [];
+    if(name){
+      let encodededID = encodeURIComponent(this.realTeamName(name));
+      params.push({ team: encodededID });
+    }
+    if(ticker){
+      params.push({ ticker: ticker });
+    }
+    if (id) {
+      let encodededID = encodeURIComponent(id);
+      params.push({ teamId: encodededID });
+    }
+    return this.httpService.httpGet(url, params);
+  };
+
+    //returns team name re formatted with spaces
+  realTeamName(teamname):string{
+    if (teamname != null && teamname != undefined) {
+      return this.charServ.reverse(teamname)
+    } else {
+      return '';
+    }
+
   }
 
   //returns a list of all teams

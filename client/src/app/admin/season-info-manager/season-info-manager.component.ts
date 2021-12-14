@@ -27,8 +27,8 @@ export class SeasonInfoManagerComponent implements OnInit {
         }else{
           alert("If you create an entry greater than the current season; it will override the current season!")
           this.editSeason = {
-            value:this.selectedSeason,
             data:{
+              'value':this.selectedSeason,
               'seasonStartDate':null,
               'seasonEndDate':null,
               'registrationOpen':false,

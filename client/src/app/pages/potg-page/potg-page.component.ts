@@ -16,8 +16,8 @@ export class PotgPageComponent implements OnInit {
     private util:UtilitiesService
   ) {
                 this.timeService.getSesasonInfo().subscribe((res) => {
-                  this.currentSeason = res["value"];
-                  this.selectedSeason = res["value"];
+                  this.currentSeason = res.value;
+                  this.selectedSeason = res.value;
                   for (let i = 9; i <= this.currentSeason; i++) {
                     this.seasonDropdown.push(i);
                   }

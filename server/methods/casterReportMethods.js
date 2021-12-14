@@ -153,6 +153,7 @@ async function generateCastReportData() {
     const season = currentSeasonInfo.value;
     const reportedMatches = await getMatches.returnReportedMatches(season);
     const teamData = await getRegisteredTeams();
+
     const report = uncasted(teamData, reportedMatches);
     const casterReports = await CasterReport.CasterReport.find({ season: season });
 

@@ -10,7 +10,8 @@ const replayScheam = new Schema({
     "futureAssociated": Boolean,
     "leagueStats": Boolean,
     "systemId": String,
-    "season": Number
+    "season": Number,
+    "archiveId": String
 }, {
     strict: false,
     useNestedStrict: false

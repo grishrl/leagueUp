@@ -40,6 +40,122 @@ if (api) {
 }
 
 
+function updateSystemSchema() {
+    const factory = {};
+
+    factory.doNotCopy = ['_id', 'span', 'stat', 'value'];
+    factory.okObjects = ['youtubeReport'];
+    factory.objects = [];
+    factory.keepKeys = ['_id', 'dataName', 'data'];
+    factory.runMore = false;
+    factory.perPage = 50;
+    factory.page = 0;
+    factory.getObjects = function() {
+        System.system.find().limit(this.perPage).skip(this.page*this.perPage).then(
+            (found) => {
+                this.objects = this.objects.concat(found);
+                if (found.length == this.perPage) {
+                    this.page++;
+                    this.getObjects();
+                }else{
+                    console.log('might be done');
+                    console.log('zz', this.objects);
+                    console.log('ll', this.objects.length);
+                    this.updateObjects();
+                }
+            }
+        )
+    }
+
+    factory.updateObjects = function() {
+        this.objects.forEach(
+            item => {
+                let object = util.objectify(item);
+                // let keys = Object.keys(object);
+                let dataName = object.dataName;
+                if (this.okObjects.indexOf(dataName) == -1) {
+                    if (dataName == 'TopStatList') {
+                        let tDat = object.data;
+                        let newDat = {};
+                        newDat.span = object.span;
+                        object.span = undefined;
+                        item.span = undefined;
+                        delete item.span;
+                        item.set('span', undefined);
+                        newDat.stat = object.stat;
+                        object.stat = undefined;
+                        item.stat = undefined;
+                        delete item.stat;
+                        item.set('stat', undefined);
+                        newDat.list = tDat;
+                        object.data = newDat;
+                        
+                    } else if (dataName == 'leagueRunningFunStats') {
+                        object.data.span = object.span;
+                        object.span = undefined;
+                        item.span = undefined;
+                        delete item.span;
+                        item.set('span', undefined);
+                    } else if (dataName == 'apiKey') {
+                        object.data = {};
+                        object.data.value = object.value;
+                        object.value = undefined;
+                        delete item.value;
+                        item.set('value', undefined);
+                    } else if (dataName == 'seasonInfo') {
+                        object.data.value = object.value;
+                        item.value = undefined;
+                        delete item.value;
+                        item.set('value', undefined);
+                        object.value = undefined;
+                    } else if (object.season) {
+                        let tDat = object.data ? object.data : [];
+                        let newDat = {};
+                        newDat.standings = tDat;
+                        newDat.season = object.season;
+                        object.data = newDat;
+                        object.season = undefined;
+                        item.season = undefined;
+                        item.set('season', undefined);
+                        delete item.season;
+                    }
+                }
+
+                Object.keys(object).forEach(
+                    key=>{
+                        item[key]=object[key];
+                    }
+                );
+
+                            item.save().then(
+                                r => {
+                                    console.log('saved');
+                                },
+                                e => {
+                                    console.log('save failed');
+                                }
+                            );
+            });
+
+
+
+            console.log(this.objects);
+    }
+
+    factory.report = function(){
+        console.log(this.objects);
+    }
+
+    factory.run = function(){
+        this.getObjects();
+    }
+
+    return factory;
+}
+
+let factoryInstance = updateSystemSchema();
+factoryInstance.run();
+
 
 //!!!!!!!!!!!!!!!!!!!!!!! API KEY GENERATOR  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // new System.system({
@@ -58,7 +174,7 @@ if (api) {
 
 
 //9-1-2021 Caster report testing..
-CasterReportWorker();
+// CasterReportWorker();
 
 //8-18-2021 vod curator testing...
 

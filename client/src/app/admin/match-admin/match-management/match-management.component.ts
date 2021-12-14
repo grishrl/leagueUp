@@ -43,7 +43,7 @@ export class MatchManagementComponent implements OnInit, AfterViewInit {
       this.divisions = res;
       this.timeService.getSesasonInfo().subscribe(
         res => {
-          this.currentSeason = res['value'];
+          this.currentSeason = res.value;
           this.scheduleService.getScheduleMatches(this.currentSeason, null, null).subscribe(
             (sched) => {
               this.originalMatches = sched;

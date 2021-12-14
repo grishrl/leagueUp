@@ -79,7 +79,7 @@ export class DivisionTournamentResultsTilesComponent implements OnInit, OnChange
     if (!this.seasonVal) {
       this.timeService.getSesasonInfo().subscribe(
         res => {
-          this.seasonVal = res['value'];
+          this.seasonVal = res.value;
           this.getTournamentInfo();
         }
       );

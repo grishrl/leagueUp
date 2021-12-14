@@ -47,6 +47,18 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="row mt-2" *ngIf="grandFinalMatch.length>0">
+                                                <div class="col">
+                                                    <h4>Grand Final:</h4>
+
+                                                        <div class="row" *ngFor="let match of grandFinalMatch">
+                                                            <div class="col">
+                                                                <app-reporting-deck [match]="match"></app-reporting-deck>
+                                                            </div>
+                                                        </div>
+
+                                                </div>
+                                            </div>
                                         </div>
 
                                     </ng-template>
