@@ -521,8 +521,6 @@ router.post('/fetch/matches/team', async(req, res) => {
             });
         }
 
-        console.log('foundTeam', foundTeam);
-
         if (foundTeam) {
 
             let teamId = foundTeam._id;

@@ -394,8 +394,6 @@ async function associationTriage() {
                     }
                 )
 
-                // console.log('homeTeam ', homeTeam);
-                // console.log('awayTeam ', awayTeam);
                 assignHomeOrAway(homeTeam, awayTeam, team1obj);
                 assignHomeOrAway(homeTeam, awayTeam, team2obj);
 
@@ -517,7 +515,7 @@ async function asscoatieReplays() {
         for (var i = 0; i < parsedReplays.length; i++) {
             console.log(' associating replay ', i + 1, ' of ', parsedReplays.length);
             var replay = parsedReplays[i];
-            // console.log(replay);
+
             var replayObj = replay.toObject();
             let players = replayObj.players;
             let playerTags = [];
@@ -567,7 +565,7 @@ async function asscoatieReplays() {
                     if (!thisUser.toonHandle) {
                         thisUser.toonHandle = getToonHandle(playerTagsAndToonHandle, thisUser.displayName);
                     }
-                    // console.log('replay.systemId ', replayObj.systemId);
+                 
                     if (thisUser.replays) {
                         if (thisUser.replays.indexOf(replayObj.systemId) == -1) {
                             thisUser.replays.push(replayObj.systemId);
@@ -582,10 +580,10 @@ async function asscoatieReplays() {
                     }
                     thisUser.save().then(
                         saved => {
-                            // console.log('saved user!')
+                            
                         },
                         err => {
-                            // console.log('err!');
+                            
                         })
                     console.log('associatedCount user: ', thisUser.displayName, associatedCount)
                 }
@@ -621,10 +619,10 @@ async function asscoatieReplays() {
                     }
                     team.save().then(
                         saved => {
-                            // console.log('team saved!');
+                            
                         },
                         err => {
-                            // console.log('err');
+                            
                         }
                     )
                     console.log('associatedCount team: ', team.teamName, associatedCount)
@@ -657,10 +655,10 @@ async function asscoatieReplays() {
                     replayToSave.markModified('futureAssociated');
                     replayToSave.save().then(
                         saved => {
-                            // console.log('replay saved');
+                            
                         },
                         err => {
-                            // console.log('err');
+                            
                         }
                     )
                 }
