@@ -23,6 +23,7 @@ export class UserSearchComponent implements OnInit {
   cantClick:boolean = false;
 
   disableButton:boolean = false;
+  @Input() filterSelf = true;
 
   @Output() userSelected = new EventEmitter();
 
@@ -101,7 +102,11 @@ export class UserSearchComponent implements OnInit {
   }
 
   ngOnInit(){
-    this.usersToFilter.push(this.Auth.getUser());
+
+    if(this.filterSelf){
+      this.usersToFilter.push(this.Auth.getUser());
+    }
+
     setInterval(()=>{
       if(this.unresolved){
           this.users.userSearch(this.userCtrl.value, this.userSearchType).subscribe(res => {

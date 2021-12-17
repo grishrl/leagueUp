@@ -9,7 +9,7 @@
     <div class="panel-box p-3">
         <div class="row">
             <div class="col">
-                <app-user-search (userSelected)="receiveUser($event)" [buttonText]="'Select User For Management'"></app-user-search>
+                <app-user-search (userSelected)="receiveUser($event)" [filterSelf]="false" [buttonText]="'Select User For Management'"></app-user-search>
             </div>
             <div class="col">
                 <div class="row" *ngIf="turnOnForm">
