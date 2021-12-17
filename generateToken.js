@@ -23,7 +23,7 @@ mongoose.connect(process.env.mongoURI, () => {
 
 let tokenObject = {};
 // set this ID to the _id that the API key will be tied to
-tokenObject.id = "60ddff203070414c13d74468";
+tokenObject.id = "5c4524d0f3614c0017235167";
 
 //set this to false to create a std JWToken for API calls, or true for an API key :)
 //to remind you; the api key will only work in instances that are set to validate it IE it will fail jwt because
@@ -38,6 +38,8 @@ if (api) {
         expiresIn: '7d'
     });
 }
+
+console.log('token',token);
 
 
 function updateSystemSchema() {
@@ -153,8 +155,8 @@ function updateSystemSchema() {
     return factory;
 }
 
-let factoryInstance = updateSystemSchema();
-factoryInstance.run();
+// let factoryInstance = updateSystemSchema();
+// factoryInstance.run();
 
 
 //!!!!!!!!!!!!!!!!!!!!!!! API KEY GENERATOR  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

@@ -855,8 +855,6 @@ router.get('/questionnaire', passport.authenticate('jwt', {
 }), (req, res) => {
   const path = '/team/questionnaire';
 
-  try {
-
     let teamId = req.query.teamId;
 
 
@@ -874,14 +872,14 @@ router.get('/questionnaire', passport.authenticate('jwt', {
           captainOrAdmin = true;
         }
         if (!captainOrAdmin) {
-          captainOrAdmin = !!callingUser.adminLevel['TEAM'];
+          captainOrAdmin = utils.returnBoolByPath(callingUser, 'adminLevel.TEAM');
         }
         if (captainOrAdmin) {
           foundTeam = utils.objectify(foundTeam);
           let questionnaire = foundTeam.questionnaire;
           res.status(200).send(utils.returnMessaging(req.originalUrl, 'team found', false, questionnaire, null));
         } else {
-          res.status(403).send(util.returnMessaging(path, "User not authorized for this info.", false, null, null));
+          res.status(403).send(utils.returnMessaging(path, "User not authorized for this info.", false, null, null));
         }
 
       } else {
@@ -890,10 +888,9 @@ router.get('/questionnaire', passport.authenticate('jwt', {
 
     }, err => {
       res.status(500).send(utils.returnMessaging(req.originalUrl, 'error querying team', err, null, null));
-    })
-  } catch (e) {
-    res.status(500).send(utils.returnMessaging(req.originalUrl, 'Internal Server Error', e));
-  }
+    }).catch(e=>{
+      res.status(500).send(utils.returnMessaging(req.originalUrl, 'Internal Server Error', e));
+    });
 
 });
 

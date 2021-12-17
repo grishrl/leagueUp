@@ -497,20 +497,16 @@ router.post('/fetch/matches/team', async(req, res) => {
         let pastSeason = false;
 
         let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
-        console.log(currentSeasonInfo);
         pastSeason = season != currentSeasonInfo.value;
 
         team = team.toLowerCase();
         let foundTeam;
-        if (pastSeason) {
-            console.log('111');
+        if (pastSeason) {            
             foundTeam = await archiveMethods.getTeamFromArchiveByNameSeason(team, season);
         } else {
-            console.log('zzz');
             foundTeam = await Team.findOne({
                 teamName_lower: team
             }).then((fT) => {
-                console.log('ft',fT);
                 if (fT) {
                     return fT;
                 } else {
