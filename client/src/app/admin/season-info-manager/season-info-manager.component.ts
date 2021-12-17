@@ -21,19 +21,20 @@ export class SeasonInfoManagerComponent implements OnInit {
 
     this.timeservice.getSpecificSeason(this.selectedSeason).subscribe(
       res=>{
+        console.log(res);
           if(res){
             this.showWarning = false;
             this.editSeason = res;
         }else{
           alert("If you create an entry greater than the current season; it will override the current season!")
           this.editSeason = {
-            data:{
+            // data:{
               'value':this.selectedSeason,
               'seasonStartDate':null,
               'seasonEndDate':null,
               'registrationOpen':false,
               'registrationEndDate':null
-            }
+            // }
           }
           this.showWarning = true;
         }
@@ -51,8 +52,8 @@ export class SeasonInfoManagerComponent implements OnInit {
 
   save(){
 
-    if(this.editSeason.data.registrationOpen === null){
-      this.editSeason.data.registrationOpen = false;
+    if(this.editSeason.registrationOpen === null){
+      this.editSeason.registrationOpen = false;
     }
     if(this.showWarning){
       let pass =confirm('You might be over-riding the current active season! \n Are you sure?');

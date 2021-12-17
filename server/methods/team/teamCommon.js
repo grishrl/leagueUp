@@ -130,11 +130,17 @@ async  function getTeamBy(req, res) {
 
         return teamQuery(optionalParameters).then(
           foundTeam => {
-            foundTeam = foundTeam ? foundTeam : {};
-            if(!admin){
-                let registrationStatus = utils.returnByPath(foundTeam, 'questionnaire.registration');
-                foundTeam.questionnaire = {registered:registrationStatus};
+            if(foundTeam){
+                            if (!admin) {
+                                let registrationStatus = utils.returnByPath(foundTeam, 'questionnaire.registration');
+                                foundTeam.questionnaire = {
+                                    registered: registrationStatus
+                                };
+                            }
+            }else{
+                foundTeam = {};
             }
+
             response.status = 200;
             response.message = utils.returnMessaging(req.originalUrl, 'Found team', false, foundTeam);
             return response;

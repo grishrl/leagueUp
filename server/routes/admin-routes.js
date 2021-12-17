@@ -11,16 +11,18 @@ router.post('/upsertSeasonInfo', passport.authenticate('jwt', {
 
     const path = '/admin/upsertSeasonInfo';
 
-    let season = parseInt(req.body.value);
+    let seasonInfoObj = req.body;
+
+    console.log('seasonInfoObj', seasonInfoObj);
 
     try {
-        season = util.validateInputs.number(season);
+        seasonInfoObj = util.validateInputs.object(seasonInfoObj);
 
-        if (season.valid) {
+        if (seasonInfoObj.valid) {
             let logObj = {};
             logObj.actor = '/upsertSeasonInfo';
             logObj.action = 'upserting season info';
-            logObj.target = 'System table: season info :' + season.value;
+            logObj.target = 'System table: season info :' + seasonInfoObj.value.value;
             logObj.logLevel = 'STD';
             logObj.timeStamp = Date.now();
 
@@ -29,19 +31,13 @@ router.post('/upsertSeasonInfo', passport.authenticate('jwt', {
                         'dataName': 'seasonInfo'
                     },
                     {
-                        'data.value': season.value
+                        'data.value': seasonInfoObj.value.value
                     }
                 ]
             };
             let postedInfo = {
                 'dataName': 'seasonInfo',
-                'data': {
-                    'value': season.value,
-                    'registrationOpen': req.body.data.registrationOpen,
-                    'seasonStartDate': req.body.data.seasonStartDate,
-                    'seasonEndDate': req.body.data.seasonEndDate,
-                    'registrationEndDate': req.body.data.registrationEndDate,
-                }
+                'data': seasonInfoObj.value
             };
 
             System.system.findOneAndUpdate(
@@ -63,10 +59,11 @@ router.post('/upsertSeasonInfo', passport.authenticate('jwt', {
 
             message += 'value (number) is required!';
 
-            res.status(500).send(utils.returnMessaging(path, message));
+            res.status(500).send(util.returnMessaging(path, message));
         }
     } catch (e) {
-        utils.errLogger(path, e);
+        console.log(e);
+        util.errLogger(path, e);
         res.status(500).send(util.returnMessaging(path, 'Internal Server Error', e));
     }
 

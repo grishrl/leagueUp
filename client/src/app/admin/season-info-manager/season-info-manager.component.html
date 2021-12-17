@@ -16,7 +16,7 @@
                     </mat-select>
                 </div>
             </div>
-            <div *ngIf="editSeason && editSeason.data">
+            <div *ngIf="editSeason">
                 <div class="row">
                     <div class="col text-center">
                         <h5>Selected Season Info:</h5>
@@ -31,7 +31,7 @@
                 </div>
                 <div class="row">
                     <div class="col text-center">
-                        <mat-checkbox [(ngModel)]="editSeason.data.registrationOpen">
+                        <mat-checkbox [(ngModel)]="editSeason.registrationOpen">
                             Registration Open</mat-checkbox>
                     </div>
                 </div>
@@ -40,7 +40,7 @@
                         <div>
                             Registration Close Date:
                         </div>
-                        <app-date-picker [(date)]="editSeason.data.registrationEndDate"></app-date-picker>
+                        <app-date-picker [(date)]="editSeason.registrationEndDate"></app-date-picker>
                     </div>
                 </div>
                 <div class="row">
@@ -48,7 +48,7 @@
                         <div>
                             Season Start Date:
                         </div>
-                        <app-date-picker [(date)]="editSeason.data.seasonStartDate">
+                        <app-date-picker [(date)]="editSeason.seasonStartDate">
                         </app-date-picker>
                     </div>
                 </div>
@@ -57,7 +57,7 @@
                         <div>
                             Season End Date:
                         </div>
-                        <app-date-picker [(date)]="editSeason.data.seasonEndDate"></app-date-picker>
+                        <app-date-picker [(date)]="editSeason.seasonEndDate"></app-date-picker>
                     </div>
                 </div>
                 <div class="row">
