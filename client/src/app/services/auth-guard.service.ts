@@ -13,12 +13,24 @@ export class AuthGuardService implements CanActivate {
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
 
+
     let token = this.auth.decryptToken();
     let tokenExp = token.exp*1000;
 
     if(Date.now() < tokenExp){
 
+      // validating token only, good token foward along route.
+    if(next.data.role == 'tokenonly'){
+      return true;
+    }
+
+    if(next.data.role == 'captain'){
+      return !!this.auth.getCaptain();
+    }
+
+    // caster route gaurd
     if (next.data.role == 'caster'){
+
       if(this.auth.getCaster()){
         return true;
       }

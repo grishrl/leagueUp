@@ -114,7 +114,11 @@ const APP_ROUTES: Routes = [
   { path: "allTeams", component: AllTeamsComponent },
   { path: "pastSeasons", component: PastSeasonsComponent },
   { path: "grandchamps", component: GrandChampionsViewerComponent },
-  { path: "teamCreate", component: CreateTeamComponent,canActivate: [AuthGuardService], },
+  { path: "teamCreate",
+    component: CreateTeamComponent,
+    canActivate: [AuthGuardService],
+    data:{role:'tokenonly'}
+  },
   {
     path: "division/:division",
     component: DivisionComponent,
@@ -276,9 +280,11 @@ const APP_ROUTES: Routes = [
     data: { role: "event" },
   },
   { path: "schedule/scheduleMatch/:id", component: MatchSchedulerComponent },
-  { path: "reporting/:id", component: ReportingComponent,
+  {
+    path: "reporting/:id",
+    component: ReportingComponent,
     canActivate: [AuthGuardService],
-    // data:{role:"captain"}
+    data:{role:"tokenonly"}
   }, //accepts team name as url parameter
   {
     path: "_admin/dashboard",
