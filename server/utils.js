@@ -356,9 +356,9 @@ function errLogger(location, err, add) {
     // err = JSON.stringify(err);
     let errLog = `Log @ ${location} : `;
 
-    if (err.name && err.message) {
-        errLog += ` ${err.name} : ${err.message} `
-    }
+    // if (err.name && err.message) {
+    //     errLog += ` ${err.name} : ${err.message} `
+    // }
 
     if (add) {
         errLog += `\n Additonal Message: ${add}`;
