@@ -383,10 +383,10 @@ async function calcLeagueStats(replay) {
 
     if (overall) {
         _.forEach(objectiveInfo, (value, key) => {
-            if (util.returnBoolByPath(overall.data.totals, key)) {
-                overall.data.totals[key] += value;
+            if (util.returnBoolByPath(overall.data, key)) {
+                overall.data[key] += value;
             } else {
-                overall.data.totals[key] = value;
+                overall.data[key] = value;
             }
         });
 
@@ -400,10 +400,10 @@ async function calcLeagueStats(replay) {
     } else {
         let newObj = {
             dataName: "leagueRunningFunStats",
-            data: { span: "overall", totals: {} }
+            data: { span: "overall" }
         }
         _.forEach(objectiveInfo, (value, key) => {
-            newObj.data.totals[key] = value;
+            newObj.data[key] = value;
         });
 
         overallSave = await new System(newObj).save().then(
@@ -434,10 +434,10 @@ async function calcLeagueStats(replay) {
 
     if (season) {
         _.forEach(objectiveInfo, (value, key) => {
-            if (util.returnBoolByPath(season.data.totals, key)) {
-                season.data.totals[key] += value;
+            if (util.returnBoolByPath(season.data, key)) {
+                season.data[key] += value;
             } else {
-                season.data.totals[key] = value;
+                season.data[key] = value;
             }
         });
 
@@ -459,7 +459,7 @@ async function calcLeagueStats(replay) {
             }
         }
         _.forEach(objectiveInfo, (value, key) => {
-            newObj.data.totals[key] = value;
+            newObj.data[key] = value;
         });
 
         seasonSave = await new System(newObj).save().then(

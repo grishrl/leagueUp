@@ -15,6 +15,7 @@ const fs = require('fs');
 const UserSub = require('./server/subroutines/user-subs');
 const testing = require('./server/workers/vods-playlist-curator');
 const CasterReportWorker = require('./server/workers/write-caster-report');
+const StatsJobs = require('./server/cron-routines/stats-routines');
 
 // connect to mongo db
 mongoose.connect(process.env.mongoURI, () => {
@@ -39,7 +40,7 @@ if (api) {
     });
 }
 
-console.log('token',token);
+// console.log('token',token);
 
 
 function updateSystemSchema() {
@@ -155,6 +156,16 @@ function updateSystemSchema() {
     return factory;
 }
 
+
+
+    StatsJobs.leagueStatRunner().then(
+        sucuess => {
+            console.log('fun stats calced');
+        },
+        err => {
+            console.log('fun stats failed calc', err);
+        }
+    );
 // let factoryInstance = updateSystemSchema();
 // factoryInstance.run();
 
