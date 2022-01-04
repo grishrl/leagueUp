@@ -322,8 +322,8 @@
 
                         <!-- Tab Two - squad -->
                         <div class="tab-pane pb-3" [ngClass]="{'active': index==1}" *ngIf="index==1">
-                            <div>
-                                <app-members [teamProfile]=" returnedProfile "></app-members>
+                            <div *ngIf="returnedProfile.teamMembers.length>0">
+                                <app-members [teamProfile]="returnedProfile"></app-members>
                                 <div class="row ">
                                     <div class="col ">
                                         <h6>History</h6>

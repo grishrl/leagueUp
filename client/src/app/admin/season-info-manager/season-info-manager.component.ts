@@ -21,7 +21,6 @@ export class SeasonInfoManagerComponent implements OnInit {
 
     this.timeservice.getSpecificSeason(this.selectedSeason).subscribe(
       res=>{
-        console.log(res);
           if(res){
             this.showWarning = false;
             this.editSeason = res;

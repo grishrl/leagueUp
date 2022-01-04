@@ -6,6 +6,8 @@ import { AuthService } from 'src/app/services/auth.service';
 import { TeamService } from 'src/app/services/team.service';
 import { ConfirmRemoveMemberComponent } from '../../../modal/confirm-remove-member/confirm-remove-member.component';
 import { EventEmitter } from '@angular/core';
+import { PlayerRankService } from 'src/app/services/player-rank.service';
+import { TimeService } from 'src/app/services/time.service';
 
 @Component({
   selector: 'app-player-small-card',
@@ -14,7 +16,8 @@ import { EventEmitter } from '@angular/core';
 })
 export class PlayerSmallCardComponent implements OnInit {
 
-  constructor(public user: UserService, private Auth: AuthService, private team: TeamService, public dialog: MatDialog) { }
+  constructor(public user: UserService, private Auth: AuthService, private team: TeamService,
+    public dialog: MatDialog, private prServ: PlayerRankService, private timeServ:TimeService) { }
 
   _captain;
   @Input() set captain(val){
@@ -31,24 +34,33 @@ export class PlayerSmallCardComponent implements OnInit {
     }
   }
 
+  @Input() showVerifiedRankings = false;
 
   @Input() showTeamLink = false;
+
+  iAmMe = false;
 
   player: Profile = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,null);
   matches = 0;
   initPlayer(){
+
+
+
     this.user.getUser(this.displayName).subscribe(
       res=>{
         if(res){
+          this.iAmMe = res.displayName == this.Auth.getUser();
           let count = 0;
           if(res.replayArchive && res.replayArchive.length>0){
             res.replayArchive.forEach(arch=>{
               count+=arch.replays.length;
             })
           }
+          this.initRankVerification(res);
           count+=res.replays.length;
           this.matches=count;
         }
+
         this.player=res;
 
       },
@@ -97,11 +109,9 @@ export class PlayerSmallCardComponent implements OnInit {
   }
 
   removeMember(player) {
-
     if(player && this._teamName){
       this.team.removeUser(player, this._teamName).subscribe(
         (res) => {
-
           //if the user left the group, destroy their team local info so they can carry on
           if (this.Auth.getUser() == player) {
             this.Auth.destroyTeam();
@@ -114,8 +124,7 @@ export class PlayerSmallCardComponent implements OnInit {
         }
       )
     }
-
-    }
+  }
 
   showLeave() {
     let ret = false;
@@ -136,6 +145,32 @@ export class PlayerSmallCardComponent implements OnInit {
   @Input() set playerID(val) {
     this.displayName = val;
     this.initPlayer();
+  }
+
+  allRequiredRanks = true;
+  initRankVerification(profile){
+    this.prServ.getRequiredRanks().subscribe(
+      reqRank=>{
+        if (profile.verifiedRankHistory.length > 0) {
+                  reqRank.data.forEach((rrEle) => {
+                    if (rrEle.required) {
+                      profile.verifiedRankHistory.forEach((profEle) => {
+                        if (
+                          profEle.year == rrEle.year &&
+                          profEle.season == rrEle.season
+                        ) {
+                          if (profEle.status != "verified") {
+                            this.allRequiredRanks = false;
+                          }
+                        }
+                      });
+                    }
+                  });
+        } else {
+          this.allRequiredRanks = false;
+        }
+      }
+    )
   }
 
   ngOnInit() {

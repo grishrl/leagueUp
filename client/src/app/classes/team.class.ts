@@ -15,7 +15,7 @@ export class Team {
   captain: string;
   history: Array<history>;
   teamMMRAvg: number; //added to display
-  teamMembers: [{ displayName: string }]; //added to display
+  teamMembers: Array<Object>; //added to display
   pendingMembers: [{ displayName: string }];
   invitedUsers: Array<any>;
   questionnaire: questionnaire;
@@ -134,7 +134,7 @@ export class Team {
     if (teamMembers != null && teamMembers != undefined) {
       this.teamMembers = teamMembers;
     } else {
-      this.teamMembers = null;
+      this.teamMembers = [];
     }
     if (pendingMembers != null && pendingMembers != undefined) {
       this.pendingMembers = pendingMembers;

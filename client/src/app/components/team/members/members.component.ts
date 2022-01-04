@@ -13,7 +13,7 @@ export class MembersComponent implements OnInit {
   teamMembers=[];
   profile;
   @Input() set teamProfile(val){
-    // console.log('team members - val', val);
+
     this.teamMembers.length = 0;
     if(val){
 

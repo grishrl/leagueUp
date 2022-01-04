@@ -82,7 +82,9 @@ export class TeamProfileComponent implements OnInit, OnDestroy {
         if (this.route.snapshot.queryParams["tab"]){
           this.setTab(this.route.snapshot.queryParams["tab"]);
         }
+        this.resetTeamProfile();
         // this.index = this.route.snapshot.queryParams['tab'];
+
         this.initProfile();
       }
     });
@@ -94,6 +96,27 @@ export class TeamProfileComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(){
     this.routerWatch.unsubscribe();
+  }
+
+  resetTeamProfile(){
+    this.returnedProfile = new Team(
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    );
   }
 
 
@@ -155,7 +178,8 @@ export class TeamProfileComponent implements OnInit, OnDestroy {
   //init implementation
   ngOnInit() {
     this.disabled = true;
-    this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+    this.resetTeamProfile();
+    // this.returnedProfile = new Team(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
   }
 
@@ -249,6 +273,7 @@ export class TeamProfileComponent implements OnInit, OnDestroy {
       //if we received a profile; the component is embedded:
       // this.componentEmbedded = true;
       this.disabled = false;
+
       this.initProfile();
     }
   }
@@ -299,7 +324,7 @@ export class TeamProfileComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
       if (result != null && result != undefined) {
         this.admin.changeCaptain(this.returnedProfile.teamName_lower, result).subscribe((res) => {
-          this.returnedProfile = null;
+          this.resetTeamProfile();
           this.returnedProfile = res;
         }, (err) => {
           console.warn(err);
@@ -542,6 +567,7 @@ export class TeamProfileComponent implements OnInit, OnDestroy {
 
   //method to get team by provided string
   private getTeamByString(getProfile: string, caller) {
+
     this.team.getTeam(getProfile).subscribe((res) => {
       merge(this.returnedProfile, res);
       this.setUpTeamMemberFilter(this.returnedProfile);

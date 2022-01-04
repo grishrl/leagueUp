@@ -1,16 +1,21 @@
 import { Injectable } from '@angular/core';
+import { CacheService } from './cache.service';
 import { HttpService } from './http.service';
 
 @Injectable({
   providedIn: "root",
 })
 export class PlayerRankService {
-  constructor(private http: HttpService) {}
+  constructor(private http: HttpService, private cacheServ:CacheService) {}
 
+  private REQRANK_CACHEKEY = 'reqRank';
   getRequiredRanks() {
     let url = "playerrank/get/required";
     const payload = {};
-    return this.http.httpGet(url, payload);
+    return this.cacheServ.getCached(
+      this.REQRANK_CACHEKEY,
+      this.http.httpGet(url, payload)
+    );
   }
 
   upsertRequiredRanks(reqRanks) {

@@ -13,20 +13,24 @@
             <span *ngIf="_captain == displayName">Captain</span>
         </h4>
         <ul>
-            <li><strong>MATCHES:</strong> <span>{{matches}}</span></li>
+            <li><strong>Matches:</strong> <span>{{matches}}</span></li>
             <li><strong>Seasons:</strong> <span>{{player.seasonsPlayed}}</span></li>
+            <li  *ngIf="showVerifiedRankings && (iAmMe || showRemove())">
+              <strong>Ranks Verified:</strong>
+              <span>
+                <i *ngIf="allRequiredRanks" class="far fa-check-circle text-success"></i>
+                <i *ngIf="!allRequiredRanks" class="fas fa-ban text-danger"></i>
+              </span>
+          </li>
         </ul>
     </div>
     <app-player-link [player]="player.displayName">
         <span class="btn">View Player <i class="fa fa-angle-right" aria-hidden="true"></i></span>
     </app-player-link>
     <div class="mt-1" *ngIf="showTeamLink && player.teamName">
-
         <app-team-link [team]="player.teamName">
-            <span class="btn">Team
-                        Profile <i class="fa fa-angle-right" aria-hidden="true"></i></span>
+            <span class="btn">Team Profile <i class="fa fa-angle-right" aria-hidden="true"></i></span>
         </app-team-link>
-
     </div>
     <div class="row mt-1" *ngIf="showRemove()">
         <div class="col">
