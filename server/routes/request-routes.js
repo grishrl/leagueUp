@@ -429,7 +429,9 @@ router.post('/user/join/response', passport.authenticate('jwt', {
             }).then((foundTeam) => {
                 if (foundTeam) {
                     var cont = true;
-                    let pendingMembers = utils.returnByPath(foundTeam, 'pendingMembers')
+                    let pendingMembers = utils.returnByPath(foundTeam, 'pendingMembers');
+                    
+                    // the user was all ready invited to the team
                     if (pendingMembers && cont) {
                         pendingMembers.forEach(function(member) {
                             if (member.displayName == payloadMemberToAdd) {
@@ -442,6 +444,7 @@ router.post('/user/join/response', passport.authenticate('jwt', {
                             }
                         });
                     }
+                    // the user was all ready a team member
                     let currentMembers = utils.returnByPath(foundTeam, 'teamMembers');
                     if (currentMembers && cont) { //current members
                         currentMembers.forEach(function(member) {
@@ -455,24 +458,27 @@ router.post('/user/join/response', passport.authenticate('jwt', {
                             }
                         });
                     }
+
                     if (cont) {
+
                         return User.findOne({
                             displayName: payloadMemberToAdd
                         }).then((foundUser) => {
                             if (foundUser) {
                                 //double check that the user has not been added to another team in the mean time
                                 if (foundUser.pendingTeam || !utils.isNullorUndefined(foundUser.teamName) || !utils.isNullorUndefined(foundUser.teamId)) {
-
                                     logObj.logLevel = "ERROR";
                                     logObj.error = 'User was all ready on a team or pending team'
                                     response.status = 400;
                                     response.message = utils.returnMessaging(path, "User was all ready on a team or pending team", false, foundUser, null, logObj);
                                     return response;
                                 } else {
+                                    //make sure team has a pendingMembers array..
                                     if (!utils.returnBoolByPath(foundTeam.toObject(), 'pendingMembers')) {
                                         foundTeam.pendingMembers = [];
                                     }
 
+                                    //add user to the pending members..
                                     let fuid = foundUser._id.toString()
                                     foundTeam.pendingMembers.push({
                                         "id": fuid,
@@ -483,7 +489,6 @@ router.post('/user/join/response', passport.authenticate('jwt', {
                                     foundTeam.invitedUsers.splice(foundTeam.invitedUsers.indexOf(foundUser.displayName), 1);
 
                                     return foundTeam.save().then((saveOK) => {
-
 
                                         deleteOutstandingRequests(foundUser._id);
                                         UserSub.togglePendingTeam(foundUser.displayName);
@@ -503,7 +508,7 @@ router.post('/user/join/response', passport.authenticate('jwt', {
 
                                             },
                                             err => {
-
+                                                console.log('err @ request-routes ln:511')   
                                             }
                                         );
                                         Message.findByIdAndDelete(messageId);
@@ -520,25 +525,47 @@ router.post('/user/join/response', passport.authenticate('jwt', {
                                     });
                                 }
 
+                            }else{
+                                logObj.logLevel = 'ERROR';
+                                response.status = 500;
+                                response.message = utils.returnMessaging(path, "error adding user to team", teamSaveErr, null, null, logObj);
+                                return response;
                             }
                         }, (err) => {
 
                             response.status = 500;
                             response.message = utils.returnMessaging(path, "error finding user", err, null, null, logObj);
                             return response;
-                        })
+                        }).catch((e) => {
+                            //catch any errors...
+                            console.log(e);
+                            logObj.logLevel = 'ERROR';
+                            logObj.error = 'Error-002';
+                            response.status = 500;
+                            response.message = utils.returnMessaging(path, "ERROR-002", false, null, null, logObj);
+                            return response;
+                        });
                     }
 
                 } else {
-
+                    // team wasnt found return error
                     logObj.logLevel = 'ERROR';
                     logObj.error = 'team was not found';
                     response.status = 500;
                     response.message = utils.returnMessaging(path, "team was not found!", false, null, null, logObj);
                     return response;
                 }
+            }).catch((e)=>{
+                //catch any errors...
+                console.log(e);
+                logObj.logLevel = 'ERROR';
+                logObj.error = 'Error-001';
+                response.status = 500;
+                response.message = utils.returnMessaging(path, "ERROR-001", false, null, null, logObj);
+                return response;
             });
         } else {
+            //remove the user from invited users of team and save..
             Team.findOne({
                 teamName_lower: payloadTeamName
             }).then(
@@ -555,6 +582,7 @@ router.post('/user/join/response', passport.authenticate('jwt', {
                     utils.errLogger(path, err);
                 }
             )
+            // send message do the user that the team join was denied..
             return Message.findByIdAndDelete(messageId).then(
                 msgDel => {
 
