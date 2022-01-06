@@ -63,40 +63,10 @@ export class PlayerProfile implements OnInit {
   //this variable is used in case someone re-routes to profile from a profile
   displayName: string;
   //variable to hold profile returned from server
-  returnedProfile = new Profile(
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null
-  );
-  //subscription to profiles
-  // profSub: Subscription;
+  returnedProfile:Profile = this.user.returnNullUser();
+
   //temp profile; stores old information in case a user hits cancel we have a copy to replace errant changes.
   tempProfile: Profile;
-
-  // //if this componenet is embedded we can pass a user name as a string for it (instead of getting it from the router)
-  // providedProfile: string;
-  // @Input() set passedProfile(profile) {
-  //   if (profile != null && profile != undefined) {
-  //     console.log('passedProfile', profile);
-  //     this.providedProfile = profile;
-  //     this.ngOnInit();
-  //   }
-  // }
 
   //if this component is embedded we can include a source; special flags for 'admin' to allow the admin options to open
   embedSource: string = "";
@@ -175,15 +145,6 @@ export class PlayerProfile implements OnInit {
     );
   }
 
-  //checks the validity of showing admin options
-  // adminShow() {
-  //   let ret = false;
-  //   if (this.providedProfile && this.embedSource == "admin") {
-  //     ret = true;
-  //   }
-  //   return ret;
-  // }
-
   //dialog options for deleting a user account
   confirm: string;
 
@@ -219,33 +180,15 @@ export class PlayerProfile implements OnInit {
   //enable editing for profile, create a copy of current data
   openEdit() {
     this.disabled = false;
-    //  this.markFormGroupTouched(this.profileForm);
-    this.tempProfile = new Profile(
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null
-    );
+
+    this.tempProfile = this.user.returnNullUser();
+
     merge(this.tempProfile, this.returnedProfile);
   }
 
   //disabled editing for profile, replace any changes with original copy
   cancel() {
-    this.returnedProfile = Object.assign({}, this.tempProfile);
+    this.returnedProfile = Object.assign(this.user.returnNullUser(), this.tempProfile);
     this.disabled = true;
   }
 
@@ -267,7 +210,7 @@ export class PlayerProfile implements OnInit {
 
   updateUserMMR() {
     this.user.updateUserMmr().subscribe((res) => {
-      merge(this.returnedProfile, res);
+      merge(this.returnedProfile, res.additional);
     });
   }
 
@@ -276,11 +219,14 @@ export class PlayerProfile implements OnInit {
 
   private init(){
 
+    this.returnedProfile = this.user.returnNullUser();
+    this.returnedProfile.verifiedRankHistory = null;
+    // this.returnedProfile.verifiedRankHistory = [];
+
     this.hpProfileLink = '';
     this.discordTagFormControl.markAsTouched();
     this.user.getUser(this.displayName).subscribe((res) => {
-
-      merge(this.returnedProfile, res);
+      this.returnedProfile = res;
       this.index = this.tabTracker.returnTabIndexIfSameRoute("profile");
       this.hotsProfile.getHPProfileLinkStream.subscribe((subj) => {
         this.hpProfileLink = subj;

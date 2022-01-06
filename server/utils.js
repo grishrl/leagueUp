@@ -175,8 +175,7 @@ returnMessaging = function(route, message, err, obj, additional, logInfo) {
         if (!ret.returnObject) {
             ret.returnObject = {};
         }
-        ret.returnObject.additional = {};
-        Object.assign(ret.returnObject.additional, additional);
+        ret.returnObject.additional = additional;
     }
 
     let logObj = {};

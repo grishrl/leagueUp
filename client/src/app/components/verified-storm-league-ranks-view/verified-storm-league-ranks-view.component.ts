@@ -46,33 +46,35 @@ export class VerifiedStormLeagueRanksViewComponent implements OnInit {
             }
           });
         }
-        if (this.verifiedUserRanks && this.verifiedUserRanks.length > 0) {
-
-          this.toDisplay.sort((a,b)=>{
-          		if(a.year == b.year){
-              return a.season < b.season ? -1 : 1;
-              }else{
-              return a.year < b.year ? -1 : 1;
-              }
-          });
-
-          this.toDisplay.forEach((reqRank, index) => {
-            this.verifiedUserRanks.forEach((verifiedRank) => {
-              if (
-                reqRank.year == verifiedRank.year &&
-                reqRank.season == verifiedRank.season
-              ) {
-                this.toDisplay[index] = verifiedRank;
-              }
-            });
-          });
-        }
+        this.updateView();
       },
       (err) => {
         console.warn(err);
       }
     );
     this.verifyUserStatus();
+  }
+
+  private updateView() {
+    if (this.verifiedUserRanks && this.verifiedUserRanks.length > 0) {
+
+      this.toDisplay.sort((a, b) => {
+        if (a.year == b.year) {
+          return a.season < b.season ? -1 : 1;
+        } else {
+          return a.year < b.year ? -1 : 1;
+        }
+      });
+
+      this.toDisplay.forEach((reqRank, index) => {
+        this.verifiedUserRanks.forEach((verifiedRank) => {
+          if (reqRank.year == verifiedRank.year &&
+            reqRank.season == verifiedRank.season) {
+            this.toDisplay[index] = verifiedRank;
+          }
+        });
+      });
+    }
   }
 
   private verifyUserStatus() {
@@ -92,8 +94,9 @@ export class VerifiedStormLeagueRanksViewComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.teamName || changes.userId) {
+    if (changes.teamName || changes.userId || changes.verifiedUserRanks) {
       this.verifyUserStatus();
+      this.updateView();
     }
   }
 

@@ -15,7 +15,28 @@ import { CacheService } from './cache.service';
 export class UserService {
   userGetURL = "user/get";
 
-
+returnNullUser(){
+  return new Profile(
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+  );
+}
 
   //gets the user profile to match
   getUser(id): Observable<Profile> {
