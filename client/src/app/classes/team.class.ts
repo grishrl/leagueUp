@@ -15,8 +15,8 @@ export class Team {
   captain: string;
   history: Array<history>;
   teamMMRAvg: number; //added to display
-  teamMembers: Array<Object>; //added to display
-  pendingMembers: [{ displayName: string }];
+  teamMembers: Array<memberinf>; //added to display
+  pendingMembers: Array<memberinf>;
   invitedUsers: Array<any>;
   questionnaire: questionnaire;
   hpMmrAvg: number;
@@ -38,8 +38,8 @@ export class Team {
     rolesNeeded: roles,
     descriptionOfTeam: string,
     timeZone: string,
-    teamMembers: [{ displayName: string }],
-    pendingMembers: [{ displayName: string }],
+    teamMembers: Array<memberinf>,
+    pendingMembers: Array<memberinf>,
     captain: string,
     teamMMRAvg: number,
     divisionDisplayName: string,
@@ -122,7 +122,7 @@ export class Team {
         rangedassassin: false,
         support: false,
         offlane: false,
-        healer:false,
+        healer: false,
         flex: false,
       };
     }
@@ -180,6 +180,11 @@ export class Team {
     this.invitedUsers = [];
     this.stormRankAvg = 0;
   }
+}
+
+interface memberinf{
+  id:string,
+  displayName:string
 }
 
 interface questionnaire{
