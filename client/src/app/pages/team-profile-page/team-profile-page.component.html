@@ -4,24 +4,34 @@
     <div class="row">
       <div class="col-xl-7">
         <div class="row">
+          <!-- intenionally left blank -->
           <div class="col-md-3">
           </div>
+          <!-- team header info -->
           <div class="col-md-9">
             <h1>{{returnedProfile.teamName}}</h1>
             <ul class="general-info">
               <li *ngIf="showDivision">
                 <h6>
                   <strong>Division:</strong>
-                  <app-division-link [division]="returnedProfile.divisionConcat">
-                    <app-division-if-public [divisionInfo]="returnedProfile.divisionConcat"></app-division-if-public>
-                  </app-division-link>
+                  <div >
+                   <u class="font-italic">
+                      <app-division-link [division]="returnedProfile.divisionConcat">
+                        <app-division-if-public [divisionInfo]="returnedProfile.divisionConcat"></app-division-if-public>
+                      </app-division-link>
+                    </u>
+                  </div>
                 </h6>
               </li>
               <li>
-                <h6><strong>Ticker:</strong> {{returnedProfile.ticker}}</h6>
+                <h6><strong>Ticker:</strong>
+                  <div>{{returnedProfile.ticker}}</div>
+                </h6>
               </li>
               <li>
-                <h6><strong>Captain:</strong>{{returnedProfile.captain}}</h6>
+                <h6><strong>Captain:</strong>
+                  <div>{{returnedProfile.captain}}</div>
+                </h6>
               </li>
               <!-- placeholder -->
               <li>
@@ -51,7 +61,8 @@
               </li>
               <li *ngIf="returnedProfile.twitter">
                 <div>
-                  <a href="{{returnedProfile.twitter | commonPipe:util.prePendHttp}}" target="_blank" class="twitter-icon">
+                  <a href="{{returnedProfile.twitter | commonPipe:util.prePendHttp}}" target="_blank"
+                    class="twitter-icon">
                     <i class="fab fa-twitter"></i>
                   </a>
                 </div>
@@ -84,7 +95,8 @@
         <div class="col-xl-12 col-md-12">
           <!-- Nav Tabs -->
           <ul class="nav nav-tabs" id="myTab">
-            <li *ngIf="registrationOpen" class="finger" [ngClass]="{'active': index==5}"><a (click)="setTab(5)">Registration</a></li>
+            <li *ngIf="registrationOpen" class="finger" [ngClass]="{'active': index==5}"><a
+                (click)="setTab(5)">Registration</a></li>
             <li class="finger" [ngClass]="{'active': index==0}"><a (click)="setTab(0)">Overview</a></li>
             <li class="finger" [ngClass]="{'active': index==1}"><a (click)="setTab(1)">Squad</a></li>
             <li class="finger" [ngClass]="{'active': index==2}"><a (click)="setTab(2)">Schedule</a></li>
@@ -122,7 +134,8 @@
                     <div class="row">
                       <div class="col-6">
                         <p>Welcome to your team profile!</p>
-                        <p>The more info you complete in your profile the more information players will have to find you!</p>
+                        <p>The more info you complete in your profile the more information players will have to find
+                          you!</p>
                       </div>
                       <div class="col-6">
                         <div *ngIf="disabled == true">
@@ -163,10 +176,12 @@
                           </div>
                           <div class="row">
                             <div class="col">
-                              <button type="button" (click)="adminRefreshMMR()" class="mt-1 btn btn-primary">Update Team MMR</button>
+                              <button type="button" (click)="adminRefreshMMR()" class="mt-1 btn btn-primary">Update Team
+                                MMR</button>
                             </div>
                             <div class="col">
-                              <button class="btn btn-dark assCapt" (click)="openAssCaptainChangeDialog()">Add Assistant Captain(s) <i class="fas fa-baby-carriage"></i></button>
+                              <button class="btn btn-dark assCapt" (click)="openAssCaptainChangeDialog()">Add Assistant
+                                Captain(s) <i class="fas fa-baby-carriage"></i></button>
                             </div>
                           </div>
                         </div>
