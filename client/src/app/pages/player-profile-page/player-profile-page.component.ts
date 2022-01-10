@@ -170,11 +170,7 @@ export class PlayerProfile implements OnInit {
 
   //if the user is on a team do not display the looking for group button
   hideLookingForGroup() {
-    if (this.auth.getTeam()) {
-      return false;
-    } else {
-      return true;
-    }
+    return !this.auth.getTeam();
   }
 
   //enable editing for profile, create a copy of current data
@@ -226,6 +222,14 @@ export class PlayerProfile implements OnInit {
     this.hpProfileLink = '';
     this.discordTagFormControl.markAsTouched();
     this.user.getUser(this.displayName).subscribe((res) => {
+      //i am so smart that I have to put this fix in place to validate that I have real roles.
+      if (false == this.util.returnBoolByPath(res, "role")) {
+        res.role = this.user.returnNullUser().role;
+      }
+      //i am so smart that I have to put this fix in place to validate that I have real availability.
+      if (false == this.util.returnBoolByPath(res, "availability")) {
+        res.availability = this.user.returnNullUser().availability;
+      }
       this.returnedProfile = res;
       this.index = this.tabTracker.returnTabIndexIfSameRoute("profile");
       this.hotsProfile.getHPProfileLinkStream.subscribe((subj) => {

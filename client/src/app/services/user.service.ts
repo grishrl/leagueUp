@@ -6,6 +6,7 @@ import { Observable, of } from 'rxjs';
 import { HttpService } from './http.service';
 import { environment } from '../../environments/environment'
 import { CacheService } from './cache.service';
+import { merge } from 'lodash';
 
 
 
@@ -43,7 +44,13 @@ returnNullUser(){
     // console.log('id');
     let encodedID = encodeURIComponent(id);
     let params = [{ user: encodedID }];
-    return this.httpService.httpGet(this.userGetURL, params);
+    return this.httpService.httpGet(this.userGetURL, params).pipe(
+      map(res=>{
+        let userProfile = this.returnNullUser();
+        merge(userProfile, res);
+        return userProfile;
+      })
+    );
   }
 
   //return user name by id; or from cache if it exists

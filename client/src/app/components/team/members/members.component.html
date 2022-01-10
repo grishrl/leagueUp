@@ -1,5 +1,7 @@
 <div class="row">
     <div class="col-xl-4 col-lg-6 col-md-6" *ngFor="let player of teamMembers">
-        <app-player-small-card (playerRemove)="handleRemove($event)" [playerID]="player.displayName" [captain]="profile.captain" [teamName]="profile.teamName" [showVerifiedRankings]="true"></app-player-small-card>
+        <app-player-small-card (playerRemove)="handleRemove($event)" [playerID]="player.displayName"
+        [captain]="profile.captain" [teamName]="profile.teamName" [showVerifiedRankings]="true"
+        [assistantCaptains]="profile.assistantCaptain"></app-player-small-card>
     </div>
 </div>

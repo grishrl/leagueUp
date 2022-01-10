@@ -15,7 +15,7 @@
         <ul>
             <li><strong>Matches:</strong> <span>{{matches}}</span></li>
             <li><strong>Seasons:</strong> <span>{{player.seasonsPlayed}}</span></li>
-            <li  *ngIf="showVerifiedRankings && (iAmMe || showRemove())">
+            <li  *ngIf="showVerifiedRankings && (iAmMe || showRankings())">
               <strong>Ranks Verified:</strong>
               <span>
                 <i *ngIf="allRequiredRanks" class="far fa-check-circle text-success"></i>
@@ -32,7 +32,7 @@
             <span class="btn">Team Profile <i class="fa fa-angle-right" aria-hidden="true"></i></span>
         </app-team-link>
     </div>
-    <div class="row mt-1" *ngIf="showRemove()">
+    <div class="row mt-1" *ngIf="showRemovePlayer()">
         <div class="col">
             <button class="btn-remove" (click)="removeMember(player.displayName)"><i class="fas fa-ban"></i> Remove From
               Team </button>

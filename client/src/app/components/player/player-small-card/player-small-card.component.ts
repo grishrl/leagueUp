@@ -8,6 +8,7 @@ import { ConfirmRemoveMemberComponent } from '../../../modal/confirm-remove-memb
 import { EventEmitter } from '@angular/core';
 import { PlayerRankService } from 'src/app/services/player-rank.service';
 import { TimeService } from 'src/app/services/time.service';
+import { find } from 'lodash';
 
 @Component({
   selector: 'app-player-small-card',
@@ -27,6 +28,8 @@ export class PlayerSmallCardComponent implements OnInit {
 
   }
 
+  @Input() assistantCaptains = [];
+
   _teamName
   @Input() set teamName(val){
     if(val){
@@ -43,8 +46,6 @@ export class PlayerSmallCardComponent implements OnInit {
   player: Profile = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,null);
   matches = 0;
   initPlayer(){
-
-
 
     this.user.getUser(this.displayName).subscribe(
       res=>{
@@ -76,7 +77,7 @@ export class PlayerSmallCardComponent implements OnInit {
     this.playerRemove.emit(x);
   }
 
-  showRemove(){
+  showRemovePlayer(): boolean{
     let ret = false;
     if(this._captain){
       if (this._captain == this.displayName) {
@@ -90,6 +91,12 @@ export class PlayerSmallCardComponent implements OnInit {
       ret = false;
     }
     return ret;
+  }
+
+  showRankings(){
+    let aC = this.assistantCaptains.indexOf(this.Auth.getUser())>-1;
+    return (this.showRemovePlayer()||aC)
+    // return !!(!!this.Auth.getCaptain() && this.);
   }
 
   openConfirmRemove(player): void {
@@ -154,16 +161,10 @@ export class PlayerSmallCardComponent implements OnInit {
         if (profile.verifiedRankHistory.length > 0) {
                   reqRank.data.forEach((rrEle) => {
                     if (rrEle.required) {
-                      profile.verifiedRankHistory.forEach((profEle) => {
-                        if (
-                          profEle.year == rrEle.year &&
-                          profEle.season == rrEle.season
-                        ) {
-                          if (profEle.status != "verified") {
-                            this.allRequiredRanks = false;
-                          }
-                        }
-                      });
+                      let vrh = find(profile.verifiedRankHistory, {year:rrEle.year+'', season:rrEle.season+''});
+                      if(!vrh || vrh.status != 'verified'){
+                          this.allRequiredRanks = false;
+                      }
                     }
                   });
         } else {
