@@ -139,7 +139,7 @@ export class Team {
     if (pendingMembers != null && pendingMembers != undefined) {
       this.pendingMembers = pendingMembers;
     } else {
-      this.pendingMembers = null;
+      this.pendingMembers = [];
     }
     if (captain != null && captain != undefined) {
       this.captain = captain;

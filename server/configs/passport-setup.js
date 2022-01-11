@@ -123,7 +123,8 @@ passport.use(new BnetStrategy({
                         returnUserToClient(updatedUser, done);
                     }, (err) => {
                         logObj.action = ' an existing user changed their battletag attempted to clean up '
-                        logObj.error = ' an error occured in the process '
+                        logObj.error = ' an error occured in the process ';
+                        logger(logObj);
                         returnUserToClient(null, done);
                     })
             } else {

@@ -81,22 +81,6 @@ router.get('/get/registered', (req, res) => {
         return response;
       }
     )
-    // return Team.find({
-    //     'questionnaire.registered': true
-    // }).lean().then(
-    //     (foundTeam) => {
-    //         foundTeam = foundTeam ? foundTeam : {};
-    //         foundTeam = utils.objectify(foundTeam);
-    //         foundTeam = TeamMethods.removeDegenerateTeams(foundTeam);
-    //         response.status = 200;
-    //         response.message = utils.returnMessaging(req.originalUrl, 'Found team', false, foundTeam);
-    //         return response;
-    //     }, (err) => {
-    //         response.status = 500;
-    //         response.message = utils.returnMessaging(req.originalUrl, "Error querying teams.", err)
-    //         return response;
-    //     }
-    // );
   });
 
 });
@@ -646,28 +630,6 @@ router.post('/save', passport.authenticate('jwt', {
   }
 
 });
-
-//
-// function getIndiciesToRemove(membersArray, predicateMember) {
-//   let indiciesToRemove = [];
-//   if (Array.isArray(predicateMember)) {
-
-//     for (var i = 0; i < membersArray.length; i++) {
-//       if (predicateMember.indexOf(membersArray[i].displayName) > -1) {
-//         indiciesToRemove.push(i);
-//       }
-//     }
-
-//   } else {
-//     for (var i = 0; i < membersArray.length; i++) {
-//       if (predicateMember == membersArray[i].displayName) {
-//         indiciesToRemove.push(i);
-//       }
-//     }
-//   }
-//   return indiciesToRemove;
-// }
-//
 
 //post
 // path: /team/removeMemver

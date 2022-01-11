@@ -11,6 +11,7 @@ const Team = require('../models/team-models');
 const QueueSubs = require('./queue-subs');
 const logger = require('./sys-logging-subs').logger;
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
+const TeamClass = require('../methods/team/Team');
 
 //sub to handle complete removal of user from data locations:
 //pendingqueue, teams - pending members and members.
@@ -375,16 +376,23 @@ async function updateUserName(id, newUserName) {
         return null;
     });
     if (team) {
+        
         //if the user was a captain update their user name in the captain property
         if (team.captain == user.displayName) {
             team.captain = newUserName;
         }
+
         //update the user name in the team members array
         team.teamMembers.forEach(member => {
             if (member.displayName == user.displayName) {
                 member.displayName = newUserName;
             }
         });
+        
+        //2021 TODO: some how pending members became null so check it until I can figure out a better way!
+        if(util.isNullOrEmpty(team.pendingMembers)){
+            team.pendingMembers = [];
+        }
         //update the user name in the pending members array
         team.pendingMembers.forEach(member => {
             if (member.displayName == user.displayName) {
