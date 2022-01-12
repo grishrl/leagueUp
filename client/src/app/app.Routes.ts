@@ -67,8 +67,8 @@ import { CreateThreadComponent } from './admin/thread/create-thread/create-threa
 
 const APP_ROUTES: Routes = [
   {
-    path:"_admin/thread/create",
-    component:CreateThreadComponent,
+    path: "_admin/thread/create",
+    component: CreateThreadComponent,
     canActivate: [AuthGuardService],
     data: { role: "schedulegen" },
   },
@@ -76,9 +76,10 @@ const APP_ROUTES: Routes = [
   { path: "", component: HomeComponent },
   { path: "login", component: LoginComponent },
   {
-    path:'playersearch',
-    component:PlayerSearchComponent,
+    path: "playersearch",
+    component: PlayerSearchComponent,
     canActivate: [AuthGuardService],
+    data: { role: "tokenonly" },
   },
   {
     path: "rules",
@@ -114,10 +115,11 @@ const APP_ROUTES: Routes = [
   { path: "allTeams", component: AllTeamsComponent },
   { path: "pastSeasons", component: PastSeasonsComponent },
   { path: "grandchamps", component: GrandChampionsViewerComponent },
-  { path: "teamCreate",
+  {
+    path: "teamCreate",
     component: CreateTeamComponent,
     canActivate: [AuthGuardService],
-    data:{role:'tokenonly'}
+    data: { role: "tokenonly" },
   },
   {
     path: "division/:division",
@@ -137,17 +139,18 @@ const APP_ROUTES: Routes = [
     data: { role: "logs" },
   },
   {
-    path:"_casterReport",
-    component:CasterReportComponent,
-    canActivate:[AuthGuardService],
-    data:{role:"caster"}
+    path: "_casterReport",
+    component: CasterReportComponent,
+    canActivate: [AuthGuardService],
+    data: { role: "caster" },
   },
-    {
+  {
     path: "_casterDashboard",
     component: CasterDashboardComponent,
     canActivate: [AuthGuardService],
     data: { role: "caster" },
-  },    {
+  },
+  {
     path: "_admin/youtube/playlist",
     component: AdminYoutubeCurator,
     canActivate: [AuthGuardService],
@@ -284,7 +287,7 @@ const APP_ROUTES: Routes = [
     path: "reporting/:id",
     component: ReportingComponent,
     canActivate: [AuthGuardService],
-    data:{role:"tokenonly"}
+    data: { role: "tokenonly" },
   }, //accepts team name as url parameter
   {
     path: "_admin/dashboard",
