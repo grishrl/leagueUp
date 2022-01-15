@@ -6,7 +6,7 @@
                 <div *ngIf="admin">
                     <strong>Admin Mod:</strong>
                     <app-storm-league [(division)]="rank.hlRankMetal" [disabled]="false" [(rank)]="rank.hlRankDivision"></app-storm-league>
-                    <button class="btn btn-warning" (click)="saveUpdate()">Save</button>
+                    <button class="btn btn-warning" (click)="saveUpdate(rank)">Save</button>
                 </div>
                 <app-storm-league *ngSwitchCase="'verified'" [disabled]="true" [division]="rank.hlRankMetal" [rank]="rank.hlRankDivision">
                 </app-storm-league>
@@ -27,7 +27,7 @@
                 <div *ngIf="admin">
                     <strong>Admin Mod:</strong>
                     <app-storm-league [(division)]="rank.hlRankMetal" [disabled]="false" [(rank)]="rank.hlRankDivision"></app-storm-league>
-                    <button class="btn btn-warning" (click)="saveUpdate()">Save</button>
+                    <button class="btn btn-warning" (click)="saveUpdate(rank)">Save</button>
                 </div>
                 <app-storm-league *ngSwitchCase="'verified'" [disabled]="true" [division]="rank.hlRankMetal" [rank]="rank.hlRankDivision">
                 </app-storm-league>
@@ -56,17 +56,6 @@
         <app-loading [showLoading]="saving" [displayText]="'Saving'"></app-loading>
     </div>
 </div>
-<!-- <drag-scroll *ngIf="toDisplay" style="background: rgba(128, 128, 128, 0.4); cursor: all-scroll;">
-    <ng-container *ngFor="let rank of toDisplay">
-        <div class="col-sm-12 col-md-12 col-lg-4" drag-scroll-item>
-            <div style="cursor: auto;">
-                <ng-container *ngIf="rank.status == 'verified' else upload">
-                    <app-storm-league></app-storm-league>
-                </ng-container>
-            </div>
-        </div>
-    </ng-container>
-</drag-scroll> -->
 
 <ng-template #upload let-rank="rank">
     <div class="row">

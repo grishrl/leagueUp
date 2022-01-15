@@ -102,14 +102,63 @@ export class VerifiedStormLeagueRanksViewComponent implements OnInit {
 
   pendingSeason = {};
 
-  saveUpdate(){
-    this.toDisplay.forEach(
-      rank=>{
-        let ind = findIndex(this.verifiedUserRanks, {season:rank.season, year:rank.year});
-        rank.level = this.rankToNumber(rank.hlRankMetal, rank.hlRankDivision);
-        this.verifiedUserRanks[ind]=rank;
+  saveUpdate(rank){
+
+    console.log(rank);
+      let ind = findIndex(this.verifiedUserRanks, {
+        season: rank.season,
+        year: rank.year,
+      });
+      console.log("ind", ind);
+      rank.level = this.rankToNumber(
+        rank.hlRankMetal,
+        rank.hlRankDivision
+      );
+      rank.status = 'verified';
+      if (ind != -1) {
+        this.verifiedUserRanks[ind] = rank;
+      } else {
+        this.verifiedUserRanks.push(rank);
+        this.verifiedUserRanks.sort((a, b) => {
+          if (a.year == b.year) {
+            if (a.season < b.season) {
+              return -1;
+            } else {
+              return 1;
+            }
+          } else if (a.year > b.year) {
+            return 1;
+          } else {
+            return -1;
+          }
+        });
       }
-    )
+    // this.toDisplay.forEach(
+    //   rank=>{
+    //     let ind = findIndex(this.verifiedUserRanks, {season:rank.season, year:rank.year});
+    //     console.log('ind', ind);
+    //     rank.level = this.rankToNumber(rank.hlRankMetal, rank.hlRankDivision);
+    //     if(ind != -1){
+    //         this.verifiedUserRanks[ind] = rank;
+    //     }else{
+    //       this.verifiedUserRanks.push(rank);
+    //       this.verifiedUserRanks.sort((a, b) => {
+    //         if (a.year == b.year) {
+    //           if (a.season < b.season) {
+    //             return -1;
+    //           } else {
+    //             return 1;
+    //           }
+    //         } else if (a.year > b.year) {
+    //           return 1;
+    //         } else {
+    //           return -1;
+    //         }
+    //       });
+    //     }
+
+    //   }
+    // )
 
     this.UserServ.getUserById(this.userId).subscribe(
       (userRes) => {
