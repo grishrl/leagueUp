@@ -19,23 +19,29 @@ router.get('/getTeamsUndivisioned', passport.authenticate('jwt', {
         const response = {};
         return Team.find({
             $and: [{
-                $or: [{
-                    divisionConcat: null
+                $or: [
+                        {
+                        divisionConcat: null
+                        }, {
+                        divisionConcat: ""
+                        }, {
+                        divisionConcat: {
+                            $exists: false
+                        }
+                        }, {
+                        "divisionDisplayName": null
+                        }, {
+                        "divisionDisplayName": {
+                            $exists: false
+                        }
+                        },
+                        {
+                            "divisionDisplayName": ""
+                        }
+                    ]
                 }, {
-                    divisionConcat: {
-                        $exists: false
-                    }
-                }, {
-                    "divisionDisplayName": null
-                }, {
-                    "divisionDisplayName": {
-                        $exists: false
-                    }
-                }]
-            }, {
-                "questionnaire.registered": true
-            }]
-        }).then((results) => {
+                    "questionnaire.registered": true
+                }]}).then((results) => {
             response.status = 200;
             response.message = utils.returnMessaging(req.originalUrl, 'Found teams', false, results)
             return response;
