@@ -69,7 +69,8 @@
       workersList.topStats();
       workersList.leagueStat();
       workersList.writeCasterReport();
-      workersList.playlistCurator();
+      
+    //   workersList.playlistCurator();
 
       //once daily in off season
       if (process.env.groupMakerEnable == 'true') {
