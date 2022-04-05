@@ -282,7 +282,12 @@ const APP_ROUTES: Routes = [
     canActivate: [AuthGuardService],
     data: { role: "event" },
   },
-  { path: "schedule/scheduleMatch/:id", component: MatchSchedulerComponent },
+  {
+    path: "schedule/scheduleMatch/:id",
+    component: MatchSchedulerComponent,
+    canActivate: [AuthGuardService],
+    data: { role: "tokenonly" }
+  },
   {
     path: "reporting/:id",
     component: ReportingComponent,

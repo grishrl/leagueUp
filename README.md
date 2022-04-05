@@ -20,10 +20,10 @@ at the top directory level of the project from CLI; run heroku local:start web
 
 inside the client directory run npx ng build --watch --configuration=local
 
-Connect to localhost:5000
+Connect to localhost:3000
 
 
-### Client Only Running !
+### !!! If you want to run the webClient Only - DO NO REQUIRE LOCAL NODE RUNNING !!!
 
 ### Prerequisites
 
@@ -35,6 +35,7 @@ inside the client directory run `npx ng serve --configuration=local-prod-no-serv
 inside the client directory run `npx ng serve --configuration=local-dev-no-server` for running client locally against dev server
 
 
+### !!! RUNNING LOCAL NODE
 ### Prerequisites
 
 * Heroku Local CLI
@@ -60,4 +61,4 @@ at the top directory level of the project from CLI; run `heroku local:start web`
 
 inside the client directory run `npx ng build --watch --configuration=local`
 
-Connect to http://localhost:5000
+Connect to http://localhost:3000 check the ports to know for sure!
