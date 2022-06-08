@@ -44,7 +44,8 @@ async function handleCasterReportObj(obj) {
             }
         )
 
-        // console.log(users);
+        console.log('accountByName',accountByName.length)
+        console.log('users.length',users.length);
 
         let xref = [];
         if (users.length > 0) {
