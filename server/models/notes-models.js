@@ -9,6 +9,5 @@ const notesSchema = new Schema({
 });
 
 const notes = mongoose.model('notes', notesSchema);
-// const MiniUser = mongoose.model('miniUser', miniUser);
 
 module.exports = notes;

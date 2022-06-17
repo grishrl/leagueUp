@@ -7,10 +7,7 @@
         "start": "node --optimize_for_size --max_old_space_size=460 --gc_interval=100 cluster.js",
         "heroku-postbuild": "node node_modules/heroprotocol/postinstall.js && cd client && npm install"
     },
-    "engines": {
-        "node": "13.8.0",
-        "npm": "6.13.6"
-    },
+    "engines": {},
     "author": "",
     "license": "ISC",
     "dependencies": {
@@ -23,7 +20,7 @@
         "formidable": "^1.2.2",
         "get-routes": "^2.1.4",
         "googleapis": "^39.2.0",
-        "hots-parser": "git+https://github.com/garyirick/hots-parser.git",
+        "hots-parser": "^7.55.2",
         "image-data-uri": "^2.0.1",
         "jimp": "^0.9.8",
         "jsonwebtoken": "^8.5.1",

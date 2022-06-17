@@ -29,30 +29,30 @@ async function handleCasterReportObj(obj) {
     try {
         let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
 
-        let accountByName = [];
-        accountByName.push(obj.casterName);
-        obj.coCasters.forEach((u) => {
-            accountByName.push(u);
+        let accountById = [];
+        accountById.push(obj.casterId);
+        obj.coCasterIds.forEach((u) => {
+            accountById.push(u);
         });
 
-        let users = await User.find({ displayName: { $in: accountByName } }).then(
+
+        let users = await User.find({ _id: { $in: accountById } }).then(
             users => {
                 return users;
             },
             err => {
                 throw err;
             }
-        )
+        )        
 
-        console.log('accountByName',accountByName.length)
+        console.log('accountById',accountById.length)
         console.log('users.length',users.length);
 
         let xref = [];
         if (users.length > 0) {
 
 
-
-            accountByName.forEach((u) => {
+            accountById.forEach((u) => {
                 users.forEach(us => {
                     let t = {};
 
@@ -98,8 +98,26 @@ async function handleCasterReportObj(obj) {
             return saved;
 
         } else {
-            throw new Error('Error saving caster report.');
+            console.log('We had something fishy...');
+            obj.error = "casterReportMethods, 116";
+            
+                        let saved = await CasterReport.CasterReport.findOneAndUpdate({
+                            matchId: obj.matchId
+                        }, obj, {
+                            new: true,
+                            upsert: true
+                        }).then(
+                            newItem => {
+                                return newItem;
+                            },
+                            err => {
+                                throw err;
+                            }
+                        );
+
+                        return saved;
         }
+        
 
     } catch (e) {
         console.log(e);

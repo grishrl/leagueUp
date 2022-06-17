@@ -7,5 +7,5 @@ const outreach = new Schema({
 });
 
 const Outreach = mongoose.model('outreach', outreach);
-// const miniTeam = mongoose.model('miniTeam', miniTeamSchema);
+
 module.exports = Outreach;

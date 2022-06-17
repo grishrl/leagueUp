@@ -11,7 +11,7 @@ const System = require('../models/system-models').system;
 
 const gsapi = google.youtube("v3");
 
-const UNCURRATED_AMOUNT = 1;
+const UNCURRATED_AMOUNT = 50;
 
 /**
  *   ready (sets up google authentication and gets needed data for currator) ->
@@ -444,7 +444,6 @@ function getUncrrated() {
             let totalVideos = 0;
             saved.forEach(
                 s => {
-                    console.log(s);
 
                     if (totalVideos < UNCURRATED_AMOUNT) {
                         totalVideos = totalVideos + s.vodLinks.length;
@@ -458,6 +457,8 @@ function getUncrrated() {
                 thisBatch: toReturn.length,
                 totalBatch: saved.length
             }
+
+            console.log('uncurrated report obj', returnObject);
 
             return returnObject;
         },
