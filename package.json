@@ -8,8 +8,8 @@
         "heroku-postbuild": "node node_modules/heroprotocol/postinstall.js && cd client && npm install"
     },
     "engines": {
-    "node": "13.8.0",
-    "npm": "6.13.6"
+    "node": "16.13.0",
+    "npm": "8.1.0"
     },
     "author": "",
     "license": "ISC",
