@@ -7,7 +7,10 @@
         "start": "node --optimize_for_size --max_old_space_size=460 --gc_interval=100 cluster.js",
         "heroku-postbuild": "node node_modules/heroprotocol/postinstall.js && cd client && npm install"
     },
-    "engines": {},
+    "engines": {
+    "node": "13.8.0",
+    "npm": "6.13.6"
+    },
     "author": "",
     "license": "ISC",
     "dependencies": {
