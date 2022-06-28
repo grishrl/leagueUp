@@ -296,7 +296,7 @@ router.post('/save', passport.authenticate('jwt', {
                         if (utils.returnBoolByPath(sentUser, 'groupMaker')) {
                             found.groupMaker = sentUser.groupMaker;
                         }
-
+                        
                         sendRes = false;
 
                         return found.save().then(

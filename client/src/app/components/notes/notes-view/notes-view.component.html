@@ -1,10 +1,10 @@
 <div class="row" *ngIf="notes && notes.length>0">
     <div class="col-12">
-        <strong>Existing Notes:</strong>
+        <strong>Existing Notes: </strong>
         <span class="ml-5 finger">
       <span [hidden]="collapsed" (click)="collapsed=!collapsed"> Collapse Notes <i class="fas fa-angle-up"></i>
       </span>
-        <span [hidden]="!collapsed" (click)="collapsed=!collapsed"> Show Notes <i class="fas fa-angle-down"></i>
+        <span *ngIf="notes.length>0" [hidden]="!collapsed" (click)="collapsed=!collapsed"> Show {{notes.length}} notes <i class="fas fa-angle-down"></i>
       </span>
         </span>
     </div>
@@ -12,8 +12,8 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th scope="col">TimeStamp</th>
-                    <th scope="col">Admin</th>
+                    <th scope="col" style="width: 25%">TimeStamp</th>
+                    <th scope="col" style="width: 25%">Admin</th>
                     <th scope="col">Note</th>
                 </tr>
             </thead>

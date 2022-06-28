@@ -21,7 +21,6 @@ function loadConfig() {
         Key: `${process.env.serverEnv}_server_config.json`
     }).promise().then(
         getRes => {
-
             const parsedVars = JSON.parse(getRes.Body.toString('utf-8'));
 
             Object.assign(global.process.env, parsedVars);
@@ -29,8 +28,7 @@ function loadConfig() {
             clearTimeout(timer);
         },
         err => {
-            console.log('Error loading process vars...');
-            timer = setTimeout(loadConfig(), 5000);
+            console.log('Error loading process vars...',err);
         }
     );
 }

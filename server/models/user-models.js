@@ -64,7 +64,9 @@ const userSchema = new Schema({
     "twitter": String,
     "youtube": String,
     "patron": String,
-    "verifiedRankHistory": [rankSchema]
+    "verifiedRankHistory": [rankSchema],
+    "adminNotes":String,
+    "accountAlias":String
 });
 
 const User = mongoose.model('user', userSchema);

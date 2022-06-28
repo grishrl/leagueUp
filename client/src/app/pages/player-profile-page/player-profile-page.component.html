@@ -258,6 +258,26 @@
                                         </mat-slide-toggle>
                                     </div>
                                 </div>
+                                <div class="row mt-5" *ngIf="returnedProfile.accountAlias">
+                                  <div class="col">
+                                    <div class="row">
+                                      <div class="col">
+                                        <h6>Account Alias:</h6>
+                                      </div>
+                                      <div class="col-8">
+                                        <h6 *ngIf="returnedProfile.adminNotes">Notes:</h6>
+                                      </div>
+                                    </div>
+                                  <div class="row">
+                                    <div class="col">
+                                      <app-player-small-card [playerUID]="returnedProfile.accountAlias"></app-player-small-card>
+                                    </div>
+                                    <div class="col-8">
+                                      {{returnedProfile.adminNotes}}
+                                    </div>
+                                  </div>
+                                  </div>
+                                </div>
                                 <!-- times -->
                                 <div class="row mt-5">
                                     <div class="col">

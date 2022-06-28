@@ -35,7 +35,10 @@ export class Profile {
   youtube: string;
   casterName: string;
   verifiedRankHistory: Array<rankHistory>;
+  adminNotes: string;
+  accountAlias: string;
   __v: string; //useless
+
 
   constructor(
     id: string,
@@ -212,6 +215,8 @@ export class Profile {
     this.youtube = null;
     this.casterName = null;
     this.verifiedRankHistory = [];
+    this.accountAlias = null;
+    this.adminNotes = null;
   }
 }
 

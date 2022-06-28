@@ -19,6 +19,12 @@ export class NotesViewComponent implements OnInit {
     }
   };
 
+  @Input() set update(val){
+    if(val){
+      this.init();
+    }
+  }
+
   notes = [];
 
   collapsed = true;
