@@ -6,9 +6,6 @@ import { UserService } from '../services/user.service';
 import { DivisionService } from '../services/division.service';
 import { MessagesService } from '../services/messages.service';
 import { NotificationService } from '../services/notification.service';
-// import { Socket } from 'ngx-socket-io';
-// import { WebsocketService } from '../services/websocket.service';
-import { TimeService } from '../services/time.service';
 
 declare var Mmenu: any;
 
@@ -45,13 +42,12 @@ export class NavComponent implements OnInit {
   menuVar;
   menuAPI;
   ngAfterViewInit(){
+    $("ul.sf-menu").superfish();
+    $(".mainmenu").sticky({ topSpacing: 0 });
     this.createMobileNav();
-    $('ul.sf-menu').superfish();
-    $('.mainmenu').sticky({ topSpacing: 0 });
 }
 
 createMobileNav(){
-
   this.menuVar = new Mmenu(this.mobileMavElement.nativeElement, {}, {});
   this.menuAPI = this.menuVar.API;
 }
@@ -63,6 +59,7 @@ createMobileNav(){
       event=>{
         if(event instanceof NavigationStart){
           if (this.menuAPI) {
+            console.log(this.menuAPI);
             this.menuAPI.close();
           }
         }

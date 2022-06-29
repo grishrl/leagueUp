@@ -47,7 +47,7 @@ export class TimezoneComponent implements OnInit {
   }
 
   @Output()
-  errorValueChange = new EventEmitter();
+  errorChange = new EventEmitter();
 
   set error(val) {
     if(val && val.hasOwnProperty('error') && val.error){
@@ -56,7 +56,7 @@ export class TimezoneComponent implements OnInit {
       this.timezoneControl.setErrors(null);
     }
     this.errorValue = val;
-    this.errorValueChange.emit(this.errorValue);
+    this.errorChange.emit(this.errorValue);
   }
 
   ngOnInit() {

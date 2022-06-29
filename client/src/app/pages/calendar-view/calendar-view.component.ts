@@ -107,7 +107,7 @@ colors: {
       this.isLoaded = true;
       this.events = cache;
       this.list = listCache;
-      this.refresh.next();
+      this.refresh.next(true);
     }
 
   }
@@ -213,7 +213,7 @@ colors: {
                  this.cache.setCache(this.calendarInfo, this.events);
                  this.cache.setCache(this.listInfo, this.list);
                  this.isLoaded = true;
-                 this.refresh.next();
+                 this.refresh.next(true);
                },
                (err) => {
                  console.warn(err);
@@ -316,7 +316,7 @@ colors: {
     }
   ];
 
-  refresh: Subject<any> = new Subject();
+  refresh: Subject<any> = new Subject<void>();
 
   events: CalendarEvent[] = [];
 
@@ -357,7 +357,7 @@ colors: {
     event.start = newStart;
     event.end = newEnd;
     this.handleEvent('Dropped or resized', event);
-    this.refresh.next();
+    this.refresh.next(true);
   }
 
   handleEvent(action: string, event: CalendarEvent): void {
