@@ -99,7 +99,7 @@ import { RecentNewsComponent } from './components/recent-news/recent-news.compon
 import { UpcomingMatchesComponent } from './components/upcoming-matches/upcoming-matches.component';
 import { RecentContentComponent } from './components/recent-content/recent-content.component';
 import { SafePipe } from './safe.pipe';
-import { SafeHtmlPipe } from './static-html-loader/static-html-loader.component';
+import { SafeHtmlPipe } from './static-html-loader/safeHtml.pipe';
 import { StaticHtmlLoaderComponent } from './static-html-loader/static-html-loader.component';
 import { HideMenuDirective } from './nav/hide-menu.directive';
 import { CategoriesComponent } from './components/blog/categories/categories.component';
@@ -307,7 +307,6 @@ import { GenerateNonSeasonalSchedulesComponent } from './admin/match-admin/gener
     PlayerSmallCardComponent,
     TeamScheduleTableComponent,
     TeamResultsTilesComponent,
-
     TeamHistoryComponent,
     TeamUpcomingMatchComponent,
     DivisionResultsTilesComponent,

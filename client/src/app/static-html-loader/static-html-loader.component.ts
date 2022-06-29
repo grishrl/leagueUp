@@ -1,7 +1,7 @@
-import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { DomSanitizer } from '@angular/platform-browser';
+import { SafeHtmlPipe } from './safeHtml.pipe';
 
 @Component({
   selector: 'app-static-html-loader',
@@ -64,10 +64,4 @@ export class StaticHtmlLoaderComponent implements OnInit {
 
 }
 
-@Pipe({ name:'safeHtml'})
-export class SafeHtmlPipe implements PipeTransform{
-  constructor(private sanatized:DomSanitizer){}
-  transform(value){
-    return this.sanatized.bypassSecurityTrustHtml(value);
-  }
-}
+
