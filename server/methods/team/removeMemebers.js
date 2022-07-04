@@ -56,6 +56,9 @@ async function removeTeamMembers(teamName, membersToRemove, captRestrict) {
             if (indiciesToRemove.length == 0) {
                 returnObject.level = 'ERROR';
                 returnObject.error = 'User not found on team';
+                returnObject.message = 'User not found on team';
+                // remove team from the users
+                UserSub.clearUsersTeam(membersToRemove);
                 throw returnObject;
             } else {
 
@@ -85,15 +88,20 @@ async function removeTeamMembers(teamName, membersToRemove, captRestrict) {
             }
         } else {
             returnObject.logLevel = 'ERROR';
-            returnObject.message = 'User not found on team.';
+            returnObject.message = 'Team not found.';
+            // remove team from the users
+            UserSub.clearUsersTeam(membersToRemove);
             throw returnObject;
         }
     }, (err) => {
         returnObject.logLevel = 'ERROR';
         returnObject.message = 'Error finding team.';
         returnObject.error = err;
+        // remove team from the users
+        UserSub.clearUsersTeam(membersToRemove);
         throw returnObject;
     });
+
     return awaitReturnObject;
 }
 

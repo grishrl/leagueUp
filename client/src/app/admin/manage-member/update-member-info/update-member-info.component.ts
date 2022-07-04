@@ -33,20 +33,27 @@ export class UpdateMemberInfoComponent implements OnInit {
   );
   ngOnInit() {}
 
+  _displayName;
   @Input() set displayname(val) {
     if (val) {
-      this.user.getUser(val).subscribe(
-        (res) => {
-          this.returnedProfile = res;
-        },
-        (err) => {
-          console.warn(err);
-        }
-      );
+      this._displayName=val;
+      this.initOnDemand();
     }
   }
 
   updateNotes;
+
+  private initOnDemand() {
+    this.user.getUser(this._displayName).subscribe(
+      (res) => {
+        this.returnedProfile = res;
+      },
+      (err) => {
+        console.warn(err);
+      }
+    );
+  }
+
   refreshNotes(retVal) {
 
     this.updateNotes=Date.now();
@@ -72,12 +79,16 @@ export class UpdateMemberInfoComponent implements OnInit {
         this.returnedProfile.displayName
       )
       .subscribe(
-        (res) => {
+        {
+          next:(res)=>{
           this.returnedProfile.teamId = null;
           this.returnedProfile.teamName = null;
-        },
-        (err) => {
-          console.warn(err);
+          },
+          error: err=>{
+            alert("There was an error in removing this user -- this typically occurs when we can't find the user on the team.  We've attempted to clean the user up.");
+            console.warn(err);
+            this.initOnDemand();
+          }
         }
       );
   }
