@@ -31,6 +31,9 @@ async function handleCasterReportObj(obj) {
 
         let accountById = [];
         accountById.push(obj.casterId);
+
+        obj.coCasterIds = utils.isNullOrEmpty(obj.coCasterIds) ? obj.coCasterIds : [];
+        
         obj.coCasterIds.forEach((u) => {
             accountById.push(u);
         });

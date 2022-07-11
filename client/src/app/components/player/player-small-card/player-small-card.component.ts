@@ -9,6 +9,7 @@ import { EventEmitter } from '@angular/core';
 import { PlayerRankService } from 'src/app/services/player-rank.service';
 import { TimeService } from 'src/app/services/time.service';
 import { find } from 'lodash';
+import { UtilitiesService } from 'src/app/services/utilities.service';
 
 @Component({
   selector: "app-player-small-card",
@@ -22,7 +23,9 @@ export class PlayerSmallCardComponent implements OnInit {
     private team: TeamService,
     public dialog: MatDialog,
     private prServ: PlayerRankService,
-    private timeServ: TimeService
+    private timeServ: TimeService,
+    private removeMemberConfirm: MatDialog,
+    private utils:UtilitiesService
   ) {}
 
   _captain;
@@ -161,19 +164,36 @@ export class PlayerSmallCardComponent implements OnInit {
 
   removeMember(player) {
     if (player && this._teamName) {
-      this.team.removeUser(player, this._teamName).subscribe(
-        (res) => {
-          //if the user left the group, destroy their team local info so they can carry on
-          if (this.Auth.getUser() == player) {
-            this.Auth.destroyTeam();
-            this.Auth.destroyTeamId();
+      const removePlayer = this.removeMemberConfirm.open(ConfirmRemoveMemberComponent,{
+        width:'450px',
+        data:{}
+      })
+      removePlayer.afterClosed().subscribe(
+        {
+          next: v=>{
+            if(!this.utils.isNullOrEmpty(v)){
+              this.team.removeUser(player, this._teamName).subscribe(
+                {
+                  next: res=>{
+                    if (this.Auth.getUser() == player) {
+                      this.Auth.destroyTeam();
+                      this.Auth.destroyTeamId();
+                    }
+                    this.dropEmmiter(player);
+                  },
+                  error: e=>{
+                    console.log(e);
+                  }
+                }
+              );
+            }
+          },
+          error:(e)=>{
+
           }
-          this.dropEmmiter(player);
-        },
-        (err) => {
-          console.warn(err);
         }
-      );
+      )
+
     }
   }
 

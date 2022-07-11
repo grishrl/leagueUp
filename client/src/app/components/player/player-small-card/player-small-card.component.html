@@ -1,56 +1,71 @@
-<div class="item-player" *ngIf="player?.displayName else error">
-    <div class="head-player">
-        <img src="{{player.avatar | commonPipe:user.avatarFQDN}}" alt="player-avatar">
-        <div class="overlay">
-            <app-player-link [player]="player.displayName">+</app-player-link>
-        </div>
+<div class="item-player" *ngIf="player?.displayName; else error">
+  <div class="head-player">
+    <img
+      src="{{ player.avatar | commonPipe: user.avatarFQDN }}"
+      alt="player-avatar"
+    />
+    <div class="overlay">
+      <app-player-link [player]="player.displayName">+</app-player-link>
     </div>
-    <div class="info-player">
-        <span class="number-player">
-    </span>
-        <h4>
-            {{player.displayName}}
-            <span *ngIf="_captain == displayName">Captain</span>
-        </h4>
-        <ul>
-            <li><strong>Matches:</strong> <span>{{matches}}</span></li>
-            <li><strong>Seasons:</strong> <span>{{player.seasonsPlayed}}</span></li>
-            <li  *ngIf="showVerifiedRankings && (iAmMe || showRankings())">
-              <strong>Ranks Verified:</strong>
-              <span>
-                <i *ngIf="allRequiredRanks" class="far fa-check-circle text-success"></i>
-                <i *ngIf="!allRequiredRanks" class="fas fa-ban text-danger"></i>
-              </span>
-          </li>
-        </ul>
+  </div>
+  <div class="info-player">
+    <span class="number-player"> </span>
+    <h4>
+      {{ player.displayName }}
+      <span *ngIf="_captain == displayName">Captain</span>
+    </h4>
+    <ul>
+      <li>
+        <strong>Matches:</strong> <span>{{ matches }}</span>
+      </li>
+      <li>
+        <strong>Seasons:</strong> <span>{{ player.seasonsPlayed }}</span>
+      </li>
+      <li *ngIf="showVerifiedRankings && (iAmMe || showRankings())">
+        <strong>Ranks Verified:</strong>
+        <span>
+          <i
+            *ngIf="allRequiredRanks"
+            class="far fa-check-circle text-success"
+          ></i>
+          <i *ngIf="!allRequiredRanks" class="fas fa-ban text-danger"></i>
+        </span>
+      </li>
+    </ul>
+  </div>
+  <app-player-link [player]="player.displayName">
+    <span class="btn"
+      >View Player <i class="fa fa-angle-right" aria-hidden="true"></i
+    ></span>
+  </app-player-link>
+  <div class="mt-1" *ngIf="showTeamLink && player.teamName">
+    <app-team-link [team]="player.teamName">
+      <span class="btn">Team Profile <i class="fa fa-angle-right" aria-hidden="true"></i></span>
+    </app-team-link>
+  </div>
+  <div class="row mt-1" *ngIf="showRemovePlayer()">
+    <div class="col">
+      <button class="btn-remove" (click)="removeMember(player.displayName)">
+        <i class="fas fa-ban"></i> Remove From Team
+      </button>
     </div>
-    <app-player-link [player]="player.displayName">
-        <span class="btn">View Player <i class="fa fa-angle-right" aria-hidden="true"></i></span>
-    </app-player-link>
-    <div class="mt-1" *ngIf="showTeamLink && player.teamName">
-        <app-team-link [team]="player.teamName">
-            <span class="btn">Team Profile <i class="fa fa-angle-right" aria-hidden="true"></i></span>
-        </app-team-link>
+  </div>
+  <div class="row mt-1" *ngIf="showLeave()">
+    <div class="col">
+      <button class="btn-remove" (click)="removeMember(player.displayName)">
+        <i class="fas fa-user-slash"></i> Leave Team
+      </button>
     </div>
-    <div class="row mt-1" *ngIf="showRemovePlayer()">
-        <div class="col">
-            <button class="btn-remove" (click)="removeMember(player.displayName)"><i class="fas fa-ban"></i> Remove From
-              Team </button>
-        </div>
-    </div>
-    <div class="row mt-1" *ngIf="showLeave()">
-        <div class="col">
-            <button class="btn-remove" (click)="removeMember(player.displayName)"><i class="fas fa-user-slash"></i>
-              Leave Team </button>
-        </div>
-    </div>
+  </div>
 </div>
 
 <ng-template #error>
-    <div class="item-player text-center" style="height: 389px; margin-bottom: 50px;">
-        <div style="margin-top: 50%;">
-            <h4>Sorry we couldn't find this user!</h4>
-        </div>
-
+  <div
+    class="item-player text-center"
+    style="height: 389px; margin-bottom: 50px"
+  >
+    <div style="margin-top: 50%">
+      <h4>Sorry we couldn't find this user!</h4>
     </div>
+  </div>
 </ng-template>

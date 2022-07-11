@@ -59,7 +59,6 @@ createMobileNav(){
       event=>{
         if(event instanceof NavigationStart){
           if (this.menuAPI) {
-            console.log(this.menuAPI);
             this.menuAPI.close();
           }
         }

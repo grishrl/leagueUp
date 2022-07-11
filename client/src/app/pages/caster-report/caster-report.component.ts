@@ -3,6 +3,7 @@ import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import { CasterReport } from 'src/app/classes/caster-report';
 import { Profile } from 'src/app/classes/profile.class';
 import { AuthService } from 'src/app/services/auth.service';
 import { ScheduleService } from 'src/app/services/schedule.service';
@@ -24,15 +25,7 @@ export class CasterReportComponent implements OnInit {
   coCastCtrl = new FormControl();
   filteredOptions: Observable<Profile[]>;
 
-  casterReport = {
-    casterName:'',
-    coCasters:[],
-    matchId:'',
-    division:'',
-    vodLinks:[],
-    issues:'',
-    season:1
-  };
+  casterReport:CasterReport = new CasterReport();
 
   selectedCoCaster = '';
   castersList = [];
