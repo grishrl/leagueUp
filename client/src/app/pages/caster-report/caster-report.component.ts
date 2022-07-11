@@ -32,8 +32,9 @@ export class CasterReportComponent implements OnInit {
 
   casterSelected(caster, type){
     if(type=='cocaster'){
-      if(this.casterReport.coCasters.indexOf(caster)==-1 && caster.length>0){
-        this.casterReport.coCasters.push(caster);
+      if(this.casterReport.coCasters.indexOf(caster.displayName)==-1 && caster.displayName.length>0){
+        this.casterReport.coCasters.push(caster.displayName);
+        this.casterReport.coCasterIds.push(caster._id);
       }
     }
   }
@@ -48,6 +49,7 @@ export class CasterReportComponent implements OnInit {
   removecoCaster(e){
     let i = this.casterReport.coCasters.indexOf(e);
     this.casterReport.coCasters.splice(i, 1);
+    this.casterReport.coCasterIds.splice(i,1);
   }
 
   addLink(){
@@ -65,7 +67,8 @@ export class CasterReportComponent implements OnInit {
       params=>{
         // console.log('params', params);
         this.casterReport.matchId = params['params'].matchId;
-        this.casterReport.division = params['params'].division;
+        this.casterReport.division =
+          params["params"].division != "undefined" ? params["params"].division : null;
         // console.log(this.casterReport);
         //get report if it exists
         this.ScheduleService.getCasterReport(this.casterReport.matchId).subscribe(
@@ -81,6 +84,7 @@ export class CasterReportComponent implements OnInit {
       }
     );
     this.casterReport.casterName = this.Auth.getUser();
+    this.casterReport.casterId = this.Auth.getUserId();
 
     this.User.getCasters().subscribe(
       casters=>{
@@ -102,17 +106,29 @@ export class CasterReportComponent implements OnInit {
 
   }
 
-  select(e){
+  selectCoCaster(e){
+    this.coCastCtrl.setValue("");
     if(e.option.value){
       this.casterSelected(e.option.value, 'cocaster');
     }
   }
 
   private _filter(val):Profile[]{
-    if(val !== undefined){
+    // console.log('filter', val);
+    if( !(val instanceof Object) && !this.util.isNullOrEmpty(val)){
       let filterVal = val.toLowerCase();
-      return this.castersList.filter(option=>option.displayName.toLowerCase().includes(filterVal));
+      let test = this.castersList.filter((option) =>
+        option.displayName.toLowerCase().includes(filterVal)
+      );
+      return test;
+    }else{
+      return this.castersList;
     }
+  }
+
+  displayFn(val){
+
+    return val && val.displayName ? val.displayName : '';
   }
 
   saving='';

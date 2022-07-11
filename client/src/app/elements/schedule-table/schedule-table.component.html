@@ -1,132 +1,185 @@
 <div class="table-responsive">
-    <table class=" table-striped table-hover">
-        <thead>
-            <tr>
-                <th *ngIf="showRound">R #</th>
-                <th *ngIf="divColumn">Div</th>
-                <th>Home</th>
-                <th class="text-center">VS</th>
-                <th>Away</th>
-                <th>Details</th>
-            </tr>
-        </thead>
-        <tbody>
-
-            <ng-container *ngFor="let match of matchesVal">
-                <tr *ngIf="match.type == 'grandfinal'">
-                    <td [attr.colspan]="colSpanInt" class="text-center h5">
-                        {{match.title}}
-                    </td>
-                </tr>
-                <tr>
-                    <!-- round column -->
-                    <td *ngIf="showRound">
-                        <app-round-column [match]="match"></app-round-column>
-                    </td>
-                    <!-- div column -->
-                    <td *ngIf="divColumn">
-                        {{match.divisionDisplayName}}
-                    </td>
-                    <ng-container *ngIf="match.type != 'bye'">
-                        <!-- home team -->
-                        <td>
-                            <span *ngIf="match.home else tbdteam">
-                <img src="{{match.home.logo}}" alt="icon">
+  <table class="table-striped table-hover">
+    <thead>
+      <tr>
+        <th *ngIf="showRound">R #</th>
+        <th *ngIf="divColumn">Div</th>
+        <th>Home</th>
+        <th class="text-center">VS</th>
+        <th>Away</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let match of matchesVal">
+        <tr *ngIf="match.type == 'grandfinal'">
+          <td [attr.colspan]="colSpanInt" class="text-center h5">
+            {{ match.title }}
+          </td>
+        </tr>
+        <tr>
+          <!-- round column -->
+          <td *ngIf="showRound">
+            <app-round-column [match]="match"></app-round-column>
+          </td>
+          <!-- div column -->
+          <td *ngIf="divColumn">
+            {{ match.divisionDisplayName }}
+          </td>
+          <ng-container *ngIf="match.type != 'bye'">
+            <!-- home team -->
+            <td>
+              <span *ngIf="match.home; else tbdteam">
+                <img src="{{ match.home.logo }}" alt="icon" />
                 <strong>
-                  <app-team-link [team]="match.home.teamName" [season]="seasonVal">
-                    {{match.home.teamName}}
+                  <app-team-link
+                    [team]="match.home.teamName"
+                    [season]="seasonVal"
+                  >
+                    {{ match.home.teamName }}
                   </app-team-link>
                 </strong>
-                <br>
+                <br />
               </span>
-                        </td>
-                        <!--  VS columns -->
-                        <td class="text-center">Vs</td>
-                        <!-- away column -->
-                        <td>
-                            <span *ngIf="match.away else tbdteam">
-                <img src="{{match.away.logo}}" alt="icon1">
+            </td>
+            <!--  VS columns -->
+            <td class="text-center">Vs</td>
+            <!-- away column -->
+            <td>
+              <span *ngIf="match.away; else tbdteam">
+                <img src="{{ match.away.logo }}" alt="icon1" />
                 <strong>
-                  <app-team-link [team]="match.away.teamName" [season]="seasonVal">
-                    {{match.away.teamName}}
+                  <app-team-link
+                    [team]="match.away.teamName"
+                    [season]="seasonVal"
+                  >
+                    {{ match.away.teamName }}
                   </app-team-link>
                 </strong>
-                <br>
+                <br />
               </span>
-                        </td>
-                        <!-- details column -->
-                        <td>
-                            <ng-container *ngIf="showCaster && isCaster">
-                                <strong>Match ID:</strong><span> {{match.matchId}}</span><br>
-                                <strong>Division:</strong><span> {{match.divisionConcat}}</span><br>
-                                <span *ngIf="!match.vodLinks || match.vodLinks.length==0">
-                  <a class="btn btn-primary mb-2"
-                    [routerLink]="['/_casterReport',{matchId:match.matchId, division:match.divisionConcat}]">
+            </td>
+            <!-- details column -->
+            <td>
+              <ng-container *ngIf="showCaster && isCaster">
+                <strong>Match ID:</strong><span> {{ match.matchId }}</span
+                ><br />
+                <strong>Division:</strong
+                ><span> {{ match.divisionConcat }}</span
+                ><br />
+                <span *ngIf="!match.vodLinks || match.vodLinks.length == 0">
+                  <a
+                    class="btn btn-primary mb-2"
+                    [routerLink]="[
+                      '/_casterReport',
+                      { matchId: match.matchId, division: match.divisionConcat }
+                    ]"
+                  >
                     Report Form
                   </a>
-                  <br>
+                  <br />
                 </span>
-                            </ng-container>
+              </ng-container>
 
-                            <span *ngIf="!match.reported else resultsButton">
-                <span *ngIf="match.scheduledTime && match.scheduledTime.startTime else tbd">
-                  <strong>Scheduled Time:
-                  </strong>{{match.scheduledTime.startTime | commonPipe:util.getFormattedDate:"MMM DD hh:mm A zz"}}
-                  <br>
+              <span *ngIf="!match.reported; else resultsButton">
+                <span
+                  *ngIf="
+                    match.scheduledTime && match.scheduledTime.startTime;
+                    else tbd
+                  "
+                >
+                  <strong>Scheduled Time: </strong
+                  >{{
+                    match.scheduledTime.startTime
+                      | commonPipe: util.getFormattedDate:"MMM DD hh:mm A zz"
+                  }}
+                  <br />
                 </span>
-                            <span>
-                  <a *ngIf="match?.home?.id && match?.away?.id"
-                    [routerLink]="['/matchupHistory', {teamAid:match.home.id, teamBid:match.away.id}]">Match Up
-                    History</a>
-                  <br>
+                <span>
+                  <a
+                    *ngIf="match?.home?.id && match?.away?.id"
+                    [routerLink]="[
+                      '/matchupHistory',
+                      { teamAid: match.home.id, teamBid: match.away.id }
+                    ]"
+                    >Match Up History</a
+                  >
+                  <br />
                 </span>
-                            <span *ngIf="match.casterName else casterButton">
-                  <small class="meta-text">Caster: {{match.casterName}},
-                    <a href="{{match.casterUrl | commonPipe:util.prePendHttp}}" target="_blank">{{match.casterUrl}}</a>
+                <span *ngIf="match.casterName; else casterButton">
+                  <small class="meta-text"
+                    >Caster: {{ match.casterName }},
+                    <a
+                      href="{{
+                        match.casterUrl | commonPipe: util.prePendHttp
+                      }}"
+                      target="_blank"
+                      >{{ match.casterUrl }}</a
+                    >
                   </small>
                 </span>
-                            </span>
-                        </td>
-                    </ng-container>
-                    <ng-container *ngIf="match.type == 'bye'">
-                        <td colspan="4" class="text-center p-3">BYE</td>
-                    </ng-container>
-                    <!-- ng-templates -->
-                    <ng-template #tbd>
-                        <div class="" *ngIf="userCanSchedule(match) else userView">
-                            <span *ngIf="match.scheduleDeadline">Schedule by:
-                {{match.scheduleDeadline-604800000 | commonPipe:util.getFormattedDate:"dddd M/D/YYYY"}}<br></span>
-                            <span *ngIf="match.friendlyDeadline">Play by: {{match.friendlyDeadline}}<br></span>
-                            <span>Schedule this match<br></span>
-                            <span><button [disabled]="checkDate(match)" class="btn btn-sm btn-primary"
-                  (click)="scheduleMatch(match.matchId)">Schedule this!</button></span>
-                            <span *ngIf="checkDate(match)"><br> <small class="text-danger">Schedule deadline was missed please contact
-                  admin!</small> </span>
-                        </div>
+              </span>
+            </td>
+          </ng-container>
+          <ng-container *ngIf="match.type == 'bye'">
+            <td colspan="4" class="text-center p-3">BYE</td>
+          </ng-container>
+          <!-- ng-templates -->
+          <ng-template #tbd>
+            <div class="" *ngIf="userCanSchedule(match); else userView">
+              <span *ngIf="match.scheduleDeadline"
+                >Schedule by:{{
+                  match.scheduleDeadline - 604800000
+                    | commonPipe: util.getFormattedDate:"dddd M/D/YYYY"
+                }}<br
+              /></span>
+              <span *ngIf="match.friendlyDeadline"
+                >Play by: {{ match.friendlyDeadline }}<br
+              /></span>
+              <span>Schedule this match<br /></span>
+              <span
+                ><button
+                  [disabled]="checkDate(match)"
+                  class="btn btn-sm btn-primary"
+                  (click)="scheduleMatch(match.matchId)"
+                >
+                  Schedule this!
+                </button></span
+              >
+              <span *ngIf="checkDate(match)"
+                ><br />
+                <small class="text-danger"
+                  >Schedule deadline was missed please contact admin!</small
+                >
+              </span>
+            </div>
 
-                        <ng-template #userView>
-                            <span>Not yet scheduled</span><br>
-                        </ng-template>
-                    </ng-template>
-                    <ng-template #casterButton>
-                        <div *ngIf="auth.isCaster() && !userCanSchedule(match)">
-                            <button class="btn btn-success" (click)="claimMatch(match.matchId)">
+            <ng-template #userView>
+              <span>Not yet scheduled</span><br />
+            </ng-template>
+          </ng-template>
+          <ng-template #casterButton>
+            <div *ngIf="auth.isCaster() && !userCanSchedule(match)">
+              <button
+                class="btn btn-success"
+                (click)="claimMatch(match.matchId)"
+              >
                 Caster One Click Claim
               </button>
-                        </div>
-                    </ng-template>
-                    <ng-template #resultsButton>
-                        <a *ngIf="match.matchId" [routerLink]="['/match/view/', match.matchId]" class="btn btn-primary">View Match
-              Info</a>
-                    </ng-template>
-                    <!-- end template -->
-                </tr>
-            </ng-container>
-
-
-        </tbody>
-    </table>
+            </div>
+          </ng-template>
+          <ng-template #resultsButton>
+            <a
+              *ngIf="match.matchId"
+              [routerLink]="['/match/view/', match.matchId]"
+              class="btn btn-primary"
+              >View Match Info</a
+            >
+          </ng-template>
+          <!-- end template -->
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
 </div>
-<ng-template #tbdteam>
-    TBD
-</ng-template>
+<ng-template #tbdteam> TBD </ng-template>

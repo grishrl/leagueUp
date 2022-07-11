@@ -19,9 +19,9 @@
                                 <!-- additional casters -->
                                 <mat-form-field class="mat-FullWidth">
                                     <input type="text" placeholder="Additional Casters:" [formControl]="coCastCtrl" matInput [matAutocomplete]="auto">
-                                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="select($event)">
+                                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectCoCaster($event)" [displayWith]="displayFn">
                                         <mat-option [value]=""></mat-option>
-                                        <mat-option *ngFor="let caster of filteredOptions | async; let i = index" [value]="caster.displayName">{{caster.displayName}}</mat-option>
+                                        <mat-option *ngFor="let caster of filteredOptions | async; let i = index" [value]="caster">{{caster.displayName}}</mat-option>
                                     </mat-autocomplete>
                                 </mat-form-field>
 
@@ -37,7 +37,7 @@
                                 </mat-form-field>
                                 <!-- division -->
                                 <mat-form-field>
-                                    <input matInput placeholder="Division" [disabled]="true" [(ngModel)]="casterReport.division">
+                                    <input matInput placeholder="Division" [disabled]="true" [value]="casterReport.division">
                                 </mat-form-field>
                                 <!-- vods -->
                                 <mat-form-field>

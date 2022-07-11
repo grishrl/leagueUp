@@ -46,13 +46,29 @@ async function handleCasterReportObj(obj) {
             err => {
                 throw err;
             }
-        )        
+        )
+        
+        //need to get account IDs by display names..
+        let accountNames = [];
+        accountNames.push(obj.casterName);
 
-        console.log('accountById',accountById.length)
-        console.log('users.length',users.length);
+        obj.coCasters = utils.isNullOrEmpty(obj.coCasters) ? obj.coCasters : [];
+
+        obj.coCasters.forEach( coCasterName=>{
+            accountNames.push(coCasterName);
+        });
+
+        let usersByName = await User.find({displayName:{$in:accountNames}}).then(
+            users => {
+                return users;
+            },
+            err => {
+                throw err;
+            }
+        )
 
         let xref = [];
-        if (users.length > 0) {
+        if (usersByName.length > 0) {
 
 
             accountById.forEach((u) => {
