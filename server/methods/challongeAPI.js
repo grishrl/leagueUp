@@ -109,7 +109,7 @@ function startTournament(tournamentId) {
     return axios.post(url, postObj).then(response => {
         return response.data;
     }, err => {
-        return err.response.data
+        return err.response;
     });;
 }
 

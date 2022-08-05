@@ -24,130 +24,6 @@ const SEASONAL = 'seasonal';
 const TOURNAMENT = 'tournament';
 
 
-
-/**
- * @name generateSeason
- * @function
- * @description generates the framework for scheduling for the season.  should only be run once ever per season;
- * !!!after this is ran, division changes should not be performed!!!!!!!
- * @param {number} season 
- */
-async function generateSeason(season) {
-
-    let logObj = {};
-    logObj.actor = 'Schedule Generater Sub; generateSeason';
-    logObj.action = ' create schedule framework for season ';
-    logObj.target = 'Season: ' + season + ' framework ';
-    logObj.timeStamp = new Date().getTime();
-    logObj.logLevel = 'STD';
-
-    let returnVal = false;
-
-    try {
-
-        let divObj = {};
-        //get list of divisions
-        let getDivision = await Division.find({
-            $and: [{
-                    $or: [{
-                            cupDiv: false
-                        },
-                        {
-                            cupDiv: {
-                                $exists: false
-                            }
-                        },
-                        {
-                            public: true
-                        }
-                    ]
-                },
-                {
-                    public: true
-                }
-            ]
-
-        }).lean().then((res) => {
-            return res;
-        });
-
-        //loop through the divisions
-        for (var i = 0; i < getDivision.length; i++) {
-
-            //local div variable
-            let thisDiv = getDivision[i];
-            divObj[thisDiv.divisionConcat] = {};
-
-            //create an array of teams from the division
-            let lowerTeam = [];
-            thisDiv.teams.forEach(iterTeam => {
-                lowerTeam.push(iterTeam.toLowerCase());
-            });
-
-            //pull the teams info from the dB and create an array of strings of the teams _ids
-            // let participants = [];
-            let participants = await TeamModel.find({
-                teamName_lower: {
-                    $in: lowerTeam
-                }
-            }).then((teams) => {
-                //create an array of strings of the teams _ids and return
-                let returnParticipants = [];
-                if (teams && teams.length > 0) {
-                    teams.forEach(team => {
-                        returnParticipants.push(team._id.toString());
-                    });
-                }
-                return returnParticipants;
-            });
-
-            //schedule object will have
-            /*
-            {
-                participants:[ String ], <- string array of team _ids
-                matches:[ Object ], <- object array of matches
-                roundSchedules[ Object ] <- object array of matches
-            }
-             */
-
-            divObj[thisDiv.divisionConcat]['participants'] = participants;
-            divObj[thisDiv.divisionConcat]['matches'] = [];
-            divObj[thisDiv.divisionConcat]['DRR'] = !!util.returnByPath(thisDiv, 'DRR');
-            divObj[thisDiv.divisionConcat]['roundSchedules'] = {};
-        }
-
-        // create the schedule object
-        let schedObj = {
-                "season": season,
-                "type": SEASONAL,
-                "division": divObj
-            }
-            //save the schedule object to db
-        let sched = await new Scheduling(
-            schedObj
-        ).save().then((saved) => {
-            return true;
-        }, (err) => {
-            return false;
-        });
-        //log results
-        if (sched) {
-            logger(logObj);
-        } else {
-            logObj.logLevel = 'ERROR';
-            logger(logObj);
-        }
-        returnVal = sched;
-
-    } catch (e) {
-        logObj.logLevel = 'ERROR';
-        logger(logObj);
-        util.errLogger('schedule-sub', e, 'Error in generateSeason');
-    }
-    return returnVal;
-
-}
-
 /**
  * @name generateSeasonTwo
  * @function
@@ -329,14 +205,23 @@ async function generateRoundRobinScheduleTwo(season) {
 
                         //duplicate the matches... ?
                         if (util.returnByPath(divisions[key], 'DRR')) {
-                            let dbl = lodash.clone(roundRobin);
+                            let firstRounds = returnRoundNumbers(roundRobin);
+                            console.log("firstRounds", firstRounds);
+                            let dbl = lodash.cloneDeep(roundRobin);
                             dbl.forEach(
-                                r => {
+                                (r, index) => {
                                     let ngsID = uniqid();
                                     r["matchId"] = ngsID;
+                                    let tHome = util.returnByPath(r, 'home');
+                                    let tAway = util.returnByPath(r, 'away');
+                                    r.home = tAway;
+                                    r.away = tHome;
+                                    r.round = firstRounds+r.round;
                                     roundRobin.push(r);
                                 }
                             );
+
+                            //
                         }
 
                         divisions[key].matches = [];
@@ -367,164 +252,9 @@ async function generateRoundRobinScheduleTwo(season) {
                     }
                 );
 
-                // 
-                //     
-                //     dbl.forEach(
-                //         r => {
-                //             roundRobin.push(r);
-                //         }
-                //     );
-                // }
-
-                //for a double round robin division >>>>
-                // if (util.returnByPath(divisions[key], 'DRR')) {
-                //     let dbl = lodash.clone(roundRobin);
-                //     dbl.forEach(
-                //         r => {
-                //             roundRobin.push(r);
-                //         }
-                //     );
-                // }
-
-                //loop for reach round number and each round generated by the robin method and assign the indvidual matches
-                //a round number
-                // for (var j = 0; j < roundRobin.length; j++) { //loop through the number of rounds
-                //     //adjust 0 based round incrementer by +1
-                //     let roundNum = j + 1;
-                //     //grab the round from the result of the robin method
-                //     let round = roundRobin[j];
-                //     round.forEach(match => { //loop through the particular rounds matches
-                //         //create a match object from the round number and the information provided by the robin method
-                //         let matchObj = {
-                //                 'season': season,
-                //                 'divisionConcat': key,
-                //                 "matchId": uniqid(),
-                //                 "round": roundNum,
-                //                 home: {
-                //                     id: match[0]
-                //                 },
-                //                 away: {
-                //                     id: match[1]
-                //                 }
-                //             }
-                //             //push the match object into the schedule matches array
-                //         matches.push(matchObj);
-                //     });
-                // }
-                //create dB objects for each match generated.
-
             }
 
         }
-
-    });
-}
-
-//
-//season:string - the season for which to generate the matches
-/**
- * @name generateRoundRobinSchedule
- * @function
- * @description generates a round robin schedule
- * @param {number} season 
- */
-function generateRoundRobinSchedule(season) {
-    let logObj = {};
-    logObj.actor = 'Schedule Generater Sub; generateRoundRobinSchedule';
-    logObj.action = ' create regular season matches ';
-    logObj.target = 'Season: ' + season + ' matches ';
-    logObj.timeStamp = new Date().getTime();
-    logObj.logLevel = 'STD';
-
-    const query = {
-        $and: [{
-                "season": season
-            },
-            {
-                'type': SEASONAL
-            }
-        ]
-    };
-
-    //grab the schedule of the season in question
-    Scheduling.findOne(query).then((found) => {
-
-        //get the divisions
-        let divisions = found.division;
-
-        //make an array of the divisions as keys to iterate through
-        let keys = Object.keys(divisions);
-
-        //loop through each division and create the matches for it
-        for (var i = 0; i < keys.length; i++) {
-
-            //local key -> this will be divisionConcat
-            let key = keys[i];
-
-            if (!(util.returnByPath(divisions[key], 'cupDiv'))) {
-
-                //local participants -> list of team ids in div
-                let participants = divisions[key].participants;
-
-                //use the robin method to create the round robin matches
-                let roundRobin = robin(participants.length, participants);
-                let matches = divisions[key].matches;
-
-                //for a double round robin division >>>>
-                if (util.returnByPath(divisions[key], 'DRR')) {
-                    let dbl = lodash.clone(roundRobin);
-                    dbl.forEach(
-                        r => {
-                            roundRobin.push(r);
-                        }
-                    );
-                }
-
-                //loop for reach round number and each round generated by the robin method and assign the indvidual matches
-                //a round number
-                for (var j = 0; j < roundRobin.length; j++) { //loop through the number of rounds
-                    //adjust 0 based round incrementer by +1
-                    let roundNum = j + 1;
-                    //grab the round from the result of the robin method
-                    let round = roundRobin[j];
-                    round.forEach(match => { //loop through the particular rounds matches
-                        //create a match object from the round number and the information provided by the robin method
-                        let matchObj = {
-                                'season': season,
-                                'divisionConcat': key,
-                                "matchId": uniqid(),
-                                "round": roundNum,
-                                home: {
-                                    id: match[0]
-                                },
-                                away: {
-                                    id: match[1]
-                                }
-                            }
-                            //push the match object into the schedule matches array
-                        matches.push(matchObj);
-                    });
-                }
-                //create dB objects for each match generated.
-                Match.insertMany(matches).then(res => {
-                    console.log('matches inserted!');
-                }, err => {
-                    console.log('error inserting matches');
-                });
-
-            }
-
-        }
-        //save the matches into the schedule object as well, this will serve as both a back up and 
-        //a way to further perserve what matches belong to each season
-        found.markModified('division');
-        found.save().then((saved) => {
-            logger(logObj);
-        }, (err) => {
-            logObj.logLevel = 'ERROR';
-            logObj.error = err;
-            logger(logObj);
-        })
 
     });
 }
@@ -819,47 +549,6 @@ async function generateRoundRobinChallonge(teams, season, division, eventType) {
                             }
                         });
 
-                        //was all that necessary?
-
-
-                        // //insert the formed up bracked objects into the matches table
-                        // let matches = await Match.insertMany(brackets).then(res => {
-                        //     console.log('matches inserted!');
-                        //     return res;
-                        // }, err => {
-                        //     console.log('error inserting matches ');
-                        //     return err;
-                        // });
-
-                        // //create a schedule object to go along with this tournament
-                        // //give it particpants and the matches asscoated with this tournament
-                        // let schedObj = {
-                        //     'type': TOURNAMENT,
-                        //     'name': name,
-                        //     'division': division,
-                        //     'season': season,
-                        //     'participants': teamIds,
-                        //     'participantsRef': finalParticipantArray,
-                        //     'matches': matchIDsArray,
-                        //     'matchesRef': matchesCrossRef,
-                        //     'challonge_ref': tournamentId,
-                        //     'challonge_url': url,
-                        //     'finalMatch': finalMatchRef,
-                        //     'active': true
-                        // }
-                        // if (cup) {
-                        //     schedObj['cup'] = cup;
-                        // }
-                        // let schedule = await new Scheduling(
-                        //     schedObj
-                        // ).save().then((saved) => {
-                        //     // console.log('fin', JSON.stringify(saved));
-                        //     return saved;
-                        // }, (err) => {
-                        //     // console.log(err);
-                        //     return err;
-                        // });
-
                         returnObj.matches = brackets;
                         return returnObj;
                     } catch (e) {
@@ -873,6 +562,20 @@ async function generateRoundRobinChallonge(teams, season, division, eventType) {
 
     }
 
+}
+
+function returnRoundNumbers(matchesArray){
+
+    let rounds = [];
+
+    matchesArray.forEach(
+        iter=>{
+            if(rounds.indexOf(iter.round)==-1){
+                rounds.push(iter.round);
+            }
+        }
+    )
+    return rounds.length;
 }
 
 /**
@@ -1195,7 +898,5 @@ async function generateTournament(teams, season, division, cup, name, descriptio
 module.exports = {
     generateSeasonTwo: generateSeasonTwo,
     generateRoundRobinScheduleTwo: generateRoundRobinScheduleTwo,
-    generateSeason: generateSeason,
-    generateRoundRobinSchedule: generateRoundRobinSchedule,
     generateTournament: generateTournament
 };
