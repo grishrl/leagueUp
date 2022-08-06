@@ -269,7 +269,7 @@ router.post('/save', passport.authenticate('jwt', {
                             found.discordTag = sentUser.discordTag
                         }
                         if (utils.returnBoolByPath(sentUser, 'discordId')) {
-                            found.discordId = sentUser.discordTag
+                            found.discordId = sentUser.discordId
                         }
                         if (utils.returnBoolByPath(sentUser, 'hlRankMetal')) {
                             found.hlRankMetal = sentUser.hlRankMetal
