@@ -43,6 +43,10 @@ async function createStandingsTouchPoint() {
                     };
 
                     const document = utils.JSONCopy(query);
+                    if(utils.isNullOrEmpty(document.data)){
+                        document.data = {};
+                    }
+                    document.data.season=season;
                     document.data.standings = standing;
 
                     System.findOneAndUpdate(
