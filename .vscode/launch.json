@@ -6,16 +6,16 @@
   "configurations": [
     {
       "type": "node",
-      "request": "launch",
-      "name": "Launch Program",
-      "program": "${workspaceFolder}/file.js"
+      "request": "attach",
+      "name": "Attach to Process",
+      "port":3000
     },
     {
-      "type": "chrome",
+      "type":"node",
       "request": "launch",
-      "name": "Launch Chrome against localhost",
-      "url": "http://localhost:3000",
-      "webRoot": "${workspaceFolder}"
+      "name":"Debugger",
+      "program":"cluster.js",
+      "envFile": "${workspaceFolder}/.env"
     }
   ]
 }
