@@ -38,8 +38,8 @@ async function handleCasterReportObj(obj) {
             accountById.push(u);
         });
 
-
-        let users = await User.find({ _id: { $in: accountById } }).then(
+        //get user data by ids... fresh copy from db
+        let usersByIdFromDb = await User.find({ _id: { $in: accountById } }).then(
             users => {
                 return users;
             },
@@ -58,31 +58,33 @@ async function handleCasterReportObj(obj) {
             accountNames.push(coCasterName);
         });
 
-        let usersByName = await User.find({displayName:{$in:accountNames}}).then(
+        let usersByNameFromDb = await User.find({displayName:{$in:accountNames}}).then(
             users => {
                 return users;
             },
             err => {
                 throw err;
             }
-        )
+        );
+
+        let totalUsers = [];
+        
+        usersByIdFromDb.forEach(u=>{
+            let tObj = utils.objectify(u);
+            if(_.findIndex(totalUsers, {_id:tObj._id})==-1){
+                totalUsers.push(tObj);
+            }
+        });
+        usersByNameFromDb.forEach(u=>{
+            let tObj = utils.objectify(u);
+            if(_.findIndex(totalUsers, {_id:tObj._id})==-1){
+                totalUsers.push(tObj);
+            }
+        });
 
         let xref = [];
-        if (usersByName.length > 0) {
+        if (totalUsers.length > 0) {
 
-
-            accountById.forEach((u) => {
-                users.forEach(us => {
-                    let t = {};
-
-                    us = utils.objectify(us);
-                    if (u === us.displayName) {
-                        t.displayName = u;
-                        t.id = us._id.toString();
-                        xref.push(t);
-                    }
-                })
-            });
 
             Match.findOne({ matchId: obj.matchId }).then(
                 foundMatch => {
@@ -92,10 +94,10 @@ async function handleCasterReportObj(obj) {
                 });
 
             // replace displaynames with ids
-            obj.casterId = findId(obj.casterName, xref);
+            obj.casterId =  _.find(totalUsers, {displayName:obj.casterName})._id;
             obj.coCasterIds = [];
             obj.coCasters.forEach(u => {
-                obj.coCasterIds.push(findId(u, xref));
+                obj.coCasterIds.push(_.find(totalUsers, {displayName:u})._id);
             });
 
             obj.season = currentSeasonInfo.value;
@@ -142,16 +144,6 @@ async function handleCasterReportObj(obj) {
         console.log(e);
         throw e;
     }
-}
-
-function findId(display, xref) {
-    let id = '';
-    xref.forEach(i => {
-        if (i.displayName == display) {
-            id = i.id;
-        }
-    });
-    return id;
 }
 
 async function getUnCurratedReports() {

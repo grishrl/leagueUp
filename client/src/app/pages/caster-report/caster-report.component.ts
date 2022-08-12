@@ -75,6 +75,7 @@ export class CasterReportComponent implements OnInit {
           res=>{
             if(res){
             this.casterReport = res;
+
             }
           },
           err=>{
@@ -84,8 +85,6 @@ export class CasterReportComponent implements OnInit {
       }
     );
     this.casterReport.casterName = this.Auth.getUser();
-    this.casterReport.casterId = this.Auth.getUserId();
-
     this.User.getCasters().subscribe(
       casters=>{
 
@@ -134,6 +133,8 @@ export class CasterReportComponent implements OnInit {
   saving='';
 
   save(){
+    this.casterReport.casterName = this.Auth.getUser();
+    this.casterReport.casterId = this.Auth.getUserId();
     if(this.casterReport.vodLinks.length>0){
       this.saving='Saving..';
       this.ScheduleService.casterReport(this.casterReport).subscribe(
