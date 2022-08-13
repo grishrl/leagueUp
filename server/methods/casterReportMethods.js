@@ -32,7 +32,7 @@ async function handleCasterReportObj(obj) {
         let accountById = [];
         accountById.push(obj.casterId);
 
-        obj.coCasterIds = utils.isNullOrEmpty(obj.coCasterIds) ? obj.coCasterIds : [];
+        obj.coCasterIds = utils.isNullOrEmpty(obj.coCasterIds) ?  [] : obj.coCasterIds;
         
         obj.coCasterIds.forEach((u) => {
             accountById.push(u);
@@ -52,7 +52,7 @@ async function handleCasterReportObj(obj) {
         let accountNames = [];
         accountNames.push(obj.casterName);
 
-        obj.coCasters = utils.isNullOrEmpty(obj.coCasters) ? obj.coCasters : [];
+        obj.coCasters = utils.isNullOrEmpty(obj.coCasters) ? [] : obj.coCasters;
 
         obj.coCasters.forEach( coCasterName=>{
             accountNames.push(coCasterName);
