@@ -87,6 +87,11 @@ const APP_ROUTES: Routes = [
     data: { slug: "rules", headerText: "Community Rules" },
   },
   {
+    path: "casterBylaws",
+    component: BlogViewComponent,
+    data: { slug: "caster-bylaws-season-14", headerText: "Caster Bylaws" },
+  },
+  {
     path: "stormrules",
     component: BlogViewComponent,
     data: {
@@ -286,7 +291,7 @@ const APP_ROUTES: Routes = [
     path: "schedule/scheduleMatch/:id",
     component: MatchSchedulerComponent,
     canActivate: [AuthGuardService],
-    data: { role: "tokenonly" }
+    data: { role: "tokenonly" },
   },
   {
     path: "reporting/:id",
