@@ -33,7 +33,7 @@
         "newrelic": "^8.14.1",
         "nodemailer": "^6.7.5",
         "nodemailer-express-handlebars": "^5.0.0",
-        "passport": "^0.4.1",
+        "passport": "^0.6.0",
         "passport-bnet": "^2.0.0",
         "passport-google-oauth20": "^1.0.0",
         "passport-jwt": "^4.0.0",
