@@ -12,8 +12,8 @@ export class CurrentlyLiveGamesComponent implements OnInit {
 
   liveList = [];
   ngOnInit(): void {
-    timer(0, 600000).subscribe(timer => {
-      this.scheduleServ.getLiveMatches().subscribe(res => {
+    timer(0, 600).subscribe((timer) => {
+      this.scheduleServ.getLiveMatches().subscribe((res) => {
         this.liveList = res;
         // this.liveList.push(
         //   {

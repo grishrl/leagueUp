@@ -353,12 +353,20 @@ router.post('/query/matches',
         }
     });
 
+var lastRequest = null;
+var cachedInfo  = null;
+const refreshMinutes = 5;
+const refreshMs = (1000*60*refreshMinutes);
+
 router.get('/get/matches/casted/playing', (req, res) => {
     const path = 'schedule/get/matches/casted/playing';
 
     const start = Date.now();
 
-    commonResponseHandler(req, res, [], [], async(req, res) => {
+    if(lastRequest!=null&&cachedInfo!=null&&start-lastRequest<refreshMs){
+        res.status(200).send(utils.returnMessaging(req.originalUrl, 'Cached matches', false, cachedInfo));
+    }else{
+            commonResponseHandler(req, res, [], [], async(req, res) => {
         const response = {};
         let now = Date.now();
         let query = {
@@ -383,33 +391,32 @@ router.get('/get/matches/casted/playing', (req, res) => {
             ]
         }
 
-        return Match.find(query).lean().then((found) => {
+        return Match.find(query).limit(5).then((found) => {
             if (found) {
                 let teams = findTeamIds(found);
                 return addTeamNamesToMatch(teams, found).then((processed) => {
-
+                    lastRequest = now;
+                    cachedInfo = found;
                     response.status = 200;
                     response.message = utils.returnMessaging(req.originalUrl, 'Found matches', false, processed)
                     return response;
                 }, (err) => {
-
                     response.status = 400;
                     response.message = utils.returnMessaging(req.originalUrl, 'Error compiling match info', err)
                     return response;
                 });
             } else {
-
                 response.status = 200;
                 response.message = utils.returnMessaging(req.originalUrl, 'No matches found for criteria', false, found)
                 return response;
             }
         }, (err) => {
-
             response.status = 500;
             response.message = utils.returnMessaging(req.originalUrl, 'Error finding matches', err)
             return response;
         });
     })
+    }
 });
 
 router.post('/fetch/matchup/history', (req, res) => {
