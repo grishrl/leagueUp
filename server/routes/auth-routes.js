@@ -7,9 +7,7 @@ const util = require('../utils');
 //auth logout
 router.get('/logout', (req, res) => {
     const path = '/auth/logout'
-        //handle with passport
-    req.logout();
-    res.status(200).send(util.returnMessaging(path, "Logged out"));
+    res.status(200).send(util.returnMessaging(path, "Logged out"));   
 });
 
 router.get('/bnet', passport.authenticate('bnet', {
