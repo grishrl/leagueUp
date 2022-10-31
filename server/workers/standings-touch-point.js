@@ -35,18 +35,17 @@ async function createStandingsTouchPoint() {
 
             standingsMethods.calulateStandings(division.divisionConcat, season, false, false).then(
                 standing => {
+                    
                     const query = {
                         $and: [
                             { dataName: division.divisionConcat },
                             { 'data.season': season }
                         ]
                     };
-
-                    const document = utils.JSONCopy(query);
-                    if(utils.isNullOrEmpty(document.data)){
-                        document.data = {};
-                    }
-                    document.data.season=season;
+                    
+                    const document = {data:{}};
+                    document.dataName = division.divisionConcat;
+                    document.data.season = season;
                     document.data.standings = standing;
 
                     System.findOneAndUpdate(
