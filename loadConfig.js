@@ -17,7 +17,6 @@ const s3 = new aws.S3({
 var timer;
 
 function loadConfig() {
-    console.log("HELLO: ", process.env);
     return s3.getObject({
         Key: `${process.env.serverEnv}_server_config.json`
     }).promise().then(
