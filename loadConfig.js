@@ -1,4 +1,5 @@
 const aws = require("aws-sdk");
+require('dotenv').config();
 
 const serverPublicKey = process.env.serverConfigKey;
 const serverSecretKey = process.env.serverConfigSecret;

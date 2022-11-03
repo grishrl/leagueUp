@@ -1,6 +1,7 @@
 const cluster = require('cluster');
 const worker = require('./worker');
 const loadConfig = require("./loadConfig");
+require('dotenv').config();
 
 var WORKERS = process.env.WEB_CONCURRENCY || 1;
 
@@ -53,7 +54,6 @@ var WORKERS = process.env.WEB_CONCURRENCY || 1;
 //            }
 //        );
 // }
-
 loadConfig().then(
     function(){
                     if (cluster.isMaster) {
