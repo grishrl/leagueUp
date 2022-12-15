@@ -7,7 +7,7 @@
 
 const Team = require("../models/team-models");
 const AWS = require('aws-sdk');
-const logger = require('../subroutines/sys-logging-subs').logger;
+const utils = require('../utils')
 const CustomError = require('./customError');
 const { s3deleteFile } = require('../methods/aws-s3/delete-s3-file');
 const { s3putObject } = require('../methods/aws-s3/put-s3-file');
@@ -125,6 +125,7 @@ async function teamLogoArchive(logo) {
             };
         },
         s3fail => {
+            console.log(s3fail);
             return {
                 "cont": false,
                 "eo": s3fail
@@ -135,8 +136,7 @@ async function teamLogoArchive(logo) {
         successObject.message = "File uploaded";
         successObject.eo = {};
     } else {
-        let error = new CustomError('uploadError', 's3 copy failure!');
-        throw error;
+        utils.errLogger('teamLogoUpload', s3await.eo, `${logo} Uploading team logo to archive failed.`)
     }
     return successObject;
 }
