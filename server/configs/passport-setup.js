@@ -206,14 +206,24 @@ function createNewProfile(userObj, logObj, done) {
             }
 
             new User(userObj).save().then((newUser) => {
-                logObj.action = ' new user was created ';
+                let action = ` new user was created `;
+                if(logObj.action){
+                    logObj.action += action;
+                }else{
+                    logObj.action = action;
+                }
                 logObj.target = newUser.displayName;
                 logger(logObj);
                 returnUserToClient(newUser, done);
             });
         }, err => {
             new User(userObj).save().then((newUser) => {
-                logObj.action = ' new user was created ';
+                let action = ` new user was created `;
+                if(logObj.action){
+                    logObj.action += action;
+                }else{
+                    logObj.action = action;
+                }
                 logObj.target = newUser.displayName;
                 logObj.error = 'mmr gathering errors!';
                 logger(logObj);

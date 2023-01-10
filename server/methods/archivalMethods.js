@@ -266,6 +266,8 @@ async function archiveUser(user, actor) {
                     }
                 );
 
+                //TODO: need to remove any pending avatars here in case someone deletes their account....
+
                 if (archived) {
                     success = removed;
                 }
