@@ -175,12 +175,13 @@ function updatePendingMemberQueueUsername(oldusername, newusername) {
  */
 function addToPendingTeamMemberQueue(teamId, teamLower, userId, user) {
     //log object
+    let time = new Date().getTime();
     let logObj = {};
     logObj.actor = 'SYSTEM SUBROUTINE addToPendingTeamMemberQueue';
     logObj.action = ' create pending queue item ';
     logObj.target = teamLower + ' : ', user;
     logObj.logLevel = 'STD';
-    logObj.timeStamp = new Date().getTime();
+    logObj.timeStamp = time;
     teamLower = teamLower.toLowerCase();
     if (util.isNullorUndefined(teamLower) && util.isNullorUndefined(user) && util.isNullorUndefined(teamId) && util.isNullorUndefined(userId)) {
         logObj.error = 'addToPendingTeamMemberQueue got emtpy teamname / username '
@@ -190,7 +191,8 @@ function addToPendingTeamMemberQueue(teamId, teamLower, userId, user) {
             "teamId": teamId,
             "teamName": teamLower,
             "userId": userId,
-            "userName": user
+            "userName": user,
+            "timestamp": time
         }).save().then((savedQueue) => {
             logger(logObj);
         }, (err) => {

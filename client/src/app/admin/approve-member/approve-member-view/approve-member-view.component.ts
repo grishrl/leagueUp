@@ -33,6 +33,7 @@ export class ApproveMemberViewComponent implements OnInit {
     null,
     null
   ); //local user profile - blank user profile
+
   viewTeam = new Team(
     null,
     null,
@@ -51,11 +52,14 @@ export class ApproveMemberViewComponent implements OnInit {
     null,
     null
   ); //local team profile - blank team profile
+
   resultantMmr: {
     resultantMmr: null;
     stormRankAvg: null;
   }; //local var for holding returned resultant MMR calculation
+
   _info: any; //local var, holds the bindings passed to this component
+
   note: string = "";
 
   //Input bindings , object that has username and teamname
@@ -113,6 +117,7 @@ export class ApproveMemberViewComponent implements OnInit {
         });
       });
     }
+
   }
 
   //handles the approval chosen by the admin

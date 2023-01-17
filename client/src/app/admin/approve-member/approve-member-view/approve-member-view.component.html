@@ -1,5 +1,10 @@
 <div class="row row-style">
     <div class="col" *ngIf="!errorState else errorTemplate">
+      <div class="row">
+        <div class="col">
+          <strong>Submitted:</strong> {{_info.timestamp | commonPipe: util.getFormattedDate:'MM/DD/YYYY hh:mm A' }}
+        </div>
+      </div>
         <div class="row">
             <div class="col">
                 <app-user-quick-view [userId]="player"></app-user-quick-view>
