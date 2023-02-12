@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HistoryService } from '../../services/history.service';
 import { TimeService } from '../../services/time.service';
 import { FilterService } from '../../services/filter.service';
+import { orderBy } from 'lodash'
 
 @Component({
   selector: 'app-past-seasons',
@@ -24,7 +25,7 @@ export class PastSeasonsComponent implements OnInit {
         let currentSeason = res.value;
         this.HS.getPastSeasons().subscribe(
           res => {
-            res.forEach(element => {
+            orderBy(res, e => 0 - e.season).forEach(element => {
               if (parseInt(element.season) != parseInt(currentSeason)){
                 this.seasonsList.push(element.season);
               }
