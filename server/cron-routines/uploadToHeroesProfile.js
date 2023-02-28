@@ -102,7 +102,7 @@ async function postToHotsProfileHandler(limNum) {
                 logObj.actor = 'SYSTEM; CRON; Hots-Profile Submit';
                 let match = matches[i];
 
-                util.errLogger(location, null, ' working ' + match.matchId)
+                util.errLogger(location, null, ' working ' + match.matchId + " : " (i+1) + " of " matches.length);
 
                 let matchCopy = _.cloneDeep(util.objectify(match));
                 //get the team info for each team in the match in case it isnt there all ready
@@ -304,7 +304,7 @@ async function sendToHp(divisions, matchCopy, match, logObj) {
                 let replayObj = matchCopy.replays[(localKey).toString()];
 
                 // if the specific replay object is not null or undefined and the replay does NOT have a valid submission to HP all ready
-                if (!util.isNullorUndefined(replayObj) && !util.returnBoolByPath(replayObj, 'parsedUrl')) {
+                if (!util.isNullorUndefined(replayObj) && util.returnBoolByPath(replayObj, 'url') && !util.returnBoolByPath(replayObj, 'parsedUrl')) {
 
                     console.log('decided to send to HP:', matchCopy.matchId, replayObj.data);
                     postObj['replay_url'] = process.env.heroProfileReplay + replayObj.url;
@@ -314,6 +314,7 @@ async function sendToHp(divisions, matchCopy, match, logObj) {
                     }
                     logObj.timeStamp = new Date().getTime();
                     logObj.logLevel = 'STD';
+
 
                     if (screenPostObject(postObj)) {
 
@@ -368,6 +369,14 @@ async function sendToHp(divisions, matchCopy, match, logObj) {
                 else if (util.returnBoolByPath(replayObj, 'parsedUrl')) {
                     postedReplays += 1;
                 }
+                
+                //2-27-2023 added a check that if a match has no URL do not process, 
+                //afraid that this is process is running between a user upload and the back end processing the file..
+                //this should not trigger a fall throughh check so for now set it false... may have to implement a try counter...
+                if(!util.returnBoolByPath(replayObj, 'url')){
+                    fallThroughCheck = false;
+                }
+                
                 if (fallThroughCheck) {
                     logObj.logLevel = "WARNING";
                     logObj.error = "This replay did nothing, needs investigation.";
