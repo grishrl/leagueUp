@@ -18,7 +18,6 @@ const tmp = require('tmp-promise');
 const parser = require('hots-parser');
 const LinvoDB = require('linvodb3');
 const { uniq, startCase } = require('lodash');
-const currentSeason = process.env.currentSeason;
 const replayBucket = process.env.s3bucketReplays;
 const statsBucket = process.env.s3bucketStats;
 const statsFolder = process.env.s3folderStats;
@@ -342,7 +341,20 @@ const getCollectionIdsForDivision = (collectionMap, divisionConcat) => {
     return collectionIds;
 };
 
-const getMatchesFromApi = async () => {
+const getCurrentSeasonFromApi = async () => {
+    const {
+        data: {
+            returnObject: { value },
+        },
+    } = await axios({
+        method: 'get',
+        url: `${publicApiUrl}/admin/getSeasonInfo`,
+    });
+
+    return value;
+};
+
+const getMatchesFromApi = async currentSeason => {
     const {
         data: { returnObject: matches },
     } = await axios({
@@ -351,7 +363,7 @@ const getMatchesFromApi = async () => {
         data: { season: currentSeason },
     });
 
-    return matches;
+    return require('lodash/take')(matches, 20);
 };
 
 const getTeamsFromApi = async () => {
@@ -370,6 +382,7 @@ const downloadAndExtractZipFromS3 = async (
     zipFilename,
     fullZipPath,
     dbPath,
+    currentSeason,
     log
 ) => {
     const writeStream = fs.createWriteStream(fullZipPath);
@@ -413,6 +426,7 @@ const publishZipToS3 = async (
     currentZipFilename,
     dailyZipFilename,
     dbDirectory,
+    currentSeason,
     log
 ) => {
     const zip = new AdmZip();
@@ -476,6 +490,8 @@ module.exports = async log => {
         prefix: 'ngs-stats',
         unsafeCleanup: true,
     });
+    const currentSeason = await getCurrentSeasonFromApi();
+    log(`Current season is ${currentSeason}.`);
     log(`Processing files using working directory ${tempDirectory}.`);
     const currentZipFilename = `NGS-season${currentSeason}-current.zip`;
     const dailyZipFilename = `NGS-season${currentSeason}-${new Date()
@@ -494,10 +510,11 @@ module.exports = async log => {
         currentZipFilename,
         oldZipPath,
         dbPath,
+        currentSeason,
         log
     );
 
-    const matches = await getMatchesFromApi();
+    const matches = await getMatchesFromApi(currentSeason);
     log(`Found ${matches.length} matches.`);
     const teams = await getTeamsFromApi();
     log(`Found ${teams.length} teams.`);
@@ -664,6 +681,7 @@ module.exports = async log => {
         currentZipFilename,
         dailyZipFilename,
         dbPath,
+        currentSeason,
         log
     );
 
