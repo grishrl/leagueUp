@@ -8,14 +8,23 @@
       "type": "node",
       "request": "attach",
       "name": "Attach to Process",
-      "port":3000
+      "port": 3000
     },
     {
-      "type":"node",
+      "type": "node",
       "request": "launch",
-      "name":"Debugger",
-      "program":"cluster.js",
+      "name": "Debugger",
+      "program": "cluster.js",
       "envFile": "${workspaceFolder}/.env"
-    }
+    },
+    {
+      "name": "Update Stats of the Storm database",
+      "program": "${workspaceFolder}/updateStatsOfTheStormDatabase.js",
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "node"
+    },
   ]
 }
