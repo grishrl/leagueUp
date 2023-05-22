@@ -327,15 +327,18 @@ const downloadReplay = async (s3, bucket, key, fullPath) => {
 
 const getCollectionIdsForDivision = (collectionMap, divisionConcat) => {
     const collectionIds = [];
-    const division = startCase(divisionConcat.replace('-', ' '));
-    collectionIds.push(collectionMap[division]);
 
-    if (division.includes(' ')) {
-        collectionIds.push(collectionMap[division.split(' ')[0]]);
-    }
+    if (divisionConcat) {
+        const division = startCase(divisionConcat.replace('-', ' '));
+        collectionIds.push(collectionMap[division]);
 
-    if (division !== 'Storm') {
-        collectionIds.push(collectionMap['Non-Storm']);
+        if (division.includes(' ')) {
+            collectionIds.push(collectionMap[division.split(' ')[0]]);
+        }
+
+        if (division !== 'Storm') {
+            collectionIds.push(collectionMap['Non-Storm']);
+        }
     }
 
     return collectionIds;
