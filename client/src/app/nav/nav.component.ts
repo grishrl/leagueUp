@@ -7,6 +7,7 @@ import { DivisionService } from '../services/division.service';
 import { MessagesService } from '../services/messages.service';
 import { NotificationService } from '../services/notification.service';
 import { TimeService } from 'src/app/services/time.service';
+import { environment } from '../../environments/environment'
 
 declare var Mmenu: any;
 
@@ -46,9 +47,9 @@ export class NavComponent implements OnInit {
   menuVar;
   menuAPI;
   currentSeason;
-  statsBucket = 'ngs-stats-of-the-storm';
-  statsFolder = 'databases';
-  statsRegion = 'us-east-1';
+  statsBucket = environment.s3bucketStats;
+  statsFolder = environment.s3folderStats;
+  statsRegion = environment.s3regionStats;
 
   ngAfterViewInit(){
     $("ul.sf-menu").superfish();

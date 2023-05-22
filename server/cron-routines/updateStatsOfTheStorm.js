@@ -7,7 +7,7 @@
 //   we haven't seen yet, and marking them as imported.
 // - Zip up the database.
 // - Publish new database to S3 with a name based on the time.
-// - Copy the new database over the existing "current" databased.
+// - Copy the new database over the existing "current" database.
 
 const fs = require('fs');
 const axios = require('axios');
