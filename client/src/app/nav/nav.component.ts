@@ -6,6 +6,8 @@ import { UserService } from '../services/user.service';
 import { DivisionService } from '../services/division.service';
 import { MessagesService } from '../services/messages.service';
 import { NotificationService } from '../services/notification.service';
+import { TimeService } from 'src/app/services/time.service';
+import { environment } from '../../environments/environment'
 
 declare var Mmenu: any;
 
@@ -20,7 +22,7 @@ export class NavComponent implements OnInit {
 
   constructor(public Auth:AuthService, private router: Router, public team:TeamService,
     public user:UserService, private divisionService: DivisionService, private messages:MessagesService,
-    private notificationService:NotificationService) {
+    private notificationService:NotificationService, private timeService:TimeService) {
 
       this.notificationService.updateLogin.subscribe(
         res => {
@@ -28,7 +30,10 @@ export class NavComponent implements OnInit {
           this.menuAPI.initPanels([document.querySelector('#mobile-nav-list')]);
         }
       )
-     }
+      this.timeService.getSesasonInfo().subscribe((res) => {
+        this.currentSeason = res.value;
+      });
+   }
 
   logout(){
     this.Auth.destroyAuth('/logout');
@@ -41,6 +46,11 @@ export class NavComponent implements OnInit {
 
   menuVar;
   menuAPI;
+  currentSeason;
+  statsBucket = environment.s3bucketStats;
+  statsFolder = environment.s3folderStats;
+  statsRegion = environment.s3regionStats;
+
   ngAfterViewInit(){
     $("ul.sf-menu").superfish();
     $(".mainmenu").sticky({ topSpacing: 0 });
