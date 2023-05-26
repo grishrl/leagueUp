@@ -13,9 +13,8 @@
   "private": true,
   "dependencies": {
     "@angular-devkit/build-angular": "^14.2.11",
-
     "@angular/animations": "^14.3.0",
-    "@angular/cdk": "^13.3.8",
+    "@angular/cdk": "^14.2.7",
     "@angular/cli": "^14.2.11",
     "@angular/common": "^14.3.0",
     "@angular/compiler": "^14.3.0",
@@ -24,8 +23,8 @@
     "@angular/elements": "^14.3.0",
     "@angular/forms": "^14.3.0",
     "@angular/language-service": "^14.3.0",
-    "@angular/material": "^13.3.9",
-    "@angular/material-moment-adapter": "^13.3.9",
+    "@angular/material": "^14.2.7",
+    "@angular/material-moment-adapter": "^14.2.7",
     "@angular/platform-browser": "^14.3.0",
     "@angular/platform-browser-dynamic": "^14.3.0",
     "@angular/router": "^14.3.0",
@@ -54,7 +53,7 @@
     "mmenu-js": "8.0.6",
     "moment": "^2.29.3",
     "moment-timezone": "^0.5.34",
-
+    "ngx-drag-scroll": "^16.0.0",
     "popper.js": "^1.16.1",
     "rxjs": "^7.5.5",
     "superfish": "^1.7.10",
