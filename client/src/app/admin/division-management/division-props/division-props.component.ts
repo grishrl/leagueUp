@@ -99,7 +99,7 @@ export class DivisionPropsComponent implements OnInit {
     if(this.editDivision.divColor){
       let color = this.hexToRgb(this.editDivision.divColor);
       let z = new Color(color.r, color.g, color.b);
-      this.colorCtr.setValue(z.toString('rgb'));
+      this.colorCtr.setValue(z.toString('hex'));
       this.deColore = z;
     }
   }
