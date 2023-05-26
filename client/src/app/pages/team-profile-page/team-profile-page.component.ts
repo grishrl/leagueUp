@@ -44,7 +44,7 @@ export class TeamProfileComponent implements OnInit, OnDestroy {
 
   errors=[];
 
-  emailControl = new FormControl({ value: '' }, [
+  emailControl = new FormControl({ value: '', disabled:false }, [
     Validators.email,
     Validators.required
   ]);
