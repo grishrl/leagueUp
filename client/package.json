@@ -13,6 +13,7 @@
   "private": true,
   "dependencies": {
     "@angular-devkit/build-angular": "^15.2.8",
+    "@angular-material-components/color-picker": "^9.0.0",
     "@angular/animations": "^15.2.9",
     "@angular/cdk": "^15.2.9",
     "@angular/cli": "^15.2.8",
@@ -53,7 +54,7 @@
     "mmenu-js": "8.0.6",
     "moment": "^2.29.3",
     "moment-timezone": "^0.5.34",
-    "ngx-drag-scroll": "^16.0.0",
+    "ngx-drag-scroll": "^15.0.0",
     "popper.js": "^1.16.1",
     "rxjs": "^7.5.5",
     "superfish": "^1.7.10",
