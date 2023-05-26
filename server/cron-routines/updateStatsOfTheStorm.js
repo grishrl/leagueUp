@@ -366,7 +366,7 @@ const getMatchesFromApi = async currentSeason => {
         data: { season: currentSeason },
     });
 
-    return require('lodash/take')(matches, 20);
+    return matches;
 };
 
 const getTeamsFromApi = async () => {
