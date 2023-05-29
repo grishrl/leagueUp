@@ -9,7 +9,7 @@
   const uploadToHeroesProfileWorker = require('./server/workers/upload-to-heroes-profile');
   const writeCasterReportWorker = require('./server/workers/write-caster-report');
   const playlistCuratorWorker = require('./server/workers/vods-playlist-curator');
-  const updateStatsOfTheStorm = require('./server/workers/update-stats-of-the-storm');
+  const kickOffStatsOfTheStormUpdate = require('./server/workers/kick-off-stats-of-the-storm-update');
 
   const mongoose = require('mongoose');
 
@@ -29,7 +29,7 @@
       'heroesProfileUploader': uploadToHeroesProfileWorker,
       'writeCasterReport': writeCasterReportWorker,
       'playlistCurator': playlistCuratorWorker,
-      'updateStatsOfTheStorm': updateStatsOfTheStorm
+      'kickOffStatsOfTheStormUpdate': kickOffStatsOfTheStormUpdate
   }
 
 
@@ -71,7 +71,7 @@
       workersList.topStats();
       workersList.leagueStat();
       workersList.writeCasterReport();
-      workersList.updateStatsOfTheStorm();
+      workersList.kickOffStatsOfTheStormUpdate();
       
     //   workersList.playlistCurator();
 

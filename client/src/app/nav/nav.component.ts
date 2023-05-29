@@ -48,7 +48,6 @@ export class NavComponent implements OnInit {
   menuAPI;
   currentSeason;
   statsBucket = environment.s3bucketStats;
-  statsFolder = environment.s3folderStats;
   statsRegion = environment.s3regionStats;
 
   ngAfterViewInit(){
