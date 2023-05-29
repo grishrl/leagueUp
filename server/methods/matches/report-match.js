@@ -8,14 +8,11 @@ const util = require('../../utils');
 const AWS = require('aws-sdk');
 const uniqid = require('uniqid');
 const _ = require('lodash');
-const {
-    s3deleteFile
-} = require('../aws-s3/delete-s3-file');
+const { s3deleteFile } = require('../aws-s3/delete-s3-file');
 const SeasonInfoCommon = require('../seasonInfoMethods');
 const utils = require('../../utils');
 
 async function reportMatch(caller, matchReport, requester, bypass) {
-
     let logObj = {};
     logObj.actor = requester;
     logObj.action = 'report match';
@@ -24,33 +21,41 @@ async function reportMatch(caller, matchReport, requester, bypass) {
     logObj.target = matchReport.matchId;
 
     let match = await Match.findOne({
-        matchId: matchReport.matchId
+        matchId: matchReport.matchId,
     });
 
     let errToThrow = '';
 
     if (!match) {
         //fail match not found
-        errToThrow = 'Error reporting match result'
+        errToThrow = 'Error reporting match result';
         logObj.logLevel = 'ERROR';
         logger(logObj);
-        throw (errToThrow);
+        throw errToThrow;
     } else {
-
         let teamIds = matchCommon.findTeamIds([match.toObject()]);
 
         let foundTeams = await Team.find({
             _id: {
-                $in: teamIds
-            }
+                $in: teamIds,
+            },
         });
 
         let homeDominate = false;
         let awayDominate = false;
-        if (util.returnBoolByPath(matchReport, 'homeTeamScore') && util.returnBoolByPath(matchReport, 'awayTeamScore')) {
-            if (matchReport.homeTeamScore == 2 && matchReport.awayTeamScore == 0) {
+        if (
+            util.returnBoolByPath(matchReport, 'homeTeamScore') &&
+            util.returnBoolByPath(matchReport, 'awayTeamScore')
+        ) {
+            if (
+                matchReport.homeTeamScore == 2 &&
+                matchReport.awayTeamScore == 0
+            ) {
                 homeDominate = true;
-            } else if (matchReport.homeTeamScore == 0 && matchReport.awayTeamScore == 2) {
+            } else if (
+                matchReport.homeTeamScore == 0 &&
+                matchReport.awayTeamScore == 2
+            ) {
                 awayDominate = true;
             }
         }
@@ -82,7 +87,6 @@ async function reportMatch(caller, matchReport, requester, bypass) {
                 if (util.returnBoolByPath(matchReport, 'awayTeamScore')) {
                     match.away.score = matchReport.awayTeamScore;
                 }
-
             }
             //info object
             let teamInf = {};
@@ -99,7 +103,10 @@ async function reportMatch(caller, matchReport, requester, bypass) {
             teamInfo.push(teamInf);
         });
 
-        if (matchReport.otherDetails != null && matchReport.otherDetails != undefined) {
+        if (
+            matchReport.otherDetails != null &&
+            matchReport.otherDetails != undefined
+        ) {
             let keys = Object.keys(matchReport.otherDetails);
             for (var i = 0; i < keys.length; i++) {
                 if (!util.returnBoolByPath(util.objectify(match), 'other')) {
@@ -124,39 +131,42 @@ async function reportMatch(caller, matchReport, requester, bypass) {
             if (match.replays == undefined || match.replays == null) {
                 match.replays = {};
             }
-            if (match.replays[(key).toString()] == undefined || match.replays[(key).toString()] == null) {
-                match.replays[(key).toString()] = {};
+            if (
+                match.replays[key.toString()] == undefined ||
+                match.replays[key.toString()] == null
+            ) {
+                match.replays[key.toString()] = {};
             }
-            match.replays[key].tempUrl = v['filename']
+            match.replays[key].tempUrl = v['filename'];
         }
 
         //validate the submitter is a captain OR assistantCaptain of one of the teams
         let isCapt = bypass ? bypass : returnIsCapt(foundTeams, requester);
         if (!isCapt) {
             //fail request is not authorized to report
-            errToThrow = 'Unauthorized'
+            errToThrow = 'Unauthorized';
             logObj.logLevel = 'ERROR';
             logObj.error = 'Unauthorized to report';
-            throw (errToThrow);
+            throw errToThrow;
         } else {
-
             match.reported = true;
             match.postedToHP = false;
-            return match.save((saved) => {
-                //if this match was a tournmanet match then we need to promote the winner to the parent match
-                matchCommon.promoteTournamentMatch(match.toObject());
-                moveAndParseTempFiles(match.matchId);
-                return { msg: 'Match reported', obj: saved };
-            }, (err) => {
-                errToThrow = 'Error reporting match result'
-                logObj.logLevel = 'ERROR';
-                logObj.error = JSON.stringify(err);
-                logger(logObj);
-                throw (errToThrow);
-            });
-
+            return match.save(
+                saved => {
+                    //if this match was a tournmanet match then we need to promote the winner to the parent match
+                    matchCommon.promoteTournamentMatch(match.toObject());
+                    moveAndParseTempFiles(match.matchId);
+                    return { msg: 'Match reported', obj: saved };
+                },
+                err => {
+                    errToThrow = 'Error reporting match result';
+                    logObj.logLevel = 'ERROR';
+                    logObj.error = JSON.stringify(err);
+                    logger(logObj);
+                    throw errToThrow;
+                }
+            );
         }
-
     }
 }
 
@@ -193,33 +203,30 @@ async function moveAndParseTempFiles(matchId) {
     logObj.target = matchId;
     try {
         let match = await Match.findOne({
-            matchId: matchId
+            matchId: matchId,
         });
         if (!match) {
             //fail match not found
-            errToThrow = 'Error reporting match result'
+            errToThrow = 'Error reporting match result';
             logObj.logLevel = 'ERROR';
             logger(logObj);
-            throw (errToThrow);
+            throw errToThrow;
         } else {
-
             let teamIds = matchCommon.findTeamIds([match.toObject()]);
 
             let foundTeams = await Team.find({
                 _id: {
-                    $in: teamIds
-                }
+                    $in: teamIds,
+                },
             });
 
             if (!foundTeams) {
                 //fail teams not found
-                errToThrow = 'Error reporting match result'
+                errToThrow = 'Error reporting match result';
                 logObj.logLevel = 'ERROR';
                 logger(logObj);
-                throw (errToThrow);
-
+                throw errToThrow;
             } else {
-
                 //an array of team name and players on each team, used to associate the replays to the specifc team
                 teamInfo = [];
                 foundTeams.forEach(team => {
@@ -256,51 +263,53 @@ async function moveAndParseTempFiles(matchId) {
                 AWS.config.update({
                     accessKeyId: process.env.S3accessKeyId,
                     secretAccessKey: process.env.S3secretAccessKey,
-                    region: process.env.S3region
+                    region: process.env.S3region,
                 });
 
                 const s3replayBucket = new AWS.S3({
                     params: {
-                        Bucket: process.env.s3bucketReplays
-                    }
+                        Bucket: process.env.s3bucketReplays,
+                    },
                 });
 
                 const s3pendingFiles = new AWS.S3({
                     params: {
-                        Bucket: 's3-client-uploads'
-                    }
+                        Bucket: 's3-client-uploads',
+                    },
                 });
 
                 const tmp = require('tmp-promise');
                 const fs = require('fs');
 
-
                 let keysArray = Object.keys(replays);
                 for (var i = 0; i < keysArray.length; i++) {
-
                     let key = keysArray[i];
                     let value = matchObj.replays[key];
 
                     if (util.returnBoolByPath(value, 'tempUrl')) {
-
-                        let dat = await s3pendingFiles.getObject({
-                            Key: value['tempUrl']
-                        }).promise().then(
-                            dat => {
-                                return dat;
-                            },
-                            err => {
-                                return null;
-                            }
-                        );
+                        let dat = await s3pendingFiles
+                            .getObject({
+                                Key: value['tempUrl'],
+                            })
+                            .promise()
+                            .then(
+                                dat => {
+                                    return dat;
+                                },
+                                err => {
+                                    return null;
+                                }
+                            );
 
                         if (dat) {
                             try {
                                 const { fd, path, cleanup } = await tmp.file();
-                                let f = await fs.promises.appendFile(path, dat.Body);
+                                let f = await fs.promises.appendFile(
+                                    path,
+                                    dat.Body
+                                );
                                 let parsedReplay = parser.processReplay(path, {
-                                    useAttributeName: true,
-                                    overrideVerifiedBuild: true
+                                    overrideVerifiedBuild: true,
                                 });
 
                                 if (parsedReplay.status != 1) {
@@ -309,64 +318,103 @@ async function moveAndParseTempFiles(matchId) {
                                 parsed.push({
                                     matchNum: key,
                                     parseObj: parsedReplay,
-                                    tempFileName: value['tempUrl']
+                                    tempFileName: value['tempUrl'],
                                 });
                                 cleanup();
-
                             } catch (error) {
                                 parsed.push({
                                     matchNum: key,
                                     parseObj: { failed: true },
-                                    tempFileName: value['tempUrl']
+                                    tempFileName: value['tempUrl'],
                                 });
-                                util.errLogger('moveAndParseTempFiles, parsing:', error, 'caught parse error');
+                                util.errLogger(
+                                    'moveAndParseTempFiles, parsing:',
+                                    error,
+                                    'caught parse error'
+                                );
                             }
                         } else {
                             //no dat!!!
                         }
-
                     }
-
                 }
                 //build new file name from parse info and give parsed replays some UUIDs
                 parsed.forEach((element, index) => {
                     let tieBack = {};
                     let timeStamp = '';
-                    if (util.returnBoolByPath(match.toObject(), 'scheduledTime.startTime')) {
-                        let date = new Date(parseInt(match.scheduledTime.startTime));
+                    if (
+                        util.returnBoolByPath(
+                            match.toObject(),
+                            'scheduledTime.startTime'
+                        )
+                    ) {
+                        let date = new Date(
+                            parseInt(match.scheduledTime.startTime)
+                        );
                         let day = date.getDate();
                         let year = date.getFullYear();
                         let month = date.getMonth();
                         month = month + 1;
-                        timeStamp = month + "-" + day + "-" + year;
+                        timeStamp = month + '-' + day + '-' + year;
                     }
-                    let composeFilename = 'ngs_' + timeStamp + "_" + teamInfo[0].teamName + '_vs_' + teamInfo[1].teamName;
+                    let composeFilename =
+                        'ngs_' +
+                        timeStamp +
+                        '_' +
+                        teamInfo[0].teamName +
+                        '_vs_' +
+                        teamInfo[1].teamName;
                     //if the replay does not parse we will still store in the s3 giving it an unknown_map suffix
-                    if (element.parseObj && element.parseObj.hasOwnProperty('failed') && element.parseObj.failed == true) {
+                    if (
+                        element.parseObj &&
+                        element.parseObj.hasOwnProperty('failed') &&
+                        element.parseObj.failed == true
+                    ) {
                         composeFilename += '_' + 'unknown_map-' + index;
                     } else {
                         let UUID = uniqid();
                         tieBack.id = UUID;
                         //this object will be pushed into the replayfilenames hold some info we need to save back to the match to tie the two together
-                        let replayTeamA = element.parseObj.match.teams["0"];
-                        let replayTeamB = element.parseObj.match.teams["1"];
+                        let replayTeamA = element.parseObj.match.teams['0'];
+                        let replayTeamB = element.parseObj.match.teams['1'];
 
                         //sort through the team members in the replay to assign the proper team names into the parsed replay object
                         teamInfo.forEach(teamInfo => {
-                            if (_.intersection(replayTeamA.names, teamInfo.players).length > _.intersection(replayTeamB.names, teamInfo.players).length) {
+                            if (
+                                _.intersection(
+                                    replayTeamA.names,
+                                    teamInfo.players
+                                ).length >
+                                _.intersection(
+                                    replayTeamB.names,
+                                    teamInfo.players
+                                ).length
+                            ) {
                                 replayTeamA.teamName = teamInfo.teamName;
                                 replayTeamA.teamId = teamInfo.id;
-                            } else if (_.intersection(replayTeamA.names, teamInfo.players).length < _.intersection(replayTeamB.names, teamInfo.players).length) {
+                            } else if (
+                                _.intersection(
+                                    replayTeamA.names,
+                                    teamInfo.players
+                                ).length <
+                                _.intersection(
+                                    replayTeamB.names,
+                                    teamInfo.players
+                                ).length
+                            ) {
                                 replayTeamB.teamName = teamInfo.teamName;
                                 replayTeamB.teamId = teamInfo.id;
                             } else {
-                                //some error state, both == 0.... 
+                                //some error state, both == 0....
                             }
                         });
                         element.parsedReplayId = UUID;
                         composeFilename += '_' + element.parseObj.match.map;
                         element.parseObj.match['ngsMatchId'] = match.matchId;
-                        composeFilename = composeFilename.replace(/[^A-Z0-9\-]+/ig, "_");
+                        composeFilename = composeFilename.replace(
+                            /[^A-Z0-9\-]+/gi,
+                            '_'
+                        );
                         element.parseObj.match.filename = composeFilename;
                         element.parseObj.systemId = UUID;
                     }
@@ -384,36 +432,51 @@ async function moveAndParseTempFiles(matchId) {
                         }
                     });
 
-
-                    if (matchObj.replays == undefined || matchObj.replays == null) {
+                    if (
+                        matchObj.replays == undefined ||
+                        matchObj.replays == null
+                    ) {
                         matchObj.replays = {};
                     }
-                    if (matchObj.replays[(key).toString()] == undefined || matchObj.replays[(key).toString()] == null) {
-                        matchObj.replays[(key).toString()] = {};
+                    if (
+                        matchObj.replays[key.toString()] == undefined ||
+                        matchObj.replays[key.toString()] == null
+                    ) {
+                        matchObj.replays[key.toString()] = {};
                     }
 
                     if (obj) {
-
                         if (obj.parsedReplayId) {
-                            matchObj.replays[(key).toString()].data = obj.parsedReplayId;
+                            matchObj.replays[key.toString()].data =
+                                obj.parsedReplayId;
                         }
 
                         if (obj.tempFileName) {
-
                             const copyParam = {
                                 CopySource: `s3-client-uploads/${obj.tempFileName}`,
                                 Bucket: process.env.s3bucketReplays,
-                                Key: obj.newFileName
+                                Key: obj.newFileName,
                             };
-                            let copied = await s3pendingFiles.copyObject(copyParam).promise().then(res => {
-                                return res;
-                            }, err => {
-                                return null;
-                            });
+                            let copied = await s3pendingFiles
+                                .copyObject(copyParam)
+                                .promise()
+                                .then(
+                                    res => {
+                                        return res;
+                                    },
+                                    err => {
+                                        return null;
+                                    }
+                                );
                             if (copied) {
-                                matchObj.replays[(key).toString()].url = obj.newFileName;
-                                delete matchObj.replays[(key).toString()].tempUrl;
-                                s3deleteFile('s3-client-uploads', null, obj.tempFileName);
+                                matchObj.replays[key.toString()].url =
+                                    obj.newFileName;
+                                delete matchObj.replays[key.toString()].tempUrl;
+                                s3deleteFile(
+                                    's3-client-uploads',
+                                    null,
+                                    obj.tempFileName
+                                );
                             } else {
                                 //uh oh
                                 let fileLog = {};
@@ -423,14 +486,13 @@ async function moveAndParseTempFiles(matchId) {
                                 fileLog.location = 'moveAndParseTempFiles';
                                 fileLog.target = obj.tempFileName;
                                 logger(fileLog);
-                                util.errLogger('moveAndParseTempFiles', `${obj.tempFileName} file wasnt moved!`);
+                                util.errLogger(
+                                    'moveAndParseTempFiles',
+                                    `${obj.tempFileName} file wasnt moved!`
+                                );
                             }
-
                         }
-
-
                     }
-
                 }
 
                 _.forEach(matchObj.replays, (v, k) => {
@@ -439,46 +501,47 @@ async function moveAndParseTempFiles(matchId) {
 
                 //if we have failed parse - remove those junk objects from the array before inserting them into the database.
                 indiciesToRemove = [];
-                SeasonInfoCommon.getSeasonInfo().then(
-                    rep => {
-                        let seasonNum = rep.value;
-                        parsed.forEach((element, index) => {
-                            parsed[index] = element.parseObj;
-                        });
-                        parsed.forEach((element, index) => {
-                            element.season = seasonNum;
-                            if (element.hasOwnProperty('failed') && element.failed == true) {
-                                indiciesToRemove.push(index);
-                            };
-                        });
+                SeasonInfoCommon.getSeasonInfo().then(rep => {
+                    let seasonNum = rep.value;
+                    parsed.forEach((element, index) => {
+                        parsed[index] = element.parseObj;
+                    });
+                    parsed.forEach((element, index) => {
+                        element.season = seasonNum;
+                        if (
+                            element.hasOwnProperty('failed') &&
+                            element.failed == true
+                        ) {
+                            indiciesToRemove.push(index);
+                        }
+                    });
 
-                        indiciesToRemove.forEach(index => {
-                            parsed.splice(index, 1);
-                        });
+                    indiciesToRemove.forEach(index => {
+                        parsed.splice(index, 1);
+                    });
 
-                        ParsedReplay.collection.insertMany(parsed).then(
-                            (records) => {
-                                let sysLog = {};
-                                sysLog.actor = 'SYS';
-                                sysLog.action = ' parsed replay stored';
-                                sysLog.logLevel = 'SYSTEM';
-                                sysLog.target = '';
-                                sysLog.timeStamp = new Date().getTime();
-                                logger(sysLog);
-                            },
-                            (err) => {
-                                let sysLog = {};
-                                sysLog.actor = 'SYS';
-                                sysLog.action = ' parsed replay error';
-                                sysLog.logLevel = 'ERROR';
-                                sysLog.error = err;
-                                sysLog.target = '';
-                                sysLog.timeStamp = new Date().getTime();
-                                logger(sysLog);
-                            }
-                        );
-                    }
-                );
+                    ParsedReplay.collection.insertMany(parsed).then(
+                        records => {
+                            let sysLog = {};
+                            sysLog.actor = 'SYS';
+                            sysLog.action = ' parsed replay stored';
+                            sysLog.logLevel = 'SYSTEM';
+                            sysLog.target = '';
+                            sysLog.timeStamp = new Date().getTime();
+                            logger(sysLog);
+                        },
+                        err => {
+                            let sysLog = {};
+                            sysLog.actor = 'SYS';
+                            sysLog.action = ' parsed replay error';
+                            sysLog.logLevel = 'ERROR';
+                            sysLog.error = err;
+                            sysLog.target = '';
+                            sysLog.timeStamp = new Date().getTime();
+                            logger(sysLog);
+                        }
+                    );
+                });
                 match.markModified('replays');
 
                 match.save().then(
@@ -487,20 +550,16 @@ async function moveAndParseTempFiles(matchId) {
                         logger(logObj);
                     },
                     err => {
-                        logObj.logLevel = "ERROR";
+                        logObj.logLevel = 'ERROR';
                         logObj.err = JSON.stringify(err);
                         logger(logObj);
                     }
                 );
-
             }
-
         }
-
     } catch (e) {
         util.errLogger('moveAndParseTempFiles', e, 'Caught');
     }
-
 }
 /*
  //these replays are in s3 all ready!
