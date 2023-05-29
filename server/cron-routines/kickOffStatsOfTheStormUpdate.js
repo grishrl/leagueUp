@@ -1,14 +1,22 @@
 // This updates JSON files that we want cached in S3 for use by lambdas.
 
+// Four environment variables are required:
+//
+// - S3region: S3 region that contains the bucket and lambda
+// - s3bucketStats: S3 bucket that holds the JSON and stats database
+// - lambdaName: name of the lambda that generates a new database
+// - publicApiUrl: URL of the public API of the NGS website
+
 const axios = require('axios');
 const AWS = require('aws-sdk');
 const statsBucket = process.env.s3bucketStats;
+const lambdaName = process.env.statsLambdaName;
 const publicApiUrl = process.env.publicApiUrl;
+const region = process.env.S3region;
 
 const getS3 = () => {
     const accessKeyId = process.env.S3accessKeyId;
     const secretAccessKey = process.env.S3secretAccessKey;
-    const region = process.env.S3region;
 
     // If we have credentials in the environment, use them.  If not, assume
     // we are either in lambda, or the developer has credentials setup.
@@ -83,4 +91,15 @@ module.exports = async () => {
     await publishJsonToS3(s3, currentSeason, 'currentSeason.json');
     await publishJsonToS3(s3, matches, `${currentSeason}/matches.json`);
     await publishJsonToS3(s3, teams, `${currentSeason}/teams.json`);
+
+    if (lambdaName) {
+        console.log(`Kicking off lambda "${lambdaName}".`);
+        const lambda = new AWS.Lambda({ region });
+        const response = await lambda
+            .invoke({ FunctionName: lambdaName, InvocationType: 'Event' })
+            .promise();
+        console.log(`Got response of ${response.StatusCode} from lambda.`);
+    } else {
+        console.log('No lambda configured.');
+    }
 };
