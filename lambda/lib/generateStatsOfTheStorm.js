@@ -660,6 +660,8 @@ module.exports = async () => {
         console.log(
             'No new games were processed, skipping upload of database.'
         );
+
+        return;
     }
 
     await publishZipToS3(
