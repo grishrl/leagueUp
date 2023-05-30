@@ -1,27 +1,17 @@
-// This updates the Stats of the Storm database that we keep in S3
-// for the current season.
-//
-// - Pull down existing database from S3 (if any).
-// - Call the public API to get reported matches.
-// - Walk through the reported matches, importing any that
-//   we haven't seen yet, and marking them as imported.
-// - Zip up the database.
-// - Publish new database to S3 with a name based on the time.
-// - Copy the new database over the existing "current" database.
-
 const fs = require('fs');
 const axios = require('axios');
 const path = require('path');
 const AdmZip = require('adm-zip');
 const AWS = require('aws-sdk');
 const tmp = require('tmp-promise');
-const parser = require('hots-parser');
 const LinvoDB = require('linvodb3');
 const { uniq, startCase } = require('lodash');
-const replayBucket = process.env.s3bucketReplays;
+
+const parsedReplaysBucket = process.env.s3bucketParsedReplays;
 const statsBucket = process.env.s3bucketStats;
-const statsFolder = process.env.s3folderStats;
-const publicApiUrl = process.env.publicApiUrl;
+
+// Make the AWS SDK stop whining about V2 going into maintenance mode soon.
+require('aws-sdk/lib/maintenance_mode_message').suppress = true;
 
 LinvoDB.defaults.store = { db: require('medeadown') };
 
@@ -30,8 +20,8 @@ const getS3 = () => {
     const secretAccessKey = process.env.S3secretAccessKey;
     const region = process.env.S3region;
 
-    // If we have credentials in the environment, use them.  If not, assume
-    // the caller has a profile set up.
+    // If we have credentials in the environment, use them.  If not, we
+    // are either in lambda, or the developer has a profile set up.
     if (accessKeyId) {
         credentials = new AWS.Credentials({ accessKeyId, secretAccessKey });
         return new AWS.S3({ region, credentials });
@@ -306,25 +296,6 @@ const updatePlayers = async (db, players) => {
     }
 };
 
-const downloadReplay = async (s3, bucket, key, fullPath) => {
-    const writeStream = fs.createWriteStream(fullPath);
-
-    try {
-        const readStream = s3
-            .getObject({ Bucket: bucket, Key: key })
-            .createReadStream();
-        await new Promise((resolve, reject) => {
-            readStream.on('error', err => reject(err));
-            writeStream.on('error', err => reject(err));
-            writeStream.on('finish', () => resolve());
-
-            readStream.pipe(writeStream);
-        });
-    } finally {
-        writeStream.close();
-    }
-};
-
 const getCollectionIdsForDivision = (collectionMap, divisionConcat) => {
     const collectionIds = [];
 
@@ -344,40 +315,30 @@ const getCollectionIdsForDivision = (collectionMap, divisionConcat) => {
     return collectionIds;
 };
 
-const getCurrentSeasonFromApi = async () => {
-    const {
-        data: {
-            returnObject: { value },
-        },
-    } = await axios({
-        method: 'get',
-        url: `${publicApiUrl}/admin/getSeasonInfo`,
+const streamToBuffer = async readableStream => {
+    return new Promise((resolve, reject) => {
+        const chunks = [];
+        readableStream.on('data', data => {
+            chunks.push(data instanceof Buffer ? data : Buffer.from(data));
+        });
+        readableStream.on('end', () => {
+            resolve(Buffer.concat(chunks));
+        });
+        readableStream.on('error', reject);
     });
-
-    return value;
 };
 
-const getMatchesFromApi = async currentSeason => {
-    const {
-        data: { returnObject: matches },
-    } = await axios({
-        method: 'post',
-        url: `${publicApiUrl}/schedule/fetch/reported/matches`,
-        data: { season: currentSeason },
-    });
+const downloadJsonFromS3 = async (s3, bucket, key) => {
+    const readStream = s3
+        .getObject({
+            Bucket: bucket,
+            Key: key,
+        })
+        .createReadStream();
 
-    return matches;
-};
+    const buffer = await streamToBuffer(readStream);
 
-const getTeamsFromApi = async () => {
-    const {
-        data: { returnObject: teams },
-    } = await axios({
-        method: 'get',
-        url: `${publicApiUrl}/team/get/registered`,
-    });
-
-    return teams;
+    return JSON.parse(buffer.toString('utf-8'));
 };
 
 const downloadAndExtractZipFromS3 = async (
@@ -385,8 +346,7 @@ const downloadAndExtractZipFromS3 = async (
     zipFilename,
     fullZipPath,
     dbPath,
-    currentSeason,
-    log
+    currentSeason
 ) => {
     const writeStream = fs.createWriteStream(fullZipPath);
 
@@ -394,7 +354,7 @@ const downloadAndExtractZipFromS3 = async (
         const readStream = s3
             .getObject({
                 Bucket: statsBucket,
-                Key: `${statsFolder}/${currentSeason}/${zipFilename}`,
+                Key: `${currentSeason}/databases/${zipFilename}`,
             })
             .createReadStream();
         await new Promise((resolve, reject) => {
@@ -407,7 +367,7 @@ const downloadAndExtractZipFromS3 = async (
     } catch (e) {
         if (e.code === 'NoSuchKey') {
             // This is OK, we just haven't created the database yet.
-            log('No current database found in S3.');
+            console.log('No current database found in S3.');
             return;
         }
 
@@ -416,11 +376,11 @@ const downloadAndExtractZipFromS3 = async (
         writeStream.close();
     }
 
-    log('Downloaded current database from S3.');
+    console.log('Downloaded current database from S3.');
 
     const zip = new AdmZip(fullZipPath);
     await zip.extractAllTo(dbPath);
-    log('Unzipped database.');
+    console.log('Unzipped database.');
 };
 
 const publishZipToS3 = async (
@@ -429,8 +389,7 @@ const publishZipToS3 = async (
     currentZipFilename,
     dailyZipFilename,
     dbDirectory,
-    currentSeason,
-    log
+    currentSeason
 ) => {
     const zip = new AdmZip();
     fs.writeFileSync(
@@ -445,25 +404,25 @@ const publishZipToS3 = async (
     await s3
         .upload({
             Bucket: statsBucket,
-            Key: `${statsFolder}/${currentSeason}/${dailyZipFilename}`,
+            Key: `${currentSeason}/databases/${dailyZipFilename}`,
             Body: readStream,
         })
         .promise();
 
-    log(`Uploaded database to S3 as ${dailyZipFilename}.`);
+    console.log(`Uploaded database to S3 as ${dailyZipFilename}.`);
 
     await s3
         .copyObject({
             Bucket: statsBucket,
-            Key: `${statsFolder}/${currentSeason}/${currentZipFilename}`,
-            CopySource: `/${statsBucket}/${statsFolder}/${currentSeason}/${dailyZipFilename}`,
+            Key: `${currentSeason}/databases/${currentZipFilename}`,
+            CopySource: `/${statsBucket}/${currentSeason}/databases/${dailyZipFilename}`,
         })
         .promise();
 
-    log('Copied database to current.');
+    console.log('Copied database to current.');
 };
 
-const scrubTempDirectory = async (tempDirectory, log) => {
+const scrubTempDirectory = async tempDirectory => {
     async function* walkFiles(dir) {
         for await (const d of await fs.promises.opendir(dir)) {
             const entry = path.join(dir, d.name);
@@ -478,49 +437,60 @@ const scrubTempDirectory = async (tempDirectory, log) => {
     // but at least we won't run the disk out of space.
     for await (const filepath of walkFiles(tempDirectory)) {
         try {
-            log(`Deleting file ${filepath}.`);
+            console.log(`Deleting file ${filepath}.`);
             fs.unlinkSync(filepath);
         } catch (e) {
-            log(`Unable to delete ${filepath}.`);
+            console.log(`Unable to delete ${filepath}.`);
         }
     }
 };
 
-module.exports = async log => {
+module.exports = async () => {
     const s3 = getS3();
     const { path: tempDirectory } = await tmp.dir({
         mode: 0o0700,
         prefix: 'ngs-stats',
         unsafeCleanup: true,
     });
-    const currentSeason = await getCurrentSeasonFromApi();
-    log(`Current season is ${currentSeason}.`);
-    log(`Processing files using working directory ${tempDirectory}.`);
-    const currentZipFilename = `NGS-season${currentSeason}-current.zip`;
-    const dailyZipFilename = `NGS-season${currentSeason}-${new Date()
+    const currentSeason = await downloadJsonFromS3(
+        s3,
+        statsBucket,
+        'currentSeason.json'
+    );
+    console.log(`Current season is ${currentSeason}.`);
+    console.log(`Processing files using working directory ${tempDirectory}.`);
+    const currentZipFilename = `NGS-season-${currentSeason}.zip`;
+    const dailyZipFilename = `NGS-season-${currentSeason}-${new Date()
         .toISOString()
         .replace(/-/g, '_')
         .replace(/:/g, '_')}.zip`;
     const oldZipPath = `${tempDirectory}/stats-old.zip`;
     const newZipPath = `${tempDirectory}/stats-new.zip`;
-    const replayDirectory = `${tempDirectory}/replays`;
     const dbPath = `${tempDirectory}/database`;
     fs.mkdirSync(dbPath);
-    fs.mkdirSync(replayDirectory);
 
     await downloadAndExtractZipFromS3(
         s3,
         currentZipFilename,
         oldZipPath,
         dbPath,
-        currentSeason,
-        log
+        currentSeason
     );
 
-    const matches = await getMatchesFromApi(currentSeason);
-    log(`Found ${matches.length} matches.`);
-    const teams = await getTeamsFromApi();
-    log(`Found ${teams.length} teams.`);
+    const matches = await downloadJsonFromS3(
+        s3,
+        statsBucket,
+        `${currentSeason}/matches.json`
+    );
+    console.log(`Found ${matches.length} matches.`);
+
+    const teams = await downloadJsonFromS3(
+        s3,
+        statsBucket,
+        `${currentSeason}/teams.json`
+    );
+    console.log(`Found ${teams.length} teams.`);
+
     const db = openDatabase(dbPath);
 
     const collectionMap = await createCollections(db, teams);
@@ -532,6 +502,8 @@ module.exports = async log => {
         playersForTeamMap[teamName] = [];
     }
 
+    let gameCount = 0;
+
     for (const match of matches) {
         if (match.replays) {
             for (const i in match.replays) {
@@ -540,9 +512,10 @@ module.exports = async log => {
                 }
 
                 const filename = match.replays[i].url;
+                const gameId = match.replays[i].data;
 
-                if (!filename) {
-                    // This replay is not here, skip it.  This should not happen.
+                if (!filename || !gameId) {
+                    // This replay doesn't have a filename or an ID.  This should not happen.
                     continue;
                 }
 
@@ -550,25 +523,25 @@ module.exports = async log => {
                     continue;
                 }
 
-                log(`Importing ${filename}.`);
-                const localFile = `${replayDirectory}/${filename}`;
+                console.log(`Importing ${filename}.`);
+                let parsedReplay = undefined;
 
                 try {
-                    await downloadReplay(s3, replayBucket, filename, localFile);
+                    parsedReplay = await downloadJsonFromS3(
+                        s3,
+                        parsedReplaysBucket,
+                        `${currentSeason}/parsedReplays/${gameId}.json`
+                    );
                 } catch (e) {
-                    log(`Unable to download ${filename} from S3, skipping.`);
-                    log(`Error: ${e}`);
+                    console.log(
+                        `Unable to download parsed replay ${gameId} for ${filename} from S3, skipping.`
+                    );
+                    console.log(`Error: ${e}`);
                     continue;
                 }
 
-                const {
-                    match: replay,
-                    players,
-                    status,
-                } = parser.processReplay(localFile, {
-                    overrideVerifiedBuild: true,
-                });
-                fs.unlinkSync(localFile);
+                const { match: replay, players, status } = parsedReplay;
+
                 const bluePlayers = [];
                 const redPlayers = [];
 
@@ -603,7 +576,7 @@ module.exports = async log => {
                     for (const bluePlayer of bluePlayers) {
                         if (!blueTeam.players.includes(bluePlayer)) {
                             blueTeam.players.push(bluePlayer);
-                            log(
+                            console.log(
                                 `Adding ORS ${bluePlayer} to ${blueTeam.name}.`
                             );
                         }
@@ -614,7 +587,9 @@ module.exports = async log => {
                     for (const redPlayer of redPlayers) {
                         if (!redTeam.players.includes(redPlayer)) {
                             redTeam.players.push(redPlayer);
-                            log(`Adding ORS ${redPlayer} to ${redTeam.name}.`);
+                            console.log(
+                                `Adding ORS ${redPlayer} to ${redTeam.name}.`
+                            );
                         }
                     }
                 }
@@ -639,8 +614,11 @@ module.exports = async log => {
 
                     if (matchID) {
                         await updatePlayers(db, players);
+                        gameCount++;
                     } else {
-                        log(`Skipped ${localFile}, status is ${status}.`);
+                        console.log(
+                            `Skipped ${localFile}, status is ${status}.`
+                        );
                     }
                 }
             }
@@ -678,15 +656,24 @@ module.exports = async log => {
 
     await closeDatabase(db);
 
+    if (gameCount == 0) {
+        console.log(
+            'No new games were processed, skipping upload of database.'
+        );
+
+        return;
+    }
+
     await publishZipToS3(
         s3,
         newZipPath,
         currentZipFilename,
         dailyZipFilename,
         dbPath,
-        currentSeason,
-        log
+        currentSeason
     );
 
-    await scrubTempDirectory(tempDirectory, log);
+    // We probably don't need to do this in a lambda, but we might be running on
+    // a developer's machine, so keep it tidy.
+    await scrubTempDirectory(tempDirectory);
 };

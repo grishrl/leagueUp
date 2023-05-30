@@ -18,8 +18,17 @@
       "envFile": "${workspaceFolder}/.env"
     },
     {
-      "name": "Update Stats of the Storm database",
-      "program": "${workspaceFolder}/updateStatsOfTheStormDatabase.js",
+      "name": "Kick off SotS update",
+      "program": "${workspaceFolder}/kickOffStatsOfTheStormUpdate.js",
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "node"
+    },
+    {
+      "name": "Generate Stats of the Storm database",
+      "program": "${workspaceFolder}/lambda/runGenerateStatsOfTheStorm.js",
       "request": "launch",
       "skipFiles": [
         "<node_internals>/**"
