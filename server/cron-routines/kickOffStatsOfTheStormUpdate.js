@@ -28,6 +28,20 @@ const getS3 = () => {
     }
 };
 
+const getLambda = () => {
+    const accessKeyId = process.env.S3accessKeyId;
+    const secretAccessKey = process.env.S3secretAccessKey;
+
+    // If we have credentials in the environment, use them.  If not, assume
+    // we are either in lambda, or the developer has credentials setup.
+    if (accessKeyId) {
+        credentials = new AWS.Credentials({ accessKeyId, secretAccessKey });
+        return new AWS.Lambda({ region, credentials });
+    } else {
+        return new AWS.Lambda();
+    }
+};
+
 const getCurrentSeasonFromApi = async () => {
     const {
         data: {
@@ -94,7 +108,7 @@ module.exports = async () => {
 
     if (lambdaName) {
         console.log(`Kicking off lambda "${lambdaName}".`);
-        const lambda = new AWS.Lambda({ region });
+        const lambda = getLambda();
         const response = await lambda
             .invoke({ FunctionName: lambdaName, InvocationType: 'Event' })
             .promise();
