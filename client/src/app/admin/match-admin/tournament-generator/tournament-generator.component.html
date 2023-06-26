@@ -33,6 +33,7 @@
                     <div class="row">
                         <div class="col">
                             <mat-form-field class="mat-FullWidth">
+                              <mat-label>Filter by name</mat-label>
                                 <input matInput placeholder="Filter by name" [(ngModel)]="filterName" (ngModelChange)="filterTeams(filterName)">
                             </mat-form-field>
                         </div>
@@ -125,6 +126,7 @@
                 <div class="col">
                     <div><span class="text-danger">Required</span></div>
                     <mat-form-field class="mat-FullWidth">
+                      <mat-label>Season</mat-label>
                         <input matInput type="number" placeholder="Season" [(ngModel)]="season">
                     </mat-form-field>
                 </div>
@@ -134,6 +136,7 @@
                 <div class="col">
                     <div>Cup Number; please enter sequential cup number (1 more than the last) for this division</div>
                     <mat-form-field class="mat-FullWidth">
+                      <mat-label>Cup:</mat-label>
                         <input matInput placeholder="Cup:" [(ngModel)]="cup">
                     </mat-form-field>
                 </div>
@@ -142,6 +145,7 @@
                 <div class="col">
                     <div><span class="text-danger">Required</span> Tournament name</div>
                     <mat-form-field class="mat-FullWidth">
+                      <mat-label>Tournament Name:</mat-label>
                         <input matInput placeholder="Tournament Name:" [formControl]="tournName" [(ngModel)]="name">
                     </mat-form-field>
                 </div>
@@ -150,6 +154,7 @@
                 <div class="col">
                     <div>Tournament description.</div>
                     <mat-form-field class="mat-FullWidth">
+                      <mat-label>Tournament Description:</mat-label>
                         <input matInput placeholder="Tournament Description:" [(ngModel)]="description">
                     </mat-form-field>
                 </div>
@@ -157,6 +162,7 @@
             <div class="row">
                 <div class="col">
                     <mat-form-field class="mat-FullWidth">
+                      <mat-label>Division:</mat-label>
                         <mat-select placeholder="Division:" [(ngModel)]="selectedType" (ngModelChange)="typeSelected(selectedDivision)" disableOptionCentering>
                             <mat-option *ngFor="let type of tournTypes" [value]="type.type">
                                 {{type.display}}</mat-option>

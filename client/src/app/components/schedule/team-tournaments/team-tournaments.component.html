@@ -8,6 +8,7 @@
         <div class="row">
             <div class="col">
                 <mat-form-field>
+                  <mat-label>Tournament:</mat-label>
                     <mat-select placeholder="Tournament:" [(ngModel)]="selectedTournament" disableOptionCentering>
                         <mat-option *ngFor="let tourn of involvedTournaments" [value]="tourn">
                             {{tourn.tournamentName}}

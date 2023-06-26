@@ -32,6 +32,7 @@
                     <div class="row">
                         <div class="col">
                             <mat-form-field class="mat-FullWidth">
+                              <mat-label>Filter by name</mat-label>
                                 <input matInput placeholder="Filter by name" [(ngModel)]="filterName" (ngModelChange)="filterTeams(filterName)">
                             </mat-form-field>
                         </div>
@@ -141,6 +142,7 @@
                 <div class="col">
                     <div>Cup Number; please enter sequential cup number (1 more than the last) for this division</div>
                     <mat-form-field class="mat-FullWidth">
+                      <mat-label>Cup:</mat-label>
                         <input matInput placeholder="Cup:" [(ngModel)]="cup">
                     </mat-form-field>
                 </div>
@@ -149,6 +151,7 @@
                 <div class="col">
                     <div><span class="text-danger">Required</span> Event Name</div>
                     <mat-form-field class="mat-FullWidth">
+                      <mat-label>Event Name:</mat-label>
                         <input matInput placeholder="Event Name:" [formControl]="tournName" [(ngModel)]="name">
                     </mat-form-field>
                 </div>
@@ -157,6 +160,7 @@
                 <div class="col">
                     <div>Event description.</div>
                     <mat-form-field class="mat-FullWidth">
+                      <mat-label>Event Description:</mat-label>
                         <input matInput placeholder="Event Description:" [(ngModel)]="description">
                     </mat-form-field>
                 </div>
@@ -164,6 +168,7 @@
             <div class="row">
                 <div class="col">
                     <mat-form-field class="mat-FullWidth">
+                      <mat-label>Elimination Rules:</mat-label>
                         <mat-select placeholder="Elimination Rules:" [(ngModel)]="selectedType" (ngModelChange)="typeSelected(selectedType)" disableOptionCentering>
                             <mat-option *ngFor="let type of tournTypes" [value]="type.type">
                                 {{type.display}}</mat-option>

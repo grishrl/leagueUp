@@ -17,6 +17,7 @@
                         </div>
                         <div class="col">
                             <mat-form-field class="mat-FullWidth">
+                              <mat-label>Round:</mat-label>
                                 <mat-select placeholder="Round:" [(ngModel)]="roundFlt" (ngModelChange)="doFilterMatches()" disableOptionCentering>
                                     <mat-option [value]="null"> </mat-option>
                                     <mat-option *ngFor="let round of rounds" [value]="round">{{round}}</mat-option>
@@ -25,6 +26,7 @@
                         </div>
                         <div class="col">
                             <mat-form-field class="mat-FullWidth">
+                              <mat-label>Team Name</mat-label>
                                 <input matInput placeholder="Team Name" [(ngModel)]="teamFlt" (ngModelChange)="doFilterMatches()">
                             </mat-form-field>
                         </div>
@@ -45,6 +47,7 @@
                         </div>
                         <div class="col ">
                             <mat-form-field class="mat-FullWidth ">
+                              <mat-label>Start Time:</mat-label>
                                 <mat-select placeholder="Start Time: " [(ngModel)]="friendlyTime" (ngModelChange)="timeChanged()">
                                     <mat-option *ngFor="let time of times " [value]="time ">
                                         {{time}}
@@ -54,6 +57,7 @@
                         </div>
                         <div class="col ">
                             <mat-form-field class="mat-FullWidth ">
+                              <mat-label>AM/PM:</mat-label>
                                 <mat-select placeholder="AM/PM: " [(ngModel)]="suffix" (ngModelChange)="timeChanged()">
                                     <mat-option *ngFor="let suffix of amPm " [value]="suffix ">
                                         {{suffix}}

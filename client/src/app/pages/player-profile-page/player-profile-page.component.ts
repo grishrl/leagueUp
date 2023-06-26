@@ -111,7 +111,7 @@ export class PlayerProfile implements OnInit {
   }
 
   discordTagFormControl = new FormControl({ value: "", disabled: false }, [
-    this.discordPatternValidator,
+    // this.discordPatternValidator,
   ]);
 
   discordPatternValidator(control: FormControl) {

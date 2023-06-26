@@ -20,7 +20,7 @@ at the top directory level of the project from CLI; run heroku local:start web
 
 inside the client directory run npx ng build --watch --configuration=local
 
-Connect to localhost:3000
+Connect to localhost:5000
 
 
 ### !!! If you want to run the webClient Only - DO NO REQUIRE LOCAL NODE RUNNING !!!

@@ -1,6 +1,7 @@
 <div class="row">
     <div class="col">
         <mat-form-field class="mat-FullWidth">
+          <mat-label>Division:</mat-label>
             <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="divSelected(selectedDivision)" disableOptionCentering>
                 <mat-option [value]=""></mat-option>
                 <mat-option *ngFor="let division of divisions; let i = index" [value]="division._id">{{division.displayName}}</mat-option>

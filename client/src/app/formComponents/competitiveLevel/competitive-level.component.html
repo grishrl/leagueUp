@@ -4,6 +4,7 @@
         <span class="h6">Competitive Level Update:</span>
         <div>
             <mat-form-field class="mt-3">
+              <mat-label>Competitive Level</mat-label>
                 <mat-select placeholder="Competitive Level" disabled="{{edit}}" [(ngModel)]="competitiveLevelValue" (ngModelChange)="updateValue()" disableOptionCentering>
                     <mat-option *ngFor="let level of competitonLevel" [value]="level.val">
                         {{level.display}}

@@ -46,6 +46,7 @@
                                         <div class="row">
                                             <div class="col">
                                                 <mat-form-field class="mat-FullWidth">
+                                                  <mat-label>Filter by name:</mat-label>
                                                     <input matInput placeholder="Filter by name" [(ngModel)]="filterName" (ngModelChange)="filterTeams(filterName)">
                                                 </mat-form-field>
                                             </div>
@@ -130,6 +131,7 @@
                                 <div class="row">
                                     <div class="col">
                                         <mat-form-field class="mat-FullWidth">
+                                          <mat-label>Season</mat-label>
                                             <input matInput type="number" placeholder="Season" [(ngModel)]="finalMatch.season">
                                         </mat-form-field>
                                     </div>
@@ -137,6 +139,7 @@
                                 <div class="row">
                                     <div class="col">
                                         <mat-form-field class="mat-FullWidth">
+                                          <mat-label>Best of # Series:</mat-label>
                                             <input matInput type="number" placeholder="Best of # Series" [(ngModel)]="finalMatch.boX">
                                         </mat-form-field>
                                     </div>
@@ -145,6 +148,7 @@
                                     <div class="col">
                                         <div>Add a title for the match? Div X Grand Final?</div>
                                         <mat-form-field class="mat-FullWidth">
+                                          <mat-label>Final Title:</mat-label>
                                             <input matInput placeholder="Final Title:" [formControl]="titleControl" [(ngModel)]="finalMatch.title">
                                         </mat-form-field>
                                     </div>
@@ -155,6 +159,7 @@
                                         <div>Caster:
                                         </div>
                                         <mat-form-field class="mat-FullWidth">
+                                          <mat-label>Caster:</mat-label>
                                             <input matInput placeholder="Caster:" [(ngModel)]="finalMatch.casterName">
                                         </mat-form-field>
                                     </div>
@@ -163,7 +168,8 @@
                                     <div class="col">
                                         <div>Caster Url:</div>
                                         <mat-form-field class="mat-FullWidth">
-                                            <input matInput placeholder="Caster Url:" [(ngModel)]="finalMatch.casterUrl">
+                                          <mat-label>Caster URL:</mat-label>
+                                            <input matInput placeholder="Caster URL:" [(ngModel)]="finalMatch.casterUrl">
                                         </mat-form-field>
                                     </div>
                                 </div>

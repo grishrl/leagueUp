@@ -53,6 +53,7 @@
                 <div class="col">
                     <div><strong>Stream Title:</strong></div>
                     <mat-form-field class="mat-FullWidth">
+                      <mat-label>Stream Title</mat-label>
                         <input matInput placeholder="Stream Title" [(ngModel)]="stream.title">
                     </mat-form-field>
                 </div>
@@ -64,6 +65,7 @@
                 <div class="col">
                     <div><strong>Team Names</strong></div>
                     <mat-form-field class="mat-FullWidth">
+                      <mat-label>Home Team Name</mat-label>
                         <input matInput placeholder="Home Team Name" [(ngModel)]="stream.team1Name">
                     </mat-form-field>
                 </div>
@@ -71,6 +73,7 @@
             <div class="row mt-2">
                 <div class="col">
                     <mat-form-field class="mat-FullWidth">
+                      <mat-label>Away Team Name</mat-label>
                         <input matInput placeholder="Away Team Name" [(ngModel)]="stream.team2Name">
                     </mat-form-field>
                 </div>
@@ -103,6 +106,7 @@
                 </div>
                 <div class="col">
                     <mat-form-field class="mat-FullWidth">
+                      <mat-label>Start Time:</mat-label>
                         <mat-select placeholder="Start Time:" [(ngModel)]="friendlyTime">
                             <mat-option *ngFor="let time of times" [value]="time">
                                 {{time}}
@@ -112,6 +116,7 @@
                 </div>
                 <div class="col">
                     <mat-form-field class="mat-FullWidth">
+                      <mat-label>AM/PM:</mat-label>
                         <mat-select placeholder="AM/PM:" [(ngModel)]="friendlySuffix">
                             <mat-option *ngFor="let suffix of amPm" [value]="suffix">
                                 {{suffix}}
@@ -125,6 +130,7 @@
                 <div class="col">
                     <strong>Duration in minutes (default is 90 if not provided)</strong>
                     <mat-form-field class="mat-FullWidth">
+                      <mat-label>Duration</mat-label>
                         <input matInput placeholder="Duration" [(ngModel)]="stream.runTime">
                     </mat-form-field>
 
@@ -135,6 +141,7 @@
                 <div class="col">
                     <strong>Caster Info:</strong>
                     <mat-form-field class="mat-FullWidth">
+                      <mat-label>Caster Name</mat-label>
                         <input matInput placeholder="Caster Name" [(ngModel)]="stream.casterName">
                     </mat-form-field>
                 </div>
@@ -144,6 +151,7 @@
                     <div>
                     </div>
                     <mat-form-field class="mat-FullWidth">
+                      <mat-label>Caster Url:</mat-label>
                         <input matInput placeholder="Caster Url:" [(ngModel)]="stream.casterUrl">
                     </mat-form-field>
                 </div>

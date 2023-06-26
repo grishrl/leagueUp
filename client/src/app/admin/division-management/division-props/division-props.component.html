@@ -21,49 +21,57 @@
                     <div class="col">
                         <div class="example-container">
                             <mat-form-field>
+                              <mat-label>Display Name</mat-label>
                                 <input matInput placeholder="Display Name" [formControl]="displayNameControl" [(ngModel)]="editDivision.displayName">
                                 <mat-error *ngIf="displayNameControl.hasError('required')">
                                     Display name is required
                                 </mat-error>
                             </mat-form-field>
                             <mat-form-field>
+                              <mat-label>Division Name</mat-label>
                                 <input matInput placeholder="Division Name" [formControl]="divisionNameControl" [(ngModel)]="editDivision.divisionName" (ngModelChange)="calculateNewConcat()">
                                 <mat-error *ngIf="divisionNameControl.hasError('required')">
                                     Division name is required
                                 </mat-error>
                             </mat-form-field>
                             <mat-form-field>
+                              <mat-label>Division Coast</mat-label>
                                 <input matInput placeholder="Division Coast" [(ngModel)]="editDivision.divisionCoast" (ngModelChange)="calculateNewConcat()">
                             </mat-form-field>
                             <mat-form-field>
+                              <mat-label>Division Concat (System Reference)</mat-label>
                                 <input matInput placeholder="Division Concat (System Reference)" [(ngModel)]="editDivision.divisionConcat" disabled="true">
                             </mat-form-field>
                             <mat-form-field>
+                              <mat-label>Sorting</mat-label>
                                 <input matInput placeholder="Sorting" [formControl]="sortingControl" [(ngModel)]="editDivision.sorting">
                                 <mat-error *ngIf="sortingControl.hasError('required')">
                                     Sort order is required
                                 </mat-error>
                             </mat-form-field>
                             <mat-form-field>
+                              <mat-label>Max MMR</mat-label>
                                 <input matInput placeholder="Max MMR" [formControl]="maxMMRControl" [(ngModel)]="editDivision.maxMMR">
                                 <mat-error *ngIf="maxMMRControl.hasError('required')">
                                     Max MMR is required
                                 </mat-error>
                             </mat-form-field>
                             <mat-form-field>
+                              <mat-label>Min MMR</mat-label>
                                 <input matInput placeholder="Min MMR" [formControl]="minMMRControl" [(ngModel)]="editDivision.minMMR">
                                 <mat-error *ngIf="minMMRControl.hasError('required')">
                                     Min MMR is required
                                 </mat-error>
                             </mat-form-field>
                             <mat-form-field>
+                              <mat-label>Division Moderator</mat-label>
                                 <input matInput placeholder="Division Moderator" [formControl]="divisionModeratorControl" [(ngModel)]="editDivision.moderator">
                                 <mat-error *ngIf="divisionModeratorControl.hasError('required')">
                                     Division Moderator is required
                                 </mat-error>
                             </mat-form-field>
                             <mat-form-field>
-                                <label>Division Color</label>
+                                <mat-label>Division Color</mat-label>
                                 <input matInput [ngxMatColorPicker]="picker" [(ngModel)]="deColore" (ngModelChange)="updateColor($event)" [formControl]="colorCtr" [disabled]="disabled">
                                 <ngx-mat-color-toggle matSuffix [for]="picker"></ngx-mat-color-toggle>
                                 <ngx-mat-color-picker #picker [touchUi]="false" [color]="color"></ngx-mat-color-picker>

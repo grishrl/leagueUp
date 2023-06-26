@@ -1,4 +1,5 @@
 <mat-form-field class="mat-FullWidth">
+  <mat-label>Team Name</mat-label>
     <input matInput placeholder="Team Name*" [formControl]="nameCtrl" [(ngModel)]="value">
 
     <mat-error *ngIf="controlDir.hasError('invalidChacters')">
