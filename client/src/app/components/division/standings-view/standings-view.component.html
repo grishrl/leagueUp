@@ -10,6 +10,7 @@
                     <th class="text-center">Games<br>Won</th>
                     <th class="text-center">Games<br>Lost</th>
                     <th class="text-center">Matches<br>Played</th>
+                    <th class="text-center">Tiebreak</th>
                 </tr>
             </thead>
 
@@ -22,7 +23,6 @@
 
                     </td>
                     <td class="text-left">
-                        <!-- <img src="img/clubs-logos/colombia.png" alt="Colombia"> -->
                         <span>
                         <app-team-link [team]="standing.teamName" [season]="seasonVal">{{standing.teamName}}</app-team-link>
                       </span>
@@ -34,6 +34,7 @@
                     <td>{{standing.wins}}</td>
                     <td>{{standing.losses}}</td>
                     <td>{{standing.matchesPlayed}}</td>
+                    <td>{{standing.tiebreakMethod}}</td>
                 </tr>
 
             </tbody>

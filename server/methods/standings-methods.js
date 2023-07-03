@@ -16,6 +16,8 @@ const Division = require('../models/division-models');
 const _ = require('lodash');
 const MatchCommon = require('./matchCommon');
 const jsonDiff = require('deep-object-diff');
+const sortBy = require('lodash/sortBy')
+const max = require('lodash/max')
 
 
 /**
@@ -258,34 +260,124 @@ async function cupDivStanding(division, season) {
 }
  */
 
+function findLeadersByPoints(standings) {
+    const maxPoints = max(standings.map(s => s.points));
+
+    return standings.filter(s => s.points === maxPoints);
+}
+
+function findLeadersByHeadToHead(standings, matchesForDivision) {
+    const teams = standings.map(s => ({ id: s.id, points: 0 }));
+    const teamIds = standings.map(s => s.id);
+
+    for (const team of teams) {
+        for (const match of matchesForDivision) {
+            let us = undefined;
+            let them = undefined;
+
+            if (match.home.id === team.id) {
+                us = match.home;
+                them = match.away;
+            } else if (match.away.id === team.id) {
+                us = match.away;
+                them = match.home;
+            } else {
+                continue;
+            }
+
+            // Only consider matches against the other tied teams.
+            if (!teamIds.includes(them.id)) {
+                continue;
+            }
+
+            team.points += us.score;
+
+            if (them.score === 0) {
+                team.points++;
+            }
+        }
+    }
+
+    const maxPoints = max(teams.map(t => t.points));
+    const leaderIds = teams.filter(t => t.points == maxPoints).map(t => t.id);
+
+    return standings.filter(s => leaderIds.includes(s.id));
+}
+
+function findLeadersByMapDifferential(standings) {
+    const maxDifferential = max(standings.map(s => s.wins - s.losses));
+
+    return standings.filter(s => s.wins - s.losses === maxDifferential);
+}
+
+function sortStandingsForStdDiv(standings, matchesForDivision) {
+    let rank = 1;
+    let remainingStandings = standings;
+    const completedStandings = [];
+
+    const tieBreakers = [
+        { label: '', func: findLeadersByPoints },
+        { label: 'head to head', func: findLeadersByHeadToHead },
+        { label: 'wins and losses', func: findLeadersByMapDifferential },
+    ];
+
+    while (remainingStandings.length > 0) {
+        let tiebreakMethod = '';
+        let leaders = remainingStandings;
+
+        for (const tieBreaker of tieBreakers) {
+            if (leaders.length > 1) {
+                leaders = tieBreaker.func(leaders, matchesForDivision);
+
+                if (leaders.length === 1) {
+                    tiebreakMethod = tieBreaker.label;
+                }
+            }
+        }
+
+        // Teams with fewer matches are technically tied, but will be listed first
+        // since they have games in hand on the others. After that, we just sort by
+        // name to make it deterministic.
+        const sortedLeaders = sortBy(
+            leaders,
+            s => 0 - s.matchesPlayed,
+            s => s.teamName.toLowerCase()
+        );
+
+        for (const leader of sortedLeaders) {
+            leader.standing = rank;
+            leader.tiebreakMethod = tiebreakMethod;
+            completedStandings.push(leader);
+            remainingStandings = remainingStandings.filter(
+                s => s.id !== leader.id
+            );
+        }
+
+        if (sortedLeaders.length > 1) {
+            for (const sortedLeader of sortedLeaders) {
+                sortedLeader.tiebreakMethod = "still tied, goes to KDA";
+            }
+        }
+
+        rank += leaders.length;
+    }
+
+    return completedStandings;
+}
+
 function sortStandingsForStormDiv(standings) {
-    standings.sort((a, b) => {
-        if (a.points > b.points) {
-            return -1;
-        } else {
-            return 1;
-        }
-    });
+    sortedStandings = sortBy(
+        standings,
+        s => 0 - s.points,
+        s => s.teamName
+    );
 
-    for (var i = 0; i < standings.length; i++) {
-        standings[i].standing = i + 1;
+    for (let i = 0; i < sortedStandings.length; i++) {
+        sortedStandings[i].standing = i + 1;
     }
+
+    return sortedStandings;
 }
-
-function sortStandingsForStdDiv(standings) {
-    standings.sort((a, b) => {
-        if (a.points > b.points) {
-            return -1;
-        } else {
-            return 1;
-        }
-    });
-
-    for (var i = 0; i < standings.length; i++) {
-        standings[i].standing = i + 1;
-    }
-}
-
 
 /**
  * @name stdDivStanding
@@ -298,7 +390,6 @@ function sortStandingsForStdDiv(standings) {
 async function stdDivStanding(division, season, pastSeason, noDeltas) {
 
     noDeltas = util.validateInputs.boolean(noDeltas).value;
-
 
     let teams;
 
@@ -346,9 +437,9 @@ async function stdDivStanding(division, season, pastSeason, noDeltas) {
         standings = [];
     } else {
         if (isStormDiv) {
-            sortStandingsForStormDiv(standings);
+            standings = sortStandingsForStormDiv(standings);
         } else {
-            sortStandingsForStdDiv(standings);
+            standings = sortStandingsForStdDiv(standings, matchesForDivision);
         }
 
         if (!noDeltas) {
@@ -433,8 +524,8 @@ function bestOfThree(matchesForDivision, nonReportedMatchCount, teams, standings
 
             //loop through the matches et all for division
             matchesForDivision.forEach(match => {
-                let us = undefined
-                let them = undefined
+                let us = undefined;
+                let them = undefined;
 
                 if (match.home.id === team) {
                     us = match.home;
