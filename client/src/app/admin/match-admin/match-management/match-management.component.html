@@ -18,6 +18,7 @@
             <div class="row">
                 <div class="col">
                     <mat-form-field class="mat-FullWidth">
+                      <mat-label>Division:</mat-label>
                         <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="doFilterMatches(selectedDivision, selectedRound, filterTeam)" disableOptionCentering>
                             <mat-option [value]="null"> </mat-option>
                             <mat-option *ngFor="let division of divisions; let i = index" [value]="division.divisionConcat">{{division.displayName}}</mat-option>
@@ -26,6 +27,7 @@
                 </div>
                 <div class="col">
                     <mat-form-field class="mat-FullWidth">
+                      <mat-label>Round:</mat-label>
                         <mat-select placeholder="Round:" [(ngModel)]="selectedRound" (ngModelChange)="doFilterMatches(selectedDivision, selectedRound, filterTeam)" disableOptionCentering>
                             <mat-option [value]="null"> </mat-option>
                             <mat-option *ngFor="let round of rounds" [value]="round">{{round}}</mat-option>
@@ -37,11 +39,13 @@
             <div class="row mt-2">
                 <div class="col">
                     <mat-form-field class="mat-FullWidth">
+                      <mat-label>Team Name:</mat-label>
                         <input matInput placeholder="Team Name" [(ngModel)]="filterTeam" (ngModelChange)="doFilterMatches(selectedDivision, selectedRound, filterTeam)">
                     </mat-form-field>
                 </div>
                 <div class="col" *ngIf="filterTeam">
                     <mat-form-field class="mat-FullWidth">
+                      <mat-label>Other Team Name:</mat-label>
                         <input matInput placeholder="Other Team Name" [(ngModel)]="filterTeam2" (ngModelChange)="filterOtherTeam(filterTeam2)">
                     </mat-form-field>
                 </div>
@@ -52,6 +56,7 @@
                 </div>
                 <div class="col">
                     <mat-form-field class="mat-FullWidth">
+                      <mat-label>Match Id:</mat-label>
                         <input matInput placeholder="Match Id" [(ngModel)]="matchId">
                     </mat-form-field>
                 </div>

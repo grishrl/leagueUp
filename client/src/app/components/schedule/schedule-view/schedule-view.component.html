@@ -10,6 +10,7 @@
     <div class="row">
         <div class="col">
             <mat-form-field>
+              <mat-label>Round:</mat-label>
                 <mat-select placeholder="Round:" [(ngModel)]="selectedRound" (ngModelChange)="getMatches()" disableOptionCentering>
                     <mat-option *ngFor="let round of rounds; let i = index" [value]="round">{{round}}</mat-option>
                 </mat-select>

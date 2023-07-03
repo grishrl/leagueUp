@@ -18,6 +18,7 @@
                     <div class="row">
                         <div class="col text-center">
                             <mat-form-field class="mat-60-width">
+                              <mat-label>Past Season:</mat-label>
                                 <mat-select placeholder="Past Season:" [(ngModel)]="selectedSeason" disableOptionCentering (ngModelChange)="initMvps()">
                                     <mat-option *ngFor="let season of seasonDropdown" [value]="season">
                                         {{season}}

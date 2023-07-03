@@ -12,6 +12,7 @@
                         </div>
                         <div class="col">
                             <mat-form-field class="mat-FullWidth">
+                              <mat-label>Previous Seasons:</mat-label>
                                 <mat-select placeholder="Previous Seasons" [(ngModel)]="selectedSeason" (ngModelChange)="seasonSelected()">
                                     <mat-option *ngFor="let season of seasonsList" [value]="season">
                                         {{season}}
@@ -29,6 +30,7 @@
                         <div class="col">
                             <div *ngIf="selectedSeason">
                                 <mat-form-field class="mat-FullWidth">
+                                  <mat-label>Season {{selectedSeason}} Divisions</mat-label>
                                     <mat-select placeholder="Season {{selectedSeason}} Divisions" [(ngModel)]="selectedDivision" (ngModelChange)="divisionSelected()">
                                         <mat-option *ngFor="let division of divisionList" [value]="division">
                                             {{division.displayName}}

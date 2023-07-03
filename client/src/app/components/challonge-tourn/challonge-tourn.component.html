@@ -1,6 +1,7 @@
 <div class="row" *ngIf="cupDiv">
     <div class="col">
         <mat-form-field>
+          <mat-label>Cup:</mat-label>
             <mat-select placeholder="Cup:" [(ngModel)]="selectedCup" (ngModelChange)="getTournLink()" disableOptionCentering>
                 <mat-option *ngFor="let cup of this.localStoreTournaments; let i = index" [value]="i">{{cup.name}}
                 </mat-option>

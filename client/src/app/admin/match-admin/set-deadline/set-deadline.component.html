@@ -18,6 +18,7 @@
     <div class="row">
         <div class="col">
             <mat-form-field>
+              <mat-label>Week: #</mat-label>
                 <mat-select placeholder="Week: #" [(ngModel)]="selectedWeek" disableOptionCentering>
                     <mat-option *ngFor="let week of weeks; let i = index" [value]="week">{{week}}</mat-option>
                 </mat-select>

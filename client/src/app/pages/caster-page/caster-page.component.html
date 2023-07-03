@@ -15,6 +15,7 @@
                 <div class="col text-center">
                     <span class="h6">Caster Name: </span><span *ngIf="!edit">{{returnedProfile.casterName}}</span>
                     <mat-form-field *ngIf="edit" class="mt-3 full-width">
+                      <mat-label>Caster Name</mat-label>
                         <input matInput placeholder="Caster Name" [(ngModel)]="returnedProfile.casterName">
                     </mat-form-field>
                 </div>

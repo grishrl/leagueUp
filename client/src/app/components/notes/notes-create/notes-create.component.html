@@ -2,7 +2,10 @@
     <div class="col">
         <strong>Enter admin notes:</strong>
         <br>
-        <mat-form-field style="width: 450px;"><textarea matInput [(ngModel)]="note" placeholder="Notes...."></textarea></mat-form-field>
+        <mat-form-field style="width: 450px;">
+          <mat-labels>Notes:</mat-labels>
+          <textarea matInput [(ngModel)]="note" placeholder="Notes...."></textarea>
+        </mat-form-field>
         <button class="btn btn-success ml-2" [disabled]="note.length==0" (click)="submitNote()">Submit Note</button>
     </div>
 </div>

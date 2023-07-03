@@ -10,6 +10,7 @@
 <div [hidden]="hideForm" class="row">
     <div class="col">
         <mat-form-field class="mat-FullWidth">
+          <mat-label>Caster Name</mat-label>
             <input matInput [formControl]="casterNameControl" placeholder="Caster Name" [(ngModel)]="name">
             <mat-error *ngIf="casterNameControl.hasError('required')">
                 Caster Name is required
@@ -18,6 +19,7 @@
     </div>
     <div class="col">
         <mat-form-field class="mat-FullWidth">
+          <mat-label>Caster URL</mat-label>
             <input matInput [formControl]="casterUrlControl" placeholder="Caster URL" [(ngModel)]="URL">
             <mat-error *ngIf="casterUrlControl.hasError('required')">
                 Caster URL is required

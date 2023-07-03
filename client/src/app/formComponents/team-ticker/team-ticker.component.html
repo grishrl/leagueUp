@@ -1,5 +1,6 @@
 <div>
     <mat-form-field class="fullWidth">
+      <mat-label>Team Ticker</mat-label>
         <input matInput placeholder="Team Ticker" [formControl]="tickerCtrl" [(ngModel)]="value">
         <mat-error *ngIf="controlDir && controlDir.hasError('minlength')">
             This ticker is too short: this ticker: {{value.length}}, required ticker: {{controlDir.control.getError('minlength').requiredLength}}

@@ -14,10 +14,12 @@
                             <div class="example-container text-center">
                                 <!-- caster name -->
                                 <mat-form-field>
+                                  <mat-label>Caster Name</mat-label>
                                     <input matInput placeholder="Caster Name" [disabled]="true" [(ngModel)]="casterReport.casterName">
                                 </mat-form-field>
                                 <!-- additional casters -->
                                 <mat-form-field class="mat-FullWidth">
+                                  <mat-label>Additional Casters:</mat-label>
                                     <input type="text" placeholder="Additional Casters:" [formControl]="coCastCtrl" matInput [matAutocomplete]="auto">
                                     <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectCoCaster($event)" [displayWith]="displayFn">
                                         <mat-option [value]=""></mat-option>
@@ -33,14 +35,17 @@
 
                                 <!-- match id -->
                                 <mat-form-field>
+                                  <mat-label>Match ID</mat-label>
                                     <input matInput placeholder="Match ID" [disabled]="true" [(ngModel)]="casterReport.matchId">
                                 </mat-form-field>
                                 <!-- division -->
                                 <mat-form-field>
+                                  <mat-label>Division</mat-label>
                                     <input matInput placeholder="Division" [disabled]="true" [value]="casterReport.division">
                                 </mat-form-field>
                                 <!-- vods -->
                                 <mat-form-field>
+                                  <mat-label>VOD Links</mat-label>
                                     <input matInput placeholder="VOD Links" [(ngModel)]="vodLink">
                                 </mat-form-field>
                                 <button class="btn btn-primary" (click)="addLink()"> Add </button>
@@ -64,6 +69,7 @@
 
                                 <!-- issues -->
                                 <mat-form-field>
+                                  <mat-label>Issues:</mat-label>
                                     <textarea matInput placeholder="Issues " [(ngModel)]="casterReport.issues ">
                                       </textarea>
                                 </mat-form-field>

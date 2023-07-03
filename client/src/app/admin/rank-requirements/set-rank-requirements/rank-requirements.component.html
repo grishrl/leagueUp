@@ -17,6 +17,7 @@
                 <div class="row">
                     <div class="col">
                         <mat-form-field class="mat-FullWidth">
+                          <mat-label>Year:</mat-label>
                             <mat-select placeholder="Year:" [(ngModel)]="year">
                                 <mat-option *ngFor="let year of years" [value]="year">
                                     {{year}}
@@ -26,6 +27,7 @@
                     </div>
                     <div class="col">
                         <mat-form-field class="mat-FullWidth">
+                          <mat-label>Season:</mat-label>
                             <mat-select placeholder="Season:" [(ngModel)]="season">
                                 <mat-option *ngFor="let season of seasons" [value]="season">
                                     {{season}}

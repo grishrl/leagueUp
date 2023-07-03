@@ -24,6 +24,7 @@
                         <div class="row">
                             <div class="col text-center">
                                 <mat-form-field class="mat-threeQuarter">
+                                  <mat-label>Division</mat-label>
                                     <mat-select placeholder="Division:" [(ngModel)]="selectedDivision" (ngModelChange)="selected(selectedDivision)" disableOptionCentering>
                                         <mat-option *ngFor="let division of filterSelected()" [value]="division">{{division}}</mat-option>
                                     </mat-select>
@@ -43,11 +44,13 @@
                         <div class="row">
                             <div class="col text-center">
                                 <mat-form-field>
+                                  <mat-label>Lower MMR</mat-label>
                                     <input matInput type="number" placeholder="Lower MMR" [(ngModel)]="searchParameters.lowerMMR">
                                 </mat-form-field>
                             </div>
                             <div class="col text-center">
                                 <mat-form-field>
+                                  <mat-label>Upper MMR</mat-label>
                                     <input matInput type="number" placeholder="Upper MMR" [(ngModel)]="searchParameters.upperMMR">
                                 </mat-form-field>
                             </div>
@@ -59,6 +62,7 @@
                         <div><span class="font-weight-bold">Player Competitive Level </span><span class="ml-5 finger badge badge-pill pill-shadow badge-light" (click)=" searchParameters.competitiveLevel = null">Reset</span>
                         </div>
                         <mat-form-field class="mat-threeQuarter">
+                          <mat-label>Player Competitive Level</mat-label>
                             <mat-select placeholder="Player Competitive Level" [(ngModel)]="searchParameters.competitiveLevel">
                                 <mat-option *ngFor="let level of competitonLevel" [value]="level.val">
                                     {{level.display}}
@@ -117,6 +121,7 @@
                 <div class="row mt-2" *ngIf="searchParameters.timezone == 'custom'">
                     <div class="col">
                         <mat-form-field class="mat-FullWidth">
+                          <mat-label>Timezone:</mat-label>
                             <mat-select placeholder="Timezone:" [(ngModel)]="searchParameters.customtimeZone">
                                 <mat-option *ngFor="let zone of timezone.timezones" [value]="zone.value">
                                     {{zone.text}}

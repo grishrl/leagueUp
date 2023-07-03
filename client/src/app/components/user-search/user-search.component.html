@@ -6,6 +6,7 @@
     <div class="col-7">
         <form class="userSearchForm">
             <mat-form-field class="mat-FullWidth">
+              <mat-label>Enter battle tag</mat-label>
                 <input matInput placeholder="Enter battle tag" [(ngModel)]="selectedUser" aria-label="Enter battle tag" [matAutocomplete]="auto" [formControl]="userCtrl">
                 <mat-autocomplete #auto="matAutocomplete">
                     <mat-option *ngFor="let btag of foundUsers " [value]="btag">

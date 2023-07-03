@@ -62,8 +62,7 @@ export class DiscordTagComponent implements OnInit, OnChanges {
   }
 
   discordTagFormControl = new FormControl({ value: '', disabled: true }, [
-    Validators.required,
-    this.discordPatternValidator
+    Validators.required
   ]);
 
 ngOnChanges(change){
