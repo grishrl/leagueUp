@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const System = require('./server/models/system-models');
 const _ = require('lodash');
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 const teamSubs = require('./server/subroutines/team-subs');
 // const Archive = require('./server/models/system-models').archive;
 const Match = require('./server/models/match-model');
@@ -17,50 +17,250 @@ const testing = require('./server/workers/vods-playlist-curator');
 const CasterReportWorker = require('./server/workers/write-caster-report');
 const StatsJobs = require('./server/cron-routines/stats-routines');
 const loadConfig = require('./loadConfig');
+const ParsedReplay = require('./server/models/replay-parsed-models');
+const { s3putObject } = require('./server/methods/aws-s3/put-s3-file');
+const getRegisteredTeams = require('./server/methods/team/getRegistered');
+const AWS = require('aws-sdk');
+
+const CURRENT_WORKING_SEASON = 6;
 
 //bootstrap the program from AWS configs...
-loadConfig().then(
-    function(){
-        // connect to mongo db
-        mongoose.connect(process.env.mongoURI, () => {
-            console.log('connected to mongodb');
+loadConfig().then(function () {
+    // connect to mongo db
+    mongoose.connect(process.env.mongoURI, () => {
+        console.log('connected to mongodb');
+    });
+
+    let tokenObject = {};
+    // set this ID to the _id that the API key will be tied to
+    tokenObject.id = '5c4524d0f3614c0017235167';
+
+    //set this to false to create a std JWToken for API calls, or true for an API key :)
+    //to remind you; the api key will only work in instances that are set to validate it IE it will fail jwt because
+    //it isn't signed by a user;
+    //
+    var api = true;
+    var token;
+    if (api) {
+        token = jwt.sign(tokenObject, process.env.jwtToken);
+    } else {
+        token = jwt.sign(tokenObject, process.env.jwtToken, {
+            expiresIn: '7d',
         });
-
-        let tokenObject = {};
-        // set this ID to the _id that the API key will be tied to
-        tokenObject.id = "5c4524d0f3614c0017235167";
-
-        //set this to false to create a std JWToken for API calls, or true for an API key :)
-        //to remind you; the api key will only work in instances that are set to validate it IE it will fail jwt because
-        //it isn't signed by a user; 
-        //
-        var api = true;
-        var token
-        if (api) {
-            token = jwt.sign(tokenObject, process.env.jwtToken);
-        } else {
-            token = jwt.sign(tokenObject, process.env.jwtToken, {
-                expiresIn: '7d'
-            });
-        }
-
-        //Operational code goes here now...
-
-        testing().then(
-            function(r){
-                console.log('R line');
-            },
-            function(e){
-                console.log('e line');
-            }
-        )
     }
-)
 
+    // moveParsedReplaysToS3();
+    // moveTeamsToS3();
+    // moveMatchesToS3();
+    reparseReplays();
+    //Operational code goes here now...
+});
 
+async function reparseReplays() {
+    const tmp = require('tmp-promise');
+    const parser = require('hots-parser');
+    AWS.config.update({
+        accessKeyId: process.env.S3accessKeyId,
+        secretAccessKey: process.env.S3secretAccessKey,
+        region: process.env.S3region,
+    });
+
+    const s3replayBucket = new AWS.S3({
+        params: {
+            Bucket: process.env.s3bucketReplays,
+        },
+    });
+
+    /**
+     * {
+        $and: [{ season: 15 }, { reported: true }],
+    }
+     * 
+     */
+    let matches = await Match.find({
+        $and: [{ season: CURRENT_WORKING_SEASON }, { reported: true }],
+    });
+    let beginTime = Date.now();
+    console.log(`found ${matches.length} matches`);
+    if (matches) {
+        for (var i = 0; i < matches.length; i++) {
+            console.log(`processing ${i + 1} of ${matches.length}`);
+            //get match info
+            let match = matches[i];
+            let matchObj = util.objectify(match);
+            if (util.returnBoolByPath(matchObj, 'replays')) {
+                let replays = matchObj.replays;
+
+                let replaysKeys = Object.keys(replays);
+
+                for (var j = 0; j < replaysKeys.length; j++) {
+                    let value = replaysKeys[j];
+
+                    if (value != '_id') {
+                        let replayInfo = replays[value];
+                        let fileUrl = replayInfo['url'];
+                        let replayUUID = replayInfo['data'];
+
+                        console.log(`re-parse ${fileUrl}, UUID: ${replayUUID}`);
+                        if (fileUrl) {
+                            let dat = await s3replayBucket
+                                .getObject({
+                                    Key: fileUrl,
+                                })
+                                .promise()
+                                .then(
+                                    dat => {
+                                        return dat;
+                                    },
+                                    err => {
+                                        return null;
+                                    }
+                                );
+
+                            if (dat) {
+                                try {
+                                    const { fd, path, cleanup } =
+                                        await tmp.file();
+                                    let f = await fs.promises.appendFile(
+                                        path,
+                                        dat.Body
+                                    );
+                                    let parsedReplay = parser.processReplay(
+                                        path,
+                                        {
+                                            overrideVerifiedBuild: true,
+                                        }
+                                    );
+
+                                    if (parsedReplay.status != 1) {
+                                        parsedReplay['failed'] = true;
+                                    }
+                                    await s3putObject(
+                                        'ngs-stats-of-the-storm',
+                                        `${CURRENT_WORKING_SEASON}/parsedReplays`,
+                                        `${replayUUID}.json`,
+                                        JSON.stringify(parsedReplay)
+                                    );
+                                    let foundReplay = await ParsedReplay.find({
+                                        systemId: replayUUID,
+                                    });
+                                    foundReplay = foundReplay[0];
+                                    foundReplay.match = {};
+                                    foundReplay.players = {};
+                                    foundReplay.markModified('match');
+                                    foundReplay.markModified('players');
+                                    await foundReplay.save().then(
+                                        r => {
+                                            console.log(
+                                                `${replayUUID} replay cleared ok`
+                                            );
+                                        },
+                                        e => {
+                                            console.log(
+                                                `error clearing ${replayUUID}`
+                                            );
+                                        }
+                                    );
+                                    cleanup();
+                                } catch (error) {
+                                    util.errLogger(
+                                        'moveAndParseTempFiles, parsing:',
+                                        error,
+                                        'caught parse error'
+                                    );
+                                }
+                            } else {
+                                //no dat!!!
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        console.log('done');
+        let endTimestamp = Date.now();
+        let elapsed = endTimestamp - beginTime;
+        console.log(`took ${elapsed / (60 * 1000)} minutes`);
+    }
+}
+
+async function moveMatchesToS3() {
+    let matches = await Match.find({
+        $and: [{ season: 15 }, { reported: true }],
+    });
+    if (matches) {
+        await s3putObject(
+            'ngs-stats-of-the-storm',
+            '15',
+            `matches.json`,
+            JSON.stringify(matches)
+        );
+        console.log('finished...');
+    }
+}
+
+async function moveTeamsToS3() {
+    let teams = await getRegisteredTeams();
+    s3putObject(
+        'ngs-stats-of-the-storm',
+        '15',
+        `teams.json`,
+        JSON.stringify(teams)
+    );
+}
+
+//ngs-stats-of-the-storm
+
+async function moveParsedReplaysToS3() {
+    let allMatches = await Match.find({
+        $and: [{ season: 15 }, { replays: { $exists: true } }],
+    });
+    console.log(`Found ${allMatches.length}  matches..`);
+    if (allMatches) {
+        for (var i = 0; i < allMatches.length; i++) {
+            console.log(
+                `Processing ${i + 1} of ${allMatches.length} matches..`
+            );
+            let match = allMatches[i];
+            if (
+                util.returnBoolByPath(match, 'replays') &&
+                Object.keys(match.replays).length > 0
+            ) {
+                let matchObj = util.objectify(match);
+                let replayObj = matchObj.replays;
+
+                let keys = Object.keys(replayObj);
+
+                for (var j = 0; j < keys.length; j++) {
+                    let key = keys[j];
+
+                    if (key != '_id') {
+                        let replayInfo = replayObj[key];
+                        let replayDataKey = null;
+                        if (util.returnBoolByPath(replayInfo, 'data')) {
+                            replayDataKey = replayInfo.data;
+                        }
+                        if (replayDataKey) {
+                            let parsedReplayInfo = await ParsedReplay.findOne({
+                                systemId: replayDataKey,
+                            });
+                            console.log(`S3ing replay json...`);
+                            await s3putObject(
+                                'ngs-stats-of-the-storm',
+                                '15',
+                                `${replayDataKey}.json`,
+                                JSON.stringify(parsedReplayInfo)
+                            );
+                        }
+                    }
+                }
+            }
+        }
+    }
+    console.log('finished...');
+}
 
 // console.log('token',token);
-
 
 // function updateSystemSchema() {
 //     const factory = {};
@@ -111,7 +311,7 @@ loadConfig().then(
 //                         item.set('stat', undefined);
 //                         newDat.list = tDat;
 //                         object.data = newDat;
-                        
+
 //                     } else if (dataName == 'leagueRunningFunStats') {
 //                         object.data.span = object.span;
 //                         object.span = undefined;
@@ -159,8 +359,6 @@ loadConfig().then(
 //                             );
 //             });
 
-
-
 //             console.log(this.objects);
 //     }
 
@@ -175,19 +373,16 @@ loadConfig().then(
 //     return factory;
 // }
 
-
-
-    // StatsJobs.leagueStatRunner().then(
-    //     sucuess => {
-    //         console.log('fun stats calced');
-    //     },
-    //     err => {
-    //         console.log('fun stats failed calc', err);
-    //     }
-    // );
+// StatsJobs.leagueStatRunner().then(
+//     sucuess => {
+//         console.log('fun stats calced');
+//     },
+//     err => {
+//         console.log('fun stats failed calc', err);
+//     }
+// );
 // let factoryInstance = updateSystemSchema();
 // factoryInstance.run();
-
 
 //!!!!!!!!!!!!!!!!!!!!!!! API KEY GENERATOR  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // new System.system({
@@ -204,7 +399,6 @@ loadConfig().then(
 //     }
 // );
 
-
 //9-1-2021 Caster report testing..
 // CasterReportWorker();
 
@@ -220,8 +414,6 @@ loadConfig().then(
 // UserSub.clearUsersTeam(['DHCæsarsalad#1517'], true);
 
 // console.log('token ', token);
-
-
 
 // vodCur();
 
@@ -320,11 +512,7 @@ loadConfig().then(
 //     }
 // );
 
-
-
-
 // let query = {
-
 
 //     type: 'team'
 
@@ -444,7 +632,6 @@ loadConfig().then(
 //         console.log(err);
 //     }
 // )
-
 
 // test
 // groupMakerTest.suggestUserToUser().then(
