@@ -21,7 +21,11 @@ async function getNgsAvgRank(verifiedRankHistory) {
 
     let highest = 0;
 
+    return calculateRanks(requiredRanks, verifiedRankHistory, highest);
 
+}
+
+function calculateRanks(requiredRanks, verifiedRankHistory, highest) {
     if (requiredRanks) {
 
         //temp array
@@ -42,7 +46,7 @@ async function getNgsAvgRank(verifiedRankHistory) {
             }
         });
 
-        //make sure the player has submited all required ranks 
+        //make sure the player has submited all required ranks
         if (requiredRanksArray.length == requiredRanksLength) {
             //loop through our temp array and get the highest ngs rank numb
             requiredRanksArray.forEach(vr => {
@@ -60,6 +64,23 @@ async function getNgsAvgRank(verifiedRankHistory) {
         throw new Error('Error finding required ranks');
 
     }
+}
+
+/**
+ * @name verifyNgsRanks
+ * @function
+ * @description loops through the verified rank history of a user and ensures that the user has submitted all required ranks
+ * @param {Object} verifiedRankHistory array of objects of a users verified rank history
+ */
+async function verifyNgsRanks(verifiedRankHistory){
+
+
+    //get the latest rank requirements from db
+    let requiredRanks = await System.findOne({ dataName: "requiredRankInfo" });
+
+    let highest = -1;
+
+    return calculateRanks(requiredRanks, verifiedRankHistory, highest);
 }
 
 /**
@@ -175,7 +196,7 @@ async function getReportingTeamMembers(membersArray) {
             users.forEach(member => {
                 let memberObj = utils.objectify(member);
                 if (utils.returnBoolByPath(memberObj, 'verifiedRankHistory')) {
-                    secondArr.push(getNgsAvgRank(memberObj.verifiedRankHistory));
+                    secondArr.push(verifyNgsRanks(memberObj.verifiedRankHistory));
                 }
             });
 
@@ -185,7 +206,7 @@ async function getReportingTeamMembers(membersArray) {
                     let count = 0;
                     secondArrReturn.forEach(
                         ind => {
-                            if (ind != 0) {
+                            if(ind>=0){
                                 count++;
                             }
                         }

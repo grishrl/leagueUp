@@ -192,8 +192,6 @@ router.post('/usersReporting', passport.authenticate('jwt', {
     session: false
 }), (req, res) => {
 
-    //TODO: replace with client direct to s3 upload
-
     const path = 'playerrank/usersReporting';
 
     const requiredParameters = [{

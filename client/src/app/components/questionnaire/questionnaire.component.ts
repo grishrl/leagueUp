@@ -59,16 +59,16 @@ export class QuestionnaireComponent implements OnInit {
 
   private initQuestionnaire() {
     if (this.passedTeam.teamMembers && this.passedTeam.teamMembers.length > 0) {
-      // this.playerRank.getReportingCount(this.passedTeam.teamMembers).subscribe(
-      //   (res) => {
-      //     if (res.reported == this.passedTeam.teamMembers.length) {
-      //       this.ranksVerified = true;
-      //     }
-      //   },
-      //   (err) => {
-      //     console.warn(err);
-      //   }
-      // );
+      this.playerRank.getReportingCount(this.passedTeam.teamMembers).subscribe(
+        (res) => {
+          if (res.reported == this.passedTeam.teamMembers.length) {
+            this.ranksVerified = true;
+          }
+        },
+        (err) => {
+          console.warn(err);
+        }
+      );
     }
 
     this.teamService.getTeamQuestionnaire(this.passedTeam._id).subscribe((res) => {
@@ -190,7 +190,7 @@ export class QuestionnaireComponent implements OnInit {
     this.pickedMaps.push(map);
   }
 
-  ranksVerified = true;
+  ranksVerified = false;
 
   ngOnInit() {
     this.timeService.getSesasonInfo().subscribe((res) => {
