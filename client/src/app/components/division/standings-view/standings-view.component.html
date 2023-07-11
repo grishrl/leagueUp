@@ -10,7 +10,6 @@
                     <th class="text-center">Games<br>Won</th>
                     <th class="text-center">Games<br>Lost</th>
                     <th class="text-center">Matches<br>Played</th>
-                    <th class="text-center">Tiebreak</th>
                 </tr>
             </thead>
 
@@ -29,12 +28,12 @@
                     </td>
                     <td>
                         {{standing.points}}
+                        <div style="display: none">Tiebreaker: {{standing.tiebreakMethod}}</div>
                     </td>
                     <td [hidden]="div.divisionConcat=='storm'">{{standing.dominations}}</td>
                     <td>{{standing.wins}}</td>
                     <td>{{standing.losses}}</td>
                     <td>{{standing.matchesPlayed}}</td>
-                    <td>{{standing.tiebreakMethod}}</td>
                 </tr>
 
             </tbody>

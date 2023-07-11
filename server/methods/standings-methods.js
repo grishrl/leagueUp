@@ -316,7 +316,7 @@ function sortStandingsForStdDiv(standings, matchesForDivision) {
     const completedStandings = [];
 
     const tieBreakers = [
-        { label: '', func: findLeadersByPoints },
+        { label: 'points', func: findLeadersByPoints },
         { label: 'head to head', func: findLeadersByHeadToHead },
         { label: 'wins and losses', func: findLeadersByMapDifferential },
     ];
