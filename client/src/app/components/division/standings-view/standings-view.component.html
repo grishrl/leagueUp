@@ -6,7 +6,7 @@
                     <th class="text-left">Rank</th>
                     <th class="text-left">Team</th>
                     <th class="text-center">Points</th>
-                    <th class="text-center">Dominations</th>
+                    <th [hidden]="div.divisionConcat=='storm'" class="text-center">Dominations</th>
                     <th class="text-center">Games<br>Won</th>
                     <th class="text-center">Games<br>Lost</th>
                     <th class="text-center">Matches<br>Played</th>
@@ -22,15 +22,15 @@
 
                     </td>
                     <td class="text-left">
-                        <!-- <img src="img/clubs-logos/colombia.png" alt="Colombia"> -->
                         <span>
                         <app-team-link [team]="standing.teamName" [season]="seasonVal">{{standing.teamName}}</app-team-link>
                       </span>
                     </td>
                     <td>
                         {{standing.points}}
+                        <div style="display: none">Tiebreaker: {{standing.tiebreakMethod}}</div>
                     </td>
-                    <td>{{standing.dominations}}</td>
+                    <td [hidden]="div.divisionConcat=='storm'">{{standing.dominations}}</td>
                     <td>{{standing.wins}}</td>
                     <td>{{standing.losses}}</td>
                     <td>{{standing.matchesPlayed}}</td>

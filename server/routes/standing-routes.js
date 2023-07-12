@@ -23,7 +23,7 @@ router.post('/fetch/division', (req, res) => {
         let division = requiredParameters.division.value;
         let season = requiredParameters.season.value;
         let pastSeason = req.body.pastSeason;
-        return Standings.calulateStandings(division, season, pastSeason, false).then(
+        return Standings.calculateStandings(division, season, pastSeason, false).then(
             (processed) => {
                 response.status = 200;
                 response.message = utils.returnMessaging(req.originalUrl, 'Calculated Standings', false, processed)

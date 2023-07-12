@@ -92,7 +92,7 @@ async function associateStandingsWithTeams(matches) {
     });
     for (var i = 0; i < divisions.length; i++) {
         let thisDiv = divisions[i];
-        let standing = await Standings.calulateStandings(thisDiv, season).then(
+        let standing = await Standings.calculateStandings(thisDiv, season).then(
             res => {
                 return res;
             },

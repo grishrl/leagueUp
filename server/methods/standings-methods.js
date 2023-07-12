@@ -16,10 +16,12 @@ const Division = require('../models/division-models');
 const _ = require('lodash');
 const MatchCommon = require('./matchCommon');
 const jsonDiff = require('deep-object-diff');
+const sortBy = require('lodash/sortBy')
+const max = require('lodash/max')
 
 
 /**
- * @name calulateStandings
+ * @name calculateStandings
  * @function
  * @description takes the provided division and season and calcuates the current standings of the teams
  * @param {Division} divisionConcat provide division concat for calculation
@@ -27,15 +29,11 @@ const jsonDiff = require('deep-object-diff');
  * @param {boolean} pastSeason provide true if past season inquiry
  * @param {boolean} noDeltas provide true if standings delta not desired; 
  */
-async function calulateStandings(divisionConcat, season, pastSeason, noDeltas) {
+async function calculateStandings(divisionConcat, season, pastSeason, noDeltas) {
     let standings;
     try {
 
-        let dbDiv = await Division.findOne({
-            divisionConcat: divisionConcat
-        }).then(found => {
-            return found;
-        });
+        let dbDiv = await Division.findOne({ divisionConcat: divisionConcat });
 
         if (dbDiv) {
             if (util.returnBoolByPath(dbDiv.toObject(), 'cupDiv') && dbDiv.cupDiv == true) {
@@ -51,10 +49,8 @@ async function calulateStandings(divisionConcat, season, pastSeason, noDeltas) {
 
         return standings;
     } catch (e) {
-        util.errLogger('standings-subs, calulateStandings', e);
+        util.errLogger('standings-subs, calculateStandings', e);
     }
-
-
 }
 
 
@@ -264,6 +260,125 @@ async function cupDivStanding(division, season) {
 }
  */
 
+function findLeadersByPoints(standings) {
+    const maxPoints = max(standings.map(s => s.points));
+
+    return standings.filter(s => s.points === maxPoints);
+}
+
+function findLeadersByHeadToHead(standings, matchesForDivision) {
+    const teams = standings.map(s => ({ id: s.id, points: 0 }));
+    const teamIds = standings.map(s => s.id);
+
+    for (const team of teams) {
+        for (const match of matchesForDivision) {
+            let us = undefined;
+            let them = undefined;
+
+            if (match.home.id === team.id) {
+                us = match.home;
+                them = match.away;
+            } else if (match.away.id === team.id) {
+                us = match.away;
+                them = match.home;
+            } else {
+                continue;
+            }
+
+            // Only consider matches against the other tied teams.
+            if (!teamIds.includes(them.id)) {
+                continue;
+            }
+
+            team.points += us.score;
+
+            if (them.score === 0) {
+                team.points++;
+            }
+        }
+    }
+
+    const maxPoints = max(teams.map(t => t.points));
+    const leaderIds = teams.filter(t => t.points == maxPoints).map(t => t.id);
+
+    return standings.filter(s => leaderIds.includes(s.id));
+}
+
+function findLeadersByMapDifferential(standings) {
+    const maxDifferential = max(standings.map(s => s.wins - s.losses));
+
+    return standings.filter(s => s.wins - s.losses === maxDifferential);
+}
+
+function sortStandingsForStdDiv(standings, matchesForDivision) {
+    let rank = 1;
+    let remainingStandings = standings;
+    const completedStandings = [];
+
+    const tieBreakers = [
+        { label: 'points', func: findLeadersByPoints },
+        { label: 'head to head', func: findLeadersByHeadToHead },
+        { label: 'wins and losses', func: findLeadersByMapDifferential },
+    ];
+
+    while (remainingStandings.length > 0) {
+        let tiebreakMethod = '';
+        let leaders = remainingStandings;
+
+        for (const tieBreaker of tieBreakers) {
+            if (leaders.length > 1) {
+                leaders = tieBreaker.func(leaders, matchesForDivision);
+
+                if (leaders.length === 1) {
+                    tiebreakMethod = tieBreaker.label;
+                }
+            }
+        }
+
+        // Teams with fewer matches are technically tied, but will be listed first
+        // since they have games in hand on the others. After that, we just sort by
+        // name to make it deterministic.
+        const sortedLeaders = sortBy(
+            leaders,
+            s => 0 - s.matchesPlayed,
+            s => s.teamName.toLowerCase()
+        );
+
+        for (const leader of sortedLeaders) {
+            leader.standing = rank;
+            leader.tiebreakMethod = tiebreakMethod;
+            completedStandings.push(leader);
+            remainingStandings = remainingStandings.filter(
+                s => s.id !== leader.id
+            );
+        }
+
+        if (sortedLeaders.length > 1) {
+            for (const sortedLeader of sortedLeaders) {
+                sortedLeader.tiebreakMethod = "still tied, goes to KDA";
+            }
+        }
+
+        rank += leaders.length;
+    }
+
+    return completedStandings;
+}
+
+function sortStandingsForStormDiv(standings) {
+    sortedStandings = sortBy(
+        standings,
+        s => 0 - s.points,
+        s => s.teamName
+    );
+
+    for (let i = 0; i < sortedStandings.length; i++) {
+        sortedStandings[i].standing = i + 1;
+    }
+
+    return sortedStandings;
+}
+
 /**
  * @name stdDivStanding
  * @function
@@ -276,11 +391,10 @@ async function stdDivStanding(division, season, pastSeason, noDeltas) {
 
     noDeltas = util.validateInputs.boolean(noDeltas).value;
 
-
     let teams;
 
     //grab all amtches that match the season and division and are not tournament matches
-    let matchesForDivision = await Match.find({
+    let rawMatches = await Match.find({
         $and: [{
             divisionConcat: division.divisionConcat
         }, {
@@ -290,48 +404,29 @@ async function stdDivStanding(division, season, pastSeason, noDeltas) {
                 $ne: 'tournament'
             }
         }]
-    }).lean().then(
-        (matches) => {
-            if (matches) {
-                //get an array of team ids
-                teams = MatchCommon.findTeamIds(matches);
-                if (pastSeason) {
-                    return MatchCommon.addTeamInfoFromArchiveToMatch(matches, season).then(
-                        (processed) => {
-                            return processed;
-                        },
-                        (err) => {
-                            return false;
-                        }
-                    )
-                } else {
-                    //grab all the team information associated with each team
-                    //add names and logos to matches
-                    return MatchCommon.addTeamInfoToMatch(matches).then(
-                        (processed) => {
-                            return processed;
-                        },
-                        (err) => {
-                            return false;
-                        }
-                    )
-                }
+    }).lean()
 
-            } else {
-                return false;
-            }
-        },
-        (err) => {
-            return false;
+    let matchesForDivision = false;
+    
+    if (rawMatches) {
+        //get an array of team ids
+        teams = MatchCommon.findTeamIds(rawMatches);
+        if (pastSeason) {
+            matchesForDivision = await MatchCommon.addTeamInfoFromArchiveToMatch(rawMatches, season);
+        } else {
+            //grab all the team information associated with each team
+            //add names and logos to matches
+            matchesForDivision = await MatchCommon.addTeamInfoToMatch(rawMatches);
         }
-    );
+    }
+
+    const isStormDiv = 'storm' == util.returnByPath(matchesForDivision[0], 'divisionConcat');
 
     let standings = [];
     let nonReportedMatchCount = 0;
     //calcualte the standings of the teams
     if (matchesForDivision != false) {
-
-        if ('storm' == util.returnByPath(matchesForDivision[0], 'divisionConcat')) {
+        if (isStormDiv) {
             nonReportedMatchCount = bestOfX(matchesForDivision, nonReportedMatchCount, teams, standings);
         } else {
             nonReportedMatchCount = bestOfThree(matchesForDivision, nonReportedMatchCount, teams, standings);
@@ -341,23 +436,13 @@ async function stdDivStanding(division, season, pastSeason, noDeltas) {
     if (nonReportedMatchCount == matchesForDivision.length) {
         standings = [];
     } else {
-        //sort resultant standings by points
-        standings.sort((a, b) => {
-            if (a.points > b.points) {
-                return -1;
-            } else {
-                return 1;
-            }
-        });
-
-        //add a position property 1st,....
-        for (var i = 0; i < standings.length; i++) {
-            standings[i]['standing'] = i + 1;
+        if (isStormDiv) {
+            standings = sortStandingsForStormDiv(standings);
+        } else {
+            standings = sortStandingsForStdDiv(standings, matchesForDivision);
         }
 
         if (!noDeltas) {
-
-
             //retrieve data from db of stored standings
             let query = {
                 $and: [
@@ -379,9 +464,7 @@ async function stdDivStanding(division, season, pastSeason, noDeltas) {
                 }
             );
 
-
             try {
-
                 if (data) {
                     _.forEach(data.data.standings, (oldDataV, oldDataK) => {
                         let storedStanding = oldDataV;
@@ -409,11 +492,8 @@ async function stdDivStanding(division, season, pastSeason, noDeltas) {
     return standings;
 }
 
-
-
-
 module.exports = {
-    calulateStandings: calulateStandings
+    calculateStandings: calculateStandings
 };
 
 /**
@@ -433,120 +513,58 @@ function bestOfThree(matchesForDivision, nonReportedMatchCount, teams, standings
         //loop through the list of team ids
         teams.forEach(team => {
             //create a response object per team..
-            let standing = {};
-            standing['wins'] = 0;
-            standing['points'] = 0;
-            standing['losses'] = 0;
-            standing['dominations'] = 0;
-            standing['id'] = team;
-            standing['matchesPlayed'] = 0;
-            standing['logo'] = null;
+            let teamStanding = {};
+            teamStanding.wins = 0;
+            teamStanding.points = 0;
+            teamStanding.losses = 0;
+            teamStanding.dominations = 0;
+            teamStanding.id = team;
+            teamStanding.matchesPlayed = 0;
+            teamStanding.logo = null;
+
             //loop through the matches et all for division
             matchesForDivision.forEach(match => {
-                if (match.away.id == team) {
-                    standing['teamName'] = match.away.teamName;
-                    if (util.returnBoolByPath(match, 'away.logo')) {
-                        standing['logo'] = match.away.logo;
-                    }
-                } else if (match.home.id == team) {
-                    standing['teamName'] = match.home.teamName;
-                    if (util.returnBoolByPath(match, 'home.logo')) {
-                        standing['logo'] = match.home.logo;
+                let us = undefined;
+                let them = undefined;
+
+                if (match.home.id === team) {
+                    us = match.home;
+                    them = match.away;
+                } else if (match.away.id === team) {
+                    us = match.away;
+                    them = match.home;
+                } else {
+                    return
+                }
+
+                if (!teamStanding.teamName) {
+                    // Grab the name and logo if we haven't already done so.
+                    teamStanding.teamName = us.teamName;
+                    const ourLogo = us.logo;
+
+                    if (ourLogo) {
+                        teamStanding.logo = ourLogo;
                     }
                 }
+                
                 //if the match is not reported; ignore it
                 if (util.returnBoolByPath(match, 'reported') == false) {
                     return;
-                } else {
-                    //match the team id
-                    if (match.away.id == team) {
-                        //get team info from here
-                        //score from this game if team id was away
-                        let score = match.away.score;
-                        //dominator variable
-                        let dominator = match.away.dominator;
+                }
 
-                        if (match.reported) {
-                            standing['matchesPlayed'] += 1;
-                        }
+                teamStanding.matchesPlayed += 1;
+                teamStanding.points += us.score;
+                teamStanding.wins += us.score;
+                teamStanding.losses += them.score;
 
-                        if (score != undefined && score != null) {
-                            //if the score was 2 
-                            if (score == 2) {
-                                //add 2 wins
-                                standing['wins'] += 2;
-                                //add 2 points
-                                standing['points'] += 2;
-                                //if you scored 2 but not a dominator then you won 2-1
-                                if (!dominator) {
-                                    standing['losses'] += 1;
-                                }
-                            } else if (score == 1) {
-                                //if you scored 1
-                                //add 1 pt
-                                standing['points'] += 1;
-                                //add 1 win
-                                standing['wins'] += 1;
-                                //add 2 losses
-                                standing['losses'] += 2;
-                            } else {
-                                //else case score is zero, 
-                                //add 2 losses
-                                standing['losses'] += 2;
-                            }
-                        }
-                        //dominator bonus;
-                        //add 1 pt
-                        //add 1 dominations
-                        if (dominator) {
-                            standing['dominations'] += 1;
-                            standing['points'] += 1;
-                        }
-                    } else if (match.home.id == team) {
-                        //get team info from here
-                        //score from this game if team id was home
-                        let score = match.home.score;
-                        //dominator variable
-                        let dominator = match.home.dominator;
-                        if (match.reported) {
-                            standing['matchesPlayed'] += 1;
-                        }
-                        if (score != undefined && score != null) {
-                            //if the score was 2 
-                            if (score == 2) {
-                                //add 2 pts
-                                standing['points'] += 2;
-                                // add 2 wins
-                                standing['wins'] += 2;
-                                //if you scored 2 but not a dominator then you won 2-1
-                                if (!dominator) {
-                                    standing['losses'] += 1;
-                                }
-                            } else if (score == 1) {
-                                //score was 1, you lost 1-2
-                                //add 1 pts
-                                standing['points'] += 1;
-                                //add 1 wins
-                                standing['wins'] += 1;
-                                //add 2 losses
-                                standing['losses'] += 2;
-                            } else {
-                                //score was zero, 
-                                //add 2 losses
-                                standing['losses'] += 2;
-                            }
-                            //dominator bonus
-                            //add 1 dominations
-                            //add 1 pts
-                            if (dominator) {
-                                standing['dominations'] += 1;
-                                standing['points'] += 1;
-                            }
-                        }
-                    }
+                if (them.score === 0) {
+                    // This was a domination, give us the bonus point please!
+                    teamStanding.points += 1;
+                    teamStanding.dominations += 1
                 }
             });
-            standings.push(standing);
+
+            standings.push(teamStanding);
         })
     } catch (e) {
         util.errLogger('standings-subs', e, 'bestOfThree');
