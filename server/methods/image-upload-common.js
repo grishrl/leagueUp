@@ -75,7 +75,7 @@ async function prepImage(dataURI, namingObject) {
 
         return {
             buffer: buf,
-            fileName: uploadedFileName
+            fileName: encodeURIComponent(uploadedFileName)
         }
     }
 }
