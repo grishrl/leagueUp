@@ -178,7 +178,7 @@ function PlaylistCurator() {
                 let reportDiv = report.division;
                 let divInf = _.find(this.divisionInfo, { divisionConcat: reportDiv });
                 playListName = `Season ${this.seasonValue} ${divInf.displayName.trim()} Division`;
-            } else if (report.division && report.division.length > 0) {
+            } else if (!report.division || report.division.length == 0) {
                 playListName = `Season ${this.seasonValue} ${report.event.trim()}`;
             }else{
 
