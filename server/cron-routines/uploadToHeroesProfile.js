@@ -113,7 +113,7 @@ async function postToHotsProfileHandler(limNum) {
                 util.errLogger(
                     location,
                     null,
-                    `working ${match.matchId} : (i + 1) of matches.length`
+                    `working ${match.matchId} : ${(i + 1)} of ${matches.length} `
                 );
 
                 let matchCopy = _.cloneDeep(util.objectify(match));
