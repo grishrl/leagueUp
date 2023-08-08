@@ -367,8 +367,9 @@ function sortStandingsForStdDiv(standings, matchesForDivision) {
         //i have completed a run through all tie breaking methods!
         runs++;
         if(runs==remainingStandings.length){
-            completedStandings.concat(remainingStandings);
-            break;
+            let temp = completedStandings.concat(remainingStandings);
+            
+            return temp;
         }
     }
 
