@@ -321,6 +321,8 @@ function sortStandingsForStdDiv(standings, matchesForDivision) {
         { label: 'wins and losses', func: findLeadersByMapDifferential },
     ];
 
+    let runs = 0;
+
     while (remainingStandings.length > 0) {
         let tiebreakMethod = '';
         let leaders = remainingStandings;
@@ -351,6 +353,7 @@ function sortStandingsForStdDiv(standings, matchesForDivision) {
             remainingStandings = remainingStandings.filter(
                 s => s.id !== leader.id
             );
+            runs = 0;
         }
 
         if (sortedLeaders.length > 1) {
@@ -360,6 +363,13 @@ function sortStandingsForStdDiv(standings, matchesForDivision) {
         }
 
         rank += leaders.length;
+
+        //i have completed a run through all tie breaking methods!
+        runs++;
+        if(runs==remainingStandings.length){
+            completedStandings.concat(remainingStandings);
+            break;
+        }
     }
 
     return completedStandings;
