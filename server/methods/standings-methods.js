@@ -272,6 +272,10 @@ function findLeadersByHeadToHead(standings, matchesForDivision) {
 
     for (const team of teams) {
         for (const match of matchesForDivision) {
+            if (!match.reported) {
+                continue;
+            }
+
             let us = undefined;
             let them = undefined;
 
@@ -290,7 +294,8 @@ function findLeadersByHeadToHead(standings, matchesForDivision) {
                 continue;
             }
 
-            team.points += us.score;
+            // Protect against score not being set.
+            team.points += (us.score || 0);
 
             if (them.score === 0) {
                 team.points++;
@@ -321,8 +326,6 @@ function sortStandingsForStdDiv(standings, matchesForDivision) {
         { label: 'wins and losses', func: findLeadersByMapDifferential },
     ];
 
-    let runs = 0;
-
     while (remainingStandings.length > 0) {
         let tiebreakMethod = '';
         let leaders = remainingStandings;
@@ -335,6 +338,13 @@ function sortStandingsForStdDiv(standings, matchesForDivision) {
                     tiebreakMethod = tieBreaker.label;
                 }
             }
+        }
+
+        if (leaders.length === 0) {
+            // This should not happen, but if we couldn't pick any leaders,
+            // this code is broken.  Just grab the remaining teams and
+            // consider them the "leaders" so we don't spin forever.
+            leaders = [...remainingStandings]
         }
 
         // Teams with fewer matches are technically tied, but will be listed first
@@ -353,7 +363,6 @@ function sortStandingsForStdDiv(standings, matchesForDivision) {
             remainingStandings = remainingStandings.filter(
                 s => s.id !== leader.id
             );
-            runs = 0;
         }
 
         if (sortedLeaders.length > 1) {
@@ -363,14 +372,6 @@ function sortStandingsForStdDiv(standings, matchesForDivision) {
         }
 
         rank += leaders.length;
-
-        //i have completed a run through all tie breaking methods!
-        runs++;
-        if(runs==remainingStandings.length){
-            let temp = completedStandings.concat(remainingStandings);
-            
-            return temp;
-        }
     }
 
     return completedStandings;
