@@ -69,6 +69,8 @@ async function asscoatieReplays() {
     //make sure we have some replays selected
     if (parsedReplays.length > 0) {
         for (var i = 0; i < parsedReplays.length; i++) {
+            //TODO: must add a call to s3 here since we will no longer have the data in the db;
+
             //iterater
             var replay = parsedReplays[i];
             //make sure this is a good replay...
@@ -730,6 +732,7 @@ async function tabulateUserStats() {
             //running archive of the replays a player is associated to
             let replays = playerObj.replays;
             //grab replays from the database
+            //TODO: replace with call to s3 since this is no longer in db
             let fullReplays = await Replay.find({
                 systemId: {
                     $in: replays
@@ -828,6 +831,7 @@ async function tabulateTeamStats() {
         for (var i = 0; i < teams.length; i++) {
             let thisTeam = teams[i]
             let replays = thisTeam.replays;
+            //TODO: replace this with S3 since the database no longer has this data...
             let dbReplay = await Replay.find({
                 systemId: {
                     $in: replays
