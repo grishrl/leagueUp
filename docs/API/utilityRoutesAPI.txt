@@ -11,41 +11,6 @@ Auth: open
 Params: id
 Return: map name of the replay id provided
 
-Route: api/utility/update/teams
-Description: updates team info (mmr) of teams not touched over 5 days
-Method: post
-Auth: API key
-Params: apiKey
-Return: compeletion or fail message -> logged to log table
-
-Route: api/utility/read-in-vods
-Description: runs nightly; grabs the caster report spreadsheet and read in vod links and associates to the match
-Method: post
-Auth: API key
-Params: apiKey
-Return: compeletion or fail message -> logged to log table
-
-Route: api/utility/associate-replays
-Description: runs nightly; associates parsed replays to the teams and users
-Method: post
-Auth: API key
-Params: apiKey
-Return: compeletion or fail message -> logged to log table
-
-Route: api/utility/tabulate-stats/user
-Description: runs nightly; goes through user associated replays and aggregates the stats
-Method: post
-Auth: API key
-Params: apiKey
-Return: compeletion or fail message -> logged to log table
-
-Route: api/utility/tabulate-stats/team
-Description: runs nightly; goes through team associated replays and aggregates the stats
-Method: post
-Auth: API key
-Params: apiKey
-Return: compeletion or fail message -> logged to log table
-
 Route: api/utility/image/upload
 Description: used for uploading images (currently only used for events) 
 Method: post
@@ -53,44 +18,3 @@ Auth: Authenticated,
 Params: multipartform; (needs id of type to associate to also needs type of object it will be assocating)
 Return: saved event with image info;
 
-Route: api/utility/tabulate-stats/hots-profile
-Description: runs nightly; submits replays to heroes profile
-Method: post
-Auth: API key
-Params: apiKey
-Return: compeletion or fail message -> logged to log table
-
-Route: api/utility/grabTopStats
-Description: runs nightly gets the league top stats from hero profile
-Method: post
-Auth: API key
-Params: apiKey
-Return: compeletion or fail message -> logged to log table
-
-Route: api/utility/leagueStatRun
-Description: runs nightly aggregates the fun league stats to show on homepage
-Method: post
-Auth: API key
-Params: apiKey
-Return: compeletion or fail message -> logged to log table
-
-Route: api/utility/discord/post/matches
-Description: test route for discord match posting; not completed
-Method: post
-Auth: API key
-Params: apiKey
-Return: nothing
-
-Route: api/utility/groupmaker
-Description: runs nightly when enabled; suggest groups for users during signups
-Method: post
-Auth: API key
-Params: apiKey
-Return: Process start message.
-
-Route: api/utility/groupmaker
-Description: runs nightly when enabled; suggest groups for users during signups
-Method: post
-Auth: API key
-Params: apiKey
-Return: Process start message.
