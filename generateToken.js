@@ -25,7 +25,7 @@ const AWS = require('aws-sdk');
 const CURRENT_WORKING_SEASON = 6;
 
 //bootstrap the program from AWS configs...
-loadConfig().then(function () {
+loadConfig().finally(function () {
     // connect to mongo db
     mongoose.connect(process.env.mongoURI, () => {
         console.log('connected to mongodb');
@@ -49,216 +49,268 @@ loadConfig().then(function () {
         });
     }
 
-    // moveParsedReplaysToS3();
-    // moveTeamsToS3();
-    // moveMatchesToS3();
-    reparseReplays();
     //Operational code goes here now...
+    processReplayInfoFromS3();
 });
 
-async function reparseReplays() {
-    const tmp = require('tmp-promise');
-    const parser = require('hots-parser');
-    AWS.config.update({
+
+async function processReplayInfoFromS3(){
+    const s3 = new AWS.S3({
         accessKeyId: process.env.S3accessKeyId,
         secretAccessKey: process.env.S3secretAccessKey,
-        region: process.env.S3region,
-    });
-
-    const s3replayBucket = new AWS.S3({
+        region: 'us-east-1',
         params: {
-            Bucket: process.env.s3bucketReplays,
+            Bucket: 'ngs-stats-of-the-storm',
         },
     });
 
-    /**
-     * {
-        $and: [{ season: 15 }, { reported: true }],
-    }
-     * 
-     */
-    let matches = await Match.find({
-        $and: [{ season: CURRENT_WORKING_SEASON }, { reported: true }],
-    });
-    let beginTime = Date.now();
-    console.log(`found ${matches.length} matches`);
-    if (matches) {
-        for (var i = 0; i < matches.length; i++) {
-            console.log(`processing ${i + 1} of ${matches.length}`);
-            //get match info
-            let match = matches[i];
-            let matchObj = util.objectify(match);
-            if (util.returnBoolByPath(matchObj, 'replays')) {
-                let replays = matchObj.replays;
+    let matches = await Match.find({$and:[{season:16},{reported:true}]});
 
-                let replaysKeys = Object.keys(replays);
+    console.log(matches.length);
 
-                for (var j = 0; j < replaysKeys.length; j++) {
-                    let value = replaysKeys[j];
+    for(var i = 0; i<matches.length; i++){
+        
+        let match = matches[i];
+        console.log('processing: ',' ', match.matchId, ' ', i + 1);
+        if(Object.keys(match.replays).length>1){
 
-                    if (value != '_id') {
-                        let replayInfo = replays[value];
-                        let fileUrl = replayInfo['url'];
-                        let replayUUID = replayInfo['data'];
+            let replays = [];
 
-                        console.log(`re-parse ${fileUrl}, UUID: ${replayUUID}`);
-                        if (fileUrl) {
-                            let dat = await s3replayBucket
-                                .getObject({
-                                    Key: fileUrl,
-                                })
-                                .promise()
-                                .then(
-                                    dat => {
-                                        return dat;
-                                    },
-                                    err => {
-                                        return null;
-                                    }
-                                );
+            replays.push(match.replays["1"]);
+            replays.push(match.replays['2']);
+            replays.push(match.replays['3'])
 
-                            if (dat) {
-                                try {
-                                    const { fd, path, cleanup } =
-                                        await tmp.file();
-                                    let f = await fs.promises.appendFile(
-                                        path,
-                                        dat.Body
-                                    );
-                                    let parsedReplay = parser.processReplay(
-                                        path,
-                                        {
-                                            overrideVerifiedBuild: true,
-                                        }
-                                    );
-
-                                    if (parsedReplay.status != 1) {
-                                        parsedReplay['failed'] = true;
-                                    }
-                                    await s3putObject(
-                                        'ngs-stats-of-the-storm',
-                                        `${CURRENT_WORKING_SEASON}/parsedReplays`,
-                                        `${replayUUID}.json`,
-                                        JSON.stringify(parsedReplay)
-                                    );
-                                    let foundReplay = await ParsedReplay.find({
-                                        systemId: replayUUID,
-                                    });
-                                    foundReplay = foundReplay[0];
-                                    foundReplay.match = {};
-                                    foundReplay.players = {};
-                                    foundReplay.markModified('match');
-                                    foundReplay.markModified('players');
-                                    await foundReplay.save().then(
-                                        r => {
-                                            console.log(
-                                                `${replayUUID} replay cleared ok`
-                                            );
-                                        },
-                                        e => {
-                                            console.log(
-                                                `error clearing ${replayUUID}`
-                                            );
-                                        }
-                                    );
-                                    cleanup();
-                                } catch (error) {
-                                    util.errLogger(
-                                        'moveAndParseTempFiles, parsing:',
-                                        error,
-                                        'caught parse error'
-                                    );
-                                }
-                            } else {
-                                //no dat!!!
-                            }
-                        }
-                    }
-                }
+            for(let j=0; j<replays.length; j++){
+            let replayOne = replays[j];
+            if (replayOne && replayOne.data) {
+                console.log(`handling data id: ${replayOne.data}`);
+                let key = `16/parsedReplays/${replayOne.data}.json`;
+                let parsedReplay = await s3
+                    .getObject({
+                        Key: key,
+                    })
+                    .promise();
+                parsedReplay = JSON.parse(parsedReplay.Body.toString('utf-8'));
+                let sysreplay = await ParsedReplay.findOne({
+                    systemId: replayOne.data,
+                });
+                sysreplay.match.map = parsedReplay.match.map;
+                sysreplay.markModified("match");
+                sysreplay.save();
             }
+
+            }
+
         }
-        console.log('done');
-        let endTimestamp = Date.now();
-        let elapsed = endTimestamp - beginTime;
-        console.log(`took ${elapsed / (60 * 1000)} minutes`);
     }
+
+
 }
 
-async function moveMatchesToS3() {
-    let matches = await Match.find({
-        $and: [{ season: 15 }, { reported: true }],
-    });
-    if (matches) {
-        await s3putObject(
-            'ngs-stats-of-the-storm',
-            '15',
-            `matches.json`,
-            JSON.stringify(matches)
-        );
-        console.log('finished...');
-    }
-}
 
-async function moveTeamsToS3() {
-    let teams = await getRegisteredTeams();
-    s3putObject(
-        'ngs-stats-of-the-storm',
-        '15',
-        `teams.json`,
-        JSON.stringify(teams)
-    );
-}
+// async function reparseReplays() {
+//     const tmp = require('tmp-promise');
+//     const parser = require('hots-parser');
+//     AWS.config.update({
+//         accessKeyId: process.env.S3accessKeyId,
+//         secretAccessKey: process.env.S3secretAccessKey,
+//         region: process.env.S3region,
+//     });
+
+//     const s3replayBucket = new AWS.S3({
+//         params: {
+//             Bucket: process.env.s3bucketReplays,
+//         },
+//     });
+
+//     /**
+//      * {
+//         $and: [{ season: 15 }, { reported: true }],
+//     }
+//      * 
+//      */
+//     let matches = await Match.find({
+//         $and: [{ season: CURRENT_WORKING_SEASON }, { reported: true }],
+//     });
+//     let beginTime = Date.now();
+//     console.log(`found ${matches.length} matches`);
+//     if (matches) {
+//         for (var i = 0; i < matches.length; i++) {
+//             console.log(`processing ${i + 1} of ${matches.length}`);
+//             //get match info
+//             let match = matches[i];
+//             let matchObj = util.objectify(match);
+//             if (util.returnBoolByPath(matchObj, 'replays')) {
+//                 let replays = matchObj.replays;
+
+//                 let replaysKeys = Object.keys(replays);
+
+//                 for (var j = 0; j < replaysKeys.length; j++) {
+//                     let value = replaysKeys[j];
+
+//                     if (value != '_id') {
+//                         let replayInfo = replays[value];
+//                         let fileUrl = replayInfo['url'];
+//                         let replayUUID = replayInfo['data'];
+
+//                         console.log(`re-parse ${fileUrl}, UUID: ${replayUUID}`);
+//                         if (fileUrl) {
+//                             let dat = await s3replayBucket
+//                                 .getObject({
+//                                     Key: fileUrl,
+//                                 })
+//                                 .promise()
+//                                 .then(
+//                                     dat => {
+//                                         return dat;
+//                                     },
+//                                     err => {
+//                                         return null;
+//                                     }
+//                                 );
+
+//                             if (dat) {
+//                                 try {
+//                                     const { fd, path, cleanup } =
+//                                         await tmp.file();
+//                                     let f = await fs.promises.appendFile(
+//                                         path,
+//                                         dat.Body
+//                                     );
+//                                     let parsedReplay = parser.processReplay(
+//                                         path,
+//                                         {
+//                                             overrideVerifiedBuild: true,
+//                                         }
+//                                     );
+
+//                                     if (parsedReplay.status != 1) {
+//                                         parsedReplay['failed'] = true;
+//                                     }
+//                                     await s3putObject(
+//                                         'ngs-stats-of-the-storm',
+//                                         `${CURRENT_WORKING_SEASON}/parsedReplays`,
+//                                         `${replayUUID}.json`,
+//                                         JSON.stringify(parsedReplay)
+//                                     );
+//                                     let foundReplay = await ParsedReplay.find({
+//                                         systemId: replayUUID,
+//                                     });
+//                                     foundReplay = foundReplay[0];
+//                                     foundReplay.match = {};
+//                                     foundReplay.players = {};
+//                                     foundReplay.markModified('match');
+//                                     foundReplay.markModified('players');
+//                                     await foundReplay.save().then(
+//                                         r => {
+//                                             console.log(
+//                                                 `${replayUUID} replay cleared ok`
+//                                             );
+//                                         },
+//                                         e => {
+//                                             console.log(
+//                                                 `error clearing ${replayUUID}`
+//                                             );
+//                                         }
+//                                     );
+//                                     cleanup();
+//                                 } catch (error) {
+//                                     util.errLogger(
+//                                         'moveAndParseTempFiles, parsing:',
+//                                         error,
+//                                         'caught parse error'
+//                                     );
+//                                 }
+//                             } else {
+//                                 //no dat!!!
+//                             }
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//         console.log('done');
+//         let endTimestamp = Date.now();
+//         let elapsed = endTimestamp - beginTime;
+//         console.log(`took ${elapsed / (60 * 1000)} minutes`);
+//     }
+// }
+
+// async function moveMatchesToS3() {
+//     let matches = await Match.find({
+//         $and: [{ season: 15 }, { reported: true }],
+//     });
+//     if (matches) {
+//         await s3putObject(
+//             'ngs-stats-of-the-storm',
+//             '15',
+//             `matches.json`,
+//             JSON.stringify(matches)
+//         );
+//         console.log('finished...');
+//     }
+// }
+
+// async function moveTeamsToS3() {
+//     let teams = await getRegisteredTeams();
+//     s3putObject(
+//         'ngs-stats-of-the-storm',
+//         '15',
+//         `teams.json`,
+//         JSON.stringify(teams)
+//     );
+// }
 
 //ngs-stats-of-the-storm
 
-async function moveParsedReplaysToS3() {
-    let allMatches = await Match.find({
-        $and: [{ season: 15 }, { replays: { $exists: true } }],
-    });
-    console.log(`Found ${allMatches.length}  matches..`);
-    if (allMatches) {
-        for (var i = 0; i < allMatches.length; i++) {
-            console.log(
-                `Processing ${i + 1} of ${allMatches.length} matches..`
-            );
-            let match = allMatches[i];
-            if (
-                util.returnBoolByPath(match, 'replays') &&
-                Object.keys(match.replays).length > 0
-            ) {
-                let matchObj = util.objectify(match);
-                let replayObj = matchObj.replays;
+// async function moveParsedReplaysToS3() {
+//     let allMatches = await Match.find({
+//         $and: [{ season: 15 }, { replays: { $exists: true } }],
+//     });
+//     console.log(`Found ${allMatches.length}  matches..`);
+//     if (allMatches) {
+//         for (var i = 0; i < allMatches.length; i++) {
+//             console.log(
+//                 `Processing ${i + 1} of ${allMatches.length} matches..`
+//             );
+//             let match = allMatches[i];
+//             if (
+//                 util.returnBoolByPath(match, 'replays') &&
+//                 Object.keys(match.replays).length > 0
+//             ) {
+//                 let matchObj = util.objectify(match);
+//                 let replayObj = matchObj.replays;
 
-                let keys = Object.keys(replayObj);
+//                 let keys = Object.keys(replayObj);
 
-                for (var j = 0; j < keys.length; j++) {
-                    let key = keys[j];
+//                 for (var j = 0; j < keys.length; j++) {
+//                     let key = keys[j];
 
-                    if (key != '_id') {
-                        let replayInfo = replayObj[key];
-                        let replayDataKey = null;
-                        if (util.returnBoolByPath(replayInfo, 'data')) {
-                            replayDataKey = replayInfo.data;
-                        }
-                        if (replayDataKey) {
-                            let parsedReplayInfo = await ParsedReplay.findOne({
-                                systemId: replayDataKey,
-                            });
-                            console.log(`S3ing replay json...`);
-                            await s3putObject(
-                                'ngs-stats-of-the-storm',
-                                '15',
-                                `${replayDataKey}.json`,
-                                JSON.stringify(parsedReplayInfo)
-                            );
-                        }
-                    }
-                }
-            }
-        }
-    }
-    console.log('finished...');
-}
+//                     if (key != '_id') {
+//                         let replayInfo = replayObj[key];
+//                         let replayDataKey = null;
+//                         if (util.returnBoolByPath(replayInfo, 'data')) {
+//                             replayDataKey = replayInfo.data;
+//                         }
+//                         if (replayDataKey) {
+//                             let parsedReplayInfo = await ParsedReplay.findOne({
+//                                 systemId: replayDataKey,
+//                             });
+//                             console.log(`S3ing replay json...`);
+//                             await s3putObject(
+//                                 'ngs-stats-of-the-storm',
+//                                 '15',
+//                                 `${replayDataKey}.json`,
+//                                 JSON.stringify(parsedReplayInfo)
+//                             );
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//     }
+//     console.log('finished...');
+// }
 
 // console.log('token',token);
 
