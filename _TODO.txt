@@ -1,1 +1,1 @@
-Check out User-Deck ; see about adding hero profile links there.
+when running match deadline setter if you set EG: 11 rounds as having deadline, then re-run with lower amount of rounds : n, the rounds n+ do not get there deadline removed.

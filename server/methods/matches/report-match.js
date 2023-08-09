@@ -544,7 +544,8 @@ async function moveAndParseTempFiles(matchId) {
                             `${parsedItem.systemId}.json`,
                             JSON.stringify(parsedItem)
                         );
-                        parsedItem.match = {};
+                        let map = parsedItem.match.map;
+                        parsedItem.match = {map};
                         parsedItem.players = {};
                     }
                 )
