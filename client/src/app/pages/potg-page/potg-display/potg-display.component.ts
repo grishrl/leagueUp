@@ -52,15 +52,15 @@ export class PotgDisplayComponent implements OnInit {
 
 
   correctAutoPlay(){
+    console.log('asdfasdf',this.potg.potg_link )
         if (this.potg.potg_link) {
           if (this.potg.potg_link.includes("twitch.tv")) {
             if (!this.potg.potg_link.includes("autoplay")) {
               this.potg.potg_link += "&autoplay=false";
             }
             //&parent=localhost&parent=prod-ngs.herokuapp.com&parent=herokuapp.com&parent=www.nexusgamingseries.org
-            this.potg.potg_link = `${this.potg.potg_link}&parent=localhost&parent=prod-ngs.herokuapp.com&parent=herokuapp.com&parent=www.nexusgamingseries.org&parent=nexusgamingseries.org&autoplay=false`;
-          }
-          if(!this.potg.potg_link.includes('https://')){
+            this.potg.potg_link = `https://${this.potg.potg_link}&parent=localhost&parent=prod-ngs.herokuapp.com&parent=herokuapp.com&parent=www.nexusgamingseries.org&parent=nexusgamingseries.org&autoplay=false`;
+          }else if(!this.potg.potg_link.includes('https://')){
             this.potg.potg_link = `https://www.${this.potg.potg_link}`;
           }
         }

@@ -17,7 +17,7 @@
         <div *ngIf="showPotg">
             <div class="row mt-2">
                 <div class="col text-center">
-                    <div *ngIf="potg && potg.potg_link && potg.potg_link.length>0 else noPotg">
+                  <div *ngIf="potg && potg.potg_link && potg.potg_link.length>0 else noPotg">
                         <iframe width="100%" [src]="potg.potg_link | safe" frameborder="0" [style.height.px]="eleHeight" allowfullscreen></iframe>
                         <div class="mt-1">
                             <div *ngIf="auth.isAuthenticated() else logonToSmile">
