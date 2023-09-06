@@ -486,21 +486,22 @@ export class UtilitiesService {
       valid = false;
     }
 
-    let obj
-    if(url.includes("iframe")||url.includes("IFRAME")){
-      //got to slice out some information
-      let targetStr = "embed/";
-      let embedIndex = url.indexOf(targetStr);
-      let embedEndIndex = embedIndex+targetStr.length;
-      let sub2 = url.substring(embedEndIndex, url.length-1)
-      let endQouteIndex = sub2.indexOf('"');
-      let youtubeTarget = sub2.substring(0,endQouteIndex);
-      obj = {v:youtubeTarget};
-    }else{
-      obj = getAllUrlParams(url, false);
-    }
 
-    if(this.returnBoolByPath(obj, 'v') ){
+    let obj
+    console.log(url);
+    if (url.includes("youtube") || url.includes("youtu.be")) {
+      if (url.includes("iframe") || url.includes("IFRAME")) {
+        //got to slice out some information
+        let targetStr = "embed/";
+        let embedIndex = url.indexOf(targetStr);
+        let embedEndIndex = embedIndex + targetStr.length;
+        let sub2 = url.substring(embedEndIndex, url.length - 1);
+        let endQouteIndex = sub2.indexOf('"');
+        let youtubeTarget = sub2.substring(0, endQouteIndex);
+        returnClip = youtubeTarget;
+        valid = true;
+      }
+    }else if(this.returnBoolByPath(obj, 'v') ){
       valid = true;
       returnClip = this.returnByPath(obj, 'v') ;
 
