@@ -8,18 +8,18 @@ import { HttpService } from './http.service';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: "root"
+  providedIn: "root",
 })
 export class UtilitiesService {
-  constructor(private HttpService:HttpService) {}
+  constructor(private HttpService: HttpService) {}
 
-  getYtO():Observable<any>{
-    let url = 'api/utility/ytoa';
-    return this.HttpService.httpGet(url,[]);
+  getYtO(): Observable<any> {
+    let url = "api/utility/ytoa";
+    return this.HttpService.httpGet(url, []);
   }
 
-  objectCopy(obj){
-    return JSON.parse( JSON.stringify(obj) );
+  objectCopy(obj) {
+    return JSON.parse(JSON.stringify(obj));
   }
 
   calculateRounds(div): Array<number> {
@@ -121,7 +121,7 @@ export class UtilitiesService {
       "Wednesday",
       "Thursday",
       "Friday",
-      "Saturday"
+      "Saturday",
     ][dayIndex];
   }
 
@@ -181,7 +181,7 @@ export class UtilitiesService {
 
   updateAvailabilityToNum(obj) {
     let keys = Object.keys(obj.availability);
-    keys.forEach(element => {
+    keys.forEach((element) => {
       let day = obj.availability[element];
       if (day.available) {
         day["startTimeNumber"] = this.convertToMil(day.startTime);
@@ -253,7 +253,7 @@ export class UtilitiesService {
     return !!retVal;
   }
 
-  returnByPath = function(obj, path) {
+  returnByPath = function (obj, path) {
     //path is a string representing a dot notation object path;
     //create an array of the string for easier manipulation
     let pathArr = path.split(".");
@@ -325,7 +325,6 @@ export class UtilitiesService {
       }
       return ret;
     });
-
   }
 
   hasMapBans(match: Match): boolean {
@@ -358,11 +357,7 @@ export class UtilitiesService {
     setDate.year(year);
     setDate.month(month);
     setDate.date(date);
-    setDate
-      .hour(0)
-      .minute(0)
-      .second(0)
-      .millisecond(0);
+    setDate.hour(0).minute(0).second(0).millisecond(0);
 
     let colonSplit = time.split(":");
     colonSplit[1] = parseInt(colonSplit[1]);
@@ -394,82 +389,15 @@ export class UtilitiesService {
     });
     const canvas = Object.assign(document.createElement("canvas"), {
       width: image.naturalWidth,
-      height: image.naturalHeight
+      height: image.naturalHeight,
     });
     canvas.getContext("2d").drawImage(image, 0, 0);
     URL.revokeObjectURL(image.src);
-    return new Promise(resolve => canvas.toBlob(resolve, "image/png", 0.3));
+    return new Promise((resolve) => canvas.toBlob(resolve, "image/png", 0.3));
   }
 
-  validateClipUrl(url) {
+  validateVodClip(url) {
     const blacklist = [];
-    let valid = true;
-    let returnClip = "";
-    if (
-      url.includes("twitch.tv") ||
-      url.includes("youtube.com/watch") ||
-      url.includes("youtu.be")
-    ) {
-      forEach(blacklist, val => {
-        if (url.includes(val)) {
-          valid = false;
-        }
-      });
-      let clipVal = "";
-      if (url.includes("twitch.tv")) {
-        returnClip = "clips.twitch.tv/embed?clip=";
-        let clipStr = "clip=";
-        if (url.includes(clipStr)) {
-          let index = url.indexOf(clipStr);
-          clipVal = url.substring(index + clipStr.length, url.length);
-        } else {
-          let twitchTLD = "clips.twitch.tv/";
-          let index = url.indexOf(twitchTLD);
-          clipVal = url.substring(index + twitchTLD.length, url.length);
-        }
-        if (
-          clipVal.length > 0 &&
-          clipVal.toLowerCase().includes("autoplay=false") == false
-        ) {
-          returnClip += clipVal + `&autoplay=false`;
-        } else {
-          returnClip += clipVal;
-        }
-      } else if (url.includes("youtu.be")) {
-        returnClip = "https://www.youtube.com/embed/";
-        let youtubeTLD = "https://youtu.be/";
-        clipVal = url.substring(youtubeTLD.length, url.length);
-        if (clipVal.length > 0) {
-          returnClip += clipVal;
-        }
-      } else if (url.includes("youtube.com/watch")) {
-        returnClip = "https://www.youtube.com/embed/";
-        let clipStr = "watch?v=";
-        let index = url.indexOf(clipStr);
-        clipVal = url.substring(index + clipStr.length, url.length);
-        if (clipVal.length > 0) {
-          returnClip += clipVal;
-        }
-      } else if (url.includes("https://www.youtube.com/embed/")) {
-        returnClip = url;
-      }
-    } else {
-      valid = false;
-    }
-    if(!valid){
-      alert('This URL is not accepted, only accepts URLs from youtube or twitch!');
-    }
-
-    if(returnClip.length == 0){
-      alert(
-        "Unable to extract the clip info in the format provided, please try again."
-      );
-    }
-    return { valid, returnClip };
-  }
-
-  validateClipUrl2(url){
-        const blacklist = [];
     let valid = false;
     let returnClip = "";
     if (
@@ -477,17 +405,51 @@ export class UtilitiesService {
       url.includes("youtube.com") ||
       url.includes("youtu.be")
     ) {
-      blacklist.forEach(val => {
+      blacklist.forEach((val) => {
         if (url.includes(val)) {
           valid = false;
         }
-      })
-    }else{
+      });
+    } else {
       valid = false;
     }
 
+    let obj = getAllUrlParams(url, false);
 
-    let obj
+    if (this.returnBoolByPath(obj, "v")) {
+      valid = true;
+      returnClip = this.returnByPath(obj, "v");
+    } else if (this.returnBoolByPath(obj, "vi")) {
+      valid = true;
+      returnClip = this.returnByPath(obj, "vi");
+    }
+
+    if (!valid) {
+      alert("Unable to parse this url for valid link, please try again.");
+    }
+
+    return { valid, returnClip };
+  }
+
+  validatePotgClip(url) {
+    const blacklist = [];
+    let valid = false;
+    let returnClip = "";
+    if (
+      url.includes("twitch.tv") ||
+      url.includes("youtube.com") ||
+      url.includes("youtu.be")
+    ) {
+      blacklist.forEach((val) => {
+        if (url.includes(val)) {
+          valid = false;
+        }
+      });
+    } else {
+      valid = false;
+    }
+
+    let obj;
     console.log(url);
     if (url.includes("youtube") || url.includes("youtu.be")) {
       if (url.includes("iframe") || url.includes("IFRAME")) {
@@ -501,47 +463,50 @@ export class UtilitiesService {
         returnClip = youtubeTarget;
         valid = true;
       }
-    }else if(this.returnBoolByPath(obj, 'v') ){
+    }else{
+      obj = getAllUrlParams(url, false);
+    }
+
+    if (this.returnBoolByPath(obj, "v")) {
       valid = true;
-      returnClip = this.returnByPath(obj, 'v') ;
-
-    }else if(this.returnBoolByPath(obj, 'vi')){
-      returnClip =this.returnByPath(obj, 'vi');
+      returnClip = this.returnByPath(obj, "v");
+    } else if (this.returnBoolByPath(obj, "vi")) {
+      returnClip = this.returnByPath(obj, "vi");
     }
 
-    if(!valid){
-            alert("Unable to parse this url for valid link, please try again.");
+    if (!valid) {
+      alert("Unable to parse this url for valid link, please try again.");
     }
 
-    return {valid, returnClip};
+    return { valid, returnClip };
   }
 
-  twitchEmbeddify(clip){
-    let obj = this.validateClipUrl2(clip);
-    if(obj.valid){
-      let embeddClip = 'clips.twitch.tv/embed?clip=' + obj.returnClip + '&autoplay=false';
-      obj.returnClip = embeddClip
+  twitchEmbeddify(clip) {
+    let obj = this.validatePotgClip(clip);
+    if (obj.valid) {
+      let embeddClip =
+        "clips.twitch.tv/embed?clip=" + obj.returnClip + "&autoplay=false";
+      obj.returnClip = embeddClip;
     }
     return obj;
   }
 
-  youtubeEmbeddify(clip){
-    let obj = this.validateClipUrl2(clip);
-    if(obj.valid){
+  youtubeEmbeddify(clip) {
+    let obj = this.validatePotgClip(clip);
+    if (obj.valid) {
       //TODO: fix for youtube embedding...
-      let embeddClip = 'youtube.com/embed/' + obj.returnClip;
-      if(embeddClip.indexOf('?')>-1){
-        embeddClip+='&';
-      }else{
-        embeddClip+='?';
+      let embeddClip = "youtube.com/embed/" + obj.returnClip;
+      if (embeddClip.indexOf("?") > -1) {
+        embeddClip += "&";
+      } else {
+        embeddClip += "?";
       }
-      embeddClip+=`autoplay=0`;
-      obj.returnClip = embeddClip
+      embeddClip += `autoplay=0`;
+      obj.returnClip = embeddClip;
     }
-    console.log('obj',obj);
+    console.log("obj", obj);
     return obj;
   }
-
 }
 
   function getAllUrlParams(url, forceLower) {

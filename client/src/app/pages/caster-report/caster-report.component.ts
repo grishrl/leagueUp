@@ -54,7 +54,7 @@ export class CasterReportComponent implements OnInit {
 
   addLink(){
     if(this.casterReport.vodLinks.indexOf(this.vodLink)==-1 && this.vodLink.length>0){
-      let validated = this.util.validateClipUrl2(this.vodLink);
+      let validated = this.util.validateVodClip(this.vodLink);
       if(validated.valid){
         this.casterReport.vodLinks.push(this.vodLink);
       }
