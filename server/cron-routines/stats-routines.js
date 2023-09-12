@@ -15,6 +15,18 @@ const _ = require('lodash');
 const util = require('../utils');
 const System = require('../models/system-models').system;
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
+const AWS = require('aws-sdk');
+AWS.config.update({
+    accessKeyId: process.env.S3accessKeyId,
+    secretAccessKey: process.env.S3secretAccessKey,
+    region: process.env.S3region,
+});
+
+const s3replayBucket = new AWS.S3({
+    params: {
+        Bucket: process.env.s3bucketStats,
+    },
+});
 
 const location = 'stats-routines';
 
@@ -69,17 +81,24 @@ async function asscoatieReplays() {
     //make sure we have some replays selected
     if (parsedReplays.length > 0) {
         for (var i = 0; i < parsedReplays.length; i++) {
-            //TODO: must add a call to s3 here since we will no longer have the data in the db;
 
             //iterater
             var replay = parsedReplays[i];
+
             //make sure this is a good replay...
             if (replay.status == 1) {
+                
                 //give me a real object to work with
                 var replayObj = replay.toObject();
 
+                let replayJson = await getReplayJson(replayObj.systemId, replay.season);
+
+                if(replayJson==null){
+                    console.log('replayJson was null');
+                    return;
+                }
                 //create a arrays of player battle tags, another array that has their battle tags and toon handles
-                let players = replayObj.players;
+                let players = replayJson.players;
                 let playerTags = [];
                 let playerTagsAndToonHandle = [];
                 _.forEach(players, (value, key) => {
@@ -204,6 +223,26 @@ async function asscoatieReplays() {
                 }
 
 
+            }else{
+                let replayToSave = await Replay.findById(
+                    replay._id
+                ).then(
+                    found => {
+                        return found;
+                    },
+                    err => {
+                        return null;
+                    }
+                );
+                replayToSave.fullyAssociated = true;
+                replayToSave.save().then(
+                    saved => {
+                        // empty promises
+                    },
+                    err => {
+                        // empty promises
+                    }
+                );
             }
         }
     } else {
@@ -252,10 +291,45 @@ async function leagueStatRunner() {
     )
     if (replays.length > 0) {
         for (var i = 0; i < replays.length; i++) {
-            util.errLogger(location, null, 'calculating fun stats ' + (i + 1) + ' of ' + replays.length);
+            
             let replay = replays[i];
+
+            if (replay.status != 1 || util.isNullorUndefined(replay.systemId)) {
+                let replayToSave = await Replay.findById(replay._id).then(
+                    found => {
+                        return found;
+                    },
+                    err => {
+                        return null;
+                    }
+                );
+
+                replayToSave.leagueStats = true;
+                replayToSave.save().then(
+                    saved => {
+                        // empty promises
+                    },
+                    err => {
+                        // empty promises
+                    }
+                );
+                return;
+            }
+
+            util.errLogger(
+                location,
+                null,
+                `${replay.systemId} calculating fun stats ${i + 1} of ${
+                    replays.length
+                }`
+            );
+
+            let overrideSeason = replay.sesaon ? replay.season : null;
+
+            const replayJSON = await getReplayJson(replay.systemId, overrideSeason);
+
             try {
-                let finishUpdate = await calcLeagueStats(replay);
+                let finishUpdate = await calcLeagueStats(replayJSON);
                 if (finishUpdate) {
                     replay.leagueStats = true;
                     replay.save().then(
@@ -279,6 +353,41 @@ async function leagueStatRunner() {
         }
     }
     return true;
+
+}
+
+async function getReplayJson(replayId, overrideSeason) {
+    let seasonNum;
+    if (!util.isNullOrEmpty(overrideSeason)) {
+        seasonNum = overrideSeason;
+    } else {
+        let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+        seasonNum = currentSeasonInfo.value;
+    }
+
+    let url = `${seasonNum}/parsedReplays/${replayId}.json`;
+    let params = {
+        Key: url,
+    };
+
+    let s3Obj = await s3replayBucket
+        .getObject(params)
+        .promise()
+        .then(
+            res => {
+                return res;
+            },
+            err => {
+                console.log('not found', params);
+                return null;
+            }
+        );
+    if (s3Obj) {
+        const replayJSON = JSON.parse(s3Obj.Body.toString('utf-8'));
+        return replayJSON;
+    } else {
+        return null;
+    }
 }
 
 /**
