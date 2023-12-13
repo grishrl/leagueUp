@@ -571,16 +571,22 @@ function bestOfThree(matchesForDivision, nonReportedMatchCount, teams, standings
 
                 if(season <= 16) {
                     if (them.score === 0) {
-                        // This was a domination, give us the bonus point please!
-                        teamStanding.points += 1;
-                        teamStanding.dominations += 1
+                        if(us.score > them.score)
+                        {
+                            // This was a domination, give us the bonus point please!
+                            teamStanding.points += 1;
+                            teamStanding.dominations += 1
+                        }
                     }
                 }
                 else {
                     if (them.score === 0) {
-                        // This was a domination, give us the bonus point please!
-                        teamStanding.points += 2;
-                        teamStanding.dominations += 1
+                        if(us.score > them.score)
+                        {
+                            // This was a domination, give us the bonus point please!
+                            teamStanding.points += 2;
+                            teamStanding.dominations += 1
+                        }
                     }
                     else if(us.score > them.score) {
                         teamStanding.points += 1;
