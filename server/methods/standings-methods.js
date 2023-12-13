@@ -441,7 +441,7 @@ async function stdDivStanding(division, season, pastSeason, noDeltas) {
         if (isStormDiv) {
             nonReportedMatchCount = bestOfX(matchesForDivision, nonReportedMatchCount, teams, standings);
         } else {
-            nonReportedMatchCount = bestOfThree(matchesForDivision, nonReportedMatchCount, teams, standings);
+            nonReportedMatchCount = bestOfThree(matchesForDivision, nonReportedMatchCount, teams, standings, season);
         }
     }
 
@@ -515,7 +515,7 @@ module.exports = {
  * @param {*} teams -> array of team objects
  * @param {*} standings -> standings object to return
  */
-function bestOfThree(matchesForDivision, nonReportedMatchCount, teams, standings) {
+function bestOfThree(matchesForDivision, nonReportedMatchCount, teams, standings, season) {
     try {
         matchesForDivision.forEach(match => {
             if (util.returnBoolByPath(match, 'reported') == false) {
@@ -569,10 +569,22 @@ function bestOfThree(matchesForDivision, nonReportedMatchCount, teams, standings
                 teamStanding.wins += us.score;
                 teamStanding.losses += them.score;
 
-                if (them.score === 0) {
-                    // This was a domination, give us the bonus point please!
-                    teamStanding.points += 1;
-                    teamStanding.dominations += 1
+                if(season <= 16) {
+                    if (them.score === 0) {
+                        // This was a domination, give us the bonus point please!
+                        teamStanding.points += 1;
+                        teamStanding.dominations += 1
+                    }
+                }
+                else {
+                    if (them.score === 0) {
+                        // This was a domination, give us the bonus point please!
+                        teamStanding.points += 2;
+                        teamStanding.dominations += 1
+                    }
+                    else if(us.score > them.score) {
+                        teamStanding.points += 1;
+                    }
                 }
             });
 
