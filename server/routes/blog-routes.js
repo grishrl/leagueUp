@@ -137,7 +137,14 @@ router.post('/blogs', (req, res) => {
                 break;
             default:
                 util.errLogger(req.originalUrl, request.action, 'Invalid Request');
-                res.status(500).send(util.returnMessaging(req.originalUrl, 'Invalid request', null, null));
+                response.status = 500
+                response.message = util.returnMessaging(
+                    req.originalUrl,
+                    'Invalid request',
+                    null,
+                    null
+                );
+                return response;
         }
     })
 
