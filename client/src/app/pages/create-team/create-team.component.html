@@ -1,0 +1,85 @@
+<!-- Section Title -->
+<app-banner-image [bannerTitle]="'Create Team'"></app-banner-image>
+
+
+<!-- Section Area - Content Central -->
+<section class="content-info">
+
+    <div class="container paddings-mini">
+        <!-- Content Text-->
+        <div class="panel-box padding-b">
+            <div class="row pt-5 pb-3">
+
+                <div class="col text-center">
+                    <button type="button" [disabled]="!validate()" (click)="save()" class="btn btn-success ">Save</button>
+                </div>
+                <div class="col text-center">
+                    <button type="button" (click)="cancel()" class="btn btn-warning">Reset Form</button>
+                </div>
+                <div class="col text-center">
+                    <a class="btn btn-danger" [routerLink]="['/']">Cancel</a>
+                </div>
+
+
+            </div>
+            <div class="row mt-2" *ngIf="errors && errors.length > 0">
+                <div class="col text-center">
+                    <div class="alert alert-danger mx-auto" style="width:50%;" *ngFor="let error of errors">{{error}}</div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col">
+                    <app-team-name name="teamName" [(ngModel)]="returnedProfile.teamName" [formControl]="nameControl"></app-team-name>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col">
+                    <app-team-ticker name="ticker" [(ngModel)]="returnedProfile.ticker" [formControl]="tickerControl"></app-team-ticker>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col">
+                    <mat-slide-toggle [(ngModel)]="returnedProfile.lookingForMore">
+                        Looking for More. <small>Enabling this shows your team in the team finder</small>
+                    </mat-slide-toggle>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col">
+                    <app-competitive-level [(competitiveLevel)]="returnedProfile.competitiveLevel">
+                    </app-competitive-level>
+
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col">
+                    <app-play-history [(description)]="returnedProfile.descriptionOfTeam"></app-play-history>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col">
+                    <app-roles [customDisplayText]="'Roles Needed:'" [(roles)]="returnedProfile.rolesNeeded">
+                    </app-roles>
+                </div>
+            </div>
+            <!-- Availability Schedule -->
+            <div class="row mt-3">
+                <div class="col">
+                    <app-times-available [availObj]="returnedProfile.availability" (availValid)="receiveTimesValidity($event)">
+                    </app-times-available>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col">
+                    <app-timezone [disabled]="false" [(error)]="timezoneError" [(timezone)]="returnedProfile.timeZone">
+                    </app-timezone>
+
+                </div>
+            </div>
+
+
+        </div>
+        <!-- End Content Text-->
+    </div>
+</section>
+<!-- End Section Area -  Content Central -->

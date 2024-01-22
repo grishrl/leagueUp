@@ -1,0 +1,24 @@
+<ng-template #noSched>
+    <div class="row">
+        <div class="col">
+            <h4>No schedules currently!</h4>
+        </div>
+    </div>
+</ng-template>
+<!-- *ngIf="matches.length>0 else noSched" -->
+<div>
+    <div class="row">
+        <div class="col">
+            <mat-form-field>
+              <mat-label>Round:</mat-label>
+                <mat-select placeholder="Round:" [(ngModel)]="selectedRound" (ngModelChange)="getMatches()" disableOptionCentering>
+                    <mat-option *ngFor="let round of rounds; let i = index" [value]="round">{{round}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+    <app-schedule-table [matches]="matches" [showRound]="false"></app-schedule-table>
+
+    <ng-template #tbd> Not yet scheduled </ng-template>
+
+</div>

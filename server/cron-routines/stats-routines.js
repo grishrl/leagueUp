@@ -1,17 +1,42 @@
+/**
+ * These methods are wrapped by crons from teporize; they mainly handle the business of associating replays to teams and users and also tabulating the league 
+ * "fun stats" which are things like minions killed globes gathered etc..
+ * reviewd: 10-1-2020
+ * reviewr: wraith
+ */
 const Replay = require('../models/replay-parsed-models');
 const User = require('../models/user-models');
 const Team = require('../models/team-models');
 const Stats = require('../models/stats-model');
-const logger = require('../subroutines/sys-logging-subs');
+const logger = require('../subroutines/sys-logging-subs').logger;
 const summarizePlayerData = require('../summarizeData/summarize-player-data');
 const summarizeTeamData = require('../summarizeData/summarize-team-data');
 const _ = require('lodash');
 const util = require('../utils');
 const System = require('../models/system-models').system;
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
+const AWS = require('aws-sdk');
+AWS.config.update({
+    accessKeyId: process.env.S3accessKeyId,
+    secretAccessKey: process.env.S3secretAccessKey,
+    region: process.env.S3region,
+});
+
+const s3replayBucket = new AWS.S3({
+    params: {
+        Bucket: process.env.s3bucketStats,
+    },
+});
 
 const location = 'stats-routines';
 
+/**
+ * @name getToonHandle
+ * @function
+ * @description gets player toon handle from user object
+ * @param {User} obj 
+ * @param {string} name 
+ */
 function getToonHandle(obj, name) {
     let handle = null;
     obj.forEach(key => {
@@ -22,7 +47,12 @@ function getToonHandle(obj, name) {
     return handle;
 }
 
-//this will filter through the replay files and associate any player and toon handle togeher
+
+/**
+ * @name asscoatieReplays
+ * @function
+ * @description this will filter through the replay files and associate them to the players and teams that were involved
+ */
 async function asscoatieReplays() {
 
     let logObj = {};
@@ -51,15 +81,24 @@ async function asscoatieReplays() {
     //make sure we have some replays selected
     if (parsedReplays.length > 0) {
         for (var i = 0; i < parsedReplays.length; i++) {
+
             //iterater
             var replay = parsedReplays[i];
+
             //make sure this is a good replay...
             if (replay.status == 1) {
+                
                 //give me a real object to work with
                 var replayObj = replay.toObject();
 
+                let replayJson = await getReplayJson(replayObj.systemId, replay.season);
+
+                if(replayJson==null){
+                    console.log('replayJson was null');
+                    return;
+                }
                 //create a arrays of player battle tags, another array that has their battle tags and toon handles
-                let players = replayObj.players;
+                let players = replayJson.players;
                 let playerTags = [];
                 let playerTagsAndToonHandle = [];
                 _.forEach(players, (value, key) => {
@@ -98,7 +137,7 @@ async function asscoatieReplays() {
                         if (!thisUser.toonHandle) {
                             thisUser.toonHandle = getToonHandle(playerTagsAndToonHandle, thisUser.displayName);
                         }
-                        //util.errLogger(location, null, 'replay.systemId '+ replayObj.systemId)
+
                         if (thisUser.replays.indexOf(replayObj.systemId) == -1) {
                             thisUser.replays.push(replayObj.systemId);
                             thisUser.parseStats = true;
@@ -184,6 +223,26 @@ async function asscoatieReplays() {
                 }
 
 
+            }else{
+                let replayToSave = await Replay.findById(
+                    replay._id
+                ).then(
+                    found => {
+                        return found;
+                    },
+                    err => {
+                        return null;
+                    }
+                );
+                replayToSave.fullyAssociated = true;
+                replayToSave.save().then(
+                    saved => {
+                        // empty promises
+                    },
+                    err => {
+                        // empty promises
+                    }
+                );
             }
         }
     } else {
@@ -193,21 +252,26 @@ async function asscoatieReplays() {
 /*
   ControlPoints: 'Sky Temple',
     TowersOfDoom: 'Towers of Doom',
-    // HauntedMines: 'Haunted Mines',
+    HauntedMines: 'Haunted Mines',
     BattlefieldOfEternity: 'Battlefield of Eternity',
-    // BlackheartsBay: "Blackheart's Bay",
+    BlackheartsBay: "Blackheart's Bay",
     CursedHollow: 'Cursed Hollow',
     DragonShire: 'Dragon Shire',
-    // HauntedWoods: 'Garden of Terror',
+    HauntedWoods: 'Garden of Terror',
     Shrines: 'Infernal Shrines',
     Crypts: 'Tomb of the Spider Queen',
     Volskaya: 'Volskaya Foundry',
-    // 'Warhead Junction': 'Warhead Junction',   // blizz why
-    // BraxisHoldout: 'Braxis Holdout',
-    // Hanamura: 'Hanamura',
+    'Warhead Junction': 'Warhead Junction',   // blizz why
+    BraxisHoldout: 'Braxis Holdout',
+    Hanamura: 'Hanamura',
     AlteracPass: 'Alterac Pass'
 */
 
+/**
+ * @name leagueStatRunner
+ * @function
+ * @description runs through replays and tabulates 'fun' stats for NGS 
+ */
 async function leagueStatRunner() {
 
     let replays = await Replay.find({
@@ -227,10 +291,45 @@ async function leagueStatRunner() {
     )
     if (replays.length > 0) {
         for (var i = 0; i < replays.length; i++) {
-            util.errLogger(location, null, 'calculating fun stats ' + (i + 1) + ' of ' + replays.length);
+            
             let replay = replays[i];
+
+            if (replay.status != 1 || util.isNullorUndefined(replay.systemId)) {
+                let replayToSave = await Replay.findById(replay._id).then(
+                    found => {
+                        return found;
+                    },
+                    err => {
+                        return null;
+                    }
+                );
+
+                replayToSave.leagueStats = true;
+                replayToSave.save().then(
+                    saved => {
+                        // empty promises
+                    },
+                    err => {
+                        // empty promises
+                    }
+                );
+                return;
+            }
+
+            util.errLogger(
+                location,
+                null,
+                `${replay.systemId} calculating fun stats ${i + 1} of ${
+                    replays.length
+                }`
+            );
+
+            let overrideSeason = replay.sesaon ? replay.season : null;
+
+            const replayJSON = await getReplayJson(replay.systemId, overrideSeason);
+
             try {
-                let finishUpdate = await calcLeagueStats(replay);
+                let finishUpdate = await calcLeagueStats(replayJSON);
                 if (finishUpdate) {
                     replay.leagueStats = true;
                     replay.save().then(
@@ -254,8 +353,49 @@ async function leagueStatRunner() {
         }
     }
     return true;
+
 }
 
+async function getReplayJson(replayId, overrideSeason) {
+    let seasonNum;
+    if (!util.isNullOrEmpty(overrideSeason)) {
+        seasonNum = overrideSeason;
+    } else {
+        let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+        seasonNum = currentSeasonInfo.value;
+    }
+
+    let url = `${seasonNum}/parsedReplays/${replayId}.json`;
+    let params = {
+        Key: url,
+    };
+
+    let s3Obj = await s3replayBucket
+        .getObject(params)
+        .promise()
+        .then(
+            res => {
+                return res;
+            },
+            err => {
+                console.log('not found', params);
+                return null;
+            }
+        );
+    if (s3Obj) {
+        const replayJSON = JSON.parse(s3Obj.Body.toString('utf-8'));
+        return replayJSON;
+    } else {
+        return null;
+    }
+}
+
+/**
+ * @name calcLeagueStats
+ * @function
+ * @description helper method that accepts a replay JSON and calculates the 'fun' stats off that replay
+ * @param {Object} replay 
+ */
 async function calcLeagueStats(replay) {
 
     let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
@@ -330,14 +470,6 @@ async function calcLeagueStats(replay) {
 
     objectiveInfo.secondsPlayed += Math.floor(replay.match.length);
 
-    // let keys = Object.keys(replay.players);
-
-    // keys.forEach(player => {
-    //     let playerObj = replay.players[player];
-    //     objectiveInfo.minionsKilled += playerObj.gameStats.MinionKills;
-    //     objectiveInfo.globesGathered += playerObj.globes.count;
-    // });
-
     _.forEach(replay.players, (value, key) => {
         objectiveInfo.minionsKilled += value.gameStats.MinionKills;
         objectiveInfo.globesGathered += value.globes.count;
@@ -348,7 +480,7 @@ async function calcLeagueStats(replay) {
                 dataName: "leagueRunningFunStats"
             },
             {
-                span: "overall"
+                'data.span': "overall"
             }
         ]
     }
@@ -368,14 +500,7 @@ async function calcLeagueStats(replay) {
                 overall.data[key] = value;
             }
         });
-        // let keys = Object.keys(objectiveInfo);
-        // keys.forEach(key => {
-        //     if (util.returnBoolByPath(overall.data, key)) {
-        //         overall.data[key] += objectiveInfo[key];
-        //     } else {
-        //         overall.data[key] = objectiveInfo[key];
-        //     }
-        // });
+
         overall.markModified('data');
         overallSave = await overall.save().then(
             rep => { return rep; },
@@ -385,17 +510,13 @@ async function calcLeagueStats(replay) {
         )
     } else {
         let newObj = {
-            span: "overall",
             dataName: "leagueRunningFunStats",
-            data: {}
+            data: { span: "overall" }
         }
         _.forEach(objectiveInfo, (value, key) => {
             newObj.data[key] = value;
         });
-        // let keys = Object.keys(objectiveInfo);
-        // keys.forEach(key => {
-        //     newObj.data[key] = objectiveInfo[key];
-        // });
+
         overallSave = await new System(newObj).save().then(
             res => {
                 return res;
@@ -410,7 +531,7 @@ async function calcLeagueStats(replay) {
                 dataName: "leagueRunningFunStats"
             },
             {
-                span: seasonNum
+                'data.span': seasonNum
             }
         ]
     };
@@ -430,14 +551,7 @@ async function calcLeagueStats(replay) {
                 season.data[key] = value;
             }
         });
-        // let keys = Object.keys(objectiveInfo);
-        // keys.forEach(key => {
-        //     if (util.returnBoolByPath(season.data, key)) {
-        //         season.data[key] += objectiveInfo[key];
-        //     } else {
-        //         season.data[key] = objectiveInfo[key];
-        //     }
-        // });
+
         season.markModified('data');
         seasonSave = await season.save().then(
             rep => {
@@ -449,17 +563,16 @@ async function calcLeagueStats(replay) {
         )
     } else {
         let newObj = {
-            span: seasonNum,
             dataName: "leagueRunningFunStats",
-            data: {}
+            data: {
+                span: seasonNum,
+                totals: {}
+            }
         }
         _.forEach(objectiveInfo, (value, key) => {
             newObj.data[key] = value;
         });
-        // let keys = Object.keys(objectiveInfo);
-        // keys.forEach(key => {
-        //     newObj.data[key] = objectiveInfo[key];
-        // });
+
         seasonSave = await new System(newObj).save().then(
             res => {
                 return res;
@@ -477,6 +590,12 @@ async function calcLeagueStats(replay) {
 
 }
 
+/**
+ * @name braxCalc
+ * @function
+ * @description helper function to determine objective winner on braxis holdout
+ * @param {Object} replay 
+ */
 function braxCalc(replay) {
     let obj = 0;
     if (replay) {
@@ -484,7 +603,12 @@ function braxCalc(replay) {
     }
     return obj;
 }
-
+/**
+ * @name alteracCalc
+ * @function
+ * @description helper function to determine objective winner on alterac pass
+ * @param {Object} replay 
+ */
 function alteracCalc(replay) {
     let obj = 0;
     if (replay) {
@@ -493,7 +617,12 @@ function alteracCalc(replay) {
     }
     return obj;
 }
-
+/**
+ * @name shrinesCalc
+ * @function
+ * @description helper function to determine objective winner on infernal shrines
+ * @param {Object} replay 
+ */
 function shrinesCalc(replay) {
     let obj = {
         'punishers-Summoned': 0,
@@ -509,7 +638,12 @@ function shrinesCalc(replay) {
     }
     return obj;
 }
-
+/**
+ * @name gardenCalc
+ * @function
+ * @description helper function to determine objective winner on garden of terror
+ * @param {Object} replay 
+ */
 function gardenCalc(replay) {
     let obj = 0;
     if (replay) {
@@ -518,7 +652,12 @@ function gardenCalc(replay) {
     }
     return obj;
 }
-
+/**
+ * @name dragonCalc
+ * @function
+ * @description helper function to determine objective winner on dragon shire
+ * @param {Object} replay 
+ */
 function dragonCalc(replay) {
     let obj = 0;
     if (replay) {
@@ -527,7 +666,12 @@ function dragonCalc(replay) {
     }
     return obj;
 }
-
+/**
+ * @name hanCalc
+ * @function
+ * @description helper function to determine objective winner on hanamura temple
+ * @param {Object} replay 
+ */
 function hanCalc(replay) {
     let obj = 0;
     if (replay) {
@@ -539,7 +683,12 @@ function hanCalc(replay) {
     }
     return obj;
 }
-
+/**
+ * @name skyCalc
+ * @function
+ * @description helper function to determine objective winner on sky temple
+ * @param {Object} replay 
+ */
 function skyCalc(replay) {
     let obj = 0;
     if (replay) {
@@ -551,7 +700,12 @@ function skyCalc(replay) {
     }
     return obj;
 }
-
+/**
+ * @name tombCalc
+ * @function
+ * @description helper function to determine objective winner on tomb of the spider queen
+ * @param {Object} replay 
+ */
 function tombCalc(replay) {
     let obj = {
         'spiders-Summoned': 0,
@@ -562,11 +716,6 @@ function tombCalc(replay) {
         obj['spiders-Summoned'] += replay.match.objective["0"].count;
         obj['spiders-Summoned'] += replay.match.objective["1"].count;
 
-        // let keys = Object.keys(replay.players);
-        // keys.forEach(key => {
-        //     let player = replay.players[key];
-        //     obj['spiderButtsTurnedIn'] += player.gameStats.GemsTurnedIn;
-        // });
         _.forEach(replay.players, (value, key) => {
             obj['spiderButtsTurnedIn'] += value.gameStats.GemsTurnedIn;
         });
@@ -576,14 +725,24 @@ function tombCalc(replay) {
     return obj;
 
 }
-
+/**
+ * @name towersCalc
+ * @function
+ * @description helper function to determine objective winner on towers of doom
+ * @param {Object} replay 
+ */
 function towersCalc(replay) {
     let obj = 0;
     obj += replay.match.objective["0"].count;
     obj += replay.match.objective["1"].count;
     return obj;
 }
-
+/**
+ * @name warheadCalc
+ * @function
+ * @description helper function to determine objective winner on warhead junction
+ * @param {Object} replay 
+ */
 function warheadCalc(replay) {
     let info = {
         'warheadsGathered': 0,
@@ -597,14 +756,24 @@ function warheadCalc(replay) {
     }
     return info;
 }
-
+/**
+ * @name volskCalc
+ * @function
+ * @description helper function to determine objective winner on volskaya foundry
+ * @param {Object} replay 
+ */
 function volskCalc(replay) {
     let obj = 0;
     obj += replay.match.objective["0"].events.length;
     obj += replay.match.objective["1"].events.length;
     return obj;
 }
-
+/**
+ * @name curseCalc
+ * @function
+ * @description helper function to determine objective winner on cursed hollow
+ * @param {Object} replay 
+ */
 function curseCalc(replay) {
     let info = {
         'tributesGathered': 0,
@@ -622,7 +791,12 @@ function curseCalc(replay) {
     return info;
 
 }
-
+/**
+ * @name boeCalc
+ * @function
+ * @description helper function to determine objective winner on battlefield of eternity
+ * @param {Object} replay 
+ */
 function boeCalc(replay) {
     let retinfo = 0;
     if (replay) {
@@ -635,7 +809,12 @@ function boeCalc(replay) {
     return retinfo;
 }
 
-//this will run through players with toon handles and tabulate their stats from replays
+
+/**
+ * @name tabulateUserStats
+ * @function
+ * @description this will run through players with toon handles and tabulate their stats from replays
+ */
 async function tabulateUserStats() {
 
     let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
@@ -662,6 +841,7 @@ async function tabulateUserStats() {
             //running archive of the replays a player is associated to
             let replays = playerObj.replays;
             //grab replays from the database
+            //TODO: replace with call to s3 since this is no longer in db
             let fullReplays = await Replay.find({
                 systemId: {
                     $in: replays
@@ -743,9 +923,13 @@ async function tabulateUserStats() {
 }
 
 
-//this will run through teams and tabulate stats
+
+/**
+ * @name tabulateTeamStats
+ * @function
+ * @description this will run through teams and tabulate stats
+ */
 async function tabulateTeamStats() {
-    //connect to mongo db
 
     let teams = await Team.find({ parseStats: true }).then(
         found => { return found; },
@@ -756,6 +940,7 @@ async function tabulateTeamStats() {
         for (var i = 0; i < teams.length; i++) {
             let thisTeam = teams[i]
             let replays = thisTeam.replays;
+            //TODO: replace this with S3 since the database no longer has this data...
             let dbReplay = await Replay.find({
                 systemId: {
                     $in: replays
@@ -771,15 +956,13 @@ async function tabulateTeamStats() {
 
             let replaysObj = [];
             dbReplay.forEach(replay => {
-                    let obj = replay.toObject();
-                    replaysObj.push(obj);
-                })
-                //util.errLogger(location, null, 'replaysObj.length ' + replaysObj.length);
+                let obj = replay.toObject();
+                replaysObj.push(obj);
+            })
             if (replaysObj && replaysObj.length > 0) {
-                //util.errLogger(location, null, 'thisTeam.teamName ' + thisTeam.teamName);
-                //util.errLogger(location, null, summarizeTeamData(thisTeam.teamName, replaysObj));
+
                 let teamData = summarizeTeamData(thisTeam._id.toString(), replaysObj);
-                //util.errLogger(location, null, 'teamData '+ teamData);
+
                 thisTeam.parseStats = false;
 
                 let dbStats = await Stats.findOne({
@@ -821,9 +1004,9 @@ async function tabulateTeamStats() {
                 }
 
                 if (statResult) {
-                    //util.errLogger(location, null, 'stats saved')
+
                 } else {
-                    //util.errLogger(location, null, 'stats not saved')
+
                 }
 
                 let saveTeam = thisTeam.save().then(

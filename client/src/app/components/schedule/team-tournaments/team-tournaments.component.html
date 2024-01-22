@@ -1,0 +1,29 @@
+<div class="row forceFull" *ngIf="involvedTournaments.length>0 else noTourn">
+    <div class="col">
+        <div class="row">
+            <div class="col">
+                The team is involved in these tournaments:
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field>
+                  <mat-label>Tournament:</mat-label>
+                    <mat-select placeholder="Tournament:" [(ngModel)]="selectedTournament" disableOptionCentering>
+                        <mat-option *ngFor="let tourn of involvedTournaments" [value]="tourn">
+                            {{tourn.tournamentName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <app-challonge-tourn [tournamentLink]="selectedTournament.challonge_url"></app-challonge-tourn>
+        <div>
+            <h3>Team Matches:</h3>
+        </div>
+        <app-schedule-table [matches]="selectedTournament.teamMatches"></app-schedule-table>
+    </div>
+</div>
+<ng-template #noTourn>
+    <h4>This team involved in no tournaments</h4>
+</ng-template>

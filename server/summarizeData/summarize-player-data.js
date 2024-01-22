@@ -19,19 +19,6 @@ function summarizePlayerData(docs, playerAliases = {}) {
 
         let statList = DetailStatList.concat(PerMapStatList[match.map]);
 
-
-
-
-        // alias resolution
-        // let playerID = match.ToonHandle;
-        // console.log('playerID ', playerID);
-        // console.log('playerAliases ', playerAliases);
-        // if (playerAliases[playerID]) {
-        //     playerID = playerAliases[playerID];
-        // }
-
-
-
         // set up the player object
         if (!(playerID in playerDetailStats)) {
             playerDetailStats[playerID] = {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UtilitiesService } from './utilities.service';
 import { environment } from '../../environments/environment';
-import { HttpServiceService } from './http-service.service';
+import { HttpService } from './http.service';
 import { Subject } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { map } from 'rxjs/operators';
@@ -11,7 +11,7 @@ import { map } from 'rxjs/operators';
 })
 export class HeroesProfileService {
 
-  constructor(private util:UtilitiesService, private http: HttpServiceService) { }
+  constructor(private util:UtilitiesService, private http: HttpService) { }
 
   getTopStats(stat){
     let url = '/user/frontPageStats'
@@ -56,7 +56,7 @@ export class HeroesProfileService {
       let blizz_id = splitToonHandle[3];
       let splitName = displayName.split('#');
       let battletag = splitName[0];
-      return environment.heroesProfilePlayer + 'region=' + region + '&blizz_id=' + blizz_id + '&battletag=' + battletag;
+      return environment.heroesProfilePlayer + 'region=' + region + '&blizz_id=' + blizz_id + '&battletag=' + battletag + '&season=';
     }
   }
 
@@ -66,7 +66,6 @@ getHPProfileLink(toonHandle, displayName) {
     let returnUrl = '';
     //https://www.heroesprofile.com/Profile/?blizz_id=7905329&battletag=wraithling&region=1
     if (this.util.isNullOrEmpty(toonHandle)) {
-
       this.http.httpGet('user/hero-profile/path', [{'displayName':encodeURIComponent(displayName)}]).subscribe(
         res=>{
           if(res){

@@ -1,0 +1,43 @@
+Template:
+Route: 
+Method: 
+Auth: 
+Params: 
+Return: 
+
+
+Route: api/admin/getTeamsUndivisioned
+Method: GET
+Auth: Auth api/ Division Permission
+Params: none
+Return: Returns all registered teams not assigned a division
+
+Route: api/admin/divisionTeams
+Method: POST
+Auth: Auth api/ Division Permission
+Params: JSON Body: divisionName: string, teamInfo: Array of team obj
+Return: Puts provided teams into provided division
+
+Route: api/admin/upsertDivision
+Method: POST
+Auth: Auth api/ Division Permission
+Params: JSON Body: divObj: division object, divName:string
+Return: Inserts new division object or updates a matching division object
+
+Route: api/admin/removeTeams
+Method: POST
+Auth: Auth api/ Division Permission
+Params: JSON Body: teams: Array object, divName:string
+Return: removes given teams from provided division
+
+Route: api/admin/createDivision
+Method: POST
+Auth: Auth api/ Division Permission
+Params: JSON Body: division: division object; 
+Return: creates new division object
+
+Route: api/admin/deleteDivision
+Method: POST
+Auth: Auth api/ Division Permission
+Params: JSON Body: division: division object; 
+Return: deletes provided division

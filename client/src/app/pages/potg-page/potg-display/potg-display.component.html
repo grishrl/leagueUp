@@ -1,0 +1,55 @@
+<!-- Widget Text-->
+<div #potgContainer class="container">
+    <div class="panel-box">
+        <div class="titles no-margin text-center">
+            <h4> {{match.home.teamName}}
+                <br>-VS-
+                <br>{{match.away.teamName}} </h4>
+        </div>
+        <!-- <div class="row pb-2">
+            <div class="col"> -->
+        <div class="row" *ngIf="showMvp && potg && potg.player_id && loadReady" class="mt-2 p-1">
+            <div class="col">
+                <app-player-display [playerId]="potg.player_id"></app-player-display>
+            </div>
+        </div>
+
+        <div *ngIf="showPotg">
+            <div class="row mt-2">
+                <div class="col text-center">
+                  <div *ngIf="potg && potg.potg_link && potg.potg_link.length>0 else noPotg">
+                        <iframe width="100%" [src]="potg.potg_link | safe" frameborder="0" [style.height.px]="eleHeight" allowfullscreen></iframe>
+                        <div class="mt-1">
+                            <div *ngIf="auth.isAuthenticated() else logonToSmile">
+                                <span class="finger"><a (click)="smile(potg.match_id)"><i
+                                                            class="far fa-laugh-squint"></i> <span
+                                                            *ngIf="potg.likes>0 else noLikes"> {{potg.likes}} Smiles</span></a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="loadReady" class="mt-1 p-2 text-center">
+            <a *ngIf="match.matchId" [routerLink]="['/match/view/', match.matchId]" class="btn btn-primary">View
+                    Match Info</a>
+        </div>
+    </div>
+</div>
+
+<ng-template #noLikes>
+    No Smiles Yet
+</ng-template>
+
+<ng-template #logonToSmile>
+    <div style="cursor: not-allowed;" data-toggle="tooltip" data-placement="top" title="Must be logged on to smile.">
+        <i class="far fa-laugh-squint"></i> <span *ngIf="potg.likes>0 else noLikes"> {{potg.likes}}
+      Smiles</span>
+    </div>
+</ng-template>
+
+<ng-template #noPotg>
+    <div [style.height.px]="eleHeight+17"> <span style="position: absolute; top: 50%; left: 33%;">No PotG Submitted Yet</span> </div>
+</ng-template>

@@ -1,17 +1,48 @@
 import { Injectable } from '@angular/core';
-import { HttpServiceService } from './http-service.service';
+import { Observable, of, interval } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
+import { HttpService } from './http.service';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MessagesService {
 
+  private REFRESH = 5;
+
   getMessageNumbers(toGet){
-    let url = '/messageCenter/get/message/numbers';
-    let payload = {
-      recipient:toGet
-    };
-    return this.httpService.httpPost(url,payload);
+    if(toGet){
+          let url = "/messageCenter/get/message/numbers";
+          let payload = {
+            recipient: toGet,
+          };
+          return this.httpService.httpPost(url, payload);
+    }else{
+     return of(null);
+    }
+
+  }
+
+    getMessageNumbersInterval(toGet){
+
+    if(toGet){
+          this.getMessageNumbers(toGet).subscribe(
+            res=>{
+              this.NotificationService.updateMessages.next(res);
+            }
+          )
+          interval((this.REFRESH*60*1000)).pipe(
+            mergeMap( ()=>this.getMessageNumbers(toGet) )
+            ).subscribe(
+              data=>{
+                this.NotificationService.updateMessages.next(data);
+              }
+            );
+    }else{
+     return of(null);
+    }
+
   }
 
   getMessages(toGet){
@@ -37,8 +68,8 @@ export class MessagesService {
     };
     return this.httpService.httpPost(url, payload, true);
   }
-  
 
 
-  constructor(private httpService:HttpServiceService) { }
+
+  constructor(private httpService:HttpService, private NotificationService:NotificationService) { }
 }

@@ -1,6 +1,12 @@
+/**
+ * These were a play ground for some discord stuff; it is mostly defunct; I dont intend to comment this much now; unless its needed later.
+ * 
+ * reviewed: 9-30-2020
+ * reviewer: wraith
+ */
 const Match = require('../models/match-model');
 const mongoose = require('mongoose');
-const Standings = require('../subroutines/standings-subs');
+// const Standings = require('../subroutines/standings-subs'); -> void
 const axios = require('axios');
 const matchCom = require('../methods/matchCommon');
 const Division = require('../models/division-models');
@@ -38,8 +44,6 @@ async function getTodaysMatchesLean() {
 
     let dayStartMS = dayStart.getTime();
     let dayEndMS = dayEnd.getTime();
-
-    console.log(dayEndMS, dayStartMS);
 
     let query = {
         $and: [{
@@ -88,7 +92,7 @@ async function associateStandingsWithTeams(matches) {
     });
     for (var i = 0; i < divisions.length; i++) {
         let thisDiv = divisions[i];
-        let standing = await Standings.calulateStandings(thisDiv, season).then(
+        let standing = await Standings.calculateStandings(thisDiv, season).then(
             res => {
                 return res;
             },

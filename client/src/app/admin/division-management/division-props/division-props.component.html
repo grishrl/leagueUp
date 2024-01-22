@@ -8,7 +8,7 @@
                             <h3>Select division to modify:</h3>
                         </div>
                     </div>
-                    <app-division-selector (selectedDiv)="selected($event)" [admin]="true"></app-division-selector>
+                    <app-division-selector (selectedDiv)="selected($event)" [refresh]="selectorRefresh" [admin]="true"></app-division-selector>
                 </div>
                 <div class="col">
                     <h5>Create new division</h5>
@@ -21,50 +21,68 @@
                     <div class="col">
                         <div class="example-container">
                             <mat-form-field>
+                              <mat-label>Display Name</mat-label>
                                 <input matInput placeholder="Display Name" [formControl]="displayNameControl" [(ngModel)]="editDivision.displayName">
                                 <mat-error *ngIf="displayNameControl.hasError('required')">
                                     Display name is required
                                 </mat-error>
                             </mat-form-field>
                             <mat-form-field>
+                              <mat-label>Division Name</mat-label>
                                 <input matInput placeholder="Division Name" [formControl]="divisionNameControl" [(ngModel)]="editDivision.divisionName" (ngModelChange)="calculateNewConcat()">
                                 <mat-error *ngIf="divisionNameControl.hasError('required')">
                                     Division name is required
                                 </mat-error>
                             </mat-form-field>
                             <mat-form-field>
+                              <mat-label>Division Coast</mat-label>
                                 <input matInput placeholder="Division Coast" [(ngModel)]="editDivision.divisionCoast" (ngModelChange)="calculateNewConcat()">
                             </mat-form-field>
                             <mat-form-field>
+                              <mat-label>Division Concat (System Reference)</mat-label>
                                 <input matInput placeholder="Division Concat (System Reference)" [(ngModel)]="editDivision.divisionConcat" disabled="true">
                             </mat-form-field>
                             <mat-form-field>
+                              <mat-label>Sorting</mat-label>
                                 <input matInput placeholder="Sorting" [formControl]="sortingControl" [(ngModel)]="editDivision.sorting">
                                 <mat-error *ngIf="sortingControl.hasError('required')">
                                     Sort order is required
                                 </mat-error>
                             </mat-form-field>
                             <mat-form-field>
+                              <mat-label>Max MMR</mat-label>
                                 <input matInput placeholder="Max MMR" [formControl]="maxMMRControl" [(ngModel)]="editDivision.maxMMR">
                                 <mat-error *ngIf="maxMMRControl.hasError('required')">
                                     Max MMR is required
                                 </mat-error>
                             </mat-form-field>
                             <mat-form-field>
+                              <mat-label>Min MMR</mat-label>
                                 <input matInput placeholder="Min MMR" [formControl]="minMMRControl" [(ngModel)]="editDivision.minMMR">
                                 <mat-error *ngIf="minMMRControl.hasError('required')">
                                     Min MMR is required
                                 </mat-error>
                             </mat-form-field>
                             <mat-form-field>
+                              <mat-label>Division Moderator</mat-label>
                                 <input matInput placeholder="Division Moderator" [formControl]="divisionModeratorControl" [(ngModel)]="editDivision.moderator">
                                 <mat-error *ngIf="divisionModeratorControl.hasError('required')">
                                     Division Moderator is required
                                 </mat-error>
                             </mat-form-field>
+                            <mat-form-field>
+                                <mat-label>Division Color</mat-label>
+                                <input matInput [ngxMatColorPicker]="picker" [(ngModel)]="deColore" (ngModelChange)="updateColor($event)" [formControl]="colorCtr" [disabled]="disabled">
+                                <ngx-mat-color-toggle matSuffix [for]="picker"></ngx-mat-color-toggle>
+                                <ngx-mat-color-picker #picker [touchUi]="false" [color]="color"></ngx-mat-color-picker>
+                            </mat-form-field>
+                            <div>
+                                <div style="width: 50px; height:50px;" [ngStyle]="{'background-color': '#'+editDivision.divColor}"></div>
+                            </div>
 
                             <mat-checkbox [(ngModel)]="editDivision.public">Visible to Public</mat-checkbox>
                             <mat-checkbox [(ngModel)]="editDivision.cupDiv">Cup Division</mat-checkbox>
+                            <mat-checkbox [(ngModel)]="editDivision.DRR">Double Round Robin Division</mat-checkbox>
 
                         </div>
                     </div>
@@ -77,7 +95,7 @@
                         <button class="btn btn-danger" (click)="delete(editDivision.divisionConcat)">Delete Selected Division</button>
                     </div>
                     <div class="col">
-                        <button class="btn btn-success" [disabled]="!divisionForm.valid" (click)="save(editDivision)">Save</button>
+                        <button class="btn btn-success" [disabled]="!divisionForm.valid" (click)="save()">Save</button>
                     </div>
                 </div>
             </div>

@@ -1,0 +1,51 @@
+<ng-container *ngIf="standings.length>0 else noStandings">
+    <div class="table-responsive">
+        <table class="table-striped  table-hover result-point">
+            <thead class="point-table-head">
+                <tr>
+                    <th class="text-left">Rank</th>
+                    <th class="text-left">Team</th>
+                    <th class="text-center">Points</th>
+                    <th [hidden]="div.divisionConcat=='storm'" class="text-center">Dominations</th>
+                    <th class="text-center">Games<br>Won</th>
+                    <th class="text-center">Games<br>Lost</th>
+                    <th class="text-center">Matches<br>Played</th>
+                </tr>
+            </thead>
+
+
+            <tbody class="text-center">
+                <tr *ngFor="let standing of standings">
+                    <td class="text-left number">{{standing.standing}}
+
+                        <i class="fa" [class.fa-caret-up]="standing.change=='up'" [class.fa-caret-down]="standing.change == 'down'" [class.fa-circle]="standing.change=='none'"></i>
+
+                    </td>
+                    <td class="text-left">
+                        <span>
+                        <app-team-link [team]="standing.teamName" [season]="seasonVal">{{standing.teamName}}</app-team-link>
+                      </span>
+                    </td>
+                    <td>
+                        {{standing.points}}
+                        <div style="display: none">Tiebreaker: {{standing.tiebreakMethod}}</div>
+                    </td>
+                    <td [hidden]="div.divisionConcat=='storm'">{{standing.dominations}}</td>
+                    <td>{{standing.wins}}</td>
+                    <td>{{standing.losses}}</td>
+                    <td>{{standing.matchesPlayed}}</td>
+                </tr>
+
+            </tbody>
+
+
+        </table>
+    </div>
+</ng-container>
+<ng-template #noStandings>
+    <div class="col text-center">
+        <div class="loading-box mx-auto mt-5">
+            <div class="loading-text">No Matches Reported Yet</div>
+        </div>
+    </div>
+</ng-template>

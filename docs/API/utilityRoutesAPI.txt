@@ -1,0 +1,20 @@
+Template:
+Route: 
+Method: 
+Auth: 
+Params: 
+Return: 
+
+Route: api/utility/replay/map/name
+Method: get
+Auth: open
+Params: id
+Return: map name of the replay id provided
+
+Route: api/utility/image/upload
+Description: used for uploading images (currently only used for events) 
+Method: post
+Auth: Authenticated,
+Params: multipartform; (needs id of type to associate to also needs type of object it will be assocating)
+Return: saved event with image info;
+

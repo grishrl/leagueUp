@@ -1,9 +1,1 @@
-
--admin need a log browser
-
-> Server, 
->post to discord when someone is looking for team 
->post to discord when team is looking for someone
-
-> free agent page ; update info blocks with hero profile mmr; and links
-> team market ; maybe robustify this so that someone can't request to join a team over and over?
+when running match deadline setter if you set EG: 11 rounds as having deadline, then re-run with lower amount of rounds : n, the rounds n+ do not get there deadline removed.

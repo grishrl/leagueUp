@@ -1,0 +1,45 @@
+<div class="container forceFull">
+    <div class="row">
+        <div class="col">
+            <a [routerLink]="['/_admin/dashboard']">Back to Dashboard</a>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col">
+            Select Division:
+        </div>
+    </div>
+    <app-division-selector (selectedDiv)="selected($event)" [admin]="true"></app-division-selector>
+    <div class="row">
+        <div class="col">
+            Select week to require a deadline through:
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <mat-form-field>
+              <mat-label>Week: #</mat-label>
+                <mat-select placeholder="Week: #" [(ngModel)]="selectedWeek" disableOptionCentering>
+                    <mat-option *ngFor="let week of weeks; let i = index" [value]="week">{{week}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            Select due date of WEEK 1 MATCH! THIS WILL SET DEADLINES +7 DAYS OUT FROM THIS WEEK FOR SPECIFIED WEEKS!
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <app-date-picker [(date)]="friendlyDate"></app-date-picker>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <button (click)="createDeadline()" class="btn btn-info">Set Play Deadlines!</button>
+        </div>
+    </div>
+
+
+</div>

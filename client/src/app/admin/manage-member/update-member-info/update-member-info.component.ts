@@ -4,75 +4,113 @@ import { Profile } from 'src/app/classes/profile.class';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
-  selector: 'app-update-member-info',
-  templateUrl: './update-member-info.component.html',
-  styleUrls: ['./update-member-info.component.css']
+  selector: "app-update-member-info",
+  templateUrl: "./update-member-info.component.html",
+  styleUrls: ["./update-member-info.component.css"],
 })
 export class UpdateMemberInfoComponent implements OnInit {
+  constructor(private admin: AdminService, private user: UserService) {}
 
-  constructor(private admin:AdminService, private user:UserService) { }
+  returnedProfile = new Profile(
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+  );
+  ngOnInit() {}
 
-  returnedProfile = new Profile(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-  ngOnInit() {
-  }
-
-  @Input() set displayname(val){
-    if(val){
-      this.user.getUser(val).subscribe(
-        res=>{
-          this.returnedProfile = res;
-        },
-        err=>{
-          console.log(err);
-        }
-      )
-
+  _displayName;
+  @Input() set displayname(val) {
+    if (val) {
+      this._displayName=val;
+      this.initOnDemand();
     }
   }
 
-  removeTeam() {
-    this.admin.removeMembers(this.returnedProfile.teamName, this.returnedProfile.displayName).subscribe(
-      res => {
-        this.returnedProfile.teamId = null;
-        this.returnedProfile.teamName = null;
+  updateNotes;
+
+  private initOnDemand() {
+    this.user.getUser(this._displayName).subscribe(
+      (res) => {
+        this.returnedProfile = res;
       },
-      err => {
+      (err) => {
+        console.warn(err);
+      }
+    );
+  }
+
+  refreshNotes(retVal) {
+
+    this.updateNotes=Date.now();
+  }
+
+  receiveUser(user) {
+    this.user.getUser(user).subscribe(
+      (res) => {
+
+        this.returnedProfile.accountAlias = res._id;
+        console.log(this.returnedProfile);
+      },
+      (err) => {
         console.log(err);
       }
-    )
+    );
+  }
+
+  removeTeam() {
+    this.admin
+      .removeMembers(
+        this.returnedProfile.teamName,
+        this.returnedProfile.displayName
+      )
+      .subscribe(
+        {
+          next:(res)=>{
+          this.returnedProfile.teamId = null;
+          this.returnedProfile.teamName = null;
+          },
+          error: err=>{
+            alert("There was an error in removing this user -- this typically occurs when we can't find the user on the team.  We've attempted to clean the user up.");
+            console.warn(err);
+            this.initOnDemand();
+          }
+        }
+      );
   }
 
   newTeam(team) {
     this.admin.manualTeamAdd(this.returnedProfile.displayName, team).subscribe(
-      res => {
+      (res) => {
         this.returnedProfile.teamId = res._id;
         this.returnedProfile.teamName = res.teamName;
       },
-      err => {
-        console.log(err);
+      (err) => {
+        console.warn(err);
       }
-    )
-    // this.team.getTeam(team).subscribe(
-    //   res=>{
-    //     console.log(res);
-    //     this.returnedProfile.teamId = res._id;
-    //     this.returnedProfile.teamName = res.teamName;
-    //   },
-    //   err=>{
-    //     console.log(err);
-    //   }
-    // )
+    );
   }
 
   adminSave() {
     this.admin.saveUser(this.returnedProfile).subscribe(
-      res => {
-        // console.log(res);
-      },
-      err => {
-        console.log(err);
+      (res) => {},
+      (err) => {
+        console.warn(err);
       }
-    )
+    );
   }
-
 }

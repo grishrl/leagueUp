@@ -3,12 +3,13 @@
     <h6>Storm League Ranking Update:</h6>
     <div>
         <mat-form-field class="mt-3">
-            <mat-select placeholder="Hero League Division" [formControl]="heroeLeagueDivisionControl" [(ngModel)]="divisionValue" (ngModelChange)="divisionChanged()" disableOptionCentering>
+          <mat-label>Storm League Division</mat-label>
+            <mat-select placeholder="Storm League Division" [formControl]="heroeLeagueDivisionControl" [(ngModel)]="divisionValue" (ngModelChange)="divisionChanged()" disableOptionCentering>
                 <mat-option *ngFor="let medal of hlMedals" [value]="medal">
                     {{medal}}
                 </mat-option>
                 <mat-error *ngIf="heroeLeagueDivisionControl.hasError('required')">
-                    Hero League Division is required
+                    Storm League Division is required
                 </mat-error>
             </mat-select>
         </mat-form-field>
@@ -17,22 +18,24 @@
     <div *ngIf="divisionValue != 'Unranked'">
         <div class="pe-full-width" *ngIf="divisionValue != 'Master' && divisionValue != 'Grand Master'">
             <mat-form-field class="pe-full-width">
-                <mat-select placeholder="Hero League Rank" [formControl]="heroeLeagueRankControl" [(ngModel)]="rankValue" (ngModelChange)="rankChanged()" disableOptionCentering>
+              <mat-label>Storm League Rank</mat-label>
+                <mat-select placeholder="Storm League Rank" [formControl]="heroeLeagueRankControl" [(ngModel)]="rankValue" (ngModelChange)="rankChanged()" disableOptionCentering>
                     <mat-option *ngFor="let rank of hlDivision" [value]="rank">
                         {{rank}}
                     </mat-option>
                     <mat-error *ngIf="heroeLeagueRankControl.hasError('required')">
-                        Hero League Rank is required
+                        Storm League Rank is required
                     </mat-error>
                 </mat-select>
             </mat-form-field>
         </div>
         <div class="pe-full-width" *ngIf="divisionValue == 'Master' || divisionValue == 'Grand Master'">
             <mat-form-field class="pe-full-width">
-                <input matInput type="number" placeholder="Hero League Rank" [formControl]="heroeLeagueRankControl" [(ngModel)]="rankValue" (ngModelChange)="rankChanged()">
+              <mat-label>Storm League Rank</mat-label>
+                <input matInput type="number" placeholder="Storm League Rank" [formControl]="heroeLeagueRankControl" [(ngModel)]="rankValue" (ngModelChange)="rankChanged()">
             </mat-form-field>
             <mat-error *ngIf="heroeLeagueRankControl.hasError('required')">
-                Hero League Rank is required
+                Storm League Rank is required
             </mat-error>
         </div>
     </div>
@@ -41,10 +44,11 @@
     <div class="row">
         <div class="col">
             <!--  -->
-            <h6>Storm League Ranking:</h6>
+            <!-- <h6>Storm League Ranking:</h6> -->
             <div *ngIf="divisionValue != 'Unranked' else unranked">
+                {{divisionValue}} {{rankValue}}
                 <div class="medal" [ngStyle]="{'background-image':'url(assets/medals/' + assetLookup[divisionValue] + ')'}">
-                    <div [ngClass]="rankClass()">{{rankValue}}</div>
+                    <div class="pt-3" [ngClass]="rankClass()">{{rankValue}}</div>
                 </div>
             </div>
             <ng-template #unranked>
@@ -56,3 +60,4 @@
             <!-- <img class="img-fluid" src="{{'assets/medals/'+assetLookup[divisionValue]}}"> -->
         </div>
     </div>
+</div>

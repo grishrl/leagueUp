@@ -1,0 +1,16 @@
+.list-group-item.active {
+    background-color: #4e5d6d;
+    border-color: black;
+}
+
+.list-group-item {
+    border-top-width: 1px;
+}
+
+.messageContainer {
+    border: black;
+    border-style: solid;
+    border-radius: 16px;
+    padding-top: 10px;
+    padding-bottom: 15px;
+}

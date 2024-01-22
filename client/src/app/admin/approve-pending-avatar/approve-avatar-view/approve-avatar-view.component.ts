@@ -35,7 +35,7 @@ export class ApproveAvatarViewComponent implements OnInit {
         this.avatarActioner();
       },
       err=>{
-        console.log(err);
+        console.warn(err);
       }
     )
   }

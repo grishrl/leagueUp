@@ -1,0 +1,30 @@
+<div #iframeContainer>
+    <div *ngIf="embedLink.length>0" class="pt-2">
+        <!-- Widget Text-->
+        <div class="panel-box">
+            <div class="titles no-margin text-center">
+                <div style="white-space: normal;" *ngIf="match.home && match.home.teamName">
+                    <h4>{{match.home.teamName}}
+                        <br> -VS-
+                        <br> {{match.away.teamName}}</h4>
+                </div>
+                <div style="white-space: normal;" *ngIf="match.title">
+                    <h4>{{match.title}}</h4>
+                </div>
+                <div>
+                    <h4>Casted by: {{match.casterName}}</h4>
+                </div>
+            </div>
+            <div class="row pb-2">
+                <div class="col">
+                    <div class="text-center">
+
+                        <iframe width="100%" [height]="eleHeight" [src]="embedLink | safe" frameborder="0" allowfullscreen></iframe>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

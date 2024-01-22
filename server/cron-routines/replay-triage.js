@@ -1,4 +1,11 @@
-const mongoose = require('mongoose')
+/**
+ * These methods are used occasionally from local nodes in order to correct and discrepancy in replays and replay parsing
+ * Since the JS parser sometimes struggles with running on linux from time to time we will have no parses on replays..
+ * while we generally dont keep up with that data since heroes profile runs a great parsing service it is nice to have the data for things
+ * like showing how many minions have been killed in NGS.
+ *
+ */
+const mongoose = require('mongoose');
 const Replay = require('../models/replay-parsed-models');
 const Team = require('../models/team-models');
 const User = require('../models/user-models');
@@ -8,43 +15,65 @@ const parser = require('hots-parser');
 const _ = require('lodash');
 const AWS = require('aws-sdk');
 const uniqid = require('uniqid');
-const ParsedReplay = require('../models/replay-parsed-models');
 const matchCommon = require('../methods/matchCommon');
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 
 AWS.config.update({
     accessKeyId: process.env.S3accessKeyId,
     secretAccessKey: process.env.S3secretAccessKey,
-    region: process.env.S3region
+    region: process.env.S3region,
 });
 
 const s3replayBucket = new AWS.S3({
     params: {
-        Bucket: process.env.s3bucketReplays
-    }
+        Bucket: process.env.s3bucketReplays,
+    },
 });
 
 //connect to mongo db
-mongoose.connect(process.env.mongoURI, {
-    useNewUrlParser: true
-}, () => {
-    console.log('connected to mongodb');
-});
+mongoose.connect(
+    process.env.mongoURI,
+    {
+        useNewUrlParser: true,
+    },
+    () => {
+        console.log('connected to mongodb');
+    }
+);
 
+const findReplayQuery = {
+    $and: [
+        {
+            season: 10,
+        },
+        {
+            reported: true,
+        },
+        {
+            $or: [
+                {
+                    forfeit: false,
+                },
+                {
+                    forfeit: {
+                        $exists: false,
+                    },
+                },
+            ],
+        },
+        {
+            replays: {
+                $exists: true,
+            },
+        },
+    ],
+};
+
+//finds matches that have bad or no parsed replays and pulls them from S3 and parses them
 async function reparseReplays() {
     //vihxvnjxo096hu
 
-    let matches = await Match.find({
-        $and: [{
-            reported: true
-        }, {
-            season: 7
-        }, {
-            replays: {
-                $exists: true
-            }
-        }]
-    }).then(
+    let matches = await Match.find(findReplayQuery).then(
         found => {
             return found;
         },
@@ -64,9 +93,15 @@ async function reparseReplays() {
                 let replayInfo = replays[thisKey];
                 if (replayInfo.hasOwnProperty('data')) {
                     console.log('has data ', replayInfo);
-                    let replayData = await Replay.findOne({ systemId: replayInfo.data }).then(
-                        found => { return found; },
-                        err => { return null; }
+                    let replayData = await Replay.findOne({
+                        systemId: replayInfo.data,
+                    }).then(
+                        found => {
+                            return found;
+                        },
+                        err => {
+                            return null;
+                        }
                     );
 
                     if (replayData) {
@@ -75,13 +110,29 @@ async function reparseReplays() {
                             // console.log('data looks good...');
                         } else {
                             console.log('data looks bad!');
-                            let deleted = await Replay.findByIdAndRemove(replayData._id).then(del => { return del; }, err => { return err; });
-                            await retrieveFromS3andParse(replayInfo, match, thisKey);
+                            let deleted = await Replay.findByIdAndRemove(
+                                replayData._id
+                            ).then(
+                                del => {
+                                    return del;
+                                },
+                                err => {
+                                    return err;
+                                }
+                            );
+                            await retrieveFromS3andParse(
+                                replayInfo,
+                                match,
+                                thisKey
+                            );
                         }
                     } else {
-                        await retrieveFromS3andParse(replayInfo, match, thisKey);
+                        await retrieveFromS3andParse(
+                            replayInfo,
+                            match,
+                            thisKey
+                        );
                     }
-
                 } else {
                     await retrieveFromS3andParse(replayInfo, match, thisKey);
                 }
@@ -90,12 +141,7 @@ async function reparseReplays() {
     }
 }
 
-// reparseReplays().then(
-//     reply => {
-//         console.log('completed.');
-//     }
-// )
-
+//pulls matches from s3 and parses them; stores those stats
 async function retrieveFromS3andParse(replayInfo, match, thisKey) {
     let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
     //or assign desired season for override
@@ -103,9 +149,19 @@ async function retrieveFromS3andParse(replayInfo, match, thisKey) {
     if (replayInfo.hasOwnProperty('url')) {
         let url = process.env.heroProfileReplay + replayInfo.url;
         let params = {
-            Key: replayInfo.url
+            Key: replayInfo.url,
         };
-        let s3Obj = await s3replayBucket.getObject(params).promise().then(res => { return res; }, err => { return null; });
+        let s3Obj = await s3replayBucket
+            .getObject(params)
+            .promise()
+            .then(
+                res => {
+                    return res;
+                },
+                err => {
+                    return null;
+                }
+            );
         if (s3Obj) {
             var fs = require('fs');
             // var b = data.Body;
@@ -114,10 +170,16 @@ async function retrieveFromS3andParse(replayInfo, match, thisKey) {
             // });
             let filename = __dirname + '/temp/test-' + Date.now().toString();
             fs.writeFileSync(filename, s3Obj.Body);
-            let parsed = parser.processReplay(filename, {
-                useAttributeName: true,
-                overrideVerifiedBuild: true
-            });
+            let parsed;
+            try {
+                parsed = parser.processReplay(filename, {
+                    overrideVerifiedBuild: true,
+                });
+            } catch (e) {
+                console.log(e);
+            }
+            console.log(parsed);
+
             if (parsed.status == 1) {
                 let UUID = uniqid();
                 parsed.season = parseInt(season);
@@ -125,9 +187,18 @@ async function retrieveFromS3andParse(replayInfo, match, thisKey) {
                 let teamIds = matchCommon.findTeamIds(match);
                 let foundTeams = await Team.find({
                     _id: {
-                        $in: teamIds
-                    }
-                }).lean().then(found => { return found; }, err => { return null; })
+                        $in: teamIds,
+                    },
+                })
+                    .lean()
+                    .then(
+                        found => {
+                            return found;
+                        },
+                        err => {
+                            return null;
+                        }
+                    );
                 teamInfo = [];
                 foundTeams.forEach(team => {
                     let teamid = team._id.toString();
@@ -145,38 +216,56 @@ async function retrieveFromS3andParse(replayInfo, match, thisKey) {
                     });
                     teamInfo.push(teamInf);
                 });
-                let replayTeamA = parsed.match.teams["0"];
-                let replayTeamB = parsed.match.teams["1"];
+                let replayTeamA = parsed.match.teams['0'];
+                let replayTeamB = parsed.match.teams['1'];
                 //sort through the team members in the replay to assign the proper team names into the parsed replay object
                 teamInfo.forEach(teamInfo => {
-                    if (_.intersection(replayTeamA.names, teamInfo.players).length > _.intersection(replayTeamB.names, teamInfo.players).length) {
+                    if (
+                        _.intersection(replayTeamA.names, teamInfo.players)
+                            .length >
+                        _.intersection(replayTeamB.names, teamInfo.players)
+                            .length
+                    ) {
                         replayTeamA.teamName = teamInfo.teamName;
                         replayTeamA.teamId = teamInfo.id;
-                    } else if (_.intersection(replayTeamA.names, teamInfo.players).length < _.intersection(replayTeamB.names, teamInfo.players).length) {
+                    } else if (
+                        _.intersection(replayTeamA.names, teamInfo.players)
+                            .length <
+                        _.intersection(replayTeamB.names, teamInfo.players)
+                            .length
+                    ) {
                         replayTeamB.teamName = teamInfo.teamName;
                         replayTeamB.teamId = teamInfo.id;
                     } else {
-                        //some error state, both == 0.... 
+                        //some error state, both == 0....
                     }
                 });
 
                 parsed.match['ngsMatchId'] = match.matchId;
                 parsed.match.filename = replayInfo.url;
-                let parsedReplayInserted = await ParsedReplay.collection.insertOne(parsed).then(success => {
-                    return success;
-                }, err => {
-                    return null;
-                });
+                let parsedReplayInserted = await Replay.collection
+                    .insertOne(parsed)
+                    .then(
+                        success => {
+                            return success;
+                        },
+                        err => {
+                            return null;
+                        }
+                    );
                 if (parsedReplayInserted) {
                     match.replays[thisKey].data = UUID;
                     match.markModified('replays');
-                    let saved = await match.save().then(saved => {
-                        return saved;
-                    }, err => {
-                        return null;
-                    });
+                    let saved = await match.save().then(
+                        saved => {
+                            return saved;
+                        },
+                        err => {
+                            return null;
+                        }
+                    );
                     if (saved) {
-                        fs.unlink(filename, (err) => {
+                        fs.unlink(filename, err => {
                             console.log(err);
                         });
                     }
@@ -186,50 +275,77 @@ async function retrieveFromS3andParse(replayInfo, match, thisKey) {
     }
 }
 
-async function testLeagueStats() {
+//associate replays object data into the league fun stats
+async function runLeagueStats() {
     let replays = await Replay.find({
-        $or: [{
-            leagueStats: false
-        }, {
-            leagueStats: null
-        }, {
-            leagueStats: {
-                $exists: false
-            }
-        }]
-    }).then(
-        found => { return found; }
-    )
+        $or: [
+            {
+                leagueStats: false,
+            },
+            {
+                leagueStats: null,
+            },
+            {
+                leagueStats: {
+                    $exists: false,
+                },
+            },
+        ],
+    }).then(found => {
+        return found;
+    });
     if (replays.length > 0) {
         for (var i = 0; i < replays.length; i++) {
-            console.log('calculating fun stats ', i + 1, ' of ', replays.length);
+            console.log(
+                'calculating fun stats ',
+                i + 1,
+                ' of ',
+                replays.length
+            );
             let replay = replays[i];
             let finishUpdate = await statsMethods.calcLeagueStats(replay);
             if (finishUpdate) {
                 replay.leagueStats = true;
-                replay.save().then(
-                    saved => {
-                        console.log('done with ', i + 1, ' of ', replays.length);
-                    }
-                )
+                replay.save().then(saved => {
+                    console.log('done with ', i + 1, ' of ', replays.length);
+                });
             }
-
         }
     }
 }
 
+//if the team has replays in its array; make sure those are valid and remove them if not
 async function validateTeamReplays() {
-    let teams = await Team.find().then(found => { return found }, err => { return err; });
+    let teams = await Team.find().then(
+        found => {
+            return found;
+        },
+        err => {
+            return err;
+        }
+    );
     if (teams && teams.length > 0) {
         for (var i = 0; i < teams.length; i++) {
             console.log('triaging team ', i + 1, ' of ', teams.length);
             let teamIter = teams[i];
             let teamObj = teamIter.toObject();
-            if (teamObj.hasOwnProperty('replays') && teamObj.replays.length > 0) {
+            if (
+                teamObj.hasOwnProperty('replays') &&
+                teamObj.replays.length > 0
+            ) {
                 let replays = teamObj.replays;
                 let removeIndex = [];
                 for (var j = 0; j < replays.length; j++) {
-                    let foundReplay = await ParsedReplay.findOne({ systemId: replays[j] }).then(found => { return found; }, err => { return null; });
+                    let foundReplay = await Replay.findOne({
+                        systemId: replays[j],
+                    }).then(
+                        found => {
+                            return found;
+                        },
+                        err => {
+                            return null;
+                        }
+                    );
                     if (!foundReplay || foundReplay.status != 1) {
                         removeIndex.push(j);
                     }
@@ -249,24 +365,38 @@ async function validateTeamReplays() {
     }
 }
 
-// validateTeamReplays().then(
-//   res=>{
-//     console.log('completed..');
-//   }
-// )
-
+//if the player has replays in its array; make sure those are valid and remove them if not
 async function validatePlayerReplays() {
-    let users = await User.find().then(found => { return found }, err => { return err; });
+    let users = await User.find().then(
+        found => {
+            return found;
+        },
+        err => {
+            return err;
+        }
+    );
     if (users && users.length > 0) {
         for (var i = 0; i < users.length; i++) {
             console.log('triaging user ', i + 1, ' of ', users.length);
             let userIter = users[i];
             let userObj = userIter.toObject();
-            if (userObj.hasOwnProperty('replays') && userObj.replays.length > 0) {
+            if (
+                userObj.hasOwnProperty('replays') &&
+                userObj.replays.length > 0
+            ) {
                 let replays = userObj.replays;
                 let removeIndex = [];
                 for (var j = 0; j < replays.length; j++) {
-                    let foundReplay = await ParsedReplay.findOne({ systemId: replays[j] }).then(found => { return found; }, err => { return null; });
+                    let foundReplay = await Replay.findOne({
+                        systemId: replays[j],
+                    }).then(
+                        found => {
+                            return found;
+                        },
+                        err => {
+                            return null;
+                        }
+                    );
                     if (!foundReplay || foundReplay.status != 1) {
                         removeIndex.push(j);
                     }
@@ -286,65 +416,40 @@ async function validatePlayerReplays() {
     }
 }
 
-// validatePlayerReplays().then(
-//   res=>{
-//     console.log('completed..');
-//   }
-// )
-
-// testLeagueStats().then(
-//     reply => {
-//         console.log(reply);
-//     },
-//     err => {
-//         console.log(err);
-//     }
-// );
-
-// asscoatieReplays().then(
-//     reply => {
-//         console.log(reply);
-//     },
-//     err => {
-//         console.log(err);
-//     }
-// );
-
-
 //triages mismatched team names inside replays
 async function associationTriage() {
-
-    /*
-    
-        */
-
     let replays = await Replay.find({
-        $or: [{
-            fullyAssociated: false
-        }, {
-            fullyAssociated: null
-        }, {
-            fullyAssociated: {
-                $exists: false
-            }
-        }]
-    }).then(found => {
-        return found;
-    }, err => {
-        return null;
-    })
+        $or: [
+            {
+                fullyAssociated: false,
+            },
+            {
+                fullyAssociated: null,
+            },
+            {
+                fullyAssociated: {
+                    $exists: false,
+                },
+            },
+        ],
+    }).then(
+        found => {
+            return found;
+        },
+        err => {
+            return null;
+        }
+    );
 
     if (replays.length > 0) {
-
         for (var i = 0; i < replays.length; i++) {
-
             console.log('triaging replay ', i + 1, ' of ', replays.length);
 
             let replay = replays[i];
             let matchId = replay.match.ngsMatchId;
 
             let matchInfo = await Match.findOne({
-                matchId: matchId
+                matchId: matchId,
             }).then(
                 found => {
                     return found;
@@ -354,40 +459,38 @@ async function associationTriage() {
                 }
             );
 
-            let team1obj = replay.match.teams["0"];
-            let team2obj = replay.match.teams["1"];
+            let team1obj = replay.match.teams['0'];
+            let team2obj = replay.match.teams['1'];
 
-            team1obj = buildTeamObj(team1obj, replay, "0");
-            team2obj = buildTeamObj(team2obj, replay, "1");
+            team1obj = buildTeamObj(team1obj, replay, '0');
+            team2obj = buildTeamObj(team2obj, replay, '1');
 
             if (matchInfo) {
-
                 let homeTeamId = matchInfo.home.id;
                 let awayTeamId = matchInfo.away.id;
 
-                let homeTeam = await Team.findById(homeTeamId).lean().then(
-                    found => {
+                let homeTeam = await Team.findById(homeTeamId)
+                    .lean()
+                    .then(found => {
                         return found;
-                    }
-                );
-                let awayTeam = await Team.findById(awayTeamId).lean().then(
-                    found => {
-                        return found
-                    }
-                )
+                    });
+                let awayTeam = await Team.findById(awayTeamId)
+                    .lean()
+                    .then(found => {
+                        return found;
+                    });
 
-                // console.log('homeTeam ', homeTeam);
-                // console.log('awayTeam ', awayTeam);
                 assignHomeOrAway(homeTeam, awayTeam, team1obj);
                 assignHomeOrAway(homeTeam, awayTeam, team2obj);
 
-
-                replay.match.teams[team1obj.parseIndex].teamName = team1obj.teamName;
+                replay.match.teams[team1obj.parseIndex].teamName =
+                    team1obj.teamName;
                 replay.match.teams[team1obj.parseIndex].teamId = team1obj.id;
-                delete replay.match.teams[team1obj.parseIndex].id
-                replay.match.teams[team2obj.parseIndex].teamName = team2obj.teamName;
+                delete replay.match.teams[team1obj.parseIndex].id;
+                replay.match.teams[team2obj.parseIndex].teamName =
+                    team2obj.teamName;
                 replay.match.teams[team2obj.parseIndex].teamId = team2obj.id;
-                delete replay.match.teams[team2obj.parseIndex].id
+                delete replay.match.teams[team2obj.parseIndex].id;
 
                 // let playerKeys = Object.keys(replay.players);
 
@@ -410,7 +513,6 @@ async function associationTriage() {
                     //     }
                     // });
                 });
-
 
                 team2obj.members.forEach(member => {
                     _.forEach(replay.players, (value, key) => {
@@ -435,20 +537,288 @@ async function associationTriage() {
                 replay.markModified('players');
                 let saved = await replay.save().then(
                     saved => {
-                        console.log('finished triaging ', i + 1, ' of ', replays.length);
+                        console.log(
+                            'finished triaging ',
+                            i + 1,
+                            ' of ',
+                            replays.length
+                        );
                         return saved;
                     },
                     err => {
-                        console.log(err)
+                        console.log(err);
+                    }
+                );
+            }
+        }
+    }
+}
+
+//this will filter through the replay files and associate any player and toon handle togeher
+async function asscoatieReplays() {
+    let logObj = {};
+    //5c7780249980ef0017086ccd
+
+    /*
+        let parsedReplays = await Replay.find({
+          $or: [{
+            fullyAssociated: false
+          }, {
+            fullyAssociated: null
+          }, {
+            fullyAssociated: {
+              $exists: false
+            }
+          }]
+        })
+    */
+
+    logObj.actor = 'SYSTEM; CRON';
+    logObj.action = ' associate replay to teams and users ';
+    logObj.timeStamp = new Date().getTime();
+    logObj.logLevel = 'STD';
+
+    let parsedReplays = await Replay.find({
+        $or: [
+            {
+                fullyAssociated: false,
+            },
+            {
+                fullyAssociated: null,
+            },
+            {
+                fullyAssociated: {
+                    $exists: false,
+                },
+            },
+        ],
+    }).then(
+        found => {
+            return found;
+        },
+        err => {
+            return null;
+        }
+    );
+
+    console.log(parsedReplays.length, ' replays to associate');
+    if (parsedReplays.length > 0) {
+        for (var i = 0; i < parsedReplays.length; i++) {
+            console.log(
+                ' associating replay ',
+                i + 1,
+                ' of ',
+                parsedReplays.length
+            );
+            var replay = parsedReplays[i];
+
+            var replayObj = replay.toObject();
+            let players = replayObj.players;
+            let playerTags = [];
+            let playerTagsAndToonHandle = [];
+            _.forEach(players, (value, key) => {
+                let btag = value.name + '#' + value.tag;
+                let tO = {
+                    btag: btag,
+                    toonHandle: key,
+                };
+                playerTags.push(btag);
+                playerTagsAndToonHandle.push(tO);
+            });
+            // let playerKey = Object.keys(replay.players);
+            // playerKey.forEach(key => {
+            //     let player = players[key];
+            //     let btag = player.name + '#' + player.tag
+            //     let tO = {
+            //         'btag': btag,
+            //         'toonHandle': key
+            //     };
+            //     playerTags.push(btag);
+            //     playerTagsAndToonHandle.push(tO);
+            // });
+            let replayTeams = [];
+            console.log(replayObj);
+            replayTeams.push(replayObj.match.teams['0'].teamId);
+            replayTeams.push(replayObj.match.teams['1'].teamId);
+
+            let users = await User.find({
+                displayName: {
+                    $in: playerTags,
+                },
+            }).then(
+                players => {
+                    return players;
+                },
+                err => {
+                    return null;
+                }
+            );
+
+            let associatedCount = 0;
+            if (users && users.length > 0) {
+                for (var j = 0; j < users.length; j++) {
+                    let thisUser = users[j];
+                    if (!thisUser.toonHandle) {
+                        thisUser.toonHandle = getToonHandle(
+                            playerTagsAndToonHandle,
+                            thisUser.displayName
+                        );
+                    }
+
+                    if (thisUser.replays) {
+                        if (
+                            thisUser.replays.indexOf(replayObj.systemId) == -1
+                        ) {
+                            thisUser.replays.push(replayObj.systemId);
+                            thisUser.parseStats = true;
+                            associatedCount += 1;
+                        } else {
+                            associatedCount += 1;
+                        }
+                    } else {
+                        thisUser.replays = [replayObj.systemId];
+                        associatedCount += 1;
+                    }
+                    thisUser.save().then(
+                        saved => {},
+                        err => {}
+                    );
+                    console.log(
+                        'associatedCount user: ',
+                        thisUser.displayName,
+                        associatedCount
+                    );
+                }
+            }
+
+            let teams = await Team.find({
+                _id: {
+                    $in: replayTeams,
+                },
+            }).then(
+                found => {
+                    return found;
+                },
+                err => {
+                    return null;
+                }
+            );
+
+            if (teams && teams.length > 0) {
+                for (var k = 0; k < teams.length; k++) {
+                    let team = teams[k];
+                    if (team.replays) {
+                        if (team.replays.indexOf(replayObj.systemId) == -1) {
+                            team.replays.push(replayObj.systemId);
+                            team.parseStats = true;
+                            associatedCount += 1;
+                        } else {
+                            associatedCount += 1;
+                        }
+                    } else {
+                        team.replays = [replayObj.systemId];
+                        associatedCount += 1;
+                    }
+                    team.save().then(
+                        saved => {},
+                        err => {}
+                    );
+                    console.log(
+                        'associatedCount team: ',
+                        team.teamName,
+                        associatedCount
+                    );
+                }
+            }
+            console.log('associatedCount ', associatedCount);
+            if (associatedCount == users.length + 2) {
+                let replayToSave = await Replay.findById(replay._id).then(
+                    found => {
+                        console.log(
+                            'finished associating replay ',
+                            i + 1,
+                            ' of ',
+                            parsedReplays.length
+                        );
+                        return found;
+                    },
+                    err => {
+                        return null;
                     }
                 );
 
+                if (replayToSave) {
+                    if (users.length + 2 == 12) {
+                        replayToSave.fullyAssociated = true;
+                        replayToSave.futureAssociated = false;
+                    } else {
+                        replayToSave.fullyAssociated = true;
+                        replayToSave.futureAssociated = true;
+                    }
+
+                    replayToSave.markModified('fullyAssociated');
+                    replayToSave.markModified('futureAssociated');
+                    replayToSave.save().then(
+                        saved => {},
+                        err => {}
+                    );
+                }
             }
         }
-
+    } else {
     }
-
 }
+
+/* parse any replays that failed */
+// reparseReplays().then(
+//     reply => {
+//         console.log('completed.');
+//     }
+// )
+
+/* validate team replays */
+// validateTeamReplays().then(
+//     res => {
+//         console.log('completed..');
+//     }
+// )
+
+/** validate user replays */
+// validatePlayerReplays().then(
+//     res => {
+//         console.log('completed..');
+//     }
+// )
+
+/** run against un coalated replays to add to the fun stats */
+// runLeagueStats().then(
+//     reply => {
+//         console.log(reply);
+//     },
+//     err => {
+//         console.log(err);
+//     }
+// );
+
+/** associate replays to the teams */
+// associationTriage().then(
+//     reply => {
+//         console.log(reply);
+//     },
+//     err => {
+//         console.log(err);
+//     }
+// );
+
+/** associate replays to the teams and users */
+asscoatieReplays().then(
+    reply => {
+        console.log(reply);
+    },
+    err => {
+        console.log(err);
+    }
+);
 
 function assignHomeOrAway(homeTeam, awayTeam, teamObj) {
     let homeMatchCount = returnMatches(homeTeam, teamObj);
@@ -473,25 +843,25 @@ function returnMatches(teamDB, teamObj) {
             if (member.displayName == possMember.battleTag) {
                 count += 1;
             }
-        })
+        });
     });
     return count;
 }
 
 function buildTeamObj(team, replay, index) {
     let ret = {
-        'parseIndex': index,
-        'teamName': '',
-        'id': '',
-        'members': []
-    }
+        parseIndex: index,
+        teamName: '',
+        id: '',
+        members: [],
+    };
     team.ids.forEach(id => {
         let playerInf = returnPlayerByToon(replay, id);
         let playerObj = {
-            'name': playerInf.name,
-            'toonHandle': playerInf.ToonHandle,
-            'battleTag': playerInf.name + '#' + playerInf.tag
-        }
+            name: playerInf.name,
+            toonHandle: playerInf.ToonHandle,
+            battleTag: playerInf.name + '#' + playerInf.tag,
+        };
         ret.members.push(playerObj);
     });
     return ret;
@@ -500,7 +870,7 @@ function buildTeamObj(team, replay, index) {
 function returnPlayerByToon(replay, toon) {
     let retObj = {};
     let players = replay.players;
-    _.forEach(player, (value, key) => {
+    _.forEach(players, (value, key) => {
         if (key == toon) {
             retObj = value;
         }
@@ -514,6 +884,15 @@ function returnPlayerByToon(replay, toon) {
     return retObj;
 }
 
+function getToonHandle(obj, name) {
+    let handle = null;
+    obj.forEach(key => {
+        if (key.btag == name) {
+            handle = key.toonHandle;
+        }
+    });
+    return handle;
+}
 
 /*
 {
@@ -530,208 +909,3 @@ function returnPlayerByToon(replay, toon) {
   members:[player]
 }
 */
-
-//this will filter through the replay files and associate any player and toon handle togeher
-async function asscoatieReplays() {
-
-    let logObj = {};
-    //5c7780249980ef0017086ccd
-
-    /*
-        let parsedReplays = await Replay.find({
-          $or: [{
-            fullyAssociated: false
-          }, {
-            fullyAssociated: null
-          }, {
-            fullyAssociated: {
-              $exists: false
-            }
-          }]
-        })
-    */
-
-    logObj.actor = 'SYSTEM; CRON';
-    logObj.action = ' associate replay to teams and users ';
-    logObj.timeStamp = new Date().getTime();
-    logObj.logLevel = 'STD';
-
-    let parsedReplays = await Replay.find({
-        $or: [{
-            fullyAssociated: false
-        }, {
-            fullyAssociated: null
-        }, {
-            fullyAssociated: {
-                $exists: false
-            }
-        }]
-    }).then(
-        found => {
-            return found;
-        },
-        err => {
-            return null;
-        }
-    );
-
-    console.log(parsedReplays.length, ' replays to associate')
-    if (parsedReplays.length > 0) {
-        for (var i = 0; i < parsedReplays.length; i++) {
-            console.log(' associating replay ', i + 1, ' of ', parsedReplays.length);
-            var replay = parsedReplays[i];
-            // console.log(replay);
-            var replayObj = replay.toObject();
-            let players = replay.players;
-            let playerTags = [];
-            let playerTagsAndToonHandle = [];
-            _.forEach(players, (value, key) => {
-                    let btag = value.name + '#' + value.tag
-                    let tO = {
-                        'btag': btag,
-                        'toonHandle': key
-                    };
-                    playerTags.push(btag);
-                    playerTagsAndToonHandle.push(tO);
-                })
-                // let playerKey = Object.keys(replay.players);
-                // playerKey.forEach(key => {
-                //     let player = players[key];
-                //     let btag = player.name + '#' + player.tag
-                //     let tO = {
-                //         'btag': btag,
-                //         'toonHandle': key
-                //     };
-                //     playerTags.push(btag);
-                //     playerTagsAndToonHandle.push(tO);
-                // });
-            let replayTeams = [];
-
-            replayTeams.push(replay.match.teams[0].teamId);
-            replayTeams.push(replay.match.teams[1].teamId);
-
-            let users = await User.find({
-                displayName: {
-                    $in: playerTags
-                }
-            }).then(
-                players => {
-                    return players;
-                },
-                err => {
-                    return null;
-                }
-            );
-
-            let associatedCount = 0;
-            if (users && users.length > 0) {
-                for (var j = 0; j < users.length; j++) {
-                    let thisUser = users[j];
-                    if (!thisUser.toonHandle) {
-                        thisUser.toonHandle = getToonHandle(playerTagsAndToonHandle, thisUser.displayName);
-                    }
-                    // console.log('replay.systemId ', replayObj.systemId);
-                    if (thisUser.replays) {
-                        if (thisUser.replays.indexOf(replayObj.systemId) == -1) {
-                            thisUser.replays.push(replayObj.systemId);
-                            thisUser.parseStats = true;
-                            associatedCount += 1;
-                        } else {
-                            associatedCount += 1;
-                        }
-                    } else {
-                        thisUser.replays = [replayObj.systemId];
-                        associatedCount += 1;
-                    }
-                    thisUser.save().then(
-                        saved => {
-                            // console.log('saved user!')
-                        },
-                        err => {
-                            // console.log('err!');
-                        })
-                    console.log('associatedCount user: ', thisUser.displayName, associatedCount)
-                }
-            }
-
-            let teams = await Team.find({
-                _id: {
-                    $in: replayTeams
-                }
-            }).then(
-                found => {
-                    return found;
-                },
-                err => {
-                    return null;
-                }
-            )
-
-            if (teams && teams.length > 0) {
-                for (var k = 0; k < teams.length; k++) {
-                    let team = teams[k];
-                    if (team.replays) {
-                        if (team.replays.indexOf(replayObj.systemId) == -1) {
-                            team.replays.push(replayObj.systemId);
-                            team.parseStats = true;
-                            associatedCount += 1;
-                        } else {
-                            associatedCount += 1;
-                        }
-                    } else {
-                        team.replays = [replayObj.systemId];
-                        associatedCount += 1;
-                    }
-                    team.save().then(
-                        saved => {
-                            // console.log('team saved!');
-                        },
-                        err => {
-                            // console.log('err');
-                        }
-                    )
-                    console.log('associatedCount team: ', team.teamName, associatedCount)
-                }
-
-            }
-            console.log('associatedCount ', associatedCount)
-            if (associatedCount == users.length + 2) {
-                let replayToSave = await Replay.findById(replay._id).then(
-                    found => {
-                        console.log('finished associating replay ', i + 1, ' of ', parsedReplays.length);
-                        return found;
-                    },
-                    err => {
-                        return null;
-                    }
-                )
-
-                if (replayToSave) {
-
-                    if (users.length + 2 == 12) {
-                        replayToSave.fullyAssociated = true;
-                        replayToSave.futureAssociated = false;
-                    } else {
-                        replayToSave.fullyAssociated = true;
-                        replayToSave.futureAssociated = true;
-                    }
-
-                    replayToSave.markModified('fullyAssociated');
-                    replayToSave.markModified('futureAssociated');
-                    replayToSave.save().then(
-                        saved => {
-                            // console.log('replay saved');
-                        },
-                        err => {
-                            // console.log('err');
-                        }
-                    )
-                }
-
-            }
-
-        }
-    } else {
-
-    }
-}

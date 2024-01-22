@@ -19,7 +19,7 @@ export class LogsViewerComponent implements OnInit {
        this.logs = res;
       },
       err=>{
-        console.log(err);
+        console.warn(err);
       }
     )
   }

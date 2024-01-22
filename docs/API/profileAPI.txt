@@ -1,0 +1,54 @@
+Template:
+Route: 
+Method: 
+Auth: 
+Params: 
+Return: 
+
+Route: api/user/get
+Method: get
+Auth: Open
+Params: user or userId or users (comma delmited list for multiple users) or userIds (comma delmited list for multiple users)
+Return: User Profile matching the query
+
+Route: api/user/delete
+Method: get
+Auth: Authenticated, must be user
+Params: displayName
+Return: Deleted User Profile
+
+Route: api/user/save
+Method: post
+Auth: Authenticated
+Params: user object
+Return: saved user object
+
+Route: api/user/update/mmr
+Method: get
+Auth: Authenticated
+Params: none
+Return: update user object
+
+Route: api/user/frontPageStats
+Method: get
+Auth: Open
+Params: stat 
+Return: sys data object of the supplied stat query
+
+Route: api/user/leagueOverallStats
+Method: get
+Auth: Open
+Params: none 
+Return: sys data object of the league fun stats
+
+Route: api/user/hero-profile/path
+Method: get
+Auth: Open
+Params: displayName 
+Return: hero profile path of the supplied display name
+
+Route: api/user/upload/avatar
+Method: get
+Auth: Authenticated
+Params: multipart form; 
+Return: saved user profile with new image url

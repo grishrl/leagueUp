@@ -1,0 +1,237 @@
+<!-- this block is only visible on large screens -->
+<div class="match-border p-4  d-none d-sm-none d-md-block">
+
+    <div class="row">
+
+        <div class="col">
+        </div>
+        <div class="col">
+        </div>
+        <div class="col text-center">
+            Record
+        </div>
+        <div class="col text-center">
+            Result
+        </div>
+    </div>
+    <!-- home team info -->
+    <div class="row p-2 font-ad" [ngClass]=" 'home' | commonPipe:winningClass:match">
+
+        <div class="col text-center  my-auto">
+            <img class="img-fluid" src="{{homeLogo}}" alt="Team Logo">
+        </div>
+        <div class="col text-center  my-auto">
+            <div *ngIf="match.home.teamName">
+                <app-team-link [team]="match.home.teamName">{{match.home.teamName}}</app-team-link>
+            </div>
+
+        </div>
+        <div class="col  text-center  my-auto">
+            <div><span> {{match.home.wins}} - {{match.home.losses}} </span></div>
+
+        </div>
+        <div class="col text-center my-auto">
+            <div *ngIf="match.home.dominator else normalScore" class="dom-cont">
+                <img src="/assets/nexagon.png" class="dominator">
+                <span class="centered">{{match.home.score}}</span>
+            </div>
+
+            <ng-template #normalScore>
+                <span *ngIf="testScore(match.home.score) else dash">
+                   {{match.home.score}}
+                </span>
+            </ng-template>
+        </div>
+    </div>
+
+    <ng-template #dash>
+        -
+    </ng-template>
+
+    <!-- away team info -->
+    <div class="row p-2 font-ad" [ngClass]="'away' | commonPipe:winningClass:match">
+        <div class="col text-center my-auto">
+            <img class="img-fluid" src="{{awayLogo}}" alt="Team Logo">
+        </div>
+        <div class="col text-center my-auto">
+            <div *ngIf="match.away.teamName; else bye">
+                <app-team-link [team]="match.away.teamName">{{match.away.teamName}}</app-team-link>
+            </div>
+        </div>
+        <div class="col text-center my-auto">
+            <span> {{match.away.wins}} - {{match.away.losses}} </span>
+        </div>
+        <div class="col text-center  my-auto">
+            <div *ngIf="match.away.dominator else awayNormalScore" class="dom-cont">
+                <img src="/assets/nexagon.png" class="dominator">
+                <span class="centered">{{match.away.score}}</span>
+            </div>
+
+
+            <ng-template #awayNormalScore>
+                <span *ngIf="testScore(match.away.score) else dash">
+                          {{match.away.score}}
+                        </span>
+            </ng-template>
+        </div>
+    </div>
+
+    <hr>
+    <!-- general match info -->
+    <div class="row">
+        <div class="col">
+
+        </div>
+        <div class="col-7 text-center">
+            <strong>Scheduled Time: </strong><span *ngIf="match.scheduledTime && match.scheduledTime.startTime != null else tbd">
+            {{match.scheduledTime.startTime | commonPipe:util.getFormattedDate:"dddd M/D/YYYY h:mm A zz"}}
+          </span>
+            <ng-template #tbd><span> TBD </span></ng-template>
+        </div>
+        <div class="col">
+
+        </div>
+    </div>
+    <!-- caster info -->
+    <div class="row" *ngIf="match.casterName && match.casterUrl">
+        <div class="col"></div>
+        <div class="col-7 text-center">
+            <strong> Casted by:</strong> {{match.casterName}} : <a href="{{match.casterUrl | commonPipe:util.prePendHttp}}" target="_blank">{{match.casterUrl}}</a>
+        </div>
+        <div class="col"></div>
+    </div>
+    <!-- map bans -->
+    <div class="row" *ngIf="match.mapBans && match.mapBans.homeOne && match.mapBans.homeTwo && match.mapBans.awayOne && match.mapBans.awayTwo">
+        <div class="col-12 text-center">
+            <span class="h6">Map Bans:</span>
+        </div>
+        <div class="col-12 text-center">
+            <strong>Home Ban 1:</strong> {{match.mapBans.homeOne}}
+            <div><strong>Home Ban 2:</strong> {{match.mapBans.homeTwo}}</div>
+
+        </div>
+        <div class="col-12 text-center">
+            <strong>Away Ban 1:</strong> {{match.mapBans.awayOne}}
+            <div><strong>Away Ban 2:</strong> {{match.mapBans.awayTwo}}</div>
+
+        </div>
+    </div>
+    <!-- match vod links -->
+    <div class="row" *ngIf="match.vodLinks && match.vodLinks.length>0">
+        <div class="col-12 text-center">
+            <span class="h6">VOD LINKS:</span>
+        </div>
+        <div class="col text-center">
+            <div *ngFor="let vod of match.vodLinks"><a href="{{vod}}" target="_blank">VOD Link</a></div>
+        </div>
+    </div>
+    <!-- match click to show / hide replay list -->
+    <div class="row" *ngIf="match.replays">
+        <div class="col text-center">
+            <a style="color:#007bff" class="finger" (click)="showReplay = !showReplay"> <span *ngIf="!showReplay else hide">Show</span>
+                <ng-template #hide>Hide</ng-template>
+                Replay Info
+                <ng-template #hideCar><i class="fas fa-caret-up"></i></ng-template><i *ngIf="!showReplay else hideCar" class="fas fa-caret-down"></i></a>
+        </div>
+    </div>
+    <!-- show replay lists -->
+    <div class="row" *ngIf="showReplay">
+        <div class="col">
+            <div class="row">
+                <div class="col text-center">
+                    Replays:
+                </div>
+            </div>
+            <div class="row" *ngFor="let replay of match.replays | keyvalue">
+                <div class="col text-center">
+                    <a href="{{replay.value.url | commonPipe:util.replayFQDN}}" target="_blank"> Replay {{replay.key}}</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-center">
+                    Parsed Matches at Heroes Profile:
+                </div>
+            </div>
+            <div class="row" *ngFor="let replay of match.replays | keyvalue">
+                <div class="col text-center">
+                    <a href="{{replay.value.parsedUrl}}" target="_blank"> Match {{replay.key}}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End large screen block -->
+
+<!-- this block is only visible on small screens -->
+<div class="d-block d-sm-none match-border">
+
+    <!-- match view verticle -->
+    <div class="row mt-4 p-3">
+        <div class="col">
+
+            <!-- home team info -->
+            <div class="row" [ngClass]="'home'|commonPipe:winningClass:match">
+                <div class="col">
+                    <img class="img-fluid" src="{{homeLogo}}" alt="Team Logo">
+                </div>
+                <div class="col text-center">
+                    <div class="row">
+                        <div class="col">
+                            <app-team-link [team]="match.home.teamName">{{match.home.teamName}}</app-team-link>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col text-center">
+
+                            <div><span> {{match.home.wins}} - {{match.home.losses}} </span></div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-2 text-center">
+                    {{match.home.score}}
+                </div>
+            </div>
+            <!-- away team info -->
+            <div class="row" [ngClass]="'away' | commonPipe:winningClass:match">
+                <div class="col">
+                    <img class="img-fluid" src="{{awayLogo}}" alt="Team Logo">
+                </div>
+                <div class="col text-center">
+                    <div class="row">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <app-team-link [team]="match.away.teamName">{{match.away.teamName}}</app-team-link>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col text-center">
+                                    <span> {{match.away.wins}} - {{match.away.losses}} </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-2 text-center">{{match.away.score}}</div>
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-center">
+            Scheduled Time: <span *ngIf="match.scheduledTime && match.scheduledTime.startTime != null  else tbd">{{match.scheduledTime.startTime | commonPipe:util.getFormattedDate:"dddd M/D/YYYY h:mm A zz"}}</span>
+            <ng-template #tbd><span> TBD </span></ng-template>
+        </div>
+    </div>
+    <div class="row" *ngIf="match.casterName">
+        <div class="col text-center">
+            <span> Casted by:</span> {{match.casterName}} : <a href="{{match.casterUrl| commonPipe:util.prePendHttp}}" target="_blank">{{match.casterUrl}}</a>
+        </div>
+    </div>
+
+</div>
+
+<ng-template #bye>
+    BYE
+</ng-template>

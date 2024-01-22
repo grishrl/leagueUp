@@ -22,25 +22,56 @@
                         <div class="container">
                             <!-- Menu-->
                             <ul class="sf-menu" id="menu">
-                                <li>
-                                    <a [routerLink]="['/rules']">Rules</a>
+                                <li class="current">
+                                    <a class="finger linkColorFix">Rules</a>
+                                    <ul class="sub-current" appHideMenu>
+                                        <li>
+                                            <a [routerLink]="['/stormrules']">Storm Rules</a>
+                                        </li>
+                                        <li>
+                                            <a [routerLink]="['/rules']">Community Rules</a>
+                                        </li>
+                                        <li>
+                                          <a [routerLink]="['/casterBylaws']">Caster Bylaws</a>
+                                        </li>
+                                    </ul>
                                 </li>
                                 <li>
                                     <a [routerLink]="['/faq']">FAQ</a>
                                 </li>
-                                <li>
-                                    <a [routerLink]="['/volunteers']">Volunteers</a>
+                                <li class="current">
+                                    <a class="finger linkColorFix">Community Spotlight</a>
+                                    <ul class="sub-current" appHideMenu>
+                                        <li>
+                                            <a href="https://www.etsy.com/shop/NGSStoreFront" target="_blank">NGS Store Front</a>
+                                        </li>
+                                        <li>
+                                            <a [routerLink]="['/volunteers']">Volunteers</a>
+                                        </li>
+                                        <li>
+                                            <a [routerLink]="['/potg']">Play of the Game</a>
+                                        </li>
+                                        <li>
+                                            <a [routerLink]="['/mvp']">MVP</a>
+                                        </li>
+                                        <li>
+                                            <a [routerLink]="['/tournament']">Tournament Viewer</a>
+                                        </li>
+                                    </ul>
                                 </li>
                                 <li class="current">
                                     <a class="finger linkColorFix">Statistics</a>
                                     <ul class="sub-current" appHideMenu>
                                         <li>
-                                            <a href="https://www.heroesprofile.com/Series" target="_blank">Heroes
+                                            <a href="https://www.heroesprofile.com/NGS" target="_blank">Heroes
                                               Profile</a>
                                         </li>
                                         <li>
                                             <a href="https://github.com/ebshimizu/stats-of-the-storm" target="_blank">Stats of the
                                               Storm</a>
+                                        </li>
+                                        <li class="current" [hidden]="!Auth.isAuthenticated()">
+                                            <a href="https://{{statsBucket}}.s3.{{statsRegion}}.amazonaws.com/{{currentSeason}}/databases/NGS-season-{{currentSeason}}.zip" target="_blank">Download Database</a>
                                         </li>
                                     </ul>
                                 </li>
@@ -54,19 +85,17 @@
                                     </ul>
                                 </li>
 
-                                <li class="current">
-                                    <a [routerLink]="['/pastSeasons']">Past Seasons</a>
 
-                                    <!--<a class="linkColorFix finger">Past Seasons
-                                    </a>
+                                <li class="current">
+                                    <a class="finger linkColorFix">Past Seasons</a>
                                     <ul class="sub-current" appHideMenu>
                                         <li>
-                                            <a [routerLink]="['/pastSeasons']">Past Seasons</a>
+                                            <a [routerLink]="['/pastSeasons']">Past Divisions</a>
                                         </li>
-                                         <li>
-                                            <a>Hall of Fame</a>
+                                        <li>
+                                            <a [routerLink]="['/grandchamps']">NGS GOATs</a>
                                         </li>
-                                    </ul> -->
+                                    </ul>
                                 </li>
                                 <li>
                                     <a [routerLink]="['/blog']">Blog</a>
@@ -81,9 +110,72 @@
                                     <a [routerLink]="['/login']">Login</a>
                                 </li>
                                 <!-- <ng-template #loggedIn> -->
-                                <li [hidden]="!Auth.isAuthenticated()">
-                                    <a class="linkColorFix finger">{{Auth.getUser()}}</a>
-                                    <div class="sf-mega" appHideMenu>
+                                <li class="current" [hidden]="!Auth.isAuthenticated()">
+                                    <a class="linkColorFix finger">{{Auth.getUser()}}
+                                      <span *ngIf="userMessages>0" class="badge badge-pill ml-1"><i class="linkColorFix fas fa-envelope"></i></span>
+                                    </a>
+                                    <ul class="sub-current" appHideMenu>
+                                        <li>
+                                            <a [routerLink]="['/messageCenter']">
+                                                <div>
+                                                    <span>Message Center</span>
+                                                    <span class="badge badge-pill ml-1 badge-success" *ngIf="userMessages>0">{{userMessages}}</span>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li class="current">
+                                            <a class="finger">Team</a>
+                                            <ul class="sub-current">
+                                                <ng-template #noTeam>
+                                                    <li>
+                                                        <a [routerLink]="['/teamCreate']">Create Team</a>
+                                                    </li>
+                                                    <li>
+                                                        <a [routerLink]="['/findTeams']">Find Team</a>
+                                                    </li>
+                                                </ng-template>
+                                                <ng-container *ngIf="Auth.getTeam(); else noTeam">
+                                                    <li>
+                                                        <app-team-link [team]="Auth.getTeam()">
+                                                            Profile
+                                                        </app-team-link>
+                                                    </li>
+                                                    <li>
+                                                        <a [routerLink]="['/reporting',team.routeFriendlyTeamName( Auth.getTeam() )]">Result Reporting</a>
+                                                    </li>
+                                                </ng-container>
+
+                                            </ul>
+                                        </li>
+                                        <li class="current">
+                                            <a class="finger">Player</a>
+                                            <ul class="sub-current">
+                                                <li>
+                                                    <app-player-link [player]="Auth.getUser()">My Profile
+                                                    </app-player-link>
+                                                </li>
+                                                <li><a [routerLink]="['/findPlayers']">Find Free Agents</a></li>
+                                                <li><a [routerLink]="['/playersearch']">Player Search</a></li>
+                                            </ul>
+                                        </li>
+                                        <li *ngIf="Auth.getCaster()" class="current">
+                                            <a class="finger">Caster Tools</a>
+                                            <ul class="sub-current">
+                                                <li>
+                                                    <a [routerLink]="['/_casterDashboard']">Caster Dashboard</a>
+                                                </li>
+                                                <li>
+                                                    <a [routerLink]="['/_casterPage']">My Casts</a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li><a [routerLink]="['/replayBrowser']">Replay Browser</a></li>
+                                        <li *ngIf="Auth.getAdmin() && Auth.getAdmin().length>0">
+                                            <a [routerLink]="['/_admin/dashboard']">Admin Dashboard</a>
+                                        </li>
+                                        <li><a class="finger linkColorBigDropDown" (click)="logout()">Logout</a></li>
+                                    </ul>
+                                    <!-- <div class="sf-mega" appHideMenu>
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <h5>Team</h5>
@@ -91,8 +183,6 @@
                                                     <li>
                                                         <app-team-link [team]="Auth.getTeam()">Profile</app-team-link>
                                                     </li>
-                                                    <!-- <li><a [routerLink]="['/schedule/teamSchedule']">Schedule</a>
-                                                        </li> -->
                                                     <li><a [routerLink]="['/reporting',team.routeFriendlyTeamName( Auth.getTeam() )]">Result
                                                             Reporting</a></li>
 
@@ -133,7 +223,6 @@
                                                     <li><a [routerLink]="['/replayBrowser']">Replay Browser</a></li>
                                                     <li *ngIf="Auth.getCaster()"><a [routerLink]="['/_casterDashboard']">Caster Dashboard</a>
                                                     </li>
-                                                    <!-- NOTE: caster changes -->
                                                     <li *ngIf="Auth.getCaster()"><a [routerLink]="['/_casterPage']">My Casts</a>
                                                     </li>
                                                     <li *ngIf="Auth.getAdmin() && Auth.getAdmin().length>0"><a [routerLink]="['/_admin/dashboard']">Admin Dashboard</a>
@@ -142,7 +231,7 @@
                                                 </ul>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </li>
                                 <!-- </ng-template> -->
 
@@ -172,7 +261,26 @@
 
         <li><a [routerLink]="['/rules']">Rules</a></li>
         <li><a [routerLink]="['/faq']">FAQ</a></li>
-        <li><a [routerLink]="['/volunteers']">Volunteers</a></li>
+        <li>
+            <a>Community Spotlight</a>
+            <ul>
+                <li>
+                    <a href="https://www.etsy.com/shop/NGSStoreFront" target="_blank">NGS Store Front</a>
+                </li>
+                <li>
+                    <a [routerLink]="['/volunteers']">Volunteers</a>
+                </li>
+                <li>
+                    <a [routerLink]="['/potg']">Play of the Game</a>
+                </li>
+                <li>
+                    <a [routerLink]="['/mvp']">MVP</a>
+                </li>
+                <li>
+                    <a [routerLink]="['/tournament']">Tournament Viewer</a>
+                </li>
+            </ul>
+        </li>
         <li>
             <a>Divisions</a>
             <ul>
@@ -182,25 +290,30 @@
                 </li>
             </ul>
         </li>
-
         <li>
-            <a [routerLink]="['/pastSeasons']">Past Seasons</a>
+            <a>Past Seasons</a>
+            <ul>
+                <li>
+                    <a [routerLink]="['/pastSeasons']">Past Divisions</a>
+                </li>
+                <li>
+                    <a [routerLink]="['/grandchamps']">NGS GOATs</a>
+                </li>
+            </ul>
         </li>
 
+        <li>
+            <a [routerLink]="['/blog']">Blog</a>
+        </li>
         <li>
             <a [routerLink]="['/allTeams']">Teams</a>
         </li>
-
         <li>
             <a [routerLink]="['/calendar']">Calendar</a>
         </li>
-
         <li [hidden]="Auth.isAuthenticated()">
             <a [routerLink]="['/login']">Login</a>
         </li>
-
-
-
         <li [hidden]="!Auth.isAuthenticated()">
             <a>
                 <span>{{Auth.getUser()}}</span>

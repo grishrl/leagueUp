@@ -1,0 +1,14 @@
+<section class="content-info">
+
+    <div class="container">
+        <div class="row portfolioContainer">
+            <!-- Item Team Group A-->
+            <div class="col-md-6 col-lg-4 col-xl-3 " *ngFor="let item of _teams">
+                <app-single-team-display [item]="item" [season]="_season"></app-single-team-display>
+            </div>
+            <!-- End Item Team Group A-->
+
+        </div>
+    </div>
+
+</section>

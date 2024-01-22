@@ -1,7 +1,13 @@
 /*
 These wrappers ostensibly simplify the admin checking we want to do by
-wrapping the whole function
+wrapping the whole function 
+Add these into the router request as middleware and presto; you've got route security for given permission.
+
+reviewed: 9/30/2020
+revier: wraith
  */
+
+
 
 const adminCheck = require("../adminCheck");
 
@@ -41,6 +47,12 @@ function logs(req, res, next) {
     adminCheck('LOGS', req, res, next);
 }
 
+function multi(roleArray) {
+    return function(req, res, next) {
+        adminCheck(roleArray, req, res, next);
+    }
+}
+
 module.exports = {
     teamLevel: teamLevel,
     userLevel: userLevel,
@@ -50,5 +62,6 @@ module.exports = {
     scheduleGenerator: scheduleGenerator,
     userACL: userACL,
     events: events,
-    logs: logs
+    logs: logs,
+    multi: multi
 }

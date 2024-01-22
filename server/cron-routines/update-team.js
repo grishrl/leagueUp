@@ -1,16 +1,24 @@
+/**
+ * This methods is wrapped by crons from teporize;
+ * check teams who have not been touched or have not been touched in 5 days keeps the team MMR fresh and current and some other team house keeping
+ * reviewd: 10-1-2020
+ * reviewr: wraith
+ */
 const Team = require('../models/team-models');
 const teamSub = require('../subroutines/team-subs');
 const User = require('../models/user-models');
 const Division = require('../models/division-models');
 
-/*
-check teams who have not been touched or have not been touched in 5 days
-update this teams MMR
-make sure that the users in this team are marked as a member (we will use the teams list of members as a trusted source)
-check the teams division, if it is not in that division, remove the marker from the team (we will use the divisions list as a trusted source)
-*/
+/**
+ * @name updateTeamsNotTouched
+ * @function
+ * @description check teams who have not been touched or have not been touched in 5 days 
+ * update this teams MMR make sure that the users in this team are marked as a member(we will use the teams list of members as a trusted source)
+ * check the teams division, if it is not in that division, remove the marker from the team(we will use the divisions list as a trusted source)
+ * @param {number} days 
+ * @param {number} limit 
+ */
 async function updateTeamsNotTouched(days, limit) {
-
     //generate the timestamp to compare to
     let date = new Date().getTime();
     let pastDate = 1000 * 60 * 60 * 24 * days;
@@ -39,26 +47,31 @@ async function updateTeamsNotTouched(days, limit) {
             }
         },
         (err) => {
-            // logObj.error = err;
-            // logger(logObj)
+
             return null;
         }
     );
-    // console.log('teams ', teams);
+
     //this batch will be returned
     let batch = [];
     if (teams) {
         //loop through the teams returned that met criteria
-        // teams.forEach(team => {
+
         for (var i = 0; i < teams.length; i++) {
             let team = teams[i];
 
             //update the team mmr
-            // console.log('team to update ', team);
-            let mmrUpdate = await teamSub.updateTeamMmrAsynch(team);
+
+            let mmrUpdate
+            try {
+                mmrUpdate = await teamSub.updateTeamMmrAsynch(team);
+            } catch (e) {
+                throw e;
+            }
+
 
             if (mmrUpdate) {
-                // console.log(team, ' mmr updated')
+
             }
 
             let teamMembers = [];
@@ -73,15 +86,16 @@ async function updateTeamsNotTouched(days, limit) {
                     return null;
                 }
             );
+
             if (usersTeamNameUpdate) {
-                // console.log(' updated users profile to belong to team ');
+
             }
 
             //check to make sure the prop exists
             if (team.pendingMembers) {
                 let pendingMembers = [];
                 team.pendingMembers.forEach(member => {
-                    pendingMembers.push(member);
+                    pendingMembers.push(member.displayName);
                 });
                 //set the users data to reflect their pending queue to the team, if they exist in the pending member array
                 let usersPendingFlag = await User.updateMany({
@@ -98,16 +112,16 @@ async function updateTeamsNotTouched(days, limit) {
                     }
                 );
                 if (usersPendingFlag) {
-                    // console.log(' updated users profiles to pending team ');
+
                 }
             }
 
 
             if (team.divisionConcat) {
-                // console.log('team ', team.teamName);
-                // console.log('team.divisionConcat ', team.divisionConcat);
+
+
                 let division = await Division.findOne({ divisionConcat: team.divisionConcat }).then(foundDiv => { return foundDiv; }, err => { return null; });
-                // console.log('division ', division);
+
                 if (division) {
                     if (division.teams.indexOf(team.teamName) == -1) {
                         team.divisionDisplayName = '';
@@ -134,12 +148,12 @@ async function updateTeamsNotTouched(days, limit) {
                 }
             );
             if (saved == null) {
-                // console.log('Team wasn\'t saved');
+
             } else {
                 batch.push(saved);
             }
         }
-        // foreach end });
+
     }
     return batch;
 }

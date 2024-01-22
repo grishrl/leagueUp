@@ -1,18 +1,50 @@
 <div class="row row-style">
-    <div class="col">
-        <app-user-quick-view [userId]="player"></app-user-quick-view>
-    </div>
-    <div class="col">
-        <app-team-quick-view [teamName]="viewTeam"></app-team-quick-view>
-    </div>
-    <div class="col">
-        {{resultantMmr}}
-    </div>
-    <div class="col">
-        <div class="text-center">
-            <button [disabled]="player.smurfAccount" class="btn btn-success" (click)="actionAccount(true)">Approve</button>
-            <button class="btn btn-danger ml-1" (click)="actionAccount(false)">Deny</button>
+    <div class="col" *ngIf="!errorState else errorTemplate">
+      <div class="row">
+        <div class="col">
+          <strong>Submitted:</strong> {{_info.timestamp | commonPipe: util.getFormattedDate:'MM/DD/YYYY hh:mm A' }}
         </div>
+      </div>
+        <div class="row">
+            <div class="col">
+                <app-user-quick-view [userId]="player"></app-user-quick-view>
+            </div>
+            <div class="col">
+                <app-team-quick-view [teamName]="viewTeam"></app-team-quick-view>
+            </div>
+            <div class="col-2" *ngIf="resultantMmr">
+                <strong>Resultant MMR</strong> {{resultantMmr.resultantMmr}}
+                <div><strong>Resultant Storm League Avg:</strong> {{resultantMmr.stormRankAvg}}</div>
+                <app-storm-league [ngsRankNumber]="resultantMmr.stormRankAvg"></app-storm-league>
+            </div>
+            <div class="col-2">
+                <div class="text-center">
+                    <button [disabled]="player.smurfAccount" class="btn btn-success" (click)="actionAccount(true)">Approve</button>
+                    <button class="btn btn-danger ml-1" (click)="actionAccount(false)">Deny</button>
+                    <div class="mt-2">
+                        <button class="btn btn-warning" (click)="delete(_info)"> Delete Queue Item</button>
+                    </div>
+                </div>
 
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col">
+                <strong>Enter admin notes:</strong>
+                <br>
+                <mat-form-field style="width: 450px;">
+                  <mat-label>Notes....</mat-label>
+                  <textarea matInput [(ngModel)]="note" placeholder="Notes...."></textarea>
+                </mat-form-field>
+                <button class="btn btn-success ml-2" [disabled]="note.length==0" (click)="submitNote()">Submit Note</button>
+            </div>
+        </div>
+        <app-notes [queueInfo]="_info"></app-notes>
     </div>
 </div>
+
+<ng-template #errorTemplate>
+    <div class="col m-5 bg-secondary text-center">
+        <p class="h1 text-warning"> There has been an unexpected error with this pending queue! {{_info._id}}</p>
+    </div>
+</ng-template>

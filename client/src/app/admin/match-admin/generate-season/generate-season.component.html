@@ -1,0 +1,33 @@
+<div class="container">
+    <div class="row forceFull">
+        <div class="col">
+            <div class="row mt-2">
+                <div class="col">
+                    <a [routerLink]="['/_admin/dashboard']">Back to Dashboard</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-center">
+                    <mat-form-field>
+                      <mat-label>Select Season Number</mat-label>
+                        <input matInput type="number" placeholder="Select Season Number" [(ngModel)]="seasonNumber" (ngModelChange)="validateSeason(seasonNumber)">
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col text-center">
+                    <button [disabled]="disabled()" (click)="generateSeason()" class="btn btn-lg btn-danger">GENERATE SEASON
+          SCHEDULES</button>
+                </div>
+            </div>
+            <div class="row">
+                <div *ngIf="seasonFull" class="col text-center">
+                    <span>This season has all ready been generated.</span>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>

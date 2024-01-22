@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { TeamService } from '../../services/team.service';
 import { AdminService } from 'src/app/services/admin.service';
 import { Router } from '@angular/router';
-import { PageEvent, MatPaginator } from '@angular/material';
+import { PageEvent, MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-manage-select-team',
@@ -91,7 +91,7 @@ export class ManageSelectTeamComponent implements OnInit, AfterViewInit {
         this.displayArray = this.teams.slice(0,10);
       },
       (err)=>{
-        console.log(err);
+        console.warn(err);
       }
     )
   }

@@ -6,4 +6,6 @@ interface JQuery{
 
   sticky(opts:any):any
 
+  croppie(opts?:any):any
+
 }

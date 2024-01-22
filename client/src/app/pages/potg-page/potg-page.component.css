@@ -1,0 +1,9 @@
+/* background: #F2692E !important;
+    background-color: #F2692E !important; */
+
+.btn-outline-primary {
+    color: #F2692E;
+    background-color: transparent;
+    background-image: none;
+    border-color: #F2692E;
+}

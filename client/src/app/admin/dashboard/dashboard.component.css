@@ -1,22 +1,7 @@
-.link-borders {
-    border-right: solid;
-    padding-right: 10px;
+a {
+    color: #868282;
 }
 
-ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
-
-a div i {
-    color: #c1c1c1;
-}
-
-a div i:hover {
-    color: #505050;
-}
-
-.hover-test:hover {
-    color: #505050;
+a:hover {
+    color: #383636;
 }

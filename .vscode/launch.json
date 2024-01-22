@@ -6,16 +6,48 @@
   "configurations": [
     {
       "type": "node",
-      "request": "launch",
-      "name": "Launch Program",
-      "program": "${workspaceFolder}/file.js"
+      "request": "attach",
+      "name": "Attach to Process",
+      "port": 5000
     },
     {
-      "type": "chrome",
+      "type": "node",
       "request": "launch",
-      "name": "Launch Chrome against localhost",
-      "url": "http://localhost:3000",
-      "webRoot": "${workspaceFolder}"
-    }
+      "name": "Launch cluster.js in debugger",
+      "program": "cluster.js",
+      "envFile": "${workspaceFolder}/.env"
+    },
+        {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch generateToken.js in debugger",
+      "program": "generateToken.js",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch server.js in debugger",
+      "program": "server.js",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "name": "Kick off SotS update",
+      "program": "${workspaceFolder}/kickOffStatsOfTheStormUpdate.js",
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "node"
+    },
+    {
+      "name": "Generate Stats of the Storm database",
+      "program": "${workspaceFolder}/lambda/runGenerateStatsOfTheStorm.js",
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "node"
+    },
   ]
 }

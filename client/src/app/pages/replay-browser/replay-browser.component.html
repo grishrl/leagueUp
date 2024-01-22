@@ -1,0 +1,54 @@
+<!-- Section Title -->
+<app-banner-image [bannerTitle]="'Replay Browser'"></app-banner-image>
+
+<!-- Section Area - Content Central -->
+<section class="content-info">
+
+    <div class="container paddings-mini">
+        <!-- Content Text-->
+        <div class="panel-box padding-b">
+
+            <div class="row">
+                <div class="col">
+
+                    <div class="row">
+                        <div class="col">
+                            Filtering:
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <app-division-selector (selectedDiv)="selectedDivision($event)"></app-division-selector>
+                        </div>
+                        <div class="col">
+                            <mat-form-field class="mat-FullWidth">
+                              <mat-label>Filter by name</mat-label>
+                                <input matInput placeholder="Filter by name" [(ngModel)]="filterName" (ngModelChange)="filterTeam(filterName)">
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col">
+                            <mat-paginator [length]="length" [pageSize]="pageSize" (page)="pageEventHandler($event)">
+
+                            </mat-paginator>
+                            <div class="row mt-2 p-3 rowBorder" *ngFor="let match of displayArray; let ind = index" [ngClass]="{oddRow : ind%2!=0}">
+                                <div class="col">
+                                    <app-match-view-verticle [passMatch]="match"></app-match-view-verticle>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+        <!-- End Content Text-->
+    </div>
+</section>
+<!-- End Section Area -  Content Central -->

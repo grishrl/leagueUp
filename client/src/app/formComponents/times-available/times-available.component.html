@@ -18,6 +18,7 @@
                 </mat-checkbox>
                 <div>
                     <mat-form-field>
+                      <mat-label>Fill From</mat-label>
                         <mat-select placeholder="Fill from" [(ngModel)]="daySelected.monday" (ngModelChange)="fillFrom('monday',daySelected.monday)" disableOptionCentering>
                             <mat-option [value]=""></mat-option>
                             <mat-option *ngFor="let day of populatedDays" [value]="day.value">{{day.key}}</mat-option>
@@ -47,6 +48,7 @@
                 </mat-checkbox>
                 <div>
                     <mat-form-field>
+                      <mat-label>Fill From</mat-label>
                         <mat-select placeholder="Fill from" [(ngModel)]="daySelected.tuesday" (ngModelChange)="fillFrom('tuesday',daySelected.tuesday)" disableOptionCentering>
                             <mat-option [value]=""></mat-option>
                             <mat-option *ngFor="let day of populatedDays" [value]="day.value">{{day.key}}</mat-option>
@@ -76,6 +78,7 @@
                 </mat-checkbox>
                 <div>
                     <mat-form-field>
+                      <mat-label>Fill From</mat-label>
                         <mat-select placeholder="Fill from" [(ngModel)]="daySelected.wednesday" (ngModelChange)="fillFrom('wednesday',daySelected.wednesday)" disableOptionCentering>
                             <mat-option [value]=""></mat-option>
                             <mat-option *ngFor="let day of populatedDays" [value]="day.value">{{day.key}}</mat-option>
@@ -104,6 +107,7 @@
                 </mat-checkbox>
                 <div>
                     <mat-form-field>
+                      <mat-label>FIll from</mat-label>
                         <mat-select placeholder="Fill from" [(ngModel)]="daySelected.thursday" (ngModelChange)="fillFrom('thursday',daySelected.thursday)" disableOptionCentering>
                             <mat-option [value]=""></mat-option>
                             <mat-option *ngFor="let day of populatedDays" [value]="day.value">{{day.key}}</mat-option>
@@ -131,6 +135,7 @@
                 </mat-checkbox>
                 <div>
                     <mat-form-field>
+                      <mat-label>Fill from</mat-label>
                         <mat-select placeholder="Fill from" [(ngModel)]="daySelected.friday" (ngModelChange)="fillFrom('friday',daySelected.friday)" disableOptionCentering>
                             <mat-option [value]=""></mat-option>
                             <mat-option *ngFor="let day of populatedDays" [value]="day.value">{{day.key}}</mat-option>
@@ -158,6 +163,7 @@
                 </mat-checkbox>
                 <div>
                     <mat-form-field>
+                      <mat-label>Fill from</mat-label>
                         <mat-select placeholder="Fill from" [(ngModel)]="daySelected.saturday" (ngModelChange)="fillFrom('saturday',daySelected.saturday)" disableOptionCentering>
                             <mat-option [value]=""></mat-option>
                             <mat-option *ngFor="let day of populatedDays" [value]="day.value">{{day.key}}</mat-option>
@@ -185,6 +191,7 @@
                 </mat-checkbox>
                 <div>
                     <mat-form-field>
+                      <mat-label>Fill from</mat-label>
                         <mat-select placeholder="Fill from" [(ngModel)]="daySelected.sunday" (ngModelChange)="fillFrom('sunday',daySelected.sunday)" disableOptionCentering>
                             <mat-option [value]=""></mat-option>
                             <mat-option *ngFor="let day of populatedDays" [value]="day.value">{{day.key}}</mat-option>

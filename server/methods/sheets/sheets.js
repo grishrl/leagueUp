@@ -1,19 +1,13 @@
 //season 7 sheet: 1-dNFe8cJ7yZlb5aCDqKuKNlDNMll72RL3t_7rivVgk4
 //season 8 sheet: 1-EYgbPXWCCFbgXv6S5lHLPBnPLHWyx7E4Qy7NNKR73w
-const {
-    google
-} = require('googleapis');
+// not reviewing this as hopefully it will be gone for season 11
+
+const { google } = require('googleapis');
 const Match = require('../../models/match-model');
-const logger = require('../../subroutines/sys-logging-subs');
+const logger = require('../../subroutines/sys-logging-subs').logger;
 const util = require('../../utils');
 
 const location = 'sheets.js';
-// const mongoose = require('mongoose');
-
-// mongoose.connect(process.env.mongoURI, () => {
-//     console.log('connected to mongodb');
-// });
-
 
 //const client = new google.auth.JWT(process.env.client_email, null, String(process.env.sheets_private_key), ['https://www.googleapis.com/auth/spreadsheets']);
 function readInVods() {
@@ -49,7 +43,7 @@ async function gsRun(client) {
     const gsapi = google.sheets({ version: 'v4', auth: client });
     //update this ID to the new sheet season over season!
     const opts = {
-        spreadsheetId: '1-EYgbPXWCCFbgXv6S5lHLPBnPLHWyx7E4Qy7NNKR73w',
+        spreadsheetId: process.env.caster_report_sheet_id,
         range: 'Form Responses 1!A2:Z100000'
     };
 
@@ -65,12 +59,11 @@ async function gsRun(client) {
             additionalCasters: r[2],
             matchId: r[3],
             division: r[4],
-            liveReplay: r[5],
-            youtubeURL: r[6],
-            vod1: r[7],
-            vod2: r[8],
-            issues: r[9],
-            sysRead: r[10]
+            youtubeURL: r[5],
+            vod1: r[6],
+            vod2: r[7],
+            issues: r[8],
+            sysRead: r[9]
         }
         return obj;
     });
@@ -109,7 +102,6 @@ async function gsRun(client) {
                 let saveResult = await match.save().then(
                     saved => {
                         return saved;
-
                     },
                     err => {
                         return null;
@@ -150,11 +142,13 @@ async function gsRun(client) {
 
     }
 
+
+
     //send a write to the sheet ONLY if we made read rows
     if (updateRequired) {
         //update this ID to the new sheet season over season!
         const updateOpts = {
-            spreadsheetId: '1-EYgbPXWCCFbgXv6S5lHLPBnPLHWyx7E4Qy7NNKR73w',
+            spreadsheetId: process.env.caster_report_sheet_id,
             range: 'Form Responses 1!A2:Z100000',
             valueInputOption: 'USER_ENTERED',
             resource: {
@@ -164,6 +158,8 @@ async function gsRun(client) {
 
         let update = await gsapi.spreadsheets.values.update(updateOpts);
     }
+
+    util.errLogger(location, null, `Read in VODs`);
 
     return returnStatus;
 

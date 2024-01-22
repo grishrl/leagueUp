@@ -1,6 +1,7 @@
 <div class="row">
     <div class="col-6">
         <mat-form-field class="mat-FullWidth">
+          <mat-label>{{locPlaceholder}}</mat-label>
             <mat-select placeholder="{{locPlaceholder}}" [disabled]="local_disabled" [(ngModel)]="_time" (ngModelChange)="calcTime()">
                 <mat-option *ngFor="let time of times" [value]="time">
                     {{time}}
@@ -10,6 +11,7 @@
     </div>
     <div class="col-6">
         <mat-form-field class="mat-FullWidth">
+          <mat-label>AM/PM:</mat-label>
             <mat-select placeholder="AM/PM:" [disabled]="local_disabled" [(ngModel)]="_suffix" (ngModelChange)="calcTime()">
                 <mat-option *ngFor="let suffix of amPm" [value]="suffix">
                     {{suffix}}

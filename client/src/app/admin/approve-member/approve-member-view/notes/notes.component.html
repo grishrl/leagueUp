@@ -1,0 +1,32 @@
+<div class="row" *ngIf="queueInfo.notes && queueInfo.notes.length>0">
+    <div class="col-12">
+        <strong>Existing Notes:</strong>
+        <span class="ml-5 finger">
+          <span [hidden]="collapsed" (click)="collapsed=!collapsed"> Collapse Notes <i class="fas fa-angle-up"></i>
+          </span>
+        <span [hidden]="!collapsed" (click)="collapsed=!collapsed"> Show Notes <i class="fas fa-angle-down"></i>
+        </span>
+        </span>
+    </div>
+    <div class="col" [hidden]="collapsed">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">TimeStamp</th>
+                    <th scope="col">Admin</th>
+                    <th scope="col">Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let note of queueInfo.notes">
+                    <td scope="row">
+                        {{ note.timeStamp | commonPipe: util.getFormattedDate:'MM/DD/YYYY hh:mm A' }}</td>
+                    <td>
+                        <app-display-name-for-id [userId]="note.id"></app-display-name-for-id>
+                    </td>
+                    <td>{{note.note}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,43 @@
+<div class="pl-5 pr-5">
+    <div class="row">
+        <div class="col-12 text-center">
+            <span class="font-weight-bold">Record</span>
+        </div>
+        <div class="col text-center">
+            <span> {{match.home.wins}} - {{match.home.losses}} </span>
+        </div>
+        <div class="col text-center">
+            - VS -
+        </div>
+        <div class="col text-center">
+            <span> {{match.away.wins}} - {{match.away.losses}} </span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-center">
+            <div class="mt-2" *ngIf="title">
+                <strong>Title:</strong> {{title}}
+            </div>
+            <div class="mt-2" *ngIf="divisionDisplayName">
+                <strong> Division:</strong> {{divisionDisplayName}}
+            </div>
+
+            <div class="mt-2">
+                <strong>Scheduled Time: </strong>
+                <span *ngIf="match.scheduledTime && match.scheduledTime.startTime != null else tbd">
+                                {{match.scheduledTime.startTime | commonPipe:util.getFormattedDate:"dddd M/D/YYYY h:mm A zz"}}
+                              </span>
+                <ng-template #tbd><span> TBD </span></ng-template>
+            </div>
+
+            <div class="mt-2" *ngIf="Auth.isCaster()">
+                <strong>Match ID: </strong>{{match.matchId}}
+            </div>
+
+            <div class="mt-2" *ngIf="match.casterName && match.casterUrl">
+                <strong> Casted by:</strong> {{match.casterName}} :
+                <a href="{{match.casterUrl| commonPipe:util.prePendHttp}}" target="_blank">{{match.casterUrl}}</a>
+            </div>
+        </div>
+    </div>
+</div>

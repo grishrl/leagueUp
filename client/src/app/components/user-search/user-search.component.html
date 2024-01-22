@@ -1,0 +1,29 @@
+<!-- <input matInput placeholder="Battle tag" [matAutocomplete]="auto">
+<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+    <mat-option *ngFor="let btag of getUsers | async" [value]="btag">{{btag}}</mat-option>
+</mat-autocomplete> -->
+<div class="row">
+    <div class="col-7">
+        <form class="userSearchForm">
+            <mat-form-field class="mat-FullWidth">
+              <mat-label>Enter battle tag</mat-label>
+                <input matInput placeholder="Enter battle tag" [(ngModel)]="selectedUser" aria-label="Enter battle tag" [matAutocomplete]="auto" [formControl]="userCtrl">
+                <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let btag of foundUsers " [value]="btag">
+                        {{btag}}
+                    </mat-option>
+                </mat-autocomplete>
+                <mat-error *ngIf="userCtrl.hasError('noMatch')">
+                    Sorry we didn't find any matches!
+                </mat-error>
+
+            </mat-form-field>
+        </form>
+    </div>
+
+    <div class="col">
+        <button type="button" class="btn btn-primary" [disabled]="disableButton" (click)="userSelect(selectedUser)"> {{btnTxt}} </button>
+    </div>
+</div>
+
+<div><span>{{message}}</span></div>

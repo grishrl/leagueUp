@@ -1,0 +1,71 @@
+<div class="container">
+    <div class="row p-5 mb-5" [hidden]="hideLogos">
+        <div class="col text-center my-auto">
+            <span>
+
+              <app-team-link [team]="teamAinf.teamName">
+                <img src="{{teamALogo}}" alt="">
+                <div>{{teamAinf.teamName}}</div>
+              </app-team-link>
+
+            </span>
+        </div>
+        <div class="col text-center my-auto">
+
+        </div>
+        <div class="col text-center my-auto">
+            <span>
+              <!-- <i *ngIf="dominator(match, 'away')" style="position: absolute;"
+                    class="fas fa-crown"></i> -->
+              <app-team-link [team]="teamBinf.teamName">
+                <img src="{{teamBLogo}}" alt="">
+                <div>
+                  {{teamBinf.teamName}}
+                </div>
+              </app-team-link>
+
+
+            </span>
+        </div>
+    </div>
+
+    <div class="mb-5 panel-box pb-2 pt-3" *ngIf="matches.length>0 else noHistory">
+        <div class="row">
+            <div class="col text-center my-auto"><strong>Match Wins:</strong> {{teamAmatchWins}}</div>
+            <div class="col text-center my-auto">
+
+            </div>
+            <div class="col text-center my-auto"><strong>Match Wins:</strong> {{teamBmatchWins}}</div>
+        </div>
+
+        <div class="row mt-2">
+            <div class="col text-center my-auto"><strong>Total Matches:</strong> {{matches.length}}</div>
+        </div>
+        <hr>
+        <div class="row mt-2">
+            <div class="col text-center my-auto"><strong>Game Wins:</strong> {{teamAgameWins}}</div>
+            <div class="col text-center my-auto">
+
+            </div>
+            <div class="col text-center my-auto"><strong>Game Wins:</strong> {{teamBgameWins}}</div>
+        </div>
+        <div class="row mt-2 mb-3">
+            <div class="col text-center my-auto"><strong>Total Games:</strong> {{teamAgameWins+teamBgameWins}}</div>
+        </div>
+    </div>
+
+
+    <div style="margin-bottom: 70px;">
+        <ng-container class="mt-2 mb-5" *ngFor="let match of matches">
+            <ng-container *ngIf="match.reported">
+                <app-games-information [match]="match"></app-games-information>
+            </ng-container>
+        </ng-container>
+    </div>
+    <ng-template #noHistory>
+        <div class="mb-5 p-5 text-center">
+            <h4> These teams have no prior match ups!</h4>
+        </div>
+
+    </ng-template>
+</div>

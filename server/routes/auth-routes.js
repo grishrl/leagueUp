@@ -7,9 +7,7 @@ const util = require('../utils');
 //auth logout
 router.get('/logout', (req, res) => {
     const path = '/auth/logout'
-        //handle with passport
-    req.logout();
-    res.status(200).send(util.returnMessaging(path, "Logged out"));
+    res.status(200).send(util.returnMessaging(path, "Logged out"));   
 });
 
 router.get('/bnet', passport.authenticate('bnet', {
@@ -18,16 +16,17 @@ router.get('/bnet', passport.authenticate('bnet', {
 
 
 router.get('/bnet/redirect', function(req, res, next) {
+    const start = Date.now();
     passport.authenticate('bnet', function(err, user, info) {
         if (err) {
             util.errLogger('/bnet/redirect', err);
         }
         if (!user) {
-            res.redirect('/');
+            return res.redirect('/');
         }
         if (user) {
             var encode = encodeURIComponent(JSON.stringify(user));
-            res.redirect('/login/' + encode);
+            return res.redirect('/login/' + encode);
         }
     })(req, res, next);
 });

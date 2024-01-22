@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { AdminService } from 'src/app/services/admin.service';
 import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { DeleteConfrimModalComponent } from '../../../modal/delete-confrim-modal/delete-confrim-modal.component';
+import { Color } from '@angular-material-components/color-picker';
 
 @Component({
   selector: 'app-division-props',
@@ -17,6 +18,7 @@ export class DivisionPropsComponent implements OnInit {
   selectedDivision: any = null;
   safeSource
   editDivision
+  disabled = false;
 
   markFormGroupTouched(formGroup: FormGroup) {
 
@@ -37,6 +39,10 @@ export class DivisionPropsComponent implements OnInit {
   constructor(private dialog: MatDialog, private adminService: AdminService) { }
 
   displayNameControl = new FormControl('', [
+    Validators.required
+  ]);
+
+  colorCtr = new FormControl('', [
     Validators.required
   ]);
   divisionNameControl = new FormControl('', [
@@ -66,7 +72,8 @@ export class DivisionPropsComponent implements OnInit {
     maxMMR: this.maxMMRControl,
     minMMR: this.minMMRControl,
     sorting: this.sortingControl,
-    divisionModerator: this.divisionModeratorControl
+    divisionModerator: this.divisionModeratorControl,
+    divColor: this.colorCtr
   })
 
   //creates a new concatinated system id from provided inputs
@@ -87,6 +94,14 @@ export class DivisionPropsComponent implements OnInit {
     this.markFormGroupTouched(this.divisionForm)
     this.editDivision = Object.assign({}, div);
     this.safeSource = Object.assign({},div);
+
+    //set the division color selector
+    if(this.editDivision.divColor){
+      let color = this.hexToRgb(this.editDivision.divColor);
+      let z = new Color(color.r, color.g, color.b);
+      this.colorCtr.setValue(z.toString('hex'));
+      this.deColore = z;
+    }
   }
 
   //sets up an empty object to create a new division from
@@ -96,9 +111,37 @@ export class DivisionPropsComponent implements OnInit {
     this.editDivision = Object.assign({});
   }
 
+  selectorRefresh = 1;
+
   ngOnInit() {
 
   }
+
+  color;
+
+  deColore;
+
+  updateColor(e){
+    if(e && e.hex){
+      this.editDivision.divColor = e.hex;
+    }
+
+  }
+
+  private hexToRgb(hex) {
+  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+    return r + r + g + g + b + b;
+  });
+
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : null;
+}
 
   //reverts any changes to a dib object back to the safe source created at selection
   revert(){
@@ -142,7 +185,9 @@ export class DivisionPropsComponent implements OnInit {
         res=>{
           this.newDiv = false;
           this.editDivision = null;
+          this.selectorRefresh+=1;
           this.ngOnInit();
+          window.scroll(0,0);
         },err=>{
           alert('Division not created');
         }
@@ -151,9 +196,11 @@ export class DivisionPropsComponent implements OnInit {
       this.adminService.saveDivisionEdits(this.safeSource.divisionConcat, this.editDivision).subscribe(
         res => {
           this.editDivision = null;
+          this.selectorRefresh+=1;
           this.ngOnInit();
+          window.scroll(0,0);
         }, err => {
-          console.log(err)
+          console.warn(err)
         }
       )
     }

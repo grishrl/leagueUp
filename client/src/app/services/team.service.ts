@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { HttpServiceService } from './http-service.service';
+import { HttpService } from './http.service';
 import { Team } from '../classes/team.class';
 import { SpecialCharactersService } from './special-characters.service';
-import { TimeserviceService } from 'src/app/services/timeservice.service';
+import { TimeService } from 'src/app/services/time.service';
 
 @Injectable({
   providedIn: 'root'
@@ -56,7 +56,7 @@ export class TeamService {
 
   //retuns teams from an array of team names
   getTeams(names){
-    let url = 'team/getTeams';
+    let url = 'team/fetch/teams';
     let payload = {teams:names}
     return this.httpService.httpPost(url, payload)
   }
@@ -98,6 +98,11 @@ export class TeamService {
   saveTeam(team:Team): Observable<any>{
     let url = 'team/save';
     return this.httpService.httpPost(url, team, true);
+  }
+
+  getTeamQuestionnaire(teamId){
+    let url = '/team/questionnaire';
+    return this.httpService.httpGet(url,[{teamId}]);
   }
 
   //saves team questionnaire
@@ -170,13 +175,19 @@ export class TeamService {
     return this.httpService.httpPost(url, payload);
   }
 
-  getTournamentMatches(teamId, name, season, division){
-    let url = '/schedule/fetch/team/tournament/matches';
+  getActiveTournaments(teamId){
+    let url = "/schedule/fetch/team/tournament/active";
+        let payload = {
+          teamId: teamId,
+        };
+        return this.httpService.httpPost(url, payload)
+  }
+
+  getSeasonTournaments(teamId, season){
+    let url = "/schedule/fetch/team/tournament/season";
     let payload = {
       teamId:teamId,
-      name:name,
       season:season,
-      division:division
     }
     return this.httpService.httpPost(url, payload);
   }
@@ -185,6 +196,11 @@ export class TeamService {
 
   //retuns a formatted string that includes the requisite info to retrieve an image from s3 bucket
   imageFQDN(img, season?) {
+    // add a break fast option in case the fqdn is all ready pre-pended.
+    if(img && img.includes('https://s3.amazonaws.com/')){
+      return img;
+    }
+
     if(season){
       let imgFQDN = 'https://s3.amazonaws.com/' + environment.s3bucketArchiveImage + '/';
             if (img) {
@@ -205,8 +221,7 @@ export class TeamService {
     let imgFQDN = 'https://s3.amazonaws.com/' + environment.s3bucketImages + '/';
     if (img) {
       imgFQDN += img;
-    }
-    else {
+    } else {
       imgFQDN += 'defaultTeamLogo.png';
     }
     return encodeURI(imgFQDN);
@@ -245,12 +260,12 @@ export class TeamService {
 
   }
 
-    getStatistics(username){
-    let encodedID = encodeURIComponent(username);
-    let url = '/team/statistics';
-    let params = [{ id: encodedID }];
-    return this.httpService.httpGet(url, params);
-  }
+  //   getStatistics(username){
+  //   let encodedID = encodeURIComponent(username);
+  //   let url = '/team/statistics';
+  //   let params = [{ id: encodedID }];
+  //   return this.httpService.httpGet(url, params);
+  // }
 
-  constructor(private httpService: HttpServiceService, private charServ: SpecialCharactersService, private timeService:TimeserviceService) { }
+  constructor(private httpService: HttpService, private charServ: SpecialCharactersService, private timeService:TimeService) { }
 }

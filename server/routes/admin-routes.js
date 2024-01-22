@@ -11,59 +11,82 @@ router.post('/upsertSeasonInfo', passport.authenticate('jwt', {
 
     const path = '/admin/upsertSeasonInfo';
 
-    let season = parseInt(req.body.value);
+    let seasonInfoObj = req.body;
 
-    let logObj = {};
-    logObj.actor = '/upsertSeasonInfo';
-    logObj.action = 'upserting season info';
-    logObj.target = 'System table: season info :' + season;
-    logObj.logLevel = 'STD';
-    logObj.timeStamp = Date.now();
+    console.log('seasonInfoObj', seasonInfoObj);
 
-    let scheduleQuery = {
+    try {
+        seasonInfoObj = util.validateInputs.object(seasonInfoObj);
 
-        'dataName': 'seasonInfo',
-        'value': season
+        if (seasonInfoObj.valid) {
+            let logObj = {};
+            logObj.actor = '/upsertSeasonInfo';
+            logObj.action = 'upserting season info';
+            logObj.target = 'System table: season info :' + seasonInfoObj.value.value;
+            logObj.logLevel = 'STD';
+            logObj.timeStamp = Date.now();
+
+            let scheduleQuery = {
+                $and: [{
+                        'dataName': 'seasonInfo'
+                    },
+                    {
+                        'data.value': seasonInfoObj.value.value
+                    }
+                ]
+            };
+            let postedInfo = {
+                'dataName': 'seasonInfo',
+                'data': seasonInfoObj.value
+            };
+
+            System.system.findOneAndUpdate(
+                scheduleQuery, postedInfo, {
+                    new: true,
+                    upsert: true
+                }
+            ).then(
+                saved => {
+                    res.status(200).send(util.returnMessaging(path, "Upserted the season schedule.", false, saved, null, logObj));
+                },
+                err => {
+                    res.status(500).send(util.returnMessaging(path, "Upsert season schedule failed.", err, null, null, logObj));
+                }
+            );
+        } else {
+            //bad inputs
+            let message = 'Error: ';
+
+            message += 'value (number) is required!';
+
+            res.status(500).send(util.returnMessaging(path, message));
+        }
+    } catch (e) {
+        console.log(e);
+        util.errLogger(path, e);
+        res.status(500).send(util.returnMessaging(path, 'Internal Server Error', e));
     }
-    let postedInfo = {
-        'dataName': 'seasonInfo',
-        'value': season,
-        'data': {
-            'registrationOpen': req.body.data.registrationOpen,
-            'seasonStartDate': req.body.data.seasonStartDate,
-            'seasonEndDate': req.body.data.seasonEndDate
-        }
-    };
 
-    System.system.findOneAndUpdate(
-        scheduleQuery, postedInfo, {
-            new: true,
-            upsert: true
-        }
-    ).then(
-        saved => {
-            res.status(200).send(util.returnMessaging(path, "Upserted the season schedule.", false, saved, null, logObj));
-        },
-        err => {
-            res.status(500).send(util.returnMessaging(path, "Upsert season schedule failed.", err, null, null, logObj));
-        }
-    );
+
 });
 
 router.get('/getSeasonInfo', (req, res) => {
 
     const path = '/admin/getSeasonInfo';
 
-    let specificSeason = parseInt(req.query.season);
+    let specificSeason = req.query.season;
+    specificSeason = util.validateInputs.number(specificSeason);
 
-    if (specificSeason) {
+
+    if (specificSeason.valid) {
         try {
-            seasonInfoCommon.getSeasonInfo(specificSeason).then(
+            seasonInfoCommon.getSeasonInfo(specificSeason.value).then(
                 process => {
                     res.status(200).send(util.returnMessaging(path, "Found the season schedule.", false, process, null));
                 }
             )
         } catch (e) {
+            util.errLogger(path, e);
             res.status(500).send(util.returnMessaging(path, "Error in node", err, null, null));
         }
     } else {
@@ -73,12 +96,13 @@ router.get('/getSeasonInfo', (req, res) => {
                     if (process) {
                         res.status(200).send(util.returnMessaging(path, "Found the season schedule.", false, process, null));
                     } else {
-                        res.status(500).send(util.returnMessaging(path, "Error finding season schedule.", err, null, null));
+                        res.status(500).send(util.returnMessaging(path, "Error finding season schedule.", false, null, null));
                     }
                 }
             )
         } catch (e) {
-            //log?
+            util.errLogger(path, e);
+            res.status(500).send(util.returnMessaging(path, "Error in node", err, null, null));
         }
     }
 

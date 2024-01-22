@@ -1,0 +1,5 @@
+<h5>{{disName}}</h5>
+<ng-container *ngIf="userProfile">
+    <app-verified-storm-league-ranks-view [admin]="admin" [userId]="userProfile._id" [teamName]="userProfile.teamName" [verifiedUserRanks]="userProfile.verifiedRankHistory">
+    </app-verified-storm-league-ranks-view>
+</ng-container>

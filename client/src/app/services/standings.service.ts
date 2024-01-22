@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpServiceService } from './http-service.service';
-import { TimeserviceService } from './timeservice.service';
+import { HttpService } from './http.service';
+import { TimeService } from './time.service';
 import { switchMap } from 'rxjs/operators';
+import { CacheService } from './cache.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +11,9 @@ export class StandingsService {
 
   //accepts the divisionConcat and returns the standings of the division based on reported matches
   getStandings(div:string){
-    let url = 'standings/get/division';
-    return this.timeService.getSesasonInfo().pipe(
+    let url = 'standings/fetch/division';
+
+    return this.cacheService.getCached(`${url}-${div}`,this.timeService.getSesasonInfo().pipe(
       switchMap(
         res=>{
           let payload = {
@@ -21,12 +23,13 @@ export class StandingsService {
           return this.httpService.httpPost(url, payload);
         }
       )
-    )
+    ));
+
 
   }
 
   getPastStandings(div: string, season) {
-    let url = 'standings/get/division';
+    let url = 'standings/fetch/division';
     let payload = {
       division: div,
       season: season,
@@ -37,6 +40,6 @@ export class StandingsService {
   }
 
 
-  constructor(private httpService: HttpServiceService, private timeService:TimeserviceService) {
+  constructor(private httpService: HttpService, private timeService:TimeService, private cacheService:CacheService) {
    }
 }

@@ -1,5 +1,15 @@
+/**
+ * this does what it says; get's top stats ... from heroes profile and saves it into the system collection of NGS database,
+ * this is wrapped in a utility API that is called by temporize on the server nightly to prevent the over burdening of the HeroesProfile APIs
+ * 
+ * reviewed:9-30-2020
+ * reviewer: wraith
+ * -some spacing to make it more readable
+ *  
+ */
+
 const System = require('../models/system-models').system;
-const logger = require('../subroutines/sys-logging-subs');
+const logger = require('../subroutines/sys-logging-subs').logger;
 const hpAPI = require('../methods/heroesProfileAPI');
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 const utls = require('../utils');
@@ -43,6 +53,11 @@ const stats = [
     'spell_damage'
 ];
 
+/**
+ * @name getTopStats
+ * @function
+ * @description get and save the top stats from hero profile...
+ */
 getTopStats = async function() {
 
     //create an array to hold promises of returns from hp api
@@ -71,30 +86,39 @@ getTopStats = async function() {
         for (var i = 0; i < rtval.length; i++) {
             //check to make sure that data was returned from the call before continuing;
             if (rtval[i].data != undefined) {
+
                 let stat = rtval[i].request.path;
                 let fromIndex = stat.indexOf('stat=');
+
                 stat = stat.substring(fromIndex, stat.length);
                 fromIndex = stat.indexOf('=');
+
                 let endIndex = stat.indexOf('&', fromIndex);
                 stat = stat.substring(fromIndex + 1, endIndex);
+
                 let query = {
                     '$and': [{
                             'dataName': 'TopStatList'
                         },
                         {
-                            'span': season
+                            'data.span': season
                         },
                         {
-                            'stat': stat
+                            'data.stat': stat
                         }
                     ]
                 };
+
+                const dataObj = {
+                    span: season,
+                    stat: stat,
+                    list: rtval[i].data
+                }
+
                 System.findOneAndUpdate(
                     query, {
                         "dataName": "TopStatList",
-                        "stat": stat,
-                        "span": season,
-                        "data": rtval[i].data
+                        "data": dataObj
                     }, {
                         new: true,
                         upsert: true

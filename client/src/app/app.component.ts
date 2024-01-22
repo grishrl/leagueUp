@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import * as $ from 'jquery';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { NotificationService } from './services/notification.service';
 import { Router, NavigationEnd } from '@angular/router';
 
@@ -14,7 +14,7 @@ export class AppComponent {
   constructor(private notificationService:NotificationService, private snackBar:MatSnackBar, private router:Router){
     this.notificationService.subj_notification.subscribe(
       message=>{
-        this.snackBar.open(message, 'Dismiss', { duration: 2500});
+        this.snackBar.open(message, 'Dismiss', { duration: 3000});
       }
     );
     this.router.events.subscribe( event=>{

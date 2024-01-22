@@ -2,6 +2,7 @@
 <div class="row" *ngIf="!edit">
     <div class="col">
         <mat-form-field class="timezone-full">
+          <mat-label>Timezone</mat-label>
             <mat-select placeholder="Timezone:" [formControl]="timezoneControl" [(ngModel)]="timezoneValue" (ngModelChange)="timezoneUpdate()">
                 <mat-option *ngFor="let zone of timezoneServ.timezones" [value]="zone.value">
                     {{zone.text}}

@@ -1,5 +1,92 @@
-const logger = require('./subroutines/sys-logging-subs');
+const logger = require('./subroutines/sys-logging-subs').logger;
 const _ = require('lodash');
+
+validateInputs = {};
+
+validateInputs.array = function(input) {
+    var retVal = { valid: false };;
+    if (!isNullOrEmpty(input)) {
+        retVal.valid = input instanceof Array ? true : false;
+        if (retVal.valid) {
+            retVal.value = input;
+        }
+
+    }
+    return retVal;
+}
+
+validateInputs.string = function(input) {
+    var retVal = { valid: false };
+    if (!isNullOrEmpty(input)) {
+        retVal.valid = typeof(input) == 'string' ? true : false;
+        if (retVal.valid) {
+            retVal.value = input;
+        }
+    }
+    return retVal;
+}
+
+validateInputs.object = function(input) {
+    var retVal = {
+        valid: false
+    };
+    if (!isNullOrEmpty(input)) {
+        retVal.valid = typeof(input) == 'object' ? true : false;
+        if (retVal.valid) {
+            retVal.type = 'object';
+            retVal.value = input;
+        }
+    }
+    return retVal;
+}
+
+validateInputs.number = function(input) {
+    var retVal = { valid: false };;
+    if (!isNullOrEmpty(input)) {
+        retVal.valid = typeof(parseInt(input)) == 'number' ? true : false;
+        if (retVal.valid) {
+            retVal.value = parseInt(input);
+        }
+    }
+    return retVal;
+}
+
+validateInputs.stringOrArrayOfStrings = function(input) {
+    var retVal = { valid: false };;
+    if (!isNullOrEmpty(input)) {
+        if (typeof(input) == 'string') {
+            retVal.valid = true;
+        }
+        if (input instanceof Array) {
+            retVal.valid = true;
+        }
+        if (retVal.valid) {
+            retVal.value = input;
+        }
+    }
+    return retVal;
+}
+
+validateInputs.boolean = function(input) {
+    var retVal = { valid: false };;
+    if (!isNullOrEmpty(input)) {
+        if (typeof(input) == 'string') {
+            if (input == 'true') {
+                retVal.valid = true;
+                retVal.value = true;
+            } else if (input == 'false') {
+                retVal.valid = true;
+                retVal.value = false;
+            }
+        }
+        if (typeof(input) == 'boolean') {
+            retVal.valid = true;
+            retVal.value = input;
+        }
+    }
+    return retVal;
+}
+
 
 isNullOrEmpty = function(dat) {
     if (dat == null || dat == undefined) {
@@ -8,20 +95,16 @@ isNullOrEmpty = function(dat) {
     if (Array.isArray(dat)) {
         if (dat.length == 0) {
             return true;
+        } else {
+            return false;
         }
     } else if (typeof dat == 'object') {
-        var noe = false;
+        var noe = true;
         _.forEach(dat, (value, key) => {
-            if (isNullOrEmpty(value)) {
-                noe = true;
+            if (!isNullOrEmpty(value)) {
+                noe = false;
             }
         });
-        // var keys = Object.keys(dat);
-        // keys.forEach(function(key) {
-        //     if (isNullOrEmpty(dat[key])) {
-        //         noe = true;
-        //     }
-        // });
         return noe;
     } else if (typeof dat == "string") {
         return dat.length == 0;
@@ -68,11 +151,22 @@ isNullorUndefined = function(dat) {
 
 returnMessaging = function(route, message, err, obj, additional, logInfo) {
     var ret = {
-        "route": route,
         "message": message
     };
+
+    if (route.indexOf('/api/') > -1) {
+        ret.route = route;
+    } else {
+        ret.route = `/api/${route}`
+    }
+
     if (!isNullorUndefined(err) && err) {
-        ret.err = err;
+        if (err.hasOwnProperty('toString')) {
+            ret.err = err.toString();
+        } else {
+            ret.err = JSON.stringify(err);
+        }
+
     }
     if (!isNullorUndefined(obj) && obj) {
         ret.returnObject = obj;
@@ -81,14 +175,17 @@ returnMessaging = function(route, message, err, obj, additional, logInfo) {
         if (!ret.returnObject) {
             ret.returnObject = {};
         }
-        ret.returnObject.additional = {};
-        Object.assign(ret.returnObject.additional, additional);
+        ret.returnObject.additional = additional;
     }
 
     let logObj = {};
     if (!isNullorUndefined(err) && err) {
         logObj.logLevel = 'ERROR';
-        logObj.error = err;
+        if (err.hasOwnProperty('toString')) {
+            logObj.error = err.toString();
+        } else {
+            logObj.error = JSON.stringify(err);
+        }
     } else {
         logObj.logLevel = 'STD';
     }
@@ -120,6 +217,9 @@ returnMessaging = function(route, message, err, obj, additional, logInfo) {
 }
 
 returnByPath = function(obj, path) {
+    if (isNullOrEmpty(obj)) {
+        return null;
+    }
     //path is a string representing a dot notation object path;
     //create an array of the string for easier manipulation
     let pathArr = path.split('.');
@@ -152,10 +252,12 @@ returnByPath = function(obj, path) {
 }
 
 returnBoolByPath = function(obj, path) {
-
-    if (obj.hasOwnProperty('toObject')) {
-        obj = obj.toObject();
+    //short circuit for a null object passed;
+    if (isNullorUndefined(obj)) {
+        return null;
     }
+
+    obj = objectify(obj);
     //path is a string representing a dot notation object path;
     //create an array of the string for easier manipulation
     let pathArr = path.split('.');
@@ -224,26 +326,44 @@ function sortMatchesByTime(matches) {
 }
 
 function objectify(obj) {
-    try {
-        return obj.toObject();
-    } catch {
+    if (obj) {
+        try {
+            let t = obj.toObject();
+            if (returnBoolByPath(t, '_id')) {
+                if (typeof t._id == 'object') {
+                    t._id = t._id.toString()
+                }
+            }
+            return t;
+        } catch {
+            return obj;
+        }
+    } else {
         return obj;
     }
+
+}
+
+function JSONCopy(obj) {
+    return JSON.parse(JSON.stringify(obj));
 }
 
 //simple console log for server side errors that will give me more info from the papertrail than a simple console.log;
 //simple method to add a few peices of data together to log out
 function errLogger(location, err, add) {
+    // err = objectify(err);
+    // err = JSON.stringify(err);
     let errLog = `Log @ ${location} : `;
 
-    if (err) {
-        errLog += ` ${err} `
-    }
+    // if (err.name && err.message) {
+    //     errLog += ` ${err.name} : ${err.message} `
+    // }
 
     if (add) {
         errLog += `\n Additonal Message: ${add}`;
     }
-    console.log(errLog);
+    
+    console.log(errLog, err);
 }
 
 module.exports = {
@@ -257,5 +377,7 @@ module.exports = {
     sortMatchesByTime: sortMatchesByTime,
     objectify: objectify,
     removeInactiveTeams: removeInactiveTeams,
-    errLogger: errLogger
+    errLogger: errLogger,
+    JSONCopy: JSONCopy,
+    validateInputs: validateInputs
 };

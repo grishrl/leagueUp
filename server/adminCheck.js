@@ -6,10 +6,25 @@ will return 403 if it is not there for the user, or next() in chain if it does
 */
 
 function adminCheck(level, req, res, next) {
+    var userInfo = req.user;
     if (!level) {
         next();
-    } else {
-        var userInfo = req.user;
+    } else if (Array.isArray(level)) {
+        let returnUnauthorized = true;
+        level.forEach(levelIt => {
+            let c = userInfo.adminLevel[levelIt];
+            if (c) {
+                returnUnauthorized = false;
+            }
+        });
+        if (returnUnauthorized) {
+            res.status(403).send({
+                "message": "Unauthorized for this action!"
+            });
+        } else {
+            next();
+        }
+    } else if (typeof level == 'string') {
         if (userInfo.adminLevel && userInfo.adminLevel[level]) {
             next();
         } else {

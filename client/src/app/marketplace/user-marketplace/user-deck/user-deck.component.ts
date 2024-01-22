@@ -6,7 +6,7 @@ import { TimezoneService } from 'src/app/services/timezone.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { TeamService } from 'src/app/services/team.service';
 import { RequestService } from 'src/app/services/request.service';
-import { HotsLogsService } from 'src/app/services/hots-logs.service';
+import { HeroesProfileService } from 'src/app/services/heroes-profile.service';
 
 @Component({
   selector: 'app-user-deck',
@@ -29,11 +29,17 @@ export class UserDeckComponent implements OnInit {
     }
   }
 
-  constructor(public hotsLogsService:HotsLogsService, private divisionService: DivisionService, private auth: AuthService, public _userService: UserService, public timezone: TimezoneService, private util: UtilitiesService, public _team: TeamService,
-    private request: RequestService) { }
+  hpLink;
+
+  constructor( private divisionService: DivisionService, private auth: AuthService, public _userService: UserService, public timezone: TimezoneService, private util: UtilitiesService, public _team: TeamService,
+    private request: RequestService, public heroprofile:HeroesProfileService) { }
 
   ngOnInit() {
     this.showInviteButton(this.player);
+
+        this.heroprofile.getHPProfileLinkStream.subscribe((subj) => {
+          this.hpLink = subj;
+        });
   }
 
   showInvButton(){
@@ -55,15 +61,23 @@ export class UserDeckComponent implements OnInit {
   }
 
   requestToJoin(player) {
-    this.request.inviteToTeamRequest(this.auth.getTeam(), player.displayName).subscribe(
-      (res) => {
-        this.teamInfo.invitedUsers.push(player.displayName);
-        this.showInviteButton(player);
-        //filter by pending invites?
-      }, err => {
-        console.log(err);
-      }
-    )
+    if(this.auth.getTeam()){
+          this.request
+            .inviteToTeamRequest(this.auth.getTeam(), player.displayName)
+            .subscribe(
+              (res) => {
+                this.teamInfo.invitedUsers.push(player.displayName);
+                this.showInviteButton(player);
+                //filter by pending invites?
+              },
+              (err) => {
+                console.warn(err);
+              }
+            );
+    }else{
+      alert("Looks like you need to join or create a team first!");
+    }
+
   }
 
   rosterFull() {

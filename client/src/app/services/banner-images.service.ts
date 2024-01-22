@@ -2,22 +2,25 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class BannerImagesService {
-
-  constructor() { }
+  constructor() {}
 
   lastInd;
 
-  returnImage(){
-
+  private url = `https://s3.amazonaws.com/${environment.s3bucketGeneralImage}/`;
+  returnImage() {
     let ind = this.uniqueNumGen();
     let imageName = this.images[ind];
-    let url = 'https://s3.amazonaws.com/' + environment.s3bucketGeneralImage + '/' + imageName;
-    return url;
+    // imageName = this.images[28];
+    return this.url + imageName;
+  }
 
-
+  returnSpecialImage(para) {
+    if (para.toLowerCase().includes("mongoose")) {
+      return this.url + "DG_banner_image.jpg";
+    }
   }
 
   images = [
@@ -40,19 +43,32 @@ export class BannerImagesService {
     "Me.jpg",
     "Ml.jpg",
     "Mp.jpg",
-    "Pb.jpg"
-  ]
+    "Pb.jpg",
+    "nexomania_II_banner_image.jpg",
+    "mei_banner_image.jpg",
+    "Ice_Crown_Citadel.png",
+    "Arthas_v_Artanis.png",
+    "hog_banner_2.jpg",
+    "hog_time_3.jpg",
+    "Overwatch_Cosplay_1.png",
+    "Overwatch_Cosplay_3.png",
+    // "Overwatch_Cosplay_4.png"
+  ];
 
-  uniqueNumGen(val?){
-    if(val==null||val==undefined){
-      return this.uniqueNumGen(Math.floor(Math.random() * Math.floor(this.images.length)));
-    }else{
-      if(val == this.lastInd){
-        return this.uniqueNumGen(Math.floor(Math.random() * Math.floor(this.images.length)));
-      }else{
+  uniqueNumGen(val?) {
+    if (val == null || val == undefined) {
+      return this.uniqueNumGen(
+        Math.floor(Math.random() * Math.floor(this.images.length))
+      );
+    } else {
+      if (val == this.lastInd) {
+        return this.uniqueNumGen(
+          Math.floor(Math.random() * Math.floor(this.images.length))
+        );
+      } else {
         this.lastInd = val;
         return this.lastInd;
       }
     }
-    }
+  }
 }

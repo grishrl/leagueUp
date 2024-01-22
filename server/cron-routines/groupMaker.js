@@ -1,19 +1,32 @@
+/**
+ * These methods are used to search through player and teams to try and match make teams during the off season;
+ * this is wrapped in an utility API that is called nightly by temporize on the server (when enabled)
+ * 
+ * reviewed: 9-30-2020
+ * reviewer: wraith
+ */
 const User = require('../models/user-models');
 const Team = require('../models/team-models');
 const util = require('../utils');
 const messageSub = require('../subroutines/message-subs');
 const _ = require('lodash');
-
-const mongoose = require('mongoose');
+const { returnIdFromDisplayName } = require('../methods/profileMethods');
+const milTime = require('../methods/timeMethods');
 
 const varianceWindow = 15;
 const compLevelVariance = 1;
 
+/**
+ * @name suggestUserToUser
+ * @function
+ * @description kicks off the process to match free agents to free agents to possibly create a team
+ */
 async function suggestUserToUser() {
-    let query = {
-        lookingForGroup: true
-    }
 
+    let query = {
+            lookingForGroup: true
+        }
+        //find all players free agent
     let usersLFG = await User.find(query).then(
         found => {
             return found;
@@ -27,10 +40,8 @@ async function suggestUserToUser() {
     if (usersLFG) {
         for (var i = 0; i < usersLFG.length; i++) {
             let user = usersLFG[i]
-            let userObj = user.toObject();
-
-
-            userBreakOut1(userObj).then(
+            let userObj = util.objectify(user);
+            matchUsersByTime(userObj).then(
                 ret => {
                     // empty return for this async function
                 }
@@ -39,7 +50,13 @@ async function suggestUserToUser() {
     }
 }
 
-function baseUserQuery() {
+
+/**
+ * @name returnBaseUserQuery
+ * @function
+ * @description return an empty user query object with some query params
+ */
+function returnBaseUserQuery() {
     return {
         $and: [{
                 $or: [{
@@ -62,8 +79,14 @@ function baseUserQuery() {
         ]
     };
 }
-
-async function userBreakOut1(userObj) {
+/**
+ * @name matchUsersByTime
+ * @function
+ * @description seeks to match a given free agent to other free agents that have similar time availability, competitive level, mmr etc...
+ * 
+ * @param {Object} userObj - user object
+ */
+async function matchUsersByTime(userObj) {
     // let compLevel = teamObj.competitiveLevel;
     // let availability = teamObj.availability;
     // let rolesNeeded = teamObj.rolesNeeded;
@@ -76,18 +99,17 @@ async function userBreakOut1(userObj) {
         $and: []
     };
 
-    let dayOr = cleanOr();
+    let dayOr = returnCleanOr();
 
+    //build a query out the given users availabilities
     _.forEach(userAvail, (val, key) => {
 
         if (val.available) {
 
-            let query = baseUserQuery();
+            let query = returnBaseUserQuery();
 
-            let endAndStart = cleanAnd();
-            // let timeOr = {
-            //     $or: []
-            // };
+            let endAndStart = returnCleanAnd();
+
             let timeAnd = {
                 $and: []
             };
@@ -96,7 +118,7 @@ async function userBreakOut1(userObj) {
 
                 let searchKey = 'availability.' + key + '.zeroGMTstartTimeNumber';
                 let searchValue = {
-                    '$gte': subtractMil(val.zeroGMTstartTimeNumber, varianceWindow)
+                    '$gte': milTime.subtractMil(val.zeroGMTstartTimeNumber, varianceWindow)
                 };
 
                 let tO = {};
@@ -104,7 +126,7 @@ async function userBreakOut1(userObj) {
                 timeAnd.$and.push(tO);
                 tO = {};
                 searchValue = {
-                    '$lte': addMil(val.zeroGMTstartTimeNumber, varianceWindow)
+                    '$lte': milTime.addMil(val.zeroGMTstartTimeNumber, varianceWindow)
                 };
                 tO[searchKey] = searchValue;
                 timeAnd.$and.push(tO);
@@ -120,7 +142,7 @@ async function userBreakOut1(userObj) {
             if (util.returnBoolByPath(val, 'zeroGMTendTimeNumber')) {
                 let searchKey = 'availability.' + key + '.zeroGMTendTimeNumber';
                 let searchValue = {
-                    '$gte': subtractMil(val.zeroGMTendTimeNumber, varianceWindow)
+                    '$gte': milTime.subtractMil(val.zeroGMTendTimeNumber, varianceWindow)
                 };
 
                 let tO = {};
@@ -128,7 +150,7 @@ async function userBreakOut1(userObj) {
                 timeAnd.$and.push(tO);
                 tO = {};
                 searchValue = {
-                    '$lte': addMil(val.zeroGMTendTimeNumber, varianceWindow)
+                    '$lte': milTime.addMil(val.zeroGMTendTimeNumber, varianceWindow)
                 };
                 tO[searchKey] = searchValue;
                 timeAnd.$and.push(tO);
@@ -149,6 +171,7 @@ async function userBreakOut1(userObj) {
 
     });
 
+    //query the users for matches
     let matches = {};
     for (var i = 0; i < queries.length; i++) {
         let runQuery = queries[i];
@@ -167,6 +190,19 @@ async function userBreakOut1(userObj) {
 
     }
 
+    /*
+    the overall object gets built out by giving each matching ID a property in the object;
+    that property is an object that contains hits; hits get incremented every time we ahve a positive match; we judge out confidence of a match later on before adding the users to the message
+    {
+      userid1:{
+        hits:1
+      },
+      userid2:{
+        hits:2
+      }
+    }
+    */
+
     let overall = {};
     //loop through the matches object;
     _.forEach(matches, (val, key) => {
@@ -184,6 +220,7 @@ async function userBreakOut1(userObj) {
         });
     });
 
+    //build out a message object
     let userMsg = {};
     userMsg.recipient = userObj._id;
     userMsg.sender = 'Mr. Fisky';
@@ -193,16 +230,19 @@ async function userBreakOut1(userObj) {
     userMsg.notSeen = true;
     userMsg.request = {};
 
+    //we'll keep track of how many possible matches we've made;
     let possible = 0;
 
+    //get the keys of the overall matches (these are user ids)
     let keys = Object.keys(overall);
 
     for (var i = 0; i < keys.length; i++) {
         let key = keys[i];
         let val = overall[key];
-        let conf = await userBreakout2(userObj, key, val.hits).then(res => {
+        let conf = await solidifyUserMatch(userObj, key, val.hits).then(res => {
             return res;
         });
+        //if our confidence level is 5 or more; move forward with the match
         if (conf['conf'] >= 5) {
             if (userMsg.request.hasOwnProperty('players')) {
                 userMsg.request.players.push(conf['displayName']);
@@ -218,6 +258,7 @@ async function userBreakOut1(userObj) {
         }
     }
 
+    //if we have more than 2 matches; send the message (this message only goes to the 1 user)
     if (possible >= 2) {
         messageSub(userMsg);
     }
@@ -226,11 +267,22 @@ async function userBreakOut1(userObj) {
     return true;
 }
 
-async function userBreakout2(userObj, candidateId, hits) {
+/**
+ * @name solidifyUserMatch
+ * @function
+ * @description At this point we have matched two users on times; lets try and solidify that match using witchy math that is all arbitrary by me.
+ * 
+ * @param {Object} userObj - given user object; 
+ * @param {string} candidateId - candidate match user Id
+ * @param {number} hits - current 'hits' or matches made (at this point this is the number of schedule times they have aligned)
+ */
+async function solidifyUserMatch(userObj, candidateId, hits) {
 
+    //abitrary numbers
     let confidenceLevel = 3;
     let confidenceMultiplier = 1;
 
+    //get the user
     let user = await User.findById(candidateId).then(
         found => {
             return found;
@@ -239,39 +291,42 @@ async function userBreakout2(userObj, candidateId, hits) {
         }
     );
 
-    let otherUserObj = user.toObject();
+    let otherUserObj = util.objectify(user);
 
+    //if these players have more than 4 available blocks together move our confidence up.
     if (hits > 4) {
         confidenceMultiplier += .5;
     }
 
+    //lets check their competitive level
     if (util.returnBoolByPath(userObj, 'competitiveLevel') && util.returnBoolByPath(otherUserObj, 'competitiveLevel')) {
         let uC = userObj.competitiveLevel;
         let tC = otherUserObj.competitiveLevel;
-
+        //if these users have the same competitve level - bump our confidence up
         if (uC == tC) {
             confidenceMultiplier += .4;
         } else if (Math.abs(uC - tC) >= 1) {
+            //if they are within 1 comp level slightly up the confidence
             confidenceMultiplier += .3;
         } else if (Math.abs(uC - tC) >= 2) {
+            //if they are out of 2 comp level add even less confidence
             confidenceMultiplier += .2;
         }
     }
 
-    /*
-        "heroesProfileMmr": Number,
-        "ngsMmr": Number,
-            "hlRankMetal": String,
-            "hlRankDivision": Number,
-    */
-
+    //now compare the players mmrs ... 
     if (util.returnBoolByPath(userObj, 'heroesProfileMmr')) {
 
         let userMMR = userObj.heroesProfileMmr;
 
         let perc = userMMR / otherUserObj.hpMmrAvg;
+        //incase userMMR is much larger than other user mmr, we want an absolute %
+        if (perc > 1) {
+            perc = perc - 1;
+        }
 
-        if (perc >= 1) {
+        //we will up our confidence depending on what % these players MMRs are of each other; the closer their MMRs the better they might play together?
+        if (perc = 1) {
             confidenceMultiplier += .5;
         } else if (perc >= .85) {
             confidenceMultiplier += .4;
@@ -285,6 +340,7 @@ async function userBreakout2(userObj, candidateId, hits) {
 
     }
 
+    //create our confidence level of this match
     confidenceLevel = confidenceLevel * confidenceMultiplier;
 
     return {
@@ -294,6 +350,11 @@ async function userBreakout2(userObj, candidateId, hits) {
 
 }
 
+/**
+ * @name suggestUserToTeam
+ * @function
+ * @description kicks off the process to match free agents to an existing team - sends message to captain and players when matches are made
+ */
 async function suggestUserToTeam() {
 
     let query = {
@@ -321,7 +382,7 @@ async function suggestUserToTeam() {
             let teamObj = team.toObject();
 
 
-            breakout1(team, teamObj).then(
+            findFreeAgentsForTeam(team, teamObj).then(
                 ret => {
                     // empty return from async
                 }
@@ -332,21 +393,37 @@ async function suggestUserToTeam() {
     }
 }
 
-function cleanAnd() {
+/**
+ * @name returnCleanAnd
+ * @function
+ * @description returns clean and query
+ */
+function returnCleanAnd() {
     return { $and: [] };
 }
 
-function cleanOr() {
+/**
+ * @name returnCleanOr
+ * @function
+ * @description returns clean or query
+ */
+function returnCleanOr() {
     return {
         $or: []
     };
 }
 
-async function breakout1(team, teamObj) {
+/**
+ * @name findFreeAgentsForTeam
+ * @function
+ * @description attempts to match free agents to teams
+ * 
+ * 
+ * @param {Team} team 
+ * @param {Object} teamObj 
+ */
+async function findFreeAgentsForTeam(team, teamObj) {
 
-    // let compLevel = teamObj.competitiveLevel;
-    // let availability = teamObj.availability;
-    // let rolesNeeded = teamObj.rolesNeeded;
 
     let teamAvail = teamObj.availability;
 
@@ -356,8 +433,9 @@ async function breakout1(team, teamObj) {
         $and: []
     };
 
-    let dayOr = cleanOr();
+    let dayOr = returnCleanOr();
 
+    //go through the team times to find users who have matching times
     _.forEach(teamAvail, (val, key) => {
 
         if (val.available) {
@@ -368,10 +446,8 @@ async function breakout1(team, teamObj) {
                 }]
             };
 
-            let endAndStart = cleanAnd();
-            // let timeOr = {
-            //     $or: []
-            // };
+            let endAndStart = returnCleanAnd();
+
             let timeAnd = {
                 $and: []
             };
@@ -380,14 +456,14 @@ async function breakout1(team, teamObj) {
 
                 let searchKey = 'availability.' + key + '.zeroGMTstartTimeNumber';
                 let searchValue = {
-                    '$gte': subtractMil(val.zeroGMTstartTimeNumber, varianceWindow)
+                    '$gte': milTime.subtractMil(val.zeroGMTstartTimeNumber, varianceWindow)
                 };
 
                 let tO = {};
                 tO[searchKey] = searchValue;
                 timeAnd.$and.push(tO);
                 tO = {};
-                searchValue = { '$lte': addMil(val.zeroGMTstartTimeNumber, varianceWindow) };
+                searchValue = { '$lte': milTime.addMil(val.zeroGMTstartTimeNumber, varianceWindow) };
                 tO[searchKey] = searchValue;
                 timeAnd.$and.push(tO);
             }
@@ -402,14 +478,14 @@ async function breakout1(team, teamObj) {
             if (util.returnBoolByPath(val, 'zeroGMTendTimeNumber')) {
                 let searchKey = 'availability.' + key + '.zeroGMTendTimeNumber';
                 let searchValue = {
-                    '$gte': subtractMil(val.zeroGMTendTimeNumber, varianceWindow)
+                    '$gte': milTime.subtractMil(val.zeroGMTendTimeNumber, varianceWindow)
                 };
 
                 let tO = {};
                 tO[searchKey] = searchValue;
                 timeAnd.$and.push(tO);
                 tO = {};
-                searchValue = { '$lte': addMil(val.zeroGMTendTimeNumber, varianceWindow) };
+                searchValue = { '$lte': milTime.addMil(val.zeroGMTendTimeNumber, varianceWindow) };
                 tO[searchKey] = searchValue;
                 timeAnd.$and.push(tO);
             }
@@ -447,6 +523,18 @@ async function breakout1(team, teamObj) {
 
     }
 
+    /*
+    the overall object gets built out by giving each matching ID a property in the object;
+    that property is an object that contains hits; hits get incremented every time we ahve a positive match; we judge out confidence of a match later on before adding the users to the message
+    {
+      userid1:{
+        hits:1
+      },
+      userid2:{
+        hits:2
+      }
+    }
+    */
     let overall = {};
     //loop through the matches object;
     _.forEach(matches, (val, key) => {
@@ -472,7 +560,7 @@ async function breakout1(team, teamObj) {
         let val = overall[key];
         if (val.hits >= 3) {
 
-            let conf = await breakout2(team, key, val.hits).then(
+            let conf = await teamMatchConfidence(team, key, val.hits).then(
                 rep => { return rep; },
                 err => { return null; }
             )
@@ -495,7 +583,7 @@ async function breakout1(team, teamObj) {
                     userMessages[conf.userId] = userMsg;
                 }
 
-                let capt = await getCptId(teamObj.captain).then(
+                let capt = await returnIdFromDisplayName(teamObj.captain).then(
                     capt => {
                         return capt;
                     },
@@ -504,12 +592,12 @@ async function breakout1(team, teamObj) {
                     }
                 );
                 if (capt) {
-                    if (teamCaptMessages.hasOwnProperty(capt._id.toString())) {
-                        teamCaptMessages[capt._id.toString()].request.players.push(conf.userName);
+                    if (teamCaptMessages.hasOwnProperty(capt.toString())) {
+                        teamCaptMessages[capt.toString()].request.players.push(conf.userName);
                     } else {
                         let teamMsg = {};
                         teamMsg.notSeen = true;
-                        teamMsg.recipient = capt._id.toString();
+                        teamMsg.recipient = capt.toString();
                         teamMsg.sender = 'Mr. Fisky';
                         teamMsg.subject = 'NGS Group Finder';
                         teamMsg.timeStamp = new Date().getTime()
@@ -517,7 +605,7 @@ async function breakout1(team, teamObj) {
                         teamMsg.request = {
                             players: [conf.userName]
                         };
-                        teamCaptMessages[capt._id.toString()] = teamMsg;
+                        teamCaptMessages[capt.toString()] = teamMsg;
                     }
                 }
             }
@@ -525,11 +613,12 @@ async function breakout1(team, teamObj) {
 
     }
 
-
+    //send messages to players about teams they might like
     _.forEach(userMessages, (val, key) => {
         messageSub(val);
     })
 
+    //send messages to captains about players they might like
     _.forEach(teamCaptMessages, (val, key) => {
         messageSub(val);
     })
@@ -537,8 +626,15 @@ async function breakout1(team, teamObj) {
     return true;
 
 }
-
-async function breakout2(team, candidateId, hits) {
+/**
+ * @name teamMatchConfidence
+ * @function
+ * @description attempts to determine match strength of team and players
+ * @param {Team} team 
+ * @param {string} candidateId 
+ * @param {number} hits 
+ */
+async function teamMatchConfidence(team, candidateId, hits) {
 
     let confidenceLevel = 3;
     let confidenceMultiplier = 1;
@@ -610,107 +706,12 @@ async function breakout2(team, candidateId, hits) {
 
 }
 
-async function getCptId(cptName) {
-    let cptID = await User.findOne({
-        displayName: cptName
-    }).then(
-        res => {
-            return res;
-        },
-        err => {
-            return err;
-        }
-    );
-    return cptID;
-}
 
-function subtractMil(time, less) {
-    let hour = Math.floor(time / 100) * 100;
-    let min = time - hour;
-    if (min == 0) {
-        hour = hour - 100;
-        min = 60 - less;
-    } else {
-        min = min - less;
-    }
-    if (min < 0) {
-        hour = hour - 100;
-        min = min + 60;
-    }
-    return ((hour) + min);
-}
-
-function addMil(time, plus) {
-    let hour = Math.floor(time / 100) * 100;
-    let min = time - hour;
-    min = min + plus;
-    if (min >= 60) {
-        hour = hour + 100;
-        min = min - 60;
-    }
-    return ((hour) + min);
-}
-
-// function convertToMil(time) {
-//     if (typeof time === 'string') {
-//         let colonSplit = time.split(':');
-//         let hour = parseInt(colonSplit[0]);
-//         let min = parseInt(colonSplit[1]);
-//         if (min >= 60) {
-//             min = min - 60;
-//             hour = hour + 1;
-//         }
-//         return hour * 100 + min;
-//     } else {
-//         let hour = Math.floor(time / 100) * 100;
-//         let min = time - hour;
-//         if (min >= 60) {
-//             min = min - 60;
-//             hour += 100;
-//         }
-//         return ((hour) + min);
-//     }
-// }
-// function convertToMil(time) {
-//     if (typeof time === 'string') {
-//         let colonSplit = time.split(':');
-//         let hour = parseInt(colonSplit[0]);
-//         let min = parseInt(colonSplit[1]);
-//         if (min >= 60) {
-//             min = min - 60;
-//             hour = hour + 1;
-//         }
-//         if (hour > 24) {
-//             hour = 0;
-//         }
-//         return hour * 100 + min;
-//     } else {
-//         let hour = Math.floor(time / 100) * 100;
-//         let min = time - hour;
-//         if (min >= 60) {
-//             min = min - 60;
-//             hour += 100;
-//         }
-//         if (hour > 24) {
-//             hour = 0;
-//         }
-//         return ((hour) + min);
-//     }
-// }
-
-function zeroGMT(time, timezone) {
-
-    let localTime = time;
-    if (typeof localTime === 'string') {
-        localTime = convertToMil(localTime);
-    }
-    timezone = parseInt(timezone);
-    let correct = localTime - (timezone * 100);
-
-    return correct;
-}
-
-// run through teams and add the zeroGMT time to the teams
+/**
+ * @name zeroTeamTimes
+ * @function
+ * @description run through teams and add the zeroGMT time to the teams
+ */
 async function zeroTeamTimes() {
 
     let teams = await Team.find().then(
@@ -736,11 +737,11 @@ async function zeroTeamTimes() {
                 _.forEach(teamAvail, (val, key) => {
                     if (val.available) {
 
-                        val['startTimeNumber'] = convertToMil(val['startTime']);
-                        val['endTimeNumber'] = convertToMil(val['endTime']);
+                        val['startTimeNumber'] = milTime.convertToMil(val['startTime']);
+                        val['endTimeNumber'] = milTime.convertToMil(val['endTime']);
 
-                        val['zeroGMTstartTimeNumber'] = zeroGMT(val['startTime'], teamObj.timeZone);
-                        val['zeroGMTendTimeNumber'] = zeroGMT(val['endTime'], teamObj.timeZone);
+                        val['zeroGMTstartTimeNumber'] = milTime.zeroGMT(val['startTime'], teamObj.timeZone);
+                        val['zeroGMTendTimeNumber'] = milTime.zeroGMT(val['endTime'], teamObj.timeZone);
 
                     }
                 });
@@ -767,6 +768,11 @@ async function zeroTeamTimes() {
 
 }
 
+/**
+ * @name zeroUserTimes
+ * @function
+ * @description run through users and add the zeroGMT time to their availabilities
+ */
 async function zeroUserTimes() {
 
     let teams = await User.find().then(
@@ -792,11 +798,11 @@ async function zeroUserTimes() {
                 _.forEach(teamAvail, (val, key) => {
                     if (val.available) {
 
-                        val['startTimeNumber'] = convertToMil(val['startTime']);
-                        val['endTimeNumber'] = convertToMil(val['endTime']);
+                        val['startTimeNumber'] = milTime.convertToMil(val['startTime']);
+                        val['endTimeNumber'] = milTime.convertToMil(val['endTime']);
 
-                        val['zeroGMTstartTimeNumber'] = zeroGMT(val['startTime'], teamObj.timeZone);
-                        val['zeroGMTendTimeNumber'] = zeroGMT(val['endTime'], teamObj.timeZone);
+                        val['zeroGMTstartTimeNumber'] = milTime.zeroGMT(val['startTime'], teamObj.timeZone);
+                        val['zeroGMTendTimeNumber'] = milTime.zeroGMT(val['endTime'], teamObj.timeZone);
 
                     }
                 });

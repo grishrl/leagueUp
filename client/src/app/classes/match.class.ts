@@ -8,15 +8,19 @@ export class Match {
   scheduledTime: schedule;
   casterName: string;
   casterUrl: string;
-  replays: any;
+  replays: {
+    [key:string]:Replay
+  };
   forfeit: boolean;
   other: any;
   vodLinks:Array<string>;
   mapBans: mapBans;
   season: number;
   boX:number;
+  type:string;
   reported:boolean;
   notes:string;
+  title:string;
 
   constructor() {
     this.home = {
@@ -39,6 +43,7 @@ export class Match {
       startTime: null,
       endTime: null
     },
+    this.type = '';
     this.matchId=null;
     this.round = null;
     this.divisionConcat = null;
@@ -54,6 +59,7 @@ export class Match {
       homeOne: '',
       homeTwo: ''
     };
+    this.title = null;
     this.season=null;
     this.boX = null;
     this.reported = false;
@@ -61,6 +67,13 @@ export class Match {
   }
 }
 
+export interface Replay {
+  data:string,
+  url:string,
+  parsedUrl:string,
+  map?:string,
+  winner?:string
+}
 
 
 export interface teamInfo {
@@ -73,8 +86,8 @@ export interface teamInfo {
 }
 
 export interface schedule {
-  startTime: string,
-  endTime: string
+  startTime: any,
+  endTime: any
 }
 
 export interface mapBans {

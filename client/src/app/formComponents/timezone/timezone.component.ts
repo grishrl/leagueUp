@@ -47,17 +47,16 @@ export class TimezoneComponent implements OnInit {
   }
 
   @Output()
-  errorValueChange = new EventEmitter();
+  errorChange = new EventEmitter();
 
   set error(val) {
     if(val && val.hasOwnProperty('error') && val.error){
       this.timezoneControl.setErrors({ required: true });
-
     }else{
       this.timezoneControl.setErrors(null);
     }
     this.errorValue = val;
-    this.errorValueChange.emit(this.errorValue);
+    this.errorChange.emit(this.errorValue);
   }
 
   ngOnInit() {

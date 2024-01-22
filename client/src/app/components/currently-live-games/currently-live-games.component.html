@@ -1,0 +1,22 @@
+<div #liveGamesComp>
+    <div *ngIf="liveList.length>0" class="p-2">
+        <div class="row">
+            <div class="col">
+                <div class="panel-box">
+                    <div class="titles no-margin">
+                        <h4>NGS LIVE: {{liveList.length}} currently streaming content!</h4>
+                    </div>
+                    <drag-scroll *ngIf="liveList" class="liveGamesContainer" style="background: rgba(128, 128, 128, 0.4); cursor: all-scroll;">
+                        <ng-container *ngFor="let match of liveList">
+                            <div class="col-sm-12 col-md-12 col-lg-4" drag-scroll-item>
+                                <div style="cursor: auto;">
+                                    <app-live-game-embedd [match]="match"></app-live-game-embedd>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </drag-scroll>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

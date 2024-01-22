@@ -1,0 +1,18 @@
+<ng-template #noCups>
+    <h4>No Cups Currently Scheduled!</h4>
+</ng-template>
+<div *ngIf="totalCups!=0 else noCups">
+    <div class="row">
+        <div class="col">
+            <mat-form-field>
+              <mat-label>Cup:</mat-label>
+                <mat-select placeholder="Cup:" [(ngModel)]="selectedCup" (ngModelChange)="getMatches()" disableOptionCentering>
+                    <mat-option *ngFor="let cup of this.localStoreTournaments; let i = index" [value]="i">{{cup.name}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+    <app-schedule-table [matches]="matches" [showRound]="false"></app-schedule-table>
+
+</div>

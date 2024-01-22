@@ -5,6 +5,9 @@ import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { ScheduleService } from 'src/app/services/schedule.service';
 
+const ROUND = 'round';
+const SCHEDULEDTIME = 'scheduledTime';
+
 @Component({
   selector: 'app-schedule-table',
   templateUrl: './schedule-table.component.html',
@@ -12,40 +15,151 @@ import { ScheduleService } from 'src/app/services/schedule.service';
 })
 export class ScheduleTableComponent implements OnInit {
 
-  constructor(public teamServ: TeamService, public util: UtilitiesService, private router: Router, public auth: AuthService, private scheduleService:ScheduleService) { }
+  constructor(public teamServ: TeamService, public util: UtilitiesService, private router: Router, public auth: AuthService, private scheduleService: ScheduleService) { }
 
   matchesVal = [];
-  @Input() set matches(val){
-    if(val){
-      this.matchesVal = val;
-    }else{
+
+  colSpanInt = 4;
+
+  @Input() sortOrder = 'round';
+
+  @Input() showBye = false;
+
+  @Input() flexOnTop = false;
+
+
+  @Input() set matches(val) {
+    if (val) {
+      // get team logo into match info
+      let matchesFlexOnTop;
+      val.forEach(
+        match => {
+          if (this.util.returnBoolByPath(match, 'home.logo')) {
+            match.home.logo = this.teamServ.imageFQDN(match.home.logo);
+          }
+          if (this.util.returnBoolByPath(match, 'away.logo')) {
+            match.away.logo = this.teamServ.imageFQDN(match.away.logo);
+          }
+        }
+      );
+      // sort matches by round
+      if (this.sortOrder == ROUND) {
+
+        val.sort((a, b) => {
+          if (
+            !this.util.returnBoolByPath(a, "round") ||
+            !this.util.returnBoolByPath(b, "round")
+          ) {
+            return 0;
+          } else if (a.round > b.round) {
+            return 1;
+          } else {
+            return -1;
+          }
+        });
+
+      } else if (this.sortOrder == SCHEDULEDTIME) {
+        val = this.util.sortMatchesByTime(val);
+      }
+
+
+      // show bye matches
+      if (this.showBye) {
+        let missingRound;
+        let index = 0;
+
+        for (var i = 0; i < val.length; i++) {
+
+          let round = i + 1;
+          let found = false;
+
+          val.forEach((match, iindex) => {
+
+            if (match.round == round) {
+              found = true;
+            }
+
+          });
+
+          if (found == false) {
+            missingRound = round;
+            // index = i;
+            val.forEach((match, iindex) => {
+            if (match.round == missingRound-1) {
+              index = iindex+1;
+            }
+          });
+          }
+
+        }
+
+
+        if (missingRound) {
+
+          val.splice(index, 0, {
+            round: missingRound,
+            type: 'bye'
+          });
+        }
+
+      }
+
+      if(this.flexOnTop){
+        let arr1 = [];
+        let arr2 = [];
+        val.forEach(match => {
+
+          if (!this.util.returnBoolByPath(match, "scheduleDeadline") && match.type != 'bye') {
+
+            arr1.push(match);
+          }else{
+            arr2.push(match);
+          }
+        });
+        matchesFlexOnTop = arr1.concat(arr2);
+      }else{
+        matchesFlexOnTop = val;
+      }
+
+      this.matchesVal = matchesFlexOnTop;
+
+    } else {
       this.matchesVal = [];
     }
   };
+
   @Input() seasonVal;
   @Input() showRound = true;
   @Input() showCaster = false;
   @Input() recTeam;
   todayDate;
+  @Input() divColumn = false;
+  @Input() disallowSchedule = false;
 
+  isCaster: Boolean = false;
   ngOnInit() {
     this.todayDate = new Date().getTime();
-  }
-
-  hasDeadline(match) {
-    return match.hasOwnProperty("scheduleDeadline");
+    this.isCaster = this.auth.isCaster();
+    if (this.divColumn) {
+      this.colSpanInt += 1;
+    }
+    if (this.showRound) {
+      this.colSpanInt += 1;
+    }
   }
 
   userCanSchedule(match) {
     let userTeam = this.auth.getTeam()
     let isCapt = this.auth.getCaptain();
-    if (match.home.teamName == userTeam || match.away.teamName == userTeam){
-      if(isCapt != 'false'){
+    if (this.disallowSchedule) {
+      return false
+    } else if (this.util.returnBoolByPath(match, 'home.teamName') && match.home.teamName == userTeam || this.util.returnBoolByPath(match, 'away.teamName') && match.away.teamName == userTeam) {
+      if (isCapt != 'false') {
         return true;
-      }else{
+      } else {
         return false;
       }
-    }else{
+    } else {
       return false;
     }
 
@@ -76,7 +190,7 @@ export class ScheduleTableComponent implements OnInit {
         // this.ngOnInit();
       },
       err => {
-        console.log(err);
+        console.warn(err);
       }
     )
 

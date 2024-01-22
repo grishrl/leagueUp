@@ -1,0 +1,43 @@
+<!-- Section Title -->
+<app-banner-image [bannerTitle]="'Blog'"></app-banner-image>
+<!-- End Section Title -->
+
+<!-- Section Area - Content Central -->
+<section class="content-info">
+
+    <div class="container paddings-mini">
+        <div class="row">
+
+            <!-- Sidebars -->
+            <aside class="col-lg-3">
+
+                <!-- Widget Categories-->
+                <app-blog-categories (currentCategory)="updateDisplay($event)"></app-blog-categories>
+                <app-author-list (currentAuthor)="updateDisplayAuthor($event)"></app-author-list>
+                <!-- End Widget Categories-->
+
+            </aside>
+            <!-- End Sidebars -->
+
+
+            <div class="col-lg-9">
+                <!-- Content Text-->
+                <div class="panel-box">
+                    <div class="titles">
+                        <h4>Recent Blog Posts</h4>
+                    </div>
+
+                    <!-- Post Item -->
+                    <div class="post-item" *ngFor="let post of posts">
+                        <app-blog-headline [blogObj]="post"></app-blog-headline>
+                    </div>
+
+                    <mat-paginator [length]="length" [pageSize]="pageSize" (page)="pageEventHandler($event)">
+
+                    </mat-paginator>
+                    <!-- End Post Item -->
+                </div>
+                <!-- End Content Text-->
+            </div>
+        </div>
+    </div>

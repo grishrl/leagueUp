@@ -1,0 +1,22 @@
+<div class="container">
+    <div class="row forceFull">
+        <div class="col">
+            <div class="row mt-2">
+                <div class="col">
+                    <a [routerLink]="['/_admin/dashboard']">Back to Dashboard</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-center">
+                    <h5>The Current Season is: <strong>{{currentSeason}}</strong></h5>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col text-center">
+                    <button (click)="archiveSeason()" class="btn btn-lg btn-danger">ARCHIVE SEASON</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

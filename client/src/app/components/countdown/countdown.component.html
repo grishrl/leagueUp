@@ -1,0 +1,95 @@
+<div class="counter-home-wraper">
+    <div class="title-color text-center">
+        <h4 *ngIf="preSeason else match">Next Season</h4>
+        <ng-template #match>
+            <h4>Upcoming Match</h4>
+        </ng-template>
+
+    </div>
+    <div class="content-counter content-counter-home" *ngIf="preSeason else season">
+        <div id="event-one" class="counter" *ngIf="registrationOpen && registrationEndDate">
+            <span>Registration Open Now!</span>
+            <span *ngIf="showRegBut"><a class="btn btn-success" [routerLink]="['/teamProfile',teamName]" [queryParams]="{tab:5}" >Register Now!</a></span>
+        </div>
+        <span *ngIf="registrationEndDate && registrationOpen">
+          <p class="text-center">
+              <i class="fa fa-clock-o"></i> Countdown Till Registration Close
+          </p>
+          <div id="event-one" class="counter">
+              <span>{{registrationTimeRemaining.days}}<br> <small>days</small></span>
+        <span>{{registrationTimeRemaining.hours}} <br> <small>hr</small> </span>
+        <span>{{registrationTimeRemaining.minutes}} <br> <small>min</small> </span>
+        <span>{{registrationTimeRemaining.seconds}} <br> <small>sec</small></span>
+    </div>
+    </span>
+    <p class="text-center">
+        <i class="fa fa-clock-o"></i> Countdown Till Season Start
+    </p>
+    <div id="event-one" class="counter">
+        <span>{{timeRemaining.days}}<br> <small>days</small></span>
+        <span>{{timeRemaining.hours}} <br> <small>hr</small> </span>
+        <span>{{timeRemaining.minutes}} <br> <small>min</small> </span>
+        <span>{{timeRemaining.seconds}} <br> <small>sec</small></span>
+    </div>
+    <ul class="post-options">
+        <li><i class="fa fa-calendar"></i>Season Start: {{startDate|commonPipe: util.getFormattedDate:"DD MMMM, YYYY"}}</li>
+    </ul>
+
+</div>
+<ng-template #season>
+    <div class="content-counter content-counter-home" *ngIf="validMatch else noMatch">
+        <p class="text-center">
+            <i class="fa fa-clock-o"></i> Countdown Till Start
+        </p>
+        <div id="event-one" class="counter">
+            <span>{{timeRemaining.days}}<br> <small>days</small></span>
+            <span>{{timeRemaining.hours}} <br> <small>hr</small> </span>
+            <span>{{timeRemaining.minutes}} <br> <small>min</small> </span>
+            <span>{{timeRemaining.seconds}} <br> <small>sec</small></span>
+        </div>
+        <ul class="post-options">
+            <li><i class="fa fa-calendar"></i>{{startDate|commonPipe:util.getFormattedDate:"DD MMMM, YYYY"}}</li>
+            <li><i class="fa fa-clock-o"></i>Draft Starts,{{startDate | commonPipe:util.getFormattedDate:"hh:mm A zz"}}</li>
+        </ul>
+
+        <div class="list-groups">
+            <div class="row align-items-center">
+
+                <div class="col-md-12">
+                    <p>{{targetMatch.divisionDisplayName}}<span *ngIf="targetMatch.casterName">at {{targetMatch.casterName}}'s stream</span></p>
+                </div>
+
+                <div class="col-md-5">
+                    <img [src]="homeImage" alt="">
+                    <span class="obnoxious-long-name-band-aid">{{targetMatch.home.teamName}}</span>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="vs">Vs</div>
+                </div>
+
+                <div class="col-md-5">
+                    <img [src]="awayImage" alt="">
+                    <span class="obnoxious-long-name-band-aid">{{targetMatch.away.teamName}}</span>
+                </div>
+            </div>
+        </div>
+
+        <a *ngIf="targetMatch.casterUrl" class="btn btn-primary" href="{{targetMatch.casterUrl | commonPipe:util.prePendHttp}}" target="_blank">
+      Watch At
+      <i class="fab fa-twitch"></i>
+    </a>
+    </div>
+    <ng-template #noMatch>
+        <div class="content-counter content-counter-home padding-top-xl padding-bottom-xl">
+            <div class="text-center">
+                <span class="h5">No Casted Upcoming Matches Found!</span><br>
+                <span class="h6">Check back later!</span>
+            </div>
+
+        </div>
+    </ng-template>
+</ng-template>
+
+</div>
+<!-- Content Counter -->

@@ -1,0 +1,15 @@
+<div *ngIf="displayMatches.size>0">
+    <div class="row">
+        <div class="col">
+            <h4>Tournament Results</h4>
+        </div>
+    </div>
+    <div *ngIf="displayMatches.size > 0">
+        <div *ngFor="let round of displayMatches|keyvalue">
+            <h5>Round {{round.key}}</h5>
+            <app-results-tiles [matches]="round.value"></app-results-tiles>
+        </div>
+    </div>
+
+
+</div>

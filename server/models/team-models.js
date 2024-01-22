@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const miniUser = new Schema({
+    "id": String,
     "displayName": String
 });
 
@@ -31,6 +32,7 @@ const teamSchema = new Schema({
     "teamMMRAvg": Number, //added to display
     "hpMmrAvg": Number,
     "ngsMmrAvg": Number,
+    "stormRankAvg": Number,
     "teamMembers": [miniUser], //added to display
     "pendingMembers": [miniUser],
     "lastTouched": Number,

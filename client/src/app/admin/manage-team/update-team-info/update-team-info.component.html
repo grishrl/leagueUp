@@ -1,6 +1,6 @@
 <div class="pb-5 pt-5 mb-5">
     <div class="row">
-        <div class="col-8 offset-2">
+        <div class="col text-center">
             <div class="row">
                 <div class="col">
                     <div class="dropdown">
@@ -23,41 +23,47 @@
                     <button type="button" (click)="adminRefreshMMR()" class="mt-1 btn btn-info">Update Team MMR</button>
                 </div>
                 <div class="col">
-                    <button type="button" (click)="adminSave()" class="mt-1 btn btn-success ">Save</button>
+                    <button class="btn btn-warning" (click)="forfeit()"> Forfeit Matches </button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <button type="button" [disabled]="!updateTeamControlGroup.valid" (click)="adminSave()" class="mt-1 btn btn-success ">Save</button>
                 </div>
             </div>
         </div>
     </div>
 
+
+
     <div class="row">
         <div class="col">
-            <app-image-upload [showEdit]="true" [embedded]="true" [teamName]="returnedProfile.teamName" [teamLogo]="returnedProfile.logo">
-            </app-image-upload>
+            <app-image-upload [showEdit]="true" [embedded]="true" [teamName]="returnedProfile.teamName" [width]="500" [height]="350" [existingImage]="returnedProfile.logo" [imageType]="'teamlogo'"></app-image-upload>
             <div class="mt-2">
                 <strong>Team Id:</strong>{{returnedProfile._id}}
             </div>
-            <mat-form-field class="mat-FullWidth ">
-                <input matInput placeholder="Team Name " [formControl]="nameControl " [(ngModel)]="returnedProfile.teamName " (ngModelChange)="nameChange()">
-                <mat-error *ngIf="nameControl.hasError( 'invalidCharacters') ">
-                    Invalid character entered
-                </mat-error>
-                <mat-error *ngIf="nameControl.hasError( 'required') ">
-                    Team name is required
-                </mat-error>
-            </mat-form-field>
+            <app-team-name [formControl]="nameControl" [(ngModel)]="returnedProfile.teamName"></app-team-name>
             <mat-slide-toggle [disabled]="disabled" [(ngModel)]="returnedProfile.lookingForMore">
                 Looking for More.
             </mat-slide-toggle>
             <div class="row">
                 <div class="col">
-                    HOTS LOGS MMR: {{returnedProfile.teamMMRAvg}}
-                </div>
-                <div class="col">
                     HEROES PROFILE MMR: {{returnedProfile.hpMmrAvg}}
                 </div>
                 <div class="col">
+                    Storm Rank Avg: {{returnedProfile.stormRankAvg}}
+                    <div>
+                        <app-members-reporting [teamMembers]="returnedProfile.teamMembers"></app-members-reporting>
+                    </div>
+                </div>
+                <div class="col">
+                    HOTS LOGS MMR: {{returnedProfile.teamMMRAvg}}
+                </div>
+
+                <div class="col">
                     NGS MMR: {{returnedProfile.ngsMmrAvg}}
                 </div>
+
             </div>
         </div>
     </div>
@@ -94,9 +100,9 @@
             <div class="row mt-3 " *ngFor="let player of displayMembersLeft ">
                 <!-- player name -->
                 <div class="col-7 verticalAlign ">
-                    <a [routerLink]="[ '/profile/', user.routeFriendlyUsername(player.displayName)] ">
+                    <app-player-link [player]="player.displayName">
                         <i *ngIf=" team.captainLevel(returnedProfile, player.displayName) " class="fas fa-crown "></i> {{player.displayName}}
-                    </a>
+                    </app-player-link>
                 </div>
                 <!-- remove from team : shows for admin and captain -->
                 <div *ngIf="!disabled " class="col ">
@@ -108,15 +114,27 @@
             <div class="row mt-3 " *ngFor="let player of displayMembersRight ">
                 <!-- player name -->
                 <div class="col ">
-                    <a [routerLink]="[ '/profile/', user.routeFriendlyUsername(player.displayName)] ">
+                    <app-player-link [player]="player.displayName">
                         <i *ngIf=" team.captainLevel(returnedProfile , player.displayName)" class="fas fa-crown "></i> {{player.displayName}}
-                    </a>
+                    </app-player-link>
                 </div>
                 <!-- remove from team : shows for admin and captain -->
                 <div *ngIf="!disabled " class="col ">
                     <button class="btn btn-danger " (click)="openConfirmRemove(player.displayName) " [disabled]="deleteUserButtonOn(player.displayName) "> X </button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="row mt-3 ">
+        <div class="col ">
+            <h2>Team Members Verified Ranks:</h2>
+        </div>
+    </div>
+
+    <div class="row mt-3" *ngFor="let player of returnedProfile.teamMembers">
+        <div class="col ">
+            <app-verified-storm-ranks-display-name [admin]="true" [displayName]="player.displayName"></app-verified-storm-ranks-display-name>
         </div>
     </div>
 
@@ -131,20 +149,57 @@
             <div class="col ">
                 <div class="row mt-3 " *ngFor="let player of displayPendingMembersLeft ">
                     <div class="col-7 verticalAlign ">
-                        <a [routerLink]="[ '/profile/', user.routeFriendlyUsername(player.displayName)] ">{{player.displayName}}</a>
-
+                        <app-player-link [player]="player.displayName">
+                            {{player.displayName}}
+                        </app-player-link>
                     </div>
-
                 </div>
             </div>
             <div class="col ">
                 <div class="row mt-3 " *ngFor="let player of displayPendingMembersRight ">
                     <div class="col ">
-                        <a [routerLink]="[ '/profile/', user.routeFriendlyUsername(player.displayName)] ">{{player.displayName}}</a>
+                        <app-player-link [player]="player.displayName">
+                            {{player.displayName}}
+                        </app-player-link>
                     </div>
 
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="row mt-3 ">
+            <div class="col ">
+                <h2>Invited Members:</h2>
+            </div>
+        </div>
+        <!-- team members list -->
+        <div class="row mt-3 ">
+            <div class="col ">
+                <div class="row mt-3 " *ngFor="let player of returnedProfile.invitedUsers ">
+                    <div class="col-7 verticalAlign ">
+                        <app-player-link [player]="player">
+                            {{player}}
+                        </app-player-link>
+                    </div>
+                    <div class="col">
+                        <button class="btn btn-danger" (click)="removeInvited(player)">Remove</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col">
+            <h3>Notes:</h3>
+            <app-notes-view [id]="returnedProfile._id"></app-notes-view>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <app-notes-create [id]="returnedProfile._id"></app-notes-create>
         </div>
     </div>
 

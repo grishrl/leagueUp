@@ -1,7 +1,17 @@
+/**
+ * Methods for handling uploading a team logo and archiving a team logo
+ * 
+ * reviewed: 10-5-2020
+ * reviewer: wraith
+ */
+
 const Team = require("../models/team-models");
 const AWS = require('aws-sdk');
-const logger = require('../subroutines/sys-logging-subs');
+const utils = require('../utils')
 const CustomError = require('./customError');
+const { s3deleteFile } = require('../methods/aws-s3/delete-s3-file');
+const { s3putObject } = require('../methods/aws-s3/put-s3-file');
+const { prepImage } = require('./image-upload-common');
 
 AWS.config.update({
     accessKeyId: process.env.S3accessKeyId,
@@ -9,38 +19,22 @@ AWS.config.update({
     region: process.env.S3region
 });
 
-const s3Bucket = new AWS.S3({
-    params: {
-        Bucket: process.env.s3bucketImages
-    }
-});
 
-async function uploadTeamLogo(path, dataURI, teamName) {
-    let uploadedFileName = '';
-    var decoded = Buffer.byteLength(dataURI, 'base64');
+/**
+ * @name uploadTeamLogo
+ * @function
+ * @description uploads team logo to s3 bucket and updates team profile with logo
+ * @param {string} dataURI 
+ * @param {string} teamName 
+ */
+async function uploadTeamLogo(dataURI, teamName) {
 
-    if (decoded.length > 2500000) {
-        let error = new CustomError('fileSize', 'File is too big!');
-        throw error;
-    } else {
-        var png = dataURI.indexOf('png');
-        var jpg = dataURI.indexOf('jpg');
-        var jpeg = dataURI.indexOf('jpeg');
-        var gif = dataURI.indexOf('gif');
-        var stamp = Date.now();
-        stamp = stamp.toString();
-        stamp = stamp.slice(stamp.length - 4, stamp.length);
-        uploadedFileName += teamName + stamp + "_logo.png";
-        var buf = new Buffer.from(dataURI.replace(/^data:image\/\w+;base64,/, ""), 'base64');
-        var data = {
-            Key: uploadedFileName,
-            Body: buf,
-            ContentEncoding: 'base64',
-            ContentType: 'image/png'
-        };
+    let preppedImage = await prepImage(dataURI, { teamName });
+
+    if (preppedImage) {
         let successObject = {};
-        let putObjectPromise = s3Bucket.putObject(data).promise();
-        let s3await = await putObjectPromise.then(
+
+        let s3await = await s3putObject(process.env.s3bucketImages, null, preppedImage.fileName, preppedImage.buffer).then(
             s3pass => {
                 return {
                     "cont": true,
@@ -53,39 +47,38 @@ async function uploadTeamLogo(path, dataURI, teamName) {
                     "eo": s3fail
                 };
             }
-        )
+        );
+
+        //continue if s3 upload worked
         if (s3await.cont) {
             let lower = teamName.toLowerCase();
             let foundTeam = await Team.findOne({
                 teamName_lower: lower
             }).then((foundTeam) => {
                 if (foundTeam) {
-                    var logoToDelete;
-                    if (foundTeam.logo) {
-                        logoToDelete = foundTeam.logo;
-                    }
-                    if (logoToDelete) {
-                        deleteFile(logoToDelete);
-                    }
                     return foundTeam;
                 } else {
-                    deleteFile(filePath);
                     let error = new CustomError('queryError', 'Team not found!');
                     throw error;
                 }
             }, (err) => {
-                deleteFile(filePath);
                 let error = new CustomError('queryError', 'Team not found!');
                 throw error;
             });
             if (foundTeam) {
-                foundTeam.logo = uploadedFileName;
+                //delete the exising logo
+                var logoToDelete;
+                if (foundTeam.logo) {
+                    logoToDelete = foundTeam.logo;
+                }
+                if (logoToDelete) {
+                    s3deleteFile(process.env.s3bucketImages, null, logoToDelete);
+                }
+                //set the team info to the new logo filename
+                foundTeam.logo = preppedImage.fileName;
                 let bubbleUp = await foundTeam.save().then((savedTeam) => {
-                    if (savedTeam) {
-                        return savedTeam;
-                    }
+                    return savedTeam;
                 }, (err) => {
-                    deleteFile(filePath);
                     let error = new CustomError('genErr', 'Error uploading file!');
                     throw error;
                 });
@@ -94,16 +87,24 @@ async function uploadTeamLogo(path, dataURI, teamName) {
                     successObject.eo = bubbleUp.toObject();
                 }
             }
-
         } else {
             let error = new CustomError('uploadError', 's3 upload failure!');
             throw error;
         }
-
         return successObject;
+    } else {
+        let error = new CustomError('fileSize', 'File is too big!');
+        throw error;
     }
+
 }
 
+/**
+ * @name teamLogoArchive
+ * @function
+ * @description adds provided logo into the team logo archive
+ * @param {string} logo 
+ */
 async function teamLogoArchive(logo) {
     let aws = new AWS.S3({
 
@@ -124,6 +125,7 @@ async function teamLogoArchive(logo) {
             };
         },
         s3fail => {
+            console.log(s3fail);
             return {
                 "cont": false,
                 "eo": s3fail
@@ -134,45 +136,18 @@ async function teamLogoArchive(logo) {
         successObject.message = "File uploaded";
         successObject.eo = {};
     } else {
-        let error = new CustomError('uploadError', 's3 copy failure!');
-        throw error;
+        utils.errLogger('teamLogoUpload', s3await.eo, `${logo} Uploading team logo to archive failed.`)
     }
     return successObject;
 }
 
-function deleteFile(path) {
-    let data = {
-        Bucket: process.env.s3bucketImages,
-        Key: path
-    };
-    s3Bucket.deleteObject(data, (err, data) => {
-        if (err) {
-            //log object
-            let sysObj = {};
-            sysObj.actor = 'SYSTEM';
-            sysObj.action = 'error deleting from AWS ';
-            sysObj.location = 'team-route-deleteFile'
-            sysObj.logLevel = 'ERROR';
-            sysObj.error = err;
-            sysObj.target = path;
-            sysObj.timeStamp = new Date().getTime();
-            logger(sysObj);
-        } else {
-            //log object
-            let sysObj = {};
-            sysObj.actor = 'SYSTEM';
-            sysObj.action = 'deleted from AWS ';
-            sysObj.location = 'team-route-deleteFile'
-            sysObj.logLevel = 'STD';
-            sysObj.target = path;
-            sysObj.timeStamp = new Date().getTime();
-            logger(sysObj);
-        }
-    })
+//using this as a wrapper for my dry function
+function teamLogoDelete(path) {
+    return s3deleteFile(process.env.s3bucketImages, null, path);
 }
 
 module.exports = {
     uploadTeamLogo: uploadTeamLogo,
     archiveTeamLogo: teamLogoArchive,
-    deleteFile: deleteFile
+    teamLogoDelete: teamLogoDelete
 };

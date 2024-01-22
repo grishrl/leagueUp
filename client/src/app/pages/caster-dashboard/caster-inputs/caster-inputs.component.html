@@ -1,0 +1,32 @@
+<div class="row mt-2">
+    <div class="col text-center">
+        <button class="btn btn-primary" (click)="hideForm = !hideForm"> Add Caster </button>
+    </div>
+    <!-- NOTE: caster changes -->
+    <div class="col">
+        <button class="btn btn-success" (click)="claimMatch()">One Click Claim</button>
+    </div>
+</div>
+<div [hidden]="hideForm" class="row">
+    <div class="col">
+        <mat-form-field class="mat-FullWidth">
+          <mat-label>Caster Name</mat-label>
+            <input matInput [formControl]="casterNameControl" placeholder="Caster Name" [(ngModel)]="name">
+            <mat-error *ngIf="casterNameControl.hasError('required')">
+                Caster Name is required
+            </mat-error>
+        </mat-form-field>
+    </div>
+    <div class="col">
+        <mat-form-field class="mat-FullWidth">
+          <mat-label>Caster URL</mat-label>
+            <input matInput [formControl]="casterUrlControl" placeholder="Caster URL" [(ngModel)]="URL">
+            <mat-error *ngIf="casterUrlControl.hasError('required')">
+                Caster URL is required
+            </mat-error>
+        </mat-form-field>
+    </div>
+    <div class="col">
+        <button class="btn btn-success" [disabled]="casterInputForm.invalid" (click)="saveCasterInfo(name, URL)">Submit</button>
+    </div>
+</div>

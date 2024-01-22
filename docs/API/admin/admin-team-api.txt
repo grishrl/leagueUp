@@ -1,0 +1,128 @@
+Template:
+Route: 
+Method: 
+Auth: 
+Params: 
+Return: 
+
+Route: api/admin/pendingMemberQueue
+Method: GET
+Auth: Auth / Schedule Generator Permission
+Params: Auth / Team Permission
+Return: Returns 20 pending member queue items
+
+Route: api/admin/pmq/delete
+Method: POST
+Auth: Authenticated / Team Permission
+Params: JSON body; queue: queue object
+Return: deletes provided queue
+
+Route: api/admin/pmq/addnote
+Description: Creates a note
+Method: POST
+Auth: Authenticated / Team Permission
+Params: JSON body; queue: queue object, note: note object
+Return: created note
+
+Route: api/admin/pendingAvatarQueue
+Method: GET
+Auth: Authenticated / User Permissions
+Params: none
+Return: 20 pending member avatar queue items
+
+Route: api/admin/pendingRankQueues
+Method: GET
+Auth: Authenticated / User Permissions
+Params: none
+Return: 20 pending member rank queue items
+
+Route: api/admin/team/removeMember
+Description: Removes provided user from the provided team object
+Method: POST
+Auth: Authenticated / Team Permissions
+Params: JSON Body; teamName: string, removeUser: string
+Return: Modified team
+
+Route: api/admin/team/removeInvitedMember
+Description: Removes provided user from the provided team object, invited memebers array
+Method: POST
+Auth: Authenticated / Team Permissions
+Params: JSON Body; teamName: string, removeUser: string
+Return: Modified team
+
+Route: api/admin/reassignCaptain
+Description:Promotes the provided user to captain of the provided team
+Method: POST
+Auth: Authenticated / Team Permissions
+Params: JSON Body; teamName: string, userName: string
+Return: Modified team
+
+Route: api/admin/approveMemberAdd
+Description:Adds or Removes the provided user to the provided team
+Method: POST
+Auth: Authenticated / Team Permissions
+Params: JSON Body; teamId: string, memberId: string, approved:boolean
+Return: Modified team
+
+Route: api/admin/delete/team
+Description: Deletes provided team
+Method: POST
+Auth: Authenticated / Team Permissions
+Params: JSON Body; teamName: string
+Return: Deleted team
+
+Route: api/admin/forfeit/team
+Description: Forfiets teams matches
+Method: POST
+Auth: Authenticated / Team Permissions
+Params: JSON Body; teamName: string
+Return: sucess info object
+
+Route: api/admin/teamSave
+Description: Saves team object
+Method: POST
+Auth: Authenticated / Team Permissions
+Params: JSON Body; teamName: string, teamObj: object
+Return: saved team object
+
+Route: api/admin/resultantmmr
+Description: Calculates the team MMR taking into account the new members mmr
+Method: POST
+Auth: Authenticated / Team Permissions
+Params: JSON Body; userMmr: number, teamName: string
+Return: calculated mmr
+
+Route: admin/team/refreshMmr
+Description: Updates the team MMR
+Method: POST
+Auth: Authenticated / Team Permissions
+Params: JSON Body; teamName: string
+Return: Team object
+
+Route: admin/get/teams/all
+Description: Updates the team MMR
+Method: GET
+Auth: Authenticated / Team Permissions
+Params: 
+Return: all Team objects
+
+Route: admin/team/memberAdd
+Description: Adds provided user to provided team
+Method: GET
+Auth: Authenticated / Team Permissions
+Params: JSON body; user:String, teamName:string
+Return: updated team object
+
+Route: api/admin/team/uploadLogo
+Description: Updates team logo
+Method: POST
+Auth: Authenticated / Team Permissions
+Params: JSON body; dataURI:string, teamName:string
+Return: updated team object
+
+Route: api/admin/team/removeLogo
+Description: Removes team logo
+Method: POST
+Auth: Authenticated / Team Permissions
+Params: JSON body; teamName:string
+Return: updated team object

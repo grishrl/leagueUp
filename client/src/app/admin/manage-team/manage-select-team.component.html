@@ -17,6 +17,7 @@
                 <div class="row">
                     <div class="col">
                         <mat-form-field class="mat-FullWidth">
+                          <mat-label>Filter by name:</mat-label>
                             <input matInput placeholder="Filter by name" [(ngModel)]="filterName" (ngModelChange)="filterTeams(filterName)">
                         </mat-form-field>
                     </div>
@@ -43,10 +44,13 @@
                                 <span class="titles">Members:</span> {{team.teamMembers.length}}
                             </div>
                             <div class="col">
-                                <span class="titles">MMR:</span> {{team.teamMMRAvg}}
+                                <span class="titles">MMR:</span> {{team.hpMmrAvg}}
                             </div>
                             <div class="col">
-
+                                <span class="titles">NGS Team Rank Avg:</span> {{team.stormRankAvg}}
+                                <div>
+                                    <app-members-reporting [teamMembers]="team.teamMembers"></app-members-reporting>
+                                </div>
                             </div>
                         </div>
                         <div class="row">

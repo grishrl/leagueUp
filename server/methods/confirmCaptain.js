@@ -1,6 +1,18 @@
+/**
+ * Middleware to confirm the user calling the API is a captain secures the routes so that only captains can do certain team acts
+ */
+
 const util = require('../utils');
 const Team = require("../models/team-models");
 //this confirms that the calling user is a captain of the team
+/**
+ * @name confirmCaptain
+ * @function
+ * @description middleware to confirm the user calling the API is a captain secures the routes so that only captains can do certain team acts
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
 function confirmCaptain(req, res, next) {
     const path = 'captianCheck';
     var callingUser = req.user;

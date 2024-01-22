@@ -1,0 +1,30 @@
+Template:
+Route: 
+Method: 
+Auth: 
+Params: 
+Return: 
+
+Route: api/division/get
+Method: get
+Auth: Open
+Params: division (string) division concat name
+Return: Division object
+
+Route: api/division/get/by/teamname
+Method: get
+Auth: Open
+Params: teamName (string)
+Return: Division object which team belongs to
+
+Route: api/division/get/all
+Method: get
+Auth: Open
+Params: none
+Return: Returns all divisions
+
+Route: api/division/get/any
+Method: get
+Auth: Open
+Params: divInfo (string)
+Return: Returns division that matches divInfo on divisionName, displayName or divisionConcat

@@ -1,0 +1,62 @@
+<div>
+    <div class="item-player" style="height: 492px; margin-bottom: 0px;">
+        <div class="head-player">
+            <img src="{{returnedProfile.avatar | commonPipe:user.avatarFQDN}}" alt="player-avatar">
+            <div style="height: 200px"></div>
+        </div>
+        <div class="info-player">
+            <span class="number-player">
+
+       </span>
+            <h4>
+                <app-player-link *ngIf="returnedProfile.displayName" [player]="returnedProfile.displayName">
+                    {{returnedProfile.displayName}}</app-player-link>
+                <!-- <span>Main Role</span> -->
+            </h4>
+            <ul>
+                <li>
+                    <strong>Team:</strong> <span>
+             <app-team-link [team]="returnedProfile.teamName">
+               {{returnedProfile.teamName}}
+             </app-team-link>
+           </span>
+                </li>
+                <li><strong>Discord:</strong> <span>{{returnedProfile.discordTag}}</span></li>
+                <li><strong>Heroes Profile MMR:</strong> <span>{{returnedProfile.heroesProfileMmr}}</span></li>
+                <li *ngIf="returnedProfile.ngsMmr"><strong>NGS League MMR:</strong>
+                    <span>{{returnedProfile.ngsMmr}}</span></li>
+                <li><strong>Matches:</strong> <span>{{estimateGamesPlayed()}}</span></li>
+                <li><strong>Seasons:</strong> <span>{{returnedProfile.seasonsPlayed}}</span></li>
+                <li *ngIf="mvpCounts>0"><strong>MVPs:</strong> <span>{{mvpCounts}}</span></li>
+            </ul>
+
+            <h6 *ngIf="returnedProfile.twitch || returnedProfile.twitter || returnedProfile.youtube">
+                Follow {{returnedProfile.displayName}}
+            </h6>
+
+            <ul class="social-player">
+                <li *ngIf="returnedProfile.twitch">
+                    <div>
+                        <a href="{{returnedProfile.twitch | commonPipe:util.prePendHttp}}" target="_blank" class="facebook">
+                            <i class="fab fa-twitch"></i>
+                        </a>
+                    </div>
+                </li>
+                <li *ngIf="returnedProfile.twitter">
+                    <div>
+                        <a href="{{returnedProfile.twitter | commonPipe:util.prePendHttp}}" target="_blank" class="twitter-icon">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </div>
+                </li>
+                <li>
+                    <div *ngIf="returnedProfile.youtube">
+                        <a href="{{returnedProfile.youtube | commonPipe:util.prePendHttp}}" target="_blank" class="youtube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

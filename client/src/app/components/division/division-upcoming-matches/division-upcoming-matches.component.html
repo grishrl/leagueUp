@@ -1,0 +1,43 @@
+<div class="panel-box">
+    <div class="titles">
+        <h4><i class="fa fa-calendar"></i>Division Agenda</h4>
+    </div>
+
+    <!-- List Diary -->
+    <ul class="list-diary">
+        <!-- Item List Diary -->
+        <li *ngFor="let match of next4matches">
+            <h6>
+                <!--GROUP A  --><span>
+          {{match.scheduledTime.startTime | commonPipe:util.getFormattedDate:"ddd MMM DD YYYY - hh:mm A zz"}}</span>
+            </h6>
+            <ul class="club-logo">
+                <li>
+                    <img src="{{match.home.logo}}" alt="">
+
+                    <app-team-link [team]="match.home.teamName">
+                        <span class="obnoxious-long-name-band-aid">
+                        {{match.home.teamName}}
+                        </span>
+                    </app-team-link>
+
+
+                </li>
+                <li>
+                    <img src="{{match.away.logo}}" alt="">
+
+                    <app-team-link [team]="match.away.teamName">
+                        <span class="obnoxious-long-name-band-aid">
+                        {{match.away.teamName}}
+                        </span>
+                    </app-team-link>
+
+                </li>
+            </ul>
+        </li>
+        <!-- End Item List Diary -->
+
+    </ul>
+    <!-- End List Diary -->
+</div>
+<!-- End Diary -->

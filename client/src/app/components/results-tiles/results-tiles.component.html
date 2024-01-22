@@ -1,0 +1,45 @@
+<div class="recent-results results-page" *ngIf="provMatches.length>0 else noResults">
+    <div class="info-results">
+        <ul>
+            <li *ngFor="let match of provMatches">
+                <span class="head" style="overflow: auto;">
+          {{match.home.teamName}} Vs {{match.away.teamName}} <span
+            *ngIf="match.scheduledTime && match.scheduledTime.startTime"
+            class="date">{{match.scheduledTime.startTime | commonPipe:util.getFormattedDate:"ddd MMM DD YYYY"}}</span>
+                </span>
+
+
+                <div class="goals-result">
+                    <span>
+                    <i *ngIf="match | commonPipe:dominator:'home'" style="position: absolute; top: 70px;" class="fas fa-lg fa-crown"></i>
+                    <i *ngIf="match | commonPipe:forfeit:'home'" style="position: absolute; top: 70px;" class="far fa-lg fa-flag"></i>
+                    <app-team-link [team]="match.home.teamName" [season]="seasonVal">
+                      <img src="{{team.imageFQDN(match.home.logo, seasonVal)}}" alt=""> {{match.home.ticker}}
+                    </app-team-link>
+                    </span>
+
+                    <span class="goals">
+                      <div style="color:black; height: 28px;">{{match | commonPipe:resultText}}
+                      </div>
+                      <b>{{match | commonPipe:reportScore:'home'}}</b> - <b>{{match | commonPipe:reportScore:'away'}}</b>
+                    <a [routerLink]="['/match/view/', match.matchId]" class="btn theme">View More</a>
+                    </span>
+                    <span>
+                      <i *ngIf="match | commonPipe:dominator:'away'" style="position: absolute; top: 70px;" class="fas fa-lg fa-crown"></i>
+                      <i *ngIf="match | commonPipe:forfeit:'away'" style="position: absolute; top: 70px;" class="far fa-lg fa-flag"></i>
+                      <app-team-link [team]="match.away.teamName" [season]="seasonVal">
+                          <img src="{{team.imageFQDN(match.away.logo, seasonVal)}}" alt=""> {{match.away.ticker}}
+                      </app-team-link>
+                    </span>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+<ng-template #noResults>
+    <div class="row">
+        <div class="col">
+            <h4>No Results Currently!</h4>
+        </div>
+    </div>
+</ng-template>

@@ -1,0 +1,18 @@
+Template:
+Route: 
+Method: 
+Auth: 
+Params: 
+Return: 
+
+Route: api/admin/upsertSeasonInfo
+Method: POST
+Auth: Auth api/ Schedule Generator Permission
+Params: JSON Body; body is the object for the season info object
+Return: Upserts a season info
+
+Route: api/admin/getSeasonInfo
+Method: GET
+Auth: Open
+Params: season: string
+Return: Season Info Objects

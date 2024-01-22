@@ -1,5 +1,15 @@
-//import the express server from file
-const app = require('./serverConf')['app'];
+const { app } = require('./serverConf');
+
+
+if (process.env.runNewRelic != 'false') {
+    console.log('run');
+    require('newrelic');
+}
+
+const express = require("express");
+//host name and port
+// const hostname = process.env.hostname;
+// const port = process.env.PORT;
 
 //load route files
 const authRoutes = require('./server/routes/auth-routes');
@@ -22,59 +32,125 @@ const utilityRoutes = require('./server/routes/utility-routes');
 const eventRoutes = require('./server/routes/event-routes');
 const history = require('./server/routes/historical-routes');
 const blog = require('./server/routes/blog-routes');
+const mvp = require('./server/routes/mvp-routes');
+const notes = require('./server/routes/notes-routes');
+const playerrank = require('./server/routes/player-rank-routes');
+const s3clientUploads = require('./server/routes/s3-client-direct-upload-routes');
 
 //load mongoose and other utilities 
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const passportSetup = require('./server/configs/passport-setup');
-const express = require("express");
 const path = require('path');
 
-//configs...
-app.use(bodyParser.json({
-    limit: '2.5mb',
-    extended: true
-}));
+const ApiLogger = require('./server/methods/aws-s3/api-logger');
 
-app.use(bodyParser.urlencoded({ extended: false }));
 
-//connect to mongo db
-mongoose.connect(process.env.mongoURI, { useNewUrlParser: true }, () => {
-    console.log('connected to mongodb');
-});
+function startApp() {
 
-//setup Routes
-app.use('/auth', authRoutes);
-app.use('/user', profileRoutes);
-app.use('/team', teamRoutes);
-app.use('/admin', adminRoutes);
-app.use('/division', divisionRoutes);
-app.use('/search', searchRoutes);
-app.use('/outreach', outreachRoutes);
-app.use('/admin', adminTeam);
-app.use('/admin', adminLogs);
-app.use('/admin', adminDivision);
-app.use('/admin', adminUser);
-app.use('/admin', adminMatch);
-app.use('/schedule', scheduleRoutes);
-app.use('/standings', standingRoutes);
-app.use('/messageCenter', messageRoutes);
-app.use('/request', requestRoutes);
-app.use('/utility', utilityRoutes);
-app.use('/events', eventRoutes);
-app.use('/history', history);
-app.use('/blog', blog);
+    var serverLogger;
+    // //bootstrap express server
+    // const app = express();
 
-//this is a special route that can be used for seeding teams and users into a dev env when needed
-// const seeding = require('./server/routes/seeding-route');
-// app.use('/dev', seeding);
+    // //create server listening on port
+    // let server = app.listen(port, hostname, () => {
+    //     console.log(`Server ${hostname} running at on ${port}`);
+    // });
 
-//initialize passport
-app.use(passport.initialize());
+    //configs...
+    app.use(bodyParser.json({
+        limit: '2.5mb',
+        extended: true
+    }));
 
-app.use('/', express.static(path.join(__dirname, './client/dist/client/')));
+    app.use(bodyParser.urlencoded({
+        extended: false
+    }));
 
-app.get('*', function(req, res) {
-    res.sendFile(path.join(__dirname, './client/dist/client/index.html'));
-});
+    //connect to mongo db
+    mongoose.set('useUnifiedTopology', true);
+    mongoose.set('useFindAndModify', false);
+    mongoose.connect(process.env.mongoURI, {
+        useNewUrlParser: true
+    }, () => {
+        console.log('connected to mongodb');
+    });
+
+    var forceSsl = function(req, res, next) {
+
+        if (process.env.environment !== 'local') {
+
+            if (req.headers['x-forwarded-proto'] !== 'https') {
+                return res.redirect(['https://', req.get('Host'), req.url].join(''));
+            }
+            return next();
+
+        } else {
+            return next();
+        }
+
+    };
+
+
+    app.use(forceSsl);
+
+    app.use(function(req, res, next) {
+
+        if (process.env.enableApiDeepLogger && process.env.enableApiDeepLogger != 'false') {
+            serverLogger.addToLog(req);
+        }
+        res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
+        res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
+        res.header("Access-Control-Allow-Headers", "Authorization, Origin, X-Requested-With, Content-Type, Accept");
+        next();
+
+    });
+
+
+    //setup Routes
+    app.use('/api/auth', authRoutes);
+    app.use('/api/user', profileRoutes);
+    app.use('/api/team', teamRoutes);
+    app.use('/api/admin', adminRoutes);
+    app.use('/api/division', divisionRoutes);
+    app.use('/api/search', searchRoutes);
+    app.use('/api/outreach', outreachRoutes);
+    app.use('/api/admin', adminTeam);
+    app.use('/api/admin', adminLogs);
+    app.use('/api/admin', adminDivision);
+    app.use('/api/admin', adminUser);
+    app.use('/api/admin', adminMatch);
+    app.use('/api/schedule', scheduleRoutes);
+    app.use('/api/standings', standingRoutes);
+    app.use('/api/messageCenter', messageRoutes);
+    app.use('/api/request', requestRoutes);
+    app.use('/api/utility', utilityRoutes);
+    app.use('/api/events', eventRoutes);
+    app.use('/api/history', history);
+    app.use('/api/blog', blog);
+    app.use('/api/mvp', mvp);
+    app.use('/api/admin', notes);
+    app.use('/api/playerrank', playerrank);
+    app.use('/api/s3', s3clientUploads);
+
+    //this is a special route that can be used for seeding teams and users into a dev env when needed
+    // const seeding = require('./server/routes/seeding-route');
+    // app.use('/api/dev', seeding);
+
+    //initialize passport
+    app.use(passport.initialize());
+
+    app.use('/', express.static(path.join(__dirname, './client/dist/client/')));
+
+    app.get('*', function(req, res) {
+        res.sendFile(path.join(__dirname, './client/dist/client/index.html'));
+    });
+
+    if (process.env.enableApiDeepLogger && process.env.enableApiDeepLogger != 'false') {
+        serverLogger = ApiLogger(app);
+    }
+
+
+}
+startApp();

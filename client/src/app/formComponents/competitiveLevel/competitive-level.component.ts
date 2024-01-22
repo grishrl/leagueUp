@@ -20,22 +20,24 @@ export class TextInputComponent implements OnInit {
     { val: 5, display: 'High' }
   ]
 
-  competitiveLevelValue: string;
+  competitiveLevelValue: number;
 
   @Output()
   competitiveLevelChange = new EventEmitter();
 
   @Input()
   get competitiveLevel() {
-    return this.competitiveLevel;
+    return this.competitiveLevelValue;
   }
 
   set competitiveLevel(val) {
     this.competitiveLevelValue = val;
+    this.getDisplay(val);
     this.competitiveLevelChange.emit(this.competitiveLevelValue);
   }
 
   updateValue(){
+    this.getDisplay(this.competitiveLevelValue);
     this.competitiveLevelChange.emit(this.competitiveLevelValue);
   }
 
@@ -49,12 +51,16 @@ export class TextInputComponent implements OnInit {
     if(!ret){
       ret = 'Error in compettive level method';
     }
-    return ret;
+    this.competitiveLevelDisplay = ret;
   }
 
   constructor() { }
 
+  competitiveLevelDisplay;
   ngOnInit() {
+    if(this.competitiveLevelValue){
+      this.getDisplay(this.competitiveLevel);
+    }
   }
 
 }

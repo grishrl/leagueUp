@@ -15,7 +15,8 @@ export class ResponseInterceptor implements HttpInterceptor {
     'nexusgamingseries'
   ];
   urlBlacklist = [
-    'googleapis'
+    'googleapis',
+    's3-client-uploads'
   ]
 
   constructor(public auth: AuthService, private router:Router) { }

@@ -1,9 +1,9 @@
 <div class="row">
-    <div class="col">
+    <div class="col" *ngIf="!errorState else errorTemplate">
         <div class="row">
             <div class="col">
-                Name:
-                <app-player-link [player]="player.displayName">{{player.displayName}}</app-player-link>
+                <strong>Name: </strong>
+                <app-player-link [player]="player.displayName" [target]="'_blank'">{{player.displayName}}</app-player-link>
             </div>
         </div>
         <div class="row" *ngIf="player.smurfAccount">
@@ -14,34 +14,42 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <div *ngIf="player.averageMmr; else noMmr">Hots Logs MMR: {{player.averageMmr}}</div>
-            </div>
-            <div class="col-12">
-                <div *ngIf="player.heroesProfileMmr; else nohpMmr">Heros-Profile MMR: {{player.heroesProfileMmr}}</div>
+                <div *ngIf="player.heroesProfileMmr; else nohpMmr"><strong>Heros-Profile MMR:</strong> {{player.heroesProfileMmr}}</div>
                 <div *ngIf="player.lowReplays">! This player has few replays !</div>
             </div>
-            <div class="col-12">
-                <div *ngIf="player.ngsMmr; else nongsMmr">NGS MMR: {{player.ngsMmr}}</div>
-            </div>
-            <ng-template #noMmr>
-                Warning: Player does not have a hotslogs mmr!
-            </ng-template>
             <ng-template #nohpMmr>
                 Warning: Player does not have a heroes profile mmr!
-            </ng-template>
-            <ng-template #nongsMmr>
-                Warning: Player does not have league specific mmr! New Guy?
             </ng-template>
         </div>
         <div class="row">
             <div class="col">
-                <div *ngIf="player.hlRankMetal && player.hlRankDivision; else noMetalDiv">
-                    Hero League: {{player.hlRankMetal}} - {{player.hlRankDivision}}
+                <app-verified-storm-league-ranks-view [orientation]="'vertical'" [admin]="false" [userId]="player._id" [verifiedUserRanks]="player.verifiedRankHistory">
+
+                </app-verified-storm-league-ranks-view>
+                <!-- <div *ngIf="player.verifiedRankHistory && player.verifiedRankHistory.length>0; else noMetalDiv">
+                    <div> <strong>Storm Leauge Ranks:</strong></div>
+                    <ng-container *ngFor="let r of player.verifiedRankHistory">
+                        <div class="border p-2" *ngIf="r?.status == 'verified'">
+                            <div>Year {{r.year}} Season {{r.season}}</div>
+                            Storm League: {{r?.hlRankMetal}} - {{r?.hlRankDivision}}
+                            <div>NGS Level: {{r.level}}</div>
+                            <div>
+                                <app-storm-league [ngsRankNumber]="r.level"></app-storm-league>
+                            </div>
+                        </div>
+                    </ng-container>
+
+
                 </div>
                 <ng-template #noMetalDiv>
-                    Player has not recorded an ingame metal/div in their profile, please contact them!
-                </ng-template>
+                    Player has no verified in game ranks!
+                </ng-template> -->
             </div>
         </div>
     </div>
 </div>
+<ng-template #errorTemplate>
+    <div class="col">
+        <h1> An Unexpected Error has occured.</h1>
+    </div>
+</ng-template>

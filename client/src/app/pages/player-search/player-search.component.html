@@ -1,0 +1,39 @@
+<app-banner-image [bannerTitle]="'Player Seach'"></app-banner-image>
+
+<section class="content-info">
+
+    <div class="container paddings-mini">
+        <div class="row">
+
+
+            <div class="col">
+                <!-- Content Text-->
+                <div class="panel-box">
+                    <div class="titles no-margin">
+                        <h4>Player Search</h4>
+                    </div>
+
+                    <div class="info-panel text-center">
+                        <app-user-search (userSelected)="receiveUser($event)" [buttonText]="'Select Player'"></app-user-search>
+                    </div>
+                </div>
+                <!-- End Content Text-->
+
+            </div>
+        </div>
+        <div *ngIf="selectedUser" class="panel-box p-5 row">
+            <div class="col"></div>
+            <div class="col-4">
+                <!--  -->
+                <app-player-small-card [playerID]="selectedUser.displayName" [showTeamLink]="true"></app-player-small-card>
+            </div>
+            <!-- <div class="col-4">
+                <app-single-team-display *ngIf="team" [item]="team"></app-single-team-display>
+            </div> -->
+            <div class="col"></div>
+        </div>
+    </div>
+
+
+
+</section>
