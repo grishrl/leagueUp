@@ -65,7 +65,6 @@ export class ScheduleTableComponent implements OnInit {
 
       // show bye matches
       if (this.showBye) {
-        let missingRound;
         let index = 0;
 
         for (var i = 0; i < val.length; i++) {
@@ -82,29 +81,22 @@ export class ScheduleTableComponent implements OnInit {
           });
 
           if (found == false) {
-            missingRound = round;
             // index = i;
             val.forEach((match, iindex) => {
-            if (match.round == missingRound-1) {
-              index = iindex+1;
-            }
-          });
+              if (match.round == round - 1) {
+                index = iindex + 1;
+              }
+            });
+
+            val.splice(index, 0, {
+              round: round,
+              type: 'bye'
+            });
           }
-
         }
-
-
-        if (missingRound) {
-
-          val.splice(index, 0, {
-            round: missingRound,
-            type: 'bye'
-          });
-        }
-
       }
 
-      if(this.flexOnTop){
+      if (this.flexOnTop) {
         let arr1 = [];
         let arr2 = [];
         val.forEach(match => {
@@ -112,12 +104,12 @@ export class ScheduleTableComponent implements OnInit {
           if (!this.util.returnBoolByPath(match, "scheduleDeadline") && match.type != 'bye') {
 
             arr1.push(match);
-          }else{
+          } else {
             arr2.push(match);
           }
         });
         matchesFlexOnTop = arr1.concat(arr2);
-      }else{
+      } else {
         matchesFlexOnTop = val;
       }
 
