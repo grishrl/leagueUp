@@ -233,6 +233,7 @@ export class PlayerProfile implements OnInit {
       this.returnedProfile = res;
       this.index = this.tabTracker.returnTabIndexIfSameRoute("profile");
       this.hotsProfile.getHPProfileLinkStream.subscribe((subj) => {
+
         this.hpProfileLink = subj;
       });
       this.hotsProfile.getHPProfileLink(

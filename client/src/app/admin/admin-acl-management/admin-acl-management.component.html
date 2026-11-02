@@ -17,6 +17,16 @@
                       <mat-label>Filter by name</mat-label>
                         <input matInput placeholder="Filter by name" [(ngModel)]="filterName" (ngModelChange)="filterUsers(filterName)">
                     </mat-form-field>
+                    <mat-checkbox [(ngModel)]="showElevatedOnly" (ngModelChange)="toggleElevatedPrivileges()">
+                        Elevated privileges
+                    </mat-checkbox>
+                    <div class="row mt-2">
+                        <div class="col-6" *ngFor="let right of aclService.rights">
+                            <mat-checkbox (change)="togglePermission(right.key, $event.checked)">
+                                {{right.key}}
+                            </mat-checkbox>
+                        </div>
+                    </div>
                 </div>
             </div>
             <mat-paginator [length]="length" [pageSize]="pageSize" (page)="pageEventHandler($event)">

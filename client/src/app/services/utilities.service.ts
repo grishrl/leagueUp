@@ -450,7 +450,7 @@ export class UtilitiesService {
     }
 
     let obj;
-    console.log(url);
+
     if (url.includes("youtube") || url.includes("youtu.be")) {
       if (url.includes("iframe") || url.includes("IFRAME")) {
         //got to slice out some information
@@ -504,7 +504,7 @@ export class UtilitiesService {
       embeddClip += `autoplay=0`;
       obj.returnClip = embeddClip;
     }
-    console.log("obj", obj);
+
     return obj;
   }
 }

@@ -22,7 +22,7 @@ export class MembersComponent implements OnInit {
         this.teamMembers = this.util.objectCopy(val.teamMembers);
       }
 
-      // console.log('this.teamMembers',this.teamMembers);
+
     }
   }
 

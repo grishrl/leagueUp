@@ -52,3 +52,24 @@
 .assCapt {
     background-color: #482262;
 }
+
+.section-title-team {
+    overflow: hidden;
+}
+
+.team-banner-image {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 41.666667%;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+
+@media (max-width: 1199.98px) {
+    .team-banner-image {
+        width: 100%;
+    }
+}

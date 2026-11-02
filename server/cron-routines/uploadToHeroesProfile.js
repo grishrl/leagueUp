@@ -338,6 +338,7 @@ async function sendToHp(divisions, matchCopy, match, logObj) {
                             },
                             err => {
                                 errorReturn = true;
+                                console.log('error', err);
                                 return err;
                             }
                         );
@@ -346,7 +347,7 @@ async function sendToHp(divisions, matchCopy, match, logObj) {
                         util.errLogger(
                             location,
                             null,
-                            'HP post return:' + posted
+                            'HP post return:' + JSON.stringify(posted)
                         );
                         if (!errorReturn) {
                             fallThroughCheck = false;
@@ -354,8 +355,8 @@ async function sendToHp(divisions, matchCopy, match, logObj) {
                                 ' logging reply from hots-profile ' +
                                 JSON.stringify(posted);
                             logger(logObj);
-                            match['replays'][localKey]['parsedUrl'] =
-                                posted.url;
+                            let replayObject = handleHpUrlUpdate(match['replays'][localKey],posted.url);
+                            match['replays'][localKey] = replayObject;
                             postedReplays += 1;
                         } else {
                             try {
@@ -538,6 +539,24 @@ function getDivisionByTeamName(divisionList, teamName) {
             return true;
         }
     });
+}
+
+function handleHpUrlUpdate(replayObj, returnedUrl){
+
+    replayObj = util.JSONCopy(replayObj);
+
+    replayObj['orig'] = returnedUrl;
+    //https://www.heroesprofile.com/NGS/Match/Single/?replayID=84
+    if(returnedUrl.indexOf('?replayID')>0){
+        let a = returnedUrl.split('?');
+        let b = a[1].split('=')[1];
+        replayObj.parsedUrl = `https://www.heroesprofile.com/Esports/NGS/Match/Single/${b}`;
+    }else{
+        replayObj.parsedUrl = returnedUrl;
+    }
+
+    return replayObj;
+
 }
 
 // 3-19-2021 promise queue work

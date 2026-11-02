@@ -16,6 +16,7 @@ const util = require('../utils');
 const System = require('../models/system-models').system;
 const SeasonInfoCommon = require('../methods/seasonInfoMethods');
 const AWS = require('aws-sdk');
+
 AWS.config.update({
     accessKeyId: process.env.S3accessKeyId,
     secretAccessKey: process.env.S3secretAccessKey,
@@ -62,8 +63,12 @@ async function asscoatieReplays() {
     logObj.timeStamp = new Date().getTime();
     logObj.logLevel = 'STD';
 
+    let currentSeasonInfo = await SeasonInfoCommon.getSeasonInfo();
+    seasonNum = currentSeasonInfo.value;
+
     //select replays that are not fully associated
     let parsedReplays = await Replay.find({
+        season:seasonNum,
         $or: [{
             fullyAssociated: false
         }, {
@@ -94,8 +99,15 @@ async function asscoatieReplays() {
                 let replayJson = await getReplayJson(replayObj.systemId, replay.season);
 
                 if(replayJson==null){
+                    const errLog = {};
+                        errLog.actor = 'SYSTEM; CRON';
+                        errLog.action = ' associate replay warning: ';
+                        errLog.timeStamp = new Date().getTime();
+                        errLog.logLevel = 'ERROR';
+                        errLog.error = `${replayObj.systemId} replayJson was null`;
+                        logger(errLog);
                     console.log('replayJson was null');
-                    return;
+                    continue;
                 }
                 //create a arrays of player battle tags, another array that has their battle tags and toon handles
                 let players = replayJson.players;
@@ -114,8 +126,8 @@ async function asscoatieReplays() {
                 //gather the teams from the replay info:
                 let replayTeams = [];
 
-                replayTeams.push(replay.match.teams[0].teamId);
-                replayTeams.push(replay.match.teams[1].teamId);
+                replayTeams.push(replayJson.match.teams[0].teamId);
+                replayTeams.push(replayJson.match.teams[1].teamId);
 
                 let users = await User.find({
                     displayName: {

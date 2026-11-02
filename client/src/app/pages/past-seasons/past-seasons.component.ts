@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { HistoryService } from '../../services/history.service';
 import { TimeService } from '../../services/time.service';
 import { FilterService } from '../../services/filter.service';
+import { AuthService } from '../../services/auth.service';
+import { environment } from '../../../environments/environment';
 import { orderBy } from 'lodash'
 
 @Component({
@@ -11,13 +13,16 @@ import { orderBy } from 'lodash'
 })
 export class PastSeasonsComponent implements OnInit {
 
-  constructor(private HS: HistoryService, private timeService: TimeService, private FS:FilterService) { }
+  constructor(private HS: HistoryService, private timeService: TimeService, private FS:FilterService, public Auth: AuthService) { }
 
   seasonsList = [];
   selectedSeason;
 
   divisionList = [];
   selectedDivision;
+
+  statsBucket = environment.s3bucketStats;
+  statsRegion = environment.s3regionStats;
 
   ngOnInit() {
     this.timeService.getSesasonInfo().subscribe(

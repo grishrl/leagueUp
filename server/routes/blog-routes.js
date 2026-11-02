@@ -23,7 +23,8 @@ router.post('/blogs', (req, res) => {
                         return response;
                     },
                     err => {
-                        util.errLogger(req.originalUrl, err, 'getBlogPosts');
+                        const e = {action:request.action, params:request.params, status:err.response.status, statusText:err.statusText, path: err.request.path};
+                        util.errLogger(req.originalUrl, e, 'getBlogPosts');
                         response.status = 500;
                         response.message = util.returnMessaging(req.originalUrl, 'Invalid request', err, null);
                         return response;
@@ -38,9 +39,16 @@ router.post('/blogs', (req, res) => {
                         return response;
                     },
                     err => {
+                        const e = {
+                            action: request.action,
+                            params: request.params,
+                            status: err.response.status,
+                            statusText: err.statusText,
+                            path: err.request.path,
+                        };
                         util.errLogger(req.originalUrl, err, 'getBlogPost');
                         response.status = 500;
-                        response.message = util.returnMessaging(req.originalUrl, 'Invalid request', err, null)
+                        response.message = util.returnMessaging(req.originalUrl, 'Invalid request', e, null)
                         return response;
                     }
                 )
@@ -53,9 +61,16 @@ router.post('/blogs', (req, res) => {
                         return response;
                     },
                     err => {
-                        util.returnMessaging(req.originalUrl, 'Invalid request', err, null)
+                        const e = {
+                            action: request.action,
+                            params: request.params,
+                            status: err.response.status,
+                            statusText: err.statusText,
+                            path: err.request.path,
+                        };
+                        util.returnMessaging(req.originalUrl, 'Invalid request', e, null)
                         response.status = 500
-                        response.message = util.returnMessaging(req.originalUrl, 'Invalid request', err, null)
+                        response.message = util.returnMessaging(req.originalUrl, 'Invalid request', e, null)
                         return response;
                     }
                 )
@@ -83,9 +98,16 @@ router.post('/blogs', (req, res) => {
                         return response;
                     },
                     err => {
-                        util.errLogger(req.originalUrl, err, 'getAuthors');
+                        const e = {
+                            action: request.action,
+                            params: request.params,
+                            status: err.response.status,
+                            statusText: err.statusText,
+                            path: err.request.path,
+                        };
+                        util.errLogger(req.originalUrl, e, 'getAuthors');
                         response.status = 500;
-                        response.message = util.returnMessaging(req.originalUrl, 'Invalid request', err, null)
+                        response.message = util.returnMessaging(req.originalUrl, 'Invalid request', e, null)
                         return response;
                     }
                 )
@@ -98,9 +120,16 @@ router.post('/blogs', (req, res) => {
                         return response;
                     },
                     err => {
-                        util.errLogger(req.originalUrl, err, 'getAuthor');
+                        const e = {
+                            action: request.action,
+                            params: request.params,
+                            status: err.response.status,
+                            statusText: err.statusText,
+                            path: err.request.path,
+                        };
+                        util.errLogger(req.originalUrl, e, 'getAuthor');
                         response.status = 500;
-                        response.message = util.returnMessaging(req.originalUrl, 'Invalid request', err, null);
+                        response.message = util.returnMessaging(req.originalUrl, 'Invalid request', e, null);
                         return response;
                     }
                 )
@@ -113,9 +142,16 @@ router.post('/blogs', (req, res) => {
                         return response;
                     },
                     err => {
-                        util.errLogger(req.originalUrl, err, 'getCategories');
+                        const e = {
+                            action: request.action,
+                            params: request.params,
+                            status: err.response.status,
+                            statusText: err.statusText,
+                            path: err.request.path,
+                        };
+                        util.errLogger(req.originalUrl, e, 'getCategories');
                         response.status = 200;
-                        response.message = util.returnMessaging(req.originalUrl, 'Invalid request', err, null)
+                        response.message = util.returnMessaging(req.originalUrl, 'Invalid request', e, null)
                         return response;
                     }
                 )
@@ -128,16 +164,30 @@ router.post('/blogs', (req, res) => {
                         return response;
                     },
                     err => {
-                        util.errLogger(req.originalUrl, err, 'getMedia');
+                        const e = {
+                            action: request.action,
+                            params: request.params,
+                            status: err.response.status,
+                            statusText: err.statusText,
+                            path: err.request.path,
+                        };
+                        util.errLogger(req.originalUrl, e, 'getMedia');
                         response.status = 500;
-                        response.message = util.returnMessaging(req.originalUrl, 'Invalid request', err, null);
+                        response.message = util.returnMessaging(req.originalUrl, 'Invalid request', e, null);
                         return response;
                     }
                 )
                 break;
             default:
                 util.errLogger(req.originalUrl, request.action, 'Invalid Request');
-                res.status(500).send(util.returnMessaging(req.originalUrl, 'Invalid request', null, null));
+                response.status = 500
+                response.message = util.returnMessaging(
+                    req.originalUrl,
+                    'Invalid request',
+                    null,
+                    null
+                );
+                return response;
         }
     })
 

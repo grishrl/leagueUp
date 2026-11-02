@@ -614,30 +614,39 @@ the options is an object of query options.
 router.post('/fetch/matches/scheduled', async(req, res) => {
     const path = 'schedule/fetch/matches/scheduled';
 
-    const optionalParameters = [{
+    const requiredParameters = [
+        {
             name: 'query',
-            type: 'array'
+            type: 'array',
         },
+    ];
+
+    const optionalParameters = [
         {
             name: 'options',
             type: 'object'
         }
     ];
 
-    commonResponseHandler(req, res, [], optionalParameters, async(req, res, required, options) => {
+    commonResponseHandler(
+        req,
+        res,
+        requiredParameters,
+        optionalParameters,
+        async (req, res, required, options) => {
+            let adQuery = {};
 
-        let adQuery = {};
+            if (options.options.valid) {
+                adQuery.options = options.options.value;
+            }
 
-        if (options.options.valid) {
-            adQuery.options = options.options.value;
+            if (required.query.valid) {
+                adQuery.query = required.query.value;
+            }
+
+            return getScheduledMatches(req, adQuery);
         }
-
-        if (options.query.valid) {
-            adQuery.query = options.query.value;
-        }
-
-        return getScheduledMatches(req, adQuery);
-    })
+    );
 
 })
 
@@ -868,8 +877,6 @@ router.post('/fetch/match', async(req, res) => {
 
 router.post('/fetch/match/list', async(req, res) => {
     const path = 'schedule/fetch/match/list';
-
-
 
     const requiredParameters = [{
         name: 'matches',
@@ -2118,7 +2125,20 @@ router.get('/matchfiles', async(req, res) => {
         //use the match ID as the folder name
         var folderName = matchData.matchId;
         //create bans text string
-        let bansText = `${matchData.home.teamName}: Bans ${matchData.mapBans.homeOne}, ${matchData.mapBans.homeTwo} \n${matchData.away.teamName}: Bans ${matchData.mapBans.awayOne}, ${matchData.mapBans.awayTwo}  `;
+        //if the match was reported by the admin then the bans might not be captured... so we need to check for that
+        let bansText = '';
+        if(
+            utils.returnBoolByPath(matchData, 'mapBans')
+            && utils.returnBoolByPath(matchData, 'mapBans.homeOne')
+            && utils.returnBoolByPath(matchData, 'mapBans.homeTwo')
+            && utils.returnBoolByPath(matchData, 'mapBans.awayOne')
+            && utils.returnBoolByPath(matchData, 'mapBans.awayTwo')
+        ){
+          bansText = `${matchData.home.teamName}: Bans ${matchData.mapBans.homeOne}, ${matchData.mapBans.homeTwo} \n${matchData.away.teamName}: Bans ${matchData.mapBans.awayOne}, ${matchData.mapBans.awayTwo}  `;
+        }else{
+            bansText = 'Bans not captured';
+        }
+        
 
         AWS.config.update({
             accessKeyId: process.env.S3accessKeyId,
@@ -2171,16 +2191,19 @@ router.get('/matchfiles', async(req, res) => {
                 s3makezipBucket.copyObject(param).promise()
             );
         }
-        let bestOf = utils.returnBoolByPath(matchData.boX) ? matchData.boX : 3;
+        let bestOf = utils.returnBoolByPath(matchData, 'boX') ? matchData.boX : 3;
         if (i < bestOf) {
-            buffer = Buffer.from("pulled a sneaky on you", "utf-8");
-            let data = {
-                Key: `${folderName}/game${i+1}/sneak.txt`,
-                Body: buffer
-            };
-            promiseArray.push(
-                s3makezipBucket.putObject(data).promise()
-            );
+            //while i is less than the best of, we need to add a placeholder file
+            for (i; i < bestOf; i++) {
+                let buffer = Buffer.from("pulled a sneaky on you", "utf-8");
+                let data = {
+                    Key: `${folderName}/game${i+1}/sneak.txt`,
+                    Body: buffer
+                };
+                promiseArray.push(
+                    s3makezipBucket.putObject(data).promise()
+                );
+            }
         }
 
         //resolve the writes to the makezip bucket...
@@ -2257,7 +2280,7 @@ router.get('/matchfiles', async(req, res) => {
         });
 
     } catch (e) {
-        res.status(500).send(utils.returnMessaging(req.originalUrl, 'Error Zipping', err))
+        res.status(500).send(utils.returnMessaging(req.originalUrl, 'Error Zipping', e))
     }
 });
 

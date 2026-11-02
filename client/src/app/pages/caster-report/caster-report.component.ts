@@ -65,11 +65,11 @@ export class CasterReportComponent implements OnInit {
   ngOnInit(): void {
       this.AR.paramMap.subscribe(
       params=>{
-        // console.log('params', params);
+
         this.casterReport.matchId = params['params'].matchId;
         this.casterReport.division =
           params["params"].division != "undefined" ? params["params"].division : null;
-        // console.log(this.casterReport);
+
         //get report if it exists
         this.ScheduleService.getCasterReport(this.casterReport.matchId).subscribe(
           res=>{
@@ -113,7 +113,7 @@ export class CasterReportComponent implements OnInit {
   }
 
   private _filter(val):Profile[]{
-    // console.log('filter', val);
+
     if( !(val instanceof Object) && !this.util.isNullOrEmpty(val)){
       let filterVal = val.toLowerCase();
       let test = this.castersList.filter((option) =>

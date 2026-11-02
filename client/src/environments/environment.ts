@@ -14,10 +14,10 @@ export const environment = {
   awsTld: "https://s3.amazonaws.com/",
   s3bucketArchiveImage: "dev-ngs-archive-image",
   socketURL: "https://dev-ngs.herokuapp.com",
-  heroesProfilePlayer: "https://www.heroesprofile.com/NGS/Profile/?",
-  heroesProfile: "https://www.heroesprofile.com/Profile/?",
-  heroesProfileTeam: "https://heroesprofile.com/NGS/Team/Single/?team=",
-  serverTLD:''
+  heroesProfilePlayer: "https://www.heroesprofile.com/Esports/NGS/Player",
+  heroesProfile: "https://www.heroesprofile.com/Player",
+  heroesProfileTeam: "https://www.heroesprofile.com/Esports/NGS/Team",
+  serverTLD: "",
 };
 
 

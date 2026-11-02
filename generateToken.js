@@ -21,8 +21,9 @@ const ParsedReplay = require('./server/models/replay-parsed-models');
 const { s3putObject } = require('./server/methods/aws-s3/put-s3-file');
 const getRegisteredTeams = require('./server/methods/team/getRegistered');
 const AWS = require('aws-sdk');
+const associateReplaysWorker = require('./server/workers/associate-replays');
 
-const CURRENT_WORKING_SEASON = 6;
+const CURRENT_WORKING_SEASON = 18;
 
 //bootstrap the program from AWS configs...
 loadConfig().finally(function () {
@@ -50,62 +51,184 @@ loadConfig().finally(function () {
     }
 
     //Operational code goes here now...
-    processReplayInfoFromS3();
+    associateReplaysWorker();
+    // fixSeasonReplay();
+
 });
 
+async function fixSeasonReplay(){
+    const ngsStatsOfTheStorm = process.env.s3bucketStats; //'ngs-stats-of-the-storm';
 
-async function processReplayInfoFromS3(){
-    const s3 = new AWS.S3({
+    AWS.config.update({
         accessKeyId: process.env.S3accessKeyId,
         secretAccessKey: process.env.S3secretAccessKey,
-        region: 'us-east-1',
-        params: {
-            Bucket: 'ngs-stats-of-the-storm',
-        },
+        region: process.env.S3region,
     });
 
-    let matches = await Match.find({$and:[{season:16},{reported:true}]});
+    const s3 = new AWS.S3();
 
-    console.log(matches.length);
+    const params = {
+        Bucket: ngsStatsOfTheStorm,
+        Prefix: `${CURRENT_WORKING_SEASON}/parsedReplays`,
+    };
 
-    for(var i = 0; i<matches.length; i++){
-        
-        let match = matches[i];
-        console.log('processing: ',' ', match.matchId, ' ', i + 1);
-        if(Object.keys(match.replays).length>1){
+    const data = await s3.listObjectsV2(params).promise();
 
-            let replays = [];
+    let systemIds = [];
 
-            replays.push(match.replays["1"]);
-            replays.push(match.replays['2']);
-            replays.push(match.replays['3'])
+    data.Contents.forEach(obj => {
+        // console.log(obj.Key);
+        let parts = obj.Key.split('/');
+        let file = parts[parts.length - 1];
+        let fileParts = file.split('.');
+        console.log(fileParts[0]);
+        systemIds.push(fileParts[0]);
+    });
 
-            for(let j=0; j<replays.length; j++){
-            let replayOne = replays[j];
-            if (replayOne && replayOne.data) {
-                console.log(`handling data id: ${replayOne.data}`);
-                let key = `16/parsedReplays/${replayOne.data}.json`;
-                let parsedReplay = await s3
-                    .getObject({
-                        Key: key,
-                    })
-                    .promise();
-                parsedReplay = JSON.parse(parsedReplay.Body.toString('utf-8'));
-                let sysreplay = await ParsedReplay.findOne({
-                    systemId: replayOne.data,
-                });
-                sysreplay.match.map = parsedReplay.match.map;
-                sysreplay.markModified("match");
-                sysreplay.save();
-            }
+    console.log(systemIds.length);
 
-            }
+    const result = await ParsedReplay.updateMany(
+        { season: 18 }, // Query condition to match documents with season 18
+        { $set: { season: null } } // Update operation to set season to null
+    );
 
+    console.log(`${result.nModified} replays updated.`);
+
+
+    // Write systemIds to a JSON file
+    fs.writeFile('systemIds.json', JSON.stringify(systemIds, null, 2), err => {
+        if (err) {
+            console.error('Error writing to file:', err);
+        } else {
+            console.log('systemIds have been written to systemIds.json');
         }
-    }
+    });
 
+    // data.Contents.forEach(
+    //     obj=>{
+    //         // console.log(obj.Key);
+    //         let parts = obj.Key.split('/');
+    //         let file = parts[parts.length-1]
+    //         let fileParts = file.split('.');
+    //         console.log(fileParts[0]);
+    //         systemIds.push(fileParts[0]);
+    //     }
+    // )
 
+    const foundReplays = await ParsedReplay.find({systemId:{$in:systemIds}});
+
+    foundReplays.forEach( element=>{
+        element.season = CURRENT_WORKING_SEASON;
+        element.markModified('season');
+        element.save().then(s=>{
+            console.log('saved', s)
+        },err=>{
+            console.log(err);
+        });
+    });
+
+    
 }
+
+
+// async function fixAllReplayLink(){
+//     let matches = await Match.find();
+
+//     let grief = [];
+
+//     for(i=2; i<matches.length; i++){
+//         let match = matches[i];
+//         console.log('working: ' + i + 1 + ' of ' + matches.length);
+        
+//         if (match.postedToHP) {
+//             const replays = match.toObject().replays;
+//             for (key in replays) {
+//                 let v = replays[key];
+//                 if (_.has(v, 'parsedUrl')) {
+//                     const copyOfObj = util.JSONCopy(v);
+//                     console.log('v.get', v.parsedUrl);
+//                     try {
+//                         let orig = copyOfObj.parsedUrl;
+//                         v.originalUrl = orig;
+//                         let a = orig.split('?');
+//                         let b = a[1].split('=')[1];
+//                         v.parsedUrl = `https://www.heroesprofile.com/Esports/NGS/Match/Single/${b}`;
+//                     } catch (e) {
+//                         console.log('ERROR ON MATCH:', match.matchId);
+//                         if(grief.indexOf(match.matchId)==-1){
+//                             grief.push(match.matchId);
+//                         }
+//                     }
+//                 }
+//             }
+
+//             match.replays = replays;
+
+//             match.markModified('replays');
+//             await match.save();
+            
+//         }
+//     }
+
+//     fs.writeFile('grief.json', JSON.stringify(grief), err => {
+//         console.log(err);
+//     });
+//     console.log('done');
+//     return 1;
+// }
+
+// async function processReplayInfoFromS3(){
+//     const s3 = new AWS.S3({
+//         accessKeyId: process.env.S3accessKeyId,
+//         secretAccessKey: process.env.S3secretAccessKey,
+//         region: 'us-east-1',
+//         params: {
+//             Bucket: 'ngs-stats-of-the-storm',
+//         },
+//     });
+
+//     let matches = await Match.find({$and:[{season:16},{reported:true}]});
+
+//     console.log(matches.length);
+
+//     for(var i = 0; i<matches.length; i++){
+        
+//         let match = matches[i];
+//         console.log('processing: ',' ', match.matchId, ' ', i + 1);
+//         if(Object.keys(match.replays).length>1){
+
+//             let replays = [];
+
+//             replays.push(match.replays["1"]);
+//             replays.push(match.replays['2']);
+//             replays.push(match.replays['3'])
+
+//             for(let j=0; j<replays.length; j++){
+//             let replayOne = replays[j];
+//             if (replayOne && replayOne.data) {
+//                 console.log(`handling data id: ${replayOne.data}`);
+//                 let key = `16/parsedReplays/${replayOne.data}.json`;
+//                 let parsedReplay = await s3
+//                     .getObject({
+//                         Key: key,
+//                     })
+//                     .promise();
+//                 parsedReplay = JSON.parse(parsedReplay.Body.toString('utf-8'));
+//                 let sysreplay = await ParsedReplay.findOne({
+//                     systemId: replayOne.data,
+//                 });
+//                 sysreplay.match.map = parsedReplay.match.map;
+//                 sysreplay.markModified("match");
+//                 sysreplay.save();
+//             }
+
+//             }
+
+//         }
+//     }
+
+
+// }
 
 
 // async function reparseReplays() {

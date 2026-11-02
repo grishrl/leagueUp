@@ -1,0 +1,11 @@
+.download-link {
+    color: #131313;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.download-link:hover {
+    color: #F2692E;
+    text-decoration: none;
+    cursor: pointer;
+}

@@ -19,6 +19,9 @@
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
+                            <div *ngIf="selectedSeason && selectedSeason >= 15 && Auth.isAuthenticated()">
+                                <a class="download-link" href="https://{{statsBucket}}.s3.{{statsRegion}}.amazonaws.com/{{selectedSeason}}/databases/NGS-season-{{selectedSeason}}.zip" target="_blank">Download Database</a>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -95,16 +95,83 @@ function startApp() {
 
     app.use(forceSsl);
 
+                    var susStrings = [];
+
+                    if (
+                        process.env.suspectStrings &&
+                        process.env.suspectStrings.length > 0
+                    ) {
+                        susStrings = process.env.suspectStrings.split(',');
+                    }
+
+    let blacklist = [];
+
+    if(process.env.ipBlacklist && process.env.ipBlacklist.length>0){
+        blacklist = process.env.ipBlacklist.split(',');
+    }
+
     app.use(function(req, res, next) {
 
-        if (process.env.enableApiDeepLogger && process.env.enableApiDeepLogger != 'false') {
-            serverLogger.addToLog(req);
-        }
-        res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
-        res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
-        res.header("Access-Control-Allow-Headers", "Authorization, Origin, X-Requested-With, Content-Type, Accept");
-        next();
 
+        //going to start rejecting losers for their request content when I have determined that it is not something I want to deal with..
+        const paramStr = JSON.stringify(req.params);
+        const queryStr = JSON.stringify(req.query);
+        const bodyStr = JSON.stringify(req.body);
+
+        const requestContents = [paramStr, queryStr, bodyStr];
+        const isSuspicious = requestContents.some(content =>
+            susStrings.some(suspicious =>
+                content.includes(suspicious)
+            )
+        );
+
+        if (isSuspicious) {
+            console.log(isSuspicious);
+            return res
+                .status(403)
+                .send(
+                    'Request blocked due to suspicious activity.'
+                );
+        }
+
+        const xForwardedFor = req.headers['x-forwarded-for'];
+        let clientIps = xForwardedFor
+            ? xForwardedFor.split(',').map(ip => ip.trim())
+            : [];
+
+        // Remove the IPv6 prefix from each IP if present and check against the blacklist
+        let sentToBlacklist = clientIps.some(ip => {
+            if (ip.startsWith('::ffff:')) {
+                ip = ip.substring(7);
+            }
+            return blacklist.includes(ip);
+        });
+
+        if (sentToBlacklist) {
+            return res
+                .status(403)
+                .send(
+                    'You have been denied access to NGS for suspected malicious behavior. If you feel this is in error, please contact support.'
+                );
+        }
+
+        if (
+            process.env.enableApiDeepLogger &&
+            process.env.enableApiDeepLogger != 'false'
+        ) {
+            serverLogger.addToLog(req, sentToBlacklist);
+        }
+        
+        res.header('Access-Control-Allow-Origin', '*'); // update to match the domain you will make the request from
+        res.header(
+            'Access-Control-Allow-Methods',
+            'GET,PUT,POST,DELETE,PATCH,OPTIONS'
+        );
+        res.header(
+            'Access-Control-Allow-Headers',
+            'Authorization, Origin, X-Requested-With, Content-Type, Accept'
+        );
+        next();
     });
 
 

@@ -10,7 +10,7 @@ export class WebsocketService {
   constructor() {
     this.socket = webSocket("ws://localhost:5000");
     this.socket.subscribe((res) => {
-      console.log("websocket res", res);
+
     });
   }
 
@@ -19,7 +19,7 @@ export class WebsocketService {
     }
 
     disconnectSocket(){
-      console.log('dc');
+
       this.socket.complete();
     }
 

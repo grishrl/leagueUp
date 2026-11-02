@@ -77,7 +77,7 @@
                     if(stickyElement.outerHeight()<100){
                       height = stickyElement.outerHeight()
                     }
-                    console.log('setting height',height);
+
                     stickyWrapper.css('height', height);
                     sticked.push({
                         topSpacing: o.topSpacing,

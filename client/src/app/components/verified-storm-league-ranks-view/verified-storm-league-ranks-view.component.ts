@@ -104,12 +104,12 @@ export class VerifiedStormLeagueRanksViewComponent implements OnInit {
 
   saveUpdate(rank){
 
-    console.log(rank);
+
       let ind = findIndex(this.verifiedUserRanks, {
         season: rank.season,
         year: rank.year,
       });
-      console.log("ind", ind);
+
       rank.level = this.rankToNumber(
         rank.hlRankMetal,
         rank.hlRankDivision

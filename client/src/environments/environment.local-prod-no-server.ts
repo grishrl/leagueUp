@@ -8,12 +8,15 @@ export const environment = {
   s3bucketReplays: "dev-ngs-replay-storage",
   s3bucketGeneralImage: "dev-ngs-general-image",
   s3bucketRankVerification: "dev-ngs-general-image/player-ranks-images",
+  s3bucketStats: "dev-ngs-stats-of-the-storm",
+  s3folderStats: "databases",
+  s3regionStats: "us-east-1",
   awsTld: "https://s3.amazonaws.com/",
   s3bucketArchiveImage: "dev-ngs-archive-image",
   socketURL: "https://dev-ngs.herokuapp.com",
-  heroesProfilePlayer: "https://www.heroesprofile.com/NGS/Profile/?",
-  heroesProfile: "https://www.heroesprofile.com/Profile/?",
-  heroesProfileTeam: "https://heroesprofile.com/NGS/Team/Single/?team=",
+  heroesProfilePlayer: "https://www.heroesprofile.com/Esports/NGS/Player",
+  heroesProfile: "https://www.heroesprofile.com/Player",
+  heroesProfileTeam: "https://www.heroesprofile.com/Esports/NGS/Team",
   serverTLD: "https://www.nexusgamingseries.org/",
 };
 

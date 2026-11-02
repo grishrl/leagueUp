@@ -41,7 +41,7 @@ returnNullUser(){
 
   //gets the user profile to match
   getUser(id): Observable<Profile> {
-    // console.log('id');
+
     let encodedID = encodeURIComponent(id);
     let params = [{ user: encodedID }];
     return this.httpService.httpGet(this.userGetURL, params).pipe(

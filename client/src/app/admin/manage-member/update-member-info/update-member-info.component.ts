@@ -64,10 +64,9 @@ export class UpdateMemberInfoComponent implements OnInit {
       (res) => {
 
         this.returnedProfile.accountAlias = res._id;
-        console.log(this.returnedProfile);
       },
       (err) => {
-        console.log(err);
+        console.error(err);
       }
     );
   }

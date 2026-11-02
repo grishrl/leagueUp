@@ -8,7 +8,8 @@
 
         <div class="row">
             <div class="col">
-                <mat-form-field>
+              <!-- <div *ngIf="involvedTournaments.length>0"> -->
+                <mat-form-field style="width: 100%;">
                   <mat-label>Tournament:</mat-label>
                     <mat-select placeholder="Tournament:" [(ngModel)]="selectedTournament" disableOptionCentering (ngModelChange)="selected()">
                         <mat-option *ngFor="let tourn of involvedTournaments" [value]="tourn"> {{tourn.name}}
@@ -16,6 +17,15 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
+              <!-- </div> -->
+              <!-- <div #elseBlcok>
+                <div class="row">
+                    <div class="col text-center">
+                        <h3>No Active Tournaments</h3>
+                    </div>
+                </div>
+              </div> -->
+
             </div>
         </div>
 

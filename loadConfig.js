@@ -10,7 +10,6 @@ const s3 = new aws.S3({
     region: "us-east-1",
     params: {
         Bucket: 'ngs-configs'
-
     }
 });
 

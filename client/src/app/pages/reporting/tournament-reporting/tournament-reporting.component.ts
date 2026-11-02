@@ -27,7 +27,10 @@ export class TournamentReportingComponent implements OnInit {
   ngOnInit() {
     this._team = this.auth.getTeam();
     this.team.getTournaments(this.auth.getTeamId()).subscribe(res => {
-      this.involvedTournaments = res;
+        this.involvedTournaments = res;
+      // this.involvedTournaments = res.filter((a) => {
+      //   return a.active;
+      // });
     }, err => {
       console.warn('y ', err);
     })

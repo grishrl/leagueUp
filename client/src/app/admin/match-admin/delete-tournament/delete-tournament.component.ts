@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ScheduleService } from 'src/app/services/schedule.service';
+import {has} from 'lodash';
 
 @Component({
   selector: 'app-delete-tournament',
@@ -19,6 +20,7 @@ export class DeleteTournamentComponent implements OnInit {
         tourn=>{
           let progressReported = false;
           let matchesScheduled = false;
+          if(has(tourn,'teamMatches')){
           tourn.teamMatches.forEach((match) => {
             if (match.hasOwnProperty("reported") && match.reported) {
               progressReported = true;
@@ -27,6 +29,8 @@ export class DeleteTournamentComponent implements OnInit {
               matchesScheduled = true;
             }
           });
+          }
+
           if(!progressReported){
             tourn.matchesScheduled = matchesScheduled;
             this.tournaments.push(tourn);

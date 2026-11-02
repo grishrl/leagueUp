@@ -154,7 +154,7 @@ export class MvpReportComponent implements OnInit {
   }
 
   private urlValidation(urlObj: { valid: boolean; returnClip: string }) {
-    console.log(this.mvpObj.potg_link, urlObj);
+
     if (this.mvpObj.potg_link.includes("twitch")) {
       urlObj = this.util.twitchEmbeddify(this.mvpObj.potg_link);
     } else if (this.mvpObj.potg_link.includes("youtube")) {

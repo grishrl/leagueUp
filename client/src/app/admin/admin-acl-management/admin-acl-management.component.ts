@@ -16,6 +16,8 @@ export class AdminAclManagementComponent implements OnInit, AfterViewInit {
   //component properties
   users: any = [];
   filterName:string='';
+  showElevatedOnly:boolean = false;
+  selectedPermissions: string[] = [];
   displayArray = [];
   length:number;
   pageSize:number = 10;
@@ -38,27 +40,40 @@ export class AdminAclManagementComponent implements OnInit, AfterViewInit {
     this.paginator.pageIndex = 0;
   }
 
-  constructor(private adminService:AdminService, private aclService: AclService, private util: UtilitiesService) { }
+  constructor(private adminService:AdminService, public aclService: AclService, private util: UtilitiesService) { }
 
-  filterUsers(filterName){
-    if(filterName == null || filterName == undefined || filterName.length == 0){
-      this.filteredArray = this.users;
-      this.length = this.filteredArray.length;
-      this.displayArray = this.filteredArray.slice(0, 10);
-      this.paginator.firstPage();
-    }else{
-      this.filteredArray = [];
-      this.users.forEach(element => {
-        if(!this.util.isNullOrEmpty(element.displayName)){
-          if (element.displayName.toLowerCase().indexOf(filterName.toLowerCase()) > -1) {
-            this.filteredArray.push(element);
-          }
-        }
-      });
-      this.length = this.filteredArray.length;
-      this.displayArray = this.filteredArray.slice(0,10);
-      this.paginator.firstPage();
+  filterUsers(filterName: string){
+    const normalizedFilterName = (filterName || '').toLowerCase();
+    this.filteredArray = this.users.filter(user => {
+      const matchesName = !normalizedFilterName ||
+        (!this.util.isNullOrEmpty(user.displayName) &&
+          user.displayName.toLowerCase().indexOf(normalizedFilterName) > -1);
+      const hasElevatedPrivileges = user.adminRights &&
+        Object.keys(user.adminRights).some(key => user.adminRights[key] === true);
+      const matchesSelectedPermissions = this.selectedPermissions.length === 0 ||
+        this.selectedPermissions.some(permission => user.adminRights && user.adminRights[permission] === true);
+
+      return matchesName &&
+        (!this.showElevatedOnly || hasElevatedPrivileges) &&
+        matchesSelectedPermissions;
+    });
+
+    this.length = this.filteredArray.length;
+    this.displayArray = this.filteredArray.slice(0, 10);
+    this.paginator.firstPage();
+  }
+
+  toggleElevatedPrivileges(){
+    this.filterUsers(this.filterName);
+  }
+
+  togglePermission(permission: string, selected: boolean){
+    if (selected) {
+      this.selectedPermissions.push(permission);
+    } else {
+      this.selectedPermissions = this.selectedPermissions.filter(selectedPermission => selectedPermission !== permission);
     }
+    this.filterUsers(this.filterName);
   }
 
   ngOnInit() {

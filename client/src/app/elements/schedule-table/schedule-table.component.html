@@ -175,6 +175,7 @@
               class="btn btn-primary"
               >View Match Info</a
             >
+            <app-replay-files-link *ngIf="casterReplayDownloader" [matchId]="match.matchId"></app-replay-files-link>
           </ng-template>
           <!-- end template -->
         </tr>

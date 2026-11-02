@@ -3,10 +3,10 @@ import { ActivatedRoute } from '@angular/router';
 import { ScheduleService } from '../../services/schedule.service';
 import { AuthService } from '../../services/auth.service';
 import { TeamService } from '../../services/team.service';
-import { environment } from '../../../environments/environment';
 import { TimeService } from '../../services/time.service';
 import { DivisionService } from '../../services/division.service';
 import { UtilitiesService } from '../../services/utilities.service';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-reporting',
@@ -37,7 +37,7 @@ export class ReportingComponent implements OnInit {
   rounds: any
   noMatches: Boolean;
   ngOnInit() {
-
+    this.grandFinalMatch = [];
     let getTeam;
     if (this.recTeam) {
       getTeam = this.recTeam;
@@ -49,12 +49,14 @@ export class ReportingComponent implements OnInit {
     if (getTeam && this.currentSeason) {
       this.divisionService.getDivisionTeam(getTeam).subscribe(
         res => {
+
           let divisionInfo = res;
           let rounds = this.util.calculateRounds(divisionInfo);
           this.scheduleService
             .getTeamSchedules(this.currentSeason, getTeam)
             .subscribe(
               (res) => {
+                this.grandFinalMatch = [];
 
                 let matches = res;
                 if (matches.length == 0) {
@@ -63,6 +65,14 @@ export class ReportingComponent implements OnInit {
                   this.noMatches = false;
                 }
                 let roundsArray = [];
+
+                let gfMatch = _.find(matches, {
+                  type: "grandfinal",
+                });
+                if (gfMatch) {
+                  this.grandFinalMatch.push(gfMatch);
+                }
+
                 for (var i = 0; i < rounds.length; i++) {
                   if (this.rounds == null || this.rounds == undefined) {
                     this.rounds = {};
@@ -71,15 +81,9 @@ export class ReportingComponent implements OnInit {
                   let realMatchNumber = i + 1;
                   roundsArray.push(realMatchNumber);
                   this.rounds[realMatchNumber] = [];
-                  matches.forEach((match) => {
-                    if (
-                      match.type == "grandfinal"
-                    ) {
-                      this.grandFinalMatch.push(match);
-                      // this.rounds["grandfinal"] = [];
-                      // this.rounds["grandfinal"].push(match);
 
-                    } else if (match.round == realMatchNumber) {
+                  matches.forEach((match) => {
+                    if (match.round == realMatchNumber) {
                       if (
                         this.rounds[realMatchNumber] == null ||
                         this.rounds[realMatchNumber] == undefined

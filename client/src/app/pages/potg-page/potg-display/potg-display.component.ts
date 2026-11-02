@@ -52,7 +52,7 @@ export class PotgDisplayComponent implements OnInit {
 
 
   correctAutoPlay(){
-    console.log('asdfasdf',this.potg.potg_link )
+
         if (this.potg.potg_link) {
           if (this.potg.potg_link.includes("twitch.tv")) {
             if (!this.potg.potg_link.includes("autoplay")) {

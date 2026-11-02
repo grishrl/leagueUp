@@ -17,3 +17,24 @@
 .mat-tab-body-wrapper {
     height: 100%;
 }
+
+.section-title-team {
+    overflow: hidden;
+}
+
+.division-banner-image {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 41.666667%;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+
+@media (max-width: 1199.98px) {
+    .division-banner-image {
+        width: 100%;
+    }
+}

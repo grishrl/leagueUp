@@ -182,7 +182,7 @@ export class PlayerSmallCardComponent implements OnInit {
                     this.dropEmmiter(player);
                   },
                   error: e=>{
-                    console.log(e);
+                    console.error(e);
                   }
                 }
               );

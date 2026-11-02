@@ -36,60 +36,73 @@ export class HeroesProfileService {
   }
 
   getHPTeamLink(teamName){
-    //https://heroesprofile.com/NGS/Team/Single/?team=TEST%20aggressive%20quorums%20(withdrawn)
-    if(this.util.isNullOrEmpty(teamName)){
-      return '';
-    }else{
+    /**
+     * https://www.heroesprofile.com/Esports/NGS/Team2+2?season=17&division=A
+     * or without filters
+     * https://www.heroesprofile.com/Esports/NGS/Team2+2
+     */
+
+    https: if (this.util.isNullOrEmpty(teamName)) {
+      return "";
+    } else {
       teamName = encodeURIComponent(teamName);
-      return environment.heroesProfileTeam+teamName;
+      return `${environment.heroesProfileTeam}/${teamName}`;
     }
   }
 
   getNgsHpPlayerLink(toonHandle, displayName){
-    //https://www.heroesprofile.com/NGS/Profile/?region=1&blizz_id=2201809&battletag=Mongoose
+    /**
+     * https://www.heroesprofile.com/Esports/NGS/Player/Zemill/67280
+     */
     if (this.util.isNullOrEmpty(toonHandle)) {
-      return '';
+      return "";
     } else {
       //1-Hero-1-848842
-      let splitToonHandle = toonHandle.split('-');
-      let region = splitToonHandle[2];
+      let splitToonHandle = toonHandle.split("-");
       let blizz_id = splitToonHandle[3];
-      let splitName = displayName.split('#');
+      let splitName = displayName.split("#");
       let battletag = splitName[0];
-      return environment.heroesProfilePlayer + 'region=' + region + '&blizz_id=' + blizz_id + '&battletag=' + battletag + '&season=';
+      return (
+        `${environment.heroesProfilePlayer}/${battletag}/${blizz_id}`
+      );
     }
   }
 
   public getHPProfileLinkStream: Subject<string> = new Subject();
 
 getHPProfileLink(toonHandle, displayName) {
-    let returnUrl = '';
-    //https://www.heroesprofile.com/Profile/?blizz_id=7905329&battletag=wraithling&region=1
-    if (this.util.isNullOrEmpty(toonHandle)) {
-      this.http.httpGet('user/hero-profile/path', [{'displayName':encodeURIComponent(displayName)}]).subscribe(
-        res=>{
-          if(res){
-            let blizz_id = res.blizz_id;
-            let region = res.region;
-            let splitName = displayName.split('#');
-            let battletag = splitName[0];
-            returnUrl = environment.heroesProfile + 'region=' + region + '&blizz_id=' + blizz_id + '&battletag=' + battletag;
-            this.getHPProfileLinkStream.next(returnUrl);
-          }else{
-            this.getHPProfileLinkStream.next(null);
-          }
+  let returnUrl = "";
+  /**
+   * https://www.heroesprofile.com/PlayerZemill/67280/1
+   */
 
-      })
-    } else {
-      //1-Hero-1-848842
-      let splitToonHandle = toonHandle.split('-');
-      let region = splitToonHandle[2];
-      let blizz_id = splitToonHandle[3];
-      let splitName = displayName.split('#');
-      let battletag = splitName[0];
-      returnUrl = environment.heroesProfile + 'region=' + region + '&blizz_id=' + blizz_id + '&battletag=' + battletag;
-      this.getHPProfileLinkStream.next(returnUrl);
-    }
+  if (this.util.isNullOrEmpty(toonHandle)) {
+    this.http
+      .httpGet("user/hero-profile/path", [
+        { displayName: encodeURIComponent(displayName) },
+      ])
+      .subscribe((res) => {
+        if (res) {
+          let blizz_id = res.blizz_id;
+          let region = res.region;
+          let splitName = displayName.split("#");
+          let battletag = splitName[0];
+          returnUrl = `${environment.heroesProfile}/${battletag}/${blizz_id}/${region}`;
+          this.getHPProfileLinkStream.next(returnUrl);
+        } else {
+          this.getHPProfileLinkStream.next(null);
+        }
+      });
+  } else {
+    //1-Hero-1-848842
+    let splitToonHandle = toonHandle.split("-");
+    let region = splitToonHandle[2];
+    let blizz_id = splitToonHandle[3];
+    let splitName = displayName.split("#");
+    let battletag = splitName[0];
+    returnUrl = `${environment.heroesProfile}/${battletag}/${blizz_id}/${region}`;
+    this.getHPProfileLinkStream.next(returnUrl);
   }
+}
 
 }

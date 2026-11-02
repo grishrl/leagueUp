@@ -22,12 +22,14 @@ export class GamesInformationComponent implements OnInit, OnChanges {
   ) {}
 
   hasMapBans = false;
+  hasReplays = false;
 
   @Input() match;
   ngOnInit() {
     this.hasMapBans = this.util.hasMapBans(this.match);
     this.resultsMap = new Map<string, Replay>();
-    if (this.match.hasOwnProperty("replays")) {
+    this.hasReplays = this.match.hasOwnProperty("replays");
+    if (this.hasReplays) {
       _forEach(this.match.replays, (value, key) => {
         if (key != "_id") {
           let item = value;

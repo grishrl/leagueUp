@@ -48,7 +48,7 @@ export class AdminYoutubeCurator implements OnInit {
     this.DivisionService.getDivisionInfo().subscribe(
       res => {
         this.divisionInfo = res;
-        console.log(this.divisionInfo);
+
       },
       err => {
         console.warn('error getting division info')
@@ -58,7 +58,7 @@ export class AdminYoutubeCurator implements OnInit {
     this.ScheduleService.getUncurratedReport().subscribe(
       res => {
         this.reports = res;
-        console.log(this.reports);
+
         this.reports.reportList.forEach(
           r=>{
             this.totalVideos += r.vodLinks.length;
@@ -71,7 +71,7 @@ export class AdminYoutubeCurator implements OnInit {
     )
 
     gapi.load('client:auth2',  ()=>{
-      console.log('initial gapi load.' , 'oauth id', this.google_oauth_id);
+
       gapi.auth2.init({ client_id: this.google_oauth_id })
     });
 
@@ -137,7 +137,7 @@ export class AdminYoutubeCurator implements OnInit {
     gapi.client.setApiKey(this.google_api_key);
     return gapi.client.load("https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest")
       .then(function () {
-        console.log("GAPI client loaded for API");
+
       },
         function (err) {
           console.error("Error loading GAPI client for API", err);
@@ -157,17 +157,16 @@ export class AdminYoutubeCurator implements OnInit {
   async recursePlaylist(npt) {
 
     let results = await this.getPlaylistInfo(npt);
-    console.log(npt);
-    console.log(results);
+
     // confirm('halting');
     if (results.items) {
       this.playlistList = this.playlistList.concat(results.items);
-      console.log('concating..', this.playlistList);
+
     }
     if (results.nextPageToken) {
       this.recursePlaylist(results.nextPageToken)
     } else {
-      console.log('might be done', this.playlistList);
+
       this.parseList();
     }
   }
@@ -175,7 +174,7 @@ export class AdminYoutubeCurator implements OnInit {
   //ngs channel id : UCnfohSTrlMyqiCwI5-3jXmw
   //ngs web channel id : UCOf6CO75ePUy5Q5lCthv2Jg
   getPlaylistInfo(nextPageToken) {
-    console.log('nextPageToken', nextPageToken);
+
     const request = {
       "part": [
         "snippet, contentDetails"
@@ -189,7 +188,7 @@ export class AdminYoutubeCurator implements OnInit {
     return gapi.client.youtube.playlists.list(request)
       .then(function (response) {
         // Handle the results here (response.result has the parsed body).
-        // console.log("Response", response.result);
+
         return response.result;
       },
         function (err) {
@@ -202,7 +201,7 @@ export class AdminYoutubeCurator implements OnInit {
   parseList() {
     this.playlistList.forEach(
       playlist => {
-        console.log(playlist);
+
         let obj = {};
         obj['id'] = playlist.id;
         obj['etag'] = playlist.etag;
@@ -211,7 +210,7 @@ export class AdminYoutubeCurator implements OnInit {
         this.parsedList.push(obj);
       }
     )
-    console.log('parsed youtube lists', this.parsedList);
+
     this.currateList();
   }
 
@@ -224,7 +223,7 @@ export class AdminYoutubeCurator implements OnInit {
     let tracked = {};
 
     this.reports.reportList.forEach(report => {
-      console.log('report',report);
+
       let playListName;
       if(report.division && report.division != "undefined" ){
         let reportDiv = report.division;
@@ -270,8 +269,7 @@ export class AdminYoutubeCurator implements OnInit {
           );
           this.deferredInserts.forEach(
             defIns => {
-              console.log('deffered insert defIns', defIns);
-              console.log('parsedList', this.parsedList);
+
               let youtubeplaylist = find(this.parsedList, { title: defIns.playListName });
               this.insertVidToList(youtubeplaylist.id, defIns.id, defIns.matchId);
             });
@@ -303,7 +301,7 @@ export class AdminYoutubeCurator implements OnInit {
 
     for(var i = 0; i<this.playlistaddarr.length; i++){
       let request = this.playlistaddarr[i];
-      console.log('request', request);
+
       try{
         let r = await gapi.client.youtube.playlistItems.insert(request);
         results.push(r);
@@ -318,7 +316,7 @@ export class AdminYoutubeCurator implements OnInit {
         this.playlistAdded +=1;
 
       }catch(e){
-        console.log(e);
+        console.error(e);
 
         this.errorCount += 1;
         this.matchResultsArr.forEach(
@@ -332,11 +330,10 @@ export class AdminYoutubeCurator implements OnInit {
       }
     }
 
-    console.log('this.matchResultsArr',this.matchResultsArr, results);
 
     this.reports.reportList.forEach(
       r=>{
-        // console.log(results);
+
         this.matchResultsArr.forEach(
           i=>{
             r.playlistCurrated = true;
@@ -352,7 +349,7 @@ export class AdminYoutubeCurator implements OnInit {
 
     this.ScheduleService.casterReport(this.reports.reportList).subscribe(
       r=>{
-        console.log('success', r);
+
       },
       e=>{
         console.warn(e);
